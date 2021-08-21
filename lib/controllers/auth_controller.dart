@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert' show json;
-import 'package:ecoach_editor/models/user.dart';
-import 'package:ecoach_editor/providers/auth_db.dart';
-import 'package:ecoach_editor/util/app_url.dart' show AppUrl;
-import 'package:ecoach_editor/util/shared_preference.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -78,7 +76,6 @@ class AuthController extends GetxController {
           'message': 'Successfully registered',
           'data': authUser
         };
-
       } else {
         result = {
           'status': false,
@@ -99,26 +96,26 @@ class AuthController extends GetxController {
     });
   }
 
-  Future<Map<String, dynamic>> localLogin(String email, String password) async {
-    var result;
+  // Future<Map<String, dynamic>> localLogin(String email, String password) async {
+  //   var result;
 
-    _loggedInStatus = Status.Authenticating;
+  //   _loggedInStatus = Status.Authenticating;
 
-    List<User> users = await AuthDB.db.localLogin(email, password);
+  //   List<User> users = await AuthDB.db.localLogin(email, password);
 
-    if (users != null && users.length > 0) {
-      User authUser = users.first;
+  //   if (users != null && users.length > 0) {
+  //     User authUser = users.first;
 
-      setUser(authUser);
-      _loggedInStatus = Status.LoggedIn;
+  //     setUser(authUser);
+  //     _loggedInStatus = Status.LoggedIn;
 
-      result = {'status': true, 'message': 'Successful', 'user': authUser};
-    } else {
-      _loggedInStatus = Status.NotLoggedIn;
-      result = {'status': false, 'message': 'could not log in locally'};
-    }
-    return result;
-  }
+  //     result = {'status': true, 'message': 'Successful', 'user': authUser};
+  //   } else {
+  //     _loggedInStatus = Status.NotLoggedIn;
+  //     result = {'status': false, 'message': 'could not log in locally'};
+  //   }
+  //   return result;
+  // }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     var result;
@@ -226,11 +223,11 @@ class AuthController extends GetxController {
     var result;
 
     final Map<String, dynamic> data = {
-      'ecoachsignin':'1',
-      'request_type':'GET',
-      'email':email,
-      'source':'ecoach_app.secure',
-      'API_key':'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      'ecoachsignin': '1',
+      'request_type': 'GET',
+      'email': email,
+      'source': 'ecoach_app.secure',
+      'API_key': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     };
 
     return result;
@@ -240,11 +237,11 @@ class AuthController extends GetxController {
     var result;
 
     final Map<String, dynamic> data = {
-      'ecoachsignin':'1',
-      'request_type':'GET',
-      'phone':phone,
-      'source':'ecoach_app.secure',
-      'API_key':'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      'ecoachsignin': '1',
+      'request_type': 'GET',
+      'phone': phone,
+      'source': 'ecoach_app.secure',
+      'API_key': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     };
 
     return result;
@@ -253,32 +250,34 @@ class AuthController extends GetxController {
   Future<Map<String, dynamic>> resetPassword(String identifier) async {
     var result;
 
-    String identifierVar="email";
-    RegExp phoneNumberExp = RegExp(r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$');
-    if(phoneNumberExp.hasMatch(identifier)){
-      identifierVar="phone";
+    String identifierVar = "email";
+    RegExp phoneNumberExp =
+        RegExp(r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$');
+    if (phoneNumberExp.hasMatch(identifier)) {
+      identifierVar = "phone";
     }
     final Map<String, dynamic> data = {
-      'ecoachsignin':'1',
-      'request_type':'GET',
-      identifierVar:identifier,
-      'source':'ecoach_app.secure',
-      'API_key':'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      'ecoachsignin': '1',
+      'request_type': 'GET',
+      identifierVar: identifier,
+      'source': 'ecoach_app.secure',
+      'API_key': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     };
 
     return result;
   }
 
-  Future<Map<String, dynamic>> changePassword(String password, String password2) async {
+  Future<Map<String, dynamic>> changePassword(
+      String password, String password2) async {
     var result;
 
     final Map<String, dynamic> data = {
-      'ecoachsignin':'1',
-      'request_type':'GET',
+      'ecoachsignin': '1',
+      'request_type': 'GET',
       'password': password,
       'password2': password2,
-      'source':'ecoach_app.secure',
-      'API_key':'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      'source': 'ecoach_app.secure',
+      'API_key': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     };
 
     return result;
@@ -287,5 +286,4 @@ class AuthController extends GetxController {
   bool hasSubscription() {
     return true;
   }
-
 }
