@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
       isLoading = true;
     });
     http.Response response = await http.post(
-      Uri.parse("https://dev.shammahapp.com/api/signup"),
+      Uri.parse(AppUrl.register),
       headers: {'Content-Type': 'application/json'},
       body: json
           .encode(<String, dynamic>{'identifier': email, "password": password}),

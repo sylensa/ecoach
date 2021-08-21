@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/register_view.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
     });
     http.Response response = await http.post(
-      Uri.parse("https://dev.shammahapp.com/api/signin"),
+      Uri.parse(AppUrl.login),
       headers: {'Content-Type': 'application/json'},
       body: json
           .encode(<String, dynamic>{'identifier': email, "password": password}),
