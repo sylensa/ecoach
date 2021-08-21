@@ -3,7 +3,9 @@ import 'dart:async';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
+import 'package:ecoach/views/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
-        setLoggedInUser(user);
+        UserPreferences().setUser(user);
 
         Navigator.pushAndRemoveUntil(
             context,
@@ -237,6 +239,20 @@ class _RegisterPageState extends State<RegisterPage> {
                                 : Text("Register"));
                       },
                     ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                          );
+                        },
+                        child: Text("Select to Login",
+                            style: TextStyle(
+                                decoration: TextDecoration.underline)))
                   ],
                 ),
               ),

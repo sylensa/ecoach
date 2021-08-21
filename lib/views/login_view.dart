@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/register_view.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
-        setLoggedInUser(user);
+        UserPreferences().setUser(user);
 
         Navigator.pushAndRemoveUntil(
             context,
