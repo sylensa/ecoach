@@ -36,7 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: json.encode(<String, dynamic>{
         'fname': firstName,
         'lname': lastName,
-        'gender': _gender,
+        'gender': _selectedGender!.substring(0, 1),
         'email': email,
         'phone': phone,
         "password": password,
@@ -58,6 +58,10 @@ class _RegisterPageState extends State<RegisterPage> {
         setState(() {
           isLoading = false;
         });
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message']),
+        ));
+
         return;
       } else {
         setState(() {
@@ -69,6 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
         return;
       }
     } else {
+      print(response.body);
       setState(() {
         isLoading = false;
       });
@@ -83,6 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
   }
 
+  TextEditingController passwordController = new TextEditingController();
   String? _selectedGender = 'Gender';
   List<String> _gender = ['Gender', 'Male', 'Female'];
 
@@ -108,13 +114,13 @@ class _RegisterPageState extends State<RegisterPage> {
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(40.0),
+              padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 70,
+                      height: 20,
                     ),
                     TextFormField(
                       decoration: InputDecoration(labelText: 'First Name'),
@@ -122,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         firstName = value!;
                       },
                       validator: (text) {
-                        String _msg = "";
+                        String? _msg;
                         if (text!.isEmpty) {
                           _msg = "Your first name is required";
                         }
@@ -138,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         lastName = value!;
                       },
                       validator: (text) {
-                        String _msg = "";
+                        String? _msg;
                         if (text!.isEmpty) {
                           _msg = "Your last name is required";
                         }
@@ -154,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         email = value!;
                       },
                       validator: (text) {
-                        String _msg = "";
+                        String? _msg;
                         RegExp regex = new RegExp(
                             r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
                         if (text!.isEmpty) {
@@ -174,9 +180,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         phone = value!;
                       },
                       validator: (text) {
-                        String _msg = "";
+                        String? _msg;
                         RegExp regex = new RegExp(
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                            r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$');
                         if (text!.isEmpty) {
                           _msg = "Your phone number is required";
                         } else if (!regex.hasMatch(text)) {
@@ -230,13 +236,14 @@ class _RegisterPageState extends State<RegisterPage> {
                       height: 20,
                     ),
                     TextFormField(
+                      controller: passwordController,
                       decoration: InputDecoration(labelText: 'Password'),
                       obscureText: true,
                       onSaved: (value) {
                         password = value!;
                       },
                       validator: (text) {
-                        String _msg = "";
+                        String? _msg;
 
                         if (text!.isEmpty) {
                           _msg = "Your password is required";
@@ -253,11 +260,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       obscureText: true,
                       onSaved: (value) {},
                       validator: (text) {
-                        String _msg = "";
+                        String? _msg;
 
                         if (text!.isEmpty) {
                           _msg = "Your password is required";
-                        } else if (text != password) {
+                        } else if (text != passwordController.text) {
                           return "Password must be same as above";
                         }
                         return _msg;
