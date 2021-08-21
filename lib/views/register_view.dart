@@ -37,12 +37,12 @@ class _RegisterPageState extends State<RegisterPage> {
       Map<String, dynamic> responseData = json.decode(response.body);
       print(responseData);
       if (responseData["status"] == true) {
-        var userData = User.fromJson(responseData["data"]);
-        setLoggedInUser(userData);
+        var user = User.fromJson(responseData["data"]);
+        setLoggedInUser(user);
 
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => HomePage(user)),
             (Route<dynamic> route) => false);
         setState(() {
           isLoading = false;

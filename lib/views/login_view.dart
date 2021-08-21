@@ -36,26 +36,16 @@ class _LoginPageState extends State<LoginPage> {
       Map<String, dynamic> responseData = json.decode(response.body);
       print(responseData);
       if (responseData["status"] == true) {
-        var userData = User.fromJson(responseData["data"]);
-        setLoggedInUser(userData);
+        var user = User.fromJson(responseData["data"]);
+        setLoggedInUser(user);
 
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => HomePage(user)),
             (Route<dynamic> route) => false);
         setState(() {
           isLoading = false;
         });
-
-        // responseData["data"]["departments"].forEach((jsonObject) {
-        //   print(jsonObject.toString());
-        //   var department = Department.fromJson(jsonObject);
-        //   DepartmentDB().insert(department);
-        //   print(department);
-        //   // departments.add(jsonObject);
-        // });
-
-        print("department insertion successful");
         return;
       } else {
         setState(() {

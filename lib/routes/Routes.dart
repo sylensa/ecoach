@@ -1,3 +1,4 @@
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,10 @@ class Routes {
 }
 
 final Map<String, WidgetBuilder> routes = {
-  Routes.home: (context) => HomePage(),
+  Routes.home: (context) {
+    final user = ModalRoute.of(context)!.settings.arguments as User;
+    return HomePage(user);
+  },
   // Routes.dashboard: (context) => DashBoard(),
   // Routes.contents: (context) => ContentsPage(),
   // Routes.monetisation: (context) => MonetisationPage(),

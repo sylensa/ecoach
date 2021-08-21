@@ -1,92 +1,59 @@
 import 'dart:io';
-
-import 'package:get/get.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+// ignore: unused_import
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DBProvider {
   DBProvider._();
   static final DBProvider db = DBProvider._();
 
-  static Database _database;
-  AuthController authController = Get.find<AuthController>();
+  static Database? _database;
 
-  Future<Database> get database async {
+  static Future<Database?> get database async {
     if (_database != null) return _database;
 
     _database = await initDB();
     return _database;
   }
 
-  initDB() async {
-    User user = authController.user();
+  static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "${user.uuid}.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {},
+    String path = join(documentsDirectory.path, "church9.db");
+    return await openDatabase(path, version: 5, onOpen: (db) {},
         onCreate: (Database db, int version) async {
-      await db.execute("CREATE TABLE questions ("
+      await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
-          "question TEXT,"
-          "subject_id INTEGER,"
-          "topic_id INTEGER,"
-          "type TEXT,"
+          "user_id INTEGER,"
+          "status TEXT,"
+          "user_requested INTEGER,"
+          "friend TEXT,"
+          "user TEXT,"
+          "created_at TEXT,"
+          "updated_at TEXT"
           ")");
 
-      await db.execute("CREATE TABLE answers ("
+      await db.execute("CREATE TABLE messages ("
           "id INTEGER PRIMARY KEY,"
-          "question_id TEXT,"
-          "answer TEXT,"
-          "is_correct INTEGER,"
+          "from_user TEXT,"
+          "to_user TEXT,"
+          "text TEXT,"
+          "title TEXT,"
+          "read INTEGER,"
+          "reply_id INTEGER,"
+          "created_at TEXT,"
+          "updated_at TEXT"
+          ")");
+
+      await db.execute("CREATE TABLE notifications ("
+          "id INTEGER PRIMARY KEY,"
+          "data_id INTEGER,"
+          "title TEXT,"
+          "text TEXT,"
           "type TEXT,"
+          "created_at TEXT"
           ")");
     });
-  }
-
-  Future<void> insertQuestion(Question question) async {
-    final Database db = await database;
-
-    await db.insert(
-      'questions',
-      question.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<List<Question>> questions() async {
-    final Database db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query('questions');
-
-    return List.generate(maps.length, (i) {
-      return Question(
-        id: maps[i]['id'],
-        question: maps[i]['question'],
-        subjectId: maps[i]['subjectId'],
-        type: maps[i]['type'],
-        topicId: maps[i]['topicId'],
-      );
-    });
-  }
-
-  Future<void> updateQuestion(Question question) async {
-    final db = _database;
-
-    await db.update(
-      'questions',
-      question.toMap(),
-      where: "id = ?",
-      whereArgs: [question.id],
-    );
-  }
-
-  Future<void> deleteQuestion(int id) async {
-    final db = _database;
-    await db.delete(
-      'questions',
-      where: "id = ?",
-      whereArgs: [id],
-    );
   }
 }
