@@ -33,7 +33,7 @@ class BaseAppBar extends AppBar {
                               width: 36,
                               height: 36,
                               fit: BoxFit.fill,
-                              imageUrl: user.avatar,
+                              imageUrl: user.avatar!,
                             )
                           : Icon(Icons.person),
                     ),

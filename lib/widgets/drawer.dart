@@ -64,7 +64,7 @@ class AppDrawer extends StatelessWidget {
       currentAccountPicture: CircleAvatar(
         backgroundColor: Colors.black,
         child: user.avatar != null
-            ? CachedNetworkImage(imageUrl: user.avatar)
+            ? CachedNetworkImage(imageUrl: user.avatar!)
             : Text(user.initials),
       ),
       decoration: BoxDecoration(color: Colors.orange),

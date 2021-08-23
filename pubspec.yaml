@@ -23,26 +23,24 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  provider: ^4.3.1
-  http: ^0.12.1
-  shared_preferences: ^0.5.8
-  sms_otp_auto_verify: ^1.2.2
-  flushbar: ^1.10.4
-  sqflite: any
-  path_provider: any
-  validators: ^2.0.0+1
-  datetime_picker_formfield: ^1.0.0
-  cached_network_image: ^2.3.3
-  image_picker: ^0.6.7+14
-  flutter_svg: ^0.18.0 # help us to use SVG in our app
+  provider: ^6.0.0
+  http: ^0.13.3
+  shared_preferences: ^2.0.7
+  sqflite: ^2.0.0+3
+  path_provider: ^2.0.2
+  validators: ^3.0.0
+  datetime_picker_formfield: ^2.0.0
+  cached_network_image: ^3.1.0
+  image_picker: ^0.8.3+3
+  flutter_svg: ^0.22.0 # help us to use SVG in our app
   # file_picker_cross: ^4.2.6
-  get:
+  get: ^4.3.8
   # flutter_tex: ^3.6.7+10
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.3
 
 dev_dependencies:
   flutter_test:
