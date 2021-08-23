@@ -1,5 +1,6 @@
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/home.dart';
+import 'package:ecoach/views/logout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -56,5 +57,5 @@ final Map<String, WidgetBuilder> routes = {
   // '/test_analytics': (context) => TestAnalyticsPage(),
   // '/questions': (context) => QuestionsPage(),
   // '/students_report': (context) => StudentsReportPage(),
-  // '/logout': (context) => Logout(),
+  '/logout': (context) => Logout(),
 };

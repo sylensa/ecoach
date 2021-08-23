@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:flutter/material.dart';
 
 class BaseAppBar extends AppBar {
   // final AppBar appBar;
   // final List<Widget> widgets;
-  BaseAppBar(BuildContext context, title)
+  User user;
+  BaseAppBar(BuildContext context, title, {required this.user})
       : super(
           title: Text(title),
           elevation: 0.1,
@@ -65,12 +67,12 @@ class Choice {
 const List<Choice> choices = const <Choice>[
   const Choice(
       title: 'My Accounts', icon: Icons.account_box, route: Routes.home),
-  const Choice(
-      title: 'My Contents', icon: Icons.content_copy, route: Routes.home),
-  const Choice(
-      title: 'My Subscriptions', icon: Icons.subject, route: Routes.home),
-  const Choice(
-      title: 'Exams Management', icon: Icons.edit_rounded, route: Routes.home),
+  // const Choice(
+  //     title: 'My Contents', icon: Icons.content_copy, route: Routes.home),
+  // const Choice(
+  //     title: 'My Subscriptions', icon: Icons.subject, route: Routes.home),
+  // const Choice(
+  //     title: 'Exams Management', icon: Icons.edit_rounded, route: Routes.home),
   const Choice(title: 'Logout', icon: Icons.logout, route: "/logout"),
 ];
 

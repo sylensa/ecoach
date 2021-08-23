@@ -1,7 +1,8 @@
 class User {
   int? id;
   String? uuid;
-  String? name;
+  String? fname;
+  String? lname;
   String? email;
   String? password;
   String? passwordConfirm;
@@ -9,14 +10,16 @@ class User {
   String? type;
   String? gender;
   String? token;
-  String? renewalToken;
   DateTime? lastLoggedIn;
   String? username;
+
+  String? avatar;
 
   User(
       {this.id,
       this.uuid,
-      this.name,
+      this.fname,
+      this.lname,
       this.username,
       this.email,
       this.phone,
@@ -24,9 +27,13 @@ class User {
       this.passwordConfirm,
       this.type,
       this.gender,
+      this.avatar,
       this.token,
-      this.renewalToken,
       this.lastLoggedIn});
+
+  String get name {
+    return fname! + " " + lname!;
+  }
 
   factory User.fromJson(Map<String, dynamic> responseData) {
     return User.fromMap(responseData);
@@ -35,38 +42,41 @@ class User {
   factory User.fromMap(Map<String, dynamic> json) => new User(
       id: json['id'],
       uuid: json['uuid'],
-      name: json['name'],
+      fname: json['fname'],
+      lname: json['lname'],
       username: json['username'],
       email: json['email'],
       phone: json['phone'],
       type: json['type'],
       gender: json['gender'],
       token: json['access_token'],
-      renewalToken: json['renewal_token']);
+      avatar: json['avatar']);
 
   fromMap(Map<String, dynamic> json) {
     id = json['id'];
     uuid = json['uuid'];
-    name = json['name'];
+    fname = json['fname'];
+    lname = json['lname'];
     username = json['username'];
     email = json['email'];
     phone = json['phone'];
     type = json['type'];
     gender = json['gender'];
     token = json['access_token'];
-    renewalToken = json['renewal_token'];
+    avatar = json['avatar'];
   }
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "uuid": uuid,
-        "name": name,
+        "fname": fname,
+        "lname": lname,
         "username": username,
         "email": email,
         "phone": phone,
         "type": type,
         "gender": gender,
         "token": token,
-        "renewalToken": renewalToken,
+        "avatar": avatar,
       };
 }

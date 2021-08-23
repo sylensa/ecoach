@@ -1,15 +1,12 @@
-import 'dart:developer';
-
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/register_view.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -24,60 +21,47 @@ class _LoginPageState extends State<LoginPage> {
   void loginUser(BuildContext context) async {
     if (_formKey.currentState!.validate() == false) return null;
     _formKey.currentState!.save();
-    setState(() {
-      isLoading = true;
-    });
+
+    showLoaderDialog(context, message: "logging in...");
+
     http.Response response = await http.post(
       Uri.parse(AppUrl.login),
       headers: {'Content-Type': 'application/json'},
-      body: json
-          .encode(<String, dynamic>{'identifier': email, "password": password}),
+      body: jsonEncode(
+          <String, dynamic>{'identifier': email, "password": password}),
     );
 
-    if (response.statusCode == 200) {
+    print(response.statusCode);
+    if (response.statusCode == 200 && response.body != "") {
+      print(response.body);
       Map<String, dynamic> responseData = json.decode(response.body);
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
         UserPreferences().setUser(user);
-
+        Navigator.pop(context);
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomePage(user)),
             (Route<dynamic> route) => false);
-        setState(() {
-          isLoading = false;
-        });
+
         return;
       } else {
-        setState(() {
-          isLoading = false;
-        });
+        Navigator.pop(context);
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
         return;
       }
     } else {
-      setState(() {
-        isLoading = false;
-      });
+      Navigator.pop(context);
+      Map<String, dynamic> responseData = json.decode(response.body);
+
       Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Server Error"),
+        content: Text(responseData['message'] ?? "Server Error"),
       ));
       return;
     }
-  }
-
-  setLoggedInUser(User user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setInt("id", user.id);
-    prefs.setString("name", user.name);
-    prefs.setString("email", user.email);
-    prefs.setString("phone", user.phone);
-    prefs.setString("access-token", user.token);
-    // prefs.setString("session-id", user.sessionId);
   }
 
   final _formKey = GlobalKey<FormState>();

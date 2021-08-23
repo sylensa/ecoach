@@ -6,6 +6,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,13 +28,16 @@ class _RegisterPageState extends State<RegisterPage> {
   doRegister(BuildContext context) async {
     if (_formKey.currentState!.validate() == false) return null;
     _formKey.currentState!.save();
-    setState(() {
-      isLoading = true;
-    });
+
+    showLoaderDialog(context, message: "signing up ...");
+
     http.Response response = await http.post(
       Uri.parse(AppUrl.register),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(<String, dynamic>{
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: jsonEncode(<String, dynamic>{
         'fname': firstName,
         'lname': lastName,
         'gender': _selectedGender!.substring(0, 1),
@@ -44,39 +48,43 @@ class _RegisterPageState extends State<RegisterPage> {
       }),
     );
 
-    if (response.statusCode == 200) {
+    print(response.body);
+    print("response got here");
+    print(response.statusCode);
+    if (response.statusCode == 200 && response.body != "") {
       Map<String, dynamic> responseData = json.decode(response.body);
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
         UserPreferences().setUser(user);
+        Navigator.pop(context);
 
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomePage(user)),
             (Route<dynamic> route) => false);
-        setState(() {
-          isLoading = false;
-        });
+
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
 
         return;
       } else {
-        setState(() {
-          isLoading = false;
-        });
+        Navigator.pop(context);
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
         return;
       }
     } else {
-      print(response.body);
-      setState(() {
-        isLoading = false;
-      });
+      Navigator.pop(context);
+      if (response.body != "") {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message']),
+        ));
+      }
+
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Server Error"),
       ));
@@ -94,16 +102,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? selectedUserType = "student";
   List<String> userType = ['student', 'teacher', 'parent'];
-
-  setLoggedInUser(User user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setInt("id", user.id);
-    prefs.setString("name", user.name);
-    prefs.setString("email", user.email);
-    prefs.setString("phone", user.phone);
-    prefs.setString("access-token", user.token);
-  }
 
   final _formKey = GlobalKey<FormState>();
 
