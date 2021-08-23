@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: BaseAppBar(context, "Home"),
+        appBar: BaseAppBar(context, "Home", user: widget.user),
         drawer: AppDrawer(user: widget.user),
         body: Container(
           color: Colors.white,

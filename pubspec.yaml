@@ -33,7 +33,6 @@ dependencies:
   validators: ^2.0.0+1
   datetime_picker_formfield: ^1.0.0
   cached_network_image: ^2.3.3
-  flutter_login: ^1.0.14
   image_picker: ^0.6.7+14
   flutter_svg: ^0.18.0 # help us to use SVG in our app
   # file_picker_cross: ^4.2.6

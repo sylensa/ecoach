@@ -35,6 +35,11 @@ class User {
     return fname! + " " + lname!;
   }
 
+  String get initials {
+    return fname!.substring(0, 1).toUpperCase() +
+        lname!.substring(0, 1).toUpperCase();
+  }
+
   factory User.fromJson(Map<String, dynamic> responseData) {
     return User.fromMap(responseData);
   }

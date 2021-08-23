@@ -28,17 +28,20 @@ class BaseAppBar extends AppBar {
                       height: 26,
                       decoration: BoxDecoration(
                           shape: BoxShape.circle, color: Colors.white),
-                      child: CachedNetworkImage(
-                        width: 36,
-                        height: 36,
-                        fit: BoxFit.fill,
-                        imageUrl: "imageUrl goes here",
-                      ),
+                      child: user.avatar != null
+                          ? CachedNetworkImage(
+                              width: 36,
+                              height: 36,
+                              fit: BoxFit.fill,
+                              imageUrl: user.avatar,
+                            )
+                          : Icon(Icons.person),
                     ),
                   ],
                 ),
                 onSelected: (value) {
-                  Navigator.pushReplacementNamed(context, value.route);
+                  Navigator.pushReplacementNamed(context, value.route,
+                      arguments: user);
                 },
                 itemBuilder: (BuildContext context) {
                   return choices.map((Choice choice) {

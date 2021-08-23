@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,8 @@ class AppDrawer extends StatelessWidget {
           _createDrawerItem(
               icon: Icons.home,
               text: 'Home',
-              onTap: () =>
-                  Navigator.pushReplacementNamed(context, Routes.home)),
+              onTap: () => Navigator.pushReplacementNamed(context, Routes.home,
+                  arguments: user)),
           // _createDrawerItem(
           //     icon: Icons.new_releases,
           //     text: 'News',
@@ -62,7 +63,9 @@ class AppDrawer extends StatelessWidget {
       accountEmail: Text(user.phone!),
       currentAccountPicture: CircleAvatar(
         backgroundColor: Colors.black,
-        child: Text(user.name.substring(0, 1)),
+        child: user.avatar != null
+            ? CachedNetworkImage(imageUrl: user.avatar)
+            : Text(user.initials),
       ),
       decoration: BoxDecoration(color: Colors.orange),
     );
