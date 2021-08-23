@@ -6,24 +6,24 @@ class UserPreferences {
   Future<bool> setUser(User? user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.setInt("id", user!.id);
-    prefs.setString("fname", user.fname);
-    prefs.setString("lname", user.lname);
-    prefs.setString("email", user.email);
-    prefs.setString("phone", user.phone);
+    prefs.setInt("id", user!.id!);
+    prefs.setString("fname", user.fname!);
+    prefs.setString("lname", user.lname!);
+    prefs.setString("email", user.email!);
+    prefs.setString("phone", user.phone!);
 
-    return prefs.setString("api-token", user.token);
+    return prefs.setString("api-token", user.token!);
   }
 
   Future<User?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    int id = prefs.getInt("id");
-    String fname = prefs.getString("fname");
-    String lname = prefs.getString("lname");
-    String email = prefs.getString("email");
-    String phone = prefs.getString("phone");
-    String token = prefs.getString("access-token");
+    int? id = prefs.getInt("id");
+    String? fname = prefs.getString("fname");
+    String? lname = prefs.getString("lname");
+    String? email = prefs.getString("email");
+    String? phone = prefs.getString("phone");
+    String? token = prefs.getString("access-token");
 
     if (id == null) return null;
 
@@ -42,15 +42,15 @@ class UserPreferences {
     prefs.clear();
   }
 
-  Future<String> getStringValue(args) async {
+  Future<String?> getStringValue(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String value = prefs.getString(args);
+    String? value = prefs.getString(args);
     return value;
   }
 
-  Future<int> getIntValue(args) async {
+  Future<int?> getIntValue(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    int value = prefs.getInt(args);
+    int? value = prefs.getInt(args);
     return value;
   }
 }
