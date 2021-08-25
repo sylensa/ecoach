@@ -1,16 +1,14 @@
 import 'dart:convert';
-import 'dart:async';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
+import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -26,7 +24,9 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isLoading = false;
 
   doRegister(BuildContext context) async {
-    if (_formKey.currentState!.validate() == false) return null;
+    if (_formKey.currentState!.validate() == false) {
+      return null;
+    }
     _formKey.currentState!.save();
 
     showLoaderDialog(context, message: "signing up ...");
@@ -58,11 +58,9 @@ class _RegisterPageState extends State<RegisterPage> {
         var user = User.fromJson(responseData["data"]);
         UserPreferences().setUser(user);
         Navigator.pop(context);
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => HomePage(user)),
-            (Route<dynamic> route) => false);
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return OTPView(user);
+        }));
 
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),

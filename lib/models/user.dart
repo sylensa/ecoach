@@ -54,7 +54,7 @@ class User {
       phone: json['phone'],
       type: json['type'],
       gender: json['gender'],
-      token: json['access_token'],
+      token: json['api-token'],
       avatar: json['avatar']);
 
   fromMap(Map<String, dynamic> json) {
@@ -67,7 +67,7 @@ class User {
     phone = json['phone'];
     type = json['type'];
     gender = json['gender'];
-    token = json['access_token'];
+    token = json['api-token'];
     avatar = json['avatar'];
   }
 
@@ -81,7 +81,7 @@ class User {
         "phone": phone,
         "type": type,
         "gender": gender,
-        "token": token,
+        "api-token": token,
         "avatar": avatar,
       };
 }

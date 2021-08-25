@@ -5,6 +5,7 @@ class AppUrl {
   static const String baseURL = liveBaseURL;
   static const String login = baseURL + "signin";
   static const String register = baseURL + "signup";
+  static const String resend_pin = baseURL + "pin/resend";
   static const String forgotPassword = baseURL + "forgot-password";
   static const String profile = baseURL + "profile";
   static const String otp_verify = baseURL + "otp/verify";
