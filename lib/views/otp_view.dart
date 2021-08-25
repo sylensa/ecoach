@@ -4,6 +4,8 @@ import 'dart:developer';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/views/register_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -91,13 +93,22 @@ class _OTPViewState extends State<OTPView> {
 
   verifyOtpCode() async {
     // post(AppUrl.otp_verify).then((value) => {}).catchError((error) {});
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.resend_pin),
+    String? token = widget.user.token;
+    print("token=$token");
+    if (token == null) {
+      return;
+    }
+    showLoaderDialog(context, message: "Verifying user....");
+    http.Response response = await http.post(
+      Uri.parse(AppUrl.otp_verify),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'api-token': widget.user.token!
+        'api-token': token
       },
+      body: jsonEncode(<String, dynamic>{
+        'pin': int.parse(currentText),
+      }),
     );
 
     print(response.body);
@@ -107,6 +118,7 @@ class _OTPViewState extends State<OTPView> {
       inspect(widget.user);
 
       if (responseData["status"] == true) {
+        UserPreferences().setActivated(true);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
@@ -142,9 +154,12 @@ class _OTPViewState extends State<OTPView> {
             children: <Widget>[
               SizedBox(height: 30),
               Container(
-                height: MediaQuery.of(context).size.height / 3,
-                child: Text(
-                  "FlareActor place",
+                height: MediaQuery.of(context).size.height / 4,
+                child: Center(
+                  child: Text(
+                    "Ecoach",
+                    style: TextStyle(fontSize: 22),
+                  ),
                 ),
               ),
               SizedBox(height: 8),
@@ -188,12 +203,12 @@ class _OTPViewState extends State<OTPView> {
                         color: Colors.green.shade600,
                         fontWeight: FontWeight.bold,
                       ),
-                      length: 4,
+                      length: 6,
                       obscureText: false,
                       obscuringCharacter: '*',
                       animationType: AnimationType.fade,
                       validator: (v) {
-                        if (v!.length < 4) {
+                        if (v!.length < 6) {
                           return "Incomplete otp";
                         } else {
                           return null;
@@ -282,20 +297,14 @@ class _OTPViewState extends State<OTPView> {
                     onPressed: () {
                       formKey.currentState!.validate();
                       // conditions for validating
-                      if (currentText.length != 4 || currentText != "1234") {
+                      if (currentText.length < 6) {
                         errorController!.add(ErrorAnimationType
                             .shake); // Triggering error shake animation
                         setState(() {
                           hasError = true;
                         });
                       } else {
-                        setState(() {
-                          hasError = false;
-                          scaffoldKey.currentState!.showSnackBar(SnackBar(
-                            content: Text("Aye!!"),
-                            duration: Duration(seconds: 2),
-                          ));
-                        });
+                        verifyOtpCode();
                       }
                     },
                     child: Center(
@@ -328,14 +337,23 @@ class _OTPViewState extends State<OTPView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  FlatButton(
+                  ElevatedButton(
                     child: Text("Clear"),
                     onPressed: () {
                       textEditingController.clear();
                     },
                   ),
                 ],
-              )
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()),
+                    );
+                  },
+                  child: Text("Back to Register",
+                      style: TextStyle(decoration: TextDecoration.underline))),
             ],
           ),
         ),

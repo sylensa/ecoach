@@ -56,6 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
+        print("registering: token=${user.token}");
         UserPreferences().setUser(user);
         Navigator.pop(context);
         Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -107,6 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.blue.shade50,
         body: SingleChildScrollView(
           child: Center(
             child: Padding(

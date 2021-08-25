@@ -8,7 +8,7 @@ class AppUrl {
   static const String resend_pin = baseURL + "pin/resend";
   static const String forgotPassword = baseURL + "forgot-password";
   static const String profile = baseURL + "profile";
-  static const String otp_verify = baseURL + "otp/verify";
+  static const String otp_verify = baseURL + "verify";
   static const String change_password = baseURL + "password/reset";
   static const String payment_initialize = baseURL + "paystack/initialize";
 }

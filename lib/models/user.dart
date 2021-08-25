@@ -12,8 +12,8 @@ class User {
   String? token;
   DateTime? lastLoggedIn;
   String? username;
-
   String? avatar;
+  bool? activated = false;
 
   User(
       {this.id,
@@ -29,7 +29,8 @@ class User {
       this.gender,
       this.avatar,
       this.token,
-      this.lastLoggedIn});
+      this.lastLoggedIn,
+      this.activated});
 
   String get name {
     return fname! + " " + lname!;
@@ -54,7 +55,7 @@ class User {
       phone: json['phone'],
       type: json['type'],
       gender: json['gender'],
-      token: json['api-token'],
+      token: json['api_token'],
       avatar: json['avatar']);
 
   fromMap(Map<String, dynamic> json) {
@@ -67,7 +68,7 @@ class User {
     phone = json['phone'];
     type = json['type'];
     gender = json['gender'];
-    token = json['api-token'];
+    token = json['api_token'];
     avatar = json['avatar'];
   }
 
@@ -81,7 +82,11 @@ class User {
         "phone": phone,
         "type": type,
         "gender": gender,
-        "api-token": token,
+        "api_token": token,
         "avatar": avatar,
       };
+
+  setActivated(bool activate) {
+    activated = activate;
+  }
 }

@@ -11,8 +11,11 @@ class UserPreferences {
     prefs.setString("lname", user.lname!);
     prefs.setString("email", user.email!);
     prefs.setString("phone", user.phone!);
+    prefs.setBool("activated", user.activated ?? false);
+    prefs.setString("api_token", user.token!);
 
-    return prefs.setString("api-token", user.token!);
+    print("${prefs.getString("api_token")}");
+    return true;
   }
 
   Future<User?> getUser() async {
@@ -23,18 +26,20 @@ class UserPreferences {
     String? lname = prefs.getString("lname");
     String? email = prefs.getString("email");
     String? phone = prefs.getString("phone");
-    String? token = prefs.getString("access-token");
+    String? token = prefs.getString("api_token");
+    bool? activated = prefs.getBool("activated");
 
+    print("shared pref: token=$token");
     if (id == null) return null;
 
     return User(
-      id: id,
-      fname: fname,
-      lname: lname,
-      email: email,
-      phone: phone,
-      token: token,
-    );
+        id: id,
+        fname: fname,
+        lname: lname,
+        email: email,
+        phone: phone,
+        token: token,
+        activated: activated);
   }
 
   void removeUser() async {
@@ -52,5 +57,14 @@ class UserPreferences {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     int? value = prefs.getInt(args);
     return value;
+  }
+
+  setActivated(bool activate) async {
+    getUser().then((user) {
+      if (user != null) {
+        user.setActivated(activate);
+        setUser(user);
+      }
+    });
   }
 }

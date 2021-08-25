@@ -2,6 +2,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/views/logout.dart';
+import 'package:ecoach/views/register_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -45,7 +46,7 @@ final Map<String, WidgetBuilder> routes = {
   // '/library': (context) => LibraryPage(),
   // '/news': (context) => NewsPage(),
   '/login': (context) => LoginPage(),
-  // '/register': (context) => Register(),
+  '/register': (context) => RegisterPage(),
   // '/profile': (context) => ProfilePage(),
   // '/change_password': (context) => ChangePasswordPage(),
   // '/store': (context) => StorePage(),
