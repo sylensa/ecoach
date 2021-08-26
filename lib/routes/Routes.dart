@@ -3,6 +3,7 @@ import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/views/register_view.dart';
+import 'package:ecoach/views/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class Routes {
   // static const String history = SubscriptionHistoryPage.routeName;
   // static const String library = LibraryPage.routeName;
   // static const String news = NewsPage.routeName;
-  // static const String store = StorePage.routeName;
+  static const String store = StorePage.routeName;
   // static const String exams = ExamsPage.routeName;
 
   // static const String analytics = AnalyticsPage.routeName;
@@ -49,7 +50,10 @@ final Map<String, WidgetBuilder> routes = {
   '/register': (context) => RegisterPage(),
   // '/profile': (context) => ProfilePage(),
   // '/change_password': (context) => ChangePasswordPage(),
-  // '/store': (context) => StorePage(),
+  '/store': (context) {
+    final user = ModalRoute.of(context)!.settings.arguments as User;
+    return StorePage(user);
+  },
   // '/exams': (context) => ExamsPage(),
   // '/exams_management': (context) => ExamsManagementPage(),
   // '/analytics': (context) => AnalyticsPage(),

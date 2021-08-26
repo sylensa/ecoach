@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ecoach">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="ecoach"
         android:icon="@mipmap/ic_launcher">

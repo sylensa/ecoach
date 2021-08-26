@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class AppDrawer extends StatelessWidget {
   User user;
@@ -38,11 +37,11 @@ class AppDrawer extends StatelessWidget {
           //     onTap: () =>
           //         Navigator.pushReplacementNamed(context, Routes.exams)),
           // Divider(),
-          // _createDrawerItem(
-          //     icon: Icons.store,
-          //     text: 'Store',
-          //     onTap: () =>
-          //         Navigator.pushReplacementNamed(context, Routes.store)),
+          _createDrawerItem(
+              icon: Icons.store,
+              text: 'Store',
+              onTap: () => Navigator.pushReplacementNamed(context, Routes.store,
+                  arguments: user)),
           Divider(),
           _createDrawerItem(icon: Icons.group, text: 'Friends'),
           _createDrawerItem(icon: Icons.report, text: 'Reports'),
