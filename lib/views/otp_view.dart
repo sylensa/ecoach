@@ -67,27 +67,33 @@ class _OTPViewState extends State<OTPView> {
 
     print(response.body);
     print(response.statusCode);
-    if (response.statusCode == 200 && response.body != "") {
-      Map<String, dynamic> responseData = json.decode(response.body);
-
-      if (responseData["status"] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(responseData['message']),
-        ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(responseData['message']),
-        ));
-      }
-      Navigator.pop(context);
-    } else {
-      Navigator.pop(context);
-      if (response.body != "") {
+    try {
+      if (response.statusCode == 200 && response.body != "") {
         Map<String, dynamic> responseData = json.decode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(responseData['message'] ?? "Server Error"),
-        ));
+
+        if (responseData["status"] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(responseData['message']),
+          ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(responseData['message']),
+          ));
+        }
+      } else {
+        if (response.body != "") {
+          Map<String, dynamic> responseData = json.decode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(responseData['message'] ?? "Server Error"),
+          ));
+        }
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+    } finally {
+      Navigator.pop(context);
     }
   }
 

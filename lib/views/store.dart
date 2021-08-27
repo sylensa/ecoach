@@ -54,49 +54,6 @@ class _StorePageState extends State<StorePage> {
               color: Colors.black,
               thickness: 2,
             ),
-            Container(
-              height: 150,
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      child: new Card(
-                        child: new Column(
-                          children: [
-                            Expanded(child: Icon(Icons.home_filled)),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: new Text("Subscription name"),
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => SubscribePage()));
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 40, 8, 10),
-              child: Text(
-                "Items",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Divider(
-              color: Colors.black,
-              thickness: 2,
-            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Container(
