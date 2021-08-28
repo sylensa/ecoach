@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import 'subscribe.dart';
+
 class StorePage extends StatefulWidget {
   static const String routeName = '/store';
   final User user;
@@ -58,17 +60,44 @@ class _StorePageState extends State<StorePage> {
               padding: const EdgeInsets.all(12.0),
               child: Container(
                 child: GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: 7,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount:
-                          (orientation == Orientation.portrait) ? 3 : 5),
+                          (orientation == Orientation.portrait) ? 2 : 4),
                   itemBuilder: (BuildContext context, int index) {
-                    return new Card(
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: new GridTile(
-                        footer: new Text("footer name"),
-                        child: Icon(Icons
-                            .home_outlined), //just for testing, will fill with image later
+                        header: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Bundle name",
+                            style: TextStyle(backgroundColor: Colors.amber),
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SubscribePage(widget.user)));
+                          },
+                          child: Card(
+                            color: Colors.yellow,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                    height: 150,
+                                    child: Icon(Icons.home_outlined)),
+                                Spacer(),
+                                Text("footer name"),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     );
                   },

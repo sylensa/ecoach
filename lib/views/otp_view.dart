@@ -204,6 +204,8 @@ class _OTPViewState extends State<OTPView> {
                     padding: const EdgeInsets.symmetric(
                         vertical: 8.0, horizontal: 30),
                     child: PinCodeTextField(
+                      autovalidateMode: AutovalidateMode.always,
+                      enablePinAutofill: true,
                       appContext: context,
                       pastedTextStyle: TextStyle(
                         color: Colors.green.shade600,
