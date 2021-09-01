@@ -1,10 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:ecoach/models/store_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/select_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 class SubscribePage extends StatefulWidget {
   static const String routeName = '/subscriptions';
@@ -19,14 +25,124 @@ class _SubscribePageState extends State<SubscribePage>
     with SingleTickerProviderStateMixin {
   double totalAmount = 0.0;
   late TabController tabController;
+  TextEditingController linkTextController = new TextEditingController();
+
   double upperHeight = 0;
   double lowerHeight = 0;
+  List<StoreItem> items = [
+    StoreItem('Science', 20, selected: true),
+    StoreItem('Maths', 20, selected: true),
+    StoreItem('English', 20, selected: true),
+    StoreItem('Social Studies', 20, selected: true),
+    StoreItem('French', 20, selected: true),
+    StoreItem('Technical Skills', 20, selected: true),
+    StoreItem('Twi', 20, selected: true),
+  ];
 
   @override
   void initState() {
     tabController = new TabController(length: 3, vsync: this);
-
+    calculateTotal();
     super.initState();
+  }
+
+  calculateTotal() {
+    totalAmount = 0;
+    items.forEach((item) {
+      if (item.selected) {
+        totalAmount += item.price;
+      } else {
+        totalAmount -= item.price;
+      }
+    });
+  }
+
+  Future<String?> getUrlFrmInitialization(
+      {String? email, required double amount, List<String>? metadata}) async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Initializing payment...."),
+    ));
+    String? url;
+    String? email = widget.user.email;
+    if (email == null || email.isEmpty) {
+      email = "${widget.user.phone}@shammah.com";
+    }
+    try {
+      final Map<String, dynamic> paymentData = {
+        'email': email,
+        'phone': widget.user.phone,
+        'amount': amount,
+        'metadata':
+            json.encode("{purpose: buying book, description: I want to learn}"),
+      };
+      print("making call..........");
+      print(amount);
+      http.Response response = await http.post(
+        Uri.parse("https://dev.shammahapp.com/api/paystack/initialize"),
+        body: json.encode(paymentData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      print("url = $responseData['data']");
+      if (responseData['status'] == true) {
+        url = responseData['data']['authorization_url'];
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message']),
+        ));
+      }
+    } catch (e, m) {
+      print("${e.toString()}");
+      print("$m");
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "There was a problem initializing payment. Please try again later"),
+      ));
+    }
+
+    return url;
+  }
+
+  authorisePayment(BuildContext context) async {
+    String? authorizationUrl = await getUrlFrmInitialization(
+        email: widget.user.email, amount: totalAmount);
+    if (authorizationUrl == null) {
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return WebView(
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: authorizationUrl,
+          navigationDelegate: (navigation) {
+            //Listen for callback URL
+            if (navigation.url.contains('https://standard.paystack.co/close')) {
+              Navigator.of(context).pop(); //close webview
+            }
+            if (navigation.url
+                .contains("https://dev.shammahapp.com/api/paystack/callback")) {
+              Navigator.of(context).pop(); //close webview
+
+              setState(() {
+                // clearTextInput();
+                // clearInput();
+              });
+
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => PaymentHistory()),(Route<dynamic> route) => false
+              // );
+
+            }
+            return NavigationDecision.navigate;
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -47,7 +163,7 @@ class _SubscribePageState extends State<SubscribePage>
                   height: upperHeight,
                   child: GridView.builder(
                     shrinkWrap: true,
-                    itemCount: 7,
+                    itemCount: items.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount:
                             (orientation == Orientation.portrait) ? 2 : 4),
@@ -56,18 +172,25 @@ class _SubscribePageState extends State<SubscribePage>
                         padding: const EdgeInsets.all(8.0),
                         child: new GridTile(
                           child: SelectTile(
+                            selected: items[index].selected,
+                            color: Colors.transparent,
+                            selectColor: Colors.green,
+                            callback: (selected) {
+                              setState(() {
+                                print("subscribe $selected");
+                                items[index].selected = selected;
+                                calculateTotal();
+                              });
+                            },
                             child: Card(
-                              color: Colors.blue,
                               child: Column(
                                 children: [
-                                  SizedBox(
-                                      height: 120,
-                                      child: Icon(Icons.home_outlined)),
+                                  SizedBox(child: Icon(Icons.home_outlined)),
                                   Spacer(),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      "Subject",
+                                      items[index].name,
                                       style: TextStyle(color: Colors.black),
                                     ),
                                   ),
@@ -152,7 +275,9 @@ class _SubscribePageState extends State<SubscribePage>
                                         child: SizedBox(
                                           width: double.infinity / 2,
                                           child: ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              authorisePayment(context);
+                                            },
                                             child: Text("Click to Pay"),
                                             style: ButtonStyle(
                                               backgroundColor:
@@ -219,7 +344,12 @@ class _SubscribePageState extends State<SubscribePage>
                                       child: SizedBox(
                                         width: 250,
                                         child: ElevatedButton(
-                                          onPressed: () {},
+                                          onPressed: () async {
+                                            String? link =
+                                                await getUrlFrmInitialization(
+                                                    amount: totalAmount);
+                                            linkTextController.text = link!;
+                                          },
                                           child: Text("Generate Link"),
                                           style: ButtonStyle(
                                             backgroundColor:
@@ -240,6 +370,7 @@ class _SubscribePageState extends State<SubscribePage>
                                             SizedBox(
                                               width: 300,
                                               child: TextField(
+                                                controller: linkTextController,
                                                 enabled: false,
                                                 decoration: InputDecoration(
                                                     hintText: "generated link",
@@ -250,7 +381,13 @@ class _SubscribePageState extends State<SubscribePage>
                                             SizedBox(
                                               height: 50,
                                               child: ElevatedButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    Clipboard.setData(
+                                                        ClipboardData(
+                                                            text:
+                                                                linkTextController
+                                                                    .text));
+                                                  },
                                                   child: Text("Copy")),
                                             ),
                                             Spacer()

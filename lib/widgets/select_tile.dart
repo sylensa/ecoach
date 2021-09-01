@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class SelectTile extends StatefulWidget {
@@ -23,13 +25,14 @@ class _SelectTileState extends State<SelectTile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         setState(() {
+          print("old select = ${widget.selected}");
           widget.selected = !widget.selected;
         });
-
         if (widget.callback != null) {
-          widget.callback!(widget.selected);
+          print("item ${widget.selected}");
+          await widget.callback!(widget.selected);
         }
       },
       child: Container(
