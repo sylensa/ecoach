@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   String firstName = "";
   String lastName = "";
+  String name = "";
   String email = "";
   String phone = "";
   String password = "";
@@ -38,9 +41,9 @@ class _RegisterPageState extends State<RegisterPage> {
         'Accept': 'application/json'
       },
       body: jsonEncode(<String, dynamic>{
-        'fname': firstName,
-        'lname': lastName,
-        'gender': _selectedGender!.substring(0, 1),
+        'fname': name.split(" ")[0],
+        'lname': name.split(" ")[1],
+        'gender': "--",
         'email': email,
         'phone': phone,
         "password": password,
@@ -63,14 +66,14 @@ class _RegisterPageState extends State<RegisterPage> {
           return OTPView(user);
         }));
 
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
 
         return;
       } else {
         Navigator.pop(context);
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
         return;
@@ -79,12 +82,12 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context);
       if (response.body != "") {
         Map<String, dynamic> responseData = json.decode(response.body);
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
       }
 
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Server Error"),
       ));
       return;
@@ -96,11 +99,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   TextEditingController passwordController = new TextEditingController();
-  String? _selectedGender = 'Gender';
-  List<String> _gender = ['Gender', 'Male', 'Female'];
-
-  String? selectedUserType = "student";
-  List<String> userType = ['student', 'teacher', 'parent'];
 
   final _formKey = GlobalKey<FormState>();
 
@@ -121,14 +119,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       height: 20,
                     ),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'First Name'),
+                      decoration: InputDecoration(
+                          labelText: 'First Name and Last Name',
+                          border: OutlineInputBorder()),
                       onSaved: (value) {
-                        firstName = value!;
+                        name = value!;
                       },
                       validator: (text) {
                         String? _msg;
                         if (text!.isEmpty) {
-                          _msg = "Your first name is required";
+                          _msg = "Your name is required";
+                        }
+                        if (text.split(" ").length != 2) {
+                          _msg =
+                              "Please enter First name and Surname. Should be exactly 2";
                         }
                         return _msg;
                       },
@@ -137,23 +141,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       height: 20,
                     ),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Last Name'),
-                      onSaved: (value) {
-                        lastName = value!;
-                      },
-                      validator: (text) {
-                        String? _msg;
-                        if (text!.isEmpty) {
-                          _msg = "Your last name is required";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Email Address'),
+                      decoration: InputDecoration(
+                          labelText: 'Email Address',
+                          border: OutlineInputBorder()),
                       onSaved: (value) {
                         email = value!;
                       },
@@ -172,11 +162,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     SizedBox(
                       height: 20,
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Phone'),
+                    IntlPhoneField(
+                      decoration: InputDecoration(
+                          labelText: 'Phone', border: OutlineInputBorder()),
                       onSaved: (value) {
-                        phone = value!;
+                        phone = value!.completeNumber;
                       },
+                      initialCountryCode: 'GH',
                       validator: (text) {
                         String? _msg;
                         RegExp regex = new RegExp(
@@ -192,50 +184,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     SizedBox(
                       height: 20,
                     ),
-                    DropdownButtonFormField(
-                        isExpanded: true,
-                        value: _selectedGender,
-                        validator: (value) => value == null
-                            ? 'Please select in your gender'
-                            : null,
-                        items: _gender.map((String val) {
-                          return new DropdownMenuItem<String>(
-                            value: val,
-                            child: new Text(val),
-                          );
-                        }).toList(),
-                        hint: Text("Gender"),
-                        onChanged: (String? newVal) {
-                          setState(
-                            () {
-                              _selectedGender = newVal;
-                            },
-                          );
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    DropdownButton(
-                        isExpanded: true,
-                        value: selectedUserType,
-                        items: userType.map((String val) {
-                          return new DropdownMenuItem<String>(
-                            value: val,
-                            child: new Text(val),
-                          );
-                        }).toList(),
-                        hint: Text("User Type"),
-                        onChanged: (String? newVal) {
-                          setState(() {
-                            selectedUserType = newVal;
-                          });
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
                     TextFormField(
                       controller: passwordController,
-                      decoration: InputDecoration(labelText: 'Password'),
+                      decoration: InputDecoration(
+                          labelText: 'Password', border: OutlineInputBorder()),
                       obscureText: true,
                       onSaved: (value) {
                         password = value!;
@@ -253,8 +205,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       height: 20,
                     ),
                     TextFormField(
-                      decoration:
-                          InputDecoration(labelText: 'Confirm Password'),
+                      decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                          border: OutlineInputBorder()),
                       obscureText: true,
                       onSaved: (value) {},
                       validator: (text) {
@@ -274,33 +227,42 @@ class _RegisterPageState extends State<RegisterPage> {
                     Builder(
                       builder: (context) {
                         return ElevatedButton(
+                            style: greenButtonStyle,
                             onPressed: () {
-                              if (isLoading == true) {
-                                return;
-                              }
                               doRegister(context);
                             },
-                            child: isLoading
-                                ? CircularProgressIndicator(
-                                    backgroundColor: Colors.white,
-                                  )
-                                : Text("Register"));
+                            child: Text("Create Account"));
                       },
                     ),
                     SizedBox(
                       height: 40,
                     ),
                     TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                          );
-                        },
-                        child: Text("Select to Login",
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "Already have an account? ",
+                              style: TextStyle(color: Colors.black)),
+                          TextSpan(
+                              text: "Log In",
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  decoration: TextDecoration.underline))
+                        ]),
+                      ),
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: Text("Forgot Password?",
                             style: TextStyle(
-                                decoration: TextDecoration.underline)))
+                              color: Colors.blue,
+                            ))),
                   ],
                 ),
               ),

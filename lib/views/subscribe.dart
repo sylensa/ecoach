@@ -89,14 +89,14 @@ class _SubscribePageState extends State<SubscribePage>
       if (responseData['status'] == true) {
         url = responseData['data']['authorization_url'];
       } else {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
       }
     } catch (e, m) {
       print("${e.toString()}");
       print("$m");
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
             "There was a problem initializing payment. Please try again later"),
       ));

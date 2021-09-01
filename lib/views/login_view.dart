@@ -1,6 +1,8 @@
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/forgot_password.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/register_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -69,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.blue.shade50,
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Center(
             child: Padding(
@@ -77,13 +79,19 @@ class _LoginPageState extends State<LoginPage> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 100,
+                      height: 80,
+                    ),
+                    Image(image: AssetImage("assets/images/adeo.png")),
+                    SizedBox(
+                      height: 50,
                     ),
                     TextFormField(
-                      decoration:
-                          InputDecoration(labelText: 'Enter your email'),
+                      decoration: InputDecoration(
+                          labelText: 'Email or Phone',
+                          border: OutlineInputBorder()),
                       onSaved: (value) {
                         email = value!;
                       },
@@ -94,17 +102,17 @@ class _LoginPageState extends State<LoginPage> {
                         if (text!.isEmpty) {
                           _msg = "Your email is required";
                         } else if (!regex.hasMatch(text)) {
-                          _msg = "Please provide a valid email address";
+                          _msg = "Please provide a valid email or phone number";
                         }
                         return _msg;
                       },
                     ),
                     SizedBox(
-                      height: 50,
+                      height: 25,
                     ),
                     TextFormField(
-                      decoration:
-                          InputDecoration(labelText: 'Enter your password'),
+                      decoration: InputDecoration(
+                          labelText: 'Password', border: OutlineInputBorder()),
                       obscureText: true,
                       onSaved: (value) {
                         password = value!;
@@ -118,39 +126,61 @@ class _LoginPageState extends State<LoginPage> {
                         return _msg;
                       },
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Builder(
-                      builder: (context) {
-                        return ElevatedButton(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
                             onPressed: () {
-                              if (isLoading == true) {
-                                return;
-                              }
-                              loginUser(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPasswordPage()),
+                              );
                             },
-                            child: isLoading
-                                ? CircularProgressIndicator(
-                                    backgroundColor: Colors.white,
-                                  )
-                                : Text("Login"));
-                      },
+                            child: Text("Forgot Password?")),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                          style: greenButtonStyle,
+                          onPressed: () {
+                            loginUser(context);
+                          },
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          )),
                     ),
                     SizedBox(
                       height: 50,
                     ),
                     TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegisterPage()),
-                          );
-                        },
-                        child: Text("Select to Register",
-                            style: TextStyle(
-                                decoration: TextDecoration.underline)))
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()),
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "Not registered yet? ",
+                              style: TextStyle(color: Colors.black)),
+                          TextSpan(
+                              text: "Create Account",
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  decoration: TextDecoration.underline))
+                        ]),
+                      ),
+                    ),
                   ],
                 ),
               ),

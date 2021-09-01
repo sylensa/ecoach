@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 class Logout extends StatefulWidget {
-  static const String routeName = '/news';
+  static const String routeName = '/logout';
 
   @override
   _LogoutState createState() => _LogoutState();
