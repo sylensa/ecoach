@@ -1,6 +1,7 @@
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/otp_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
             if (user.activated == null || !user.activated!) {
               return OTPView(user);
             }
-            return HomePage(user);
+            return MainHomePage(user);
           } else if (snapshot.data == null) {
             return LoginPage();
           } else {

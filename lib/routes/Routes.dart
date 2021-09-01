@@ -1,7 +1,10 @@
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/views/friends.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/views/logout.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/register_view.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +12,7 @@ import 'package:flutter/material.dart';
 
 class Routes {
   static const String home = HomePage.routeName;
+  static const String mainHome = MainHomePage.routeName;
   // static const String dashboard = DashBoard.routeName;
   // static const String subscriptions = SubscriptionsPage.routeName;
   // static const String history = SubscriptionHistoryPage.routeName;
@@ -26,7 +30,8 @@ class Routes {
   // static const String exams_management = ExamsManagementPage.routeName;
   // static const String test_analytics = TestAnalyticsPage.routeName;
   // static const String tests = TestsPage.routeName;
-  // static const String questions = QuestionsPage.routeName;
+  static const String courses = CoursesPage.routeName;
+  static const String friends = FriendsView.routeName;
   // static const String students_report = StudentsReportPage.routeName;
   // static const String set_exams = SetExamsPage.routeName;
 
@@ -50,7 +55,7 @@ final Map<String, WidgetBuilder> routes = {
   '/register': (context) => RegisterPage(),
   // '/profile': (context) => ProfilePage(),
   // '/change_password': (context) => ChangePasswordPage(),
-  '/store': (context) {
+  Routes.store: (context) {
     final user = ModalRoute.of(context)!.settings.arguments as User;
     return StorePage(user);
   },

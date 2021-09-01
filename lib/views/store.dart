@@ -2,13 +2,8 @@ import 'dart:developer';
 
 import 'package:ecoach/controllers/subscribe_controller.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/utils/screen_size_reducers.dart';
-import 'package:ecoach/utils/shared_preference.dart';
-import 'package:ecoach/widgets/appbar.dart';
-import 'package:ecoach/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import 'subscribe.dart';
 
@@ -33,106 +28,102 @@ class _StorePageState extends State<StorePage> {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
 
-    return Scaffold(
-      appBar: BaseAppBar(
-        context,
-        "Store",
-        user: widget.user,
-      ),
-      drawer: AppDrawer(user: widget.user),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 60,
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Subscriptions",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            SizedBox(
+              height: 60,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Subscriptions",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showCodePopup(context);
-                    },
-                    child: Text("Voucher Code"),
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        showCodePopup(context);
+                      },
+                      child: Text("Voucher Code"),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Divider(
-            color: Colors.black,
-            thickness: 2,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Container(
-                        child: GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 7,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      (orientation == Orientation.portrait)
-                                          ? 2
-                                          : 4),
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: new GridTile(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SubscribePage(widget.user)));
-                                  },
-                                  child: Card(
-                                    shape: Border.all(
-                                        color: Colors.black, width: 1),
-                                    color: Colors.yellow,
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                            height: 120,
-                                            child: Icon(Icons.home_outlined)),
-                                        Spacer(),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Bundle name"),
-                                        ),
-                                      ],
+            Divider(
+              color: Colors.black,
+              thickness: 2,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Container(
+                          child: GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: 7,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        (orientation == Orientation.portrait)
+                                            ? 2
+                                            : 4),
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: new GridTile(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SubscribePage(widget.user)));
+                                    },
+                                    child: Card(
+                                      shape: Border.all(
+                                          color: Colors.black, width: 1),
+                                      color: Colors.yellow,
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                              height: 120,
+                                              child: Icon(Icons.home_outlined)),
+                                          Spacer(),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text("Bundle name"),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
