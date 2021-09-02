@@ -43,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: jsonEncode(<String, dynamic>{
         'fname': name.split(" ")[0],
         'lname': name.split(" ")[1],
-        'gender': "--",
+        'gender': "----",
         'email': email,
         'phone': phone,
         "password": password,
@@ -106,166 +106,186 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.blue.shade50,
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'First Name and Last Name',
-                          border: OutlineInputBorder()),
-                      onSaved: (value) {
-                        name = value!;
-                      },
-                      validator: (text) {
-                        String? _msg;
-                        if (text!.isEmpty) {
-                          _msg = "Your name is required";
-                        }
-                        if (text.split(" ").length != 2) {
-                          _msg =
-                              "Please enter First name and Surname. Should be exactly 2";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Email Address',
-                          border: OutlineInputBorder()),
-                      onSaved: (value) {
-                        email = value!;
-                      },
-                      validator: (text) {
-                        String? _msg;
-                        RegExp regex = new RegExp(
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-                        if (text!.isEmpty) {
-                          _msg = "Your email is required";
-                        } else if (!regex.hasMatch(text)) {
-                          _msg = "Please provide a valid email address";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    IntlPhoneField(
-                      decoration: InputDecoration(
-                          labelText: 'Phone', border: OutlineInputBorder()),
-                      onSaved: (value) {
-                        phone = value!.completeNumber;
-                      },
-                      initialCountryCode: 'GH',
-                      validator: (text) {
-                        String? _msg;
-                        RegExp regex = new RegExp(
-                            r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$');
-                        if (text!.isEmpty) {
-                          _msg = "Your phone number is required";
-                        } else if (!regex.hasMatch(text)) {
-                          _msg = "Please provide a valid phone";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                          labelText: 'Password', border: OutlineInputBorder()),
-                      obscureText: true,
-                      onSaved: (value) {
-                        password = value!;
-                      },
-                      validator: (text) {
-                        String? _msg;
+          child: Container(
+            child: Center(
+              child: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Text(
+                          "Get started with Adeo",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                              labelText: 'First Name and Last Name',
+                              border: OutlineInputBorder()),
+                          onSaved: (value) {
+                            name = value!;
+                          },
+                          validator: (text) {
+                            String? _msg;
+                            if (text!.isEmpty) {
+                              _msg = "Your name is required";
+                            }
+                            if (text.split(" ").length != 2) {
+                              _msg =
+                                  "Please enter First name and Surname. Should be exactly 2";
+                            }
+                            return _msg;
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                              labelText: 'Email Address',
+                              border: OutlineInputBorder()),
+                          onSaved: (value) {
+                            email = value!;
+                          },
+                          validator: (text) {
+                            String? _msg;
+                            RegExp regex = new RegExp(
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                            if (text!.isEmpty) {
+                              _msg = "Your email is required";
+                            } else if (!regex.hasMatch(text)) {
+                              _msg = "Please provide a valid email address";
+                            }
+                            return _msg;
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        IntlPhoneField(
+                          decoration: InputDecoration(
+                              labelText: 'Phone', border: OutlineInputBorder()),
+                          onSaved: (value) {
+                            phone = value!.number!;
+                          },
+                          initialCountryCode: 'GH',
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: passwordController,
+                          decoration: InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder()),
+                          obscureText: true,
+                          onSaved: (value) {
+                            password = value!;
+                          },
+                          validator: (text) {
+                            String? _msg;
 
-                        if (text!.isEmpty) {
-                          _msg = "Your password is required";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Confirm Password',
-                          border: OutlineInputBorder()),
-                      obscureText: true,
-                      onSaved: (value) {},
-                      validator: (text) {
-                        String? _msg;
+                            if (text!.isEmpty) {
+                              _msg = "Your password is required";
+                            }
+                            return _msg;
+                          },
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                              labelText: 'Confirm Password',
+                              border: OutlineInputBorder()),
+                          obscureText: true,
+                          onSaved: (value) {},
+                          validator: (text) {
+                            String? _msg;
 
-                        if (text!.isEmpty) {
-                          _msg = "Your password is required";
-                        } else if (text != passwordController.text) {
-                          return "Password must be same as above";
-                        }
-                        return _msg;
-                      },
+                            if (text!.isEmpty) {
+                              _msg = "Your password is required";
+                            } else if (text != passwordController.text) {
+                              return "Password must be same as above";
+                            }
+                            return _msg;
+                          },
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                              style: greenButtonStyle,
+                              onPressed: () {
+                                doRegister(context);
+                              },
+                              child: Text("Create Account")),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()),
+                            );
+                          },
+                          child: RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text: "Already have an account? ",
+                                  style: TextStyle(color: Colors.black)),
+                              TextSpan(
+                                  text: "Log In",
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      decoration: TextDecoration.underline))
+                            ]),
+                          ),
+                        ),
+                        TextButton(
+                            onPressed: () {},
+                            child: Text("Forgot Password?",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ))),
+                      ],
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Builder(
-                      builder: (context) {
-                        return ElevatedButton(
-                            style: greenButtonStyle,
-                            onPressed: () {
-                              doRegister(context);
-                            },
-                            child: Text("Create Account"));
-                      },
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: RichText(
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: "Already have an account? ",
-                              style: TextStyle(color: Colors.black)),
-                          TextSpan(
-                              text: "Log In",
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  decoration: TextDecoration.underline))
-                        ]),
-                      ),
-                    ),
-                    TextButton(
-                        onPressed: () {},
-                        child: Text("Forgot Password?",
-                            style: TextStyle(
-                              color: Colors.blue,
-                            ))),
-                  ],
+                  ),
                 ),
-              ),
+                Positioned(
+                    top: -160,
+                    right: -70,
+                    child: Image(
+                      image: AssetImage('assets/images/leave.png'),
+                    )),
+                Positioned(
+                    bottom: -150,
+                    left: -110,
+                    child: RotatedBox(
+                      quarterTurns: 2,
+                      child: Image(
+                        image: AssetImage('assets/images/leave.png'),
+                      ),
+                    ))
+              ]),
             ),
           ),
         ),

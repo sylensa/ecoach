@@ -2,16 +2,13 @@ import 'dart:developer';
 
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/routes/Routes.dart';
-import 'package:ecoach/widgets/appbar.dart';
-import 'package:ecoach/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   final User user;
-  GlobalKey<NavigatorState>? navigatorKey;
-  HomePage(this.user, {this.navigatorKey});
+  Function? callback;
+  HomePage(this.user, {this.callback});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,65 +26,59 @@ class _HomePageState extends State<HomePage> {
       return null;
     }
 
-    return Scaffold(
-      appBar: BaseAppBar(
-        context,
-        "Home",
-        user: widget.user,
-      ),
-      drawer: AppDrawer(
-        user: widget.user,
-      ),
-      body: FutureBuilder(
-          future: getUserData(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-                return CircularProgressIndicator();
-              default:
-                if (snapshot.hasError)
-                  return Text('Error: ${snapshot.error}');
-                else if (snapshot.data != null) {
-                  List<Question>? items = snapshot.data as List<Question>?;
+    return SafeArea(
+      child: Scaffold(
+        body: FutureBuilder(
+            future: getUserData(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return CircularProgressIndicator();
+                default:
+                  if (snapshot.hasError)
+                    return Text('Error: ${snapshot.error}');
+                  else if (snapshot.data != null) {
+                    List<Question>? items = snapshot.data as List<Question>?;
 
-                  return ListView.builder(
-                    // Let the ListView know how many items it needs to build.
-                    itemCount: items!.length,
-                    // Provide a builder function. This is where the magic happens.
-                    // Convert each item into a widget based on the type of item it is.
-                    itemBuilder: (context, index) {
-                      final item = items[index];
+                    return ListView.builder(
+                      // Let the ListView know how many items it needs to build.
+                      itemCount: items!.length,
+                      // Provide a builder function. This is where the magic happens.
+                      // Convert each item into a widget based on the type of item it is.
+                      itemBuilder: (context, index) {
+                        final item = items[index];
 
-                      return ListTile(
-                        title: Text('question $index'),
-                        subtitle: Text("question name"),
-                      );
-                    },
-                  );
-                } else if (snapshot.data == null)
-                  return NoSubWidget(widget.navigatorKey!);
-                else
-                  return Column(
-                    children: [
-                      SizedBox(
-                        height: 100,
-                      ),
-                      Center(
-                          child: Text(
-                              widget.user.email ?? "Something isn't right")),
-                      SizedBox(height: 100),
-                    ],
-                  );
-            }
-          }),
+                        return ListTile(
+                          title: Text('question $index'),
+                          subtitle: Text("question name"),
+                        );
+                      },
+                    );
+                  } else if (snapshot.data == null)
+                    return NoSubWidget(widget.callback);
+                  else
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 100,
+                        ),
+                        Center(
+                            child: Text(
+                                widget.user.email ?? "Something isn't right")),
+                        SizedBox(height: 100),
+                      ],
+                    );
+              }
+            }),
+      ),
     );
   }
 }
 
 class NoSubWidget extends StatelessWidget {
-  NoSubWidget(this.navigatorKey);
-  final GlobalKey<NavigatorState> navigatorKey;
+  NoSubWidget(this.callback);
+  final Function? callback;
 
   @override
   Widget build(BuildContext context) {
@@ -178,8 +169,7 @@ class NoSubWidget extends StatelessWidget {
                         ),
                       ),
                       onTap: () {
-                        navigatorKey.currentState!
-                            .pushReplacementNamed(Routes.store, arguments: 2);
+                        callback!();
                       },
                     ),
                     padding: const EdgeInsets.all(24.0),

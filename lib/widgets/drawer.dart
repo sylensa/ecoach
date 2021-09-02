@@ -37,13 +37,13 @@ class AppDrawer extends StatelessWidget {
           //     onTap: () =>
           //         Navigator.pushReplacementNamed(context, Routes.exams)),
           // Divider(),
+          Divider(),
           _createDrawerItem(
-              icon: Icons.store,
-              text: 'Store',
+              icon: Icons.edit,
+              text: 'Editor',
               onTap: () => Navigator.pushReplacementNamed(context, Routes.store,
                   arguments: user)),
-          Divider(),
-          _createDrawerItem(icon: Icons.group, text: 'Friends'),
+          _createDrawerItem(icon: Icons.question_answer, text: 'Testgen'),
           _createDrawerItem(icon: Icons.report, text: 'Reports'),
           Divider(),
           _createDrawerItem(icon: Icons.bug_report, text: 'Report an issue'),

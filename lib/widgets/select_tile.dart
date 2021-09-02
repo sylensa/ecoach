@@ -27,19 +27,20 @@ class _SelectTileState extends State<SelectTile> {
     return GestureDetector(
       onTap: () async {
         setState(() {
-          print("old select = ${widget.selected}");
           widget.selected = !widget.selected;
         });
         if (widget.callback != null) {
-          print("item ${widget.selected}");
           await widget.callback!(widget.selected);
         }
       },
       child: Container(
         decoration: widget.selected
             ? BoxDecoration(
-                color: widget.selectColor,
-                border: Border.all(width: 3, style: BorderStyle.solid))
+                border: Border.all(
+                width: 3,
+                style: BorderStyle.solid,
+                color: widget.selectColor!,
+              ))
             : null,
         child: Padding(
           padding: const EdgeInsets.all(1.0),

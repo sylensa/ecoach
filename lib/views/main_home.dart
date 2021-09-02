@@ -32,7 +32,9 @@ class _MainHomePageState extends State<MainHomePage> {
     _children = [
       HomePage(
         widget.user,
-        navigatorKey: _navigatorKey,
+        callback: () {
+          tapping(2);
+        },
       ),
       CoursesPage(),
       StorePage(widget.user),
@@ -64,7 +66,8 @@ class _MainHomePageState extends State<MainHomePage> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: "Courses"),
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: "Store"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: "Store"),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: "Friends"),
           BottomNavigationBarItem(icon: Icon(Icons.more_vert), label: "More"),
         ],

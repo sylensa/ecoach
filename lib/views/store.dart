@@ -38,9 +38,17 @@ class _StorePageState extends State<StorePage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Subscriptions",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Store",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 24),
+                        ),
+                        Icon(
+                          Icons.shopping_cart,
+                        ),
+                      ],
                     ),
                   ),
                   Spacer(),
@@ -93,19 +101,28 @@ class _StorePageState extends State<StorePage> {
                                               builder: (context) =>
                                                   SubscribePage(widget.user)));
                                     },
-                                    child: Card(
-                                      shape: Border.all(
-                                          color: Colors.black, width: 1),
-                                      color: Colors.yellow,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.black, width: 1),
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: AssetImage(
+                                              "assets/images/math.png"),
+                                        ),
+                                      ),
                                       child: Column(
                                         children: [
-                                          SizedBox(
-                                              height: 120,
-                                              child: Icon(Icons.home_outlined)),
                                           Spacer(),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Text("Bundle name"),
+                                            child: Text(
+                                              "Bundle name",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18),
+                                            ),
                                           ),
                                         ],
                                       ),

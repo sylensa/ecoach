@@ -30,13 +30,15 @@ class _SubscribePageState extends State<SubscribePage>
   double upperHeight = 0;
   double lowerHeight = 0;
   List<StoreItem> items = [
-    StoreItem('Science', 20, selected: true),
-    StoreItem('Maths', 20, selected: true),
-    StoreItem('English', 20, selected: true),
-    StoreItem('Social Studies', 20, selected: true),
-    StoreItem('French', 20, selected: true),
-    StoreItem('Technical Skills', 20, selected: true),
-    StoreItem('Twi', 20, selected: true),
+    StoreItem('Science', 20, image: "assets/images/math.png", selected: true),
+    StoreItem('Maths', 20, image: "assets/images/biology.png", selected: true),
+    StoreItem('English', 20, image: "assets/images/book.png", selected: true),
+    StoreItem('Social Studies', 20,
+        image: "assets/images/square.png", selected: true),
+    StoreItem('French', 20, image: "assets/images/leave.png", selected: true),
+    StoreItem('Technical Skills', 20,
+        image: "assets/images/math.png", selected: true),
+    StoreItem('Twi', 20, image: "assets/images/math.png", selected: true),
   ];
 
   @override
@@ -51,9 +53,8 @@ class _SubscribePageState extends State<SubscribePage>
     items.forEach((item) {
       if (item.selected) {
         totalAmount += item.price;
-      } else {
-        totalAmount -= item.price;
       }
+      print("calculating amount $totalAmount");
     });
   }
 
@@ -177,21 +178,30 @@ class _SubscribePageState extends State<SubscribePage>
                             selectColor: Colors.green,
                             callback: (selected) {
                               setState(() {
-                                print("subscribe $selected");
                                 items[index].selected = selected;
                                 calculateTotal();
                               });
                             },
-                            child: Card(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(items[index].image),
+                                ),
+                              ),
                               child: Column(
                                 children: [
-                                  SizedBox(child: Icon(Icons.home_outlined)),
                                   Spacer(),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       items[index].name,
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          backgroundColor: Colors.black45,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ],

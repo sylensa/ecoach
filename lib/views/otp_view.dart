@@ -149,7 +149,7 @@ class _OTPViewState extends State<OTPView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: Colors.white,
       key: scaffoldKey,
       body: GestureDetector(
         onTap: () {},
@@ -163,7 +163,7 @@ class _OTPViewState extends State<OTPView> {
                 height: MediaQuery.of(context).size.height / 4,
                 child: Center(
                   child: Text(
-                    "Ecoach",
+                    "Adeo",
                     style: TextStyle(fontSize: 22),
                   ),
                 ),
@@ -233,7 +233,7 @@ class _OTPViewState extends State<OTPView> {
                       cursorColor: Colors.black,
                       animationDuration: Duration(milliseconds: 300),
                       textStyle: TextStyle(fontSize: 20, height: 1.6),
-                      backgroundColor: Colors.blue.shade50,
+                      backgroundColor: Colors.white,
                       enableActiveFill: true,
                       errorAnimationController: errorController,
                       controller: textEditingController,

@@ -1,9 +1,10 @@
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/forgot_password.dart';
-import 'package:ecoach/views/home.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/register_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -40,17 +41,18 @@ class _LoginPageState extends State<LoginPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
+        user.activated = true;
         UserPreferences().setUser(user);
         Navigator.pop(context);
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomePage(user)),
+            MaterialPageRoute(builder: (context) => MainHomePage(user)),
             (Route<dynamic> route) => false);
 
         return;
       } else {
         Navigator.pop(context);
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
         return;
@@ -59,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pop(context);
       Map<String, dynamic> responseData = json.decode(response.body);
 
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(responseData['message'] ?? "Server Error"),
       ));
       return;
@@ -73,117 +75,137 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(40.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 80,
-                    ),
-                    Image(image: AssetImage("assets/images/adeo.png")),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Email or Phone',
-                          border: OutlineInputBorder()),
-                      onSaved: (value) {
-                        email = value!;
-                      },
-                      validator: (text) {
-                        String? _msg;
-                        RegExp regex = new RegExp(
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-                        if (text!.isEmpty) {
-                          _msg = "Your email is required";
-                        } else if (!regex.hasMatch(text)) {
-                          _msg = "Please provide a valid email or phone number";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Password', border: OutlineInputBorder()),
-                      obscureText: true,
-                      onSaved: (value) {
-                        password = value!;
-                      },
-                      validator: (text) {
-                        String? _msg;
-
-                        if (text!.isEmpty) {
-                          _msg = "Your password is required";
-                        }
-                        return _msg;
-                      },
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+          child: Container(
+            height: screenHeightExcludingToolbar(context),
+            child: Center(
+              child: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        SizedBox(
+                          height: 80,
+                        ),
+                        Image(image: AssetImage("assets/images/adeo.png")),
+                        SizedBox(
+                          height: 50,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                              labelText: 'Email or Phone',
+                              border: OutlineInputBorder()),
+                          onSaved: (value) {
+                            email = value!;
+                          },
+                          validator: (text) {
+                            String? _msg;
+                            RegExp regex = new RegExp(
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                            if (text!.isEmpty) {
+                              _msg = "Your email is required";
+                            } else if (!regex.hasMatch(text)) {
+                              _msg =
+                                  "Please provide a valid email or phone number";
+                            }
+                            return _msg;
+                          },
+                        ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder()),
+                          obscureText: true,
+                          onSaved: (value) {
+                            password = value!;
+                          },
+                          validator: (text) {
+                            String? _msg;
+
+                            if (text!.isEmpty) {
+                              _msg = "Your password is required";
+                            }
+                            return _msg;
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPasswordPage()),
+                                  );
+                                },
+                                child: Text("Forgot Password?")),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                              style: greenButtonStyle,
+                              onPressed: () {
+                                loginUser(context);
+                              },
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              )),
+                        ),
+                        SizedBox(
+                          height: 50,
+                        ),
                         TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ForgotPasswordPage()),
-                              );
-                            },
-                            child: Text("Forgot Password?")),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegisterPage()),
+                            );
+                          },
+                          child: RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text: "Not registered yet? ",
+                                  style: TextStyle(color: Colors.black)),
+                              TextSpan(
+                                  text: "Create Account",
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      decoration: TextDecoration.underline))
+                            ]),
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                          style: greenButtonStyle,
-                          onPressed: () {
-                            loginUser(context);
-                          },
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          )),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterPage()),
-                        );
-                      },
-                      child: RichText(
-                        text: TextSpan(children: [
-                          TextSpan(
-                              text: "Not registered yet? ",
-                              style: TextStyle(color: Colors.black)),
-                          TextSpan(
-                              text: "Create Account",
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  decoration: TextDecoration.underline))
-                        ]),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                Positioned(
+                    top: -150,
+                    right: -280,
+                    child: Image(
+                      image: AssetImage('assets/images/square.png'),
+                    )),
+                Positioned(
+                    bottom: -150,
+                    left: -310,
+                    child: Image(
+                      image: AssetImage('assets/images/square.png'),
+                    ))
+              ]),
             ),
           ),
         ),
