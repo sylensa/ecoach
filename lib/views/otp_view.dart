@@ -13,6 +13,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
 
 import 'home.dart';
+import 'main_home.dart';
 
 class OTPView extends StatefulWidget {
   final User user;
@@ -134,7 +135,10 @@ class _OTPViewState extends State<OTPView> {
         ));
       }
       Navigator.pop(context);
-      Navigator.pushNamed(context, "/home", arguments: widget.user);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainHomePage(widget.user)),
+          (Route<dynamic> route) => false);
     } else {
       Navigator.pop(context);
       if (response.body != "") {
