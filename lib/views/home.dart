@@ -178,7 +178,8 @@ class NoSubWidget extends StatelessWidget {
           ),
           decoration: BoxDecoration(
               color: Colors.white70,
-              border: Border.all(color: Colors.blueAccent)),
+              border: Border.all(color: Colors.blueAccent),
+              borderRadius: BorderRadius.circular(10)),
           padding: const EdgeInsets.fromLTRB(40, 100, 40, 100),
           alignment: Alignment.center,
         ),

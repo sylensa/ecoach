@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/store_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/appbar.dart';
@@ -15,7 +16,8 @@ import 'package:flutter/services.dart';
 class SubscribePage extends StatefulWidget {
   static const String routeName = '/subscriptions';
   final User user;
-  SubscribePage(this.user);
+  final Plan plan;
+  SubscribePage(this.user, this.plan);
 
   @override
   _SubscribePageState createState() => _SubscribePageState();
@@ -29,33 +31,12 @@ class _SubscribePageState extends State<SubscribePage>
 
   double upperHeight = 0;
   double lowerHeight = 0;
-  List<StoreItem> items = [
-    StoreItem('Science', 20, image: "assets/images/math.png", selected: true),
-    StoreItem('Maths', 20, image: "assets/images/biology.png", selected: true),
-    StoreItem('English', 20, image: "assets/images/book.png", selected: true),
-    StoreItem('Social Studies', 20,
-        image: "assets/images/square.png", selected: true),
-    StoreItem('French', 20, image: "assets/images/leave.png", selected: true),
-    StoreItem('Technical Skills', 20,
-        image: "assets/images/math.png", selected: true),
-    StoreItem('Twi', 20, image: "assets/images/math.png", selected: true),
-  ];
 
   @override
   void initState() {
     tabController = new TabController(length: 3, vsync: this);
-    calculateTotal();
+    totalAmount = widget.plan.price!;
     super.initState();
-  }
-
-  calculateTotal() {
-    totalAmount = 0;
-    items.forEach((item) {
-      if (item.selected) {
-        totalAmount += item.price;
-      }
-      print("calculating amount $totalAmount");
-    });
   }
 
   Future<String?> getUrlFrmInitialization(
@@ -155,91 +136,50 @@ class _SubscribePageState extends State<SubscribePage>
 
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue.shade300,
+          shadowColor: Colors.transparent,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_sharp),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text("${widget.plan.name} Bill"),
+          actions: [
+            Icon(Icons.more_vert),
+          ],
+        ),
+        backgroundColor: Colors.blue.shade200,
         body: SingleChildScrollView(
           child: Column(
             children: [
               Container(
-                color: Colors.white,
-                child: SizedBox(
-                  height: upperHeight,
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: items.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                            (orientation == Orientation.portrait) ? 2 : 4),
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: new GridTile(
-                          child: SelectTile(
-                            selected: items[index].selected,
-                            color: Colors.transparent,
-                            selectColor: Colors.green,
-                            callback: (selected) {
-                              setState(() {
-                                items[index].selected = selected;
-                                calculateTotal();
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: AssetImage(items[index].image),
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Spacer(),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      items[index].name,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          backgroundColor: Colors.black45,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Container(
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
                       child: RichText(
                           text: TextSpan(children: [
                         TextSpan(
                           text: "$totalAmount",
                           style: TextStyle(
-                              fontSize: 35,
+                              fontSize: 80,
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         TextSpan(
                           text: "GHC",
-                          style: TextStyle(fontSize: 15, color: Colors.black38),
+                          style: TextStyle(fontSize: 25, color: Colors.black),
                         ),
                       ])),
                     ),
-                    Divider(
-                      thickness: 2,
-                    ),
                     Text(
                       "Payment Options",
-                      style: TextStyle(fontSize: 20, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       height: 10,
@@ -270,7 +210,7 @@ class _SubscribePageState extends State<SubscribePage>
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          8, 18, 8, 20),
+                                          8, 40, 8, 40),
                                       child: Text(
                                         "Pay via visa or mobile money",
                                         style: TextStyle(
@@ -350,7 +290,7 @@ class _SubscribePageState extends State<SubscribePage>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.all(12.0),
+                                      padding: const EdgeInsets.all(42.0),
                                       child: SizedBox(
                                         width: 250,
                                         child: ElevatedButton(
@@ -370,7 +310,7 @@ class _SubscribePageState extends State<SubscribePage>
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.all(8),
+                                      padding: EdgeInsets.all(18),
                                       child: SizedBox(
                                         width: double.infinity,
                                         height: 50,
