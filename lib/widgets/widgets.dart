@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
   AlertDialog alert = AlertDialog(
@@ -19,5 +20,9 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
 }
 
 money(double amount, {String currency = ""}) {
-  return currency != "" ? "$currency $amount" : "Ghc $amount";
+  NumberFormat format = NumberFormat.simpleCurrency(
+      decimalDigits: 2,
+      locale: "en_GH",
+      name: currency != "" ? currency : "GHC");
+  return format.format(amount);
 }
