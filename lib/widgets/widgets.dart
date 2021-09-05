@@ -17,3 +17,7 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
     },
   );
 }
+
+money(double amount, {String currency = ""}) {
+  return currency != "" ? "$currency $amount" : "Ghc $amount";
+}

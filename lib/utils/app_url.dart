@@ -11,6 +11,7 @@ class AppUrl {
   static const String otp_verify = baseURL + "verify";
   static const String change_password = baseURL + "password/reset";
   static const String payment_initialize = baseURL + "paystack/initialize";
+  static const String payment_callback = baseURL + "paystack/callback";
 
   static const String plans = baseURL + "plans";
 }

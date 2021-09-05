@@ -15,6 +15,8 @@ class User {
   String? avatar;
   bool? activated = false;
 
+  Wallet wallet = Wallet();
+
   User(
       {this.id,
       this.uuid,
@@ -89,4 +91,14 @@ class User {
   setActivated(bool activate) {
     activated = activate;
   }
+
+  updateWallet(Wallet wallet) {
+    wallet.amount = wallet.amount;
+    wallet.updated_at = wallet.updated_at;
+  }
+}
+
+class Wallet {
+  double amount = 0;
+  DateTime? updated_at;
 }

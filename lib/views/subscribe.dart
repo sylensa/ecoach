@@ -5,8 +5,10 @@ import 'dart:developer';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/store_item.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/select_tile.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -42,12 +44,12 @@ class _SubscribePageState extends State<SubscribePage>
   Future<String?> getUrlFrmInitialization(
       {String? email, required double amount, List<String>? metadata}) async {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Initializing payment...."),
+      content: Text("Initializing payment information ..."),
     ));
     String? url;
     String? email = widget.user.email;
     if (email == null || email.isEmpty) {
-      email = "${widget.user.phone}@shammah.com";
+      email = "${widget.user.phone}@ecoach.com";
     }
     try {
       final Map<String, dynamic> paymentData = {
@@ -60,7 +62,7 @@ class _SubscribePageState extends State<SubscribePage>
       print("making call..........");
       print(amount);
       http.Response response = await http.post(
-        Uri.parse("https://dev.shammahapp.com/api/paystack/initialize"),
+        Uri.parse(AppUrl.payment_initialize),
         body: json.encode(paymentData),
         headers: {'Content-Type': 'application/json'},
       );
@@ -76,8 +78,6 @@ class _SubscribePageState extends State<SubscribePage>
         ));
       }
     } catch (e, m) {
-      print("${e.toString()}");
-      print("$m");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
             "There was a problem initializing payment. Please try again later"),
@@ -91,6 +91,7 @@ class _SubscribePageState extends State<SubscribePage>
     String? authorizationUrl = await getUrlFrmInitialization(
         email: widget.user.email, amount: totalAmount);
     if (authorizationUrl == null) {
+      Navigator.pop(context);
       return;
     }
 
@@ -105,20 +106,10 @@ class _SubscribePageState extends State<SubscribePage>
             if (navigation.url.contains('https://standard.paystack.co/close')) {
               Navigator.of(context).pop(); //close webview
             }
-            if (navigation.url
-                .contains("https://dev.shammahapp.com/api/paystack/callback")) {
+            if (navigation.url.contains(AppUrl.payment_callback)) {
               Navigator.of(context).pop(); //close webview
 
-              setState(() {
-                // clearTextInput();
-                // clearInput();
-              });
-
-              // Navigator.pushAndRemoveUntil(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => PaymentHistory()),(Route<dynamic> route) => false
-              // );
-
+              setState(() {});
             }
             return NavigationDecision.navigate;
           },
@@ -129,7 +120,6 @@ class _SubscribePageState extends State<SubscribePage>
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
     double height = MediaQuery.of(context).size.height;
     upperHeight = height / 2;
     lowerHeight = height / 2;
@@ -258,7 +248,7 @@ class _SubscribePageState extends State<SubscribePage>
                                       padding: const EdgeInsets.fromLTRB(
                                           8, 10, 8, 12),
                                       child: Text(
-                                        "Ghc 300.00",
+                                        money(widget.user.wallet.amount),
                                         style: TextStyle(
                                             fontWeight: FontWeight.normal,
                                             fontSize: 30),
