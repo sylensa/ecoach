@@ -21,8 +21,6 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
 
 money(double amount, {String currency = ""}) {
   NumberFormat format = NumberFormat.simpleCurrency(
-      decimalDigits: 2,
-      locale: "en_GH",
-      name: currency != "" ? currency : "GHC");
+      decimalDigits: 2, locale: "en-GH", name: "GHS");
   return format.format(amount);
 }

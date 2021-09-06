@@ -3,6 +3,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/otp_view.dart';
+import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,23 +25,31 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: FutureBuilder(
-        future: UserPreferences().getUser(),
-        builder: (context, AsyncSnapshot<User?> snapshot) {
-          if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          } else if (snapshot.data != null) {
-            User user = snapshot.data as User;
-            if (user.activated == null || !user.activated!) {
-              return OTPView(user);
+          future: UserPreferences().getUser(),
+          builder: (context, AsyncSnapshot<User?> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return CircularProgressIndicator();
+              default:
+                if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                } else if (snapshot.data != null) {
+                  User user = snapshot.data as User;
+                  if (user.activated == null || !user.activated!) {
+                    return OTPView(user);
+                  }
+                  if (user.subscriptions.length == 0) {
+                    return WelcomeAdeo(user);
+                  }
+                  return MainHomePage(user);
+                } else if (snapshot.data == null) {
+                  return LoginPage();
+                } else {
+                  return CircularProgressIndicator();
+                }
             }
-            return MainHomePage(user);
-          } else if (snapshot.data == null) {
-            return LoginPage();
-          } else {
-            return CircularProgressIndicator();
-          }
-        },
-      ),
+          }),
       routes: routes,
     );
   }

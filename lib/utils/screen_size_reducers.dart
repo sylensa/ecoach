@@ -16,5 +16,6 @@ double screenWidth(BuildContext context,
 
 double screenHeightExcludingToolbar(BuildContext context,
     {double dividedBy = 1}) {
-  return screenHeight(context, dividedBy: dividedBy, reducedBy: kToolbarHeight);
+  return screenHeight(context,
+      dividedBy: dividedBy, reducedBy: kToolbarHeight - 20);
 }

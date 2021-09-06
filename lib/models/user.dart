@@ -1,3 +1,5 @@
+import 'subscription.dart';
+
 class User {
   int? id;
   String? uuid;
@@ -16,6 +18,7 @@ class User {
   bool? activated = false;
 
   Wallet wallet = Wallet();
+  List<Subscription> subscriptions = [];
 
   User(
       {this.id,

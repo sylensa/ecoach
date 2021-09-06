@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:ecoach/controllers/subscribe_controller.dart';
 import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -229,14 +228,9 @@ class _StorePageState extends State<StorePage> {
                                                                               .bold)),
                                                               Spacer(),
                                                               Text(
-                                                                  "${plans[index].currency}",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          18)),
-                                                              Text(
-                                                                  "${plans[index].price!}",
+                                                                  money(plans[
+                                                                          index]
+                                                                      .price!),
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .white,
