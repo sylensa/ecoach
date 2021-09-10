@@ -6,6 +6,8 @@ import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class QuizView extends StatefulWidget {
   QuizView(this.user, this.questions, {Key? key, this.level, this.subject})
@@ -22,6 +24,10 @@ class QuizView extends StatefulWidget {
 class _QuizViewState extends State<QuizView> {
   late final PageController controller;
   int currentQuestion = 0;
+  List<QuestionWidget> questionWidgets = [];
+
+  late CountdownTimerController countdownTimerController;
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
 
   @override
   void initState() {
@@ -29,14 +35,28 @@ class _QuizViewState extends State<QuizView> {
     controller.addListener(() {
       print("listening...");
     });
+    for (int i = 0; i < widget.questions.length; i++)
+      questionWidgets.add(QuestionWidget(
+        widget.questions[i],
+        position: i,
+      ));
+
+    countdownTimerController =
+        CountdownTimerController(endTime: endTime, onEnd: onEnd);
 
     super.initState();
   }
 
+  onEnd() {
+    print("timer ended");
+    countdownTimerController.disposeTimer();
+    completeQuiz();
+  }
+
   completeQuiz() {
-    showLoaderDialog(context);
-    Future.delayed(Duration(seconds: 2));
-    Navigator.pop(context);
+    // showLoaderDialog(context);
+    // Future.delayed(Duration(seconds: 2));
+    // Navigator.pop(context);
   }
 
   @override
@@ -58,13 +78,7 @@ class _QuizViewState extends State<QuizView> {
                 child: PageView(
                   controller: controller,
                   physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    for (int i = 0; i < widget.questions.length; i++)
-                      QuestionWidget(
-                        widget.questions[i],
-                        position: i,
-                      )
-                  ],
+                  children: questionWidgets,
                 ),
               ),
             ),
@@ -100,20 +114,34 @@ class _QuizViewState extends State<QuizView> {
                   image: AssetImage('assets/images/white_leave.png'),
                 )),
             Positioned(
-                top: 50,
-                right: 20,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(context,
-                        MaterialPageRoute(builder: (context) {
-                      return MainHomePage(widget.user);
-                    }), (route) => false);
+              top: 55,
+              right: 20,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) {
+                    return MainHomePage(widget.user);
+                  }), (route) => false);
+                },
+                child: CountdownTimer(
+                  controller: countdownTimerController,
+                  onEnd: onEnd,
+                  endTime: endTime,
+                  widgetBuilder: (context, remainingTime) {
+                    if (remainingTime == null) {
+                      return Text("Time Up",
+                          style: TextStyle(
+                              color: Color(0xFF00C664), fontSize: 18));
+                    }
+
+                    return Text(
+                        "${remainingTime.min ?? 0}:${remainingTime.sec}",
+                        style:
+                            TextStyle(color: Color(0xFF00C664), fontSize: 28));
                   },
-                  child: Text(
-                    "Skip",
-                    style: TextStyle(color: Color(0xFF00C664), fontSize: 24),
-                  ),
-                )),
+                ),
+              ),
+            ),
             Positioned(
               bottom: 0,
               right: 0,

@@ -38,6 +38,7 @@ class Question {
   int? deleted;
   String? editors;
   List<Answer>? answers;
+  Answer? selectedAnswer;
 
   factory Question.fromJson(Map<String, dynamic> json) => Question(
         id: json["id"],
