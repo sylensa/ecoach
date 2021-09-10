@@ -1,6 +1,5 @@
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/shared_preference.dart';
-import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/views/welcome_adeo.dart';

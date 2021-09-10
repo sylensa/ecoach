@@ -24,3 +24,24 @@ money(double amount, {String currency = ""}) {
       decimalDigits: 2, locale: "en-GH", name: "GHS");
   return format.format(amount);
 }
+
+selectText(String text, bool selected,
+    {required Function select, double? normalSize, double? selectedSize}) {
+  return GestureDetector(
+    onTap: () {
+      select();
+    },
+    child: Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+          child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: selected ? (selectedSize ?? 40) : normalSize ?? 16),
+        ),
+      )),
+    ),
+  );
+}

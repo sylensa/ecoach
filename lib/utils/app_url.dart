@@ -14,4 +14,10 @@ class AppUrl {
   static const String payment_callback = baseURL + "paystack/callback";
 
   static const String plans = baseURL + "plans";
+  static const String levels = baseURL + "levels";
+  static const String levelGroups = baseURL + "level-groups";
+
+  static const String subjects = baseURL + 'subjects';
+
+  static const String questions = baseURL + 'questions/get';
 }

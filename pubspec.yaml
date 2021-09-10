@@ -39,6 +39,7 @@ dependencies:
   pin_code_fields: ^7.3.0
   webview_flutter: ^2.0.6
   intl_phone_field: ^2.0.1
+  flutter_html: ^2.1.2
 
 
   # The following adds the Cupertino Icons font to your application.
