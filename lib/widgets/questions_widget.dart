@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class QuestionWidget extends StatefulWidget {
-  QuestionWidget(this.question, {Key? key, this.position}) : super(key: key);
+  QuestionWidget(this.question, {Key? key, this.position, this.enabled = true})
+      : super(key: key);
   Question question;
   int? position;
+  bool enabled;
 
   @override
   _QuestionWidgetState createState() => _QuestionWidgetState();
@@ -56,6 +58,9 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                     selectHtml(answers![i].text!.replaceFirst("<br>", ""),
                         widget.question.selectedAnswer == answers![i],
                         normalSize: 20, selectedSize: 22, select: () {
+                      if (!widget.enabled) {
+                        return;
+                      }
                       setState(() {
                         widget.question.selectedAnswer = answers![i];
                       });

@@ -33,6 +33,7 @@ class _QuizViewState extends State<QuizView> {
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
 
   CurrentRemainingTime? remainingTime;
+  bool enabled = true;
 
   @override
   void initState() {
@@ -40,14 +41,9 @@ class _QuizViewState extends State<QuizView> {
     controller.addListener(() {
       print("listening...");
     });
-    for (int i = 0; i < widget.questions.length; i++)
-      questionWidgets.add(QuestionWidget(
-        widget.questions[i],
-        position: i,
-      ));
 
     countdownTimerController =
-        CountdownController(duration: Duration(minutes: 50), onEnd: onEnd);
+        CountdownController(duration: Duration(minutes: 1), onEnd: onEnd);
 
     countdownTimerController.start();
 
@@ -63,8 +59,14 @@ class _QuizViewState extends State<QuizView> {
   completeQuiz() async {
     showLoaderDialog(context);
     await Future.delayed(Duration(seconds: 2));
+    countdownTimerController.stop();
+    setState(() {
+      enabled = false;
+    });
     Navigator.pop(context);
   }
+
+  viewResults() {}
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +87,14 @@ class _QuizViewState extends State<QuizView> {
                 child: PageView(
                   controller: controller,
                   physics: NeverScrollableScrollPhysics(),
-                  children: questionWidgets,
+                  children: [
+                    for (int i = 0; i < widget.questions.length; i++)
+                      QuestionWidget(
+                        widget.questions[i],
+                        position: i,
+                        enabled: enabled,
+                      )
+                  ],
                 ),
               ),
             ),
@@ -125,6 +134,9 @@ class _QuizViewState extends State<QuizView> {
               right: 20,
               child: GestureDetector(
                 onTap: () {
+                  if (!enabled) {
+                    return;
+                  }
                   countdownTimerController.stop();
                   showDialog(
                       barrierDismissible: false,
@@ -203,13 +215,26 @@ class _QuizViewState extends State<QuizView> {
                         ),
                       ),
                     ),
-                  if (currentQuestion == widget.questions.length - 1)
+                  if (enabled && currentQuestion == widget.questions.length - 1)
                     TextButton(
                       onPressed: () {
                         completeQuiz();
                       },
                       child: Text(
                         "Finish",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                        ),
+                      ),
+                    ),
+                  if (!enabled)
+                    TextButton(
+                      onPressed: () {
+                        viewResults();
+                      },
+                      child: Text(
+                        "View results",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
