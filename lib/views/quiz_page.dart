@@ -6,7 +6,10 @@ import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown.dart';
+import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class QuizView extends StatefulWidget {
@@ -26,8 +29,10 @@ class _QuizViewState extends State<QuizView> {
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
 
-  late CountdownTimerController countdownTimerController;
+  late CountdownController countdownTimerController;
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
+
+  CurrentRemainingTime? remainingTime;
 
   @override
   void initState() {
@@ -42,21 +47,23 @@ class _QuizViewState extends State<QuizView> {
       ));
 
     countdownTimerController =
-        CountdownTimerController(endTime: endTime, onEnd: onEnd);
+        CountdownController(duration: Duration(minutes: 50), onEnd: onEnd);
+
+    countdownTimerController.start();
 
     super.initState();
   }
 
   onEnd() {
     print("timer ended");
-    countdownTimerController.disposeTimer();
+    countdownTimerController.dispose();
     completeQuiz();
   }
 
-  completeQuiz() {
-    // showLoaderDialog(context);
-    // Future.delayed(Duration(seconds: 2));
-    // Navigator.pop(context);
+  completeQuiz() async {
+    showLoaderDialog(context);
+    await Future.delayed(Duration(seconds: 2));
+    Navigator.pop(context);
   }
 
   @override
@@ -118,27 +125,38 @@ class _QuizViewState extends State<QuizView> {
               right: 20,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (context) {
-                    return MainHomePage(widget.user);
-                  }), (route) => false);
+                  countdownTimerController.stop();
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        return PauseDialog(
+                          time: countdownTimerController
+                              .currentDuration.inSeconds,
+                          callback: (action) {
+                            Navigator.pop(context);
+                            if (action == "resume") {
+                              countdownTimerController.start();
+                            } else if (action == "quit") {
+                            } else if (action == "end quiz") {}
+                          },
+                        );
+                      });
                 },
-                child: CountdownTimer(
-                  controller: countdownTimerController,
-                  onEnd: onEnd,
-                  endTime: endTime,
-                  widgetBuilder: (context, remainingTime) {
-                    if (remainingTime == null) {
+                child: Countdown(
+                  builder: (context, duration) {
+                    if (duration.inSeconds == 0) {
                       return Text("Time Up",
                           style: TextStyle(
                               color: Color(0xFF00C664), fontSize: 18));
                     }
-
-                    return Text(
-                        "${remainingTime.min ?? 0}:${remainingTime.sec}",
+                    int min = (duration.inSeconds / 60).floor();
+                    int sec = duration.inSeconds % 60;
+                    return Text("$min:$sec",
                         style:
                             TextStyle(color: Color(0xFF00C664), fontSize: 28));
                   },
+                  countdownController: countdownTimerController,
                 ),
               ),
             ),
@@ -163,7 +181,7 @@ class _QuizViewState extends State<QuizView> {
                         "Previous",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 28,
+                          fontSize: 22,
                         ),
                       ),
                     ),
@@ -181,7 +199,7 @@ class _QuizViewState extends State<QuizView> {
                         "Next",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 28,
+                          fontSize: 22,
                         ),
                       ),
                     ),
@@ -194,7 +212,7 @@ class _QuizViewState extends State<QuizView> {
                         "Finish",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 28,
+                          fontSize: 22,
                         ),
                       ),
                     ),
@@ -202,6 +220,119 @@ class _QuizViewState extends State<QuizView> {
               ),
             )
           ]),
+        ),
+      ),
+    );
+  }
+}
+
+class PauseDialog extends StatefulWidget {
+  PauseDialog({Key? key, required this.time, required this.callback})
+      : super(key: key);
+  int time;
+  Function(String action) callback;
+
+  @override
+  _PauseDialogState createState() => _PauseDialogState();
+}
+
+class _PauseDialogState extends State<PauseDialog> {
+  String action = "";
+  int min = 0;
+  int sec = 0;
+  @override
+  void initState() {
+    min = (widget.time / 60).floor();
+    sec = widget.time % 60;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          width: 380,
+          height: 560,
+          decoration: BoxDecoration(
+              color: Color(0xFF00C664),
+              borderRadius: BorderRadius.circular(20)),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 70,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xFF05A958),
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Time Remaining ",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              decoration: TextDecoration.none)),
+                      Text("$min:$sec",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              decoration: TextDecoration.none))
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                  child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    selectText("resume", action == "resume",
+                        normalSize: 27, selectedSize: 45, select: () {
+                      setState(() {
+                        action = "resume";
+                      });
+                    }),
+                    selectText("quit", action == "quit",
+                        normalSize: 27, selectedSize: 45, select: () {
+                      setState(() {
+                        action = "quit";
+                      });
+                    }),
+                    selectText("end", action == "end",
+                        normalSize: 27, selectedSize: 45, select: () {
+                      setState(() {
+                        action = "end";
+                      });
+                    }),
+                  ],
+                ),
+              )),
+              SizedBox(
+                height: 70,
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFF05A958),
+                        borderRadius:
+                            BorderRadius.vertical(bottom: Radius.circular(20))),
+                    child: Center(
+                        child: TextButton(
+                      onPressed: () {
+                        if (action == "") {
+                          return;
+                        }
+                        widget.callback(action);
+                      },
+                      child: Text("proceed",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              decoration: TextDecoration.none)),
+                    ))),
+              ),
+            ],
+          ),
         ),
       ),
     );

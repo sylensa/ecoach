@@ -53,9 +53,9 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    selectHtml(answers![i].text!,
+                    selectHtml(answers![i].text!.replaceFirst("<br>", ""),
                         widget.question.selectedAnswer == answers![i],
-                        normalSize: 25, selectedSize: 30, select: () {
+                        normalSize: 20, selectedSize: 22, select: () {
                       setState(() {
                         widget.question.selectedAnswer = answers![i];
                       });
