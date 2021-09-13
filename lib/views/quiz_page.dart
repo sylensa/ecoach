@@ -1,23 +1,20 @@
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/subjects.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
-import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 class QuizView extends StatefulWidget {
-  QuizView(this.user, this.questions, {Key? key, this.level, this.subject})
+  QuizView(this.user, this.questions, {Key? key, this.level, this.course})
       : super(key: key);
   User user;
   Level? level;
-  Subject? subject;
+  Course? course;
   List<Question> questions;
 
   @override
@@ -38,10 +35,6 @@ class _QuizViewState extends State<QuizView> {
   @override
   void initState() {
     controller = PageController(initialPage: currentQuestion);
-    controller.addListener(() {
-      print("listening...");
-    });
-
     countdownTimerController =
         CountdownController(duration: Duration(minutes: 1), onEnd: onEnd);
 
@@ -115,7 +108,7 @@ class _QuizViewState extends State<QuizView> {
 
                           controller.jumpToPage(i);
                           controller.animateToPage(i,
-                              duration: Duration(milliseconds: 100),
+                              duration: Duration(milliseconds: 1000),
                               curve: Curves.easeInBack);
                         })
                     ],
@@ -177,71 +170,73 @@ class _QuizViewState extends State<QuizView> {
               right: 0,
               left: 0,
               child: Container(
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  if (currentQuestion > 0)
-                    TextButton(
-                      onPressed: () {
-                        controller.previousPage(
-                            duration: Duration(milliseconds: 200),
-                            curve: Curves.ease);
-                        setState(() {
-                          currentQuestion--;
-                        });
-                      },
-                      child: Text(
-                        "Previous",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (currentQuestion > 0)
+                        TextButton(
+                          onPressed: () {
+                            controller.previousPage(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.ease);
+                            setState(() {
+                              currentQuestion--;
+                            });
+                          },
+                          child: Text(
+                            "Previous",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  if (currentQuestion < widget.questions.length - 1)
-                    TextButton(
-                      onPressed: () {
-                        controller.nextPage(
-                            duration: Duration(milliseconds: 200),
-                            curve: Curves.ease);
-                        setState(() {
-                          currentQuestion++;
-                        });
-                      },
-                      child: Text(
-                        "Next",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
+                      if (currentQuestion < widget.questions.length - 1)
+                        TextButton(
+                          onPressed: () {
+                            controller.nextPage(
+                                duration: Duration(milliseconds: 200),
+                                curve: Curves.ease);
+                            setState(() {
+                              currentQuestion++;
+                            });
+                          },
+                          child: Text(
+                            "Next",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  if (enabled && currentQuestion == widget.questions.length - 1)
-                    TextButton(
-                      onPressed: () {
-                        completeQuiz();
-                      },
-                      child: Text(
-                        "Finish",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
+                      if (enabled &&
+                          currentQuestion == widget.questions.length - 1)
+                        TextButton(
+                          onPressed: () {
+                            completeQuiz();
+                          },
+                          child: Text(
+                            "Complete",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  if (!enabled)
-                    TextButton(
-                      onPressed: () {
-                        viewResults();
-                      },
-                      child: Text(
-                        "View results",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
+                      if (!enabled)
+                        TextButton(
+                          onPressed: () {
+                            viewResults();
+                          },
+                          child: Text(
+                            "Results",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                ]),
+                    ]),
               ),
             )
           ]),

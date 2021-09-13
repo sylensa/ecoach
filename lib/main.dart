@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
                   return Text("${snapshot.error}");
                 } else if (snapshot.data != null) {
                   User user = snapshot.data as User;
-                  if (user.activated == null || !user.activated!) {
+                  if (!user.activated) {
                     return OTPView(user);
                   }
                   if (user.subscriptions.length == 0) {

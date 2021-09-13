@@ -11,7 +11,7 @@ class UserPreferences {
     prefs.setString("lname", user.lname!);
     prefs.setString("email", user.email!);
     prefs.setString("phone", user.phone!);
-    prefs.setBool("activated", user.activated ?? false);
+    prefs.setBool("activated", user.activated);
     prefs.setString("api_token", user.token!);
 
     print("${prefs.getString("api_token")}");
@@ -27,7 +27,7 @@ class UserPreferences {
     String? email = prefs.getString("email");
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
-    bool? activated = prefs.getBool("activated");
+    bool activated = prefs.getBool("activated")!;
 
     print("shared pref: token=$token");
     if (id == null) return null;

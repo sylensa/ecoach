@@ -1,20 +1,21 @@
 import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/subjects.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/questions_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class QuestionsController {
-  loadDiagnoticQuestion(Level level, Subject subject) async {
+  loadDiagnoticQuestion(Level level, Course course) async {
     User? user = await UserPreferences().getUser();
     print(user!.token!);
     Map<String, dynamic> queryParams = {
       'level_id': "${level.id}",
-      'subject_id': "${subject.id}",
+      'course_id': "${course.id}",
       'limit': jsonEncode(10)
     };
     http.Response response = await http.get(
@@ -46,5 +47,9 @@ class QuestionsController {
       print(response.statusCode);
       print(response.body);
     }
+  }
+
+  saveTestLocally(List<Question> questions) {
+    QuestionDB().insertAll(questions);
   }
 }

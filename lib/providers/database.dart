@@ -121,6 +121,21 @@ class DBProvider {
         UNIQUE KEY 'plans_tag_unique' ('tag')
       ) """);
 
+      await db.execute("""CREATE TABLE 'answers' (
+        'id' int NOT NULL AUTO_INCREMENT,
+        'question_id' int NOT NULL,
+        'text' text NOT NULL,
+        'value' int DEFAULT '0',
+        'solution' text NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NULL,
+        'answer_order' int DEFAULT '0',
+        'responses' int NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'editors' varchar(128) NOT NULL DEFAULT '[]',
+        PRIMARY KEY ('id'),
+      )""");
+
       await db.execute("""CREATE TABLE notifications ("
           id INTEGER PRIMARY KEY,
           data_id INTEGER,

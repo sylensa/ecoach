@@ -15,7 +15,7 @@ class User {
   DateTime? lastLoggedIn;
   String? username;
   String? avatar;
-  bool? activated = false;
+  bool activated;
 
   Wallet wallet = Wallet();
   List<Subscription> subscriptions = [];
@@ -35,7 +35,7 @@ class User {
       this.avatar,
       this.token,
       this.lastLoggedIn,
-      this.activated});
+      this.activated = false});
 
   String get name {
     return fname! + " " + lname!;

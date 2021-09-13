@@ -20,4 +20,8 @@ class AppUrl {
   static const String subjects = baseURL + 'subjects';
 
   static const String questions = baseURL + 'questions/get';
+
+  static const String courses = baseURL + 'courses';
+
+  static const String new_user_data = baseURL + 'new_user_data';
 }

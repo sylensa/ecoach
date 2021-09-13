@@ -62,7 +62,7 @@ selectHtml(String text, bool selected,
         child: Html(data: text, style: {
           // tables will have the below background color
           "body": Style(
-            color: selected ? Colors.yellow : Colors.blue,
+            color:  Colors.white,
             fontSize: selected
                 ? FontSize(selectedSize ?? 40)
                 : FontSize(normalSize ?? 16),
