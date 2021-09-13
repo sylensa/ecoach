@@ -2,12 +2,16 @@ import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/new_user_data.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/course_db.dart';
+import 'package:ecoach/providers/level_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -24,9 +28,38 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
   @override
   void initState() {
     super.initState();
+
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      showLoaderDialog(context, message: "Loading initial data ...");
+      getInitialData().then((data) {
+        LevelDB().insertAll(data.data!.levels!);
+        CourseDB().insertAll(data.data!.courses!);
+        Navigator.pop(context);
+      });
+    });
   }
 
-  getInitialData() async {}
+  Future<NewUserData> getInitialData() async {
+    final response = await http.get(
+      Uri.parse(AppUrl.new_user_data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': widget.user.token!
+      },
+    );
+
+    print(response.body);
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      return NewUserData.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

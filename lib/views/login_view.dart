@@ -6,6 +6,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/forgot_password.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/register_view.dart';
+import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -44,11 +45,17 @@ class _LoginPageState extends State<LoginPage> {
         user.activated = true;
         UserPreferences().setUser(user);
         Navigator.pop(context);
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => MainHomePage(user)),
-            (Route<dynamic> route) => false);
-
+        if (user.subscriptions.length == 0) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => WelcomeAdeo(user)),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainHomePage(user)),
+              (Route<dynamic> route) => false);
+        }
         return;
       } else {
         Navigator.pop(context);

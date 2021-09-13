@@ -27,7 +27,7 @@ class UserPreferences {
     String? email = prefs.getString("email");
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
-    bool activated = prefs.getBool("activated")!;
+    bool activated = prefs.getBool("activated") ?? false;
 
     print("shared pref: token=$token");
     if (id == null) return null;

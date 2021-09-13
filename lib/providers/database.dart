@@ -35,7 +35,7 @@ class DBProvider {
           ")");
 
       await db.execute("""CREATE TABLE 'course_levels' (
-        'id' int NOT NULL AUTO_INCREMENT,
+        'id' int NOT NULL,
         'name' varchar(50) NOT NULL,
         'code' varchar(10) NOT NULL,
         'group' varchar(50) NOT NULL,
@@ -45,7 +45,7 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'questions' (
-        'id' int NOT NULL AUTO_INCREMENT,
+        'id' int NOT NULL,
         'course_id' int NOT NULL,
         'topic_id' int NOT NULL,
         'qid' varchar(50) NOT NULL,
@@ -61,20 +61,11 @@ class DBProvider {
         'public' int NOT NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0',
-        'editors' varchar(128) NOT NULL DEFAULT '[]',
-        PRIMARY KEY ('id'),
-      ) """);
-
-      await db.execute("""CREATE TABLE 'subjects' (
-        'id' bigint unsigned NOT NULL AUTO_INCREMENT,
-        'name' varchar(255) NOT NULL,
-        'created_at' timestamp NULL DEFAULT NULL,
-        'updated_at' timestamp NULL DEFAULT NULL,
-        PRIMARY KEY ('id')
+        'editors' varchar(128) NOT NULL DEFAULT '[]'
       ) """);
 
       await db.execute("""CREATE TABLE 'courses' (
-        'id' int NOT NULL AUTO_INCREMENT,
+        'id' int NOT NULL,
         'package_code' varchar(11) NOT NULL,
         'courseID' varchar(20) NOT NULL,
         'name' varchar(50) NOT NULL,
@@ -90,39 +81,30 @@ class DBProvider {
         'p' int NOT NULL DEFAULT '0',
         'editors' varchar(128) NOT NULL DEFAULT '[]',
         'level_id' int DEFAULT NULL,
-        'subject_id' int NOT NULL,
-        PRIMARY KEY ('id'),
-        UNIQUE KEY 'code' ('courseID'),
-        KEY 'confirmed' ('confirmed'),
-        KEY 'public' ('public'),
-        KEY 'author' ('author'),
-        KEY 'courseID' ('courseID'),
-        KEY 'editors' ('editors')
+        'subject_id' int NOT NULL
       )""");
 
       await db.execute("""CREATE TABLE 'plans' (
-        'id' int unsigned NOT NULL AUTO_INCREMENT,
-        'tag' varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-        'name' varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-        'description' varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+        'id' int unsigned NOT NULL,
+        'tag' varchar(255)  NOT NULL,
+        'name' varchar(255)  NOT NULL,
+        'description' varchar(255)  DEFAULT NULL,
         'is_active' tinyint(1) NOT NULL DEFAULT '1',
         'price' decimal(8,2) NOT NULL DEFAULT '0.00',
         'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
-        'currency' varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL,
+        'currency' varchar(3)  NOT NULL,
         'trial_period' smallint unsigned NOT NULL DEFAULT '0',
-        'trial_interval' varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'day',
+        'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
         'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
-        'invoice_interval' varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'month',
+        'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
         'tier' mediumint unsigned NOT NULL DEFAULT '0',
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL,
-        'deleted_at' timestamp NULL DEFAULT NULL,
-        PRIMARY KEY ('id'),
-        UNIQUE KEY 'plans_tag_unique' ('tag')
+        'deleted_at' timestamp NULL DEFAULT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'answers' (
-        'id' int NOT NULL AUTO_INCREMENT,
+        'id' int NOT NULL,
         'question_id' int NOT NULL,
         'text' text NOT NULL,
         'value' int DEFAULT '0',
@@ -132,11 +114,10 @@ class DBProvider {
         'answer_order' int DEFAULT '0',
         'responses' int NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
-        'editors' varchar(128) NOT NULL DEFAULT '[]',
-        PRIMARY KEY ('id'),
+        'editors' varchar(128) NOT NULL DEFAULT '[]'
       )""");
 
-      await db.execute("""CREATE TABLE notifications ("
+      await db.execute("""CREATE TABLE notifications (
           id INTEGER PRIMARY KEY,
           data_id INTEGER,
           title TEXT,
