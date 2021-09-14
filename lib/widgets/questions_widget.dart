@@ -29,35 +29,87 @@ class _QuestionWidgetState extends State<QuestionWidget> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
+        color: Color(0xFF595959),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 12,
-            ),
             Container(
+              color: Color(0xFF444444),
               child: Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: FittedBox(
                   fit: BoxFit.cover,
-                  child: Html(data: "${widget.question.text ?? ''}", style: {
-                    // tables will have the below background color
-                    "body": Style(
-                      color: Colors.white,
-                      fontSize: FontSize(20),
-                    ),
-                  }),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Html(data: "${widget.question.text ?? ''}", style: {
+                        // tables will have the below background color
+                        "body": Style(
+                          color: Colors.white,
+                          fontSize: FontSize(23),
+                        ),
+                      }),
+                    ],
+                  ),
                 ),
               ),
             ),
-            Container(),
             Container(
+              width: double.infinity,
+              color: Color(0xFF00C664),
+              child: Padding(
+                padding: EdgeInsets.all(4),
+              ),
+            ),
+            if (!widget.enabled)
+              Container(
+                color: Color(0xFF595959),
+              ),
+            if (!widget.enabled)
+              Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: double.infinity,
+                      child: Container(
+                        color: Colors.amber.shade200,
+                        child: Center(
+                          child: Text(
+                            "Solution",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.orange,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            selectedAnswer != null
+                                ? selectedAnswer!.solution!
+                                : "----",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            Container(
+              color: Color(0xFF595959),
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
                     selectHtml(answers![i].text!.replaceFirst("<br>", ""),
                         widget.question.selectedAnswer == answers![i],
-                        normalSize: 20, selectedSize: 22, select: () {
+                        normalSize: 15, selectedSize: 48, select: () {
                       if (!widget.enabled) {
                         return;
                       }

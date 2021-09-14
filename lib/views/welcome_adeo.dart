@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/level.dart';
@@ -29,6 +31,20 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
   void initState() {
     super.initState();
 
+    DateTime date = DateTime.now();
+    int count = 0;
+    for (int i = 0;
+        DateTime.now().millisecondsSinceEpoch - date.millisecondsSinceEpoch <
+            1000;
+        i++) {
+      count++;
+      if (count % 1000 == 0) {
+        print(
+            "start: ${date.millisecondsSinceEpoch} current: ${DateTime.now().millisecondsSinceEpoch} diff: ${DateTime.now().millisecondsSinceEpoch - date.millisecondsSinceEpoch} i: $i");
+      }
+    }
+
+    print("count= $count");
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       showLoaderDialog(context, message: "Loading initial data ...");
       getInitialData().then((data) {

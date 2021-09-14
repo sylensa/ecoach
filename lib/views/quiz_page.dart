@@ -36,7 +36,7 @@ class _QuizViewState extends State<QuizView> {
   void initState() {
     controller = PageController(initialPage: currentQuestion);
     countdownTimerController =
-        CountdownController(duration: Duration(minutes: 1), onEnd: onEnd);
+        CountdownController(duration: Duration(minutes: 5), onEnd: onEnd);
 
     countdownTimerController.start();
 
@@ -75,7 +75,7 @@ class _QuizViewState extends State<QuizView> {
               bottom: 51,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Color(0xFF636363),
+                  color: Color(0xFF595959),
                 ),
                 child: PageView(
                   controller: controller,
@@ -205,7 +205,7 @@ class _QuizViewState extends State<QuizView> {
                             "Next",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 22,
+                              fontSize: 21,
                             ),
                           ),
                         ),
@@ -219,7 +219,7 @@ class _QuizViewState extends State<QuizView> {
                             "Complete",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 22,
+                              fontSize: 21,
                             ),
                           ),
                         ),
@@ -232,7 +232,7 @@ class _QuizViewState extends State<QuizView> {
                             "Results",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 22,
+                              fontSize: 21,
                             ),
                           ),
                         ),

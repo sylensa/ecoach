@@ -40,6 +40,16 @@ class Question {
   List<Answer>? answers;
   Answer? selectedAnswer;
 
+  Answer? get correctAnswer {
+    for (int i = 0; i < answers!.length; i++) {
+      if (answers![i].value == 1) {
+        return answers![i];
+      }
+    }
+
+    return null;
+  }
+
   factory Question.fromJson(Map<String, dynamic> json) => Question(
         id: json["id"],
         courseId: json["course_id"],
