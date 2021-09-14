@@ -1,4 +1,5 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -107,7 +108,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    selectHtml(answers![i].text!.replaceFirst("<br>", ""),
+                    SelectHtml(answers![i].text!,
                         widget.question.selectedAnswer == answers![i],
                         normalSize: 15, selectedSize: 48, select: () {
                       if (!widget.enabled) {
