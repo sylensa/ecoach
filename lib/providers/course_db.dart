@@ -55,8 +55,6 @@ class CourseDB {
         confirmed: maps[i]["confirmed"],
         description: maps[i]["description"],
         levelId: maps[i]["level_id"],
-        createdAt: maps[i]["created_at"],
-        updatedAt: maps[i]["update_at"],
         time: maps[i]["time"],
       );
     });

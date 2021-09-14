@@ -200,7 +200,7 @@ class _SelectLevelState extends State<SelectLevel> {
 
   @override
   void initState() {
-    futureLevels = getLevels();
+    futureLevels = LevelDB().levelGroups();
 
     super.initState();
   }
@@ -294,11 +294,16 @@ class _SelectLevelState extends State<SelectLevel> {
                             return Center(child: CircularProgressIndicator());
                           default:
                             if (snapshot.hasError)
-                              return Text('Error: ${snapshot.error}');
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                    width: 400,
+                                    child: Text('Error: ${snapshot.error}')),
+                              );
                             else if (snapshot.data != null) {
-                              ApiResponse<String>? apiResponse =
-                                  snapshot.data as ApiResponse<String>?;
-                              List<String> levels = apiResponse!.data!;
+                              List<String> levels =
+                                  snapshot.data as List<String>;
+                              print(levels);
                               return Flexible(
                                 child: ListView.builder(
                                     shrinkWrap: true,
@@ -385,73 +390,13 @@ class _SelectCourseState extends State<SelectCourse> {
 
   @override
   void initState() {
-    futureLevels = getLevels();
-
+    futureLevels = LevelDB().levelByGroup(widget.levelGroup);
+    LevelDB().levels().then((value) => print(value[0].category));
     super.initState();
   }
 
-  getLevels() async {
-    print(widget.user.token!);
-    Map<String, String> queryParams = {'group': widget.levelGroup};
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.levels + '?' + Uri(queryParameters: queryParams).query),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        print("messages returned");
-        print(response.body);
-
-        return ApiResponse<Level>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
-          return Level.fromJson(dataItem);
-        });
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.statusCode);
-    }
-  }
-
-  loadCourses() async {
-    print(widget.user.token!);
-    Map<String, String> queryParams = {'level_id': "${selectedLevel!.id}"};
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.courses + '?' + Uri(queryParameters: queryParams).query),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        print("messages returned");
-        print(response.body);
-
-        return ApiResponse<Course>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
-          return Course.fromJson(dataItem);
-        });
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.statusCode);
-    }
+  getCourses() {
+    return CourseDB().courses();
   }
 
   @override
@@ -518,49 +463,46 @@ class _SelectCourseState extends State<SelectCourse> {
                                       child: CircularProgressIndicator());
                                 default:
                                   if (snapshot.hasError)
-                                    return Text('Error: ${snapshot.error}');
+                                    return Padding(
+                                      padding: const EdgeInsets.all(28.0),
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
                                   else if (snapshot.data != null) {
-                                    ApiResponse<Level>? apiResponse =
-                                        snapshot.data as ApiResponse<Level>?;
-                                    List<Level> levels = apiResponse!.data!;
+                                    List<Level> levels =
+                                        snapshot.data as List<Level>;
                                     return Flexible(
                                         child: Column(
                                       children: [
                                         SizedBox(
-                                          height: 10,
+                                          height: 30,
                                         ),
-                                        Text(
-                                          widget.levelGroup,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            for (int i = 0;
-                                                i < levels.length;
-                                                i++)
-                                              selectText(
-                                                  levels[i].name!.split(" ")[
-                                                      levels[i]
-                                                              .name!
-                                                              .split(" ")
-                                                              .length -
-                                                          1],
-                                                  levels[i] == selectedLevel,
-                                                  normalSize: 25,
-                                                  selectedSize: 30, select: () {
-                                                setState(() {
-                                                  selectedLevel = levels[i];
-                                                });
-                                                futureCourses = loadCourses();
-                                              }),
-                                          ],
+                                        SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              for (int i = 0;
+                                                  i < levels.length;
+                                                  i++)
+                                                selectText(
+                                                    levels[i].name!.split(" ")[
+                                                        levels[i]
+                                                                .name!
+                                                                .split(" ")
+                                                                .length -
+                                                            1],
+                                                    levels[i] == selectedLevel,
+                                                    normalSize: 25,
+                                                    selectedSize: 30,
+                                                    select: () {
+                                                  setState(() {
+                                                    selectedLevel = levels[i];
+                                                  });
+                                                  futureCourses = getCourses();
+                                                }),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ));
@@ -571,6 +513,9 @@ class _SelectCourseState extends State<SelectCourse> {
                             }),
                       ),
                     ),
+                  ),
+                  SizedBox(
+                    height: 15,
                   ),
                   Container(
                     child: FutureBuilder(
@@ -583,37 +528,28 @@ class _SelectCourseState extends State<SelectCourse> {
                               return Center(child: CircularProgressIndicator());
                             default:
                               if (snapshot.hasError)
-                                return Text('Error: ${snapshot.error}');
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('Error: ${snapshot.error}'),
+                                );
                               else if (snapshot.data != null) {
-                                ApiResponse<Course>? apiResponse =
-                                    snapshot.data as ApiResponse<Course>?;
-                                List<Course> courses = apiResponse!.data!;
-                                return SingleChildScrollView(
-                                  child: Flexible(
-                                      child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          for (int i = 0;
-                                              i < courses.length;
-                                              i++)
-                                            selectText(courses[i].name!,
-                                                courses[i] == selectedCourse,
-                                                normalSize: 25,
-                                                selectedSize: 30, select: () {
-                                              setState(() {
-                                                selectedCourse = courses[i];
-                                              });
-                                            }),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
+                                List<Course> courses =
+                                    snapshot.data as List<Course>;
+
+                                return Expanded(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: courses.length,
+                                      itemBuilder: (context, index) {
+                                        return selectText(courses[index].name!,
+                                            courses[index] == selectedCourse,
+                                            normalSize: 25,
+                                            selectedSize: 30, select: () {
+                                          setState(() {
+                                            selectedCourse = courses[index];
+                                          });
+                                        });
+                                      }),
                                 );
                               } else {
                                 return Container();

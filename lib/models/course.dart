@@ -74,6 +74,5 @@ class Course {
         "p": p,
         "editors": editors,
         "level_id": levelId,
-        "subject_id": subjectId,
       };
 }

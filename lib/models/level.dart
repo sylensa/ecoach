@@ -3,7 +3,7 @@ class Level {
     this.id,
     this.name,
     this.code,
-    this.group,
+    this.category,
     this.createdAt,
     this.updatedAt,
   });
@@ -11,7 +11,7 @@ class Level {
   int? id;
   String? name;
   String? code;
-  String? group;
+  String? category;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -19,7 +19,7 @@ class Level {
         id: json["id"],
         name: json["name"],
         code: json["code"],
-        group: json["group"],
+        category: json["category"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );
@@ -28,7 +28,7 @@ class Level {
         "id": id,
         "name": name,
         "code": code,
-        "group": group,
+        "category": category,
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
       };

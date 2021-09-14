@@ -21,7 +21,7 @@ class DBProvider {
   static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "ecoach.db");
-    return await openDatabase(path, version: 5, onOpen: (db) {},
+    return await openDatabase(path, version: 6, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -35,17 +35,16 @@ class DBProvider {
           ")");
 
       await db.execute("""CREATE TABLE 'course_levels' (
-        'id' int NOT NULL,
+        'id' INTEGER PRIMARY KEY,
         'name' varchar(50) NOT NULL,
         'code' varchar(10) NOT NULL,
-        'group' varchar(50) NOT NULL,
+        'category' varchar(50) NOT NULL,
         'created_at' timestamp NULL DEFAULT NULL,
-        'updated_at' timestamp NULL DEFAULT NULL,
-        PRIMARY KEY ('id')
+        'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'questions' (
-        'id' int NOT NULL,
+        'id' INTEGER PRIMARY KEY,
         'course_id' int NOT NULL,
         'topic_id' int NOT NULL,
         'qid' varchar(50) NOT NULL,
@@ -65,7 +64,7 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'courses' (
-        'id' int NOT NULL,
+        'id' INTEGER PRIMARY KEY,
         'package_code' varchar(11) NOT NULL,
         'courseID' varchar(20) NOT NULL,
         'name' varchar(50) NOT NULL,
@@ -80,12 +79,11 @@ class DBProvider {
         'N' int NOT NULL DEFAULT '0',
         'p' int NOT NULL DEFAULT '0',
         'editors' varchar(128) NOT NULL DEFAULT '[]',
-        'level_id' int DEFAULT NULL,
-        'subject_id' int NOT NULL
+        'level_id' int DEFAULT NULL
       )""");
 
       await db.execute("""CREATE TABLE 'plans' (
-        'id' int unsigned NOT NULL,
+        'id' INTEGER PRIMARY KEY,
         'tag' varchar(255)  NOT NULL,
         'name' varchar(255)  NOT NULL,
         'description' varchar(255)  DEFAULT NULL,
@@ -104,7 +102,7 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'answers' (
-        'id' int NOT NULL,
+        'id' INTEGER PRIMARY KEY,
         'question_id' int NOT NULL,
         'text' text NOT NULL,
         'value' int DEFAULT '0',

@@ -52,8 +52,40 @@ class LevelDB {
         code: maps[i]["code"],
         createdAt: DateTime.parse(maps[i]["created_at"]),
         updatedAt: DateTime.parse(maps[i]["updated_at"]),
-        group: maps[i]["group"],
+        category: maps[i]["category"],
       );
+    });
+  }
+
+  Future<List<Level>> levelByGroup(String category) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!
+        .query('course_levels', where: 'category = ?', whereArgs: [category]);
+
+    return List.generate(maps.length, (i) {
+      return Level(
+        id: maps[i]["id"],
+        name: maps[i]["name"],
+        code: maps[i]["code"],
+        createdAt: DateTime.parse(maps[i]["created_at"]),
+        updatedAt: DateTime.parse(maps[i]["updated_at"]),
+        category: maps[i]["category"],
+      );
+    });
+  }
+
+  Future<List<String>> levelGroups() async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'course_levels',
+      columns: ['category'],
+      distinct: true,
+    );
+
+    return List.generate(maps.length, (i) {
+      return maps[i]["category"];
     });
   }
 
