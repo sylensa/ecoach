@@ -104,6 +104,7 @@ class _QuizViewState extends State<QuizView> {
                         SelectText("${(i + 1)}", i == currentQuestion,
                             normalSize: 28,
                             selectedSize: 45,
+                            underlineSelected: true,
                             selectedColor: Color(0xFFFD6363),
                             color: Colors.white70, select: () {
                           setState(() {

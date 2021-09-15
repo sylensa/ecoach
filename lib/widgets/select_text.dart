@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/parser.dart' as htmlparser;
@@ -11,11 +12,13 @@ class SelectText extends StatefulWidget {
       this.imposedSize,
       this.color = Colors.white,
       this.selectedColor = Colors.white,
-      this.imposedColor})
+      this.imposedColor,
+      this.underlineSelected = false})
       : super(key: key);
 
   String text;
   bool selected;
+  bool underlineSelected;
   Function select;
   double? normalSize;
   double? selectedSize;
@@ -51,7 +54,10 @@ class _SelectTextState extends State<SelectText> {
                     ? widget.imposedSize
                     : widget.selected
                         ? (widget.selectedSize ?? 40)
-                        : widget.normalSize ?? 16),
+                        : widget.normalSize ?? 16,
+                decoration: widget.underlineSelected && widget.selected
+                    ? TextDecoration.underline
+                    : null),
           ),
         )),
       ),

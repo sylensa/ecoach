@@ -60,8 +60,23 @@ class _QuestionWidgetState extends State<QuestionWidget> {
             Container(
               width: double.infinity,
               color: Color(0xFF00C664),
-              child: Padding(
-                padding: EdgeInsets.all(4),
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.all(4),
+                  child: widget.question.instructions != null &&
+                          widget.question.instructions!.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            widget.question.instructions!,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.white),
+                          ),
+                        )
+                      : null,
+                ),
               ),
             ),
             if (!widget.enabled)
