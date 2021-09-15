@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Poppins',
       ),
       home: FutureBuilder(
           future: UserPreferences().getUser(),
