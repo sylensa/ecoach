@@ -94,13 +94,13 @@ class NoSubWidget extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     child: new Text(
-                      "Welcom to the Adeo Experience",
+                      "Welcome to the Adeo Experience",
                       textAlign: TextAlign.center,
                       style: new TextStyle(
                           fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
                           color: const Color(0xFF000000),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Roboto"),
+                          ),
                     ),
                     padding: const EdgeInsets.all(0.0),
                   ),
@@ -109,10 +109,8 @@ class NoSubWidget extends StatelessWidget {
                       "You currently have",
                       textAlign: TextAlign.center,
                       style: new TextStyle(
-                          fontSize: 20.0,
-                          color: const Color(0xFF000000),
-                          fontWeight: FontWeight.w300,
-                          fontFamily: "Roboto"),
+                          fontSize: 18.0,
+                          color: const Color(0xFF000000),),
                     ),
                     padding: const EdgeInsets.fromLTRB(0, 24.0, 0, 0),
                   ),
@@ -124,20 +122,17 @@ class NoSubWidget extends StatelessWidget {
                             "NO",
                             textAlign: TextAlign.center,
                             style: new TextStyle(
-                                fontSize: 20.0,
+                                fontSize: 18.0,
                                 color: const Color(0xFF000000),
-                                fontWeight: FontWeight.w400,
-                                fontFamily: "Roboto"),
+                                fontWeight: FontWeight.w700,),
                           ),
                           SizedBox(width: 10, height: 0),
                           new Text(
                             "Subscriptions",
                             textAlign: TextAlign.center,
                             style: new TextStyle(
-                                fontSize: 20.0,
-                                color: const Color(0xFF000000),
-                                fontWeight: FontWeight.w300,
-                                fontFamily: "Roboto"),
+                                fontSize: 18.0,
+                                color: const Color(0xFF000000),),
                           ),
                         ]),
                     padding: const EdgeInsets.all(0.0),
@@ -147,10 +142,8 @@ class NoSubWidget extends StatelessWidget {
                       "Buy a subscription and enjoy a great content",
                       textAlign: TextAlign.center,
                       style: new TextStyle(
-                          fontSize: 20.0,
-                          color: const Color(0xFF000000),
-                          fontWeight: FontWeight.w300,
-                          fontFamily: "Roboto"),
+                          fontSize: 18.0,
+                          color: const Color(0xFF000000),),
                     ),
                     padding: const EdgeInsets.all(24.0),
                   ),
@@ -163,8 +156,7 @@ class NoSubWidget extends StatelessWidget {
                         style: new TextStyle(
                           fontSize: 20.0,
                           color: Colors.blue,
-                          fontWeight: FontWeight.w300,
-                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w700,
                           decoration: TextDecoration.underline,
                         ),
                       ),

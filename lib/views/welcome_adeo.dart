@@ -115,8 +115,9 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                   children: [
                     Text(
                       'Welcome to the\nAdeo Experience',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontSize: 25,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
@@ -124,20 +125,32 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                       height: 40,
                     ),
                     RichText(
+                        textAlign: TextAlign.center,
                         text: TextSpan(children: [
-                      TextSpan(
-                          text: "You currently have\n",
-                          style: TextStyle(color: Colors.white, fontSize: 24)),
-                      TextSpan(
-                          text: "NO",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                          TextSpan(
+                            text: "You currently have\n",
+                            style: TextStyle(
                               color: Colors.white,
-                              fontSize: 24)),
-                      TextSpan(
-                          text: " Subscriptions.",
-                          style: TextStyle(color: Colors.white, fontSize: 24))
-                    ])),
+                              fontSize: 22,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          TextSpan(
+                            text: "NO",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontFamily: 'Poppins'),
+                          ),
+                          TextSpan(
+                              text: " Subscriptions.",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontFamily: 'Poppins',
+                              ))
+                        ])),
                     SizedBox(
                       height: 40,
                     ),
@@ -145,23 +158,29 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                         textAlign: TextAlign.center,
                         text: TextSpan(children: [
                           TextSpan(
-                              text: "First take a",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 24)),
+                            text: "First take a",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
                           TextSpan(
                               text: " DIAGNOSTIC TEST\n",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 24)),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontFamily: 'Poppins',
+                              )),
                           TextSpan(
-                              text: "  to determine the right course\n",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 24)),
-                          TextSpan(
-                              text: "  for you. ",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 24))
+                            text: "  to determine the right course for you.",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
                         ])),
                     SizedBox(
                       height: 60,
@@ -176,9 +195,9 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                       child: Text(
                         "Next",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                        ),
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500),
                       ),
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all(
