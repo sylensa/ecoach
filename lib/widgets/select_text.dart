@@ -8,7 +8,10 @@ class SelectText extends StatefulWidget {
       required this.select,
       this.normalSize,
       this.selectedSize,
-      this.imposedSize})
+      this.imposedSize,
+      this.color = Colors.white,
+      this.selectedColor = Colors.white,
+      this.imposedColor})
       : super(key: key);
 
   String text;
@@ -17,6 +20,9 @@ class SelectText extends StatefulWidget {
   double? normalSize;
   double? selectedSize;
   double? imposedSize;
+  Color? color;
+  Color? selectedColor;
+  Color? imposedColor;
 
   @override
   _SelectTextState createState() => _SelectTextState();
@@ -36,7 +42,11 @@ class _SelectTextState extends State<SelectText> {
           child: Text(
             widget.text,
             style: TextStyle(
-                color: Colors.white,
+                color: widget.imposedColor != null
+                    ? widget.imposedColor
+                    : widget.selected
+                        ? widget.selectedColor
+                        : widget.color,
                 fontSize: widget.imposedSize != null
                     ? widget.imposedSize
                     : widget.selected
@@ -55,7 +65,10 @@ class SelectHtml extends StatefulWidget {
       required this.select,
       this.normalSize,
       this.selectedSize,
-      this.imposedSize})
+      this.imposedSize,
+      this.color = Colors.white,
+      this.selectedColor = Colors.white,
+      this.imposedColor})
       : super(key: key);
 
   String text;
@@ -64,6 +77,9 @@ class SelectHtml extends StatefulWidget {
   double? normalSize;
   double? selectedSize;
   double? imposedSize;
+  Color? color;
+  Color? selectedColor;
+  Color? imposedColor;
 
   @override
   _SelectHtmlState createState() => _SelectHtmlState();

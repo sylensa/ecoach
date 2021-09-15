@@ -3,6 +3,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
+import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown.dart';
@@ -100,8 +101,11 @@ class _QuizViewState extends State<QuizView> {
                   child: Row(
                     children: [
                       for (int i = 0; i < widget.questions.length; i++)
-                        selectText("${(i + 1)}", i == currentQuestion,
-                            normalSize: 28, selectedSize: 45, select: () {
+                        SelectText("${(i + 1)}", i == currentQuestion,
+                            normalSize: 28,
+                            selectedSize: 45,
+                            selectedColor: Color(0xFFFD6363),
+                            color: Colors.white70, select: () {
                           setState(() {
                             currentQuestion = i;
                           });

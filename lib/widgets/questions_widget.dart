@@ -86,11 +86,10 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       ),
                     ),
                     Container(
-                      width: double.infinity,
                       color: Colors.orange,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
                           child: Text(
                             selectedAnswer != null
                                 ? selectedAnswer!.solution!
