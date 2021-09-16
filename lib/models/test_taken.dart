@@ -1,0 +1,77 @@
+class TestTaken {
+  TestTaken({
+    this.id,
+    required this.userId,
+    this.datetime,
+    this.courseId,
+    this.testname,
+    this.testType,
+    this.testId,
+    this.testTime,
+    this.usedtime,
+    this.pauseduration,
+    required this.totalQuestions,
+    this.score,
+    this.correct,
+    this.wrong,
+    this.unattempted,
+    required this.responses,
+    this.comment,
+  });
+
+  int? id;
+  int? userId;
+  DateTime? datetime;
+  int? courseId;
+  String? testname;
+  String? testType;
+  int? testId;
+  int? testTime;
+  int? usedtime;
+  int? pauseduration;
+  int totalQuestions;
+  double? score;
+  int? correct;
+  int? wrong;
+  int? unattempted;
+  String responses;
+  String? comment;
+
+  factory TestTaken.fromJson(Map<String, dynamic> json) => TestTaken(
+        id: json["id"],
+        userId: json["user_id"],
+        datetime: DateTime.parse(json["date_time"]),
+        courseId: json["course_id"],
+        testname: json["test_name"],
+        testType: json["test_type"],
+        testId: json["test_id"],
+        testTime: json["test_time"],
+        usedtime: json["used_time"],
+        pauseduration: json["pause_duration"],
+        totalQuestions: json["total_questions"],
+        score: json["score"],
+        wrong: json["wrong"],
+        unattempted: json["unattempted"],
+        responses: json["responses"],
+        comment: json["comment"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user_id": userId,
+        "date_time": datetime!.toIso8601String(),
+        "course_id": courseId,
+        "test_name": testname,
+        "test_type": testType,
+        "test_id": testId,
+        "test_time": testTime,
+        "used_time": usedtime,
+        "pause_duration": pauseduration,
+        "total_questions": totalQuestions,
+        "score": score,
+        "wrong": wrong,
+        "unattempted": unattempted,
+        "responses": responses,
+        "comment": comment,
+      };
+}
