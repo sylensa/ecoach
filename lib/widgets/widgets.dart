@@ -1,3 +1,4 @@
+import 'package:ecoach/models/question.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
@@ -26,49 +27,28 @@ money(double amount, {String currency = ""}) {
   return format.format(amount);
 }
 
-selectText(String text, bool selected,
-    {required Function select, double? normalSize, double? selectedSize}) {
-  return GestureDetector(
-    onTap: () {
-      select();
-    },
-    child: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Container(
-          child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: selected ? (selectedSize ?? 40) : normalSize ?? 16),
-        ),
-      )),
-    ),
-  );
-}
-
-selectHtml(String text, bool selected,
-    {required Function select, double? normalSize, double? selectedSize}) {
-  print(text);
-  return GestureDetector(
-    onTap: () {
-      print("tapping..");
-      select();
-    },
-    child: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Container(
-          child: Center(
-        child: Html(data: text, style: {
-          // tables will have the below background color
-          "body": Style(
-            color:  Colors.white,
-            fontSize: selected
-                ? FontSize(selectedSize ?? 40)
-                : FontSize(normalSize ?? 16),
+topicRow(List<Question> questions) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(0, 22.0, 0, 22.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 140,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
+            child: Text(
+              "${question.topicId}",
+              style: TextStyle(fontSize: 15),
+            ),
           ),
-        }),
-      )),
+        ),
+        SizedBox(
+            width: 120,
+            child: Text("${question.isCorrect ? 1 : 0}",
+                style: TextStyle(fontSize: 15))),
+        Expanded(child: Text("Performance", style: TextStyle(fontSize: 15))),
+      ],
     ),
   );
 }

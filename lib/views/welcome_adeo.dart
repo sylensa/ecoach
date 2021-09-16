@@ -11,6 +11,7 @@ import 'package:ecoach/providers/level_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/quiz_page.dart';
+import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -328,7 +329,7 @@ class _SelectLevelState extends State<SelectLevel> {
                                     itemBuilder: (context, index) {
                                       String name = levels[index];
                                       print(name);
-                                      return selectText(
+                                      return SelectText(
                                           name, levels[index] == selectedLevel,
                                           select: () {
                                         setState(() {
@@ -502,7 +503,7 @@ class _SelectCourseState extends State<SelectCourse> {
                                               for (int i = 0;
                                                   i < levels.length;
                                                   i++)
-                                                selectText(
+                                                SelectText(
                                                     levels[i].name!.split(" ")[
                                                         levels[i]
                                                                 .name!
@@ -558,7 +559,7 @@ class _SelectCourseState extends State<SelectCourse> {
                                       shrinkWrap: true,
                                       itemCount: courses.length,
                                       itemBuilder: (context, index) {
-                                        return selectText(courses[index].name!,
+                                        return SelectText(courses[index].name!,
                                             courses[index] == selectedCourse,
                                             normalSize: 25,
                                             selectedSize: 30, select: () {

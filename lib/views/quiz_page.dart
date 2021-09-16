@@ -93,6 +93,7 @@ class _QuizViewState extends State<QuizView> {
     widget.questions.forEach((question) {
       Map<String, dynamic> answer = {
         "question_id": question.id,
+        "topic_id": question.topicId,
         "selected_answer_id": question.selectedAnswer != null
             ? question.selectedAnswer!.id
             : null,
@@ -391,19 +392,19 @@ class _PauseDialogState extends State<PauseDialog> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    selectText("resume", action == "resume",
+                    SelectText("resume", action == "resume",
                         normalSize: 27, selectedSize: 45, select: () {
                       setState(() {
                         action = "resume";
                       });
                     }),
-                    selectText("quit", action == "quit",
+                    SelectText("quit", action == "quit",
                         normalSize: 27, selectedSize: 45, select: () {
                       setState(() {
                         action = "quit";
                       });
                     }),
-                    selectText("end", action == "end",
+                    SelectText("end", action == "end",
                         normalSize: 27, selectedSize: 45, select: () {
                       setState(() {
                         action = "end";
