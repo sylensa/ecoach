@@ -8,8 +8,11 @@ import 'package:get/get.dart';
 
 import 'models/user.dart';
 import 'views/login_view.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
   runApp(MyApp());
 }
 
@@ -20,10 +23,13 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Adeo',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Poppins',
-      ),
+          primarySwatch: Colors.orange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          fontFamily: 'Poppins',
+          textTheme: Theme.of(context).textTheme.apply(
+                bodyColor: Colors.white,
+                displayColor: Colors.white,
+              )),
       home: FutureBuilder(
           future: UserPreferences().getUser(),
           builder: (context, AsyncSnapshot<User?> snapshot) {

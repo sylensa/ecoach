@@ -5,6 +5,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
+import 'package:ecoach/views/results.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -56,7 +57,13 @@ class _QuizViewState extends State<QuizView> {
     completeQuiz();
   }
 
-  int get score {
+  double get score {
+    int totalQuestions = widget.questions.length;
+    int correctAnswers = correct;
+    return correctAnswers / totalQuestions * 100;
+  }
+
+  int get correct {
     int score = 0;
     widget.questions.forEach((question) {
       if (question.isCorrect) score++;
@@ -116,6 +123,7 @@ class _QuizViewState extends State<QuizView> {
         testTime: duration.inMinutes,
         responses: responses,
         score: score,
+        correct: correct,
         wrong: wrong,
         unattempted: unattempted);
 
@@ -126,192 +134,196 @@ class _QuizViewState extends State<QuizView> {
     Navigator.pop(context);
   }
 
-  viewResults() {}
+  viewResults() {
+    Navigator.push<void>(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => DiagnoticResultView(widget.user),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(color: Color(0xFF00C664)),
-          child: Stack(children: [
-            Positioned(
-              top: 95,
-              right: -120,
-              left: -100,
-              bottom: 51,
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(color: Color(0xFF00C664)),
+        child: Stack(children: [
+          Positioned(
+            top: 95,
+            right: -120,
+            left: -100,
+            bottom: 51,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFF595959),
+              ),
+              child: PageView(
+                controller: controller,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  for (int i = 0; i < widget.questions.length; i++)
+                    QuestionWidget(
+                      widget.questions[i],
+                      position: i,
+                      enabled: enabled,
+                    )
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 40,
+            left: 0,
+            child: Container(
               child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xFF595959),
-                ),
-                child: PageView(
-                  controller: controller,
-                  physics: NeverScrollableScrollPhysics(),
+                child: Row(
                   children: [
                     for (int i = 0; i < widget.questions.length; i++)
-                      QuestionWidget(
-                        widget.questions[i],
-                        position: i,
-                        enabled: enabled,
-                      )
+                      SelectText("${(i + 1)}", i == currentQuestion,
+                          normalSize: 28,
+                          selectedSize: 45,
+                          underlineSelected: true,
+                          selectedColor: Color(0xFFFD6363),
+                          color: Colors.white70, select: () {
+                        setState(() {
+                          currentQuestion = i;
+                        });
+
+                        controller.jumpToPage(i);
+                        controller.animateToPage(i,
+                            duration: Duration(milliseconds: 1000),
+                            curve: Curves.easeInBack);
+                      })
                   ],
                 ),
               ),
             ),
-            Positioned(
-              top: 0,
-              right: 40,
-              left: 0,
-              child: Container(
-                child: Container(
-                  child: Row(
-                    children: [
-                      for (int i = 0; i < widget.questions.length; i++)
-                        SelectText("${(i + 1)}", i == currentQuestion,
-                            normalSize: 28,
-                            selectedSize: 45,
-                            underlineSelected: true,
-                            selectedColor: Color(0xFFFD6363),
-                            color: Colors.white70, select: () {
-                          setState(() {
-                            currentQuestion = i;
-                          });
-
-                          controller.jumpToPage(i);
-                          controller.animateToPage(i,
-                              duration: Duration(milliseconds: 1000),
-                              curve: Curves.easeInBack);
-                        })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-                top: -120,
-                right: -80,
-                child: Image(
-                  image: AssetImage('assets/images/white_leave.png'),
-                )),
-            Positioned(
-              top: 55,
-              right: 20,
-              child: GestureDetector(
-                onTap: () {
-                  if (!enabled) {
-                    return;
-                  }
-                  countdownTimerController.stop();
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) {
-                        return PauseDialog(
-                          time: countdownTimerController
-                              .currentDuration.inSeconds,
-                          callback: (action) {
-                            Navigator.pop(context);
-                            if (action == "resume") {
-                              countdownTimerController.start();
-                            } else if (action == "quit") {
-                            } else if (action == "end quiz") {}
-                          },
-                        );
-                      });
-                },
-                child: Countdown(
-                  builder: (context, duration) {
-                    if (duration.inSeconds == 0) {
-                      return Text("Time Up",
-                          style: TextStyle(
-                              color: Color(0xFF00C664), fontSize: 18));
-                    }
-                    int min = (duration.inSeconds / 60).floor();
-                    int sec = duration.inSeconds % 60;
-                    return Text("$min:$sec",
+          ),
+          Positioned(
+              top: -120,
+              right: -80,
+              child: Image(
+                image: AssetImage('assets/images/white_leave.png'),
+              )),
+          Positioned(
+            top: 55,
+            right: 20,
+            child: GestureDetector(
+              onTap: () {
+                if (!enabled) {
+                  return;
+                }
+                countdownTimerController.stop();
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      return PauseDialog(
+                        time:
+                            countdownTimerController.currentDuration.inSeconds,
+                        callback: (action) {
+                          Navigator.pop(context);
+                          if (action == "resume") {
+                            countdownTimerController.start();
+                          } else if (action == "quit") {
+                          } else if (action == "end quiz") {}
+                        },
+                      );
+                    });
+              },
+              child: Countdown(
+                builder: (context, duration) {
+                  if (duration.inSeconds == 0) {
+                    return Text("Time Up",
                         style:
-                            TextStyle(color: Color(0xFF00C664), fontSize: 28));
-                  },
-                  countdownController: countdownTimerController,
-                ),
+                            TextStyle(color: Color(0xFF00C664), fontSize: 18));
+                  }
+                  int min = (duration.inSeconds / 60).floor();
+                  int sec = duration.inSeconds % 60;
+                  return Text("$min:$sec",
+                      style: TextStyle(color: Color(0xFF00C664), fontSize: 28));
+                },
+                countdownController: countdownTimerController,
               ),
             ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              left: 0,
-              child: Container(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      if (currentQuestion > 0)
-                        TextButton(
-                          onPressed: () {
-                            controller.previousPage(
-                                duration: Duration(milliseconds: 200),
-                                curve: Curves.ease);
-                            setState(() {
-                              currentQuestion--;
-                            });
-                          },
-                          child: Text(
-                            "Previous",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Container(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    if (currentQuestion > 0)
+                      TextButton(
+                        onPressed: () {
+                          controller.previousPage(
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.ease);
+                          setState(() {
+                            currentQuestion--;
+                          });
+                        },
+                        child: Text(
+                          "Previous",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
                           ),
                         ),
-                      if (currentQuestion < widget.questions.length - 1)
-                        TextButton(
-                          onPressed: () {
-                            controller.nextPage(
-                                duration: Duration(milliseconds: 200),
-                                curve: Curves.ease);
-                            setState(() {
-                              currentQuestion++;
-                            });
-                          },
-                          child: Text(
-                            "Next",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 21,
-                            ),
+                      ),
+                    if (currentQuestion < widget.questions.length - 1)
+                      TextButton(
+                        onPressed: () {
+                          controller.nextPage(
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.ease);
+                          setState(() {
+                            currentQuestion++;
+                          });
+                        },
+                        child: Text(
+                          "Next",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 21,
                           ),
                         ),
-                      if (enabled &&
-                          currentQuestion == widget.questions.length - 1)
-                        TextButton(
-                          onPressed: () {
-                            completeQuiz();
-                          },
-                          child: Text(
-                            "Complete",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 21,
-                            ),
+                      ),
+                    if (enabled &&
+                        currentQuestion == widget.questions.length - 1)
+                      TextButton(
+                        onPressed: () {
+                          completeQuiz();
+                        },
+                        child: Text(
+                          "Complete",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 21,
                           ),
                         ),
-                      if (!enabled)
-                        TextButton(
-                          onPressed: () {
-                            viewResults();
-                          },
-                          child: Text(
-                            "Results",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 21,
-                            ),
+                      ),
+                    if (!enabled)
+                      TextButton(
+                        onPressed: () {
+                          viewResults();
+                        },
+                        child: Text(
+                          "Results",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 21,
                           ),
                         ),
-                    ]),
-              ),
-            )
-          ]),
-        ),
+                      ),
+                  ]),
+            ),
+          )
+        ]),
       ),
     );
   }
