@@ -31,20 +31,6 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
   void initState() {
     super.initState();
 
-    DateTime date = DateTime.now();
-    int count = 0;
-    for (int i = 0;
-        DateTime.now().millisecondsSinceEpoch - date.millisecondsSinceEpoch <
-            1000;
-        i++) {
-      count++;
-      if (count % 1000 == 0) {
-        print(
-            "start: ${date.millisecondsSinceEpoch} current: ${DateTime.now().millisecondsSinceEpoch} diff: ${DateTime.now().millisecondsSinceEpoch - date.millisecondsSinceEpoch} i: $i");
-      }
-    }
-
-    print("count= $count");
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       showLoaderDialog(context, message: "Loading initial data ...");
       getInitialData().then((data) {
@@ -67,12 +53,8 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
 
     print(response.body);
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       return NewUserData.fromJson(jsonDecode(response.body));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception('Failed to load album');
     }
   }
@@ -609,11 +591,11 @@ class _SelectCourseState extends State<SelectCourse> {
                       return;
                     }
                     showLoaderDialog(context);
-                    Future futureList = QuestionsController()
+                    Future futureList = TestController()
                         .loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
 
                     futureList.then((apiResponse) {
-                      showLoaderDialog(context);
+                      Navigator.pop(context);
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                         return QuizView(widget.user, apiResponse.data,

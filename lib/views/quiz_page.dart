@@ -1,7 +1,10 @@
+import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -9,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class QuizView extends StatefulWidget {
   QuizView(this.user, this.questions, {Key? key, this.level, this.course})
@@ -28,16 +32,18 @@ class _QuizViewState extends State<QuizView> {
   List<QuestionWidget> questionWidgets = [];
 
   late CountdownController countdownTimerController;
+  DateTime startTime = DateTime.now();
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
 
   CurrentRemainingTime? remainingTime;
   bool enabled = true;
+  Duration duration = Duration(minutes: 5);
 
   @override
   void initState() {
     controller = PageController(initialPage: currentQuestion);
     countdownTimerController =
-        CountdownController(duration: Duration(minutes: 5), onEnd: onEnd);
+        CountdownController(duration: duration, onEnd: onEnd);
 
     countdownTimerController.start();
 
@@ -50,10 +56,70 @@ class _QuizViewState extends State<QuizView> {
     completeQuiz();
   }
 
+  int get score {
+    int score = 0;
+    widget.questions.forEach((question) {
+      if (question.isCorrect) score++;
+    });
+    return score;
+  }
+
+  int get wrong {
+    int wrong = 0;
+    widget.questions.forEach((question) {
+      if (question.isWrong) wrong++;
+    });
+    return wrong;
+  }
+
+  int get unattempted {
+    int unattempted = 0;
+    widget.questions.forEach((question) {
+      if (question.unattempted) unattempted++;
+    });
+    return unattempted;
+  }
+
+  String get responses {
+    Map<int, dynamic> responses = Map();
+    int i = 1;
+    widget.questions.forEach((question) {
+      Map<String, dynamic> answer = {
+        "question_id": question.id,
+        "selected_answer_id": question.selectedAnswer != null
+            ? question.selectedAnswer!.id
+            : null,
+        "status": question.isCorrect
+            ? "correct"
+            : question.isWrong
+                ? "wrong"
+                : "unattempted",
+      };
+
+      responses[i] = answer;
+      i++;
+    });
+    return responses.toString();
+  }
+
   completeQuiz() async {
+    countdownTimerController.stop();
     showLoaderDialog(context);
     await Future.delayed(Duration(seconds: 2));
-    countdownTimerController.stop();
+    TestTaken testTaken = TestTaken(
+        userId: widget.user.id,
+        datetime: startTime,
+        totalQuestions: widget.questions.length,
+        courseId: widget.course!.id,
+        testname: "Test Diagnotic",
+        testType: "Dianotic",
+        testTime: duration.inMinutes,
+        responses: responses,
+        score: score,
+        wrong: wrong,
+        unattempted: unattempted);
+
+    TestController().saveTestTaken(testTaken);
     setState(() {
       enabled = false;
     });

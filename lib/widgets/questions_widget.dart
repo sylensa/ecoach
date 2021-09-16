@@ -62,11 +62,11 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               color: Color(0xFF00C664),
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.fromLTRB(35, 4, 35, 4),
                   child: widget.question.instructions != null &&
                           widget.question.instructions!.isNotEmpty
                       ? Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.fromLTRB(20, 8.0, 20, 8),
                           child: Text(
                             widget.question.instructions!,
                             style: TextStyle(
@@ -105,12 +105,16 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
-                          child: Text(
-                            selectedAnswer != null
-                                ? selectedAnswer!.solution!
-                                : "----",
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          child: Html(
+                              data: selectedAnswer != null
+                                  ? selectedAnswer!.solution!
+                                  : "----",
+                              style: {
+                                // tables will have the below background color
+                                "body": Style(
+                                  color: Colors.white,
+                                ),
+                              }),
                         ),
                       ),
                     )
@@ -124,7 +128,24 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                   for (int i = 0; i < answers!.length; i++)
                     SelectHtml(answers![i].text!,
                         widget.question.selectedAnswer == answers![i],
-                        normalSize: 15, selectedSize: 48, select: () {
+                        normalSize: 15,
+                        selectedSize: widget.enabled ? 48 : 24,
+                        imposedSize: selectedAnswer == null ||
+                                selectedAnswer != answers![i] &&
+                                    answers![i].value == 0
+                            ? null
+                            : selectedAnswer == answers![i] &&
+                                    selectedAnswer!.value == 0
+                                ? 24
+                                : 48,
+                        imposedColor: selectedAnswer == null ||
+                                selectedAnswer != answers![i] &&
+                                    answers![i].value == 0
+                            ? null
+                            : selectedAnswer == answers![i] &&
+                                    selectedAnswer!.value == 0
+                                ? Colors.red.shade400
+                                : Colors.green.shade600, select: () {
                       if (!widget.enabled) {
                         return;
                       }

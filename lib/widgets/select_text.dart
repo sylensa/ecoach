@@ -105,7 +105,11 @@ class _SelectHtmlState extends State<SelectHtml> {
           child: Html(data: parseHtmlString(widget.text), style: {
             // tables will have the below background color
             "body": Style(
-              color: Colors.white,
+              color: widget.imposedColor != null
+                  ? widget.imposedColor
+                  : widget.selected
+                      ? widget.selectedColor
+                      : widget.color,
               fontSize: widget.imposedSize != null
                   ? FontSize(widget.imposedSize)
                   : widget.selected

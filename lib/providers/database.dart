@@ -20,8 +20,8 @@ class DBProvider {
 
   static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "ecoach.db");
-    return await openDatabase(path, version: 6, onOpen: (db) {},
+    String path = join(documentsDirectory.path, "ecoach2.db");
+    return await openDatabase(path, version: 8, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -115,6 +115,27 @@ class DBProvider {
         'editors' varchar(128) NOT NULL DEFAULT '[]'
       )""");
 
+      await db.execute("""CREATE TABLE 'tests_taken' (
+        'id' INTEGER PRIMARY KEY,
+        'user_id' int NOT NULL,
+        'date_time' varchar(255) NOT NULL,
+        'course_id' int NOT NULL,
+        'test_name' varchar(255) DEFAULT NULL,
+        'test_type' varchar(255) DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'test_time' int DEFAULT NULL,
+        'used_time' int DEFAULT NULL,
+        'pause_duration' int DEFAULT NULL,
+        'total_questions' int NOT NULL,
+        'score' int NOT NULL,
+        'wrong' int NOT NULL,
+        'unattempted' int NOT NULL,
+        'responses' LONGTEXT NOT NULL,
+        'comment' text DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
       await db.execute("""CREATE TABLE notifications (
           id INTEGER PRIMARY KEY,
           data_id INTEGER,
@@ -123,6 +144,10 @@ class DBProvider {
           type TEXT,
           created_at TEXT
           )""");
+    }, onUpgrade: (db, oldVersion, newVersion) {
+      if (oldVersion < newVersion) {
+        // you can execute drop table and create table
+      }
     });
   }
 }

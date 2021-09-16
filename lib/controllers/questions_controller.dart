@@ -2,14 +2,16 @@ import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/questions_db.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class QuestionsController {
+class TestController {
   loadDiagnoticQuestion(Level level, Course course) async {
     User? user = await UserPreferences().getUser();
     print(user!.token!);
@@ -49,7 +51,11 @@ class QuestionsController {
     }
   }
 
-  saveTestLocally(List<Question> questions) {
+  saveQuestionsLocally(List<Question> questions) {
     QuestionDB().insertAll(questions);
+  }
+
+  saveTestTaken(TestTaken test) {
+    TestTakenDB().insert(test);
   }
 }

@@ -50,6 +50,18 @@ class Question {
     return null;
   }
 
+  bool get isCorrect {
+    return correctAnswer == selectedAnswer;
+  }
+
+  bool get isWrong {
+    return !unattempted && correctAnswer == selectedAnswer;
+  }
+
+  bool get unattempted {
+    return selectedAnswer == null;
+  }
+
   factory Question.fromJson(Map<String, dynamic> json) => Question(
         id: json["id"],
         courseId: json["course_id"],
