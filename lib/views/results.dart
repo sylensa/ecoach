@@ -51,7 +51,7 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                   children: [
                     getScoreWidget(widget.test.score! / 100),
                     getRankWidget(142, 305),
-                    getTimeWidget(Duration(minutes: widget.test.testTime!))
+                    getTimeWidget(Duration(seconds: widget.test.testTime!))
                   ],
                 ),
               ),

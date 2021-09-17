@@ -133,8 +133,8 @@ class _QuizViewState extends State<QuizView> {
         courseId: widget.course!.id,
         testname: "Test Diagnotic",
         testType: "Dianotic",
-        testTime: duration.inMinutes -
-            countdownTimerController.currentDuration.inMinutes,
+        testTime: duration.inSeconds -
+            countdownTimerController.currentDuration.inSeconds,
         responses: responses,
         score: score,
         correct: correct,
