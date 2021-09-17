@@ -170,10 +170,10 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                     ),
                     OutlinedButton(
                       onPressed: () {
-                        Navigator.pushAndRemoveUntil(context,
+                        Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return SelectLevel(widget.user);
-                        }), (route) => false);
+                        }));
                       },
                       child: Text(
                         "Next",
@@ -359,10 +359,10 @@ class _SelectLevelState extends State<SelectLevel> {
                     if (selectedLevel == null) {
                       return;
                     }
-                    Navigator.pushAndRemoveUntil(context,
+                    Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return SelectCourse(widget.user, selectedLevel!);
-                    }), (route) => false);
+                    }));
                   },
                   child: Text(
                     "Next",
