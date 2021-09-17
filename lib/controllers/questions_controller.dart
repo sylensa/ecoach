@@ -58,4 +58,45 @@ class TestController {
   saveTestTaken(TestTaken test) {
     TestTakenDB().insert(test);
   }
+
+  Future<Map<String, List<TestAnswer>>> topicsAnalysis() async {
+    Map<String, List<TestAnswer>> topicsMap = Map();
+
+    TestTaken? test = await TestTakenDB().getTestTakenById(1);
+    String responses = test!.responses;
+    print("respones:");
+
+    responses = responses.replaceAll("(", "").replaceAll(")", "");
+    // responses = jsonEncode(responses);
+    print(responses);
+    Map<String, dynamic> res = json.decode(responses);
+    print(res.runtimeType);
+    List<TestAnswer>? answers = fromMap(res, (answer) {
+      print(answer);
+      return TestAnswer.fromJson(answer);
+    });
+
+    answers!.forEach((answer) {
+      topicsMap.update("${answer.topicId}", (list) {
+        list.add(answer);
+        return list;
+      }, ifAbsent: () {
+        return [answer];
+      });
+    });
+
+    return topicsMap;
+  }
+
+  fromMap(Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
+    print("inside fromMap");
+    List<TestAnswer> data = [];
+    json.forEach((k, v) {
+      print(k);
+      data.add(create(v));
+    });
+    print("checking data");
+    print(data);
+    return data;
+  }
 }

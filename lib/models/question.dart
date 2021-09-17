@@ -3,6 +3,7 @@ class Question {
     this.id,
     this.courseId,
     this.topicId,
+    this.topicName,
     this.qid,
     this.text,
     this.instructions,
@@ -23,6 +24,7 @@ class Question {
   int? id;
   int? courseId;
   int? topicId;
+  String? topicName;
   String? qid;
   String? text;
   String? instructions;
@@ -66,6 +68,7 @@ class Question {
         id: json["id"],
         courseId: json["course_id"],
         topicId: json["topic_id"],
+        topicName: json["topic_name"],
         qid: json["qid"],
         text: json["text"],
         instructions: json["instructions"],

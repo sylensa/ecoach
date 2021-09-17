@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -88,7 +90,7 @@ class _QuizViewState extends State<QuizView> {
   }
 
   String get responses {
-    Map<int, dynamic> responses = Map();
+    Map<String, dynamic> responses = Map();
     int i = 1;
     widget.questions.forEach((question) {
       Map<String, dynamic> answer = {
@@ -104,10 +106,10 @@ class _QuizViewState extends State<QuizView> {
                 : "unattempted",
       };
 
-      responses[i] = answer;
+      responses["$i"] = answer;
       i++;
     });
-    return responses.toString();
+    return jsonEncode(responses);
   }
 
   completeQuiz() async {

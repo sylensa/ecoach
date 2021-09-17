@@ -1,4 +1,8 @@
+import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class DiagnoticResultView extends StatefulWidget {
@@ -10,7 +14,23 @@ class DiagnoticResultView extends StatefulWidget {
 }
 
 class _DiagnoticResultViewState extends State<DiagnoticResultView> {
+  var futureList;
+  List<Widget> analysisWidgets = [];
+
   @override
+  void initState() {
+    super.initState();
+
+    TestController().topicsAnalysis().then((mapList) {
+      mapList.keys.forEach((key) {
+        List<TestAnswer> answers = mapList[key]!;
+        analysisWidgets.add(topicRow(TopicAnalysis(key, answers)));
+      });
+
+      setState(() {});
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF28BFDF),
@@ -52,7 +72,9 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                                   style: TextStyle(fontSize: 15))),
                         ],
                       ),
-                    )
+                    ),
+                    for (int i = 0; i < analysisWidgets.length; i++)
+                      analysisWidgets[i],
                   ],
                 ),
               ),

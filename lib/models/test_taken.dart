@@ -50,6 +50,7 @@ class TestTaken {
         pauseduration: json["pause_duration"],
         totalQuestions: json["total_questions"],
         score: json["score"],
+        correct: json["correct"],
         wrong: json["wrong"],
         unattempted: json["unattempted"],
         responses: json["responses"],
@@ -69,9 +70,50 @@ class TestTaken {
         "pause_duration": pauseduration,
         "total_questions": totalQuestions,
         "score": score,
+        "correct": correct,
         "wrong": wrong,
         "unattempted": unattempted,
         "responses": responses,
         "comment": comment,
+      };
+}
+
+class TestAnswer {
+  TestAnswer({
+    this.questionId,
+    this.topicId,
+    this.selectedAnswerId,
+    this.status,
+  });
+
+  int? questionId;
+  int? topicId;
+  int? selectedAnswerId;
+  String? status;
+
+  bool get isCorrect {
+    return status == "correct";
+  }
+
+  bool get isWrong {
+    return status == "wrong";
+  }
+
+  bool get unattempted {
+    return status == "unattempted";
+  }
+
+  factory TestAnswer.fromJson(Map<String, dynamic> json) => TestAnswer(
+        questionId: json["question_id"],
+        topicId: json["topic_id"],
+        selectedAnswerId: json["selected_answer_id"],
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "question_id": questionId,
+        "topic_id": topicId,
+        "selected_answer_id": selectedAnswerId,
+        "status": status,
       };
 }

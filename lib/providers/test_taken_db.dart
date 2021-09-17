@@ -14,11 +14,12 @@ class TestTakenDB {
     );
   }
 
-  Future<TestTaken?> getMessageById(int id) async {
+  Future<TestTaken?> getTestTakenById(int id) async {
     final db = await DBProvider.database;
     var result =
         await db!.query("tests_taken", where: "id = ?", whereArgs: [id]);
-    return result.isNotEmpty ? TestTaken.fromJson(result.first) : null;
+
+    return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
   }
 
   Future<void> insertAll(List<TestTaken> testsTaken) async {
