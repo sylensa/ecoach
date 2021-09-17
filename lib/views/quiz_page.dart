@@ -96,6 +96,7 @@ class _QuizViewState extends State<QuizView> {
       Map<String, dynamic> answer = {
         "question_id": question.id,
         "topic_id": question.topicId,
+        "topic_name": question.topicName,
         "selected_answer_id": question.selectedAnswer != null
             ? question.selectedAnswer!.id
             : null,
@@ -114,7 +115,7 @@ class _QuizViewState extends State<QuizView> {
 
   completeQuiz() async {
     countdownTimerController.stop();
-    showLoaderDialog(context);
+    showLoaderDialog(context, message: "Saving results");
     await Future.delayed(Duration(seconds: 2));
     TestTaken testTaken = TestTaken(
         userId: widget.user.id,

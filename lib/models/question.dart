@@ -68,7 +68,9 @@ class Question {
         id: json["id"],
         courseId: json["course_id"],
         topicId: json["topic_id"],
-        topicName: json["topic_name"],
+        topicName: json["topic"] != null
+            ? json['topic']['name']
+            : "topic id: ${json["topic_id"]}",
         qid: json["qid"],
         text: json["text"],
         instructions: json["instructions"],

@@ -77,7 +77,7 @@ class TestController {
     });
 
     answers!.forEach((answer) {
-      topicsMap.update("${answer.topicId}", (list) {
+      topicsMap.update("${answer.topicName}", (list) {
         list.add(answer);
         return list;
       }, ifAbsent: () {

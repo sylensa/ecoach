@@ -1,8 +1,5 @@
-import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -11,7 +8,12 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
     content: new Row(
       children: [
         CircularProgressIndicator(),
-        Container(margin: EdgeInsets.only(left: 7), child: Text(message!)),
+        Container(
+            margin: EdgeInsets.only(left: 7),
+            child: Text(
+              message!,
+              style: TextStyle(color: Colors.black),
+            )),
       ],
     ),
   );
@@ -32,12 +34,12 @@ money(double amount, {String currency = ""}) {
 
 topicRow(TopicAnalysis topicAnalysis) {
   return Padding(
-    padding: const EdgeInsets.fromLTRB(0, 22.0, 0, 22.0),
+    padding: const EdgeInsets.fromLTRB(0, 25.0, 0, 25.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
-          width: 140,
+          width: 160,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
             child: Text(

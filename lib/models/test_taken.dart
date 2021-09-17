@@ -82,12 +82,14 @@ class TestAnswer {
   TestAnswer({
     this.questionId,
     this.topicId,
+    this.topicName,
     this.selectedAnswerId,
     this.status,
   });
 
   int? questionId;
   int? topicId;
+  String? topicName;
   int? selectedAnswerId;
   String? status;
 
@@ -106,6 +108,7 @@ class TestAnswer {
   factory TestAnswer.fromJson(Map<String, dynamic> json) => TestAnswer(
         questionId: json["question_id"],
         topicId: json["topic_id"],
+        topicName: json["topic_name"],
         selectedAnswerId: json["selected_answer_id"],
         status: json["status"],
       );
@@ -113,6 +116,7 @@ class TestAnswer {
   Map<String, dynamic> toJson() => {
         "question_id": questionId,
         "topic_id": topicId,
+        "topic_name": topicName,
         "selected_answer_id": selectedAnswerId,
         "status": status,
       };

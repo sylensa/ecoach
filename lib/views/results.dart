@@ -4,6 +4,7 @@ import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class DiagnoticResultView extends StatefulWidget {
   const DiagnoticResultView(this.user, {Key? key}) : super(key: key);
@@ -38,9 +39,17 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
         child: Column(
           children: [
             Container(
-              color: Colors.red,
-              child: Row(
-                children: [Text("Top")],
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 10, 8, 40),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    getScoreWidget(0.4),
+                    getRankWidget(142, 305),
+                    getTimeWidget(Duration(minutes: 50))
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -49,7 +58,7 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 22.0, 0, 22.0),
+                      padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 30.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -97,6 +106,97 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget getScoreWidget(
+    double percent,
+  ) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Score",
+            style: TextStyle(fontSize: 15),
+          ),
+        ),
+        Stack(
+          children: [
+            CircularPercentIndicator(
+              radius: 55,
+              percent: percent,
+              backgroundColor: Colors.black38,
+              progressColor: Colors.red,
+              animation: true,
+            ),
+            Positioned(
+                top: 25,
+                left: 15,
+                child: Text(
+                  "${percent * 100}%",
+                  style: TextStyle(fontSize: 17),
+                )),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget getRankWidget(int position, int overall) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Rank",
+            style: TextStyle(fontSize: 15),
+          ),
+        ),
+        Container(
+          width: 90,
+          height: 50,
+          child: Stack(
+            children: [
+              Positioned(
+                  top: 15,
+                  left: 10,
+                  child: Text(
+                    "$position",
+                    style: TextStyle(fontSize: 30, color: Colors.black26),
+                  )),
+              Positioned(
+                  top: 0,
+                  left: 60,
+                  child: Text("/$overall",
+                      style: TextStyle(fontSize: 14, color: Colors.white))),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getTimeWidget(Duration duration) {
+    int min = (duration.inSeconds / 60).floor();
+    int sec = duration.inSeconds % 60;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Time taken",
+            style: TextStyle(fontSize: 15),
+          ),
+        ),
+        SizedBox(
+          height: 18,
+        ),
+        Text(
+          "${min}s:${sec}s",
+          style: TextStyle(fontSize: 15),
+        ),
+      ],
     );
   }
 }
