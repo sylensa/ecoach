@@ -488,8 +488,7 @@ class _SelectCourseState extends State<SelectCourse> {
                                   else if (snapshot.data != null) {
                                     List<Level> levels =
                                         snapshot.data as List<Level>;
-                                    return Flexible(
-                                        child: Column(
+                                    return Column(
                                       children: [
                                         SizedBox(
                                           height: 30,
@@ -523,7 +522,7 @@ class _SelectCourseState extends State<SelectCourse> {
                                           ),
                                         ),
                                       ],
-                                    ));
+                                    );
                                   } else {
                                     return Container();
                                   }
