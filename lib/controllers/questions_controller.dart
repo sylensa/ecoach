@@ -59,10 +59,10 @@ class TestController {
     TestTakenDB().insert(test);
   }
 
-  Future<Map<String, List<TestAnswer>>> topicsAnalysis() async {
+  Future<Map<String, List<TestAnswer>>> topicsAnalysis(testId) async {
     Map<String, List<TestAnswer>> topicsMap = Map();
 
-    TestTaken? test = await TestTakenDB().getTestTakenById(1);
+    TestTaken? test = await TestTakenDB().getTestTakenById(testId);
     String responses = test!.responses;
     print("respones:");
 

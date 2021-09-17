@@ -2,13 +2,16 @@ import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class DiagnoticResultView extends StatefulWidget {
-  const DiagnoticResultView(this.user, {Key? key}) : super(key: key);
+  DiagnoticResultView(this.user, {Key? key, required this.test})
+      : super(key: key);
   final User user;
+  TestTaken test;
 
   @override
   _DiagnoticResultViewState createState() => _DiagnoticResultViewState();
@@ -22,7 +25,8 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
   void initState() {
     super.initState();
 
-    TestController().topicsAnalysis().then((mapList) {
+    print("test id = ${widget.test.id}");
+    TestController().topicsAnalysis(widget.test.id).then((mapList) {
       mapList.keys.forEach((key) {
         List<TestAnswer> answers = mapList[key]!;
         analysisWidgets.add(topicRow(TopicAnalysis(key, answers)));
@@ -45,9 +49,9 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    getScoreWidget(0.4),
+                    getScoreWidget(widget.test.score! / 100),
                     getRankWidget(142, 305),
-                    getTimeWidget(Duration(minutes: 50))
+                    getTimeWidget(Duration(minutes: widget.test.testTime!))
                   ],
                 ),
               ),
@@ -95,7 +99,15 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                   Padding(
                     padding: const EdgeInsets.all(11.0),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) =>
+                                StorePage(widget.user),
+                          ),
+                        );
+                      },
                       child: Text("Buy Subscription",
                           style: TextStyle(color: Colors.white, fontSize: 25)),
                     ),
@@ -163,13 +175,19 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                   left: 10,
                   child: Text(
                     "$position",
-                    style: TextStyle(fontSize: 30, color: Colors.black26),
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.black26,
+                        fontWeight: FontWeight.bold),
                   )),
               Positioned(
                   top: 0,
                   left: 60,
                   child: Text("/$overall",
-                      style: TextStyle(fontSize: 14, color: Colors.white))),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.bold))),
             ],
           ),
         ),
@@ -193,7 +211,7 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
           height: 18,
         ),
         Text(
-          "${min}s:${sec}s",
+          "${min}m:${sec}s",
           style: TextStyle(fontSize: 15),
         ),
       ],

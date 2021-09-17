@@ -7,6 +7,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/results.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:http/http.dart' as http;
 
 class QuizView extends StatefulWidget {
   QuizView(this.user, this.questions, {Key? key, this.level, this.course})
@@ -40,7 +42,11 @@ class _QuizViewState extends State<QuizView> {
 
   CurrentRemainingTime? remainingTime;
   bool enabled = true;
+  bool savedTest = false;
   Duration duration = Duration(minutes: 5);
+
+  TestTaken? testTaken;
+  TestTaken? testTakenSaved;
 
   @override
   void initState() {
@@ -115,34 +121,81 @@ class _QuizViewState extends State<QuizView> {
 
   completeQuiz() async {
     countdownTimerController.stop();
+    setState(() {
+      enabled = false;
+    });
     showLoaderDialog(context, message: "Saving results");
-    await Future.delayed(Duration(seconds: 2));
-    TestTaken testTaken = TestTaken(
+
+    testTaken = TestTaken(
         userId: widget.user.id,
         datetime: startTime,
         totalQuestions: widget.questions.length,
         courseId: widget.course!.id,
         testname: "Test Diagnotic",
         testType: "Dianotic",
-        testTime: duration.inMinutes,
+        testTime: duration.inMinutes -
+            countdownTimerController.currentDuration.inMinutes,
         responses: responses,
         score: score,
         correct: correct,
         wrong: wrong,
         unattempted: unattempted);
 
-    TestController().saveTestTaken(testTaken);
-    setState(() {
-      enabled = false;
-    });
-    Navigator.pop(context);
+    saveTestTaken(testTaken!).then((value) {});
+  }
+
+  Future<void> saveTestTaken(TestTaken testTaken) async {
+    try {
+      http.Response response = await http.post(
+        Uri.parse(AppUrl.testTaken),
+        headers: {
+          "api-token": widget.user.token!,
+          "Content-Type": "application/json"
+        },
+        body: json.encode(testTaken.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        // print(responseData);
+        if (responseData["status"] == true) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(responseData['message'])));
+          print(response.body);
+          print(responseData['data']);
+          testTakenSaved = TestTaken.fromJson(responseData['data']);
+          TestController().saveTestTaken(testTakenSaved!);
+
+          setState(() {
+            testTaken = testTakenSaved!;
+            savedTest = true;
+            enabled = false;
+          });
+        } else {
+          print("not successful event");
+        }
+      } else {
+        print("Failed ....");
+        print(response.statusCode);
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to save test. Please try again")));
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      Navigator.pop(context);
+    }
   }
 
   viewResults() {
+    print("viewing results");
+    print(testTakenSaved!.toJson().toString());
     Navigator.push<void>(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => DiagnoticResultView(widget.user),
+        builder: (BuildContext context) =>
+            DiagnoticResultView(widget.user, test: testTakenSaved!),
       ),
     );
   }
@@ -297,7 +350,7 @@ class _QuizViewState extends State<QuizView> {
                           ),
                         ),
                       ),
-                    if (enabled &&
+                    if (!savedTest &&
                         currentQuestion == widget.questions.length - 1)
                       TextButton(
                         onPressed: () {
@@ -311,7 +364,7 @@ class _QuizViewState extends State<QuizView> {
                           ),
                         ),
                       ),
-                    if (!enabled)
+                    if (savedTest)
                       TextButton(
                         onPressed: () {
                           viewResults();

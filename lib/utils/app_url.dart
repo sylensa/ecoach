@@ -24,4 +24,6 @@ class AppUrl {
   static const String courses = baseURL + 'courses';
 
   static const String new_user_data = baseURL + 'new_user_data';
+
+  static const String testTaken = baseURL + 'tests/taken';
 }

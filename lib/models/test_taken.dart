@@ -49,7 +49,7 @@ class TestTaken {
         usedtime: json["used_time"],
         pauseduration: json["pause_duration"],
         totalQuestions: json["total_questions"],
-        score: json["score"],
+        score: json["score"] != null ? double.parse("${json['score']}") : 0,
         correct: json["correct"],
         wrong: json["wrong"],
         unattempted: json["unattempted"],

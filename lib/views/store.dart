@@ -22,7 +22,7 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   SubscribeController subscribeController = Get.put(SubscribeController());
-  List<bool> _isSelected = [false, false, false, true];
+  List<bool> _isSelected = [false, true];
   var futurePlans;
 
   @override
@@ -68,85 +68,49 @@ class _StorePageState extends State<StorePage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.blue.shade200,
+        backgroundColor: Color(0xFF28BFDF),
         body: Column(
           children: [
             SizedBox(
-              height: 60,
+              height: 40,
+            ),
+            SizedBox(
+              width: double.infinity,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Store",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 24),
+                  ToggleButtons(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("Monthly"),
                         ),
-                        Icon(
-                          Icons.shopping_cart,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("Annually"),
                         ),
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.blue.shade600)),
-                      onPressed: () {
-                        showCodePopup(context);
-                      },
-                      child: Text("Voucher Code"),
-                    ),
+                      )
+                    ],
+                    isSelected: _isSelected,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < _isSelected.length; i++) {
+                          _isSelected[i] = i == index;
+                        }
+                      });
+                    },
+                    color: Colors.black,
+                    selectedColor: Colors.orange.shade100,
+                    fillColor: Colors.blue.shade600,
+                    borderColor: Colors.blue.shade700,
+                    selectedBorderColor: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ],
               ),
-            ),
-            Divider(
-              color: Colors.black,
-              thickness: 2,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Select time period"),
-            ),
-            ToggleButtons(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Month"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Quarter"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Half"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Year"),
-                )
-              ],
-              isSelected: _isSelected,
-              onPressed: (int index) {
-                setState(() {
-                  for (int i = 0; i < _isSelected.length; i++) {
-                    _isSelected[i] = i == index;
-                  }
-                });
-              },
-              color: Colors.black,
-              selectedColor: Colors.orange.shade100,
-              fillColor: Colors.blue.shade600,
-              borderColor: Colors.blue.shade700,
-              selectedBorderColor: Colors.red,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             Expanded(
                 child: FutureBuilder(

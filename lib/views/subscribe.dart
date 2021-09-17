@@ -127,7 +127,7 @@ class _SubscribePageState extends State<SubscribePage>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue.shade300,
+          backgroundColor: Color(0xFF00A0C2),
           shadowColor: Colors.transparent,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_sharp),
@@ -140,7 +140,7 @@ class _SubscribePageState extends State<SubscribePage>
             Icon(Icons.more_vert),
           ],
         ),
-        backgroundColor: Colors.blue.shade200,
+        backgroundColor: Color(0xFF28BFDF),
         body: SingleChildScrollView(
           child: Column(
             children: [
