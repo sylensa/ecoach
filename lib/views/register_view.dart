@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/login_view.dart';
@@ -130,6 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 30,
                         ),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                               labelText: 'First Name and Last Name',
                               border: OutlineInputBorder()),
@@ -152,6 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 20,
                         ),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                               labelText: 'Email Address',
                               border: OutlineInputBorder()),
@@ -174,6 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 20,
                         ),
                         IntlPhoneField(
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                               labelText: 'Phone', border: OutlineInputBorder()),
                           onSaved: (value) {
@@ -185,6 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 20,
                         ),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           controller: passwordController,
                           decoration: InputDecoration(
                               labelText: 'Password',
@@ -206,6 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 20,
                         ),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                               labelText: 'Confirm Password',
                               border: OutlineInputBorder()),

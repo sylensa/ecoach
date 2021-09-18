@@ -83,24 +83,25 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Container(
-            height: screenHeightExcludingToolbar(context),
+            height: screenHeight(context),
             child: Center(
               child: Stack(children: [
                 Padding(
-                  padding: const EdgeInsets.all(40.0),
+                  padding: const EdgeInsets.fromLTRB(40, 20.0, 40, 20),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: 80,
+                          height: 50,
                         ),
                         Image(image: AssetImage("assets/images/adeo.png")),
                         SizedBox(
-                          height: 50,
+                          height: 40,
                         ),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                               labelText: 'Email or Phone',
                               border: OutlineInputBorder()),
@@ -124,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 25,
                         ),
                         TextFormField(
+                          style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                               labelText: 'Password',
                               border: OutlineInputBorder()),
@@ -152,7 +154,10 @@ class _LoginPageState extends State<LoginPage> {
                                             ForgotPasswordPage()),
                                   );
                                 },
-                                child: Text("Forgot Password?")),
+                                child: Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(),
+                                )),
                           ],
                         ),
                         SizedBox(
@@ -160,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(
                           width: double.infinity,
-                          height: 50,
+                          height: 40,
                           child: ElevatedButton(
                               style: greenButtonStyle,
                               onPressed: () {
