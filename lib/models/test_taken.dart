@@ -8,7 +8,7 @@ class TestTaken {
       this.testType,
       this.testId,
       this.testTime,
-      this.usedtime,
+      this.usedTime,
       this.pauseduration,
       required this.totalQuestions,
       this.score,
@@ -28,7 +28,7 @@ class TestTaken {
   String? testType;
   int? testId;
   int? testTime;
-  int? usedtime;
+  int? usedTime;
   int? pauseduration;
   int totalQuestions;
   double? score;
@@ -49,7 +49,7 @@ class TestTaken {
       testType: json["test_type"],
       testId: json["test_id"],
       testTime: json["test_time"],
-      usedtime: json["used_time"],
+      usedTime: json["used_time"],
       pauseduration: json["pause_duration"],
       totalQuestions: json["total_questions"],
       score: json["score"] != null ? double.parse("${json['score']}") : 0,
@@ -70,7 +70,7 @@ class TestTaken {
         "test_type": testType,
         "test_id": testId,
         "test_time": testTime,
-        "used_time": usedtime,
+        "used_time": usedTime,
         "pause_duration": pauseduration,
         "total_questions": totalQuestions,
         "score": score,

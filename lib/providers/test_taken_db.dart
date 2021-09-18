@@ -52,7 +52,7 @@ class TestTakenDB {
         userId: maps[i]["user_id"],
         datetime: maps[i]["date_time"],
         pauseduration: maps[i]["pause_duration"],
-        usedtime: maps[i]["used_time"],
+        usedTime: maps[i]["used_time"],
         testTime: maps[i]["test_time"],
         totalQuestions: maps[i]["total_questions"],
         score: maps[i]["score"],

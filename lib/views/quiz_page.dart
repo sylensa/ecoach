@@ -134,7 +134,7 @@ class _QuizViewState extends State<QuizView> {
         testname: "Test Diagnotic",
         testType: "diagnostic",
         testTime: duration.inSeconds,
-        usedtime: duration.inSeconds -
+        usedTime: duration.inSeconds -
             countdownTimerController.currentDuration.inSeconds,
         responses: responses,
         score: score,

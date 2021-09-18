@@ -52,7 +52,7 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                     getScoreWidget(widget.test.score! / 100),
                     getRankWidget(
                         widget.test.userRank!, widget.test.totalRank!),
-                    getTimeWidget(Duration(seconds: widget.test.testTime!))
+                    getTimeWidget(Duration(seconds: widget.test.usedTime ?? 0))
                   ],
                 ),
               ),
@@ -60,36 +60,38 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
             Expanded(
               child: Container(
                 color: Color(0xFF636363),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 30.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 140,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                              child: Text(
-                                "Topic",
-                                style: TextStyle(fontSize: 15),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 30.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 140,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                                child: Text(
+                                  "Topic",
+                                  style: TextStyle(fontSize: 15),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                              width: 120,
-                              child:
-                                  Text("Time", style: TextStyle(fontSize: 15))),
-                          Expanded(
-                              child: Text("Performance",
-                                  style: TextStyle(fontSize: 15))),
-                        ],
+                            SizedBox(
+                                width: 120,
+                                child: Text("Time",
+                                    style: TextStyle(fontSize: 15))),
+                            Expanded(
+                                child: Text("Performance",
+                                    style: TextStyle(fontSize: 15))),
+                          ],
+                        ),
                       ),
-                    ),
-                    for (int i = 0; i < analysisWidgets.length; i++)
-                      analysisWidgets[i],
-                  ],
+                      for (int i = 0; i < analysisWidgets.length; i++)
+                        analysisWidgets[i],
+                    ],
+                  ),
                 ),
               ),
             ),
