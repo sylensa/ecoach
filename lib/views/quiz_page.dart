@@ -234,26 +234,29 @@ class _QuizViewState extends State<QuizView> {
             right: 40,
             left: 0,
             child: Container(
-              child: Container(
-                child: Row(
-                  children: [
-                    for (int i = 0; i < widget.questions.length; i++)
-                      SelectText("${(i + 1)}", i == currentQuestion,
-                          normalSize: 28,
-                          selectedSize: 45,
-                          underlineSelected: true,
-                          selectedColor: Color(0xFFFD6363),
-                          color: Colors.white70, select: () {
-                        setState(() {
-                          currentQuestion = i;
-                        });
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  child: Row(
+                    children: [
+                      for (int i = 0; i < widget.questions.length; i++)
+                        SelectText("${(i + 1)}", i == currentQuestion,
+                            normalSize: 28,
+                            selectedSize: 45,
+                            underlineSelected: true,
+                            selectedColor: Color(0xFFFD6363),
+                            color: Colors.white70, select: () {
+                          setState(() {
+                            currentQuestion = i;
+                          });
 
-                        controller.jumpToPage(i);
-                        controller.animateToPage(i,
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.easeInBack);
-                      })
-                  ],
+                          controller.jumpToPage(i);
+                          controller.animateToPage(i,
+                              duration: Duration(milliseconds: 1000),
+                              curve: Curves.easeInBack);
+                        })
+                    ],
+                  ),
                 ),
               ),
             ),
