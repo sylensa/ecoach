@@ -1,23 +1,24 @@
 class TestTaken {
-  TestTaken({
-    this.id,
-    required this.userId,
-    this.datetime,
-    this.courseId,
-    this.testname,
-    this.testType,
-    this.testId,
-    this.testTime,
-    this.usedtime,
-    this.pauseduration,
-    required this.totalQuestions,
-    this.score,
-    this.correct,
-    this.wrong,
-    this.unattempted,
-    required this.responses,
-    this.comment,
-  });
+  TestTaken(
+      {this.id,
+      required this.userId,
+      this.datetime,
+      this.courseId,
+      this.testname,
+      this.testType,
+      this.testId,
+      this.testTime,
+      this.usedtime,
+      this.pauseduration,
+      required this.totalQuestions,
+      this.score,
+      this.correct,
+      this.wrong,
+      this.unattempted,
+      required this.responses,
+      this.comment,
+      this.userRank,
+      this.totalRank});
 
   int? id;
   int? userId;
@@ -36,26 +37,29 @@ class TestTaken {
   int? unattempted;
   String responses;
   String? comment;
+  int? userRank;
+  int? totalRank;
 
   factory TestTaken.fromJson(Map<String, dynamic> json) => TestTaken(
-        id: json["id"],
-        userId: json["user_id"],
-        datetime: DateTime.parse(json["date_time"]),
-        courseId: json["course_id"],
-        testname: json["test_name"],
-        testType: json["test_type"],
-        testId: json["test_id"],
-        testTime: json["test_time"],
-        usedtime: json["used_time"],
-        pauseduration: json["pause_duration"],
-        totalQuestions: json["total_questions"],
-        score: json["score"] != null ? double.parse("${json['score']}") : 0,
-        correct: json["correct"],
-        wrong: json["wrong"],
-        unattempted: json["unattempted"],
-        responses: json["responses"],
-        comment: json["comment"],
-      );
+      id: json["id"],
+      userId: json["user_id"],
+      datetime: DateTime.parse(json["date_time"]),
+      courseId: json["course_id"],
+      testname: json["test_name"],
+      testType: json["test_type"],
+      testId: json["test_id"],
+      testTime: json["test_time"],
+      usedtime: json["used_time"],
+      pauseduration: json["pause_duration"],
+      totalQuestions: json["total_questions"],
+      score: json["score"] != null ? double.parse("${json['score']}") : 0,
+      correct: json["correct"],
+      wrong: json["wrong"],
+      unattempted: json["unattempted"],
+      responses: json["responses"],
+      comment: json["comment"],
+      userRank: json['rank']['rank'],
+      totalRank: json['rank']['total']);
 
   Map<String, dynamic> toJson() => {
         "id": id,

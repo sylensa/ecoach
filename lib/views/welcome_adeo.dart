@@ -33,7 +33,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
     super.initState();
 
     SchedulerBinding.instance!.addPostFrameCallback((_) {
-      showLoaderDialog(context, message: "Loading initial data ...");
+      showLoaderDialog(context, message: "Loading Diagnostic data ...");
       getInitialData().then((data) {
         LevelDB().insertAll(data.data!.levels!);
         CourseDB().insertAll(data.data!.courses!);

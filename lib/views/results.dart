@@ -26,7 +26,7 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
     super.initState();
 
     print("test id = ${widget.test.id}");
-    TestController().topicsAnalysis(widget.test.id).then((mapList) {
+    TestController().topicsAnalysis(widget.test).then((mapList) {
       mapList.keys.forEach((key) {
         List<TestAnswer> answers = mapList[key]!;
         analysisWidgets.add(topicRow(TopicAnalysis(key, answers)));
@@ -50,7 +50,8 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     getScoreWidget(widget.test.score! / 100),
-                    getRankWidget(142, 305),
+                    getRankWidget(
+                        widget.test.userRank!, widget.test.totalRank!),
                     getTimeWidget(Duration(seconds: widget.test.testTime!))
                   ],
                 ),

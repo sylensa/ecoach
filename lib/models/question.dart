@@ -53,7 +53,7 @@ class Question {
   }
 
   bool get isCorrect {
-    return correctAnswer == selectedAnswer;
+    return correctAnswer != null && correctAnswer == selectedAnswer;
   }
 
   bool get isWrong {
