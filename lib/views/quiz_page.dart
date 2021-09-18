@@ -185,6 +185,9 @@ class _QuizViewState extends State<QuizView> {
       print(e);
     } finally {
       Navigator.pop(context);
+      if (savedTest) {
+        viewResults();
+      }
     }
   }
 
