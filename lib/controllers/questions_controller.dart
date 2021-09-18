@@ -16,10 +16,12 @@ class TestController {
     User? user = await UserPreferences().getUser();
     print(user!.token!);
     Map<String, dynamic> queryParams = {
-      'level_id': "${level.id}",
-      'course_id': "${course.id}",
-      'limit': jsonEncode(10)
+      'level_id': jsonEncode(level.id),
+      'course_id': jsonEncode(course.id),
+      'limit': jsonEncode(5)
     };
+    print(queryParams);
+    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
     http.Response response = await http.get(
       Uri.parse(
           AppUrl.questions + '?' + Uri(queryParameters: queryParams).query),

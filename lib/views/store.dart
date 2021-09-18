@@ -81,17 +81,13 @@ class _StorePageState extends State<StorePage> {
                 children: [
                   ToggleButtons(
                     children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Monthly"),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Monthly"),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Annually"),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Annually"),
                       )
                     ],
                     isSelected: _isSelected,
@@ -112,8 +108,7 @@ class _StorePageState extends State<StorePage> {
                 ],
               ),
             ),
-            Expanded(
-                child: FutureBuilder(
+            FutureBuilder(
               future: futurePlans,
               builder: (context, snapshot) {
                 print(snapshot.data);
@@ -231,7 +226,7 @@ class _StorePageState extends State<StorePage> {
                       return Container();
                 }
               },
-            )),
+            ),
           ],
         ),
       ),
