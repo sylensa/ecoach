@@ -201,7 +201,11 @@ class _QuizViewState extends State<QuizView> {
         builder: (BuildContext context) =>
             DiagnoticResultView(widget.user, test: testTakenSaved!),
       ),
-    );
+    ).then((value) {
+      controller.jumpToPage(0);
+      controller.animateToPage(0,
+          duration: Duration(milliseconds: 1000), curve: Curves.easeInBack);
+    });
   }
 
   @override
@@ -318,73 +322,90 @@ class _QuizViewState extends State<QuizView> {
             right: 0,
             left: 0,
             child: Container(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    if (currentQuestion > 0)
-                      TextButton(
-                        onPressed: () {
-                          controller.previousPage(
-                              duration: Duration(milliseconds: 200),
-                              curve: Curves.ease);
-                          setState(() {
-                            currentQuestion--;
-                          });
-                        },
-                        child: Text(
-                          "Previous",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
+              child: IntrinsicHeight(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (currentQuestion > 0)
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              controller.previousPage(
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.ease);
+                              setState(() {
+                                currentQuestion--;
+                              });
+                            },
+                            child: Text(
+                              "Previous",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    if (currentQuestion < widget.questions.length - 1)
-                      TextButton(
-                        onPressed: () {
-                          controller.nextPage(
-                              duration: Duration(milliseconds: 200),
-                              curve: Curves.ease);
-                          setState(() {
-                            currentQuestion++;
-                          });
-                        },
-                        child: Text(
-                          "Next",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 21,
+                      if (currentQuestion < widget.questions.length - 1)
+                        VerticalDivider(width: 2, color: Colors.white),
+                      if (currentQuestion < widget.questions.length - 1)
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              controller.nextPage(
+                                  duration: Duration(milliseconds: 200),
+                                  curve: Curves.ease);
+                              setState(() {
+                                currentQuestion++;
+                              });
+                            },
+                            child: Text(
+                              "Next",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 21,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    if (!savedTest &&
-                        currentQuestion == widget.questions.length - 1)
-                      TextButton(
-                        onPressed: () {
-                          completeQuiz();
-                        },
-                        child: Text(
-                          "Complete",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 21,
+                      if (!savedTest &&
+                          currentQuestion == widget.questions.length - 1)
+                        VerticalDivider(width: 2, color: Colors.white),
+                      if (!savedTest &&
+                          currentQuestion == widget.questions.length - 1)
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              completeQuiz();
+                            },
+                            child: Text(
+                              "Complete",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 21,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    if (savedTest)
-                      TextButton(
-                        onPressed: () {
-                          viewResults();
-                        },
-                        child: Text(
-                          "Results",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 21,
+                      if (savedTest)
+                        VerticalDivider(width: 2, color: Colors.white),
+                      if (savedTest)
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              viewResults();
+                            },
+                            child: Text(
+                              "Results",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 21,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                  ]),
+                    ]),
+              ),
             ),
           )
         ]),

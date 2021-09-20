@@ -96,26 +96,48 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
               ),
             ),
             Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(11.0),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push<void>(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (BuildContext context) =>
-                                StorePage(widget.user),
-                          ),
-                        );
-                      },
-                      child: Text("Buy Subscription",
-                          style: TextStyle(color: Colors.white, fontSize: 25)),
+              child: IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(11.0),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Review",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 25)),
+                        ),
+                      ),
                     ),
-                  )
-                ],
+                    VerticalDivider(
+                      width: 2,
+                      color: Colors.white,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(11.0),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push<void>(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    StorePage(widget.user),
+                              ),
+                            );
+                          },
+                          child: Text("Store",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 25)),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             )
           ],
