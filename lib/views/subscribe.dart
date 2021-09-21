@@ -64,7 +64,11 @@ class _SubscribePageState extends State<SubscribePage>
       http.Response response = await http.post(
         Uri.parse(AppUrl.payment_initialize),
         body: json.encode(paymentData),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'api-token': widget.user.token!
+        },
       );
 
       final Map<String, dynamic> responseData = json.decode(response.body);

@@ -202,9 +202,9 @@ class _QuizViewState extends State<QuizView> {
             DiagnoticResultView(widget.user, test: testTakenSaved!),
       ),
     ).then((value) {
-      controller.jumpToPage(0);
-      controller.animateToPage(0,
-          duration: Duration(milliseconds: 1000), curve: Curves.easeInBack);
+      setState(() {
+        currentQuestion = 0;
+      });
     });
   }
 
