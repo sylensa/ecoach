@@ -10,6 +10,7 @@ import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/level_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -413,8 +414,8 @@ class _SelectCourseState extends State<SelectCourse> {
     super.initState();
   }
 
-  getCourses() {
-    return CourseDB().courses();
+  getCourses(int levelId) async {
+    return await CourseDB().levelCourses(levelId);
   }
 
   @override
@@ -516,7 +517,8 @@ class _SelectCourseState extends State<SelectCourse> {
                                                   setState(() {
                                                     selectedLevel = levels[i];
                                                   });
-                                                  futureCourses = getCourses();
+                                                  futureCourses =
+                                                      getCourses(levels[i].id!);
                                                 }),
                                             ],
                                           ),
@@ -598,7 +600,7 @@ class _SelectCourseState extends State<SelectCourse> {
                       Navigator.pop(context);
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return QuizView(widget.user, apiResponse.data,
+                        return QuizCover(widget.user, apiResponse.data,
                             level: selectedLevel!, course: selectedCourse!);
                       }));
                     });

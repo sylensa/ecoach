@@ -20,7 +20,7 @@ class DBProvider {
 
   static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "ecoach9.db");
+    String path = join(documentsDirectory.path, "ecoach11.db");
     return await openDatabase(path, version: 8, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
@@ -145,6 +145,17 @@ class DBProvider {
           type TEXT,
           created_at TEXT
           )""");
+
+      await db.execute("""
+            CREATE TABLE courses_levels (
+              id INTEGER PRIMARY KEY, 
+              course_id INTEGER NOT NULL,
+              level_id INTEGER NOT NULL,
+              FOREIGN KEY (course_id) REFERENCES courses (id) 
+                ON DELETE NO ACTION ON UPDATE NO ACTION,
+              FOREIGN KEY (level_id) REFERENCES levels (id) 
+                ON DELETE NO ACTION ON UPDATE NO ACTION
+            )""");
     }, onUpgrade: (db, oldVersion, newVersion) {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table

@@ -1,23 +1,23 @@
+import 'level.dart';
+
 class Course {
-  Course({
-    this.id,
-    this.packageCode,
-    this.courseId,
-    this.name,
-    this.description,
-    this.category,
-    this.author,
-    this.time,
-    this.createdAt,
-    this.updatedAt,
-    this.confirmed,
-    this.public,
-    this.n,
-    this.p,
-    this.editors,
-    this.levelId,
-    this.subjectId,
-  });
+  Course(
+      {this.id,
+      this.packageCode,
+      this.courseId,
+      this.name,
+      this.description,
+      this.category,
+      this.author,
+      this.time,
+      this.createdAt,
+      this.updatedAt,
+      this.confirmed,
+      this.public,
+      this.n,
+      this.p,
+      this.editors,
+      this.levels});
 
   int? id;
   String? packageCode;
@@ -34,8 +34,7 @@ class Course {
   int? n;
   int? p;
   String? editors;
-  int? levelId;
-  int? subjectId;
+  List<Level>? levels;
 
   factory Course.fromJson(Map<String, dynamic> json) => Course(
         id: json["id"],
@@ -53,8 +52,9 @@ class Course {
         n: json["N"],
         p: json["p"],
         editors: json["editors"],
-        levelId: json["level_id"],
-        subjectId: json["subject_id"],
+        levels: json["levels"] == null
+            ? []
+            : List<Level>.from(json["levels"].map((x) => Level.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -73,6 +73,5 @@ class Course {
         "N": n,
         "p": p,
         "editors": editors,
-        "level_id": levelId,
       };
 }

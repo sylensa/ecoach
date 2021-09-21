@@ -83,7 +83,10 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               Container(
                 color: Color(0xFF595959),
               ),
-            if (!widget.enabled)
+            if (!widget.enabled &&
+                selectedAnswer != null &&
+                selectedAnswer!.solution != null &&
+                selectedAnswer!.solution != "")
               Container(
                 child: Column(
                   children: [
@@ -100,24 +103,27 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         ),
                       ),
                     ),
-                    Container(
-                      color: Colors.orange,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
-                          child: Html(
-                              data: selectedAnswer != null
-                                  ? selectedAnswer!.solution!
-                                  : "----",
-                              style: {
-                                // tables will have the below background color
-                                "body": Style(
-                                  color: Colors.white,
-                                ),
-                              }),
+                    if (selectedAnswer != null &&
+                        selectedAnswer!.solution != null &&
+                        selectedAnswer!.solution != "")
+                      Container(
+                        color: Colors.orange,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
+                            child: Html(
+                                data: selectedAnswer != null
+                                    ? selectedAnswer!.solution!
+                                    : "----",
+                                style: {
+                                  // tables will have the below background color
+                                  "body": Style(
+                                    color: Colors.white,
+                                  ),
+                                }),
+                          ),
                         ),
-                      ),
-                    )
+                      )
                   ],
                 ),
               ),
@@ -130,7 +136,8 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         widget.question.selectedAnswer == answers![i],
                         normalSize: 15,
                         selectedSize: widget.enabled ? 48 : 24,
-                        imposedSize: selectedAnswer == null ||
+                        imposedSize: widget.enabled ||
+                                selectedAnswer == null ||
                                 selectedAnswer != answers![i] &&
                                     answers![i].value == 0
                             ? null
@@ -138,7 +145,8 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                                     selectedAnswer!.value == 0
                                 ? 24
                                 : 48,
-                        imposedColor: selectedAnswer == null ||
+                        imposedColor: widget.enabled ||
+                                selectedAnswer == null ||
                                 selectedAnswer != answers![i] &&
                                     answers![i].value == 0
                             ? null
