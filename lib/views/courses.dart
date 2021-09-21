@@ -1,6 +1,4 @@
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/courses/course_card.dart';
 import 'package:flutter/material.dart';
 
