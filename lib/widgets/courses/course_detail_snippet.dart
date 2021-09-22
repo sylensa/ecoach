@@ -1,3 +1,4 @@
+import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -5,10 +6,12 @@ class CourseDetailSnippet extends StatelessWidget {
   CourseDetailSnippet({
     this.label = 'Label',
     required this.content,
+    required this.background,
   });
 
   final String label;
   final Widget content;
+  final Color background;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class CourseDetailSnippet extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.only(left: 20.0),
-            color: kCourseCardOverlayColor,
+            color: darken(background, 20),
             width: 140.0,
             height: 40.0,
             child: Column(

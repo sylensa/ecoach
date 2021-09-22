@@ -43,7 +43,7 @@ class LearnerRank extends StatelessWidget {
           ),
         ),
         Image.asset(
-          'assets/images/success.png',
+          'assets/icons/success.png',
           width: 28,
         ),
       ],
