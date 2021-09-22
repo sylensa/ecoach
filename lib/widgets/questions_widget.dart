@@ -58,15 +58,14 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               ),
             ),
             Container(
-              width: double.infinity,
               color: Color(0xFF00C664),
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(35, 4, 35, 4),
+                  padding: EdgeInsets.fromLTRB(80, 4, 80, 4),
                   child: widget.question.instructions != null &&
                           widget.question.instructions!.isNotEmpty
                       ? Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 8.0, 20, 8),
+                          padding: const EdgeInsets.fromLTRB(40, 8.0, 40, 8),
                           child: Text(
                             widget.question.instructions!,
                             style: TextStyle(

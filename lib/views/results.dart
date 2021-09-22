@@ -197,13 +197,17 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
             children: [
               Positioned(
                   top: 15,
-                  left: 10,
-                  child: Text(
-                    "$position",
-                    style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.black26,
-                        fontWeight: FontWeight.bold),
+                  left: -10,
+                  child: SizedBox(
+                    width: 70,
+                    child: Text(
+                      "$position",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          fontSize: 30,
+                          color: Colors.black26,
+                          fontWeight: FontWeight.bold),
+                    ),
                   )),
               Positioned(
                   top: 0,
