@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
           textTheme: Theme.of(context).textTheme.apply(
                 bodyColor: Colors.white,
                 displayColor: Colors.white,
+                fontFamily: 'Poppins',
               )),
       home: FutureBuilder(
           future: UserPreferences().getUser(),
