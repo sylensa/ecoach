@@ -204,6 +204,7 @@ class _QuizViewState extends State<QuizView> {
     ).then((value) {
       setState(() {
         currentQuestion = 0;
+        controller.jumpToPage(currentQuestion);
       });
     });
   }
