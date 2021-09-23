@@ -6,6 +6,7 @@ import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/store_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/select_tile.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -56,6 +57,7 @@ class _SubscribePageState extends State<SubscribePage>
         'email': email,
         'phone': widget.user.phone,
         'amount': amount,
+        "plan_id": widget.plan.id,
         'metadata':
             json.encode("{purpose: buying book, description: I want to learn}"),
       };
@@ -114,6 +116,11 @@ class _SubscribePageState extends State<SubscribePage>
               Navigator.of(context).pop(); //close webview
 
               setState(() {});
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MainHomePage(widget.user)),
+                  (Route<dynamic> route) => false);
             }
             return NavigationDecision.navigate;
           },
@@ -334,7 +341,7 @@ class _SubscribePageState extends State<SubscribePage>
                                                   },
                                                   child: Text("Copy")),
                                             ),
-                                            Spacer()
+                                            // Spacer()
                                           ],
                                         ),
                                       ),
