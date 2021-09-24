@@ -52,7 +52,7 @@ class QuizCover extends StatelessWidget {
                               fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(
-                      width: 120,
+                      width: 140,
                       child: Text(":Diagnostic",
                           style: TextStyle(
                               fontSize: 22,
@@ -76,7 +76,7 @@ class QuizCover extends StatelessWidget {
                               fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(
-                      width: 120,
+                      width: 140,
                       child: Text(":${questions.length}",
                           style: TextStyle(
                               fontSize: 22,
@@ -100,7 +100,7 @@ class QuizCover extends StatelessWidget {
                               fontWeight: FontWeight.bold)),
                     ),
                     SizedBox(
-                      width: 120,
+                      width: 140,
                       child: Text(":40 mins",
                           style: TextStyle(
                               fontSize: 22,

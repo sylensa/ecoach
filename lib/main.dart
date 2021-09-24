@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
                     return OTPView(user);
                   }
                   print('is user subscribed to a bundle');
-                  if (user.subscriptions.length == 0) {
+                  if (user.subscriptions.length == 1) {
                     return WelcomeAdeo(user);
                   }
                   print('lets go home');
