@@ -40,22 +40,19 @@ class MyApp extends StatelessWidget {
               case ConnectionState.waiting:
                 return CircularProgressIndicator();
               default:
-                print('its default');
                 if (snapshot.hasError) {
-                  print('user is wrong');
                   return Text("${snapshot.error}");
                 } else if (snapshot.data != null) {
-                  print('data is not null');
                   User user = snapshot.data as User;
-                  print('is user activated');
+
                   if (!user.activated) {
                     return OTPView(user);
                   }
-                  print('is user subscribed to a bundle');
-                  if (user.subscriptions.length == 1) {
+
+                  if (user.subscriptions.length == 0) {
                     return WelcomeAdeo(user);
                   }
-                  print('lets go home');
+
                   return MainHomePage(user);
                 } else if (snapshot.data == null) {
                   return LoginPage();

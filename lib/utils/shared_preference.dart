@@ -32,7 +32,7 @@ class UserPreferences {
     print("shared pref: token=$token");
     if (id == null) return null;
 
-    return User(
+    User user = User(
         id: id,
         fname: fname,
         lname: lname,
@@ -40,6 +40,8 @@ class UserPreferences {
         phone: phone,
         token: token,
         activated: activated);
+
+    return user;
   }
 
   void removeUser() async {
