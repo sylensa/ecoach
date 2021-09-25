@@ -49,14 +49,14 @@ class _HomePageState extends State<HomePage> {
       });
     }
 
-    getSubscriptions().then((api) {
-      List<Subscription> subscriptions = api!.data as List<Subscription>;
-      SubscriptionDB().insertAll(subscriptions);
+    // getSubscriptions().then((api) {
+    //   List<Subscription> subscriptions = api!.data as List<Subscription>;
+    //   SubscriptionDB().insertAll(subscriptions);
 
-      setState(() {
-        futureSubs = SubscriptionDB().subscriptions();
-      });
-    });
+    //   setState(() {
+    //     futureSubs = SubscriptionDB().subscriptions();
+    //   });
+    // });
   }
 
   Future<ApiResponse<Subscription>?> getSubscriptions() async {
@@ -144,19 +144,18 @@ class _HomePageState extends State<HomePage> {
                                 return NoSubWidget(
                                     widget.user, widget.callback);
                               case ConnectionState.waiting:
-                                return CircularProgressIndicator();
+                                return Center(
+                                    child: CircularProgressIndicator());
                               default:
                                 if (snapshot.hasError)
                                   return Text('Error: ${snapshot.error}');
                                 else if (snapshot.data != null) {
-                                  ApiResponse<Subscription>? apiResponse =
-                                      snapshot.data
-                                          as ApiResponse<Subscription>?;
-                                  List<Subscription>? items = apiResponse!.data;
+                                  List<Subscription> items =
+                                      snapshot.data as List<Subscription>;
 
                                   return ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: items!.length,
+                                    itemCount: items.length,
                                     itemBuilder: (context, index) {
                                       final item = items[index];
                                       return ListTile(
