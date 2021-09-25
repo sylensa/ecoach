@@ -5,8 +5,10 @@ import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/subscription_db.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,20 +45,23 @@ class _HomePageState extends State<HomePage> {
         }
       });
       if (active == 0) {}
+      setState(() {
+        futureSubs = TestTakenDB().testsTaken();
+      });
     } else {
       setState(() {
         futureSubs = null;
       });
     }
 
-    // getSubscriptions().then((api) {
-    //   List<Subscription> subscriptions = api!.data as List<Subscription>;
-    //   SubscriptionDB().insertAll(subscriptions);
+    getSubscriptions().then((api) {
+      List<Subscription> subscriptions = api!.data as List<Subscription>;
+      SubscriptionDB().insertAll(subscriptions);
 
-    //   setState(() {
-    //     futureSubs = SubscriptionDB().subscriptions();
-    //   });
-    // });
+      // setState(() {
+      //   futureSubs = SubscriptionDB().subscriptions();
+      // });
+    });
   }
 
   Future<ApiResponse<Subscription>?> getSubscriptions() async {
@@ -150,8 +155,8 @@ class _HomePageState extends State<HomePage> {
                                 if (snapshot.hasError)
                                   return Text('Error: ${snapshot.error}');
                                 else if (snapshot.data != null) {
-                                  List<Subscription> items =
-                                      snapshot.data as List<Subscription>;
+                                  List<TestTaken> items =
+                                      snapshot.data as List<TestTaken>;
 
                                   return ListView.builder(
                                     shrinkWrap: true,
@@ -159,10 +164,10 @@ class _HomePageState extends State<HomePage> {
                                     itemBuilder: (context, index) {
                                       final item = items[index];
                                       return ListTile(
-                                        title: Text('question $index',
+                                        title: Text(item.testname ?? "no name",
                                             style:
                                                 TextStyle(color: Colors.black)),
-                                        subtitle: Text("question name",
+                                        subtitle: Text("${item.totalQuestions}",
                                             style:
                                                 TextStyle(color: Colors.black)),
                                       );
