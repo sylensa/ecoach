@@ -1,10 +1,17 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/subscription_db.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
@@ -17,17 +24,78 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    //AuthController authController = Get.find<AuthController>();
+  var futureSubs;
 
-    Future<List<Question>?> getUserData() async {
-      // List<Question> questions = await DBProvider.db.questions(user);
-      //user.addQuestions(questions);
-      // return questions;
-      return null;
+  @override
+  void initState() {
+    super.initState();
+    checkSubscription();
+  }
+
+  checkSubscription() {
+    List<Subscription> subscriptions = widget.user.subscriptions;
+
+    if (subscriptions.length > 0) {
+      int active = 0;
+      subscriptions.forEach((subscription) {
+        if (subscription.endsAt!.isBefore(DateTime.now())) {
+          active++;
+        }
+      });
+      if (active == 0) {}
+    } else {
+      setState(() {
+        futureSubs = null;
+      });
     }
 
+    getSubscriptions().then((api) {
+      List<Subscription> subscriptions = api!.data as List<Subscription>;
+      SubscriptionDB().insertAll(subscriptions);
+
+      setState(() {
+        futureSubs = SubscriptionDB().subscriptions();
+      });
+    });
+  }
+
+  Future<ApiResponse<Subscription>?> getSubscriptions() async {
+    Map<String, dynamic> queryParams = {};
+    print(queryParams);
+    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    http.Response response = await http.get(
+      Uri.parse(
+          AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': widget.user.token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      // print(responseData);
+      if (responseData["status"] == true) {
+        print("messages returned");
+        print(response.body);
+
+        return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
+          print("it's fine here");
+          return Subscription.fromJson(dataItem);
+        });
+      } else {
+        print("not successful event");
+      }
+    } else {
+      print("Failed ....");
+      print(response.statusCode);
+      print(response.body);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -69,30 +137,35 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Container(
                       child: FutureBuilder(
-                          future: getUserData(),
+                          future: futureSubs,
                           builder: (context, snapshot) {
                             switch (snapshot.connectionState) {
                               case ConnectionState.none:
+                                return NoSubWidget(
+                                    widget.user, widget.callback);
                               case ConnectionState.waiting:
                                 return CircularProgressIndicator();
                               default:
                                 if (snapshot.hasError)
                                   return Text('Error: ${snapshot.error}');
                                 else if (snapshot.data != null) {
-                                  List<Question>? items =
-                                      snapshot.data as List<Question>?;
+                                  ApiResponse<Subscription>? apiResponse =
+                                      snapshot.data
+                                          as ApiResponse<Subscription>?;
+                                  List<Subscription>? items = apiResponse!.data;
 
                                   return ListView.builder(
-                                    // Let the ListView know how many items it needs to build.
+                                    shrinkWrap: true,
                                     itemCount: items!.length,
-                                    // Provide a builder function. This is where the magic happens.
-                                    // Convert each item into a widget based on the type of item it is.
                                     itemBuilder: (context, index) {
                                       final item = items[index];
-
                                       return ListTile(
-                                        title: Text('question $index'),
-                                        subtitle: Text("question name"),
+                                        title: Text('question $index',
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        subtitle: Text("question name",
+                                            style:
+                                                TextStyle(color: Colors.black)),
                                       );
                                     },
                                   );

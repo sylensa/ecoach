@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
                     return OTPView(user);
                   }
 
-                  if (user.subscriptions.length == 0) {
+                  if (user.subscriptions.length == 0 && !user.hasTakenTest) {
                     return WelcomeAdeo(user);
                   }
 

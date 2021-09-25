@@ -20,7 +20,7 @@ class DBProvider {
 
   static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "ecoach11.db");
+    String path = join(documentsDirectory.path, "ecoach12.db");
     return await openDatabase(path, version: 8, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
@@ -97,8 +97,7 @@ class DBProvider {
         'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
         'tier' mediumint unsigned NOT NULL DEFAULT '0',
         'created_at' timestamp NULL DEFAULT NULL,
-        'updated_at' timestamp NULL DEFAULT NULL,
-        'deleted_at' timestamp NULL DEFAULT NULL
+        'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'answers' (
@@ -113,6 +112,28 @@ class DBProvider {
         'responses' int NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
         'editors' varchar(128) NOT NULL DEFAULT '[]'
+      )""");
+
+      await db.execute("""CREATE TABLE 'subscriptions' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255) NOT NULL,
+        'subscriber_type' varchar(255) NOT NULL,
+        'subscriber_id' bigint unsigned NOT NULL,
+        'plan_id' int unsigned DEFAULT NULL,
+        'name' varchar(255) DEFAULT NULL,
+        'description' varchar(255) DEFAULT NULL,
+        'price' decimal(8,2) NOT NULL DEFAULT '0.00',
+        'currency' varchar(3) NOT NULL,
+        'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
+        'invoice_interval' varchar(255) NOT NULL DEFAULT 'month',
+        'tier' mediumint unsigned NOT NULL DEFAULT '0',
+        'trial_ends_at' timestamp NULL DEFAULT NULL,
+        'starts_at' timestamp NULL DEFAULT NULL,
+        'ends_at' timestamp NULL DEFAULT NULL,
+        'cancels_at' timestamp NULL DEFAULT NULL,
+        'canceled_at' timestamp NULL DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
       )""");
 
       await db.execute("""CREATE TABLE 'tests_taken' (

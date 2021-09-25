@@ -1,4 +1,9 @@
+import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/subscription_db.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
@@ -40,6 +45,10 @@ class UserPreferences {
         phone: phone,
         token: token,
         activated: activated);
+    List<Subscription> plans = await SubscriptionDB().subscriptions();
+    user.subscriptions = plans;
+    List<TestTaken> tests = await TestTakenDB().testsTaken();
+    user.hasTakenTest = tests.length > 0 ? true : false;
 
     return user;
   }

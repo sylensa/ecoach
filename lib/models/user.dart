@@ -1,3 +1,5 @@
+import 'package:ecoach/models/plan.dart';
+
 import 'subscription.dart';
 
 class User {
@@ -19,6 +21,7 @@ class User {
 
   Wallet wallet = Wallet();
   List<Subscription> subscriptions = [];
+  bool hasTakenTest = false;
 
   User(
       {this.id,
