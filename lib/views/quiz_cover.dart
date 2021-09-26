@@ -44,7 +44,7 @@ class QuizCover extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 110,
+                      width: 130,
                       child: Text("Test Type",
                           style: TextStyle(
                               fontSize: 22,
@@ -68,7 +68,7 @@ class QuizCover extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 110,
+                      width: 130,
                       child: Text("Questions",
                           style: TextStyle(
                               fontSize: 22,
@@ -92,7 +92,7 @@ class QuizCover extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 110,
+                      width: 130,
                       child: Text("Time",
                           style: TextStyle(
                               fontSize: 22,
