@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/providers/database.dart';
+import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SubscriptionDB {
@@ -34,6 +36,18 @@ class SubscriptionDB {
         element.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      List<SubscriptionItem> items = element.subscriptionItems!;
+      if (items.length > 0) {
+        items.forEach((item) {
+          print({'plan id': element.planId, 'item_id': item.id});
+          db.delete(
+            'subscription_items',
+            where: "plan_id = ?",
+            whereArgs: [element.planId],
+          );
+          SubscriptionItemDB().insert(item);
+        });
+      }
     });
 
     await batch.commit(noResult: true);

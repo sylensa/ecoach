@@ -1,25 +1,27 @@
+import 'subscription_item.dart';
+
 class Subscription {
-  Subscription({
-    this.id,
-    this.tag,
-    this.subscriberType,
-    this.subscriberId,
-    this.planId,
-    this.name,
-    this.description,
-    this.price,
-    this.currency,
-    this.invoicePeriod,
-    this.invoiceInterval,
-    this.tier,
-    this.trialEndsAt,
-    this.startsAt,
-    this.endsAt,
-    this.cancelsAt,
-    this.canceledAt,
-    this.createdAt,
-    this.updatedAt,
-  });
+  Subscription(
+      {this.id,
+      this.tag,
+      this.subscriberType,
+      this.subscriberId,
+      this.planId,
+      this.name,
+      this.description,
+      this.price,
+      this.currency,
+      this.invoicePeriod,
+      this.invoiceInterval,
+      this.tier,
+      this.trialEndsAt,
+      this.startsAt,
+      this.endsAt,
+      this.cancelsAt,
+      this.canceledAt,
+      this.createdAt,
+      this.updatedAt,
+      this.subscriptionItems});
 
   int? id;
   String? tag;
@@ -40,6 +42,7 @@ class Subscription {
   String? canceledAt;
   DateTime? createdAt;
   DateTime? updatedAt;
+  List<SubscriptionItem>? subscriptionItems;
 
   factory Subscription.fromJson(Map<String, dynamic> json) => Subscription(
         id: json["id"],
@@ -61,6 +64,10 @@ class Subscription {
         canceledAt: json["canceled_at"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        subscriptionItems: json["features"] == null
+            ? []
+            : List<SubscriptionItem>.from(
+                json["features"].map((x) => SubscriptionItem.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
