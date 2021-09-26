@@ -36,7 +36,7 @@ class _MainHomePageState extends State<MainHomePage> {
           tapping(2);
         },
       ),
-      CoursesPage(),
+      CoursesPage(widget.user),
       StorePage(widget.user),
       FriendsView(),
       MoreView(),
