@@ -1,4 +1,5 @@
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:flutter/material.dart';
 
 import 'course_module.dart';
@@ -15,7 +16,6 @@ class CourseDetail extends CourseModule {
     this.subtitle2,
     required this.subGraphicsIsIcon,
     this.subGraphics,
-    required this.onTap,
   }) : super(
           title: title,
           background: background,
@@ -29,7 +29,6 @@ class CourseDetail extends CourseModule {
   final String? subtitle2;
   final bool subGraphicsIsIcon;
   final dynamic subGraphics;
-  final Function onTap;
 }
 
 List<CourseDetail> courseDetails = [
@@ -44,7 +43,6 @@ List<CourseDetail> courseDetails = [
     subtitle2: 'Pressure',
     subGraphicsIsIcon: true,
     subGraphics: Icons.play_arrow_sharp,
-    onTap: () {},
   ),
   CourseDetail(
     title: 'Density',
@@ -55,7 +53,6 @@ List<CourseDetail> courseDetails = [
     iconLabel: 'Notes',
     subGraphicsIsIcon: true,
     subGraphics: Icons.pause,
-    onTap: () {},
   ),
   CourseDetail(
     title: 'BECE 2020',
@@ -67,7 +64,6 @@ List<CourseDetail> courseDetails = [
     subtitle1: 'Rank: 105th',
     subGraphicsIsIcon: false,
     subGraphics: 'reload.png',
-    onTap: () {},
   ),
   CourseDetail(
     title: 'Challenge',
@@ -79,7 +75,6 @@ List<CourseDetail> courseDetails = [
     subtitle1: 'Rank: 5th',
     subGraphicsIsIcon: false,
     subGraphics: 'challenge.png',
-    onTap: () {},
   ),
   CourseDetail(
     title: 'LeaderBoard',
@@ -91,6 +86,5 @@ List<CourseDetail> courseDetails = [
     subtitle1: 'Rank: 2nd',
     subGraphicsIsIcon: false,
     subGraphics: 'leaderboard.png',
-    onTap: () {},
   )
 ];

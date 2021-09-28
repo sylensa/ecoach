@@ -90,14 +90,25 @@ class TestController {
   }
 
   fromMap(Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
-    print("inside fromMap");
     List<TestAnswer> data = [];
     json.forEach((k, v) {
       print(k);
       data.add(create(v));
     });
-    print("checking data");
+
     print(data);
     return data;
   }
+
+  getMockTests(Course course) {}
+
+  getExamTests(Course course) {}
+
+  getTopics(Course course) {}
+
+  getEssays(Course course) {}
+
+  getSavedTests(Course course) {}
+
+  getBankTest(Course course) {}
 }

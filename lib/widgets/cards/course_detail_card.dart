@@ -9,14 +9,15 @@ import 'package:ecoach/widgets/courses/vertical_captioned_image.dart';
 import 'package:flutter/material.dart';
 
 class CourseDetailCard extends StatelessWidget {
-  const CourseDetailCard({required this.courseDetail});
+  const CourseDetailCard({required this.courseDetail, this.onTap});
 
   final CourseDetail courseDetail;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: courseDetail.onTap(),
+      onTap: this.onTap,
       child: Container(
         margin: EdgeInsets.only(bottom: 16.0),
         decoration: BoxDecoration(

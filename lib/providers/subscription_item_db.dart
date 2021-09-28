@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ecoach/models/subscription_item.dart';
+import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -15,6 +16,9 @@ class SubscriptionItemDB {
       subscriptionItem.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    if (subscriptionItem.course != null) {
+      CourseDB().insert(subscriptionItem.course!);
+    }
   }
 
   Future<SubscriptionItem?> getMessageById(int id) async {
@@ -47,8 +51,9 @@ class SubscriptionItemDB {
         where: "plan_id = ?",
         whereArgs: [planId]);
 
-    return List.generate(maps.length, (i) {
-      return SubscriptionItem(
+    List<SubscriptionItem> items = [];
+    for (int i = 0; i < maps.length; i++) {
+      items.add(SubscriptionItem(
         id: maps[i]["id"],
         tag: maps[i]["tag"],
         name: maps[i]["name"],
@@ -60,8 +65,10 @@ class SubscriptionItemDB {
         resettablePeriod: maps[i]["resettable_period"],
         createdAt: DateTime.parse(maps[i]["created_at"]),
         updatedAt: DateTime.parse(maps[i]["updated_at"]),
-      );
-    });
+        course: await CourseDB().getCourseById(int.parse(maps[i]['tag'])),
+      ));
+    }
+    return items;
   }
 
   Future<void> update(SubscriptionItem subscriptionItem) async {

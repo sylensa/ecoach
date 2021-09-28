@@ -2,7 +2,8 @@
  *
  */
 
-import 'package:ecoach/models/ui/course.dart';
+import 'package:ecoach/models/ui/course_info.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
@@ -14,8 +15,9 @@ import 'package:ecoach/widgets/courses/learner_rank.dart';
 import 'package:ecoach/widgets/courses/linear_percent_indicator_wrapper.dart';
 
 class CourseCard extends StatefulWidget {
-  const CourseCard({required this.course});
-  final Course course;
+  const CourseCard(this.user, {required this.courseInfo});
+  final CourseInfo courseInfo;
+  final User user;
 
   @override
   _CourseCardState createState() => _CourseCardState();
@@ -31,18 +33,19 @@ class _CourseCardState extends State<CourseCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CourseDetailsPage(course: widget.course),
+            builder: (context) =>
+                CourseDetailsPage(widget.user, courseInfo: widget.courseInfo),
           ),
         );
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 16.0),
         decoration: BoxDecoration(
-          color: widget.course.background,
+          color: widget.courseInfo.background,
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: darken(widget.course.background, 10),
+              color: darken(widget.courseInfo.background, 10),
               offset: Offset(0, 2),
             )
           ],
@@ -58,7 +61,7 @@ class _CourseCardState extends State<CourseCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   VerticalCaptionedImage(
-                      imageUrl: 'assets/icons/${widget.course.icon}'),
+                      imageUrl: 'assets/icons/${widget.courseInfo.icon}'),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -66,7 +69,7 @@ class _CourseCardState extends State<CourseCard> {
                         horizontal: 16.0,
                       ),
                       child: Text(
-                        kCapitalizeString(widget.course.title),
+                        kCapitalizeString(widget.courseInfo.title),
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -84,8 +87,8 @@ class _CourseCardState extends State<CourseCard> {
                     ),
                   ),
                   CircularProgressIndicatorWrapper(
-                    progress: widget.course.progress,
-                    progressColor: widget.course.progressColor,
+                    progress: widget.courseInfo.progress,
+                    progressColor: widget.courseInfo.progressColor,
                     onTap: () {
                       setState(() {
                         isExpanded = !isExpanded;
@@ -98,7 +101,7 @@ class _CourseCardState extends State<CourseCard> {
             if (isExpanded)
               Container(
                 decoration: BoxDecoration(
-                  color: darken(widget.course.background, 10),
+                  color: darken(widget.courseInfo.background, 10),
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(8.0),
                     bottomRight: Radius.circular(8.0),
@@ -107,41 +110,43 @@ class _CourseCardState extends State<CourseCard> {
                 child: Column(
                   children: [
                     CourseDetailSnippet(
-                      background: widget.course.background,
+                      background: widget.courseInfo.background,
                       label: 'Rank',
                       content: LearnerRank(
-                        position: widget.course.rank['position'],
-                        numberOnRoll: widget.course.rank['numberOnRoll'],
+                        position: widget.courseInfo.rank['position'],
+                        numberOnRoll: widget.courseInfo.rank['numberOnRoll'],
                       ),
                     ),
                     CourseDetailSnippet(
-                      background: widget.course.background,
+                      background: widget.courseInfo.background,
                       label: 'Tests',
                       content: LinearPercentIndicatorWrapper(
-                        percent: widget.course.tests['testsTaken'] /
-                            widget.course.tests['totalNumberOfTests'],
-                        label: widget.course.tests['testsTaken'].toString() +
-                            '/' +
-                            widget.course.tests['totalNumberOfTests']
-                                .toString(),
+                        percent: widget.courseInfo.tests['testsTaken'] /
+                            widget.courseInfo.tests['totalNumberOfTests'],
+                        label:
+                            widget.courseInfo.tests['testsTaken'].toString() +
+                                '/' +
+                                widget.courseInfo.tests['totalNumberOfTests']
+                                    .toString(),
                         progressColor: kProgressColors[0],
                       ),
                     ),
                     CourseDetailSnippet(
-                      background: widget.course.background,
+                      background: widget.courseInfo.background,
                       label: 'Total Points',
                       content: LinearPercentIndicatorWrapper(
-                        label: widget.course.totalPoints.toString(),
-                        percent: widget.course.totalPoints.toDouble() * 0.0001,
+                        label: widget.courseInfo.totalPoints.toString(),
+                        percent:
+                            widget.courseInfo.totalPoints.toDouble() * 0.0001,
                         progressColor: kProgressColors[1],
                       ),
                     ),
                     CourseDetailSnippet(
-                      background: widget.course.background,
+                      background: widget.courseInfo.background,
                       label: 'Times',
                       content: LinearPercentIndicatorWrapper(
-                        label: widget.course.times.toString(),
-                        percent: widget.course.times.toDouble() * 0.001,
+                        label: widget.courseInfo.times.toString(),
+                        percent: widget.courseInfo.times.toDouble() * 0.001,
                         progressColor: kProgressColors[2],
                       ),
                     )

@@ -150,6 +150,26 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
+      await db.execute("""CREATE TABLE 'quizzes' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'testID' varchar(50) DEFAULT '0000000000',
+        'type' varchar(20) NOT NULL DEFAULT 'DEFINED',
+        'name' varchar(50) NOT NULL,
+        'author' varchar(50) NOT NULL DEFAULT 'content@ecoachsolutions.com',
+        'time' int NOT NULL DEFAULT '0',
+        'description' text NULL,
+        'category' varchar(255) NOT NULL,
+        'instructions' text NOT NULL,
+        'start_time' datetime NOT NULL,
+        'end_time' datetime NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+      ) """);
+
       await db.execute("""CREATE TABLE 'tests_taken' (
         'id' INTEGER PRIMARY KEY,
         'user_id' int NOT NULL,

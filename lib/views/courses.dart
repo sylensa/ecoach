@@ -1,7 +1,7 @@
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
-import 'package:ecoach/models/ui/course.dart' as CourseUI;
+import 'package:ecoach/models/ui/course_info.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/subscription_db.dart';
@@ -71,33 +71,32 @@ class _CoursesPageState extends State<CoursesPage> {
                     shrinkWrap: true,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
-                      CourseDB()
-                          .getCourseById(int.parse(items[index].tag!))
-                          .then((value) {});
                       return Padding(
                         padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                        child: CourseCard(
-                            course: CourseUI.Course(
-                          title: items[index].name!.replaceFirst(subName, ""),
-                          background:
-                              kCourseColors[index % kCourseColors.length]
-                                  ['background'],
-                          icon: 'ict.png',
-                          progress: 51,
-                          progressColor:
-                              kCourseColors[index % kCourseColors.length]
-                                  ['progress'],
-                          rank: {
-                            'position': 12,
-                            'numberOnRoll': 305,
-                          },
-                          tests: {
-                            'testsTaken': 132,
-                            'totalNumberOfTests': 3254,
-                          },
-                          totalPoints: 1895,
-                          times: 697,
-                        )),
+                        child: CourseCard(widget.user,
+                            courseInfo: CourseInfo(
+                              course: items[index].course!,
+                              title:
+                                  items[index].name!.replaceFirst(subName, ""),
+                              background:
+                                  kCourseColors[index % kCourseColors.length]
+                                      ['background'],
+                              icon: 'ict.png',
+                              progress: 51,
+                              progressColor:
+                                  kCourseColors[index % kCourseColors.length]
+                                      ['progress'],
+                              rank: {
+                                'position': 12,
+                                'numberOnRoll': 305,
+                              },
+                              tests: {
+                                'testsTaken': 132,
+                                'totalNumberOfTests': 3254,
+                              },
+                              totalPoints: 1895,
+                              times: 697,
+                            )),
                       );
                     },
                   );

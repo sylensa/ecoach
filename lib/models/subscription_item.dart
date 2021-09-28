@@ -1,3 +1,5 @@
+import 'package:ecoach/models/course.dart';
+
 class SubscriptionItem {
   SubscriptionItem({
     this.id,
@@ -11,6 +13,7 @@ class SubscriptionItem {
     this.sortOrder,
     this.createdAt,
     this.updatedAt,
+    this.course,
   });
 
   int? id;
@@ -24,6 +27,7 @@ class SubscriptionItem {
   int? sortOrder;
   DateTime? createdAt;
   DateTime? updatedAt;
+  Course? course;
 
   factory SubscriptionItem.fromJson(Map<String, dynamic> json) =>
       SubscriptionItem(
@@ -38,6 +42,7 @@ class SubscriptionItem {
         sortOrder: json["sort_order"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        course: json['course'] != null ? Course.fromJson(json['course']) : null,
       );
 
   Map<String, dynamic> toJson() => {
