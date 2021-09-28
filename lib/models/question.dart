@@ -17,7 +17,6 @@ class Question {
     this.public,
     this.flagged,
     this.deleted,
-    this.editors,
     this.answers,
   });
 
@@ -38,7 +37,6 @@ class Question {
   int? public;
   int? flagged;
   int? deleted;
-  String? editors;
   List<Answer>? answers;
   Answer? selectedAnswer;
 
@@ -84,9 +82,9 @@ class Question {
         public: json["public"],
         flagged: json["flagged"],
         deleted: json["deleted"],
-        editors: json["editors"],
-        answers:
-            List<Answer>.from(json["answers"].map((x) => Answer.fromJson(x))),
+        answers: json["answers"] == null
+            ? []
+            : List<Answer>.from(json["answers"].map((x) => Answer.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -105,9 +103,6 @@ class Question {
         "confirmed": confirmed,
         "public": public,
         "flagged": flagged,
-        "deleted": deleted,
-        "editors": editors,
-        "answers": List<dynamic>.from(answers!.map((x) => x.toJson())),
       };
 }
 

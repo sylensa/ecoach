@@ -20,7 +20,7 @@ class DBProvider {
 
   static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "ecoach14.db");
+    String path = join(documentsDirectory.path, "ecoach16.db");
     return await openDatabase(path, version: 8, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
@@ -59,8 +59,7 @@ class DBProvider {
         'confirmed' int NOT NULL DEFAULT '0',
         'public' int NOT NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
-        'deleted' int NOT NULL DEFAULT '0',
-        'editors' varchar(128) NOT NULL DEFAULT '[]'
+        'deleted' int NOT NULL DEFAULT '0'
       ) """);
 
       await db.execute("""CREATE TABLE 'courses' (
@@ -167,7 +166,13 @@ class DBProvider {
         'created_at' datetime NOT NULL,
         'updated_at' datetime NOT NULL,
         'confirmed' int NOT NULL DEFAULT '0',
-        'public' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0'
+      ) """);
+
+      await db.execute("""CREATE TABLE 'quiz_items' (
+        'id' INTEGER PRIMARY KEY,
+        'question_id' int NOT NULL,
+        'quiz_id' int NOT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'tests_taken' (

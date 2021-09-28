@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/providers/answers.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,6 +34,12 @@ class QuestionDB {
         element.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      List<Answer> answers = element.answers!;
+      if (answers.length > 0) {
+        answers.forEach((answer) {
+          AnswerDB().insert(answer);
+        });
+      }
     });
 
     await batch.commit(noResult: true);

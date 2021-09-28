@@ -87,6 +87,7 @@ class _HomePageState extends State<HomePage> {
 
         return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
           print("it's fine here");
+          print(dataItem);
           return Subscription.fromJson(dataItem);
         });
       } else {

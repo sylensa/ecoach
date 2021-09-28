@@ -1,20 +1,21 @@
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/quiz.dart';
 
 class SubscriptionItem {
-  SubscriptionItem({
-    this.id,
-    this.tag,
-    this.planId,
-    this.name,
-    this.description,
-    this.value,
-    this.resettablePeriod,
-    this.resettableInterval,
-    this.sortOrder,
-    this.createdAt,
-    this.updatedAt,
-    this.course,
-  });
+  SubscriptionItem(
+      {this.id,
+      this.tag,
+      this.planId,
+      this.name,
+      this.description,
+      this.value,
+      this.resettablePeriod,
+      this.resettableInterval,
+      this.sortOrder,
+      this.createdAt,
+      this.updatedAt,
+      this.course,
+      this.quizzes});
 
   int? id;
   String? tag;
@@ -28,6 +29,7 @@ class SubscriptionItem {
   DateTime? createdAt;
   DateTime? updatedAt;
   Course? course;
+  List<Quiz>? quizzes;
 
   factory SubscriptionItem.fromJson(Map<String, dynamic> json) =>
       SubscriptionItem(
@@ -43,6 +45,9 @@ class SubscriptionItem {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         course: json['course'] != null ? Course.fromJson(json['course']) : null,
+        quizzes: json["quizzes"] == null
+            ? []
+            : List<Quiz>.from(json["quizzes"].map((x) => Quiz.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
