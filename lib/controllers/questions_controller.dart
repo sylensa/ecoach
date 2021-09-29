@@ -2,12 +2,15 @@ import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/questions_db.dart';
+import 'package:ecoach/providers/quiz_db.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -100,7 +103,16 @@ class TestController {
     return data;
   }
 
-  getMockTests(Course course) {}
+  getMockTests(Course course) async {
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "BANK");
+
+    List<TestNameAndCount> testNames = [];
+    quizzes.forEach((quiz) {
+      testNames.add(TestNameAndCount(quiz.name!, 3, 12));
+    });
+
+    return testNames;
+  }
 
   getExamTests(Course course) {}
 

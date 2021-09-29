@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/subscription_db.dart';
 import 'package:ecoach/routes/Routes.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/friends.dart';
 import 'package:ecoach/views/home.dart';
@@ -9,6 +14,7 @@ import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'more_view.dart';
 
@@ -43,8 +49,75 @@ class _MainHomePageState extends State<MainHomePage> {
     ];
     currentIndex = widget.index;
     print("init");
-
+    // checkSubscription();
     super.initState();
+  }
+
+  checkSubscription() {
+    List<Subscription> subscriptions = widget.user.subscriptions;
+
+    if (subscriptions.length > 0) {
+      int active = 0;
+      subscriptions.forEach((subscription) {
+        if (subscription.endsAt!.isBefore(DateTime.now())) {
+          active++;
+        }
+      });
+      if (active == 0) {}
+      // setState(() {
+      //   futureSubs = TestTakenDB().testsTaken();
+      // });
+    } else {
+      // setState(() {
+      //   futureSubs = null;
+      // });
+    }
+
+    getSubscriptions().then((api) {
+      if (api == null) return;
+      List<Subscription> subscriptions = api.data as List<Subscription>;
+      SubscriptionDB().insertAll(subscriptions);
+
+      // setState(() {
+      //   futureSubs = SubscriptionDB().subscriptions();
+      // });
+    });
+  }
+
+  Future<ApiResponse<Subscription>?> getSubscriptions() async {
+    Map<String, dynamic> queryParams = {};
+    print(queryParams);
+    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    http.Response response = await http.get(
+      Uri.parse(
+          AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': widget.user.token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      // print(responseData);
+      if (responseData["status"] == true) {
+        print("messages returned");
+        print(response.body);
+
+        return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
+          print("it's fine here");
+          print(dataItem);
+          return Subscription.fromJson(dataItem);
+        });
+      } else {
+        print("not successful event");
+      }
+    } else {
+      print("Failed ....");
+      print(response.statusCode);
+      print(response.body);
+    }
   }
 
   tapping(int index) {

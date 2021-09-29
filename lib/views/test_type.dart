@@ -1,7 +1,7 @@
 import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/views/mock_list.dart';
+import 'package:ecoach/views/test_type_list.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -112,8 +112,10 @@ class _TestTypeViewState extends State<TestTypeView> {
       padding: const EdgeInsets.fromLTRB(8.0, 12, 8, 12),
       child: OutlinedButton(
           style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all(Size(130, 154)),
-              backgroundColor: MaterialStateProperty.all(Colors.white)),
+              fixedSize: MaterialStateProperty.all(Size(134, 157)),
+              backgroundColor: MaterialStateProperty.all(Colors.white),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)))),
           onPressed: callback != null ? callback : null,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -153,10 +155,35 @@ class _TestTypeViewState extends State<TestTypeView> {
           futureList = TestController().getBankTest(widget.course);
       }
 
-      futureList.then((apiResponse) {
+      futureList.then((data) {
         Navigator.pop(context);
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return MockListView(widget.user, apiResponse.data);
+          Widget? widgetView;
+          print("selecting test");
+          print(testCategory);
+          switch (testCategory) {
+            case TestCategory.MOCK:
+              widgetView = TestTypeListView(widget.user, data);
+              break;
+            case TestCategory.EXAM:
+              widgetView = TestTypeListView(widget.user, data);
+              break;
+            case TestCategory.TOPIC:
+              widgetView = TestTypeListView(widget.user, data);
+              break;
+            case TestCategory.ESSAY:
+              widgetView = TestTypeListView(widget.user, data);
+              break;
+            case TestCategory.SAVED:
+              widgetView = QuizCover(widget.user, data);
+              break;
+            case TestCategory.BANK:
+              widgetView = QuizCover(widget.user, data);
+              break;
+            default:
+              widgetView = null;
+          }
+          return widgetView!;
         }));
       });
     }
@@ -205,11 +232,11 @@ class _TestTypeViewState extends State<TestTypeView> {
                           children: [
                             getTestCatButton("Mock", () {
                               testCategory = TestCategory.MOCK;
-                              Navigator.pop(context);
+                              getTest();
                             }),
                             getTestCatButton("Exam", () {
                               testCategory = TestCategory.EXAM;
-                              Navigator.pop(context);
+                              getTest();
                             }),
                           ],
                         ),
@@ -217,11 +244,11 @@ class _TestTypeViewState extends State<TestTypeView> {
                           children: [
                             getTestCatButton("Topic", () {
                               testCategory = TestCategory.TOPIC;
-                              Navigator.pop(context);
+                              getTest();
                             }),
                             getTestCatButton("Essay", () {
                               testCategory = TestCategory.ESSAY;
-                              Navigator.pop(context);
+                              getTest();
                             }),
                           ],
                         ),
@@ -229,11 +256,13 @@ class _TestTypeViewState extends State<TestTypeView> {
                           children: [
                             getTestCatButton("Saved", () {
                               testCategory = TestCategory.SAVED;
-                              Navigator.pop(context);
+
+                              getTest();
                             }),
                             getTestCatButton("Bank", () {
                               testCategory = TestCategory.BANK;
-                              Navigator.pop(context);
+
+                              getTest();
                             }),
                           ],
                         )
@@ -261,9 +290,7 @@ class _TestTypeViewState extends State<TestTypeView> {
               ),
             ),
           );
-        }).then((value) {
-      getTest();
-    });
+        }).then((value) {});
   }
 
   getTestCatButton(String name, Function()? callback) {
@@ -284,5 +311,17 @@ class _TestTypeViewState extends State<TestTypeView> {
             ],
           )),
     );
+  }
+}
+
+class TestNameAndCount {
+  String name;
+  int count;
+  int totalCount;
+
+  TestNameAndCount(this.name, this.count, this.totalCount);
+
+  double get progress {
+    return count / totalCount;
   }
 }

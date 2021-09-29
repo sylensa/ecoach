@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    checkSubscription();
+    // checkSubscription();
   }
 
   checkSubscription() {

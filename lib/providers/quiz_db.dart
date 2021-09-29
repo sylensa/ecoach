@@ -26,6 +26,20 @@ class QuizDB {
     return result.isNotEmpty ? Quiz.fromJson(result.first) : null;
   }
 
+  Future<List<Quiz>> getQuizzesByType(int courseId, String type) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('quizzes',
+        orderBy: "created_at DESC",
+        where: "type = ? AND course_id = ?",
+        whereArgs: [type, courseId]);
+    print(courseId);
+    return List.generate(maps.length, (i) {
+      print(maps[i]);
+      return Quiz.fromJson(maps[i]);
+    });
+  }
+
   Future<void> insertAll(List<Quiz> quizzes) async {
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();
@@ -37,7 +51,7 @@ class QuizDB {
       );
       List<Question> questions = element.questions!;
       if (questions.length > 0) {
-        questions.forEach((question) {
+        questions.forEach((question) async {
           print({'quiz_id': element.id, 'question_id': question.id});
           db.delete(
             'quiz_items',
@@ -45,11 +59,11 @@ class QuizDB {
             whereArgs: [element.id, question.id],
           );
           batch.insert(
-            "courses_levels",
+            "quiz_items",
             {'quiz_id': element.id, 'question_id': question.id},
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          QuestionDB().insert(question);
+          await QuestionDB().insert(question);
         });
       }
     });
