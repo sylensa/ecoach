@@ -102,6 +102,22 @@ class _MockListViewState extends State<TestTypeListView> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           50)),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  Text(
+                                                    "${(widget.quizzes[index].progress * 100).floor()}%",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           )
                                         ],
