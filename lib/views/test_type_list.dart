@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/quiz_cover.dart';
@@ -7,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class TestTypeListView extends StatefulWidget {
-  TestTypeListView(this.user, this.tests,
+  TestTypeListView(this.user, this.course, this.tests,
       {Key? key, this.title, this.multiSelect = false})
       : super(key: key);
 
   final User user;
+  final Course course;
   final List<TestNameAndCount> tests;
   String? title;
   bool multiSelect;
@@ -201,7 +203,11 @@ class _MockListViewState extends State<TestTypeListView> {
                                 print(questions.toString());
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return QuizCover(widget.user, questions);
+                                  return QuizCover(
+                                    widget.user,
+                                    questions,
+                                    course: widget.course,
+                                  );
                                 }));
                               },
                               style: ButtonStyle(

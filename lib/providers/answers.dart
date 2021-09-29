@@ -11,7 +11,6 @@ class AnswerDB {
     }
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {
-      print(answer.toJson());
       await txn.insert(
         'answers',
         answer.toJson(),

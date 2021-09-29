@@ -63,7 +63,8 @@ class _MainHomePageState extends State<MainHomePage> {
     int same = 0;
     subscriptions.forEach((subscription) {
       for (int i = 0; i < freshSubscriptions.length; i++) {
-        if (subscription == freshSubscriptions[i]) {
+        if (subscription.id == freshSubscriptions[i].id &&
+            subscription.tag == freshSubscriptions[i].tag) {
           same++;
         }
       }
@@ -81,7 +82,7 @@ class _MainHomePageState extends State<MainHomePage> {
       List<Subscription> freshSubscriptions = api.data as List<Subscription>;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context, message: "downloading subscription data");
+        showLoaderDialog(context, message: "downloading subscription\n data");
         SubscriptionDB().deleteAll();
         getSubscriptionData().then((api) async {
           if (api == null) {
