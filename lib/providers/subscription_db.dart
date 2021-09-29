@@ -104,4 +104,11 @@ class SubscriptionDB {
       whereArgs: [id],
     );
   }
+
+  deleteAll() async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'subscriptions',
+    );
+  }
 }

@@ -13,6 +13,7 @@ import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/drawer.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,44 +54,91 @@ class _MainHomePageState extends State<MainHomePage> {
     super.initState();
   }
 
-  checkSubscription() {
-    List<Subscription> subscriptions = widget.user.subscriptions;
-
-    if (subscriptions.length > 0) {
-      int active = 0;
-      subscriptions.forEach((subscription) {
-        if (subscription.endsAt!.isBefore(DateTime.now())) {
-          active++;
-        }
-      });
-      if (active == 0) {}
-      // setState(() {
-      //   futureSubs = TestTakenDB().testsTaken();
-      // });
-    } else {
-      // setState(() {
-      //   futureSubs = null;
-      // });
+  bool compareSubscriptions(
+      List<Subscription> freshSubscriptions, List<Subscription> subscriptions) {
+    if (freshSubscriptions.length != subscriptions.length) {
+      return false;
     }
 
+    int same = 0;
+    subscriptions.forEach((subscription) {
+      for (int i = 0; i < freshSubscriptions.length; i++) {
+        if (subscription == freshSubscriptions[i]) {
+          same++;
+        }
+      }
+    });
+
+    if (same == subscriptions.length) {
+      return true;
+    }
+    return false;
+  }
+
+  checkSubscription() {
     getSubscriptions().then((api) {
       if (api == null) return;
-      List<Subscription> subscriptions = api.data as List<Subscription>;
-      SubscriptionDB().insertAll(subscriptions);
-
-      // setState(() {
-      //   futureSubs = SubscriptionDB().subscriptions();
-      // });
+      List<Subscription> freshSubscriptions = api.data as List<Subscription>;
+      List<Subscription> subscriptions = widget.user.subscriptions;
+      if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
+        showLoaderDialog(context, message: "downloading subscription data");
+        SubscriptionDB().deleteAll();
+        getSubscriptionData().then((api) async {
+          if (api == null) {
+            Navigator.pop(context);
+            return;
+          }
+          List<Subscription> subscriptions = api.data as List<Subscription>;
+          await SubscriptionDB().insertAll(subscriptions);
+          Navigator.pop(context);
+        });
+      }
     });
   }
 
   Future<ApiResponse<Subscription>?> getSubscriptions() async {
     Map<String, dynamic> queryParams = {};
-    print(queryParams);
     print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
     http.Response response = await http.get(
       Uri.parse(
           AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': widget.user.token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      // print(responseData);
+      if (responseData["status"] == true) {
+        print("messages returned");
+        print(response.body);
+
+        return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
+          print("it's fine here");
+          print(dataItem);
+          return Subscription.fromJson(dataItem);
+        });
+      } else {
+        print("not successful event");
+      }
+    } else {
+      print("Failed ....");
+      print(response.statusCode);
+      print(response.body);
+    }
+  }
+
+  Future<ApiResponse<Subscription>?> getSubscriptionData() async {
+    Map<String, dynamic> queryParams = {};
+    print(queryParams);
+    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    http.Response response = await http.get(
+      Uri.parse(AppUrl.subscriptionData +
+          '?' +
+          Uri(queryParameters: queryParams).query),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

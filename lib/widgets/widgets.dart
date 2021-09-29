@@ -12,6 +12,7 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
             margin: EdgeInsets.only(left: 7),
             child: Text(
               message!,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(color: Colors.black),
             )),
       ],

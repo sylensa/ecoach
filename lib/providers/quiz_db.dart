@@ -52,7 +52,6 @@ class QuizDB {
       List<Question> questions = element.questions!;
       if (questions.length > 0) {
         questions.forEach((question) async {
-          print({'quiz_id': element.id, 'question_id': question.id});
           db.delete(
             'quiz_items',
             where: "quiz_id = ? AND question_id = ?",

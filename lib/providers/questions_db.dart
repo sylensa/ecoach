@@ -20,7 +20,6 @@ class QuestionDB {
     List<Answer> answers = question.answers!;
     if (answers.length > 0) {
       answers.forEach((answer) {
-        print(answer.toJson());
         AnswerDB().insert(answer);
       });
     }
