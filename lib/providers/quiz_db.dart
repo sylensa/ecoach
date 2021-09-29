@@ -42,32 +42,33 @@ class QuizDB {
 
   Future<void> insertAll(List<Quiz> quizzes) async {
     final Database? db = await DBProvider.database;
-    Batch batch = db!.batch();
-    quizzes.forEach((element) {
-      batch.insert(
-        'quizzes',
-        element.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      List<Question> questions = element.questions!;
-      if (questions.length > 0) {
-        questions.forEach((question) async {
-          db.delete(
-            'quiz_items',
-            where: "quiz_id = ? AND question_id = ?",
-            whereArgs: [element.id, question.id],
-          );
-          batch.insert(
-            "quiz_items",
-            {'quiz_id': element.id, 'question_id': question.id},
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
-          await QuestionDB().insert(question);
-        });
+    db!.transaction((txn) async {
+      for (int i = 0; i < quizzes.length; i++) {
+        Quiz element = quizzes[i];
+        txn.insert(
+          'quizzes',
+          element.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        List<Question> questions = element.questions!;
+        if (questions.length > 0) {
+          for (int i = 0; i < questions.length; i++) {
+            Question question = questions[i];
+            txn.delete(
+              'quiz_items',
+              where: "quiz_id = ? AND question_id = ?",
+              whereArgs: [element.id, question.id],
+            );
+            txn.insert(
+              "quiz_items",
+              {'quiz_id': element.id, 'question_id': question.id},
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+            await QuestionDB().insert(question);
+          }
+        }
       }
     });
-
-    await batch.commit(noResult: true);
   }
 
   Future<List<Quiz>> quizzes() async {

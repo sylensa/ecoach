@@ -89,8 +89,9 @@ class _MainHomePageState extends State<MainHomePage> {
             return;
           }
           List<Subscription> subscriptions = api.data as List<Subscription>;
-          await SubscriptionDB().insertAll(subscriptions);
-          Navigator.pop(context);
+          SubscriptionDB().insertAll(subscriptions).then((value) {
+            Navigator.pop(context);
+          });
         });
       }
     });

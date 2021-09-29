@@ -47,7 +47,6 @@ class _CoursesPageState extends State<CoursesPage> {
       ),
       body: PageView(
         controller: controller,
-        physics: NeverScrollableScrollPhysics(),
         children: [
           for (int i = 0; i < subscriptions.length; i++)
             CourseView(
