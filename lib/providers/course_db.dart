@@ -11,12 +11,13 @@ class CourseDB {
       return;
     }
     final Database? db = await DBProvider.database;
-
-    await db!.insert(
-      'courses',
-      course.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    db!.transaction((txn) async {
+      await txn.insert(
+        'courses',
+        course.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    });
   }
 
   Future<Course?> getCourseById(int id) async {

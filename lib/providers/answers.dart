@@ -10,12 +10,14 @@ class AnswerDB {
       return;
     }
     final Database? db = await DBProvider.database;
-
-    await db!.insert(
-      'answers',
-      answer.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    db!.transaction((txn) async {
+      print(answer.toJson());
+      await txn.insert(
+        'answers',
+        answer.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    });
   }
 
   Future<Answer?> getAnswerById(int id) async {

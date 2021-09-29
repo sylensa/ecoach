@@ -11,18 +11,19 @@ class QuestionDB {
       return;
     }
     final Database? db = await DBProvider.database;
-
-    await db!.insert(
-      'questions',
-      question.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    List<Answer> answers = question.answers!;
-    if (answers.length > 0) {
-      answers.forEach((answer) {
-        AnswerDB().insert(answer);
-      });
-    }
+    db!.transaction((txn) async {
+      await txn.insert(
+        'questions',
+        question.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      List<Answer> answers = question.answers!;
+      if (answers.length > 0) {
+        answers.forEach((answer) {
+          AnswerDB().insert(answer);
+        });
+      }
+    });
   }
 
   Future<Question?> getQuestionById(int id) async {

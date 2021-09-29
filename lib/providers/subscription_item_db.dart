@@ -11,16 +11,17 @@ class SubscriptionItemDB {
       return;
     }
     final Database? db = await DBProvider.database;
-
-    await db!.insert(
-      'subscription_items',
-      subscriptionItem.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    if (subscriptionItem.course != null) {
-      CourseDB().insert(subscriptionItem.course!);
-      QuizDB().insertAll(subscriptionItem.quizzes!);
-    }
+    db!.transaction((txn) async {
+      await txn.insert(
+        'subscription_items',
+        subscriptionItem.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      if (subscriptionItem.course != null) {
+        CourseDB().insert(subscriptionItem.course!);
+        QuizDB().insertAll(subscriptionItem.quizzes!);
+      }
+    });
   }
 
   Future<SubscriptionItem?> getMessageById(int id) async {
