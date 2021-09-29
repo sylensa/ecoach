@@ -18,7 +18,7 @@ class AnswerDB {
     );
   }
 
-  Future<Answer?> getMessageById(int id) async {
+  Future<Answer?> getAnswerById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("answers", where: "id = ?", whereArgs: [id]);
     return result.isNotEmpty ? Answer.fromJson(result.first) : null;
@@ -28,6 +28,7 @@ class AnswerDB {
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();
     answers.forEach((element) {
+      print(element.toJson());
       batch.insert(
         'answers',
         element.toJson(),
@@ -43,6 +44,30 @@ class AnswerDB {
 
     final List<Map<String, dynamic>> maps =
         await db!.query('answers', orderBy: "created_at DESC");
+
+    return List.generate(maps.length, (i) {
+      return Answer(
+        id: maps[i]["id"],
+        questionId: maps[i]["question_id"],
+        value: maps[i]["value"],
+        answerOrder: maps[i]["answer_order"],
+        text: maps[i]["text"],
+        solution: maps[i]["solution"],
+        responses: maps[i]["responses"],
+        flagged: maps[i]["flagged"],
+        createdAt: DateTime.parse(maps[i]["created_at"]),
+        updatedAt: DateTime.parse(maps[i]["updated_at"]),
+      );
+    });
+  }
+
+  Future<List<Answer>> questoinAnswers(int questionId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('answers',
+        orderBy: "created_at DESC",
+        where: 'question_id = ?',
+        whereArgs: [questionId]);
 
     return List.generate(maps.length, (i) {
       return Answer(

@@ -49,7 +49,7 @@ class _MainHomePageState extends State<MainHomePage> {
     ];
     currentIndex = widget.index;
     print("init");
-    // checkSubscription();
+    checkSubscription();
     super.initState();
   }
 

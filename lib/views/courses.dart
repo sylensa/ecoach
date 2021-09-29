@@ -71,6 +71,7 @@ class _CoursesPageState extends State<CoursesPage> {
                     shrinkWrap: true,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
+                      if (items[index].course == null) return Container();
                       return Padding(
                         padding: EdgeInsets.only(left: 24.0, right: 24.0),
                         child: CourseCard(widget.user,

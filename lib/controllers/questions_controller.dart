@@ -64,6 +64,18 @@ class TestController {
     TestTakenDB().insert(test);
   }
 
+  Future<List<Question>> getQuizQuestions(int quizId) {
+    return QuizDB().getQuestions(quizId, 40);
+  }
+
+  Future<List<Question>> getMockQuestions(int courseId) {
+    return QuestionDB().getRandomQuestions(courseId, 40);
+  }
+
+  Future<List<Question>> getTopicQuestions(List<int> topicIds) {
+    return QuestionDB().getTopicQuestions(topicIds, 40);
+  }
+
   Future<Map<String, List<TestAnswer>>> topicsAnalysis(TestTaken test) async {
     Map<String, List<TestAnswer>> topicsMap = Map();
 
@@ -104,23 +116,74 @@ class TestController {
   }
 
   getMockTests(Course course) async {
-    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "BANK");
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "MOCK");
 
     List<TestNameAndCount> testNames = [];
     quizzes.forEach((quiz) {
-      testNames.add(TestNameAndCount(quiz.name!, 3, 12));
+      testNames.add(
+          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.MOCK));
     });
 
     return testNames;
   }
 
-  getExamTests(Course course) {}
+  getExamTests(Course course) async {
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "EXAM");
 
-  getTopics(Course course) {}
+    List<TestNameAndCount> testNames = [];
+    quizzes.forEach((quiz) {
+      testNames.add(
+          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.EXAM));
+    });
 
-  getEssays(Course course) {}
+    return testNames;
+  }
 
-  getSavedTests(Course course) {}
+  getTopics(Course course) async {
+    Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 
-  getBankTest(Course course) {}
+    List<TestNameAndCount> testNames = [];
+    topics.forEach((id, name) {
+      testNames.add(
+          TestNameAndCount(name, 3, 12, id: id, category: TestCategory.TOPIC));
+    });
+
+    return testNames;
+  }
+
+  getEssays(Course course) async {
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "ESSAY");
+
+    List<TestNameAndCount> testNames = [];
+    quizzes.forEach((quiz) {
+      testNames.add(
+          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.ESSAY));
+    });
+
+    return testNames;
+  }
+
+  getSavedTests(Course course) async {
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "SAVED");
+
+    List<TestNameAndCount> testNames = [];
+    quizzes.forEach((quiz) {
+      testNames.add(
+          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.SAVED));
+    });
+
+    return testNames;
+  }
+
+  getBankTest(Course course) async {
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "BANK");
+
+    List<TestNameAndCount> testNames = [];
+    quizzes.forEach((quiz) {
+      testNames.add(
+          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.BANK));
+    });
+
+    return testNames;
+  }
 }

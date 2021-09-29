@@ -163,16 +163,33 @@ class _TestTypeViewState extends State<TestTypeView> {
           print(testCategory);
           switch (testCategory) {
             case TestCategory.MOCK:
-              widgetView = TestTypeListView(widget.user, data);
+              widgetView = TestTypeListView(
+                widget.user,
+                data,
+                title: "Mock Test",
+              );
               break;
             case TestCategory.EXAM:
-              widgetView = TestTypeListView(widget.user, data);
+              widgetView = TestTypeListView(
+                widget.user,
+                data,
+                title: "Exams",
+              );
               break;
             case TestCategory.TOPIC:
-              widgetView = TestTypeListView(widget.user, data);
+              widgetView = TestTypeListView(
+                widget.user,
+                data,
+                title: "Topic",
+                multiSelect: true,
+              );
               break;
             case TestCategory.ESSAY:
-              widgetView = TestTypeListView(widget.user, data);
+              widgetView = TestTypeListView(
+                widget.user,
+                data,
+                title: "Essay",
+              );
               break;
             case TestCategory.SAVED:
               widgetView = QuizCover(widget.user, data);
@@ -316,10 +333,13 @@ class _TestTypeViewState extends State<TestTypeView> {
 
 class TestNameAndCount {
   String name;
+  int? id;
   int count;
   int totalCount;
+  TestCategory? category;
 
-  TestNameAndCount(this.name, this.count, this.totalCount);
+  TestNameAndCount(this.name, this.count, this.totalCount,
+      {this.id, this.category});
 
   double get progress {
     return count / totalCount;

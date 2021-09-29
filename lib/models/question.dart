@@ -91,6 +91,7 @@ class Question {
         "id": id,
         "course_id": courseId,
         "topic_id": topicId,
+        "topic_name": topicName,
         "qid": qid,
         "text": text,
         "instructions": instructions,
