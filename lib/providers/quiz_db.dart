@@ -40,6 +40,20 @@ class QuizDB {
     });
   }
 
+  Future<List<Quiz>> getQuizzesByName(int courseId, String name) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('quizzes',
+        orderBy: "created_at DESC",
+        where: "type LIKE ? AND course_id = ?",
+        whereArgs: [name + "%", courseId]);
+    print(courseId);
+    return List.generate(maps.length, (i) {
+      print(maps[i]);
+      return Quiz.fromJson(maps[i]);
+    });
+  }
+
   Future<void> insertAll(List<Quiz> quizzes) async {
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {

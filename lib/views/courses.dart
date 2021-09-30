@@ -7,6 +7,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/subscription_db.dart';
 import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/course_card.dart';
 import 'package:flutter/material.dart';

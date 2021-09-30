@@ -37,7 +37,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         .getCourseProgress(widget.courseInfo.course.id)
         .then((value) {
       setState(() {
-        courseProgress = (value * 100).floor();
+        courseProgress = value is num ? (value * 100).floor() : 0;
       });
     });
     UserPreferences().getUserLastNote().then((value) {
@@ -66,7 +66,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     List<CourseDetail> courseDetails = [
       CourseDetail(
         title: lastStudy,
