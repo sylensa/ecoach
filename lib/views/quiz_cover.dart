@@ -8,13 +8,18 @@ import 'package:flutter/material.dart';
 
 class QuizCover extends StatelessWidget {
   QuizCover(this.user, this.questions,
-      {Key? key, this.level, this.course, this.diagnostic = false})
+      {Key? key,
+      this.level,
+      required this.name,
+      this.course,
+      this.diagnostic = false})
       : super(key: key);
   User user;
   Level? level;
   Course? course;
   List<Question> questions;
   bool diagnostic;
+  String name;
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +139,7 @@ class QuizCover extends StatelessWidget {
                                 user,
                                 questions,
                                 level: level,
+                                name: name,
                                 course: course,
                                 diagnostic: diagnostic,
                               );

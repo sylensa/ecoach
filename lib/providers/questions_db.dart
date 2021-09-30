@@ -147,6 +147,18 @@ class QuestionDB {
     return questions;
   }
 
+  Future<int> getTotalQuestionCount(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'questions',
+      where: "course_id = ?",
+      whereArgs: [courseId],
+    );
+
+    return maps.length;
+  }
+
   Future<void> update(Question question) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;

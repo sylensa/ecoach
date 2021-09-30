@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
@@ -8,6 +8,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
@@ -21,13 +22,20 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class QuizView extends StatefulWidget {
   QuizView(this.user, this.questions,
-      {Key? key, this.level, this.course, this.diagnostic = false})
+      {Key? key,
+      this.level,
+      this.course,
+      required this.name,
+      this.timeInMin = 5,
+      this.diagnostic = false})
       : super(key: key);
   User user;
   Level? level;
   Course? course;
   List<Question> questions;
+  int timeInMin;
   bool diagnostic;
+  String name;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -45,7 +53,7 @@ class _QuizViewState extends State<QuizView> {
   CurrentRemainingTime? remainingTime;
   bool enabled = true;
   bool savedTest = false;
-  Duration duration = Duration(minutes: 5);
+  late Duration duration;
 
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
@@ -56,6 +64,8 @@ class _QuizViewState extends State<QuizView> {
   void initState() {
     controller = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
+    duration = Duration(minutes: widget.timeInMin);
+
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
 
@@ -137,7 +147,7 @@ class _QuizViewState extends State<QuizView> {
         datetime: startTime,
         totalQuestions: widget.questions.length,
         courseId: widget.course!.id,
-        testname: "Test Diagnotic",
+        testname: widget.name,
         testType: "diagnostic",
         testTime: duration.inSeconds,
         usedTime: duration.inSeconds -
@@ -307,7 +317,13 @@ class _QuizViewState extends State<QuizView> {
                           if (action == "resume") {
                             countdownTimerController.start();
                           } else if (action == "quit") {
-                          } else if (action == "end quiz") {}
+                            Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(builder: (context) {
+                              return MainHomePage(widget.user, index: 1);
+                            }), (route) => false);
+                          } else if (action == "end") {
+                            completeQuiz();
+                          }
                         },
                       );
                     });
@@ -348,7 +364,7 @@ class _QuizViewState extends State<QuizView> {
                                 currentQuestion--;
                                 numberingController.scrollTo(
                                     index: currentQuestion,
-                                    duration: Duration(seconds: 2),
+                                    duration: Duration(seconds: 1),
                                     curve: Curves.easeInOutCubic);
                               });
                             },
@@ -374,7 +390,7 @@ class _QuizViewState extends State<QuizView> {
                                 currentQuestion++;
                                 numberingController.scrollTo(
                                     index: currentQuestion,
-                                    duration: Duration(seconds: 2),
+                                    duration: Duration(seconds: 1),
                                     curve: Curves.easeInOutCubic);
                               });
                             },

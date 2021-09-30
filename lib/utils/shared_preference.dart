@@ -58,10 +58,54 @@ class UserPreferences {
     prefs.clear();
   }
 
-  Future<String?> getStringValue(args) async {
+  Future<String?> getUserValue(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? value = prefs.getString(args);
     return value;
+  }
+
+  Future<bool> setUserLastTest(String testName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('last_test', testName);
+  }
+
+  Future<String?> getUserLastTest() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('last_test');
+    return value ?? "No Test Yet";
+  }
+
+  Future<bool> setUserLastNote(String testName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('last_note', testName);
+  }
+
+  Future<String?> getUserLastNote() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('last_note');
+    return value ?? "No Notes Yet";
+  }
+
+  Future<bool> setUserLastStudy(String testName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('last_study', testName);
+  }
+
+  Future<bool> setUserLastStudyTopic(String testName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('last_study_topic', testName);
+  }
+
+  Future<String?> getUserLastStudy() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('last_study');
+    return value ?? "No Study Yet";
+  }
+
+  Future<String?> getUserLastStudyTopic() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString('last_study_topic');
+    return value ?? "----";
   }
 
   Future<int?> getIntValue(args) async {

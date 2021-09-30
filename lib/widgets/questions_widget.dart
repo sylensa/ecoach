@@ -136,7 +136,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         normalSize: 15,
                         selectedSize: widget.enabled ? 48 : 24,
                         imposedSize: widget.enabled ||
-                                selectedAnswer == null ||
+                                (widget.enabled && selectedAnswer == null) ||
                                 selectedAnswer != answers![i] &&
                                     answers![i].value == 0
                             ? null
@@ -145,7 +145,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                                 ? 24
                                 : 48,
                         imposedColor: widget.enabled ||
-                                selectedAnswer == null ||
+                                (widget.enabled && selectedAnswer == null) ||
                                 selectedAnswer != answers![i] &&
                                     answers![i].value == 0
                             ? null

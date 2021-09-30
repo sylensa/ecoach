@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/course.dart';
@@ -603,6 +603,7 @@ class _SelectCourseState extends State<SelectCourse> {
                         return QuizCover(
                           widget.user,
                           apiResponse.data,
+                          name: "Test Diagnostic",
                           level: selectedLevel!,
                           course: selectedCourse!,
                           diagnostic: true,
