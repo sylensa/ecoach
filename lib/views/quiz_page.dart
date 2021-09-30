@@ -17,6 +17,7 @@ import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:http/http.dart' as http;
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class QuizView extends StatefulWidget {
   QuizView(this.user, this.questions,
@@ -49,12 +50,12 @@ class _QuizViewState extends State<QuizView> {
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
 
-  late ScrollController numberingController;
+  late ItemScrollController numberingController;
 
   @override
   void initState() {
     controller = PageController(initialPage: currentQuestion);
-    numberingController = ScrollController();
+    numberingController = ItemScrollController();
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
 
@@ -251,30 +252,30 @@ class _QuizViewState extends State<QuizView> {
             right: 40,
             left: 0,
             child: Container(
-              child: SingleChildScrollView(
-                controller: numberingController,
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  child: Row(
-                    children: [
-                      for (int i = 0; i < widget.questions.length; i++)
-                        SelectText("${(i + 1)}", i == currentQuestion,
+              child: SizedBox(
+                height: 100,
+                child: ScrollablePositionedList.builder(
+                  itemScrollController: numberingController,
+                  itemCount: widget.questions.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, i) {
+                    return Container(
+                        child: SelectText("${(i + 1)}", i == currentQuestion,
                             normalSize: 28,
                             selectedSize: 45,
                             underlineSelected: true,
                             selectedColor: Color(0xFFFD6363),
                             color: Colors.white70, select: () {
-                          setState(() {
-                            currentQuestion = i;
-                          });
+                      setState(() {
+                        currentQuestion = i;
+                      });
 
-                          controller.jumpToPage(i);
-                          controller.animateToPage(i,
-                              duration: Duration(milliseconds: 1000),
-                              curve: Curves.easeInBack);
-                        })
-                    ],
-                  ),
+                      controller.jumpToPage(i);
+                      controller.animateToPage(i,
+                          duration: Duration(milliseconds: 1000),
+                          curve: Curves.easeInBack);
+                    }));
+                  },
                 ),
               ),
             ),
@@ -345,6 +346,10 @@ class _QuizViewState extends State<QuizView> {
                                   curve: Curves.ease);
                               setState(() {
                                 currentQuestion--;
+                                numberingController.scrollTo(
+                                    index: currentQuestion,
+                                    duration: Duration(seconds: 2),
+                                    curve: Curves.easeInOutCubic);
                               });
                             },
                             child: Text(
@@ -367,8 +372,10 @@ class _QuizViewState extends State<QuizView> {
                                   curve: Curves.ease);
                               setState(() {
                                 currentQuestion++;
-                                numberingController
-                                    .jumpTo(currentQuestion * 30.0);
+                                numberingController.scrollTo(
+                                    index: currentQuestion,
+                                    duration: Duration(seconds: 2),
+                                    curve: Curves.easeInOutCubic);
                               });
                             },
                             child: Text(

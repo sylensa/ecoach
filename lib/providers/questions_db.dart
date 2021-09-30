@@ -30,7 +30,13 @@ class QuestionDB {
   Future<Question?> getQuestionById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("questions", where: "id = ?", whereArgs: [id]);
-    return result.isNotEmpty ? Question.fromJson(result.first) : null;
+    Question? question =
+        result.isNotEmpty ? Question.fromJson(result.first) : null;
+    if (question != null) {
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+    }
+
+    return question;
   }
 
   Future<void> insertAll(List<Question> questions) async {
@@ -131,9 +137,14 @@ class QuestionDB {
         whereArgs: [courseId],
         limit: limit);
 
-    return List.generate(maps.length, (i) {
-      return Question.fromJson(maps[i]);
-    });
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
   }
 
   Future<void> update(Question question) async {

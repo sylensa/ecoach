@@ -111,7 +111,10 @@ class _CourseViewState extends State<CourseView> {
                       child: CourseCard(widget.user,
                           courseInfo: CourseInfo(
                             course: items[index].course!,
-                            title: items[index].name!.replaceFirst(subName, ""),
+                            title: items[index]
+                                .name!
+                                .toUpperCase()
+                                .replaceFirst(subName.toUpperCase(), ""),
                             background:
                                 kCourseColors[index % kCourseColors.length]
                                     ['background'],

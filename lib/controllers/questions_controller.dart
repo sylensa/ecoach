@@ -120,8 +120,8 @@ class TestController {
 
     List<TestNameAndCount> testNames = [];
     quizzes.forEach((quiz) {
-      testNames.add(
-          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.MOCK));
+      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+          id: quiz.id, category: TestCategory.MOCK));
     });
 
     return testNames;
@@ -132,8 +132,8 @@ class TestController {
 
     List<TestNameAndCount> testNames = [];
     quizzes.forEach((quiz) {
-      testNames.add(
-          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.EXAM));
+      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+          id: quiz.id, category: TestCategory.EXAM));
     });
 
     return testNames;
@@ -156,8 +156,8 @@ class TestController {
 
     List<TestNameAndCount> testNames = [];
     quizzes.forEach((quiz) {
-      testNames.add(
-          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.ESSAY));
+      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+          id: quiz.id, category: TestCategory.ESSAY));
     });
 
     return testNames;
@@ -168,8 +168,8 @@ class TestController {
 
     List<TestNameAndCount> testNames = [];
     quizzes.forEach((quiz) {
-      testNames.add(
-          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.SAVED));
+      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+          id: quiz.id, category: TestCategory.SAVED));
     });
 
     return testNames;
@@ -180,8 +180,8 @@ class TestController {
 
     List<TestNameAndCount> testNames = [];
     quizzes.forEach((quiz) {
-      testNames.add(
-          TestNameAndCount(quiz.name!, 3, 12, category: TestCategory.BANK));
+      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+          id: quiz.id, category: TestCategory.BANK));
     });
 
     return testNames;

@@ -103,10 +103,7 @@ class QuizDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.query('quiz_items',
-        orderBy: "created_at DESC",
-        where: "quiz_id = ?",
-        whereArgs: [quizId],
-        limit: limit);
+        where: "quiz_id = ?", whereArgs: [quizId], limit: limit);
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
