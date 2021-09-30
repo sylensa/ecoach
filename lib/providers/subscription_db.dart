@@ -40,14 +40,14 @@ class SubscriptionDB {
         );
         List<SubscriptionItem> items = element.subscriptionItems!;
         if (items.length > 0) {
-          items.forEach((item) {
+          items.forEach((item) async {
             print({'plan id': element.planId, 'item_id': item.id});
             txn.delete(
               'subscription_items',
               where: "plan_id = ?",
               whereArgs: [element.planId],
             );
-            SubscriptionItemDB().insert(item);
+            await SubscriptionItemDB().insert(item);
           });
         }
       }

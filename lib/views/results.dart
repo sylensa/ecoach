@@ -2,22 +2,24 @@ import 'package:ecoach/controllers/questions_controller.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-class DiagnoticResultView extends StatefulWidget {
-  DiagnoticResultView(this.user, {Key? key, required this.test})
+class ResultView extends StatefulWidget {
+  ResultView(this.user, {Key? key, required this.test, this.diagnostic = false})
       : super(key: key);
   final User user;
   TestTaken test;
+  bool diagnostic;
 
   @override
-  _DiagnoticResultViewState createState() => _DiagnoticResultViewState();
+  _ResultViewState createState() => _ResultViewState();
 }
 
-class _DiagnoticResultViewState extends State<DiagnoticResultView> {
+class _ResultViewState extends State<ResultView> {
   var futureList;
   List<Widget> analysisWidgets = [];
 
@@ -113,29 +115,55 @@ class _DiagnoticResultViewState extends State<DiagnoticResultView> {
                         ),
                       ),
                     ),
-                    VerticalDivider(
-                      width: 2,
-                      color: Colors.white,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(11.0),
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push<void>(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) =>
-                                    StorePage(widget.user),
-                              ),
-                            );
-                          },
-                          child: Text("Store",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 25)),
+                    if (widget.diagnostic)
+                      VerticalDivider(
+                        width: 2,
+                        color: Colors.white,
+                      ),
+                    if (widget.diagnostic)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(11.0),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      StorePage(widget.user),
+                                ),
+                              );
+                            },
+                            child: Text("Store",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 25)),
+                          ),
                         ),
                       ),
-                    )
+                    if (!widget.diagnostic)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(11.0),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        MainHomePage(
+                                      widget.user,
+                                      index: 1,
+                                    ),
+                                  ), (route) {
+                                return false;
+                              });
+                            },
+                            child: Text("Close",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 25)),
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ),

@@ -600,8 +600,13 @@ class _SelectCourseState extends State<SelectCourse> {
                       Navigator.pop(context);
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return QuizCover(widget.user, apiResponse.data,
-                            level: selectedLevel!, course: selectedCourse!);
+                        return QuizCover(
+                          widget.user,
+                          apiResponse.data,
+                          level: selectedLevel!,
+                          course: selectedCourse!,
+                          diagnostic: true,
+                        );
                       }));
                     });
                   },

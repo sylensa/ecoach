@@ -136,7 +136,9 @@ class _MainHomePageState extends State<MainHomePage> {
   Future<ApiResponse<Subscription>?> getSubscriptionData() async {
     Map<String, dynamic> queryParams = {};
     print(queryParams);
-    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    print(AppUrl.subscriptionData +
+        '?' +
+        Uri(queryParameters: queryParams).query);
     http.Response response = await http.get(
       Uri.parse(AppUrl.subscriptionData +
           '?' +

@@ -16,16 +16,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
 
 class QuizView extends StatefulWidget {
-  QuizView(this.user, this.questions, {Key? key, this.level, this.course})
+  QuizView(this.user, this.questions,
+      {Key? key, this.level, this.course, this.diagnostic = false})
       : super(key: key);
   User user;
   Level? level;
   Course? course;
   List<Question> questions;
+  bool diagnostic;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -48,9 +49,12 @@ class _QuizViewState extends State<QuizView> {
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
 
+  late ScrollController numberingController;
+
   @override
   void initState() {
     controller = PageController(initialPage: currentQuestion);
+    numberingController = ScrollController();
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
 
@@ -99,6 +103,7 @@ class _QuizViewState extends State<QuizView> {
     Map<String, dynamic> responses = Map();
     int i = 1;
     widget.questions.forEach((question) {
+      print(question.topicName);
       Map<String, dynamic> answer = {
         "question_id": question.id,
         "topic_id": question.topicId,
@@ -198,8 +203,11 @@ class _QuizViewState extends State<QuizView> {
     Navigator.push<void>(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            DiagnoticResultView(widget.user, test: testTakenSaved!),
+        builder: (BuildContext context) => ResultView(
+          widget.user,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+        ),
       ),
     ).then((value) {
       setState(() {
@@ -244,6 +252,7 @@ class _QuizViewState extends State<QuizView> {
             left: 0,
             child: Container(
               child: SingleChildScrollView(
+                controller: numberingController,
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   child: Row(
@@ -358,6 +367,8 @@ class _QuizViewState extends State<QuizView> {
                                   curve: Curves.ease);
                               setState(() {
                                 currentQuestion++;
+                                numberingController
+                                    .jumpTo(currentQuestion * 30.0);
                               });
                             },
                             child: Text(

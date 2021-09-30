@@ -62,30 +62,36 @@ class Question {
     return selectedAnswer == null;
   }
 
-  factory Question.fromJson(Map<String, dynamic> json) => Question(
-        id: json["id"],
-        courseId: json["course_id"],
-        topicId: json["topic_id"],
-        topicName: json["topic"] != null
-            ? json['topic']['name']
-            : "topic id: ${json["topic_id"]}",
-        qid: json["qid"],
-        text: json["text"],
-        instructions: json["instructions"],
-        resource: json["resource"],
-        options: json["options"],
-        position: json["position"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        qtype: json["qtype"],
-        confirmed: json["confirmed"],
-        public: json["public"],
-        flagged: json["flagged"],
-        deleted: json["deleted"],
-        answers: json["answers"] == null
-            ? []
-            : List<Answer>.from(json["answers"].map((x) => Answer.fromJson(x))),
-      );
+  factory Question.fromJson(Map<String, dynamic> json) {
+    print(
+        "--------------------------------------------------------------------");
+    print(json["topic"]);
+    print(json["topic_name"]);
+    return Question(
+      id: json["id"],
+      courseId: json["course_id"],
+      topicId: json["topic_id"],
+      topicName: json["topic"] != null
+          ? json['topic']['name']
+          : json["topic_name"] ?? "topic id: ${json["topic_id"]}",
+      qid: json["qid"],
+      text: json["text"],
+      instructions: json["instructions"],
+      resource: json["resource"],
+      options: json["options"],
+      position: json["position"],
+      createdAt: DateTime.parse(json["created_at"]),
+      updatedAt: DateTime.parse(json["updated_at"]),
+      qtype: json["qtype"],
+      confirmed: json["confirmed"],
+      public: json["public"],
+      flagged: json["flagged"],
+      deleted: json["deleted"],
+      answers: json["answers"] == null
+          ? []
+          : List<Answer>.from(json["answers"].map((x) => Answer.fromJson(x))),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,

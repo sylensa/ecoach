@@ -10,6 +10,7 @@ class QuestionDB {
     if (question == null) {
       return;
     }
+    print(question.toJson());
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {
       await txn.insert(
@@ -19,8 +20,8 @@ class QuestionDB {
       );
       List<Answer> answers = question.answers!;
       if (answers.length > 0) {
-        answers.forEach((answer) {
-          AnswerDB().insert(answer);
+        answers.forEach((answer) async {
+          await AnswerDB().insert(answer);
         });
       }
     });
@@ -36,6 +37,7 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();
     questions.forEach((element) {
+      // print(element.toJson());
       batch.insert(
         'questions',
         element.toJson(),
@@ -43,8 +45,8 @@ class QuestionDB {
       );
       List<Answer> answers = element.answers!;
       if (answers.length > 0) {
-        answers.forEach((answer) {
-          AnswerDB().insert(answer);
+        answers.forEach((answer) async {
+          await AnswerDB().insert(answer);
         });
       }
     });

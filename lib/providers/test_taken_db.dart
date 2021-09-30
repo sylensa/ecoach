@@ -43,24 +43,7 @@ class TestTakenDB {
         await db!.query('tests_taken', orderBy: "created_at DESC");
 
     return List.generate(maps.length, (i) {
-      return TestTaken(
-        id: maps[i]["id"],
-        courseId: maps[i]["course_id"],
-        testname: maps[i]["test_name"],
-        testType: maps[i]["test_type"],
-        testId: maps[i]["test_id"],
-        userId: maps[i]["user_id"],
-        datetime: maps[i]["date_time"],
-        pauseduration: maps[i]["pause_duration"],
-        usedTime: maps[i]["used_time"],
-        testTime: maps[i]["test_time"],
-        totalQuestions: maps[i]["total_questions"],
-        score: maps[i]["score"],
-        wrong: maps[i]["wrong"],
-        unattempted: maps[i]["unattempted"],
-        responses: maps[i]["responses"],
-        comment: maps[i]["comment"],
-      );
+      return TestTaken.fromJson(maps[i]);
     });
   }
 

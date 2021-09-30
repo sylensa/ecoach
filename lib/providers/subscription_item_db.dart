@@ -18,8 +18,8 @@ class SubscriptionItemDB {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       if (subscriptionItem.course != null) {
-        CourseDB().insert(subscriptionItem.course!);
-        QuizDB().insertAll(subscriptionItem.quizzes!);
+        await CourseDB().insert(subscriptionItem.course!);
+        await QuizDB().insertAll(subscriptionItem.quizzes!);
       }
     });
   }

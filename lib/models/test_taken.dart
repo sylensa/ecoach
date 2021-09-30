@@ -58,8 +58,8 @@ class TestTaken {
       unattempted: json["unattempted"],
       responses: json["responses"],
       comment: json["comment"],
-      userRank: json['rank']['rank'],
-      totalRank: json['rank']['total']);
+      userRank: json['rank'] != null ? json['rank']['rank'] : null,
+      totalRank: json['rank'] != null ? json['rank']['total'] : null);
 
   Map<String, dynamic> toJson() => {
         "id": id,
