@@ -10,9 +10,9 @@ class QuestionDB {
     if (question == null) {
       return;
     }
-    print(question.toJson());
+    // print(question.toJson());
     final Database? db = await DBProvider.database;
-    db!.transaction((txn) async {
+    await db!.transaction((txn) async {
       await txn.insert(
         'questions',
         question.toJson(),
@@ -20,9 +20,9 @@ class QuestionDB {
       );
       List<Answer> answers = question.answers!;
       if (answers.length > 0) {
-        answers.forEach((answer) async {
-          await AnswerDB().insert(answer);
-        });
+        for (int i = 0; i < answers.length; i++) {
+          await AnswerDB().insert(answers[i]);
+        }
       }
     });
   }

@@ -79,6 +79,8 @@ class TestTaken {
         "unattempted": unattempted,
         "responses": responses,
         "comment": comment,
+        "user_rank": userRank,
+        "total_rank": totalRank
       };
 }
 

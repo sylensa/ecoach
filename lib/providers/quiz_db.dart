@@ -56,10 +56,10 @@ class QuizDB {
 
   Future<void> insertAll(List<Quiz> quizzes) async {
     final Database? db = await DBProvider.database;
-    db!.transaction((txn) async {
+    await db!.transaction((txn) async {
       for (int i = 0; i < quizzes.length; i++) {
         Quiz element = quizzes[i];
-        txn.insert(
+        await txn.insert(
           'quizzes',
           element.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace,
@@ -68,12 +68,12 @@ class QuizDB {
         if (questions.length > 0) {
           for (int i = 0; i < questions.length; i++) {
             Question question = questions[i];
-            txn.delete(
+            await txn.delete(
               'quiz_items',
               where: "quiz_id = ? AND question_id = ?",
               whereArgs: [element.id, question.id],
             );
-            txn.insert(
+            await txn.insert(
               "quiz_items",
               {'quiz_id': element.id, 'question_id': question.id},
               conflictAlgorithm: ConflictAlgorithm.replace,
