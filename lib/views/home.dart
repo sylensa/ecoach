@@ -31,20 +31,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // checkSubscription();
+    checkSubscription();
   }
 
   checkSubscription() {
     List<Subscription> subscriptions = widget.user.subscriptions;
 
     if (subscriptions.length > 0) {
-      int active = 0;
-      subscriptions.forEach((subscription) {
-        if (subscription.endsAt!.isBefore(DateTime.now())) {
-          active++;
-        }
-      });
-      if (active == 0) {}
       setState(() {
         futureSubs = TestTakenDB().testsTaken();
       });
