@@ -43,11 +43,11 @@ class SubscriptionDB {
           for (int i = 0; i < items.length; i++) {
             SubscriptionItem item = items[i];
             print({'plan id': element.planId, 'item_id': item.id});
-            await txn.delete(
-              'subscription_items',
-              where: "plan_id = ?",
-              whereArgs: [element.planId],
-            );
+            // await txn.delete(
+            //   'subscription_items',
+            //   where: "plan_id = ?",
+            //   whereArgs: [element.planId],
+            // );
             await SubscriptionItemDB().insert(item);
           }
         }

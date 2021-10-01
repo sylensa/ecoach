@@ -155,12 +155,6 @@ class _MainHomePageState extends State<MainHomePage> {
       // print(responseData);
       if (responseData["status"] == true) {
         print("messages returned");
-
-        var size = utf8.encode(response.body).length;
-        print(
-            'length of data=====================================================');
-        print(size);
-        print(response.body);
         return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
           print("it's fine here");
           print(dataItem);

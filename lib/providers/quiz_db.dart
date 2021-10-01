@@ -68,11 +68,11 @@ class QuizDB {
         if (questions.length > 0) {
           for (int i = 0; i < questions.length; i++) {
             Question question = questions[i];
-            await txn.delete(
-              'quiz_items',
-              where: "quiz_id = ? AND question_id = ?",
-              whereArgs: [element.id, question.id],
-            );
+            // await txn.delete(
+            //   'quiz_items',
+            //   where: "quiz_id = ? AND question_id = ?",
+            //   whereArgs: [element.id, question.id],
+            // );
             await txn.insert(
               "quiz_items",
               {'quiz_id': element.id, 'question_id': question.id},

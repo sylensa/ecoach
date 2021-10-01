@@ -10,6 +10,7 @@ class SubscriptionItemDB {
     if (subscriptionItem == null) {
       return;
     }
+    print("saving subcription item ${subscriptionItem.name}");
     final Database? db = await DBProvider.database;
     await db!.transaction((txn) async {
       await txn.insert(
