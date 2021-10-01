@@ -17,6 +17,7 @@ import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class QuizView extends StatefulWidget {
@@ -326,7 +327,7 @@ class _QuizViewState extends State<QuizView> {
               )),
           Positioned(
             top: 50,
-            right: 20,
+            right: 15,
             child: GestureDetector(
               onTap: () {
                 if (!enabled) {
@@ -369,7 +370,8 @@ class _QuizViewState extends State<QuizView> {
                   }
                   int min = (duration.inSeconds / 60).floor();
                   int sec = duration.inSeconds % 60;
-                  return Text("$min:$sec",
+                  return Text(
+                      "${NumberFormat('00').format(min)}:${NumberFormat('00').format(sec)}",
                       style: TextStyle(color: Color(0xFF00C664), fontSize: 28));
                 },
                 countdownController: countdownTimerController,
