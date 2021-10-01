@@ -27,6 +27,7 @@ class QuizView extends StatefulWidget {
       this.course,
       required this.name,
       this.timeInMin = 5,
+      this.disableTime = false,
       this.diagnostic = false})
       : super(key: key);
   User user;
@@ -36,6 +37,7 @@ class QuizView extends StatefulWidget {
   int timeInMin;
   bool diagnostic;
   String name;
+  bool disableTime;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -69,9 +71,15 @@ class _QuizViewState extends State<QuizView> {
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
 
-    countdownTimerController.start();
+    startTimer();
 
     super.initState();
+  }
+
+  startTimer() {
+    if (!widget.disableTime) {
+      countdownTimerController.start();
+    }
   }
 
   onEnd() {
@@ -136,7 +144,10 @@ class _QuizViewState extends State<QuizView> {
   }
 
   completeQuiz() async {
-    countdownTimerController.stop();
+    if (!widget.disableTime) {
+      countdownTimerController.stop();
+    }
+
     setState(() {
       enabled = false;
     });
@@ -149,9 +160,11 @@ class _QuizViewState extends State<QuizView> {
         courseId: widget.course!.id,
         testname: widget.name,
         testType: "diagnostic",
-        testTime: duration.inSeconds,
-        usedTime: duration.inSeconds -
-            countdownTimerController.currentDuration.inSeconds,
+        testTime: widget.disableTime ? -1 : duration.inSeconds,
+        usedTime: widget.disableTime
+            ? -1
+            : duration.inSeconds -
+                countdownTimerController.currentDuration.inSeconds,
         responses: responses,
         score: score,
         correct: correct,
@@ -297,7 +310,7 @@ class _QuizViewState extends State<QuizView> {
                 image: AssetImage('assets/images/white_leave.png'),
               )),
           Positioned(
-            top: 55,
+            top: 50,
             right: 20,
             child: GestureDetector(
               onTap: () {
@@ -330,6 +343,10 @@ class _QuizViewState extends State<QuizView> {
               },
               child: Countdown(
                 builder: (context, duration) {
+                  if (widget.disableTime) {
+                    return Image(
+                        image: AssetImage("assets/images/infinite.png"));
+                  }
                   if (duration.inSeconds == 0) {
                     return Text("Time Up",
                         style:

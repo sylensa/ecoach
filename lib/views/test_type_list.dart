@@ -8,13 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class TestTypeListView extends StatefulWidget {
-  TestTypeListView(this.user, this.course, this.tests,
+  TestTypeListView(this.user, this.course, this.tests, this.type,
       {Key? key, this.title, this.multiSelect = false})
       : super(key: key);
 
   final User user;
   final Course course;
   final List<TestNameAndCount> tests;
+  final TestType type;
   String? title;
   bool multiSelect;
 
@@ -206,10 +207,12 @@ class _MockListViewState extends State<TestTypeListView> {
                                   return QuizCover(
                                     widget.user,
                                     questions,
-                                    name: testsSelected[0].category !=
-                                            TestCategory.TOPIC
-                                        ? ":" + testsSelected[0].name
-                                        : "Topic",
+                                    name: testsSelected[0].name,
+                                    type: widget.type,
+                                    category: testsSelected[0]
+                                        .category
+                                        .toString()
+                                        .split(".")[1],
                                     time: 10,
                                     course: widget.course,
                                   );

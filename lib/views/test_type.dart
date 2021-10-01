@@ -168,6 +168,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 widget.user,
                 widget.course,
                 data,
+                testType,
                 title: "Mock Test",
               );
               break;
@@ -176,6 +177,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 widget.user,
                 widget.course,
                 data,
+                testType,
                 title: "Exams",
               );
               break;
@@ -184,6 +186,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 widget.user,
                 widget.course,
                 data,
+                testType,
                 title: "Topic",
                 multiSelect: true,
               );
@@ -193,6 +196,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 widget.user,
                 widget.course,
                 data,
+                testType,
                 title: "Essay",
               );
               break;
@@ -205,7 +209,8 @@ class _TestTypeViewState extends State<TestTypeView> {
               );
               break;
             case TestCategory.BANK:
-              widgetView = TestTypeListView(widget.user, widget.course, data,
+              widgetView = TestTypeListView(
+                  widget.user, widget.course, data, testType,
                   title: "Bank");
               break;
             default:
