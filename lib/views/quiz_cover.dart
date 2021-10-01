@@ -3,6 +3,7 @@ import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/quiz_page.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,8 @@ class QuizCover extends StatelessWidget {
       {Key? key,
       this.level,
       required this.name,
+      this.type = TestType.NONE,
+      this.category = "Test",
       this.course,
       this.time = 5,
       this.diagnostic = false})
@@ -21,6 +24,8 @@ class QuizCover extends StatelessWidget {
   List<Question> questions;
   bool diagnostic;
   String name;
+  String? category;
+  final TestType type;
   int time;
 
   @override
@@ -72,7 +77,7 @@ class QuizCover extends StatelessWidget {
                               ),
                               SizedBox(
                                 width: 140,
-                                child: Text(":${name}",
+                                child: Text(":${category}",
                                     style: TextStyle(
                                         fontSize: 22,
                                         color: Colors.white,
@@ -120,11 +125,17 @@ class QuizCover extends StatelessWidget {
                               ),
                               SizedBox(
                                 width: 140,
-                                child: Text(":${time} mins",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                child: type != TestType.UNTIMED
+                                    ? Text(":${time} mins",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold))
+                                    : Text("Untimed",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold)),
                               ),
                             ],
                           ),
@@ -154,6 +165,9 @@ class QuizCover extends StatelessWidget {
                                           name: name,
                                           course: course,
                                           timeInMin: time,
+                                          disableTime: type == TestType.UNTIMED
+                                              ? true
+                                              : false,
                                           diagnostic: diagnostic,
                                         );
                                       }));
