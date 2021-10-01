@@ -28,6 +28,7 @@ class SubscriptionDB {
   }
 
   Future<void> insertAll(List<Subscription> subscriptions) async {
+    print("insert all subs");
     final Database? db = await DBProvider.database;
 
     await db!.transaction((txn) async {
@@ -39,7 +40,7 @@ class SubscriptionDB {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
         List<SubscriptionItem> items = element.subscriptionItems!;
-        if (items.length > 0) {
+        if (items.isNotEmpty) {
           for (int i = 0; i < items.length; i++) {
             SubscriptionItem item = items[i];
             print({'plan id': element.planId, 'item_id': item.id});

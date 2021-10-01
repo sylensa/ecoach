@@ -12,8 +12,8 @@ class QuestionDB {
     }
     // print(question.toJson());
     final Database? db = await DBProvider.database;
-    await db!.transaction((txn) async {
-      await txn.insert(
+    db!.transaction((txn) async {
+      txn.insert(
         'questions',
         question.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,

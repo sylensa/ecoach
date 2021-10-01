@@ -12,7 +12,7 @@ class CourseDB {
     }
     final Database? db = await DBProvider.database;
     await db!.transaction((txn) async {
-      await txn.insert(
+      txn.insert(
         'courses',
         course.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,

@@ -10,8 +10,8 @@ class AnswerDB {
       return;
     }
     final Database? db = await DBProvider.database;
-    await db!.transaction((txn) async {
-      await txn.insert(
+    db!.transaction((txn) async {
+      txn.insert(
         'answers',
         answer.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,

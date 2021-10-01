@@ -6,6 +6,8 @@ import 'package:ecoach/providers/database.dart';
 import 'package:ecoach/providers/questions_db.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'answers.dart';
+
 class QuizDB {
   Future<void> insert(Quiz quiz) async {
     if (quiz == null) {
@@ -59,7 +61,7 @@ class QuizDB {
     await db!.transaction((txn) async {
       for (int i = 0; i < quizzes.length; i++) {
         Quiz element = quizzes[i];
-        await txn.insert(
+        txn.insert(
           'quizzes',
           element.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace,
@@ -73,12 +75,26 @@ class QuizDB {
             //   where: "quiz_id = ? AND question_id = ?",
             //   whereArgs: [element.id, question.id],
             // );
-            await txn.insert(
+            txn.insert(
               "quiz_items",
               {'quiz_id': element.id, 'question_id': question.id},
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
-            await QuestionDB().insert(question);
+            txn.insert(
+              'questions',
+              question.toJson(),
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+            List<Answer> answers = question.answers!;
+            if (answers.length > 0) {
+              for (int i = 0; i < answers.length; i++) {
+                txn.insert(
+                  'answers',
+                  answers[i].toJson(),
+                  conflictAlgorithm: ConflictAlgorithm.replace,
+                );
+              }
+            }
           }
         }
       }
