@@ -1,15 +1,23 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/widgets/select_text.dart';
-import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_tex/flutter_tex.dart';
 
 class QuestionWidget extends StatefulWidget {
-  QuestionWidget(this.question, {Key? key, this.position, this.enabled = true})
+  QuestionWidget(this.question,
+      {Key? key,
+      this.position,
+      this.useTex = false,
+      this.enabled = true,
+      this.callback})
       : super(key: key);
   Question question;
   int? position;
   bool enabled;
+  bool useTex;
+  Function(Answer selectedAnswer)? callback;
 
   @override
   _QuestionWidgetState createState() => _QuestionWidgetState();
@@ -45,13 +53,28 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       SizedBox(
                         height: 12,
                       ),
-                      Html(data: "${widget.question.text ?? ''}", style: {
-                        // tables will have the below background color
-                        "body": Style(
-                          color: Colors.white,
-                          fontSize: FontSize(23),
-                        ),
-                      }),
+                      if (!widget.useTex)
+                        Html(data: "${widget.question.text ?? ''}", style: {
+                          // tables will have the below background color
+                          "body": Style(
+                            color: Colors.white,
+                            fontSize: FontSize(23),
+                          ),
+                        }),
+                      if (widget.useTex)
+                        SizedBox(
+                          width: screenWidth(context),
+                          child: TeXView(
+                            child: TeXViewDocument(widget.question.text ?? "",
+                                style: TeXViewStyle(
+                                  backgroundColor: Color(0xFF444444),
+                                  contentColor: Colors.white,
+                                  fontStyle: TeXViewFontStyle(
+                                    fontSize: 23,
+                                  ),
+                                )),
+                          ),
+                        )
                     ],
                   ),
                 ),
@@ -133,6 +156,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                   for (int i = 0; i < answers!.length; i++)
                     SelectHtml(answers![i].text!,
                         widget.question.selectedAnswer == answers![i],
+                        useTex: widget.useTex,
                         normalSize: 15,
                         selectedSize: widget.enabled ? 48 : 24,
                         imposedSize: widget.enabled ||
@@ -159,6 +183,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       setState(() {
                         widget.question.selectedAnswer = answers![i];
                       });
+                      widget.callback!(answers![i]);
                     })
                 ],
               ),

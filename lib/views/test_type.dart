@@ -205,6 +205,7 @@ class _TestTypeViewState extends State<TestTypeView> {
               widgetView = QuizCover(
                 widget.user,
                 data,
+                time: 40 * 60,
                 name: "Saved Test",
               );
               break;

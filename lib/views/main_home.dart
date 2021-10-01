@@ -216,14 +216,15 @@ class _MainHomePageState extends State<MainHomePage>
           '/$itemId?' +
           Uri(queryParameters: queryParams).query),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json',
         'api-token': widget.user.token!
       },
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
+      String body = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> responseData = json.decode(body);
       // print(responseData);
       if (responseData["status"] == true) {
         print("messages returned");

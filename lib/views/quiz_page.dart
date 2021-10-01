@@ -66,6 +66,8 @@ class _QuizViewState extends State<QuizView> {
 
   late ItemScrollController numberingController;
 
+  bool useTex = false;
+
   @override
   void initState() {
     controller = PageController(initialPage: currentQuestion);
@@ -79,7 +81,9 @@ class _QuizViewState extends State<QuizView> {
     if (widget.timedPerQuestion) {
       widget.forwardOnly = true;
     }
-
+    if (widget.course!.name!.toUpperCase().contains("Math".toUpperCase())) {
+      useTex = true;
+    }
     super.initState();
   }
 
@@ -90,6 +94,7 @@ class _QuizViewState extends State<QuizView> {
   }
 
   resetTimer() {
+    countdownTimerController.dispose();
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
     countdownTimerController.start();
@@ -99,6 +104,22 @@ class _QuizViewState extends State<QuizView> {
     print("timer ended");
     completeQuiz();
     countdownTimerController.dispose();
+  }
+
+  nextButton() {
+    controller.nextPage(
+        duration: Duration(milliseconds: 200), curve: Curves.ease);
+    setState(() {
+      currentQuestion++;
+      numberingController.scrollTo(
+          index: currentQuestion,
+          duration: Duration(seconds: 1),
+          curve: Curves.easeInOutCubic);
+
+      if (widget.timedPerQuestion && enabled) {
+        resetTimer();
+      }
+    });
   }
 
   double get score {
@@ -278,6 +299,14 @@ class _QuizViewState extends State<QuizView> {
                       widget.questions[i],
                       position: i,
                       enabled: enabled,
+                      useTex: useTex,
+                      callback: (Answer answer) {
+                        if (widget.forwardOnly && answer.value == 0) {
+                          completeQuiz();
+                        } else {
+                          nextButton();
+                        }
+                      },
                     )
                 ],
               ),
@@ -391,6 +420,7 @@ class _QuizViewState extends State<QuizView> {
                           (!widget.forwardOnly ||
                               widget.forwardOnly && !enabled))
                         Expanded(
+                          flex: 2,
                           child: TextButton(
                             onPressed: () {
                               controller.previousPage(
@@ -417,23 +447,9 @@ class _QuizViewState extends State<QuizView> {
                         VerticalDivider(width: 2, color: Colors.white),
                       if (currentQuestion < widget.questions.length - 1)
                         Expanded(
+                          flex: 2,
                           child: TextButton(
-                            onPressed: () {
-                              controller.nextPage(
-                                  duration: Duration(milliseconds: 200),
-                                  curve: Curves.ease);
-                              setState(() {
-                                currentQuestion++;
-                                numberingController.scrollTo(
-                                    index: currentQuestion,
-                                    duration: Duration(seconds: 1),
-                                    curve: Curves.easeInOutCubic);
-
-                                if (widget.timedPerQuestion && enabled) {
-                                  resetTimer();
-                                }
-                              });
-                            },
+                            onPressed: nextButton,
                             child: Text(
                               "Next",
                               style: TextStyle(
@@ -449,6 +465,7 @@ class _QuizViewState extends State<QuizView> {
                       if (!savedTest &&
                           currentQuestion == widget.questions.length - 1)
                         Expanded(
+                          flex: 2,
                           child: TextButton(
                             onPressed: () {
                               completeQuiz();
@@ -466,15 +483,20 @@ class _QuizViewState extends State<QuizView> {
                         VerticalDivider(width: 2, color: Colors.white),
                       if (savedTest)
                         Expanded(
+                          flex: 1,
                           child: TextButton(
                             onPressed: () {
                               viewResults();
                             },
-                            child: Text(
-                              "Results",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 21,
+                            child: RichText(
+                              softWrap: false,
+                              overflow: TextOverflow.clip,
+                              text: TextSpan(
+                                text: "Results",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 21,
+                                ),
                               ),
                             ),
                           ),
