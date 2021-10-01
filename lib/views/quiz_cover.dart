@@ -26,154 +26,166 @@ class QuizCover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      color: Color(0xFF00C664),
-      child: Stack(children: [
-        Positioned(
-          top: 20,
-          left: -100,
-          right: -140,
-          child: Container(
-            height: 500,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/images/deep_pool_green.png'),
-            )),
-          ),
-        ),
-        Positioned(
-          child: Container(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 120,
+        body: questions.length == 0
+            ? Container(
+                child: Center(
+                  child: Text(
+                    "There are no questions\n for your selection",
+                    style: TextStyle(color: Colors.black, fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 130,
-                      child: Text("Test Type",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+              )
+            : Container(
+                color: Color(0xFF00C664),
+                child: Stack(children: [
+                  Positioned(
+                    top: 20,
+                    left: -100,
+                    right: -140,
+                    child: Container(
+                      height: 500,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage('assets/images/deep_pool_green.png'),
+                      )),
                     ),
-                    SizedBox(
-                      width: 140,
-                      child: Text(":${name}",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 130,
-                      child: Text("Questions",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    SizedBox(
-                      width: 140,
-                      child: Text(":${questions.length}",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 130,
-                      child: Text("Time",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    SizedBox(
-                      width: 140,
-                      child: Text(":${time} mins",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 100,
-                ),
-                Text("answer all questions",
-                    style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
-                        fontStyle: FontStyle.italic)),
-                SizedBox(
-                  height: 220,
-                ),
-                Container(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        OutlinedButton(
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return QuizView(
-                                user,
-                                questions,
-                                level: level,
-                                name: name,
-                                course: course,
-                                timeInMin: time,
-                                diagnostic: diagnostic,
-                              );
-                            }));
-                          },
-                          child: Text(
-                            "Let's go",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                            ),
+                  ),
+                  Positioned(
+                    child: Container(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 120,
                           ),
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                EdgeInsets.fromLTRB(35, 10, 35, 10)),
-                            side: MaterialStateProperty.all(BorderSide(
-                                color: Colors.white,
-                                width: 1,
-                                style: BorderStyle.solid)),
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0))),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 130,
+                                child: Text("Test Type",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 140,
+                                child: Text(":${name}",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ],
                           ),
-                        ),
-                      ]),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ]),
-    ));
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 130,
+                                child: Text("Questions",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 140,
+                                child: Text(":${questions.length}",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 130,
+                                child: Text("Time",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 140,
+                                child: Text(":${time} mins",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 100,
+                          ),
+                          Text("answer all questions",
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontStyle: FontStyle.italic)),
+                          SizedBox(
+                            height: 220,
+                          ),
+                          Container(
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return QuizView(
+                                          user,
+                                          questions,
+                                          level: level,
+                                          name: name,
+                                          course: course,
+                                          timeInMin: time,
+                                          diagnostic: diagnostic,
+                                        );
+                                      }));
+                                    },
+                                    child: Text(
+                                      "Let's go",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 28,
+                                      ),
+                                    ),
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                          EdgeInsets.fromLTRB(35, 10, 35, 10)),
+                                      side: MaterialStateProperty.all(
+                                          BorderSide(
+                                              color: Colors.white,
+                                              width: 1,
+                                              style: BorderStyle.solid)),
+                                      shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0))),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ]),
+              ));
   }
 }
