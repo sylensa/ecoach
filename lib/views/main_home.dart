@@ -12,10 +12,11 @@ import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/courses.dart';
-import 'package:ecoach/views/friends.dart';
+import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/widgets/adeo_bottom_navigation_bar.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 0});
+  MainHomePage(this.user, {this.index = 3});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
@@ -49,7 +50,7 @@ class _MainHomePageState extends State<MainHomePage> {
       ),
       CoursesPage(widget.user),
       StorePage(widget.user),
-      FriendsView(),
+      AnalysisView(),
       MoreView(),
     ];
     currentIndex = widget.index;
@@ -234,19 +235,29 @@ class _MainHomePageState extends State<MainHomePage> {
     return Scaffold(
       drawer: AppDrawer(user: widget.user),
       body: _children[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        onTap: tapping,
-        selectedItemColor: Colors.red,
-        currentIndex: currentIndex,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: "Courses"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: "Store"),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Friends"),
-          BottomNavigationBarItem(icon: Icon(Icons.more_vert), label: "More"),
-        ],
+      // bottomNavigationBar: BottomNavigationBar(
+      //   type: BottomNavigationBarType.fixed,
+      //   onTap: tapping,
+      //   selectedItemColor: Colors.red,
+      //   currentIndex: currentIndex,
+      //   items: [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+      //     BottomNavigationBarItem(icon: Icon(Icons.book), label: "Courses"),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.shopping_cart),
+      //       label: "Store",
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.bar_chart),
+      //       label: "Analysis",
+      //     ),
+      //     BottomNavigationBarItem(icon: Icon(Icons.more_vert), label: "More"),
+      //   ],
+      // ),
+      bottomNavigationBar: AdeoBottomNavigationBar(
+        selectedIndex: currentIndex,
+        onItemSelected: tapping,
+        items: ['home', 'courses', 'adeo', 'analysis', 'account'],
       ),
     );
   }
