@@ -16,7 +16,7 @@ class QuizCover extends StatelessWidget {
       this.type = TestType.NONE,
       this.category = "Test",
       this.course,
-      this.time = 5,
+      this.time = 300,
       this.diagnostic = false})
       : super(key: key);
   User user;
