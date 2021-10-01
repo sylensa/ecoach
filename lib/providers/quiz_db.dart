@@ -32,7 +32,7 @@ class QuizDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.query('quizzes',
-        orderBy: "created_at DESC",
+        orderBy: "name ASC",
         where: "type = ? AND course_id = ?",
         whereArgs: [type, courseId]);
     print(courseId);
@@ -46,7 +46,7 @@ class QuizDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.query('quizzes',
-        orderBy: "created_at DESC",
+        orderBy: "name ASC",
         where: "type LIKE ? AND course_id = ?",
         whereArgs: [name + "%", courseId]);
     print(courseId);

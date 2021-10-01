@@ -206,7 +206,11 @@ class _MockListViewState extends State<TestTypeListView> {
                                   return QuizCover(
                                     widget.user,
                                     questions,
-                                    name: testsSelected[0].name,
+                                    name: testsSelected[0].category !=
+                                            TestCategory.TOPIC
+                                        ? ":" + testsSelected[0].name
+                                        : "Topic",
+                                    time: 10,
                                     course: widget.course,
                                   );
                                 }));

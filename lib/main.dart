@@ -4,15 +4,16 @@ import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'models/user.dart';
 import 'views/login_view.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom]);
   runApp(MyApp());
 }
 

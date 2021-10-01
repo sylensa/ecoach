@@ -12,6 +12,7 @@ class QuizCover extends StatelessWidget {
       this.level,
       required this.name,
       this.course,
+      this.time = 5,
       this.diagnostic = false})
       : super(key: key);
   User user;
@@ -20,6 +21,7 @@ class QuizCover extends StatelessWidget {
   List<Question> questions;
   bool diagnostic;
   String name;
+  int time;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class QuizCover extends StatelessWidget {
                     ),
                     SizedBox(
                       width: 140,
-                      child: Text(":Diagnostic",
+                      child: Text(":${name}",
                           style: TextStyle(
                               fontSize: 22,
                               color: Colors.white,
@@ -108,7 +110,7 @@ class QuizCover extends StatelessWidget {
                     ),
                     SizedBox(
                       width: 140,
-                      child: Text(":40 mins",
+                      child: Text(":${time} mins",
                           style: TextStyle(
                               fontSize: 22,
                               color: Colors.white,
@@ -141,6 +143,7 @@ class QuizCover extends StatelessWidget {
                                 level: level,
                                 name: name,
                                 course: course,
+                                timeInMin: time,
                                 diagnostic: diagnostic,
                               );
                             }));

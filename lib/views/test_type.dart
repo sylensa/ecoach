@@ -203,7 +203,8 @@ class _TestTypeViewState extends State<TestTypeView> {
               );
               break;
             case TestCategory.BANK:
-              widgetView = QuizCover(widget.user, data, name: "Bank");
+              widgetView = TestTypeListView(widget.user, widget.course, data,
+                  title: "Bank");
               break;
             default:
               widgetView = null;
