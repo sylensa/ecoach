@@ -69,7 +69,7 @@ class _MainHomePageState extends State<MainHomePage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      checkSubscription();
+      // checkSubscription();
     }
   }
 
