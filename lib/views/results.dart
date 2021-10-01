@@ -1,4 +1,4 @@
-import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';

@@ -20,7 +20,7 @@ class DBProvider {
 
   static initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "ecoach27.db");
+    String path = join(documentsDirectory.path, "ecoach47.db");
     return await openDatabase(path, version: 8, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
@@ -194,6 +194,8 @@ class DBProvider {
         'unattempted' int NOT NULL,
         'responses' LONGTEXT NOT NULL,
         'comment' text DEFAULT NULL,
+        'user_rank' int NULL,
+        'total_rank' int NULL,
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);

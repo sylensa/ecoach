@@ -3,8 +3,12 @@ import 'dart:convert';
 
 import 'package:ecoach/models/api_response.dart';
 import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/course_db.dart';
+import 'package:ecoach/providers/quiz_db.dart';
 import 'package:ecoach/providers/subscription_db.dart';
+import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/courses.dart';
@@ -83,17 +87,37 @@ class _MainHomePageState extends State<MainHomePage> {
       List<Subscription> freshSubscriptions = api.data as List<Subscription>;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context, message: "downloading subscription\n data");
-        SubscriptionDB().deleteAll();
+        showLoaderDialog(context,
+            message: "downloading subscription\n data.....");
         getSubscriptionData().then((api) async {
+          print("------------------------------------------------------");
+
           if (api == null) {
             Navigator.pop(context);
             return;
           }
           List<Subscription> subscriptions = api.data as List<Subscription>;
-          SubscriptionDB().insertAll(subscriptions).then((value) {
+          await SubscriptionDB().insertAll(subscriptions);
+          Navigator.pop(context);
+
+          List<SubscriptionItem> items =
+              await SubscriptionItemDB().allSubscriptionItems();
+          print(items);
+          print("all sub items");
+          for (int i = 0; i < items.length; i++) {
+            print("downloading ${items[i].name}\n data");
+            showLoaderDialog(context,
+                message: "downloading..... \n${items[i].name}\n data");
+            SubscriptionItem? subscriptionItem =
+                await getSubscriptionItem(items[i].id!);
+            print(subscriptionItem!);
+
+            await CourseDB().insert(subscriptionItem.course!);
+            await QuizDB().insertAll(subscriptionItem.quizzes!);
             Navigator.pop(context);
-          });
+          }
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Subscription data download successfully")));
         });
       }
     });
@@ -156,13 +180,40 @@ class _MainHomePageState extends State<MainHomePage> {
       // print(responseData);
       if (responseData["status"] == true) {
         print("messages returned");
-        print(response.body);
-
         return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
           print("it's fine here");
           print(dataItem);
           return Subscription.fromJson(dataItem);
         });
+      } else {
+        print("not successful event");
+      }
+    } else {
+      print("Failed ....");
+      print(response.statusCode);
+      print(response.body);
+    }
+  }
+
+  Future<SubscriptionItem?> getSubscriptionItem(int itemId) async {
+    Map<String, dynamic> queryParams = {};
+    http.Response response = await http.get(
+      Uri.parse(AppUrl.subscriptionItem +
+          '/$itemId?' +
+          Uri(queryParameters: queryParams).query),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': widget.user.token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      // print(responseData);
+      if (responseData["status"] == true) {
+        print("messages returned");
+        return SubscriptionItem.fromJson(responseData['data']);
       } else {
         print("not successful event");
       }

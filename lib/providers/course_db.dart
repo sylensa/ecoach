@@ -11,8 +11,8 @@ class CourseDB {
       return;
     }
     final Database? db = await DBProvider.database;
-    db!.transaction((txn) async {
-      await txn.insert(
+    await db!.transaction((txn) async {
+      txn.insert(
         'courses',
         course.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,

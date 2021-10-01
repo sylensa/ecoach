@@ -10,19 +10,19 @@ class QuestionDB {
     if (question == null) {
       return;
     }
-    print(question.toJson());
+    // print(question.toJson());
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {
-      await txn.insert(
+      txn.insert(
         'questions',
         question.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       List<Answer> answers = question.answers!;
       if (answers.length > 0) {
-        answers.forEach((answer) async {
-          await AnswerDB().insert(answer);
-        });
+        for (int i = 0; i < answers.length; i++) {
+          await AnswerDB().insert(answers[i]);
+        }
       }
     });
   }
@@ -145,6 +145,18 @@ class QuestionDB {
     }
 
     return questions;
+  }
+
+  Future<int> getTotalQuestionCount(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'questions',
+      where: "course_id = ?",
+      whereArgs: [courseId],
+    );
+
+    return maps.length;
   }
 
   Future<void> update(Question question) async {

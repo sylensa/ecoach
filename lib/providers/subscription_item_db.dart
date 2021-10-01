@@ -7,12 +7,10 @@ import 'package:sqflite/sqflite.dart';
 
 class SubscriptionItemDB {
   Future<void> insert(SubscriptionItem subscriptionItem) async {
-    if (subscriptionItem == null) {
-      return;
-    }
+    print("saving subcription item ${subscriptionItem.name}");
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {
-      await txn.insert(
+      txn.insert(
         'subscription_items',
         subscriptionItem.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
@@ -32,6 +30,7 @@ class SubscriptionItemDB {
   }
 
   Future<void> insertAll(List<SubscriptionItem> subscriptionItems) async {
+    print("insert all subs");
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();
     subscriptionItems.forEach((element) {
@@ -43,6 +42,33 @@ class SubscriptionItemDB {
     });
 
     await batch.commit(noResult: true);
+  }
+
+  Future<List<SubscriptionItem>> allSubscriptionItems() async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'subscription_items',
+      orderBy: "created_at DESC",
+    );
+
+    List<SubscriptionItem> items = [];
+    for (int i = 0; i < maps.length; i++) {
+      items.add(SubscriptionItem(
+        id: maps[i]["id"],
+        tag: maps[i]["tag"],
+        name: maps[i]["name"],
+        description: maps[i]["description"],
+        planId: maps[i]["plan_id"],
+        value: maps[i]["value"],
+        sortOrder: maps[i]["sort_order"],
+        resettableInterval: maps[i]["resettable_interval"],
+        resettablePeriod: maps[i]["resettable_period"],
+        createdAt: DateTime.parse(maps[i]["created_at"]),
+        updatedAt: DateTime.parse(maps[i]["updated_at"]),
+      ));
+    }
+    return items;
   }
 
   Future<List<SubscriptionItem>> subscriptionItems(int planId) async {

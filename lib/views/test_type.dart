@@ -1,5 +1,6 @@
-import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/test_type_list.dart';
 import 'package:ecoach/views/quiz_cover.dart';
@@ -196,10 +197,16 @@ class _TestTypeViewState extends State<TestTypeView> {
               );
               break;
             case TestCategory.SAVED:
-              widgetView = QuizCover(widget.user, data);
+              List<Question> questions = data as List<Question>;
+              widgetView = QuizCover(
+                widget.user,
+                data,
+                name: "Saved Test",
+              );
               break;
             case TestCategory.BANK:
-              widgetView = QuizCover(widget.user, data);
+              widgetView = TestTypeListView(widget.user, widget.course, data,
+                  title: "Bank");
               break;
             default:
               widgetView = null;

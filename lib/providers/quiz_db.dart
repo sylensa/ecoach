@@ -6,6 +6,8 @@ import 'package:ecoach/providers/database.dart';
 import 'package:ecoach/providers/questions_db.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'answers.dart';
+
 class QuizDB {
   Future<void> insert(Quiz quiz) async {
     if (quiz == null) {
@@ -30,7 +32,7 @@ class QuizDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.query('quizzes',
-        orderBy: "created_at DESC",
+        orderBy: "name ASC",
         where: "type = ? AND course_id = ?",
         whereArgs: [type, courseId]);
     print(courseId);
@@ -40,9 +42,23 @@ class QuizDB {
     });
   }
 
+  Future<List<Quiz>> getQuizzesByName(int courseId, String name) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('quizzes',
+        orderBy: "name ASC",
+        where: "type LIKE ? AND course_id = ?",
+        whereArgs: [name + "%", courseId]);
+    print(courseId);
+    return List.generate(maps.length, (i) {
+      print(maps[i]);
+      return Quiz.fromJson(maps[i]);
+    });
+  }
+
   Future<void> insertAll(List<Quiz> quizzes) async {
     final Database? db = await DBProvider.database;
-    db!.transaction((txn) async {
+    await db!.transaction((txn) async {
       for (int i = 0; i < quizzes.length; i++) {
         Quiz element = quizzes[i];
         txn.insert(
@@ -54,17 +70,31 @@ class QuizDB {
         if (questions.length > 0) {
           for (int i = 0; i < questions.length; i++) {
             Question question = questions[i];
-            txn.delete(
-              'quiz_items',
-              where: "quiz_id = ? AND question_id = ?",
-              whereArgs: [element.id, question.id],
-            );
+            // await txn.delete(
+            //   'quiz_items',
+            //   where: "quiz_id = ? AND question_id = ?",
+            //   whereArgs: [element.id, question.id],
+            // );
             txn.insert(
               "quiz_items",
               {'quiz_id': element.id, 'question_id': question.id},
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
-            await QuestionDB().insert(question);
+            txn.insert(
+              'questions',
+              question.toJson(),
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+            List<Answer> answers = question.answers!;
+            if (answers.length > 0) {
+              for (int i = 0; i < answers.length; i++) {
+                txn.insert(
+                  'answers',
+                  answers[i].toJson(),
+                  conflictAlgorithm: ConflictAlgorithm.replace,
+                );
+              }
+            }
           }
         }
       }

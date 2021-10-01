@@ -28,27 +28,29 @@ class SubscriptionDB {
   }
 
   Future<void> insertAll(List<Subscription> subscriptions) async {
+    print("insert all subs");
     final Database? db = await DBProvider.database;
 
     await db!.transaction((txn) async {
       for (int i = 0; i < subscriptions.length; i++) {
         Subscription element = subscriptions[i];
-        txn.insert(
+        await txn.insert(
           'subscriptions',
           element.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
         List<SubscriptionItem> items = element.subscriptionItems!;
-        if (items.length > 0) {
-          items.forEach((item) async {
+        if (items.isNotEmpty) {
+          for (int i = 0; i < items.length; i++) {
+            SubscriptionItem item = items[i];
             print({'plan id': element.planId, 'item_id': item.id});
-            txn.delete(
-              'subscription_items',
-              where: "plan_id = ?",
-              whereArgs: [element.planId],
-            );
+            // await txn.delete(
+            //   'subscription_items',
+            //   where: "plan_id = ?",
+            //   whereArgs: [element.planId],
+            // );
             await SubscriptionItemDB().insert(item);
-          });
+          }
         }
       }
     });

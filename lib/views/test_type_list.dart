@@ -1,4 +1,4 @@
-import 'package:ecoach/controllers/questions_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
@@ -206,6 +206,11 @@ class _MockListViewState extends State<TestTypeListView> {
                                   return QuizCover(
                                     widget.user,
                                     questions,
+                                    name: testsSelected[0].category !=
+                                            TestCategory.TOPIC
+                                        ? ":" + testsSelected[0].name
+                                        : "Topic",
+                                    time: 10,
                                     course: widget.course,
                                   );
                                 }));

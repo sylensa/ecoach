@@ -47,6 +47,30 @@ class TestTakenDB {
     });
   }
 
+  Future<List<TestTaken>> courseTestsTaken(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('tests_taken',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId]);
+
+    return List.generate(maps.length, (i) {
+      return TestTaken.fromJson(maps[i]);
+    });
+  }
+
+  Future<TestTaken?> courseLastTest(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('tests_taken',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId]);
+
+    return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
+  }
+
   Future<void> update(TestTaken testTaken) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;

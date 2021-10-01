@@ -2,8 +2,10 @@
  *
  */
 
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/ui/course_info.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
@@ -25,6 +27,20 @@ class CourseCard extends StatefulWidget {
 
 class _CourseCardState extends State<CourseCard> {
   bool isExpanded = false;
+  num courseProgress = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    TestController()
+        .getCourseProgress(widget.courseInfo.course.id)
+        .then((value) {
+      setState(() {
+        courseProgress = value is num ? (value * 100).floor() : 0;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +103,7 @@ class _CourseCardState extends State<CourseCard> {
                     ),
                   ),
                   CircularProgressIndicatorWrapper(
-                    progress: widget.courseInfo.progress,
+                    progress: courseProgress,
                     progressColor: widget.courseInfo.progressColor,
                     onTap: () {
                       setState(() {

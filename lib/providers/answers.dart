@@ -11,7 +11,7 @@ class AnswerDB {
     }
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {
-      await txn.insert(
+      txn.insert(
         'answers',
         answer.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
