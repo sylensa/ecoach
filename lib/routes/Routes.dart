@@ -1,6 +1,6 @@
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/courses.dart';
-import 'package:ecoach/views/friends.dart';
+import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/views/logout.dart';
@@ -31,7 +31,7 @@ class Routes {
   // static const String test_analytics = TestAnalyticsPage.routeName;
   // static const String tests = TestsPage.routeName;
   static const String courses = CoursesPage.routeName;
-  static const String friends = FriendsView.routeName;
+  static const String friends = AnalysisView.routeName;
   // static const String students_report = StudentsReportPage.routeName;
   // static const String set_exams = SetExamsPage.routeName;
 
