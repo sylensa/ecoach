@@ -6,6 +6,7 @@ import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class QuizCover extends StatelessWidget {
   QuizCover(this.user, this.questions,
@@ -126,7 +127,8 @@ class QuizCover extends StatelessWidget {
                               SizedBox(
                                 width: 140,
                                 child: type != TestType.UNTIMED
-                                    ? Text(":${time} mins",
+                                    ? Text(
+                                        ":${NumberFormat('00').format(Duration(seconds: time).inMinutes)}:${NumberFormat('00').format(Duration(seconds: time).inSeconds % 60)}",
                                         style: TextStyle(
                                             fontSize: 22,
                                             color: Colors.white,
@@ -164,7 +166,11 @@ class QuizCover extends StatelessWidget {
                                           level: level,
                                           name: name,
                                           course: course,
-                                          timeInMin: time,
+                                          timeInSec: time,
+                                          timedPerQuestion:
+                                              type == TestType.SPEED
+                                                  ? true
+                                                  : false,
                                           disableTime: type == TestType.UNTIMED
                                               ? true
                                               : false,

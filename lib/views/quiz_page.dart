@@ -6,7 +6,6 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results.dart';
@@ -26,7 +25,9 @@ class QuizView extends StatefulWidget {
       this.level,
       this.course,
       required this.name,
-      this.timeInMin = 5,
+      this.timeInSec = 60,
+      this.forwardOnly = false,
+      this.timedPerQuestion = false,
       this.disableTime = false,
       this.diagnostic = false})
       : super(key: key);
@@ -34,10 +35,12 @@ class QuizView extends StatefulWidget {
   Level? level;
   Course? course;
   List<Question> questions;
-  int timeInMin;
+  int timeInSec;
   bool diagnostic;
   String name;
   bool disableTime;
+  bool forwardOnly;
+  bool timedPerQuestion;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -66,12 +69,15 @@ class _QuizViewState extends State<QuizView> {
   void initState() {
     controller = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
-    duration = Duration(minutes: widget.timeInMin);
+    duration = Duration(seconds: widget.timeInSec);
 
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
 
     startTimer();
+    if (widget.timedPerQuestion) {
+      widget.forwardOnly = true;
+    }
 
     super.initState();
   }
@@ -82,10 +88,16 @@ class _QuizViewState extends State<QuizView> {
     }
   }
 
+  resetTimer() {
+    countdownTimerController =
+        CountdownController(duration: duration, onEnd: onEnd);
+    countdownTimerController.start();
+  }
+
   onEnd() {
     print("timer ended");
-    countdownTimerController.dispose();
     completeQuiz();
+    countdownTimerController.dispose();
   }
 
   double get score {
@@ -289,6 +301,9 @@ class _QuizViewState extends State<QuizView> {
                             underlineSelected: true,
                             selectedColor: Color(0xFFFD6363),
                             color: Colors.white70, select: () {
+                      if (widget.forwardOnly) {
+                        return;
+                      }
                       setState(() {
                         currentQuestion = i;
                       });
@@ -328,7 +343,7 @@ class _QuizViewState extends State<QuizView> {
                         callback: (action) {
                           Navigator.pop(context);
                           if (action == "resume") {
-                            countdownTimerController.start();
+                            startTimer();
                           } else if (action == "quit") {
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(builder: (context) {
@@ -370,7 +385,9 @@ class _QuizViewState extends State<QuizView> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      if (currentQuestion > 0)
+                      if (currentQuestion > 0 &&
+                          (!widget.forwardOnly ||
+                              widget.forwardOnly && !enabled))
                         Expanded(
                           child: TextButton(
                             onPressed: () {
@@ -409,6 +426,10 @@ class _QuizViewState extends State<QuizView> {
                                     index: currentQuestion,
                                     duration: Duration(seconds: 1),
                                     curve: Curves.easeInOutCubic);
+
+                                if (widget.timedPerQuestion && enabled) {
+                                  resetTimer();
+                                }
                               });
                             },
                             child: Text(
