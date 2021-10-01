@@ -107,8 +107,11 @@ class _QuizViewState extends State<QuizView> {
   }
 
   nextButton() {
+    if (currentQuestion == widget.questions.length - 1) {
+      return;
+    }
     controller.nextPage(
-        duration: Duration(milliseconds: 200), curve: Curves.ease);
+        duration: Duration(milliseconds: 700), curve: Curves.ease);
     setState(() {
       currentQuestion++;
       numberingController.scrollTo(
@@ -424,7 +427,7 @@ class _QuizViewState extends State<QuizView> {
                           child: TextButton(
                             onPressed: () {
                               controller.previousPage(
-                                  duration: Duration(milliseconds: 200),
+                                  duration: Duration(milliseconds: 700),
                                   curve: Curves.ease);
                               setState(() {
                                 currentQuestion--;
