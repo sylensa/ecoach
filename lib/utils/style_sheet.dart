@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 ButtonStyle greenButtonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
-    foregroundColor: MaterialStateProperty.all(Colors.white));
+  backgroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
+  foregroundColor: MaterialStateProperty.all(Colors.white),
+);
 
 const kCourseCardSnippetPadding = EdgeInsets.only(left: 20.0, right: 16.0);
 const kCourseCardOverlayColor = Colors.black12;
@@ -28,3 +29,30 @@ const kCourseColors = [
   {'background': Color(0xFFFF6344), 'progress': Color(0xFF6AC466)},
   {'background': Color(0xFF707070), 'progress': Color(0xFFFFB300)},
 ];
+
+const kAnalysisScreenBackground = Color(0xFF636363);
+const kAnalysisScreenActiveColor = Color(0xFF4C4C4C);
+const kNavigationTopBorderColor = Color(0xFFC0C0C0);
+
+const kSixteenPointWhiteText = TextStyle(
+  fontSize: 16,
+  color: Colors.white,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Poppins',
+);
+
+const kTableBodyMainText = TextStyle(
+  fontSize: 12,
+  color: Colors.white,
+  fontFamily: 'Poppins',
+);
+
+const kTableBodySubText = TextStyle(
+  fontSize: 12,
+  color: Color(0x88FFFFFF),
+  fontFamily: 'Poppins',
+);
+
+const kAnalysisInfoSnippetBackground1 = Color(0xFFFFB34E);
+const kAnalysisInfoSnippetBackground2 = Color(0xFF28BFDF);
+const kAnalysisInfoSnippetBackground3 = Color(0xFF13BFA3);
