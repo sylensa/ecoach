@@ -175,7 +175,7 @@ class _QuizViewState extends State<QuizView> {
         testType: "diagnostic",
         testTime: widget.disableTime ? -1 : duration.inSeconds,
         usedTime: widget.disableTime
-            ? -1
+            ? DateTime.now().difference(startTime).inSeconds
             : duration.inSeconds -
                 countdownTimerController.currentDuration.inSeconds,
         responses: responses,
