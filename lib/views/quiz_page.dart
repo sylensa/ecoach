@@ -27,8 +27,7 @@ class QuizView extends StatefulWidget {
       this.course,
       required this.name,
       this.timeInSec = 60,
-      this.forwardOnly = false,
-      this.timedPerQuestion = false,
+      this.speedTest = false,
       this.disableTime = false,
       this.diagnostic = false})
       : super(key: key);
@@ -40,8 +39,7 @@ class QuizView extends StatefulWidget {
   bool diagnostic;
   String name;
   bool disableTime;
-  bool forwardOnly;
-  bool timedPerQuestion;
+  bool speedTest;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -67,6 +65,7 @@ class _QuizViewState extends State<QuizView> {
   late ItemScrollController numberingController;
 
   bool useTex = false;
+  int finalQuestion = 0;
 
   @override
   void initState() {
@@ -78,9 +77,7 @@ class _QuizViewState extends State<QuizView> {
         CountdownController(duration: duration, onEnd: onEnd);
 
     startTimer();
-    if (widget.timedPerQuestion) {
-      widget.forwardOnly = true;
-    }
+
     if (widget.course!.name!.toUpperCase().contains("Math".toUpperCase())) {
       useTex = true;
     }
@@ -102,6 +99,7 @@ class _QuizViewState extends State<QuizView> {
 
   onEnd() {
     print("timer ended");
+
     completeQuiz();
     countdownTimerController.dispose();
   }
@@ -110,6 +108,7 @@ class _QuizViewState extends State<QuizView> {
     if (currentQuestion == widget.questions.length - 1) {
       return;
     }
+
     controller.nextPage(
         duration: Duration(milliseconds: 700), curve: Curves.ease);
     setState(() {
@@ -119,7 +118,7 @@ class _QuizViewState extends State<QuizView> {
           duration: Duration(seconds: 1),
           curve: Curves.easeInOutCubic);
 
-      if (widget.timedPerQuestion && enabled) {
+      if (widget.speedTest && enabled) {
         resetTimer();
       }
     });
@@ -184,12 +183,16 @@ class _QuizViewState extends State<QuizView> {
     if (!widget.disableTime) {
       countdownTimerController.stop();
     }
-
+    if (widget.speedTest) {
+      finalQuestion = currentQuestion;
+    }
     setState(() {
       enabled = false;
     });
-    showLoaderDialog(context, message: "Saving results");
-
+    showLoaderDialog(context, message: "Test Completed\nSaving results");
+    if (widget.speedTest) {
+      await Future.delayed(Duration(seconds: 1));
+    }
     testTaken = TestTaken(
         userId: widget.user.id,
         datetime: startTime,
@@ -304,7 +307,7 @@ class _QuizViewState extends State<QuizView> {
                       enabled: enabled,
                       useTex: useTex,
                       callback: (Answer answer) {
-                        if (widget.forwardOnly && answer.value == 0) {
+                        if (widget.speedTest && answer.value == 0) {
                           completeQuiz();
                         } else {
                           nextButton();
@@ -327,6 +330,7 @@ class _QuizViewState extends State<QuizView> {
                   itemCount: widget.questions.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, i) {
+                    if (widget.speedTest) return Container();
                     return Container(
                         child: SelectText("${(i + 1)}", i == currentQuestion,
                             normalSize: 28,
@@ -334,7 +338,7 @@ class _QuizViewState extends State<QuizView> {
                             underlineSelected: true,
                             selectedColor: Color(0xFFFD6363),
                             color: Colors.white70, select: () {
-                      if (widget.forwardOnly) {
+                      if (widget.speedTest) {
                         return;
                       }
                       setState(() {
@@ -420,8 +424,7 @@ class _QuizViewState extends State<QuizView> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       if (currentQuestion > 0 &&
-                          (!widget.forwardOnly ||
-                              widget.forwardOnly && !enabled))
+                          (!widget.speedTest || widget.speedTest && !enabled))
                         Expanded(
                           flex: 2,
                           child: TextButton(
@@ -448,7 +451,10 @@ class _QuizViewState extends State<QuizView> {
                         ),
                       if (currentQuestion < widget.questions.length - 1)
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (currentQuestion < widget.questions.length - 1)
+                      if (currentQuestion < widget.questions.length - 1 &&
+                          !(!enabled &&
+                              widget.speedTest &&
+                              currentQuestion == finalQuestion))
                         Expanded(
                           flex: 2,
                           child: TextButton(
@@ -466,7 +472,10 @@ class _QuizViewState extends State<QuizView> {
                           currentQuestion == widget.questions.length - 1)
                         VerticalDivider(width: 2, color: Colors.white),
                       if (!savedTest &&
-                          currentQuestion == widget.questions.length - 1)
+                              currentQuestion == widget.questions.length - 1 ||
+                          (!enabled &&
+                              widget.speedTest &&
+                              currentQuestion == finalQuestion))
                         Expanded(
                           flex: 2,
                           child: TextButton(

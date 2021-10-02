@@ -131,11 +131,8 @@ class QuestionDB {
   Future<List<Question>> getRandomQuestions(int courseId, int limit) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps = await db!.query('questions',
-        orderBy: "created_at DESC",
-        where: "course_id = ?",
-        whereArgs: [courseId],
-        limit: limit);
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {

@@ -167,10 +167,9 @@ class QuizCover extends StatelessWidget {
                                           name: name,
                                           course: course,
                                           timeInSec: time,
-                                          timedPerQuestion:
-                                              type == TestType.SPEED
-                                                  ? true
-                                                  : false,
+                                          speedTest: type == TestType.SPEED
+                                              ? true
+                                              : false,
                                           disableTime: type == TestType.UNTIMED
                                               ? true
                                               : false,

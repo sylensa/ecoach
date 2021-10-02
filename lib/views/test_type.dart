@@ -164,12 +164,15 @@ class _TestTypeViewState extends State<TestTypeView> {
           print(testCategory);
           switch (testCategory) {
             case TestCategory.MOCK:
-              widgetView = TestTypeListView(
+              List<Question> questions = data as List<Question>;
+              widgetView = QuizCover(
                 widget.user,
-                widget.course,
-                data,
-                testType,
-                title: "Mock Test",
+                questions,
+                course: widget.course,
+                type: testType,
+                category: testCategory.toString().split(".")[1],
+                time: testType == TestType.SPEED ? 30 : 40 * 60,
+                name: "Mock Test",
               );
               break;
             case TestCategory.EXAM:
@@ -204,8 +207,10 @@ class _TestTypeViewState extends State<TestTypeView> {
               List<Question> questions = data as List<Question>;
               widgetView = QuizCover(
                 widget.user,
-                data,
-                time: 40 * 60,
+                questions,
+                category: testCategory.toString().split(".")[1],
+                course: widget.course,
+                time: testType == TestType.SPEED ? 30 : 40 * 60,
                 name: "Saved Test",
               );
               break;

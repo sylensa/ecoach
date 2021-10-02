@@ -104,6 +104,46 @@ class _QuestionWidgetState extends State<QuestionWidget> {
             if (!widget.enabled)
               Container(
                 color: Color(0xFF595959),
+                child: widget.question.resource == ""
+                    ? null
+                    : Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 12,
+                              ),
+                              if (!widget.useTex)
+                                Html(
+                                    data: "${widget.question.resource ?? ''}",
+                                    style: {
+                                      // tables will have the below background color
+                                      "body": Style(
+                                        color: Colors.white,
+                                        fontSize: FontSize(23),
+                                      ),
+                                    }),
+                              if (widget.useTex)
+                                SizedBox(
+                                  width: screenWidth(context),
+                                  child: TeXView(
+                                    child: TeXViewDocument(
+                                        widget.question.resource ?? "",
+                                        style: TeXViewStyle(
+                                          backgroundColor: Color(0xFF444444),
+                                          contentColor: Colors.white,
+                                          fontStyle: TeXViewFontStyle(
+                                            fontSize: 23,
+                                          ),
+                                        )),
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ),
               ),
             if (!widget.enabled &&
                 selectedAnswer != null &&

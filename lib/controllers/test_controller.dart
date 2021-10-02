@@ -116,15 +116,10 @@ class TestController {
   }
 
   getMockTests(Course course) async {
-    List<Quiz> quizzes = await QuizDB().getQuizzesByName(course.id!, "MOCK");
+    List<Question> questions =
+        await QuestionDB().getRandomQuestions(course.id!, 40);
 
-    List<TestNameAndCount> testNames = [];
-    quizzes.forEach((quiz) {
-      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
-          id: quiz.id, category: TestCategory.MOCK));
-    });
-
-    return testNames;
+    return questions;
   }
 
   getExamTests(Course course) async {
