@@ -4,6 +4,7 @@ import 'package:ecoach/widgets/select_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_tex/flutter_tex.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuestionWidget extends StatefulWidget {
   QuestionWidget(this.question,
@@ -61,6 +62,16 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                             fontSize: FontSize(23),
                           ),
                         }),
+                      // Text(
+                      //   parseHtmlString(widget.question.text ?? ""),
+                      //   softWrap: true,
+                      //   style: GoogleFonts.ebGaramond(
+                      //     textStyle: TextStyle(
+                      //       color: Colors.white,
+                      //       fontSize: 23,
+                      //     ),
+                      //   ),
+                      // ),
                       if (widget.useTex)
                         SizedBox(
                           width: screenWidth(context),

@@ -165,12 +165,12 @@ class _SelectHtmlState extends State<SelectHtml> {
       ),
     );
   }
+}
 
-  String parseHtmlString(String htmlString) {
-    final document = htmlparser.parse(htmlString);
-    final String parsedString =
-        htmlparser.parse(document.body!.text).documentElement!.text;
+String parseHtmlString(String htmlString) {
+  final document = htmlparser.parse(htmlString);
+  final String parsedString =
+      htmlparser.parse(document.body!.text).documentElement!.text;
 
-    return parsedString;
-  }
+  return parsedString;
 }
