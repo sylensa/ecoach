@@ -108,20 +108,20 @@ class _QuizViewState extends State<QuizView> {
     if (currentQuestion == widget.questions.length - 1) {
       return;
     }
-
-    controller.nextPage(
-        duration: Duration(milliseconds: 700), curve: Curves.ease);
     setState(() {
       currentQuestion++;
-      numberingController.scrollTo(
-          index: currentQuestion,
-          duration: Duration(seconds: 1),
-          curve: Curves.easeInOutCubic);
-
-      if (widget.speedTest && enabled) {
-        resetTimer();
-      }
     });
+    controller.nextPage(
+        duration: Duration(milliseconds: 700), curve: Curves.ease);
+
+    numberingController.scrollTo(
+        index: currentQuestion,
+        duration: Duration(seconds: 1),
+        curve: Curves.easeInOutCubic);
+
+    if (widget.speedTest && enabled) {
+      resetTimer();
+    }
   }
 
   double get score {

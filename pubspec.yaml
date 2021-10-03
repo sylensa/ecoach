@@ -44,9 +44,11 @@ dependencies:
   percent_indicator: ^3.0.1
   scrollable_positioned_list: ^0.2.0-nullsafety.0
   google_fonts: ^2.1.0
+  flutter_math_fork: ^0.4.1
 
   cupertino_icons: ^1.0.3
   intl: ^0.17.0
+  # catex: ^0.0.1+8
 
 dev_dependencies:
   flutter_test:
