@@ -34,13 +34,14 @@ class MainHomePage extends StatefulWidget {
   _MainHomePageState createState() => _MainHomePageState();
 }
 
-class _MainHomePageState extends State<MainHomePage> {
+class _MainHomePageState extends State<MainHomePage>
+    with WidgetsBindingObserver {
   late List<Widget> _children;
-  final _navigatorKey = GlobalKey<NavigatorState>();
   int currentIndex = 0;
 
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
     _children = [
       HomePage(
         widget.user,
@@ -57,6 +58,19 @@ class _MainHomePageState extends State<MainHomePage> {
     print("init");
     checkSubscription();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // checkSubscription();
+    }
   }
 
   bool compareSubscriptions(
@@ -202,14 +216,15 @@ class _MainHomePageState extends State<MainHomePage> {
           '/$itemId?' +
           Uri(queryParameters: queryParams).query),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json',
         'api-token': widget.user.token!
       },
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
+      String body = utf8.decode(response.bodyBytes);
+      Map<String, dynamic> responseData = json.decode(body);
       // print(responseData);
       if (responseData["status"] == true) {
         print("messages returned");
@@ -235,25 +250,6 @@ class _MainHomePageState extends State<MainHomePage> {
     return Scaffold(
       drawer: AppDrawer(user: widget.user),
       body: _children[currentIndex],
-      // bottomNavigationBar: BottomNavigationBar(
-      //   type: BottomNavigationBarType.fixed,
-      //   onTap: tapping,
-      //   selectedItemColor: Colors.red,
-      //   currentIndex: currentIndex,
-      //   items: [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-      //     BottomNavigationBarItem(icon: Icon(Icons.book), label: "Courses"),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.shopping_cart),
-      //       label: "Store",
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.bar_chart),
-      //       label: "Analysis",
-      //     ),
-      //     BottomNavigationBarItem(icon: Icon(Icons.more_vert), label: "More"),
-      //   ],
-      // ),
       bottomNavigationBar: AdeoBottomNavigationBar(
         selectedIndex: currentIndex,
         onItemSelected: tapping,

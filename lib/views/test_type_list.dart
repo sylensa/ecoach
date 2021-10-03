@@ -213,7 +213,9 @@ class _MockListViewState extends State<TestTypeListView> {
                                         .category
                                         .toString()
                                         .split(".")[1],
-                                    time: 10,
+                                    time: widget.type == TestType.SPEED
+                                        ? 30
+                                        : 40 * 60,
                                     course: widget.course,
                                   );
                                 }));

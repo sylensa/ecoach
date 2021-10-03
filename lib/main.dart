@@ -3,6 +3,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,11 @@ import 'models/user.dart';
 import 'views/login_view.dart';
 
 void main() {
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('google_fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+  });
+
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.bottom]);

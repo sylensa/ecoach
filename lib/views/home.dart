@@ -152,20 +152,24 @@ class _HomePageState extends State<HomePage> {
                                   List<TestTaken> items =
                                       snapshot.data as List<TestTaken>;
 
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: items.length,
-                                    itemBuilder: (context, index) {
-                                      final item = items[index];
-                                      return ListTile(
-                                        title: Text(item.testname ?? "no name",
-                                            style:
-                                                TextStyle(color: Colors.black)),
-                                        subtitle: Text("${item.totalQuestions}",
-                                            style:
-                                                TextStyle(color: Colors.black)),
-                                      );
-                                    },
+                                  return Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: items.length,
+                                      itemBuilder: (context, index) {
+                                        final item = items[index];
+                                        return ListTile(
+                                          title: Text(
+                                              item.testname ?? "no name",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          subtitle: Text(
+                                              "${item.totalQuestions}",
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        );
+                                      },
+                                    ),
                                   );
                                 } else if (snapshot.data == null)
                                   return NoSubWidget(

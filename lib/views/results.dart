@@ -6,6 +6,7 @@ import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ResultView extends StatefulWidget {
@@ -268,7 +269,7 @@ class _ResultViewState extends State<ResultView> {
           height: 18,
         ),
         Text(
-          "${min}m:${sec}s",
+          "${NumberFormat('00').format(min)} min:${NumberFormat('00').format(sec)} sec",
           style: TextStyle(fontSize: 15),
         ),
       ],

@@ -35,7 +35,7 @@ dependencies:
   flutter_svg: ^0.22.0 # help us to use SVG in our app
   # file_picker_cross: ^4.2.6
   get: ^4.3.8
-  # flutter_tex: ^3.6.7+10
+  flutter_tex: ^4.0.3
   pin_code_fields: ^7.3.0
   webview_flutter: ^2.0.6
   intl_phone_field: ^2.0.1
@@ -43,9 +43,12 @@ dependencies:
   flutter_countdown_timer: ^4.1.0
   percent_indicator: ^3.0.1
   scrollable_positioned_list: ^0.2.0-nullsafety.0
+  google_fonts: ^2.1.0
+  flutter_math_fork: ^0.4.1
 
   cupertino_icons: ^1.0.3
   intl: ^0.17.0
+  # catex: ^0.0.1+8
 
 dev_dependencies:
   flutter_test:

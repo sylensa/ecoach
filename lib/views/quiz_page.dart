@@ -6,7 +6,6 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results.dart';
@@ -18,6 +17,7 @@ import 'package:flutter_countdown_timer/countdown.dart';
 import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class QuizView extends StatefulWidget {
@@ -26,7 +26,8 @@ class QuizView extends StatefulWidget {
       this.level,
       this.course,
       required this.name,
-      this.timeInMin = 5,
+      this.timeInSec = 60,
+      this.speedTest = false,
       this.disableTime = false,
       this.diagnostic = false})
       : super(key: key);
@@ -34,10 +35,11 @@ class QuizView extends StatefulWidget {
   Level? level;
   Course? course;
   List<Question> questions;
-  int timeInMin;
+  int timeInSec;
   bool diagnostic;
   String name;
   bool disableTime;
+  bool speedTest;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -62,17 +64,23 @@ class _QuizViewState extends State<QuizView> {
 
   late ItemScrollController numberingController;
 
+  bool useTex = false;
+  int finalQuestion = 0;
+
   @override
   void initState() {
     controller = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
-    duration = Duration(minutes: widget.timeInMin);
+    duration = Duration(seconds: widget.timeInSec);
 
     countdownTimerController =
         CountdownController(duration: duration, onEnd: onEnd);
 
     startTimer();
 
+    if (widget.course!.name!.toUpperCase().contains("Math".toUpperCase())) {
+      useTex = true;
+    }
     super.initState();
   }
 
@@ -82,10 +90,38 @@ class _QuizViewState extends State<QuizView> {
     }
   }
 
+  resetTimer() {
+    countdownTimerController.dispose();
+    countdownTimerController =
+        CountdownController(duration: duration, onEnd: onEnd);
+    countdownTimerController.start();
+  }
+
   onEnd() {
     print("timer ended");
-    countdownTimerController.dispose();
+
     completeQuiz();
+    countdownTimerController.dispose();
+  }
+
+  nextButton() {
+    if (currentQuestion == widget.questions.length - 1) {
+      return;
+    }
+    setState(() {
+      currentQuestion++;
+    });
+    controller.nextPage(
+        duration: Duration(milliseconds: 700), curve: Curves.ease);
+
+    numberingController.scrollTo(
+        index: currentQuestion,
+        duration: Duration(seconds: 1),
+        curve: Curves.easeInOutCubic);
+
+    if (widget.speedTest && enabled) {
+      resetTimer();
+    }
   }
 
   double get score {
@@ -147,12 +183,16 @@ class _QuizViewState extends State<QuizView> {
     if (!widget.disableTime) {
       countdownTimerController.stop();
     }
-
+    if (widget.speedTest) {
+      finalQuestion = currentQuestion;
+    }
     setState(() {
       enabled = false;
     });
-    showLoaderDialog(context, message: "Saving results");
-
+    showLoaderDialog(context, message: "Test Completed\nSaving results");
+    if (widget.speedTest) {
+      await Future.delayed(Duration(seconds: 1));
+    }
     testTaken = TestTaken(
         userId: widget.user.id,
         datetime: startTime,
@@ -162,7 +202,7 @@ class _QuizViewState extends State<QuizView> {
         testType: "diagnostic",
         testTime: widget.disableTime ? -1 : duration.inSeconds,
         usedTime: widget.disableTime
-            ? -1
+            ? DateTime.now().difference(startTime).inSeconds
             : duration.inSeconds -
                 countdownTimerController.currentDuration.inSeconds,
         responses: responses,
@@ -265,6 +305,14 @@ class _QuizViewState extends State<QuizView> {
                       widget.questions[i],
                       position: i,
                       enabled: enabled,
+                      useTex: useTex,
+                      callback: (Answer answer) {
+                        if (widget.speedTest && answer.value == 0) {
+                          completeQuiz();
+                        } else {
+                          nextButton();
+                        }
+                      },
                     )
                 ],
               ),
@@ -282,6 +330,7 @@ class _QuizViewState extends State<QuizView> {
                   itemCount: widget.questions.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, i) {
+                    if (widget.speedTest) return Container();
                     return Container(
                         child: SelectText("${(i + 1)}", i == currentQuestion,
                             normalSize: 28,
@@ -289,6 +338,9 @@ class _QuizViewState extends State<QuizView> {
                             underlineSelected: true,
                             selectedColor: Color(0xFFFD6363),
                             color: Colors.white70, select: () {
+                      if (widget.speedTest) {
+                        return;
+                      }
                       setState(() {
                         currentQuestion = i;
                       });
@@ -311,7 +363,7 @@ class _QuizViewState extends State<QuizView> {
               )),
           Positioned(
             top: 50,
-            right: 20,
+            right: 15,
             child: GestureDetector(
               onTap: () {
                 if (!enabled) {
@@ -328,7 +380,7 @@ class _QuizViewState extends State<QuizView> {
                         callback: (action) {
                           Navigator.pop(context);
                           if (action == "resume") {
-                            countdownTimerController.start();
+                            startTimer();
                           } else if (action == "quit") {
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(builder: (context) {
@@ -354,7 +406,8 @@ class _QuizViewState extends State<QuizView> {
                   }
                   int min = (duration.inSeconds / 60).floor();
                   int sec = duration.inSeconds % 60;
-                  return Text("$min:$sec",
+                  return Text(
+                      "${NumberFormat('00').format(min)}:${NumberFormat('00').format(sec)}",
                       style: TextStyle(color: Color(0xFF00C664), fontSize: 28));
                 },
                 countdownController: countdownTimerController,
@@ -370,12 +423,14 @@ class _QuizViewState extends State<QuizView> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      if (currentQuestion > 0)
+                      if (currentQuestion > 0 &&
+                          (!widget.speedTest || widget.speedTest && !enabled))
                         Expanded(
+                          flex: 2,
                           child: TextButton(
                             onPressed: () {
                               controller.previousPage(
-                                  duration: Duration(milliseconds: 200),
+                                  duration: Duration(milliseconds: 700),
                                   curve: Curves.ease);
                               setState(() {
                                 currentQuestion--;
@@ -396,21 +451,14 @@ class _QuizViewState extends State<QuizView> {
                         ),
                       if (currentQuestion < widget.questions.length - 1)
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (currentQuestion < widget.questions.length - 1)
+                      if (currentQuestion < widget.questions.length - 1 &&
+                          !(!enabled &&
+                              widget.speedTest &&
+                              currentQuestion == finalQuestion))
                         Expanded(
+                          flex: 2,
                           child: TextButton(
-                            onPressed: () {
-                              controller.nextPage(
-                                  duration: Duration(milliseconds: 200),
-                                  curve: Curves.ease);
-                              setState(() {
-                                currentQuestion++;
-                                numberingController.scrollTo(
-                                    index: currentQuestion,
-                                    duration: Duration(seconds: 1),
-                                    curve: Curves.easeInOutCubic);
-                              });
-                            },
+                            onPressed: nextButton,
                             child: Text(
                               "Next",
                               style: TextStyle(
@@ -424,8 +472,12 @@ class _QuizViewState extends State<QuizView> {
                           currentQuestion == widget.questions.length - 1)
                         VerticalDivider(width: 2, color: Colors.white),
                       if (!savedTest &&
-                          currentQuestion == widget.questions.length - 1)
+                              currentQuestion == widget.questions.length - 1 ||
+                          (!enabled &&
+                              widget.speedTest &&
+                              currentQuestion == finalQuestion))
                         Expanded(
+                          flex: 2,
                           child: TextButton(
                             onPressed: () {
                               completeQuiz();
@@ -443,15 +495,20 @@ class _QuizViewState extends State<QuizView> {
                         VerticalDivider(width: 2, color: Colors.white),
                       if (savedTest)
                         Expanded(
+                          flex: 1,
                           child: TextButton(
                             onPressed: () {
                               viewResults();
                             },
-                            child: Text(
-                              "Results",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 21,
+                            child: RichText(
+                              softWrap: false,
+                              overflow: TextOverflow.clip,
+                              text: TextSpan(
+                                text: "Results",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 21,
+                                ),
                               ),
                             ),
                           ),

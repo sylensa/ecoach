@@ -1,15 +1,25 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/widgets/select_text.dart';
-import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:flutter_tex/flutter_tex.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuestionWidget extends StatefulWidget {
-  QuestionWidget(this.question, {Key? key, this.position, this.enabled = true})
+  QuestionWidget(this.question,
+      {Key? key,
+      this.position,
+      this.useTex = false,
+      this.enabled = true,
+      this.callback})
       : super(key: key);
   Question question;
   int? position;
   bool enabled;
+  bool useTex;
+  Function(Answer selectedAnswer)? callback;
 
   @override
   _QuestionWidgetState createState() => _QuestionWidgetState();
@@ -45,13 +55,32 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       SizedBox(
                         height: 12,
                       ),
-                      Html(data: "${widget.question.text ?? ''}", style: {
-                        // tables will have the below background color
-                        "body": Style(
-                          color: Colors.white,
-                          fontSize: FontSize(23),
-                        ),
-                      }),
+                      if (!widget.useTex)
+                        Html(data: "${widget.question.text ?? ''}", style: {
+                          // tables will have the below background color
+                          "body": Style(
+                            color: Colors.white,
+                            fontSize: FontSize(23),
+                          ),
+                        }),
+                      if (widget.useTex)
+                        SizedBox(
+                          width: screenWidth(context),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                            child: TeXView(
+                              renderingEngine: TeXViewRenderingEngine.katex(),
+                              child: TeXViewDocument(widget.question.text ?? "",
+                                  style: TeXViewStyle(
+                                    backgroundColor: Color(0xFF444444),
+                                    contentColor: Colors.white,
+                                    fontStyle: TeXViewFontStyle(
+                                      fontSize: 23,
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        )
                     ],
                   ),
                 ),
@@ -81,6 +110,50 @@ class _QuestionWidgetState extends State<QuestionWidget> {
             if (!widget.enabled)
               Container(
                 color: Color(0xFF595959),
+                child: widget.question.resource == ""
+                    ? null
+                    : Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: FittedBox(
+                          fit: BoxFit.cover,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 12,
+                              ),
+                              if (!widget.useTex)
+                                Html(
+                                    data: "${widget.question.resource ?? ''}",
+                                    style: {
+                                      // tables will have the below background color
+                                      "body": Style(
+                                        color: Colors.white,
+                                        fontSize: FontSize(23),
+                                      ),
+                                    }),
+                              if (widget.useTex)
+                                SizedBox(
+                                  width: screenWidth(context),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                    child: TeXView(
+                                      child: TeXViewDocument(
+                                          widget.question.resource ?? "",
+                                          style: TeXViewStyle(
+                                            backgroundColor: Color(0xFF444444),
+                                            contentColor: Colors.white,
+                                            fontStyle: TeXViewFontStyle(
+                                              fontSize: 23,
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ),
               ),
             if (!widget.enabled &&
                 selectedAnswer != null &&
@@ -128,40 +201,67 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               ),
             Container(
               color: Color(0xFF595959),
-              child: Column(
-                children: [
-                  for (int i = 0; i < answers!.length; i++)
-                    SelectHtml(answers![i].text!,
-                        widget.question.selectedAnswer == answers![i],
-                        normalSize: 15,
-                        selectedSize: widget.enabled ? 48 : 24,
-                        imposedSize: widget.enabled ||
-                                (widget.enabled && selectedAnswer == null) ||
-                                selectedAnswer != answers![i] &&
-                                    answers![i].value == 0
-                            ? null
-                            : selectedAnswer == answers![i] &&
-                                    selectedAnswer!.value == 0
-                                ? 24
-                                : 48,
-                        imposedColor: widget.enabled ||
-                                (widget.enabled && selectedAnswer == null) ||
-                                selectedAnswer != answers![i] &&
-                                    answers![i].value == 0
-                            ? null
-                            : selectedAnswer == answers![i] &&
-                                    selectedAnswer!.value == 0
-                                ? Colors.red.shade400
-                                : Colors.green.shade600, select: () {
-                      if (!widget.enabled) {
-                        return;
-                      }
-                      setState(() {
-                        widget.question.selectedAnswer = answers![i];
-                      });
-                    })
-                ],
-              ),
+              child: widget.useTex
+                  ? SelectTex(
+                      answers!,
+                      widget.question.selectedAnswer,
+                      enabled: widget.enabled,
+                      normalSize: 15,
+                      selectedSize: widget.enabled ? 48 : 24,
+                      correctSize: 48,
+                      wrongSize: 24,
+                      color: Colors.white,
+                      selectedColor: Colors.white,
+                      correctColor: Colors.green.shade600,
+                      wrongColor: Colors.red.shade400,
+                      select: (answer) {
+                        if (!widget.enabled) {
+                          return;
+                        }
+                        setState(() {
+                          widget.question.selectedAnswer = answer;
+                        });
+                        widget.callback!(answer);
+                      },
+                    )
+                  : Column(
+                      children: [
+                        for (int i = 0; i < answers!.length; i++)
+                          SelectHtml(answers![i].text!,
+                              widget.question.selectedAnswer == answers![i],
+                              useTex: widget.useTex,
+                              normalSize: 15,
+                              selectedSize: widget.enabled ? 48 : 24,
+                              imposedSize: widget.enabled ||
+                                      (widget.enabled &&
+                                          selectedAnswer == null) ||
+                                      selectedAnswer != answers![i] &&
+                                          answers![i].value == 0
+                                  ? null
+                                  : selectedAnswer == answers![i] &&
+                                          selectedAnswer!.value == 0
+                                      ? 24
+                                      : 48,
+                              imposedColor: widget.enabled ||
+                                      (widget.enabled &&
+                                          selectedAnswer == null) ||
+                                      selectedAnswer != answers![i] &&
+                                          answers![i].value == 0
+                                  ? null
+                                  : selectedAnswer == answers![i] &&
+                                          selectedAnswer!.value == 0
+                                      ? Colors.red.shade400
+                                      : Colors.green.shade600, select: () {
+                            if (!widget.enabled) {
+                              return;
+                            }
+                            setState(() {
+                              widget.question.selectedAnswer = answers![i];
+                            });
+                            widget.callback!(answers![i]);
+                          })
+                      ],
+                    ),
             )
           ],
         ),
