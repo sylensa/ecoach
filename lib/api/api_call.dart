@@ -38,7 +38,7 @@ class ApiCall<T> {
     }
     try {
       http.Response response = await http.get(
-        Uri.parse(url + '?' + Uri(queryParameters: params).query),
+        Uri.parse(url + '?' + Uri(queryParameters: params ?? {}).query),
         headers: headers ??
             {
               'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ class ApiCall<T> {
               'Accept': 'application/json',
               'api-token': user != null ? user!.token! : token
             },
-        body: jsonEncode(params),
+        body: jsonEncode(params ?? {}),
       );
 
       handleResponse(response);
