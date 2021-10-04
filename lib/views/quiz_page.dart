@@ -14,9 +14,7 @@ import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class QuizView extends StatefulWidget {
@@ -54,7 +52,6 @@ class _QuizViewState extends State<QuizView> {
   DateTime startTime = DateTime.now();
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
 
-  CurrentRemainingTime? remainingTime;
   bool enabled = true;
   bool savedTest = false;
   late Duration duration;
