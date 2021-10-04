@@ -1,5 +1,5 @@
 import 'package:ecoach/controllers/subscribe_controller.dart';
-import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';

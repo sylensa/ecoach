@@ -1,0 +1,113 @@
+warning: LF will be replaced by CRLF in windows/flutter/generated_plugin_registrant.cc.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in windows/flutter/generated_plugin_registrant.h.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in windows/flutter/generated_plugins.cmake.
+The file will have its original line endings in your working directory
+[1mdiff --git a/lib/models/api_response.dart b/lib/models/api_response.dart[m
+[1mdeleted file mode 100644[m
+[1mindex 4a8c920..0000000[m
+[1m--- a/lib/models/api_response.dart[m
+[1m+++ /dev/null[m
+[36m@@ -1,88 +0,0 @@[m
+[31m-// To parse this JSON data, do[m
+[31m-//[m
+[31m-//     final planResponse = planResponseFromMap(jsonString);[m
+[31m-[m
+[31m-import 'dart:convert';[m
+[31m-[m
+[31m-class ApiResponse<T> {[m
+[31m-  ApiResponse({[m
+[31m-    this.status,[m
+[31m-    this.message,[m
+[31m-    this.data,[m
+[31m-    this.meta,[m
+[31m-  });[m
+[31m-[m
+[31m-  bool? status;[m
+[31m-  String? message;[m
+[31m-  List<T>? data;[m
+[31m-  Meta? meta;[m
+[31m-[m
+[31m-  factory ApiResponse.fromJson([m
+[31m-          String str, Function(Map<String, dynamic>) create) =>[m
+[31m-      ApiResponse.fromMap(json.decode(str), create);[m
+[31m-[m
+[31m-  // String toJson() => json.encode(toMap());[m
+[31m-[m
+[31m-  factory ApiResponse.fromMap([m
+[31m-      Map<String, dynamic> json, Function(Map<String, dynamic>) create) {[m
+[31m-    List<T> data = [];[m
+[31m-    json['data'].forEach((v) {[m
+[31m-      data.add(create(v));[m
+[31m-    });[m
+[31m-    print("checking data");[m
+[31m-    print(data);[m
+[31m-    return ApiResponse([m
+[31m-      status: json["status"],[m
+[31m-      message: json["message"],[m
+[31m-      data: data,[m
+[31m-      // meta: Meta.fromMap(json["meta"]),[m
+[31m-    );[m
+[31m-  }[m
+[31m-[m
+[31m-  // Map<String, dynamic> toMap() => {[m
+[31m-  //   "status": status,[m
+[31m-  //   "message": message,[m
+[31m-  //   "data": this.data.toJson(),[m
+[31m-  //   "meta": meta.toMap(),[m
+[31m-  // };[m
+[31m-}[m
+[31m-[m
+[31m-abstract class Serializable {[m
+[31m-  Map<String, dynamic> toJson();[m
+[31m-}[m
+[31m-[m
+[31m-class Meta {[m
+[31m-  Meta({[m
+[31m-    this.total,[m
+[31m-    this.skipped,[m
+[31m-    this.perPage,[m
+[31m-    this.page,[m
+[31m-    this.pageCount,[m
+[31m-  });[m
+[31m-[m
+[31m-  int? total;[m
+[31m-  int? skipped;[m
+[31m-  int? perPage;[m
+[31m-  int? page;[m
+[31m-  int? pageCount;[m
+[31m-[m
+[31m-  factory Meta.fromJson(String str) => Meta.fromMap(json.decode(str));[m
+[31m-[m
+[31m-  String toJson() => json.encode(toMap());[m
+[31m-[m
+[31m-  factory Meta.fromMap(Map<String, dynamic> json) => Meta([m
+[31m-        total: json["total"],[m
+[31m-        skipped: json["skipped"],[m
+[31m-        perPage: json["perPage"],[m
+[31m-        page: json["page"],[m
+[31m-        pageCount: json["pageCount"],[m
+[31m-      );[m
+[31m-[m
+[31m-  Map<String, dynamic> toMap() => {[m
+[31m-        "total": total,[m
+[31m-        "skipped": skipped,[m
+[31m-        "perPage": perPage,[m
+[31m-        "page": page,[m
+[31m-        "pageCount": pageCount,[m
+[31m-      };[m
+[31m-}[m
+[1mdiff --git a/lib/views/main_home.dart b/lib/views/main_home.dart[m
+[1mindex 53858dc..27a21c0 100644[m
+[1m--- a/lib/views/main_home.dart[m
+[1m+++ b/lib/views/main_home.dart[m
+[36m@@ -1,7 +1,7 @@[m
+ import 'dart:async';[m
+ import 'dart:convert';[m
+ [m
+[31m-import 'package:ecoach/models/api_response.dart';[m
+[32m+[m[32mimport 'package:ecoach/api/api_response.dart';[m
+ import 'package:ecoach/models/subscription.dart';[m
+ import 'package:ecoach/models/subscription_item.dart';[m
+ import 'package:ecoach/models/user.dart';[m

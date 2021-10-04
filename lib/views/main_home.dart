@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';

@@ -58,6 +58,10 @@ class UserPreferences {
     prefs.clear();
   }
 
+  Future<String?> getUserToken() async {
+    return getUserValue("api_token");
+  }
+
   Future<String?> getUserValue(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? value = prefs.getString(args);

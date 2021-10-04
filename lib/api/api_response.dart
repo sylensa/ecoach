@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final planResponse = planResponseFromMap(jsonString);
-
 import 'dart:convert';
 
 class ApiResponse<T> {
@@ -25,6 +21,7 @@ class ApiResponse<T> {
 
   factory ApiResponse.fromMap(
       Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
+    // bool isList = json['data'] is List;
     List<T> data = [];
     json['data'].forEach((v) {
       data.add(create(v));
@@ -38,13 +35,6 @@ class ApiResponse<T> {
       // meta: Meta.fromMap(json["meta"]),
     );
   }
-
-  // Map<String, dynamic> toMap() => {
-  //   "status": status,
-  //   "message": message,
-  //   "data": this.data.toJson(),
-  //   "meta": meta.toMap(),
-  // };
 }
 
 abstract class Serializable {
