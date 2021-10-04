@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -13,8 +14,6 @@ import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_countdown_timer/countdown.dart';
-import 'package:flutter_countdown_timer/countdown_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -50,7 +49,8 @@ class _QuizViewState extends State<QuizView> {
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
 
-  late CountdownController countdownTimerController;
+  late CustomTimerController timerController;
+  int countdownInSeconds = 0;
   DateTime startTime = DateTime.now();
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
 
@@ -73,8 +73,10 @@ class _QuizViewState extends State<QuizView> {
     numberingController = ItemScrollController();
     duration = Duration(seconds: widget.timeInSec);
 
-    countdownTimerController =
-        CountdownController(duration: duration, onEnd: onEnd);
+    timerController = CustomTimerController();
+    timerController.onSetStart(() {});
+    timerController.onSetPause(() {});
+    timerController.onSetReset(() {});
 
     startTimer();
 
@@ -86,22 +88,19 @@ class _QuizViewState extends State<QuizView> {
 
   startTimer() {
     if (!widget.disableTime) {
-      countdownTimerController.start();
+      timerController.start();
     }
   }
 
   resetTimer() {
-    countdownTimerController.dispose();
-    countdownTimerController =
-        CountdownController(duration: duration, onEnd: onEnd);
-    countdownTimerController.start();
+    timerController.reset();
   }
 
   onEnd() {
     print("timer ended");
 
     completeQuiz();
-    countdownTimerController.dispose();
+    timerController.dispose();
   }
 
   nextButton() {
@@ -110,18 +109,19 @@ class _QuizViewState extends State<QuizView> {
     }
     setState(() {
       currentQuestion++;
+
+      controller.nextPage(
+          duration: Duration(milliseconds: 700), curve: Curves.ease);
+
+      numberingController.scrollTo(
+          index: currentQuestion,
+          duration: Duration(seconds: 1),
+          curve: Curves.easeInOutCubic);
+
+      if (widget.speedTest && enabled) {
+        resetTimer();
+      }
     });
-    controller.nextPage(
-        duration: Duration(milliseconds: 700), curve: Curves.ease);
-
-    numberingController.scrollTo(
-        index: currentQuestion,
-        duration: Duration(seconds: 1),
-        curve: Curves.easeInOutCubic);
-
-    if (widget.speedTest && enabled) {
-      resetTimer();
-    }
   }
 
   double get score {
@@ -181,7 +181,7 @@ class _QuizViewState extends State<QuizView> {
 
   completeQuiz() async {
     if (!widget.disableTime) {
-      countdownTimerController.stop();
+      timerController.dispose();
     }
     if (widget.speedTest) {
       finalQuestion = currentQuestion;
@@ -203,8 +203,7 @@ class _QuizViewState extends State<QuizView> {
         testTime: widget.disableTime ? -1 : duration.inSeconds,
         usedTime: widget.disableTime
             ? DateTime.now().difference(startTime).inSeconds
-            : duration.inSeconds -
-                countdownTimerController.currentDuration.inSeconds,
+            : duration.inSeconds - countdownInSeconds,
         responses: responses,
         score: score,
         correct: correct,
@@ -362,6 +361,7 @@ class _QuizViewState extends State<QuizView> {
                 image: AssetImage('assets/images/white_leave.png'),
               )),
           Positioned(
+            key: UniqueKey(),
             top: 50,
             right: 15,
             child: GestureDetector(
@@ -369,14 +369,14 @@ class _QuizViewState extends State<QuizView> {
                 if (!enabled) {
                   return;
                 }
-                countdownTimerController.stop();
+                timerController.pause();
+
                 showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (context) {
                       return PauseDialog(
-                        time:
-                            countdownTimerController.currentDuration.inSeconds,
+                        time: countdownInSeconds,
                         callback: (action) {
                           Navigator.pop(context);
                           if (action == "resume") {
@@ -393,24 +393,35 @@ class _QuizViewState extends State<QuizView> {
                       );
                     });
               },
-              child: Countdown(
-                builder: (context, duration) {
+              child: CustomTimer(
+                onBuildAction: enabled
+                    ? CustomTimerAction.auto_start
+                    : CustomTimerAction.go_to_end,
+                builder: (CustomTimerRemainingTime remaining) {
+                  countdownInSeconds = remaining.duration.inSeconds;
                   if (widget.disableTime) {
                     return Image(
                         image: AssetImage("assets/images/infinite.png"));
                   }
-                  if (duration.inSeconds == 0) {
+                  if (remaining.duration.inSeconds == 0) {
                     return Text("Time Up",
                         style:
                             TextStyle(color: Color(0xFF00C664), fontSize: 18));
                   }
-                  int min = (duration.inSeconds / 60).floor();
-                  int sec = duration.inSeconds % 60;
-                  return Text(
-                      "${NumberFormat('00').format(min)}:${NumberFormat('00').format(sec)}",
+
+                  return Text("${remaining.minutes}:${remaining.seconds}",
                       style: TextStyle(color: Color(0xFF00C664), fontSize: 28));
                 },
-                countdownController: countdownTimerController,
+                controller: timerController,
+                from: duration,
+                to: Duration(seconds: 0),
+                onStart: () {},
+                onPaused: () {},
+                onReset: () {},
+                onFinish: () {
+                  print("finished");
+                  onEnd();
+                },
               ),
             ),
           ),

@@ -49,6 +49,7 @@ dependencies:
   cupertino_icons: ^1.0.3
   intl: ^0.17.0
   # catex: ^0.0.1+8
+  custom_timer: ^0.0.6
 
 dev_dependencies:
   flutter_test:
