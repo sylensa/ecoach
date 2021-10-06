@@ -81,6 +81,24 @@ money(double amount, {String currency = ""}) {
   return format.format(amount);
 }
 
+positionText(int position) {
+  String suffix = "th";
+  switch (position % 10) {
+    case 1:
+      suffix = 'st';
+      break;
+    case 2:
+      suffix = 'nd';
+      break;
+    case 3:
+      suffix = 'rd';
+      break;
+    default:
+      suffix = 'th';
+  }
+  return "$position$suffix";
+}
+
 topicRow(TopicAnalysis topicAnalysis) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(0, 25.0, 0, 25.0),

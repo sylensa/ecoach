@@ -11,7 +11,7 @@ String analysisToJson(CourseAnalytic data) => json.encode(data.toJson());
 class CourseAnalytic {
   int? userRank, lastUserRank;
   int? totalRank;
-  int? coursePoint, lastCoursePoint;
+  double? coursePoint, lastCoursePoint;
   double? mastery, lastMastery;
   int? usedSpeed, lastSpeed, totalSpeed;
   User? user;
@@ -39,8 +39,9 @@ class CourseAnalytic {
         lastMastery: json["last_mastery"] != null
             ? json["last_mastery"].toDouble()
             : null,
-        coursePoint: json["points"],
-        lastCoursePoint: json["last_points"],
+        coursePoint: json["points"] != null ? json["points"].toDouble() : null,
+        lastCoursePoint:
+            json["last_points"] != null ? json["last_points"].toDouble() : null,
         usedSpeed: json['speed'] != null ? json['speed']['used'] : null,
         lastSpeed: json['speed'] != null ? json['speed']['last_used'] : null,
         totalSpeed: json['speed'] != null ? json['speed']['total'] : null,

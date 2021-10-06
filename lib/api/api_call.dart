@@ -98,6 +98,7 @@ class ApiCall<T> {
       if (requireLogIn) {
         showLogoutDialog(context);
       }
+      print("returning data");
       return data;
     } catch (e) {
       onError!(e);
@@ -105,6 +106,7 @@ class ApiCall<T> {
   }
 
   handleResponse(http.Response response) {
+    print("api response body: ${response.body}");
     Map<String, dynamic> responseData = json.decode(response.body);
     message = responseData['message'] ?? "";
     switch (response.statusCode) {
@@ -131,7 +133,6 @@ class ApiCall<T> {
   handleData(Map<String, dynamic> responseData) {
     if (responseData["status"] == true) {
       data = fromMap(responseData["data"], (dataItem) {
-        print(dataItem);
         return create(dataItem);
       });
     } else {
@@ -141,18 +142,26 @@ class ApiCall<T> {
   }
 
   fromMap(dynamic jsonData, Function(Map<String, dynamic>) create) {
-    print(jsonData);
-    List<T> data = [];
-    jsonData.forEach((v) {
-      data.add(create(v));
-    });
+    print("data=$jsonData");
+    List<T> list = [];
+    if (isList) {
+      jsonData.forEach((v) {
+        print("is array");
+        print(v);
+        list.add(create(v));
+      });
+    } else {
+      print("is object");
+      list.add(create(jsonData));
+      print("list len=${list.length}");
+    }
 
-    print(data);
+    print(list.length);
 
     return isList
-        ? data
-        : data.length > 0
-            ? data[0]
+        ? list
+        : list.length > 0
+            ? list[0]
             : null;
   }
 

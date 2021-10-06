@@ -10,6 +10,7 @@ import 'package:ecoach/widgets/cards/analysis_info_snippet_card.dart';
 import 'package:ecoach/widgets/courses/linear_percent_indicator_wrapper.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AllTabBarView extends StatefulWidget {
   AllTabBarView(this.item, {Key? key}) : super(key: key);
@@ -30,7 +31,6 @@ class _AllTabBarViewState extends State<AllTabBarView> {
   }
 
   List<TestTaken> testsTaken = [];
-  CourseAnalytic? analytic;
 
   @override
   void initState() {
@@ -42,54 +42,62 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       });
     });
 
-    ApiCall<CourseAnalytic> apiCall = new ApiCall<CourseAnalytic>(
+    var futureAnalytic = new ApiCall<CourseAnalytic>(
         AppUrl.analysis + '/' + widget.item.tag!,
         isList: false, create: (dataItem) {
-      return CourseAnalytic();
+      return CourseAnalytic.fromJson(dataItem);
     }, onMessage: (message) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
+    }).get(context);
+
+    futureAnalytic.then((analytic) {
+      print("api future return");
+      print(analytic);
+      if (analytic == null) return;
+      setState(() {
+        Duration speedDuration = Duration(seconds: analytic.usedSpeed!);
+        print(analytic.toJson());
+        infoList = [
+          AnalysisInfoSnippet(
+            bodyText: '${positionText(analytic.userRank!)}',
+            footerText: 'rank',
+            performance: '3',
+            performanceImproved: true,
+            background: kAnalysisInfoSnippetBackground1,
+          ),
+          AnalysisInfoSnippet(
+            bodyText: '${analytic.coursePoint!.floor()}',
+            footerText: 'points',
+            performance: '3',
+            performanceImproved: true,
+            background: kAnalysisInfoSnippetBackground1,
+          ),
+          AnalysisInfoSnippet(
+            bodyText: '${(analytic.mastery! * 100).floor()}',
+            footerText: 'mastery',
+            performance: '3',
+            performanceImproved: true,
+            background: kAnalysisInfoSnippetBackground1,
+          ),
+          AnalysisInfoSnippet(
+            bodyText:
+                "${NumberFormat('00').format(speedDuration.inHours)}:${NumberFormat('00').format(speedDuration.inMinutes % 60)}",
+            footerText: 'speed',
+            performance: '3',
+            performanceImproved: true,
+            background: kAnalysisInfoSnippetBackground1,
+          ),
+          AnalysisInfoSnippet(
+            bodyText: '12',
+            footerText: 'other',
+            performance: '4',
+            performanceImproved: true,
+            background: kAnalysisInfoSnippetBackground1,
+          ),
+        ];
+      });
     });
-
-    var futureAnalytic = apiCall.get(context);
-
-    infoList = [
-      AnalysisInfoSnippet(
-        bodyText: '19th',
-        footerText: 'rank',
-        performance: '3',
-        performanceImproved: true,
-        background: kAnalysisInfoSnippetBackground1,
-      ),
-      AnalysisInfoSnippet(
-        bodyText: '209',
-        footerText: 'points',
-        performance: '3',
-        performanceImproved: true,
-        background: kAnalysisInfoSnippetBackground1,
-      ),
-      AnalysisInfoSnippet(
-        bodyText: '26.78',
-        footerText: 'mastery',
-        performance: '3',
-        performanceImproved: true,
-        background: kAnalysisInfoSnippetBackground1,
-      ),
-      AnalysisInfoSnippet(
-        bodyText: '1:02',
-        footerText: 'speed',
-        performance: '3',
-        performanceImproved: true,
-        background: kAnalysisInfoSnippetBackground1,
-      ),
-      AnalysisInfoSnippet(
-        bodyText: '12',
-        footerText: 'other',
-        performance: '4',
-        performanceImproved: true,
-        background: kAnalysisInfoSnippetBackground1,
-      ),
-    ];
   }
 
   @override
