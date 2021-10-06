@@ -120,8 +120,10 @@ class _MainHomePageState extends State<MainHomePage>
           print("all sub items");
           for (int i = 0; i < items.length; i++) {
             print("downloading ${items[i].name}\n data");
-            showLoaderDialog(context,
-                message: "downloading..... \n${items[i].name}\n data");
+            showDownloadDialog(context,
+                message: "downloading..... ${items[i].name} data",
+                current: i,
+                total: items.length);
             SubscriptionItem? subscriptionItem =
                 await getSubscriptionItem(items[i].id!);
             print(subscriptionItem!);

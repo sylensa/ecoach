@@ -27,6 +27,54 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
   );
 }
 
+showDownloadDialog(BuildContext context,
+    {String? message = "loading...", int? current, int? total}) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return Scaffold(
+        body: Container(
+          padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(28.0),
+                child: Text(
+                  "Downloading subscriptions...",
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                ),
+              ),
+              Spacer(),
+              new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(left: 7),
+                      child: Text(
+                        message!,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.black),
+                      )),
+                  current != null && current > 0
+                      ? LinearPercentIndicator(
+                          percent: current / total!,
+                        )
+                      : LinearProgressIndicator(),
+                  SizedBox(
+                    height: 50,
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 money(double amount, {String currency = ""}) {
   NumberFormat format = NumberFormat.simpleCurrency(
       decimalDigits: 2, locale: "en-GH", name: "GHS");
@@ -66,4 +114,12 @@ topicRow(TopicAnalysis topicAnalysis) {
       ],
     ),
   );
+}
+
+String getTime(DateTime dateTime) {
+  return "${NumberFormat('00').format(dateTime.hour)}:${NumberFormat('00').format(dateTime.second)}";
+}
+
+String getDateOnly(DateTime dateTime) {
+  return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
 }

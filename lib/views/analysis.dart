@@ -1,4 +1,6 @@
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/pill.dart';
+import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
@@ -16,20 +18,22 @@ class _AnalysisViewState extends State<AnalysisView>
     with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
+  List<SubscriptionItem> items = [];
 
   late TabController tabController;
 
   @override
   void initState() {
     super.initState();
-    coursePillList = [
-      Pill(label: 'jhs1 math'),
-      Pill(label: 'jhs1 ict'),
-      Pill(label: 'jhs1 science'),
-      Pill(label: 'jhs1 english'),
-      Pill(label: 'jhs1 bdt'),
-      Pill(label: 'jhs1 social studies'),
-    ];
+
+    SubscriptionItemDB().allSubscriptionItems().then((subscriptionItems) {
+      setState(() {
+        subscriptionItems.forEach((item) {
+          items.add(item);
+          coursePillList.add(Pill(label: item.name!));
+        });
+      });
+    });
 
     tabController = TabController(length: 4, vsync: this);
   }
@@ -49,21 +53,34 @@ class _AnalysisViewState extends State<AnalysisView>
               tabController: tabController,
               onPillTapped: (index) {
                 setState(() {
+                  print("index=$index");
                   currentPillIndex = index;
                 });
               },
             ),
-            Expanded(
-              child: TabBarView(
-                controller: tabController,
-                children: [
-                  AllTabBarView(),
-                  Center(child: Text('Exams')),
-                  Center(child: Text('Topics')),
-                  Center(child: Text('Analysis')),
-                ],
-              ),
-            )
+            ValueListenableBuilder<int>(
+                valueListenable: ValueNotifier(currentPillIndex),
+                builder: (context, dynamic value, Widget? child) {
+                  print(value);
+                  return Expanded(
+                    child: TabBarView(
+                      controller: tabController,
+                      children: [
+                        items.length > 0
+                            ? AllTabBarView(
+                                items[currentPillIndex],
+                                key: UniqueKey(),
+                              )
+                            : Center(
+                                child: Text("loading....."),
+                              ),
+                        Center(child: Text('Exams')),
+                        Center(child: Text('Topics')),
+                        Center(child: Text('Analysis')),
+                      ],
+                    ),
+                  );
+                }),
           ],
         ),
       ),

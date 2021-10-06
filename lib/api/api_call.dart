@@ -29,16 +29,21 @@ class ApiCall<T> {
       required this.create,
       this.onCallback,
       this.onMessage,
-      this.onError}) {}
+      this.onError}) {
+    print(this.url);
+    print(params.toString());
+  }
 
-  get(BuildContext context) async {
+  Future<T?> get(BuildContext context) async {
     String token = "";
     if (user == null) {
       token = (await UserPreferences().getUserToken())!;
     }
     try {
+      String urlString = url + '?' + Uri(queryParameters: params ?? {}).query;
+      print(urlString);
       http.Response response = await http.get(
-        Uri.parse(url + '?' + Uri(queryParameters: params ?? {}).query),
+        Uri.parse(urlString),
         headers: headers ??
             {
               'Content-Type': 'application/json',
@@ -59,11 +64,13 @@ class ApiCall<T> {
       }
       return data;
     } catch (e) {
-      onError!(e);
+      if (onError != null) {
+        onError!(e);
+      }
     }
   }
 
-  post(BuildContext context) async {
+  Future<T?> post(BuildContext context) async {
     String token = "";
     if (user == null) {
       token = (await UserPreferences().getUserToken())!;
@@ -134,6 +141,7 @@ class ApiCall<T> {
   }
 
   fromMap(dynamic jsonData, Function(Map<String, dynamic>) create) {
+    print(jsonData);
     List<T> data = [];
     jsonData.forEach((v) {
       data.add(create(v));
@@ -159,10 +167,16 @@ class ApiCall<T> {
               height: 200,
               child: Column(
                 children: [
-                  Text(message),
-                  SizedBox(
-                    height: 40,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 12, 8, 0),
+                    child: Text(
+                      "Logout?",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
+                  Spacer(),
+                  Center(child: Text(message)),
+                  Spacer(),
                   SizedBox(
                     height: 60,
                     child: Row(

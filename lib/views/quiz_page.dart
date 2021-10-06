@@ -10,6 +10,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -23,6 +24,7 @@ class QuizView extends StatefulWidget {
       this.level,
       this.course,
       required this.name,
+      this.type = TestType.NONE,
       this.timeInSec = 60,
       this.speedTest = false,
       this.disableTime = false,
@@ -37,6 +39,7 @@ class QuizView extends StatefulWidget {
   String name;
   bool disableTime;
   bool speedTest;
+  final TestType type;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -97,7 +100,7 @@ class _QuizViewState extends State<QuizView> {
     print("timer ended");
 
     completeQuiz();
-    timerController.dispose();
+    // timerController.dispose();
   }
 
   nextButton() {
