@@ -24,7 +24,7 @@ class QuizView extends StatefulWidget {
       this.level,
       this.course,
       required this.name,
-      this.type = TestType.NONE,
+      this.type = "NONE",
       this.timeInSec = 60,
       this.speedTest = false,
       this.disableTime = false,
@@ -39,7 +39,7 @@ class QuizView extends StatefulWidget {
   String name;
   bool disableTime;
   bool speedTest;
-  final TestType type;
+  final String type;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -199,7 +199,7 @@ class _QuizViewState extends State<QuizView> {
         totalQuestions: widget.questions.length,
         courseId: widget.course!.id,
         testname: widget.name,
-        testType: "diagnostic",
+        testType: widget.type,
         testTime: widget.disableTime ? -1 : duration.inSeconds,
         usedTime: widget.disableTime
             ? DateTime.now().difference(startTime).inSeconds

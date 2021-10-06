@@ -11,6 +11,7 @@ import 'package:ecoach/providers/subscription_db.dart';
 import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/utf_fix.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/home.dart';
@@ -42,6 +43,7 @@ class _MainHomePageState extends State<MainHomePage>
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
+
     _children = [
       HomePage(
         widget.user,
@@ -218,7 +220,7 @@ class _MainHomePageState extends State<MainHomePage>
           '/$itemId?' +
           Uri(queryParameters: queryParams).query),
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
         'api-token': widget.user.token!
       },

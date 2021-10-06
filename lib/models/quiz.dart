@@ -1,4 +1,5 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/utils/utf_fix.dart';
 
 class Quiz {
   Quiz(
@@ -67,10 +68,10 @@ class Quiz {
         "topic_id": topicId,
         "testID": testId,
         "type": type,
-        "name": name,
+        "name": getUtfFixed(name),
         "author": author,
         "time": time,
-        "description": description,
+        "description": getUtfFixed(description),
         "category": category,
         "instructions": instructions,
         "start_time": startTime,

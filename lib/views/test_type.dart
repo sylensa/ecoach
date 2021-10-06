@@ -7,7 +7,7 @@ import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, NONE }
+enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, DIAGNOSTIC, NONE }
 enum TestCategory { MOCK, EXAM, TOPIC, ESSAY, SAVED, BANK, NONE }
 
 class TestTypeView extends StatefulWidget {

@@ -4,6 +4,8 @@ import 'package:ecoach/models/course_analysis.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
+import 'package:ecoach/providers/analysis_db.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/analysis_info_snippet_card.dart';
@@ -35,69 +37,99 @@ class _AllTabBarViewState extends State<AllTabBarView> {
   @override
   void initState() {
     super.initState();
-    print("all tabs called ${widget.item.tag}");
+    getTestTaken();
+    getAnalytics();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  getTestTaken() {
     TestController().getTestTaken(widget.item.tag!).then((tests) {
       setState(() {
         testsTaken = tests;
       });
     });
 
-    var futureAnalytic = new ApiCall<CourseAnalytic>(
-        AppUrl.analysis + '/' + widget.item.tag!,
-        isList: false, create: (dataItem) {
-      return CourseAnalytic.fromJson(dataItem);
-    }, onMessage: (message) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
-    }).get(context);
+    ApiCall<TestTaken>(AppUrl.testTaken, create: (dataItem) {
+      return TestTaken.fromJson(dataItem);
+    }, onError: (e) {
+      print(e);
+    }, params: {'course_id': widget.item.tag!}).get(context).then((tests) {
+      if (tests == null) return;
+      TestTakenDB().insertAll(tests);
 
-    futureAnalytic.then((analytic) {
-      print("api future return");
-      print(analytic);
-      if (analytic == null) return;
       setState(() {
-        Duration speedDuration = Duration(seconds: analytic.usedSpeed!);
-        print(analytic.toJson());
-        infoList = [
-          AnalysisInfoSnippet(
-            bodyText: '${positionText(analytic.userRank!)}',
-            footerText: 'rank',
-            performance: '3',
-            performanceImproved: true,
-            background: kAnalysisInfoSnippetBackground1,
-          ),
-          AnalysisInfoSnippet(
-            bodyText: '${analytic.coursePoint!.floor()}',
-            footerText: 'points',
-            performance: '3',
-            performanceImproved: true,
-            background: kAnalysisInfoSnippetBackground1,
-          ),
-          AnalysisInfoSnippet(
-            bodyText: '${(analytic.mastery! * 100).floor()}',
-            footerText: 'mastery',
-            performance: '3',
-            performanceImproved: true,
-            background: kAnalysisInfoSnippetBackground1,
-          ),
-          AnalysisInfoSnippet(
-            bodyText:
-                "${NumberFormat('00').format(speedDuration.inHours)}:${NumberFormat('00').format(speedDuration.inMinutes % 60)}",
-            footerText: 'speed',
-            performance: '3',
-            performanceImproved: true,
-            background: kAnalysisInfoSnippetBackground1,
-          ),
-          AnalysisInfoSnippet(
-            bodyText: '12',
-            footerText: 'other',
-            performance: '4',
-            performanceImproved: true,
-            background: kAnalysisInfoSnippetBackground1,
-          ),
-        ];
+        testsTaken = tests;
       });
     });
+  }
+
+  getAnalytics() {
+    AnalysisDB().getAnalysisById(int.parse(widget.item.tag!)).then((analytic) {
+      // print(analytic!.toJson());
+      setInfoList(analytic);
+    });
+
+    ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!,
+        isList: false, create: (dataItem) {
+      return CourseAnalytic.fromJson(dataItem);
+    }, onError: (e) {
+      print(e);
+    }).get(context).then((analytic) {
+      if (analytic == null) return;
+      AnalysisDB().insert(analytic);
+      setState(() {
+        setInfoList(analytic);
+      });
+    });
+  }
+
+  setInfoList(CourseAnalytic? analytic) {
+    if (analytic == null) return;
+    Duration speedDuration = Duration(seconds: analytic.usedSpeed ?? 0);
+    infoList = [
+      AnalysisInfoSnippet(
+        bodyText: '${positionText(analytic.userRank ?? 0)}',
+        footerText: 'rank',
+        performance: '3',
+        performanceImproved: true,
+        background: kAnalysisInfoSnippetBackground1,
+      ),
+      AnalysisInfoSnippet(
+        bodyText: '${analytic.coursePoint!.floor()}',
+        footerText: 'points',
+        performance: '3',
+        performanceImproved: true,
+        background: kAnalysisInfoSnippetBackground1,
+      ),
+      AnalysisInfoSnippet(
+        bodyText: '${(analytic.mastery! * 100).floor()}',
+        footerText: 'mastery',
+        performance: '3',
+        performanceImproved: true,
+        background: kAnalysisInfoSnippetBackground1,
+      ),
+      AnalysisInfoSnippet(
+        bodyText:
+            "${NumberFormat('00').format(speedDuration.inHours)}:${NumberFormat('00').format(speedDuration.inMinutes % 60)}",
+        footerText: 'speed',
+        performance: '3',
+        performanceImproved: true,
+        background: kAnalysisInfoSnippetBackground1,
+      ),
+      AnalysisInfoSnippet(
+        bodyText: '12',
+        footerText: 'other',
+        performance: '4',
+        performanceImproved: true,
+        background: kAnalysisInfoSnippetBackground1,
+      ),
+    ];
   }
 
   @override

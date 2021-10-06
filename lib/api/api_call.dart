@@ -13,7 +13,7 @@ class ApiCall<T> {
   String message = "Something went wrong";
   bool isList;
   User? user;
-  T? data;
+  List<T>? data;
   Function(Map<String, dynamic>) create;
   Function(dynamic)? onCallback;
   Function(dynamic)? onError;
@@ -34,7 +34,7 @@ class ApiCall<T> {
     print(params.toString());
   }
 
-  Future<T?> get(BuildContext context) async {
+  get(BuildContext context) async {
     String token = "";
     if (user == null) {
       token = (await UserPreferences().getUserToken())!;
@@ -62,15 +62,20 @@ class ApiCall<T> {
       if (requireLogIn) {
         showLogoutDialog(context);
       }
-      return data;
+      return isList
+          ? data
+          : data!.length > 0
+              ? data![0]
+              : null;
     } catch (e) {
       if (onError != null) {
+        print(e);
         onError!(e);
       }
     }
   }
 
-  Future<T?> post(BuildContext context) async {
+  post(BuildContext context) async {
     String token = "";
     if (user == null) {
       token = (await UserPreferences().getUserToken())!;
@@ -99,7 +104,11 @@ class ApiCall<T> {
         showLogoutDialog(context);
       }
       print("returning data");
-      return data;
+      return isList
+          ? data
+          : data!.length > 0
+              ? data![0]
+              : null;
     } catch (e) {
       onError!(e);
     }
@@ -158,11 +167,7 @@ class ApiCall<T> {
 
     print(list.length);
 
-    return isList
-        ? list
-        : list.length > 0
-            ? list[0]
-            : null;
+    return list;
   }
 
   void showLogoutDialog(context) {
