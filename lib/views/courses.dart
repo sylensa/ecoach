@@ -81,8 +81,7 @@ class _CourseViewState extends State<CourseView> {
     subName = widget.subscription.name!;
     subName = subName.replaceFirst("Bundle", "").trim();
     print(subName);
-    futureItems =
-        SubscriptionItemDB().subscriptionItems(widget.subscription.planId!);
+    futureItems = SubscriptionItemDB().subscriptionItems(widget.subscription.planId!);
   }
 
   @override
@@ -99,8 +98,7 @@ class _CourseViewState extends State<CourseView> {
               if (snapshot.hasError)
                 return Text('Error: ${snapshot.error}');
               else if (snapshot.data != null) {
-                List<SubscriptionItem> items =
-                    snapshot.data! as List<SubscriptionItem>;
+                List<SubscriptionItem> items = snapshot.data! as List<SubscriptionItem>;
 
                 return ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -117,14 +115,10 @@ class _CourseViewState extends State<CourseView> {
                                 .name!
                                 .toUpperCase()
                                 .replaceFirst(subName.toUpperCase(), ""),
-                            background:
-                                kCourseColors[index % kCourseColors.length]
-                                    ['background'],
+                            background: kCourseColors[index % kCourseColors.length]['background'],
                             icon: 'ict.png',
                             progress: 51,
-                            progressColor:
-                                kCourseColors[index % kCourseColors.length]
-                                    ['progress'],
+                            progressColor: kCourseColors[index % kCourseColors.length]['progress'],
                             rank: {
                               'position': 12,
                               'numberOnRoll': 305,
@@ -147,9 +141,7 @@ class _CourseViewState extends State<CourseView> {
                     SizedBox(
                       height: 100,
                     ),
-                    Center(
-                        child:
-                            Text(widget.user.email ?? "Something isn't right")),
+                    Center(child: Text(widget.user.email ?? "Something isn't right")),
                     SizedBox(height: 100),
                   ],
                 );

@@ -2,6 +2,7 @@ import 'package:ecoach/models/ui/pill.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
+import 'package:ecoach/widgets/tab_bar_views/exams_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 
 class AnalysisView extends StatefulWidget {
@@ -12,11 +13,9 @@ class AnalysisView extends StatefulWidget {
   _AnalysisViewState createState() => _AnalysisViewState();
 }
 
-class _AnalysisViewState extends State<AnalysisView>
-    with TickerProviderStateMixin {
+class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
-
   late TabController tabController;
 
   @override
@@ -31,7 +30,7 @@ class _AnalysisViewState extends State<AnalysisView>
       Pill(label: 'jhs1 social studies'),
     ];
 
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(initialIndex: 1, length: 4, vsync: this);
   }
 
   @override
@@ -58,7 +57,7 @@ class _AnalysisViewState extends State<AnalysisView>
                 controller: tabController,
                 children: [
                   AllTabBarView(),
-                  Center(child: Text('Exams')),
+                  ExamsTabBarView(),
                   Center(child: Text('Topics')),
                   Center(child: Text('Analysis')),
                 ],
