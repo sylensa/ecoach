@@ -9,12 +9,15 @@ const kCourseCardSnippetPadding = EdgeInsets.only(left: 20.0, right: 16.0);
 const kCourseCardOverlayColor = Colors.black12;
 const kTenPointWhiteText = TextStyle(fontSize: 10, color: Colors.white);
 const kBlack38 = Colors.black38;
+const kDefaultBlack = Color(0xFF2A2121);
 
 // progress colors
 const kProgressColors = [
   Color(0xFFFFD600),
   Color(0xFF5AE52B),
   Color(0xFFFE5040),
+  Color(0xFF93E4EE),
+  Color(0xFF8CFFC5),
 ];
 
 // course card colors
@@ -32,7 +35,12 @@ const kCourseColors = [
 
 const kAnalysisScreenBackground = Color(0xFF636363);
 const kAnalysisScreenActiveColor = Color(0xFF4C4C4C);
+const kAnalysisInfoSnippetBackground1 = Color(0xFFFFB34E);
+const kAnalysisInfoSnippetBackground2 = Color(0xFF28BFDF);
+const kAnalysisInfoSnippetBackground3 = Color(0xFF13BFA3);
+
 const kNavigationTopBorderColor = Color(0xFFC0C0C0);
+const kAdeoTaupe = Color(0xFFFFB444);
 
 const kSixteenPointWhiteText = TextStyle(
   fontSize: 16,
@@ -42,9 +50,10 @@ const kSixteenPointWhiteText = TextStyle(
 );
 
 const kTableBodyMainText = TextStyle(
-  fontSize: 12,
+  fontSize: 13,
   color: Colors.white,
   fontFamily: 'Poppins',
+  fontWeight: FontWeight.w600,
 );
 
 const kTableBodySubText = TextStyle(
@@ -53,6 +62,14 @@ const kTableBodySubText = TextStyle(
   fontFamily: 'Poppins',
 );
 
-const kAnalysisInfoSnippetBackground1 = Color(0xFFFFB34E);
-const kAnalysisInfoSnippetBackground2 = Color(0xFF28BFDF);
-const kAnalysisInfoSnippetBackground3 = Color(0xFF13BFA3);
+const kTwentyFourPointText = TextStyle(
+  fontSize: 24.0,
+  fontWeight: FontWeight.w700,
+);
+
+const kPinInputTextStyle = TextStyle(
+  fontSize: 88.0,
+  fontWeight: FontWeight.normal,
+  color: kDefaultBlack,
+  height: 1.1,
+);

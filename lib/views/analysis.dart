@@ -4,6 +4,7 @@ import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
+import 'package:ecoach/widgets/tab_bar_views/exams_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 
 class AnalysisView extends StatefulWidget {
@@ -14,12 +15,14 @@ class AnalysisView extends StatefulWidget {
   _AnalysisViewState createState() => _AnalysisViewState();
 }
 
-class _AnalysisViewState extends State<AnalysisView>
-    with TickerProviderStateMixin {
+class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
+<<<<<<< HEAD
+=======
   List<SubscriptionItem> items = [];
 
+>>>>>>> a541ae64457d32964014a6528ae105dc333a6824
   late TabController tabController;
 
   @override
@@ -35,7 +38,7 @@ class _AnalysisViewState extends State<AnalysisView>
       });
     });
 
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(initialIndex: 1, length: 4, vsync: this);
   }
 
   @override
@@ -74,7 +77,7 @@ class _AnalysisViewState extends State<AnalysisView>
                             : Center(
                                 child: Text("loading....."),
                               ),
-                        Center(child: Text('Exams')),
+                        Center(child: ExamsTabBarView()),
                         Center(child: Text('Topics')),
                         Center(child: Text('Analysis')),
                       ],
