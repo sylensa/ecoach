@@ -236,7 +236,8 @@ class _OTPViewState extends State<OTPView> {
                       ),
                       cursorColor: Colors.black,
                       animationDuration: Duration(milliseconds: 300),
-                      textStyle: TextStyle(fontSize: 20, height: 1.6),
+                      textStyle: TextStyle(
+                          fontSize: 20, height: 1.6, color: Colors.black),
                       backgroundColor: Colors.white,
                       enableActiveFill: true,
                       errorAnimationController: errorController,
@@ -251,6 +252,7 @@ class _OTPViewState extends State<OTPView> {
                       ],
                       onCompleted: (v) {
                         print("Completed");
+                        print(v);
                       },
                       // onTap: () {
                       //   print("Pressed");
