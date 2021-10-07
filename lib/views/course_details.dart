@@ -7,7 +7,6 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ecoach/utils/manip.dart';
 
 class CourseDetailsPage extends StatefulWidget {
@@ -33,9 +32,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
   void initState() {
     super.initState();
     print('checking test taken');
-    TestController()
-        .getCourseProgress(widget.courseInfo.course.id)
-        .then((value) {
+    TestController().getCourseProgress(widget.courseInfo.course.id).then((value) {
       setState(() {
         courseProgress = value is num ? (value * 100).floor() : 0;
       });

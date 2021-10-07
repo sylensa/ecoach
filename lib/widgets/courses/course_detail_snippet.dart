@@ -1,5 +1,4 @@
 import 'package:ecoach/utils/manip.dart';
-import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
 class CourseDetailSnippet extends StatelessWidget {

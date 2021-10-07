@@ -49,7 +49,7 @@ class AnalysisAppBar extends StatelessWidget {
               Tab(text: 'all'),
               Tab(text: 'exams'),
               Tab(text: 'topics'),
-              Tab(text: 'analyses')
+              Tab(text: 'analyses'),
             ],
           ),
         ],
