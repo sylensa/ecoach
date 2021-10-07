@@ -1,3 +1,5 @@
+import 'package:ecoach/utils/utf_fix.dart';
+
 import 'level.dart';
 
 class Course {
@@ -61,8 +63,8 @@ class Course {
         "id": id,
         "package_code": packageCode,
         "courseID": courseId,
-        "name": name,
-        "description": description,
+        "name": getUtfFixed(name),
+        "description": getUtfFixed(description),
         "category": category,
         "author": author,
         "time": time,

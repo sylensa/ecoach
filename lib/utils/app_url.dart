@@ -26,4 +26,6 @@ class AppUrl {
   static const String subscriptionData = baseURL + 'subscriptions/data';
   static const String subscriptions = baseURL + 'subscriptions';
   static const String subscriptionItem = baseURL + 'subscriptions/feature';
+
+  static const String analysis = baseURL + 'analysis/course';
 }

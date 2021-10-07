@@ -120,6 +120,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  custom_timer:
+    dependency: "direct main"
+    description:
+      name: custom_timer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.6"
   datetime_picker_formfield:
     dependency: "direct main"
     description:
@@ -167,13 +174,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.2"
-  flutter_countdown_timer:
-    dependency: "direct main"
-    description:
-      name: flutter_countdown_timer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
   flutter_html:
     dependency: "direct main"
     description:

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/new_user_data.dart';

@@ -1,10 +1,23 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/course_analysis.dart';
+import 'package:ecoach/models/subscription_item.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
+import 'package:ecoach/providers/analysis_db.dart';
+import 'package:ecoach/providers/test_taken_db.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/analysis_info_snippet_card.dart';
 import 'package:ecoach/widgets/courses/linear_percent_indicator_wrapper.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AllTabBarView extends StatefulWidget {
+  AllTabBarView(this.item, {Key? key}) : super(key: key);
+  SubscriptionItem item;
+
   @override
   _AllTabBarViewState createState() => _AllTabBarViewState();
 }
@@ -19,33 +32,91 @@ class _AllTabBarViewState extends State<AllTabBarView> {
     });
   }
 
+  List<TestTaken> testsTaken = [];
+
   @override
   void initState() {
     super.initState();
+    getTestTaken();
+    getAnalytics();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  getTestTaken() {
+    TestController().getTestTaken(widget.item.tag!).then((tests) {
+      setState(() {
+        testsTaken = tests;
+      });
+    });
+
+    ApiCall<TestTaken>(AppUrl.testTaken, create: (dataItem) {
+      return TestTaken.fromJson(dataItem);
+    }, onError: (e) {
+      print(e);
+    }, params: {'course_id': widget.item.tag!}).get(context).then((tests) {
+      if (tests == null) return;
+      TestTakenDB().insertAll(tests);
+
+      setState(() {
+        testsTaken = tests;
+      });
+    });
+  }
+
+  getAnalytics() {
+    AnalysisDB().getAnalysisById(int.parse(widget.item.tag!)).then((analytic) {
+      // print(analytic!.toJson());
+      setInfoList(analytic);
+    });
+
+    ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!,
+        isList: false, create: (dataItem) {
+      return CourseAnalytic.fromJson(dataItem);
+    }, onError: (e) {
+      print(e);
+    }).get(context).then((analytic) {
+      if (analytic == null) return;
+      AnalysisDB().insert(analytic);
+      setState(() {
+        setInfoList(analytic);
+      });
+    });
+  }
+
+  setInfoList(CourseAnalytic? analytic) {
+    if (analytic == null) return;
+    Duration speedDuration = Duration(seconds: analytic.usedSpeed ?? 0);
     infoList = [
       AnalysisInfoSnippet(
-        bodyText: '19th',
+        bodyText: '${positionText(analytic.userRank ?? 0)}',
         footerText: 'rank',
         performance: '3',
         performanceImproved: true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
-        bodyText: '209',
+        bodyText: '${analytic.coursePoint!.floor()}',
         footerText: 'points',
         performance: '3',
         performanceImproved: true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
-        bodyText: '26.78',
+        bodyText: '${(analytic.mastery! * 100).floor()}',
         footerText: 'mastery',
         performance: '3',
         performanceImproved: true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
-        bodyText: '1:02',
+        bodyText:
+            "${NumberFormat('00').format(speedDuration.inHours)}:${NumberFormat('00').format(speedDuration.inMinutes % 60)}",
         footerText: 'speed',
         performance: '3',
         performanceImproved: true,
@@ -134,50 +205,20 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                   DataColumn(label: Text('Score')),
                 ],
                 rows: [
-                  makeDataRow(
-                    cell1Text1: '16:04',
-                    cell1Text2: '07/09/21',
-                    cell2Text1: 'Term 1',
-                    cell2Text2: 'exam',
-                    cell3Text: '3.2s',
-                    progressColor: kCourseColors[0]['progress']!,
-                    progress: 0.4,
-                    selected: selectedTableRowIndex == 0,
-                    onSelectChanged: handleSelectChanged(0),
-                  ),
-                  makeDataRow(
-                    cell1Text1: '16:04',
-                    cell1Text2: '07/09/21',
-                    cell2Text1: 'Pressure',
-                    cell2Text2: 'topic',
-                    cell3Text: '4.2s',
-                    progressColor: kCourseColors[2]['background']!,
-                    progress: 0.8,
-                    selected: selectedTableRowIndex == 1,
-                    onSelectChanged: handleSelectChanged(1),
-                  ),
-                  makeDataRow(
-                    cell1Text1: '16:04',
-                    cell1Text2: '07/09/21',
-                    cell2Text1: 'Diagnostic',
-                    cell2Text2: 'exam',
-                    cell3Text: '5.2s',
-                    progressColor: kCourseColors[7]['progress']!,
-                    progress: 1,
-                    selected: selectedTableRowIndex == 2,
-                    onSelectChanged: handleSelectChanged(2),
-                  ),
-                  makeDataRow(
-                    cell1Text1: '16:04',
-                    cell1Text2: '07/09/21',
-                    cell2Text1: 'Mixed Topics',
-                    cell2Text2: 'exam',
-                    cell3Text: '15.2s',
-                    progressColor: kCourseColors[7]['background']!,
-                    progress: 0.2,
-                    selected: selectedTableRowIndex == 3,
-                    onSelectChanged: handleSelectChanged(3),
-                  ),
+                  for (int i = 0; i < testsTaken.length; i++)
+                    makeDataRow(
+                      cell1Text1: getTime(testsTaken[i].datetime!),
+                      cell1Text2: getDateOnly(testsTaken[i].datetime!),
+                      cell2Text1: testsTaken[i].testname!,
+                      cell2Text2: testsTaken[i].testType!,
+                      cell3Text: "${testsTaken[i].testTime!}",
+                      progressColor: kCourseColors[i % kCourseColors.length]
+                          ['progress']!,
+                      progress:
+                          testsTaken[i].correct! / testsTaken[i].totalQuestions,
+                      selected: selectedTableRowIndex == 0,
+                      onSelectChanged: handleSelectChanged(0),
+                    ),
                 ],
               ),
             )
@@ -218,45 +259,38 @@ DataRow makeDataRow({
     color: MaterialStateProperty.resolveWith(getColor),
     cells: [
       DataCell(
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(cell1Text1),
-              Text(cell1Text2, style: kTableBodySubText)
-            ],
-          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(cell1Text1),
+            Text(cell1Text2, style: kTableBodySubText)
+          ],
         ),
       ),
       DataCell(
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(cell2Text1),
-              Text(cell2Text2, style: kTableBodySubText)
-            ],
-          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(cell2Text1),
+            Text(cell2Text2, style: kTableBodySubText)
+          ],
         ),
       ),
       DataCell(
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(cell3Text)],
-          ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text(cell3Text)],
         ),
       ),
       DataCell(
-        Expanded(
-          child: Center(
-            widthFactor: 1,
-            child: LinearPercentIndicatorWrapper(
-              percent: progress,
-              progressColor: progressColor,
-              backgroundColor: Color(0xFF363636),
-              label: (progress * 100).toString(),
-            ),
+        Center(
+          widthFactor: 1,
+          child: LinearPercentIndicatorWrapper(
+            percent: progress,
+            progressColor: progressColor,
+            backgroundColor: Color(0xFF363636),
+            label: (progress * 100).toString(),
           ),
         ),
       ),

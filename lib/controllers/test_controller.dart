@@ -1,4 +1,4 @@
-import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
@@ -220,5 +220,9 @@ class TestController {
     int totalQuestions = await QuestionDB().getTotalQuestionCount(courseId);
     if (totalQuestions == 0) totalQuestions = 1;
     return totalTaken / totalQuestions;
+  }
+
+  Future<List<TestTaken>> getTestTaken(String tag) {
+    return TestTakenDB().courseTestsTaken(int.parse(tag));
   }
 }

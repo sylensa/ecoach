@@ -1,3 +1,5 @@
+import 'package:ecoach/utils/utf_fix.dart';
+
 class Question {
   Question({
     this.id,
@@ -97,12 +99,12 @@ class Question {
         "id": id,
         "course_id": courseId,
         "topic_id": topicId,
-        "topic_name": topicName,
+        "topic_name": getUtfFixed(topicName),
         "qid": qid,
-        "text": text,
-        "instructions": instructions,
-        "resource": resource,
-        "options": options,
+        "text": getUtfFixed(text),
+        "instructions": getUtfFixed(instructions),
+        "resource": getUtfFixed(resource),
+        "options": getUtfFixed(options),
         "position": position,
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
@@ -157,9 +159,9 @@ class Answer {
   Map<String, dynamic> toJson() => {
         "id": id,
         "question_id": questionId,
-        "text": text,
+        "text": getUtfFixed(text),
         "value": value,
-        "solution": solution,
+        "solution": getUtfFixed(solution),
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
         "answer_order": answerOrder,

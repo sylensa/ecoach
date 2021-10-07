@@ -167,6 +167,7 @@ class QuizCover extends StatelessWidget {
                                           name: name,
                                           course: course,
                                           timeInSec: time,
+                                          type: type.toString().split(".")[1],
                                           speedTest: type == TestType.SPEED
                                               ? true
                                               : false,

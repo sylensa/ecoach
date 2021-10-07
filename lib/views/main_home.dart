@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ecoach/models/api_response.dart';
+import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
@@ -11,6 +11,7 @@ import 'package:ecoach/providers/subscription_db.dart';
 import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/utf_fix.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/customize.dart';
@@ -42,6 +43,7 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
+
     _children = [
       HomePage(
         widget.user,
@@ -119,7 +121,8 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
           print("all sub items");
           for (int i = 0; i < items.length; i++) {
             print("downloading ${items[i].name}\n data");
-            showLoaderDialog(context, message: "downloading..... \n${items[i].name}\n data");
+            showDownloadDialog(context,
+                message: "downloading..... ${items[i].name} data", current: i, total: items.length);
             SubscriptionItem? subscriptionItem = await getSubscriptionItem(items[i].id!);
             print(subscriptionItem!);
 
@@ -206,7 +209,7 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
     http.Response response = await http.get(
       Uri.parse(AppUrl.subscriptionItem + '/$itemId?' + Uri(queryParameters: queryParams).query),
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
         'api-token': widget.user.token!
       },
