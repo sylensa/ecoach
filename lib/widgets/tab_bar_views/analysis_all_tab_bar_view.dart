@@ -242,7 +242,7 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                       cell1Text2: getDateOnly(testsTaken[i].datetime!),
                       cell2Text1: testsTaken[i].testname!,
                       cell2Text2: testsTaken[i].testType!,
-                      cell3Text: "${testsTaken[i].testTime!}",
+                      cell3Text: "${testsTaken[i].usedTime!}",
                       progressColor: kCourseColors[i % kCourseColors.length]
                           ['progress']!,
                       progress:

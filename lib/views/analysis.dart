@@ -36,7 +36,7 @@ class _AnalysisViewState extends State<AnalysisView>
       });
     });
 
-    tabController = TabController(initialIndex: 1, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
   }
 
   @override
