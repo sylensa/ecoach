@@ -152,8 +152,7 @@ class _CourseCardState extends State<CourseCard> {
                       label: 'Total Points',
                       content: LinearPercentIndicatorWrapper(
                         label: widget.courseInfo.totalPoints.toString(),
-                        percent:
-                            widget.courseInfo.totalPoints.toDouble() * 0.0001,
+                        percent: widget.courseInfo.totalPoints.toDouble(),
                         progressColor: kProgressColors[1],
                       ),
                     ),
