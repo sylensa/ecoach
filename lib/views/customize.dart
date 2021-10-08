@@ -1,11 +1,18 @@
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/pin_input.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class Customize extends StatefulWidget {
-  const Customize({Key? key}) : super(key: key);
+  const Customize(this.user, this.course, {Key? key}) : super(key: key);
+  final User user;
+  final Course course;
 
   @override
   _CustomizeState createState() => _CustomizeState();
@@ -57,7 +64,7 @@ class _CustomizeState extends State<Customize> {
                             label: 'Questions',
                             onChanged: (v) {
                               setState(() {
-                                numberOfQuestions = v.split('').reversed.join('');
+                                numberOfQuestions = v.split('').join('');
                               });
                               print(numberOfQuestions);
                             },
@@ -68,7 +75,7 @@ class _CustomizeState extends State<Customize> {
                             label: 'Time',
                             onChanged: (v) {
                               setState(() {
-                                duration = v.split('').reversed.join('');
+                                duration = v.split('').join('');
                               });
                               print(duration);
                             },
@@ -118,8 +125,29 @@ class _CustomizeState extends State<Customize> {
                             if (currentSliderIndex == 0)
                               controller.nextPage();
                             else {
-                              // ignore: todo
-                              // TODO: Quaye, this is where you navigate to wherever you wish to
+                              if (duration.split(":").length != 2) return;
+                              TestController()
+                                  .getCustomizedQuestions(widget.course,
+                                      int.parse(numberOfQuestions))
+                                  .then((questions) {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return QuizCover(
+                                    widget.user,
+                                    questions,
+                                    course: widget.course,
+                                    type: TestType.CUSTOMIZED,
+                                    category: "Customized",
+                                    time: Duration(
+                                            minutes: int.parse(
+                                                duration.split(":")[0]),
+                                            seconds: int.parse(
+                                                duration.split(":")[1]))
+                                        .inSeconds,
+                                    name: "Customize",
+                                  );
+                                }));
+                              });
                             }
                           },
                         ),
@@ -181,7 +209,7 @@ class _CarouselItemState extends State<CarouselItem> {
             ),
             SizedBox(height: 24),
             Directionality(
-              textDirection: TextDirection.rtl,
+              textDirection: TextDirection.ltr,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

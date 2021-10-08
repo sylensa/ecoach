@@ -225,4 +225,12 @@ class TestController {
   Future<List<TestTaken>> getTestTaken(String tag) {
     return TestTakenDB().courseTestsTaken(int.parse(tag));
   }
+
+  Future<List<Question>> getCustomizedQuestions(
+      Course course, int numberOfQuestions) async {
+    List<Question> questions =
+        await QuestionDB().getRandomQuestions(course.id!, numberOfQuestions);
+
+    return questions;
+  }
 }

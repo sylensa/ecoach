@@ -75,21 +75,26 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       setInfoList(analytic);
 
       ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!,
-          isList: false, create: (dataItem) {
+              isList: false, create: (dataItem) {
         return CourseAnalytic.fromJson(dataItem);
       }, onError: (e) {
         print(e);
-      }, params: {
-        'points': analytic!.coursePoint ?? null,
-        'last_points': analytic.lastCoursePoint ?? null,
-        'rank': analytic.userRank ?? null,
-        'last_rank': analytic.lastUserRank ?? null,
-        'total_rank': analytic.totalRank ?? null,
-        'mastery': analytic.mastery ?? null,
-        'last_mastery': analytic.lastMastery ?? null,
-        'speed': analytic.usedSpeed ?? null,
-        'last_speed': analytic.lastSpeed ?? null,
-      }).get(context).then((analytic) {
+      },
+              params: analytic != null
+                  ? {
+                      'points': analytic.coursePoint ?? null,
+                      'last_points': analytic.lastCoursePoint ?? null,
+                      'rank': analytic.userRank ?? null,
+                      'last_rank': analytic.lastUserRank ?? null,
+                      'total_rank': analytic.totalRank ?? null,
+                      'mastery': analytic.mastery ?? null,
+                      'last_mastery': analytic.lastMastery ?? null,
+                      'speed': analytic.usedSpeed ?? null,
+                      'last_speed': analytic.lastSpeed ?? null,
+                    }
+                  : {})
+          .get(context)
+          .then((analytic) {
         if (analytic == null) return;
         AnalysisDB().insert(analytic);
         setState(() {
