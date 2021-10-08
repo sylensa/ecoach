@@ -49,7 +49,7 @@ class SubscriptionItemDB {
 
     final List<Map<String, dynamic>> maps = await db!.query(
       'subscription_items',
-      orderBy: "created_at DESC",
+      orderBy: "name ASC",
     );
 
     List<SubscriptionItem> items = [];
@@ -76,7 +76,7 @@ class SubscriptionItemDB {
 
     final List<Map<String, dynamic>> maps = await db!.query(
         'subscription_items',
-        orderBy: "created_at DESC",
+        orderBy: "name ASC",
         where: "plan_id = ?",
         whereArgs: [planId]);
 

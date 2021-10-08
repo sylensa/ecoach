@@ -162,7 +162,10 @@ class _CourseCardState extends State<CourseCard> {
                       label: 'Times',
                       content: LinearPercentIndicatorWrapper(
                         label: widget.courseInfo.times.toString(),
-                        percent: widget.courseInfo.times.toDouble() * 0.001,
+                        percent: widget.courseInfo.totalPoints != 0
+                            ? widget.courseInfo.times.toDouble() /
+                                widget.courseInfo.totalTimes
+                            : 0,
                         progressColor: kProgressColors[2],
                       ),
                     )

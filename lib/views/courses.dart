@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_analysis.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/course_info.dart';
@@ -81,7 +82,8 @@ class _CourseViewState extends State<CourseView> {
     subName = widget.subscription.name!;
     subName = subName.replaceFirst("Bundle", "").trim();
     print(subName);
-    futureItems = SubscriptionItemDB().subscriptionItems(widget.subscription.planId!);
+    futureItems =
+        SubscriptionItemDB().subscriptionItems(widget.subscription.planId!);
   }
 
   @override
@@ -98,7 +100,8 @@ class _CourseViewState extends State<CourseView> {
               if (snapshot.hasError)
                 return Text('Error: ${snapshot.error}');
               else if (snapshot.data != null) {
-                List<SubscriptionItem> items = snapshot.data! as List<SubscriptionItem>;
+                List<SubscriptionItem> items =
+                    snapshot.data! as List<SubscriptionItem>;
 
                 return ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -106,6 +109,7 @@ class _CourseViewState extends State<CourseView> {
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     if (items[index].course == null) return Container();
+                    CourseAnalytic? analytic = items[index].course!.analytic;
                     return Padding(
                       padding: EdgeInsets.only(left: 24.0, right: 24.0),
                       child: CourseCard(widget.user,
@@ -115,20 +119,29 @@ class _CourseViewState extends State<CourseView> {
                                 .name!
                                 .toUpperCase()
                                 .replaceFirst(subName.toUpperCase(), ""),
-                            background: kCourseColors[index % kCourseColors.length]['background'],
+                            background:
+                                kCourseColors[index % kCourseColors.length]
+                                    ['background'],
                             icon: 'ict.png',
                             progress: 51,
-                            progressColor: kCourseColors[index % kCourseColors.length]['progress'],
+                            progressColor:
+                                kCourseColors[index % kCourseColors.length]
+                                    ['progress'],
                             rank: {
-                              'position': 12,
-                              'numberOnRoll': 305,
+                              'position':
+                                  analytic != null ? analytic.userRank : 0,
+                              'numberOnRoll':
+                                  analytic != null ? analytic.totalRank : 0,
                             },
                             tests: {
                               'testsTaken': 132,
                               'totalNumberOfTests': 3254,
                             },
-                            totalPoints: 1895,
-                            times: 697,
+                            totalPoints:
+                                analytic != null ? analytic.coursePoint! : 0,
+                            times: analytic != null ? analytic.usedSpeed! : 0,
+                            totalTimes:
+                                analytic != null ? analytic.totalSpeed! : 0,
                           )),
                     );
                   },
@@ -141,7 +154,9 @@ class _CourseViewState extends State<CourseView> {
                     SizedBox(
                       height: 100,
                     ),
-                    Center(child: Text(widget.user.email ?? "Something isn't right")),
+                    Center(
+                        child:
+                            Text(widget.user.email ?? "Something isn't right")),
                     SizedBox(height: 100),
                   ],
                 );

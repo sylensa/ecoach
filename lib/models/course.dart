@@ -1,3 +1,4 @@
+import 'package:ecoach/models/course_analysis.dart';
 import 'package:ecoach/utils/utf_fix.dart';
 
 import 'level.dart';
@@ -37,6 +38,7 @@ class Course {
   int? p;
   String? editors;
   List<Level>? levels;
+  CourseAnalytic? analytic;
 
   factory Course.fromJson(Map<String, dynamic> json) => Course(
         id: json["id"],
