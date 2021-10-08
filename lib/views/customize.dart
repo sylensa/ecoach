@@ -125,6 +125,7 @@ class _CustomizeState extends State<Customize> {
                             if (currentSliderIndex == 0)
                               controller.nextPage();
                             else {
+                              print(duration);
                               if (duration.split(":").length != 2) return;
                               TestController()
                                   .getCustomizedQuestions(widget.course,
