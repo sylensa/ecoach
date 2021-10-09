@@ -12,7 +12,7 @@ class TestTypeListView extends StatefulWidget {
       {Key? key,
       this.title,
       this.multiSelect = false,
-      this.questionLimit,
+      this.questionLimit = 40,
       this.time})
       : super(key: key);
 
