@@ -64,16 +64,17 @@ class TestController {
     TestTakenDB().insert(test);
   }
 
-  Future<List<Question>> getQuizQuestions(int quizId) {
-    return QuizDB().getQuestions(quizId, 40);
+  Future<List<Question>> getQuizQuestions(int quizId, {int? limit = 40}) {
+    return QuizDB().getQuestions(quizId, limit!);
   }
 
-  Future<List<Question>> getMockQuestions(int courseId) {
-    return QuestionDB().getRandomQuestions(courseId, 40);
+  Future<List<Question>> getMockQuestions(int courseId, {int? limit = 40}) {
+    return QuestionDB().getRandomQuestions(courseId, limit!);
   }
 
-  Future<List<Question>> getTopicQuestions(List<int> topicIds) {
-    return QuestionDB().getTopicQuestions(topicIds, 40);
+  Future<List<Question>> getTopicQuestions(List<int> topicIds,
+      {int? limit = 40}) {
+    return QuestionDB().getTopicQuestions(topicIds, limit!);
   }
 
   Future<Map<String, List<TestAnswer>>> topicsAnalysis(TestTaken test) async {
@@ -115,9 +116,9 @@ class TestController {
     return data;
   }
 
-  getMockTests(Course course) async {
+  getMockTests(Course course, {limit = 40}) async {
     List<Question> questions =
-        await QuestionDB().getRandomQuestions(course.id!, 40);
+        await QuestionDB().getRandomQuestions(course.id!, limit);
 
     return questions;
   }

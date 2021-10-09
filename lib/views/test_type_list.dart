@@ -9,7 +9,11 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class TestTypeListView extends StatefulWidget {
   TestTypeListView(this.user, this.course, this.tests, this.type,
-      {Key? key, this.title, this.multiSelect = false})
+      {Key? key,
+      this.title,
+      this.multiSelect = false,
+      this.questionLimit,
+      this.time})
       : super(key: key);
 
   final User user;
@@ -18,6 +22,8 @@ class TestTypeListView extends StatefulWidget {
   final TestType type;
   String? title;
   bool multiSelect;
+  int? questionLimit;
+  int? time;
 
   @override
   _MockListViewState createState() => _MockListViewState();
@@ -185,7 +191,8 @@ class _MockListViewState extends State<TestTypeListView> {
                                   case TestCategory.EXAM:
                                     print("exam and bank");
                                     questions = await TestController()
-                                        .getQuizQuestions(testsSelected[0].id!);
+                                        .getQuizQuestions(testsSelected[0].id!,
+                                            limit: widget.questionLimit);
                                     break;
                                   case TestCategory.TOPIC:
                                     print("topic list");
@@ -195,7 +202,8 @@ class _MockListViewState extends State<TestTypeListView> {
                                       topicIds.add(element.id!);
                                     });
                                     questions = await TestController()
-                                        .getTopicQuestions(topicIds);
+                                        .getTopicQuestions(topicIds,
+                                            limit: widget.questionLimit);
                                     break;
                                   default:
                                     questions = await TestController()
@@ -213,9 +221,11 @@ class _MockListViewState extends State<TestTypeListView> {
                                         .category
                                         .toString()
                                         .split(".")[1],
-                                    time: widget.type == TestType.SPEED
-                                        ? 30
-                                        : 40 * 60,
+                                    time: widget.time != null
+                                        ? widget.time!
+                                        : widget.type == TestType.SPEED
+                                            ? 30
+                                            : 40 * 60,
                                     course: widget.course,
                                   );
                                 }));
