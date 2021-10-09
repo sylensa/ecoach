@@ -39,6 +39,12 @@ class _MockListViewState extends State<TestTypeListView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    print(widget.tests);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -152,7 +158,12 @@ class _MockListViewState extends State<TestTypeListView> {
                                                           width: 5,
                                                         ),
                                                         Text(
-                                                          "${(widget.tests[index].progress * 100).floor()}%",
+                                                          widget.tests[index]
+                                                                      .category ==
+                                                                  TestCategory
+                                                                      .TOPIC
+                                                              ? "${(widget.tests[index].progress * 100).floor()}%"
+                                                              : "${widget.tests[index].totalCount}x",
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(

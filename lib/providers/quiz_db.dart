@@ -132,8 +132,8 @@ class QuizDB {
   Future<List<Question>> getQuestions(int quizId, int limit) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps = await db!.query('quiz_items',
-        where: "quiz_id = ?", whereArgs: [quizId], limit: limit);
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM quiz_items WHERE quiz_id = $quizId ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
@@ -145,6 +145,15 @@ class QuizDB {
     }
 
     return questions;
+  }
+
+  Future<int> getQuestionsCount(int quizId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!
+        .query('quiz_items', where: "quiz_id = ?", whereArgs: [quizId]);
+
+    return maps.length;
   }
 
   Future<void> update(Quiz quiz) async {

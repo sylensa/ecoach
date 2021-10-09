@@ -127,25 +127,32 @@ class TestController {
     List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "EXAM");
 
     List<TestNameAndCount> testNames = [];
-    quizzes.forEach((quiz) {
-      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+    for (int i = 0; i < quizzes.length; i++) {
+      Quiz quiz = quizzes[i];
+      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
+      testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
           id: quiz.id, category: TestCategory.EXAM));
-    });
+    }
 
     return testNames;
   }
 
   getTopics(Course course) async {
-    print("geting topics");
     Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 
     List<TestNameAndCount> testNames = [];
-    topics.forEach((id, name) async {
+    for (int i = 0; i < topics.length; i++) {
+      int id = topics.keys.toList()[i];
+      String name = topics.values.toList()[i];
+
+      int count = await getTopicAnsweredCount(course.id!, id);
       int totalCount = await QuestionDB().getTopicCount(id);
-      print("$name totat count=$totalCount");
-      testNames.add(TestNameAndCount(name, 3, totalCount,
+
+      print("$name c=$count totat count=$totalCount");
+      testNames.add(TestNameAndCount(name, count, totalCount,
           id: id, category: TestCategory.TOPIC));
-    });
+    }
+    topics.forEach((id, name) async {});
 
     return testNames;
   }
@@ -154,10 +161,12 @@ class TestController {
     List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "ESSAY");
 
     List<TestNameAndCount> testNames = [];
-    quizzes.forEach((quiz) {
-      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+    for (int i = 0; i < quizzes.length; i++) {
+      Quiz quiz = quizzes[i];
+      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
+      testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
           id: quiz.id, category: TestCategory.ESSAY));
-    });
+    }
 
     return testNames;
   }
@@ -178,12 +187,43 @@ class TestController {
     List<Quiz> quizzes = await QuizDB().getQuizzesByName(course.id!, "BANK");
 
     List<TestNameAndCount> testNames = [];
-    quizzes.forEach((quiz) {
-      testNames.add(TestNameAndCount(quiz.name!, 3, 12,
+    for (int i = 0; i < quizzes.length; i++) {
+      Quiz quiz = quizzes[i];
+      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
+      testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
           id: quiz.id, category: TestCategory.BANK));
-    });
+    }
 
     return testNames;
+  }
+
+  Future<int> getTopicAnsweredCount(int courseId, int topicId,
+      {bool onlyAttempted = false, bool onlyCorrect = false}) async {
+    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
+    Map<String, dynamic> responses = Map();
+    tests.forEach((test) {
+      responses.addAll(jsonDecode(test.responses));
+    });
+
+    List<Map<String, dynamic>> testAnswers = [];
+    // print(responses.toString());
+    responses.forEach((key, value) {
+      testAnswers.add(value);
+    });
+
+    List<int> topicIds = [];
+    testAnswers.forEach((answer) {
+      int tId = answer['topic_id'];
+      if (tId == topicId) {
+        if ((onlyCorrect && answer['status'] == 'correct') ||
+            (onlyAttempted && answer['status'] != 'unattempted') ||
+            (!onlyCorrect && !onlyAttempted)) {
+          topicIds.add(tId);
+        }
+      }
+    });
+
+    return topicIds.length;
   }
 
   Future<int> getQuestionsAnsweredCount(int courseId,

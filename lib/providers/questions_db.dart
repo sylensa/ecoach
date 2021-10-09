@@ -88,7 +88,7 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.query('questions',
-        orderBy: "created_at DESC",
+        orderBy: "topic_name ASC",
         columns: ["topic_id", "topic_name"],
         distinct: true,
         where: "course_id = ?",
@@ -118,17 +118,14 @@ class QuestionDB {
 
     String amps = "";
     for (int i = 0; i < topicIds.length; i++) {
-      amps += "?";
+      amps += "${topicIds[i]}";
       if (i < topicIds.length - 1) {
         amps += ",";
       }
     }
 
-    final List<Map<String, dynamic>> maps = await db!.query('questions',
-        orderBy: "created_at DESC",
-        where: "topic_id IN ($amps)",
-        whereArgs: topicIds,
-        limit: limit);
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE topic_id IN ($amps) ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
