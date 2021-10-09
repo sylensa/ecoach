@@ -93,12 +93,24 @@ class QuestionDB {
         distinct: true,
         where: "course_id = ?",
         whereArgs: [courseId]);
-    print(maps);
+
     Map<int, String> topicNames = Map();
     for (int i = 0; i < maps.length; i++) {
       topicNames[maps[i]['topic_id']] = maps[i]['topic_name'];
     }
     return topicNames;
+  }
+
+  Future<int> getTopicCount(int topicId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'questions',
+      where: "topic_id = ?",
+      whereArgs: [topicId],
+    );
+
+    return maps.length;
   }
 
   Future<List<Question>> getTopicQuestions(List<int> topicIds, limit) async {

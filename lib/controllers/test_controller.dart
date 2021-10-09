@@ -136,12 +136,15 @@ class TestController {
   }
 
   getTopics(Course course) async {
+    print("geting topics");
     Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 
     List<TestNameAndCount> testNames = [];
-    topics.forEach((id, name) {
-      testNames.add(
-          TestNameAndCount(name, 3, 12, id: id, category: TestCategory.TOPIC));
+    topics.forEach((id, name) async {
+      int totalCount = await QuestionDB().getTopicCount(id);
+      print("$name totat count=$totalCount");
+      testNames.add(TestNameAndCount(name, 3, totalCount,
+          id: id, category: TestCategory.TOPIC));
     });
 
     return testNames;
@@ -191,14 +194,12 @@ class TestController {
     tests.forEach((test) {
       responses.addAll(jsonDecode(test.responses));
     });
-    print("number of resonses= ${responses.length}");
+
     List<Map<String, dynamic>> testAnswers = [];
     // print(responses.toString());
     responses.forEach((key, value) {
-      print(key);
       testAnswers.add(value);
     });
-    print("number of testanswers ${testAnswers.length}");
 
     List<int> questionIds = [];
     testAnswers.forEach((answer) {
@@ -211,8 +212,7 @@ class TestController {
         }
       }
     });
-    print(questionIds);
-    print(questionIds.length);
+
     return questionIds.length;
   }
 

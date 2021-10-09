@@ -145,6 +145,7 @@ class _TestTypeViewState extends State<TestTypeView> {
           futureList = TestController().getExamTests(widget.course);
           break;
         case TestCategory.TOPIC:
+          print("future topic");
           futureList = TestController().getTopics(widget.course);
           break;
         case TestCategory.ESSAY:
@@ -189,6 +190,7 @@ class _TestTypeViewState extends State<TestTypeView> {
               );
               break;
             case TestCategory.TOPIC:
+              print("case topic");
               widgetView = TestTypeListView(
                 widget.user,
                 widget.course,
