@@ -115,7 +115,6 @@ class ApiCall<T> {
   }
 
   handleResponse(http.Response response) {
-    print("api response body: ${response.body}");
     Map<String, dynamic> responseData = json.decode(response.body);
     message = responseData['message'] ?? "";
     switch (response.statusCode) {
@@ -151,18 +150,15 @@ class ApiCall<T> {
   }
 
   fromMap(dynamic jsonData, Function(Map<String, dynamic>) create) {
-    print("data=$jsonData");
     List<T> list = [];
     if (isList) {
       jsonData.forEach((v) {
         print("is array");
-        print(v);
         list.add(create(v));
       });
     } else {
       print("is object");
       list.add(create(jsonData));
-      print("list len=${list.length}");
     }
 
     print(list.length);

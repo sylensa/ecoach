@@ -73,7 +73,7 @@ class _AnalysisViewState extends State<AnalysisView>
                                 key: UniqueKey(),
                               )
                             : Center(
-                                child: Text("loading....."),
+                                child: Text("No data yet...."),
                               ),
                         Center(child: ExamsTabBarView()),
                         Center(child: Text('Topics')),

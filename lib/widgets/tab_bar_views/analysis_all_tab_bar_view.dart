@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course_analysis.dart';
@@ -50,6 +52,8 @@ class _AllTabBarViewState extends State<AllTabBarView> {
 
   getTestTaken() {
     TestController().getTestTaken(widget.item.tag!).then((tests) {
+      print("testTaken from DB:");
+      print(tests[0].toJson().toString().substring(0, 100));
       setState(() {
         testsTaken = tests;
       });
@@ -63,6 +67,8 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       if (tests == null) return;
       TestTakenDB().insertAll(tests);
 
+      print("test taken from server");
+      print(tests[0].toJson().toString().substring(0, 100));
       setState(() {
         testsTaken = tests;
       });
