@@ -52,8 +52,6 @@ class _AllTabBarViewState extends State<AllTabBarView> {
 
   getTestTaken() {
     TestController().getTestTaken(widget.item.tag!).then((tests) {
-      print("testTaken from DB:");
-      print(tests[0].toJson().toString().substring(0, 100));
       setState(() {
         testsTaken = tests;
       });
@@ -66,9 +64,6 @@ class _AllTabBarViewState extends State<AllTabBarView> {
     }, params: {'course_id': widget.item.tag!}).get(context).then((tests) {
       if (tests == null) return;
       TestTakenDB().insertAll(tests);
-
-      print("test taken from server");
-      print(tests[0].toJson().toString().substring(0, 100));
       setState(() {
         testsTaken = tests;
       });
