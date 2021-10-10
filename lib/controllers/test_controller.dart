@@ -145,7 +145,8 @@ class TestController {
       int id = topics.keys.toList()[i];
       String name = topics.values.toList()[i];
 
-      int count = await getTopicAnsweredCount(course.id!, id);
+      int count =
+          await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
       int totalCount = await QuestionDB().getTopicCount(id);
 
       print("$name c=$count totat count=$totalCount");
@@ -257,7 +258,8 @@ class TestController {
   }
 
   Future<double> getCourseProgress(courseId) async {
-    int totalTaken = await getQuestionsAnsweredCount(courseId);
+    int totalTaken =
+        await getQuestionsAnsweredCount(courseId, onlyAttempted: true);
     int totalQuestions = await QuestionDB().getTotalQuestionCount(courseId);
     if (totalQuestions == 0) totalQuestions = 1;
     return totalTaken / totalQuestions;
