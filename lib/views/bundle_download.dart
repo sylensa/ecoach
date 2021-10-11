@@ -1,13 +1,24 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/bundle.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/course_db.dart';
+import 'package:ecoach/providers/quiz_db.dart';
+import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/more_view.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class BundleDownload extends StatefulWidget {
-  const BundleDownload({Key? key, required this.bundle}) : super(key: key);
+  const BundleDownload(this.user, {Key? key, required this.bundle})
+      : super(key: key);
 
-  final Bundle bundle;
+  final Subscription bundle;
+  final User user;
 
   @override
   _BundleDownloadState createState() => _BundleDownloadState();
@@ -20,29 +31,19 @@ class _BundleDownloadState extends State<BundleDownload> {
   @override
   void initState() {
     super.initState();
-
-    courseList = [
-      {
-        'time': {'date': '07/09/21', 'time': '14:04'},
-        'courseName': 'Science',
-        'downloadStatus': 'pending'
-      },
-      {
-        'time': {'date': '07/09/21', 'time': '14:04'},
-        'courseName': 'Science',
-        'downloadStatus': 'pending'
-      },
-      {
-        'time': {'date': '07/09/21', 'time': '14:04'},
-        'courseName': 'Science',
-        'downloadStatus': 'successful'
-      },
-      {
-        'time': {'date': '07/09/21', 'time': '14:04'},
-        'courseName': 'Science',
-        'downloadStatus': 'failed'
-      },
-    ];
+    print(widget.bundle.subscriptionItems);
+    SubscriptionItemDB().subscriptionItems(widget.bundle.planId!).then((items) {
+      setState(() {
+        for (int i = 0; i < items.length; i++) {
+          courseList.add({
+            'id': items[i].id,
+            'time': {'date': items[i].dateOnly, 'time': items[i].timeOnly},
+            'courseName': items[i].name,
+            'downloadStatus': items[i].downloadStatus
+          });
+        }
+      });
+    });
   }
 
   @override
@@ -63,12 +64,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MoreView(),
-                            ),
-                          );
+                          Navigator.pop(context);
                         },
                         child: Container(
                           width: 32.0,
@@ -112,7 +108,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.bundle.name.toUpperCase(),
+                          widget.bundle.name!.toUpperCase(),
                           style: TextStyle(
                             fontSize: 40.0,
                             color: Colors.black54,
@@ -120,7 +116,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                           ),
                         ),
                         Text(
-                          'updated 5 days ago',
+                          'updated ${widget.bundle.updatedAgo}',
                           style: TextStyle(
                             fontSize: 18.0,
                             color: kDefaultBlack,
@@ -147,20 +143,26 @@ class _BundleDownloadState extends State<BundleDownload> {
                           data: Theme.of(context).copyWith(
                             unselectedWidgetColor: darken(kAdeoGray, 20),
                             checkboxTheme: CheckboxThemeData(
-                              fillColor: MaterialStateProperty.resolveWith((states) {
-                                const Set<MaterialState> interactiveStates = <MaterialState>{
+                              fillColor:
+                                  MaterialStateProperty.resolveWith((states) {
+                                const Set<MaterialState> interactiveStates =
+                                    <MaterialState>{
                                   MaterialState.selected,
                                   MaterialState.focused,
                                   MaterialState.pressed,
                                 };
-                                if (states.any(interactiveStates.contains)) return Colors.green;
+                                if (states.any(interactiveStates.contains))
+                                  return Colors.green;
                               }),
-                              checkColor: MaterialStateProperty.resolveWith((states) {
-                                const Set<MaterialState> interactiveStates = <MaterialState>{
+                              checkColor:
+                                  MaterialStateProperty.resolveWith((states) {
+                                const Set<MaterialState> interactiveStates =
+                                    <MaterialState>{
                                   MaterialState.selected,
                                   MaterialState.focused
                                 };
-                                if (states.any(interactiveStates.contains)) return Colors.white;
+                                if (states.any(interactiveStates.contains))
+                                  return Colors.white;
                               }),
                             ),
                           ),
@@ -174,7 +176,8 @@ class _BundleDownloadState extends State<BundleDownload> {
                             ),
                             dataRowHeight: 64.0,
                             dividerThickness: 0,
-                            headingRowColor: MaterialStateProperty.all(kAdeoGray),
+                            headingRowColor:
+                                MaterialStateProperty.all(kAdeoGray),
                             columns: [
                               DataColumn(label: Text('Time')),
                               DataColumn(label: Text('Course')),
@@ -186,12 +189,15 @@ class _BundleDownloadState extends State<BundleDownload> {
                                   cell1: courseList[i]['time'],
                                   cell2: courseList[i]['courseName'],
                                   cell3: courseList[i]['downloadStatus'],
-                                  selected: selectedTableRows.contains(courseList[i]),
+                                  selected:
+                                      selectedTableRows.contains(courseList[i]),
                                   onSelectChanged: (isSelected) {
-                                    final Map<String, dynamic> course = courseList[i];
+                                    final Map<String, dynamic> course =
+                                        courseList[i];
 
                                     setState(() {
-                                      final bool isAdding = isSelected != null && isSelected;
+                                      final bool isAdding =
+                                          isSelected != null && isSelected;
 
                                       isAdding
                                           ? selectedTableRows.add(course)
@@ -211,9 +217,26 @@ class _BundleDownloadState extends State<BundleDownload> {
             ),
             if (selectedTableRows.length > 0)
               GestureDetector(
-                onTap: () {
-                  // @Todo
-                  // Quaye, this is where you do your magic
+                onTap: () async {
+                  for (int i = 0; i < selectedTableRows.length; i++) {
+                    print(
+                        "downloading ${selectedTableRows[i]['courseName']}\n data");
+                    showDownloadDialog(context,
+                        message:
+                            "downloading..... ${selectedTableRows[i]['courseName']} data",
+                        current: i,
+                        total: selectedTableRows.length);
+                    SubscriptionItem? subscriptionItem =
+                        await getSubscriptionItem(selectedTableRows[i]['id']!);
+                    print(subscriptionItem);
+                    if (subscriptionItem != null) {
+                      await CourseDB().insert(subscriptionItem.course!);
+                      await QuizDB().insertAll(subscriptionItem.quizzes!);
+                    }
+
+                    Navigator.pop(context);
+                  }
+                  setState(() {});
                 },
                 child: Container(
                   height: 60.0,
@@ -234,6 +257,13 @@ class _BundleDownloadState extends State<BundleDownload> {
         ),
       ),
     );
+  }
+
+  getSubscriptionItem(id) async {
+    return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false,
+        create: (json) {
+      return SubscriptionItem.fromJson(json);
+    }).get(context);
   }
 }
 
@@ -273,7 +303,10 @@ DataRow makeDataRow({
           ],
         ),
       ),
-      DataCell(Text(cell2)),
+      DataCell(Text(
+        cell2,
+        softWrap: true,
+      )),
       DataCell(Text(cell3)),
     ],
   );

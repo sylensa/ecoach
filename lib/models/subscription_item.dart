@@ -1,5 +1,8 @@
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/providers/course_db.dart';
+import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:flutter/material.dart';
 
 class SubscriptionItem {
   SubscriptionItem(
@@ -30,6 +33,18 @@ class SubscriptionItem {
   DateTime? updatedAt;
   Course? course;
   List<Quiz>? quizzes;
+
+  get dateOnly {
+    return "${createdAt!.day}/${createdAt!.month}/${createdAt!.year}";
+  }
+
+  get timeOnly {
+    return "${createdAt!.hour}:${createdAt!.minute}";
+  }
+
+  get downloadStatus {
+    return course != null ? "downloaded" : "not download";
+  }
 
   factory SubscriptionItem.fromJson(Map<String, dynamic> json) =>
       SubscriptionItem(

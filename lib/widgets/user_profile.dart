@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class UserProfile extends StatelessWidget {
   const UserProfile(this.user);
 
-  final User user;
+  final UserInfo user;
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +117,8 @@ class DetailStrip extends StatelessWidget {
   }
 }
 
-class User {
-  const User({
+class UserInfo {
+  const UserInfo({
     required this.name,
     required this.profileImageURL,
     required this.email,
@@ -128,7 +128,7 @@ class User {
   });
 
   final String name;
-  final String profileImageURL;
+  final String? profileImageURL;
   final String email;
   final String phoneNumber;
   final String country;

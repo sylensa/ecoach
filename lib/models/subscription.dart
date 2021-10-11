@@ -1,4 +1,5 @@
 import 'subscription_item.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Subscription {
   Subscription(
@@ -43,6 +44,14 @@ class Subscription {
   DateTime? createdAt;
   DateTime? updatedAt;
   List<SubscriptionItem>? subscriptionItems;
+
+  get timeLeft {
+    return endsAt!.difference(DateTime.now()).inDays.toString();
+  }
+
+  get updatedAgo {
+    return updatedAt != null ? timeago.format(updatedAt!) : "never";
+  }
 
   factory Subscription.fromJson(Map<String, dynamic> json) => Subscription(
         id: json["id"],

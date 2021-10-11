@@ -18,6 +18,7 @@ class UserPreferences {
     prefs.setString("phone", user.phone!);
     prefs.setBool("activated", user.activated);
     prefs.setString("api_token", user.token!);
+    prefs.setString("signup_date", user.signupDate!.toIso8601String());
 
     print("${prefs.getString("api_token")}");
     return true;
@@ -33,6 +34,7 @@ class UserPreferences {
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
     bool activated = prefs.getBool("activated") ?? false;
+    String? signupDate = prefs.getString("signup_date");
 
     print("shared pref: token=$token");
     if (id == null) return null;
@@ -44,7 +46,8 @@ class UserPreferences {
         email: email,
         phone: phone,
         token: token,
-        activated: activated);
+        activated: activated,
+        signupDate: signupDate != null ? DateTime.parse(signupDate) : null);
     List<Subscription> plans = await SubscriptionDB().subscriptions();
     user.subscriptions = plans;
     List<TestTaken> tests = await TestTakenDB().testsTaken();

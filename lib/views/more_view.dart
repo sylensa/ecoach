@@ -1,5 +1,7 @@
+import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
 import 'package:ecoach/models/ui/bundle.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/bundle_download.dart';
 import 'package:ecoach/widgets/tab_bars/analysis_info_snippet_card_tab_bar.dart';
@@ -8,17 +10,19 @@ import 'package:flutter/material.dart';
 
 class MoreView extends StatefulWidget {
   static const String routeName = '/more';
-  const MoreView({Key? key}) : super(key: key);
+  const MoreView(this.user, {Key? key}) : super(key: key);
+  final User user;
 
   @override
   _MoreViewState createState() => _MoreViewState();
 }
 
 class _MoreViewState extends State<MoreView> {
-  late User user;
+  late UserInfo userInfo;
   List<AnalysisInfoSnippet> infoList = [];
   int selectedTabIndex = 1;
   List<Bundle> bundleList = [];
+  List<Subscription> subscriptions = [];
 
   handleSelectChanged(index) {
     setState(() {
@@ -30,13 +34,23 @@ class _MoreViewState extends State<MoreView> {
   void initState() {
     super.initState();
 
-    user = User(
+    subscriptions = widget.user.subscriptions;
+    subscriptions.forEach((subscription) {
+      bundleList.add(Bundle(
+          name: subscription.name!,
+          timeLeft: subscription.endsAt!
+              .difference(DateTime.now())
+              .inDays
+              .toString()));
+    });
+
+    userInfo = UserInfo(
       country: 'Ghana',
-      dateJoined: '30th January, 2027',
-      email: 'sfquaye@ecoachsolutions.gh',
-      name: 'SF Quaye',
-      phoneNumber: '+233 123 456 789',
-      profileImageURL: '',
+      dateJoined: widget.user.signupDate!.toString(),
+      email: widget.user.email!,
+      name: widget.user.name,
+      phoneNumber: widget.user.phone!,
+      profileImageURL: widget.user.avatar != null ? widget.user.avatar! : null,
     );
 
     infoList = [
@@ -48,9 +62,9 @@ class _MoreViewState extends State<MoreView> {
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
-        bodyText: '3',
+        bodyText: "${subscriptions.length}",
         footerText: 'bundles',
-        performance: '3',
+        performance: "",
         performanceImproved: false,
         background: kAnalysisInfoSnippetBackground2,
       ),
@@ -62,12 +76,6 @@ class _MoreViewState extends State<MoreView> {
         background: kAnalysisInfoSnippetBackground3,
       ),
     ];
-
-    bundleList = [
-      Bundle(name: 'JHS 1 Bundle', timeLeft: '100 days'),
-      Bundle(name: 'JHS 2 Bundle', timeLeft: '100 days'),
-      Bundle(name: 'JHS 3 Bundle', timeLeft: '100 days'),
-    ];
   }
 
   @override
@@ -78,7 +86,7 @@ class _MoreViewState extends State<MoreView> {
           color: kAdeoGray,
           child: Column(
             children: [
-              UserProfile(user),
+              UserProfile(userInfo),
               Padding(
                 padding: const EdgeInsets.only(
                   left: 12.0,
@@ -101,7 +109,7 @@ class _MoreViewState extends State<MoreView> {
                   padding: EdgeInsets.symmetric(vertical: 20.0),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: infoList.length,
+                    itemCount: bundleList.length,
                     itemBuilder: (context, index) {
                       return BundleListItem(
                         bundle: bundleList[index],
@@ -111,7 +119,8 @@ class _MoreViewState extends State<MoreView> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => BundleDownload(
-                                bundle: bundleList[index],
+                                widget.user,
+                                bundle: subscriptions[index],
                               ),
                             ),
                           );
@@ -153,7 +162,9 @@ class BundleListItem extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           border: Border(
-            top: isFirstChild ? BorderSide(width: 1.0, color: kAdeoGray) : BorderSide.none,
+            top: isFirstChild
+                ? BorderSide(width: 1.0, color: kAdeoGray)
+                : BorderSide.none,
             bottom: BorderSide(width: 1.0, color: kAdeoGray),
           ),
         ),

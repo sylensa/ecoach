@@ -18,6 +18,7 @@ class User {
   String? username;
   String? avatar;
   bool activated;
+  DateTime? signupDate;
 
   Wallet wallet = Wallet();
   List<Subscription> subscriptions = [];
@@ -38,7 +39,8 @@ class User {
       this.avatar,
       this.token,
       this.lastLoggedIn,
-      this.activated = false});
+      this.activated = false,
+      this.signupDate});
 
   String get name {
     return fname! + " " + lname!;
@@ -64,7 +66,8 @@ class User {
       type: json['type'],
       gender: json['gender'],
       token: json['api_token'],
-      avatar: json['avatar']);
+      avatar: json['avatar'],
+      signupDate: DateTime.parse(json['signup_date']));
 
   fromMap(Map<String, dynamic> json) {
     id = json['id'];
@@ -78,6 +81,7 @@ class User {
     gender = json['gender'];
     token = json['api_token'];
     avatar = json['avatar'];
+    signupDate = json['signup_date'];
   }
 
   Map<String, dynamic> toMap() => {
@@ -92,6 +96,7 @@ class User {
         "gender": gender,
         "api_token": token,
         "avatar": avatar,
+        "signup_date": signupDate!.toIso8601String(),
       };
 
   setActivated(bool activate) {
