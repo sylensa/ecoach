@@ -75,8 +75,8 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       setInfoList(analytic);
     });
 
-    ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!,
-        isList: false, create: (dataItem) {
+    ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!, isList: false,
+        create: (dataItem) {
       return CourseAnalytic.fromJson(dataItem);
     }, onError: (e) {
       print(e);
@@ -212,12 +212,10 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                       cell2Text1: testsTaken[i].testname!,
                       cell2Text2: testsTaken[i].testType!,
                       cell3Text: "${testsTaken[i].testTime!}",
-                      progressColor: kCourseColors[i % kCourseColors.length]
-                          ['progress']!,
-                      progress:
-                          testsTaken[i].correct! / testsTaken[i].totalQuestions,
-                      selected: selectedTableRowIndex == 0,
-                      onSelectChanged: handleSelectChanged(0),
+                      progressColor: kCourseColors[i % kCourseColors.length]['progress']!,
+                      progress: testsTaken[i].correct! / testsTaken[i].totalQuestions,
+                      selected: selectedTableRowIndex == i,
+                      onSelectChanged: handleSelectChanged(i),
                     ),
                 ],
               ),
@@ -261,20 +259,14 @@ DataRow makeDataRow({
       DataCell(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(cell1Text1),
-            Text(cell1Text2, style: kTableBodySubText)
-          ],
+          children: [Text(cell1Text1), Text(cell1Text2, style: kTableBodySubText)],
         ),
       ),
       DataCell(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(cell2Text1),
-            Text(cell2Text2, style: kTableBodySubText)
-          ],
+          children: [Text(cell2Text1), Text(cell2Text2, style: kTableBodySubText)],
         ),
       ),
       DataCell(

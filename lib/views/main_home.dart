@@ -9,22 +9,17 @@ import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/quiz_db.dart';
 import 'package:ecoach/providers/subscription_db.dart';
 import 'package:ecoach/providers/subscription_item_db.dart';
-import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/utils/utf_fix.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/home.dart';
-import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/views/more_view.dart';
 import 'package:ecoach/widgets/adeo_bottom_navigation_bar.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import 'more_view.dart';
 
 class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
@@ -54,8 +49,7 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
       CoursesPage(widget.user),
       StorePage(widget.user),
       AnalysisView(),
-      // MoreView(),
-      Customize(),
+      MoreView(),
     ];
     currentIndex = widget.index;
     print("init");

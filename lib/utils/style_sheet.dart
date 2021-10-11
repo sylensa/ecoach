@@ -41,6 +41,11 @@ const kAnalysisInfoSnippetBackground3 = Color(0xFF13BFA3);
 
 const kNavigationTopBorderColor = Color(0xFFC0C0C0);
 const kAdeoTaupe = Color(0xFFFFB444);
+const kAdeoBlue = Color(0xFF00ABE0);
+const kAdeoGreen = Color(0xFF00C664);
+const kAdeoWhiteAlpha40 = Color(0x66FFFFFF);
+const kAdeoWhiteAlpha81 = Color(0xCFFFFFFF);
+const kAdeoGray = Color(0xFFF1F1F1);
 
 const kSixteenPointWhiteText = TextStyle(
   fontSize: 16,

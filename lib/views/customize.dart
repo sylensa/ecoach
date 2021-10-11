@@ -1,5 +1,5 @@
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/widgets/adeo_outlined_button.dart';
+import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/pin_input.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -76,6 +76,7 @@ class _CustomizeState extends State<Customize> {
                         ],
                         carouselController: controller,
                         options: CarouselOptions(
+                          viewportFraction: 1,
                           scrollPhysics: NeverScrollableScrollPhysics(),
                           enableInfiniteScroll: false,
                           onPageChanged: (index, reason) {

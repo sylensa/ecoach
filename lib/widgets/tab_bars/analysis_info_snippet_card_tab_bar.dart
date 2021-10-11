@@ -10,17 +10,21 @@ class AnalysisInfoSnippetCardTabBar extends StatelessWidget {
     this.subLabels,
     required this.selectedIndex,
     required this.onActiveTabChange,
+    this.theme = 'dark',
+    this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
   });
 
   final List<AnalysisInfoSnippet> infoList;
   final List<String>? subLabels;
   final int selectedIndex;
   final Function onActiveTabChange;
+  final String theme;
+  final MainAxisAlignment mainAxisAlignment;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (var i = 0; i < infoList.length; i++)
@@ -37,7 +41,9 @@ class AnalysisInfoSnippetCardTabBar extends StatelessWidget {
                       SizedBox(height: 12),
                       Text(
                         subLabels![i],
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: theme.toLowerCase() == 'dark' ? Colors.white : kDefaultBlack),
                       ),
                     ],
                   ),
@@ -47,7 +53,7 @@ class AnalysisInfoSnippetCardTabBar extends StatelessWidget {
                       SizedBox(height: 4),
                       CustomPaint(
                         painter: TraingularActiveIndicator(
-                          kAnalysisScreenActiveColor,
+                          theme.toLowerCase() == 'dark' ? kAnalysisScreenActiveColor : Colors.white,
                         ),
                         size: Size(28.0, 16.0),
                       )

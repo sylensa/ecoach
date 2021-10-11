@@ -18,11 +18,8 @@ class AnalysisView extends StatefulWidget {
 class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
-<<<<<<< HEAD
-=======
   List<SubscriptionItem> items = [];
 
->>>>>>> a541ae64457d32964014a6528ae105dc333a6824
   late TabController tabController;
 
   @override
@@ -77,7 +74,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
                             : Center(
                                 child: Text("loading....."),
                               ),
-                        Center(child: ExamsTabBarView()),
+                        ExamsTabBarView(),
                         Center(child: Text('Topics')),
                         Center(child: Text('Analysis')),
                       ],
