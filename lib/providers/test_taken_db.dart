@@ -55,9 +55,13 @@ class TestTakenDB {
         where: "course_id = ?",
         whereArgs: [courseId]);
 
-    return List.generate(maps.length, (i) {
-      return TestTaken.fromJson(maps[i]);
-    });
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      print(test.toJson().toString().substring(0, 100));
+      tests.add(test);
+    }
+    return tests;
   }
 
   Future<TestTaken?> courseLastTest(int courseId) async {

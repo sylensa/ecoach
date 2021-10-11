@@ -1,3 +1,4 @@
+import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/subscribe_controller.dart';
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/plan.dart';
@@ -23,211 +24,232 @@ class StorePage extends StatefulWidget {
 class _StorePageState extends State<StorePage> {
   SubscribeController subscribeController = Get.put(SubscribeController());
   List<bool> _isSelected = [false, true];
-  var futurePlans;
+
+  List<Plan> monthlyPlan = [];
+  List<Plan> annuallyPlan = [];
 
   @override
   void initState() {
     super.initState();
 
-    futurePlans = getPlans();
-  }
+    ApiCall<Plan>(AppUrl.plans, user: widget.user, create: (dataItem) {
+      return Plan.fromJson(dataItem);
+    }, onCallback: (plans) {
+      print("plans coming=====");
+      print(plans);
+      if (plans == null) return;
+      plans.forEach((plan) {
+        if (plan.invoiceInterval == "month") {
+          monthlyPlan.add(plan);
+        } else if (plan.invoiceInterval == "year") {
+          annuallyPlan.add(plan);
+        }
+      });
 
-  getPlans() async {
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.plans),
-      headers: {
-        "api-token": widget.user.token!,
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-    );
-    print("response returned");
-    print("${response.statusCode}");
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        print("messages returned");
-        print(response.body);
-        return ApiResponse<Plan>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
-          return Plan.fromJson(dataItem);
-        });
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.body);
-    }
+      setState(() {});
+    }).get(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
-
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xFF28BFDF),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 40,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ToggleButtons(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Monthly"),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Annually"),
-                      )
-                    ],
-                    isSelected: _isSelected,
-                    onPressed: (int index) {
-                      setState(() {
-                        for (int i = 0; i < _isSelected.length; i++) {
-                          _isSelected[i] = i == index;
-                        }
-                      });
-                    },
-                    color: Colors.black,
-                    selectedColor: Colors.orange.shade100,
-                    fillColor: Colors.blue.shade600,
-                    borderColor: Colors.blue.shade700,
-                    selectedBorderColor: Colors.red,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          backgroundColor: Color(0xFF28BFDF),
+          appBar: new PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: new Container(
+              color: Color(0xFF00A0C2),
+              height: 50.0,
+              child: new TabBar(
+                tabs: [
+                  Tab(
+                    text: "Monthly",
+                  ),
+                  Tab(
+                    text: "Annually",
                   ),
                 ],
               ),
             ),
-            FutureBuilder(
-              future: futurePlans,
-              builder: (context, snapshot) {
-                print(snapshot.data);
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
-                  default:
-                    if (snapshot.hasError)
-                      return Text('Error: ${snapshot.error}');
-                    else if (snapshot.data != null) {
-                      ApiResponse response = snapshot.data! as ApiResponse;
-
-                      List<Plan>? plans = response.data as List<Plan>;
-                      print(plans);
-                      return SingleChildScrollView(
-                        child: Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Container(
-                                    child: plans.length > 0
-                                        ? Container(
-                                            child: ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: plans.length,
-                                                itemBuilder: (context, index) {
-                                                  return Padding(
-                                                    padding: const EdgeInsets
-                                                            .fromLTRB(
-                                                        20, 12, 20, 12),
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        Navigator.push(context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) {
-                                                          return SubscribePage(
-                                                              widget.user,
-                                                              plans[index]);
-                                                        }));
-                                                      },
-                                                      highlightColor:
-                                                          Colors.blue.shade600,
-                                                      child: Container(
-                                                        // height: 80,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                width: 1,
-                                                                color: Colors
-                                                                    .white),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(14.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Text(
-                                                                  plans[index]
-                                                                      .name!,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          18,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold)),
-                                                              Spacer(),
-                                                              Text(
-                                                                  money(plans[
-                                                                          index]
-                                                                      .price!),
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontSize:
-                                                                          18)),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }),
-                                          )
-                                        : Container(
-                                            child: SizedBox(
-                                              height: 400,
-                                              child: Center(
-                                                child: Text(
-                                                    "There are no items in the store"),
+          ),
+          body: TabBarView(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            child: monthlyPlan.length > 0
+                                ? Container(
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: monthlyPlan.length,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                20, 12, 20, 12),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return SubscribePage(
+                                                      widget.user,
+                                                      monthlyPlan[index]);
+                                                }));
+                                              },
+                                              highlightColor:
+                                                  Colors.blue.shade600,
+                                              child: Container(
+                                                // height: 80,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.white),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      14.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                          monthlyPlan[index]
+                                                              .name!,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Spacer(),
+                                                      Text(
+                                                          money(
+                                                              monthlyPlan[index]
+                                                                  .price!),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18)),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                  )),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else if (snapshot.data == null)
-                      return Container(
-                          child: Center(
-                        child: Text("There are no items in the store"),
-                      ));
-                    else
-                      return Container();
-                }
-              },
-            ),
-          ],
+                                          );
+                                        }),
+                                  )
+                                : Container(
+                                    child: SizedBox(
+                                      height: 400,
+                                      child: Center(
+                                        child: Text(
+                                            "There are no items in the store"),
+                                      ),
+                                    ),
+                                  ),
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Container(
+                            child: annuallyPlan.length > 0
+                                ? Container(
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: annuallyPlan.length,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                20, 12, 20, 12),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return SubscribePage(
+                                                      widget.user,
+                                                      annuallyPlan[index]);
+                                                }));
+                                              },
+                                              highlightColor:
+                                                  Colors.blue.shade600,
+                                              child: Container(
+                                                // height: 80,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.white),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      14.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                          annuallyPlan[index]
+                                                              .name!,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Spacer(),
+                                                      Text(
+                                                          money(annuallyPlan[
+                                                                  index]
+                                                              .price!),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18)),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                  )
+                                : Container(
+                                    child: SizedBox(
+                                      height: 400,
+                                      child: Center(
+                                        child: Text(
+                                            "There are no items in the store"),
+                                      ),
+                                    ),
+                                  ),
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

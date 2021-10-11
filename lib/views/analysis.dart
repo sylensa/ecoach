@@ -35,7 +35,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
       });
     });
 
-    tabController = TabController(initialIndex: 1, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
   }
 
   @override
@@ -72,7 +72,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
                                 key: UniqueKey(),
                               )
                             : Center(
-                                child: Text("loading....."),
+                                child: Text("No data yet...."),
                               ),
                         ExamsTabBarView(),
                         Center(child: Text('Topics')),

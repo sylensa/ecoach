@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/test_type_list.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -77,7 +78,9 @@ class _TestTypeViewState extends State<TestTypeView> {
                     showTestCat(TestType.UNTIMED);
                   }),
                   getTypeButton(AssetImage("assets/images/customize.png"), "Customized", () {
-                    showTestCat(TestType.CUSTOMIZED);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return Customize(widget.user, widget.course);
+                    }));
                   }),
                 ],
               ),
@@ -134,6 +137,7 @@ class _TestTypeViewState extends State<TestTypeView> {
           futureList = TestController().getExamTests(widget.course);
           break;
         case TestCategory.TOPIC:
+          print("future topic");
           futureList = TestController().getTopics(widget.course);
           break;
         case TestCategory.ESSAY:
@@ -178,6 +182,7 @@ class _TestTypeViewState extends State<TestTypeView> {
               );
               break;
             case TestCategory.TOPIC:
+              print("case topic");
               widgetView = TestTypeListView(
                 widget.user,
                 widget.course,

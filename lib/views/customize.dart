@@ -1,11 +1,20 @@
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
+import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/views/test_type_list.dart';
+import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/pin_input.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class Customize extends StatefulWidget {
-  const Customize({Key? key}) : super(key: key);
+  const Customize(this.user, this.course, {Key? key}) : super(key: key);
+  final User user;
+  final Course course;
 
   @override
   _CustomizeState createState() => _CustomizeState();
@@ -17,6 +26,7 @@ class _CustomizeState extends State<Customize> {
   int currentSliderIndex = 0;
   String numberOfQuestions = '';
   String duration = '';
+  TestCategory testCategory = TestCategory.NONE;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +67,7 @@ class _CustomizeState extends State<Customize> {
                             label: 'Questions',
                             onChanged: (v) {
                               setState(() {
-                                numberOfQuestions = v.split('').reversed.join('');
+                                numberOfQuestions = v.split('').join('');
                               });
                               print(numberOfQuestions);
                             },
@@ -68,7 +78,7 @@ class _CustomizeState extends State<Customize> {
                             label: 'Time',
                             onChanged: (v) {
                               setState(() {
-                                duration = v.split('').reversed.join('');
+                                duration = v.split('').join('');
                               });
                               print(duration);
                             },
@@ -119,8 +129,32 @@ class _CustomizeState extends State<Customize> {
                             if (currentSliderIndex == 0)
                               controller.nextPage();
                             else {
-                              // ignore: todo
-                              // TODO: Quaye, this is where you navigate to wherever you wish to
+                              print(duration);
+                              if (duration.split(":").length != 2) return;
+
+                              showTestCat(TestType.CUSTOMIZED);
+                              // TestController()
+                              //     .getCustomizedQuestions(widget.course,
+                              //         int.parse(numberOfQuestions))
+                              //     .then((questions) {
+                              //   Navigator.push(context,
+                              //       MaterialPageRoute(builder: (context) {
+                              //     return QuizCover(
+                              //       widget.user,
+                              //       questions,
+                              //       course: widget.course,
+                              //       type: TestType.CUSTOMIZED,
+                              //       category: "Customized",
+                              //       time: Duration(
+                              //               minutes: int.parse(
+                              //                   duration.split(":")[0]),
+                              //               seconds: int.parse(
+                              //                   duration.split(":")[1]))
+                              //           .inSeconds,
+                              //       name: "Customize",
+                              //     );
+                              //   }));
+                              // });
                             }
                           },
                         ),
@@ -134,6 +168,209 @@ class _CustomizeState extends State<Customize> {
           ),
         ),
       ),
+    );
+  }
+
+  showTestCat(TestType testType) {
+    Duration timeDuration = Duration(
+        minutes: int.parse(duration.split(":")[0]), seconds: int.parse(duration.split(":")[1]));
+
+    getTest() {
+      Future futureList;
+      switch (testCategory) {
+        case TestCategory.MOCK:
+          futureList =
+              TestController().getMockTests(widget.course, limit: int.parse(numberOfQuestions));
+          break;
+
+        case TestCategory.TOPIC:
+          futureList = TestController().getTopics(widget.course);
+          break;
+        case TestCategory.ESSAY:
+          futureList = TestController().getEssays(widget.course);
+          break;
+        case TestCategory.SAVED:
+          futureList = TestController().getSavedTests(widget.course);
+          break;
+        case TestCategory.BANK:
+          futureList = TestController().getBankTest(widget.course);
+          break;
+        default:
+          futureList = TestController().getBankTest(widget.course);
+      }
+
+      futureList.then((data) {
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          Widget? widgetView;
+
+          switch (testCategory) {
+            case TestCategory.MOCK:
+              List<Question> questions = data as List<Question>;
+              widgetView = QuizCover(
+                widget.user,
+                questions,
+                course: widget.course,
+                type: testType,
+                category: testCategory.toString().split(".")[1],
+                time: testType == TestType.SPEED ? 30 : 40 * 60,
+                name: "Mock Test",
+              );
+              break;
+
+            case TestCategory.TOPIC:
+              widgetView = TestTypeListView(widget.user, widget.course, data, testType,
+                  title: "Topic",
+                  multiSelect: true,
+                  questionLimit: int.parse(numberOfQuestions),
+                  time: timeDuration.inSeconds);
+              break;
+            case TestCategory.ESSAY:
+              widgetView = TestTypeListView(widget.user, widget.course, data, testType,
+                  title: "Essay",
+                  questionLimit: int.parse(numberOfQuestions),
+                  time: timeDuration.inSeconds);
+              break;
+            case TestCategory.SAVED:
+              List<Question> questions = data as List<Question>;
+              widgetView = QuizCover(
+                widget.user,
+                questions,
+                category: testCategory.toString().split(".")[1],
+                course: widget.course,
+                time: timeDuration.inSeconds,
+                name: "Saved Test",
+              );
+              break;
+            case TestCategory.BANK:
+              widgetView = TestTypeListView(widget.user, widget.course, data, testType,
+                  title: "Bank",
+                  questionLimit: int.parse(numberOfQuestions),
+                  time: timeDuration.inSeconds);
+              break;
+            default:
+              widgetView = null;
+          }
+          return widgetView!;
+        }));
+      });
+    }
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              leading: GestureDetector(
+                child: Icon(Icons.arrow_back_ios),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            backgroundColor: Color(0xFFF6F6F6),
+            body: Padding(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Choose your test type",
+                          style: TextStyle(color: Colors.black38),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    Divider(
+                      thickness: 2,
+                      color: Colors.black38,
+                    ),
+                    SizedBox(
+                      height: 80,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            getTestCatButton("Mock", () {
+                              testCategory = TestCategory.MOCK;
+                              getTest();
+                            }),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            getTestCatButton("Topic", () {
+                              testCategory = TestCategory.TOPIC;
+                              getTest();
+                            }),
+                            getTestCatButton("Essay", () {
+                              testCategory = TestCategory.ESSAY;
+                              getTest();
+                            }),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            getTestCatButton("Saved", () {
+                              testCategory = TestCategory.SAVED;
+                              getTest();
+                            }),
+                            getTestCatButton("Bank", () {
+                              testCategory = TestCategory.BANK;
+                              getTest();
+                            }),
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 60,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: OutlinedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Colors.white)),
+                                onPressed: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Text('View Analysis'),
+                                ))),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).then((value) {});
+  }
+
+  getTestCatButton(String name, Function()? callback) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 12, 8, 12),
+      child: OutlinedButton(
+          style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all(Size(100, 132)),
+              backgroundColor: MaterialStateProperty.all(Colors.white)),
+          onPressed: callback != null ? callback : null,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                name,
+                style: TextStyle(color: Colors.black38),
+              ),
+            ],
+          )),
     );
   }
 }
@@ -182,7 +419,7 @@ class _CarouselItemState extends State<CarouselItem> {
             ),
             SizedBox(height: 24),
             Directionality(
-              textDirection: TextDirection.rtl,
+              textDirection: TextDirection.ltr,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

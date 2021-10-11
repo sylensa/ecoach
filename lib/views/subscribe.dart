@@ -314,7 +314,7 @@ class _SubscribePageState extends State<SubscribePage>
                                       padding: EdgeInsets.all(18),
                                       child: SizedBox(
                                         width: double.infinity,
-                                        height: 50,
+                                        height: 70,
                                         child: Row(
                                           children: [
                                             Spacer(),

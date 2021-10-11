@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_analysis.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/course_info.dart';
@@ -79,73 +80,87 @@ class _CourseViewState extends State<CourseView> {
   void initState() {
     super.initState();
     subName = widget.subscription.name!;
-    subName = subName.replaceFirst("Bundle", "").trim();
+    subName = subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
     print(subName);
     futureItems = SubscriptionItemDB().subscriptionItems(widget.subscription.planId!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: futureItems,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return Container();
-            case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
-            default:
-              if (snapshot.hasError)
-                return Text('Error: ${snapshot.error}');
-              else if (snapshot.data != null) {
-                List<SubscriptionItem> items = snapshot.data! as List<SubscriptionItem>;
+    return Column(
+      children: [
+        Text(
+          subName,
+          style: TextStyle(color: Colors.black),
+        ),
+        FutureBuilder(
+            future: futureItems,
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Container();
+                case ConnectionState.waiting:
+                  return Center(child: CircularProgressIndicator());
+                default:
+                  if (snapshot.hasError)
+                    return Text('Error: ${snapshot.error}');
+                  else if (snapshot.data != null) {
+                    List<SubscriptionItem> items = snapshot.data! as List<SubscriptionItem>;
 
-                return ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    if (items[index].course == null) return Container();
-                    return Padding(
-                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                      child: CourseCard(widget.user,
-                          courseInfo: CourseInfo(
-                            course: items[index].course!,
-                            title: items[index]
-                                .name!
-                                .toUpperCase()
-                                .replaceFirst(subName.toUpperCase(), ""),
-                            background: kCourseColors[index % kCourseColors.length]['background'],
-                            icon: 'ict.png',
-                            progress: 51,
-                            progressColor: kCourseColors[index % kCourseColors.length]['progress'],
-                            rank: {
-                              'position': 12,
-                              'numberOnRoll': 305,
-                            },
-                            tests: {
-                              'testsTaken': 132,
-                              'totalNumberOfTests': 3254,
-                            },
-                            totalPoints: 1895,
-                            times: 697,
-                          )),
+                    return Expanded(
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          if (items[index].course == null) return Container();
+                          CourseAnalytic? analytic = items[index].course!.analytic;
+                          return Padding(
+                            padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                            child: CourseCard(widget.user,
+                                courseInfo: CourseInfo(
+                                  course: items[index].course!,
+                                  title: items[index]
+                                      .name!
+                                      .toUpperCase()
+                                      .replaceFirst(subName.toUpperCase(), ""),
+                                  background: kCourseColors[index % kCourseColors.length]
+                                      ['background'],
+                                  icon: 'ict.png',
+                                  progress: 51,
+                                  progressColor: kCourseColors[index % kCourseColors.length]
+                                      ['progress'],
+                                  rank: {
+                                    'position': analytic != null ? analytic.userRank : 0,
+                                    'numberOnRoll': analytic != null ? analytic.totalRank : 0,
+                                  },
+                                  tests: {
+                                    'testsTaken': 132,
+                                    'totalNumberOfTests': 3254,
+                                  },
+                                  totalPoints: analytic != null ? analytic.coursePoint! : 0,
+                                  times: analytic != null ? analytic.usedSpeed! : 0,
+                                  totalTimes: analytic != null ? analytic.totalSpeed! : 0,
+                                )),
+                          );
+                        },
+                      ),
                     );
-                  },
-                );
-              } else if (snapshot.data == null)
-                return Container();
-              else
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 100,
-                    ),
-                    Center(child: Text(widget.user.email ?? "Something isn't right")),
-                    SizedBox(height: 100),
-                  ],
-                );
-          }
-        });
+                  } else if (snapshot.data == null)
+                    return Container();
+                  else
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 100,
+                        ),
+                        Center(child: Text(widget.user.email ?? "Something isn't right")),
+                        SizedBox(height: 100),
+                      ],
+                    );
+              }
+            }),
+      ],
+    );
   }
 }

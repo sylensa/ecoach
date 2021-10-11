@@ -57,7 +57,7 @@ class _QuizViewState extends State<QuizView> {
 
   bool enabled = true;
   bool savedTest = false;
-  late Duration duration;
+  late Duration duration, resetDuration;
 
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
@@ -72,6 +72,7 @@ class _QuizViewState extends State<QuizView> {
     controller = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
     duration = Duration(seconds: widget.timeInSec);
+    resetDuration = Duration(seconds: widget.timeInSec);
 
     timerController = CustomTimerController();
     timerController.onSetStart(() {});
@@ -93,7 +94,11 @@ class _QuizViewState extends State<QuizView> {
   }
 
   resetTimer() {
-    timerController.reset();
+    // print("reset timer");
+    // timerController.reset();
+    setState(() {
+      duration = resetDuration;
+    });
   }
 
   onEnd() {
@@ -393,36 +398,43 @@ class _QuizViewState extends State<QuizView> {
                       );
                     });
               },
-              child: CustomTimer(
-                onBuildAction: enabled
-                    ? CustomTimerAction.auto_start
-                    : CustomTimerAction.go_to_end,
-                builder: (CustomTimerRemainingTime remaining) {
-                  countdownInSeconds = remaining.duration.inSeconds;
-                  if (widget.disableTime) {
-                    return Image(
-                        image: AssetImage("assets/images/infinite.png"));
-                  }
-                  if (remaining.duration.inSeconds == 0) {
-                    return Text("Time Up",
-                        style:
-                            TextStyle(color: Color(0xFF00C664), fontSize: 18));
-                  }
+              child: enabled
+                  ? CustomTimer(
+                      onBuildAction: enabled
+                          ? CustomTimerAction.auto_start
+                          : CustomTimerAction.go_to_end,
+                      builder: (CustomTimerRemainingTime remaining) {
+                        duration = remaining.duration;
+                        countdownInSeconds = remaining.duration.inSeconds;
+                        if (widget.disableTime) {
+                          return Image(
+                              image: AssetImage("assets/images/infinite.png"));
+                        }
+                        if (remaining.duration.inSeconds == 0) {
+                          return Text("Time Up",
+                              style: TextStyle(
+                                  color: Color(0xFF00C664), fontSize: 18));
+                        }
 
-                  return Text("${remaining.minutes}:${remaining.seconds}",
-                      style: TextStyle(color: Color(0xFF00C664), fontSize: 28));
-                },
-                controller: timerController,
-                from: duration,
-                to: Duration(seconds: 0),
-                onStart: () {},
-                onPaused: () {},
-                onReset: () {},
-                onFinish: () {
-                  print("finished");
-                  onEnd();
-                },
-              ),
+                        return Text("${remaining.minutes}:${remaining.seconds}",
+                            style: TextStyle(
+                                color: Color(0xFF00C664), fontSize: 28));
+                      },
+                      controller: timerController,
+                      from: duration,
+                      to: Duration(seconds: 0),
+                      onStart: () {},
+                      onPaused: () {},
+                      onReset: () {
+                        print("onReset");
+                      },
+                      onFinish: () {
+                        print("finished");
+                        onEnd();
+                      },
+                    )
+                  : Text("Time Up",
+                      style: TextStyle(color: Color(0xFF00C664), fontSize: 18)),
             ),
           ),
           Positioned(
@@ -484,7 +496,7 @@ class _QuizViewState extends State<QuizView> {
                         VerticalDivider(width: 2, color: Colors.white),
                       if (!savedTest &&
                               currentQuestion == widget.questions.length - 1 ||
-                          (!enabled &&
+                          (enabled &&
                               widget.speedTest &&
                               currentQuestion == finalQuestion))
                         Expanded(

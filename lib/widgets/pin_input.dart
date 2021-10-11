@@ -56,12 +56,15 @@ class _PinInputState extends State<PinInput> {
       cursorColor: Colors.black,
       animationDuration: Duration(milliseconds: 300),
       textStyle: kPinInputTextStyle,
-      errorAnimationController: errorController,
       controller: textEditingController,
       keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9 ]'))],
       onCompleted: (v) {},
-      onChanged: (value) => widget.onChanged(value),
+      onChanged: (value) {
+        value = value.replaceAll(" ", "0");
+        print(value);
+        widget.onChanged(value);
+      },
       beforeTextPaste: (text) => true,
     );
   }

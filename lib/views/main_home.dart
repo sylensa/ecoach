@@ -12,6 +12,7 @@ import 'package:ecoach/providers/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/more_view.dart';

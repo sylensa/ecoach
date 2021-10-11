@@ -15,6 +15,7 @@ class CourseInfo extends CourseModule {
     required this.tests,
     required this.totalPoints,
     required this.times,
+    required this.totalTimes,
     required this.course,
   }) : super(
           title: title,
@@ -26,8 +27,9 @@ class CourseInfo extends CourseModule {
 
   final Map rank;
   final Map tests;
-  final double totalPoints;
-  final double times;
+  final num totalPoints;
+  final num times;
+  final num totalTimes;
   final Course course;
 }
 

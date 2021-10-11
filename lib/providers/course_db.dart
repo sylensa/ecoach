@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
+import 'package:ecoach/providers/analysis_db.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -23,7 +24,13 @@ class CourseDB {
   Future<Course?> getCourseById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("courses", where: "id = ?", whereArgs: [id]);
-    return result.isNotEmpty ? Course.fromJson(result.first) : null;
+    Course? course;
+    if (result.isNotEmpty) {
+      print("course is not Empty");
+      course = Course.fromJson(result.first);
+      course.analytic = await AnalysisDB().getAnalysisById(course.id!);
+    }
+    return course;
   }
 
   Future<void> insertAll(List<Course> courses) async {

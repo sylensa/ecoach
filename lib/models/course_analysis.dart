@@ -36,7 +36,8 @@ class CourseAnalytic {
   factory CourseAnalytic.fromJson(Map<String, dynamic> json) => CourseAnalytic(
         id: json['id'] is String ? int.parse(json['id']) : json['id'],
         userRank: json['rank'] != null ? json['rank']['rank'] : null,
-        lastUserRank: json['rank'] != null ? json['rank']['last_rank'] : null,
+        lastUserRank:
+            json['rank'] != null ? json['rank']['last_rank'] ?? null : null,
         totalRank: json['rank'] != null ? json['rank']['total'] : null,
         mastery: json["mastery"].toDouble(),
         lastMastery: json["last_mastery"] != null

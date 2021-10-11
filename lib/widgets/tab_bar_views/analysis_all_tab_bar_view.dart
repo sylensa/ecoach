@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course_analysis.dart';
@@ -62,7 +64,6 @@ class _AllTabBarViewState extends State<AllTabBarView> {
     }, params: {'course_id': widget.item.tag!}).get(context).then((tests) {
       if (tests == null) return;
       TestTakenDB().insertAll(tests);
-
       setState(() {
         testsTaken = tests;
       });
@@ -73,18 +74,33 @@ class _AllTabBarViewState extends State<AllTabBarView> {
     AnalysisDB().getAnalysisById(int.parse(widget.item.tag!)).then((analytic) {
       // print(analytic!.toJson());
       setInfoList(analytic);
-    });
 
-    ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!, isList: false,
-        create: (dataItem) {
-      return CourseAnalytic.fromJson(dataItem);
-    }, onError: (e) {
-      print(e);
-    }).get(context).then((analytic) {
-      if (analytic == null) return;
-      AnalysisDB().insert(analytic);
-      setState(() {
-        setInfoList(analytic);
+      ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!, isList: false,
+              create: (dataItem) {
+        return CourseAnalytic.fromJson(dataItem);
+      }, onError: (e) {
+        print(e);
+      },
+              params: analytic != null
+                  ? {
+                      'points': analytic.coursePoint ?? null,
+                      'last_points': analytic.lastCoursePoint ?? null,
+                      'rank': analytic.userRank ?? null,
+                      'last_rank': analytic.lastUserRank ?? null,
+                      'total_rank': analytic.totalRank ?? null,
+                      'mastery': analytic.mastery ?? null,
+                      'last_mastery': analytic.lastMastery ?? null,
+                      'speed': analytic.usedSpeed ?? null,
+                      'last_speed': analytic.lastSpeed ?? null,
+                    }
+                  : {})
+          .get(context)
+          .then((analytic) {
+        if (analytic == null) return;
+        AnalysisDB().insert(analytic);
+        setState(() {
+          setInfoList(analytic);
+        });
       });
     });
   }
@@ -96,30 +112,40 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       AnalysisInfoSnippet(
         bodyText: '${positionText(analytic.userRank ?? 0)}',
         footerText: 'rank',
-        performance: '3',
-        performanceImproved: true,
+        performance:
+            analytic.lastUserRank != null ? "${analytic.lastUserRank! - analytic.userRank!}" : "-",
+        performanceImproved:
+            analytic.lastUserRank != null ? analytic.lastUserRank! - analytic.userRank! >= 0 : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
         bodyText: '${analytic.coursePoint!.floor()}',
         footerText: 'points',
-        performance: '3',
-        performanceImproved: true,
+        performance: analytic.lastCoursePoint != null
+            ? "${analytic.coursePoint! - analytic.lastCoursePoint!}"
+            : "-",
+        performanceImproved: analytic.lastCoursePoint != null
+            ? analytic.coursePoint! - analytic.lastCoursePoint! >= 0
+            : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
         bodyText: '${(analytic.mastery! * 100).floor()}',
         footerText: 'mastery',
-        performance: '3',
-        performanceImproved: true,
+        performance:
+            analytic.lastMastery != null ? "${analytic.mastery! - analytic.lastMastery!}" : "-",
+        performanceImproved:
+            analytic.lastMastery != null ? analytic.mastery! - analytic.lastMastery! >= 0 : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
         bodyText:
             "${NumberFormat('00').format(speedDuration.inHours)}:${NumberFormat('00').format(speedDuration.inMinutes % 60)}",
         footerText: 'speed',
-        performance: '3',
-        performanceImproved: true,
+        performance:
+            analytic.lastSpeed != null ? "${analytic.usedSpeed! - analytic.lastSpeed!}" : "-",
+        performanceImproved:
+            analytic.lastSpeed != null ? analytic.usedSpeed! - analytic.lastSpeed! >= 0 : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(

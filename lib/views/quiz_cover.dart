@@ -77,7 +77,7 @@ class QuizCover extends StatelessWidget {
                                         fontWeight: FontWeight.bold)),
                               ),
                               SizedBox(
-                                width: 140,
+                                width: 160,
                                 child: Text(":${category}",
                                     style: TextStyle(
                                         fontSize: 22,
@@ -101,7 +101,7 @@ class QuizCover extends StatelessWidget {
                                         fontWeight: FontWeight.bold)),
                               ),
                               SizedBox(
-                                width: 140,
+                                width: 160,
                                 child: Text(":${questions.length}",
                                     style: TextStyle(
                                         fontSize: 22,
@@ -125,7 +125,7 @@ class QuizCover extends StatelessWidget {
                                         fontWeight: FontWeight.bold)),
                               ),
                               SizedBox(
-                                width: 140,
+                                width: 160,
                                 child: type != TestType.UNTIMED
                                     ? Text(
                                         ":${NumberFormat('00').format(Duration(seconds: time).inMinutes)}:${NumberFormat('00').format(Duration(seconds: time).inSeconds % 60)}",
