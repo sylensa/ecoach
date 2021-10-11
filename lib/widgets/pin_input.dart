@@ -38,7 +38,6 @@ class _PinInputState extends State<PinInput> {
       obscureText: false,
       animationType: AnimationType.fade,
       validator: (v) {
-        print("valid v=$v");
         if (v!.length == 0) {
           return "Please enter a valid number";
         } else {

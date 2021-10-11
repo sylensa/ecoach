@@ -61,9 +61,11 @@ flutter:
   assets:
     - assets/flags/
     - assets/images/
+    - assets/images/notes/
     - assets/icons/
     - assets/icons/navigation/
     - assets/icons/arrows/
+    - assets/icons/topics/
 
   fonts:
     - family: 'Poppins'

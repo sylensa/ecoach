@@ -9,35 +9,30 @@ import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/quiz_db.dart';
 import 'package:ecoach/providers/subscription_db.dart';
 import 'package:ecoach/providers/subscription_item_db.dart';
-import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/utils/utf_fix.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/home.dart';
-import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/views/more_view.dart';
 import 'package:ecoach/widgets/adeo_bottom_navigation_bar.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'more_view.dart';
-
 class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 0});
+  MainHomePage(this.user, {this.index = 4});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
 }
 
-class _MainHomePageState extends State<MainHomePage>
-    with WidgetsBindingObserver {
+class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver {
   late List<Widget> _children;
   int currentIndex = 0;
 
@@ -104,8 +99,7 @@ class _MainHomePageState extends State<MainHomePage>
       List<Subscription> freshSubscriptions = api.data as List<Subscription>;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context,
-            message: "downloading subscription\n data.....");
+        showLoaderDialog(context, message: "downloading subscription\n data.....");
         getSubscriptionData().then((api) async {
           print("------------------------------------------------------");
 
@@ -117,26 +111,22 @@ class _MainHomePageState extends State<MainHomePage>
           await SubscriptionDB().insertAll(subscriptions);
           Navigator.pop(context);
 
-          List<SubscriptionItem> items =
-              await SubscriptionItemDB().allSubscriptionItems();
+          List<SubscriptionItem> items = await SubscriptionItemDB().allSubscriptionItems();
           print(items);
           print("all sub items");
           for (int i = 0; i < items.length; i++) {
             print("downloading ${items[i].name}\n data");
             showDownloadDialog(context,
-                message: "downloading..... ${items[i].name} data",
-                current: i,
-                total: items.length);
-            SubscriptionItem? subscriptionItem =
-                await getSubscriptionItem(items[i].id!);
+                message: "downloading..... ${items[i].name} data", current: i, total: items.length);
+            SubscriptionItem? subscriptionItem = await getSubscriptionItem(items[i].id!);
             print(subscriptionItem!);
 
             await CourseDB().insert(subscriptionItem.course!);
             await QuizDB().insertAll(subscriptionItem.quizzes!);
             Navigator.pop(context);
           }
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Subscription data download successfully")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Subscription data download successfully")));
         });
       }
     });
@@ -146,8 +136,7 @@ class _MainHomePageState extends State<MainHomePage>
     Map<String, dynamic> queryParams = {};
     print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
     http.Response response = await http.get(
-      Uri.parse(
-          AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
+      Uri.parse(AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -180,13 +169,9 @@ class _MainHomePageState extends State<MainHomePage>
   Future<ApiResponse<Subscription>?> getSubscriptionData() async {
     Map<String, dynamic> queryParams = {};
     print(queryParams);
-    print(AppUrl.subscriptionData +
-        '?' +
-        Uri(queryParameters: queryParams).query);
+    print(AppUrl.subscriptionData + '?' + Uri(queryParameters: queryParams).query);
     http.Response response = await http.get(
-      Uri.parse(AppUrl.subscriptionData +
-          '?' +
-          Uri(queryParameters: queryParams).query),
+      Uri.parse(AppUrl.subscriptionData + '?' + Uri(queryParameters: queryParams).query),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -217,9 +202,7 @@ class _MainHomePageState extends State<MainHomePage>
   Future<SubscriptionItem?> getSubscriptionItem(int itemId) async {
     Map<String, dynamic> queryParams = {};
     http.Response response = await http.get(
-      Uri.parse(AppUrl.subscriptionItem +
-          '/$itemId?' +
-          Uri(queryParameters: queryParams).query),
+      Uri.parse(AppUrl.subscriptionItem + '/$itemId?' + Uri(queryParameters: queryParams).query),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

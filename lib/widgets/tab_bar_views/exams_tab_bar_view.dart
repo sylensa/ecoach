@@ -287,19 +287,21 @@ DataRow makeDataRow({
     color: MaterialStateProperty.resolveWith(getColor),
     cells: [
       DataCell(
-        Text(cell1Text),
+        Expanded(child: Text(cell1Text)),
       ),
       DataCell(
-        Text(cell2Text),
+        Expanded(child: Text(cell2Text)),
       ),
       DataCell(
-        Center(
-          widthFactor: 1,
-          child: LinearPercentIndicatorWrapper(
-            percent: progress,
-            progressColor: progressColor,
-            backgroundColor: Color(0xFF363636),
-            label: (progress * 100).toString(),
+        Expanded(
+          child: Center(
+            widthFactor: 1,
+            child: LinearPercentIndicatorWrapper(
+              percent: progress,
+              progressColor: progressColor,
+              backgroundColor: Color(0xFF363636),
+              label: (progress * 100).toString(),
+            ),
           ),
         ),
       ),

@@ -15,8 +15,7 @@ class AnalysisView extends StatefulWidget {
   _AnalysisViewState createState() => _AnalysisViewState();
 }
 
-class _AnalysisViewState extends State<AnalysisView>
-    with TickerProviderStateMixin {
+class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
   List<SubscriptionItem> items = [];
@@ -75,7 +74,7 @@ class _AnalysisViewState extends State<AnalysisView>
                             : Center(
                                 child: Text("No data yet...."),
                               ),
-                        Center(child: ExamsTabBarView()),
+                        ExamsTabBarView(),
                         Center(child: Text('Topics')),
                         Center(child: Text('Analysis')),
                       ],

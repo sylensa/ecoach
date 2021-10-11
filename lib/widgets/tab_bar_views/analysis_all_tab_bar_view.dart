@@ -75,8 +75,8 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       // print(analytic!.toJson());
       setInfoList(analytic);
 
-      ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!,
-              isList: false, create: (dataItem) {
+      ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!, isList: false,
+              create: (dataItem) {
         return CourseAnalytic.fromJson(dataItem);
       }, onError: (e) {
         print(e);
@@ -112,12 +112,10 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       AnalysisInfoSnippet(
         bodyText: '${positionText(analytic.userRank ?? 0)}',
         footerText: 'rank',
-        performance: analytic.lastUserRank != null
-            ? "${analytic.lastUserRank! - analytic.userRank!}"
-            : "-",
-        performanceImproved: analytic.lastUserRank != null
-            ? analytic.lastUserRank! - analytic.userRank! >= 0
-            : true,
+        performance:
+            analytic.lastUserRank != null ? "${analytic.lastUserRank! - analytic.userRank!}" : "-",
+        performanceImproved:
+            analytic.lastUserRank != null ? analytic.lastUserRank! - analytic.userRank! >= 0 : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
@@ -134,24 +132,20 @@ class _AllTabBarViewState extends State<AllTabBarView> {
       AnalysisInfoSnippet(
         bodyText: '${(analytic.mastery! * 100).floor()}',
         footerText: 'mastery',
-        performance: analytic.lastMastery != null
-            ? "${analytic.mastery! - analytic.lastMastery!}"
-            : "-",
-        performanceImproved: analytic.lastMastery != null
-            ? analytic.mastery! - analytic.lastMastery! >= 0
-            : true,
+        performance:
+            analytic.lastMastery != null ? "${analytic.mastery! - analytic.lastMastery!}" : "-",
+        performanceImproved:
+            analytic.lastMastery != null ? analytic.mastery! - analytic.lastMastery! >= 0 : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
         bodyText:
             "${NumberFormat('00').format(speedDuration.inHours)}:${NumberFormat('00').format(speedDuration.inMinutes % 60)}",
         footerText: 'speed',
-        performance: analytic.lastSpeed != null
-            ? "${analytic.usedSpeed! - analytic.lastSpeed!}"
-            : "-",
-        performanceImproved: analytic.lastSpeed != null
-            ? analytic.usedSpeed! - analytic.lastSpeed! >= 0
-            : true,
+        performance:
+            analytic.lastSpeed != null ? "${analytic.usedSpeed! - analytic.lastSpeed!}" : "-",
+        performanceImproved:
+            analytic.lastSpeed != null ? analytic.usedSpeed! - analytic.lastSpeed! >= 0 : true,
         background: kAnalysisInfoSnippetBackground1,
       ),
       AnalysisInfoSnippet(
@@ -243,13 +237,11 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                       cell1Text2: getDateOnly(testsTaken[i].datetime!),
                       cell2Text1: testsTaken[i].testname!,
                       cell2Text2: testsTaken[i].testType!,
-                      cell3Text: "${testsTaken[i].usedTime!}",
-                      progressColor: kCourseColors[i % kCourseColors.length]
-                          ['progress']!,
-                      progress:
-                          testsTaken[i].correct! / testsTaken[i].totalQuestions,
-                      selected: selectedTableRowIndex == 0,
-                      onSelectChanged: handleSelectChanged(0),
+                      cell3Text: "${testsTaken[i].testTime!}",
+                      progressColor: kCourseColors[i % kCourseColors.length]['progress']!,
+                      progress: testsTaken[i].correct! / testsTaken[i].totalQuestions,
+                      selected: selectedTableRowIndex == i,
+                      onSelectChanged: handleSelectChanged(i),
                     ),
                 ],
               ),
@@ -293,20 +285,14 @@ DataRow makeDataRow({
       DataCell(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(cell1Text1),
-            Text(cell1Text2, style: kTableBodySubText)
-          ],
+          children: [Text(cell1Text1), Text(cell1Text2, style: kTableBodySubText)],
         ),
       ),
       DataCell(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(cell2Text1),
-            Text(cell2Text2, style: kTableBodySubText)
-          ],
+          children: [Text(cell2Text1), Text(cell2Text2, style: kTableBodySubText)],
         ),
       ),
       DataCell(
