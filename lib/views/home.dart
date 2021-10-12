@@ -97,6 +97,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFFFFFFFF),
         body: Container(
           child: new Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 30, 24, 34),
@@ -215,6 +216,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Color(0xFFFFFFFF),
       child: Column(
         children: [
           RichText(

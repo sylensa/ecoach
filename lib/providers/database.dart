@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,8 +21,11 @@ class DBProvider {
   }
 
   static initDB() async {
+    int? userId = await UserPreferences().getUserId();
+    String name = userId != null ? "ecoach_${userId}.1.db" : "ecoach62.db";
+    print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "ecoach62.db");
+    String path = join(documentsDirectory.path, name);
     return await openDatabase(path, version: 8, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
@@ -61,6 +66,24 @@ class DBProvider {
         'public' int NOT NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0'
+      ) """);
+
+      await db.execute("""CREATE TABLE 'topics' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int DEFAULT NULL,
+        'topicID' text DEFAULT NULL,
+        'name' text,
+        'author' text DEFAULT NULL,
+        'description' text DEFAULT NULL,
+        'notes' text DEFAULT NULL,
+        'category' text DEFAULT NULL,
+        'created_at' text,
+        'updated_at' text,
+        'confirmed' int DEFAULT NULL,
+        'public' int DEFAULT NULL,
+        'N' int DEFAULT NULL,
+        'p' int DEFAULT NULL,
+        'editors' text
       ) """);
 
       await db.execute("""CREATE TABLE 'courses' (

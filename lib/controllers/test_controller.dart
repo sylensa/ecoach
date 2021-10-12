@@ -158,6 +158,27 @@ class TestController {
     return testNames;
   }
 
+  getTopicsAndNotes(Course course) async {
+    Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
+
+    List<TestNameAndCount> testNames = [];
+    for (int i = 0; i < topics.length; i++) {
+      int id = topics.keys.toList()[i];
+      String name = topics.values.toList()[i];
+
+      int count =
+          await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
+      int totalCount = await QuestionDB().getTopicCount(id);
+
+      print("$name c=$count totat count=$totalCount");
+      testNames.add(TestNameAndCount(name, count, totalCount,
+          id: id, category: TestCategory.TOPIC));
+    }
+    topics.forEach((id, name) async {});
+
+    return testNames;
+  }
+
   getEssays(Course course) async {
     List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "ESSAY");
 

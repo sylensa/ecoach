@@ -29,10 +29,7 @@ class ApiCall<T> {
       required this.create,
       this.onCallback,
       this.onMessage,
-      this.onError}) {
-    print(this.url);
-    print(params.toString());
-  }
+      this.onError}) {}
 
   get(BuildContext context) async {
     String token = "";
@@ -80,9 +77,9 @@ class ApiCall<T> {
 
   Future post(BuildContext context) async {
     String token = "";
-    print(user!.toMap());
+    print(Uri.parse(url));
+    print(params!);
     if (user == null) {
-      print(user!.toMap());
       token = (await UserPreferences().getUserToken())!;
     } else {
       token = user!.token!;
@@ -100,7 +97,6 @@ class ApiCall<T> {
         body: jsonEncode(params ?? {}),
       );
 
-      print("got here too");
       handleResponse(response);
       var finalData = isList
           ? data

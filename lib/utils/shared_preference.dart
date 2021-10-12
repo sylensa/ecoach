@@ -37,6 +37,7 @@ class UserPreferences {
     String? signupDate = prefs.getString("signup_date");
 
     print("shared pref: token=$token");
+    print("id= $id");
     if (id == null) return null;
 
     User user = User(
@@ -63,6 +64,12 @@ class UserPreferences {
 
   Future<String?> getUserToken() async {
     return getUserValue("api_token");
+  }
+
+  Future<int?> getUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? value = prefs.getInt("id");
+    return value;
   }
 
   Future<String?> getUserValue(args) async {

@@ -12,6 +12,7 @@ enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, DIAGNOSTIC, NONE }
 enum TestCategory { MOCK, EXAM, TOPIC, ESSAY, SAVED, BANK, NONE }
 
 class TestTypeView extends StatefulWidget {
+  static const String routeName = '/testtype';
   TestTypeView(this.user, this.course, {Key? key}) : super(key: key);
   User user;
   Course course;
@@ -66,19 +67,26 @@ class _TestTypeViewState extends State<TestTypeView> {
               ),
               GridView(
                 shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
                 children: [
-                  getTypeButton(AssetImage("assets/images/speedometer.png"), "Speed", () {
+                  getTypeButton(
+                      AssetImage("assets/images/speedometer.png"), "Speed", () {
                     showTestCat(TestType.SPEED);
                   }),
-                  getTypeButton(AssetImage("assets/images/brain.png"), "Knowledge", () {
+                  getTypeButton(
+                      AssetImage("assets/images/brain.png"), "Knowledge", () {
                     showTestCat(TestType.KNOWLEDGE);
                   }),
-                  getTypeButton(AssetImage("assets/images/infinite.png"), "Untimed", () {
+                  getTypeButton(
+                      AssetImage("assets/images/infinite.png"), "Untimed", () {
                     showTestCat(TestType.UNTIMED);
                   }),
-                  getTypeButton(AssetImage("assets/images/customize.png"), "Customized", () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  getTypeButton(
+                      AssetImage("assets/images/customize.png"), "Customized",
+                      () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
                       return Customize(widget.user, widget.course);
                     }));
                   }),
@@ -88,8 +96,9 @@ class _TestTypeViewState extends State<TestTypeView> {
                 children: [
                   Expanded(
                       child: OutlinedButton(
-                          style:
-                              ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.white)),
                           onPressed: () {},
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
@@ -111,8 +120,8 @@ class _TestTypeViewState extends State<TestTypeView> {
           style: ButtonStyle(
               fixedSize: MaterialStateProperty.all(Size(134, 157)),
               backgroundColor: MaterialStateProperty.all(Colors.white),
-              shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)))),
           onPressed: callback != null ? callback : null,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -213,8 +222,9 @@ class _TestTypeViewState extends State<TestTypeView> {
               );
               break;
             case TestCategory.BANK:
-              widgetView =
-                  TestTypeListView(widget.user, widget.course, data, testType, title: "Bank");
+              widgetView = TestTypeListView(
+                  widget.user, widget.course, data, testType,
+                  title: "Bank");
               break;
             default:
               widgetView = null;
@@ -312,7 +322,8 @@ class _TestTypeViewState extends State<TestTypeView> {
                         Expanded(
                             child: OutlinedButton(
                                 style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(Colors.white)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.white)),
                                 onPressed: () {},
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
@@ -356,7 +367,8 @@ class TestNameAndCount {
   int totalCount;
   TestCategory? category;
 
-  TestNameAndCount(this.name, this.count, this.totalCount, {this.id, this.category});
+  TestNameAndCount(this.name, this.count, this.totalCount,
+      {this.id, this.category});
 
   double get progress {
     return count / totalCount;

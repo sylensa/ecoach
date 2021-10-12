@@ -6,13 +6,13 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/register_view.dart';
+import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
 
-import 'home.dart';
 import 'main_home.dart';
 
 class OTPView extends StatefulWidget {
@@ -137,7 +137,7 @@ class _OTPViewState extends State<OTPView> {
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => MainHomePage(widget.user)),
+          MaterialPageRoute(builder: (context) => WelcomeAdeo(widget.user)),
           (Route<dynamic> route) => false);
     } else {
       Navigator.pop(context);
@@ -243,6 +243,7 @@ class _OTPViewState extends State<OTPView> {
                       errorAnimationController: errorController,
                       controller: textEditingController,
                       keyboardType: TextInputType.number,
+
                       boxShadows: [
                         BoxShadow(
                           offset: Offset(0, 1),

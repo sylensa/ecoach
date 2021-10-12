@@ -1,3 +1,4 @@
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/utf_fix.dart';
 
 class Question {
@@ -20,6 +21,7 @@ class Question {
     this.flagged,
     this.deleted,
     this.answers,
+    this.topic,
   });
 
   int? id;
@@ -41,6 +43,7 @@ class Question {
   int? deleted;
   List<Answer>? answers;
   Answer? selectedAnswer;
+  Topic? topic;
 
   Answer? get correctAnswer {
     for (int i = 0; i < answers!.length; i++) {
@@ -92,6 +95,7 @@ class Question {
       answers: json["answers"] == null
           ? []
           : List<Answer>.from(json["answers"].map((x) => Answer.fromJson(x))),
+      topic: json["topic"] == null ? null : Topic.fromJson(json['topic']),
     );
   }
 

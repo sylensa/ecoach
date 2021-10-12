@@ -1,10 +1,13 @@
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/notes_bottom_button.dart';
 import 'package:ecoach/widgets/search_bars/notes_search_bar.dart';
 import 'package:flutter/material.dart';
 
 class NotesTopics extends StatefulWidget {
-  const NotesTopics({Key? key});
+  const NotesTopics(this.topics, {Key? key});
+
+  final List<Topic> topics;
 
   @override
   _NotesTopicsState createState() => _NotesTopicsState();
@@ -19,13 +22,7 @@ class _NotesTopicsState extends State<NotesTopics> {
   @override
   void initState() {
     super.initState();
-    topics = [
-      Topic(label: 'Density', imageURL: 'assets/icons/topics/density.png'),
-      Topic(label: 'Matter', imageURL: 'assets/icons/topics/matter.png'),
-      Topic(label: 'Pressure', imageURL: 'assets/icons/topics/pressure.png'),
-      Topic(label: 'Forces', imageURL: 'assets/icons/topics/pressure.png'),
-      Topic(label: 'Waves', imageURL: 'assets/icons/topics/density.png'),
-    ];
+    topics = widget.topics;
   }
 
   @override
@@ -144,8 +141,8 @@ class NotesTopicCard extends StatelessWidget {
 }
 
 class Topic {
-  const Topic({required this.label, required this.imageURL});
-
+  const Topic({required this.id, required this.label, required this.imageURL});
+  final int id;
   final String label;
   final String imageURL;
 }

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/providers/topics_db.dart';
 import 'package:ecoach/providers/answers.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,6 +20,10 @@ class QuestionDB {
         question.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      Topic? topic = question.topic;
+      if (topic != null) {
+        await TopicDB().insert(topic);
+      }
       List<Answer> answers = question.answers!;
       if (answers.length > 0) {
         for (int i = 0; i < answers.length; i++) {
@@ -42,13 +48,17 @@ class QuestionDB {
   Future<void> insertAll(List<Question> questions) async {
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();
-    questions.forEach((element) {
+    questions.forEach((element) async {
       // print(element.toJson());
       batch.insert(
         'questions',
         element.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      Topic? topic = element.topic;
+      if (topic != null) {
+        await TopicDB().insert(topic);
+      }
       List<Answer> answers = element.answers!;
       if (answers.length > 0) {
         answers.forEach((answer) async {

@@ -4,6 +4,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
   void initState() {
     super.initState();
     print('checking test taken');
-    TestController().getCourseProgress(widget.courseInfo.course.id).then((value) {
+    TestController()
+        .getCourseProgress(widget.courseInfo.course.id)
+        .then((value) {
       setState(() {
         courseProgress = value is num ? (value * 100).floor() : 0;
       });
@@ -144,7 +147,15 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
           ),
           Padding(
             padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(courseDetail: courseDetails[1]),
+            child: CourseDetailCard(
+                courseDetail: courseDetails[1],
+                onTap: () async {
+                  List<Topic> topics = await TestController()
+                      .getTopics(widget.courseInfo.course);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return NotesTopics(topics);
+                  }));
+                }),
           ),
           Padding(
             padding: EdgeInsets.only(left: 24.0, right: 24.0),
@@ -161,7 +172,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 subGraphics: 'reload.png',
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                Navigator.push(context, MaterialPageRoute(settings: RouteSettings(name: TestTypeView.routeName),builder: (context) {
                   return TestTypeView(widget.user, widget.courseInfo.course);
                 }));
               },

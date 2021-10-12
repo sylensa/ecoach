@@ -152,15 +152,8 @@ class _ResultViewState extends State<ResultView> {
                           padding: const EdgeInsets.all(11.0),
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushAndRemoveUntil<void>(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        TestTypeView(
-                                            widget.user, widget.course),
-                                  ), (route) {
-                                return false;
-                              });
+                              Navigator.popUntil(context,
+                                  ModalRoute.withName(TestTypeView.routeName));
                             },
                             child: Text("New",
                                 style: TextStyle(

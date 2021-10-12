@@ -30,10 +30,10 @@ class _NotesState extends State<Notes> {
               label: 'Topics',
               imageURL: 'topics',
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NotesTopics()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => NotesTopics()),
+                // );
               },
             ),
             SizedBox(height: 32.0),
