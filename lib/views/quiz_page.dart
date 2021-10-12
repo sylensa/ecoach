@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:custom_timer/custom_timer.dart';
+import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -85,6 +86,10 @@ class _QuizViewState extends State<QuizView> {
       useTex = true;
     }
     super.initState();
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showPauseDialog());
   }
 
   startTimer() {
@@ -213,12 +218,37 @@ class _QuizViewState extends State<QuizView> {
         score: score,
         correct: correct,
         wrong: wrong,
-        unattempted: unattempted);
+        unattempted: unattempted,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now());
 
-    saveTestTaken(testTaken!).then((value) {});
+    // saveTestTaken(testTaken!).then((value) {});
+    ApiCall<TestTaken>(AppUrl.testTaken,
+        user: widget.user,
+        isList: false,
+        params: testTaken!.toJson(), create: (json) {
+      return TestTaken.fromJson(json);
+    }, onError: (err) {
+      Navigator.pop(context);
+    }, onCallback: (data) {
+      Navigator.pop(context);
+      testTakenSaved = data;
+      TestController().saveTestTaken(testTakenSaved!);
+
+      setState(() {
+        testTaken = testTakenSaved!;
+        savedTest = true;
+        enabled = false;
+      });
+    }).post(context).then((value) {
+      if (savedTest) {
+        viewResults();
+      }
+    });
   }
 
   Future<void> saveTestTaken(TestTaken testTaken) async {
+    print("save TEst");
     try {
       http.Response response = await http.post(
         Uri.parse(AppUrl.testTaken),
@@ -228,10 +258,10 @@ class _QuizViewState extends State<QuizView> {
         },
         body: json.encode(testTaken.toJson()),
       );
-
+      print("got here");
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = json.decode(response.body);
-        // print(responseData);
+        print(responseData);
         if (responseData["status"] == true) {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(responseData['message'])));
@@ -273,6 +303,7 @@ class _QuizViewState extends State<QuizView> {
       MaterialPageRoute<void>(
         builder: (BuildContext context) => ResultView(
           widget.user,
+          widget.course!,
           test: testTakenSaved!,
           diagnostic: widget.diagnostic,
         ),
@@ -287,247 +318,195 @@ class _QuizViewState extends State<QuizView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(color: Color(0xFF00C664)),
-        child: Stack(children: [
-          Positioned(
-            top: 95,
-            right: -120,
-            left: -100,
-            bottom: 51,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xFF595959),
-              ),
-              child: PageView(
-                controller: controller,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  for (int i = 0; i < widget.questions.length; i++)
-                    QuestionWidget(
-                      widget.questions[i],
-                      position: i,
-                      enabled: enabled,
-                      useTex: useTex,
-                      callback: (Answer answer) {
-                        if (widget.speedTest && answer.value == 0) {
-                          completeQuiz();
-                        } else {
-                          nextButton();
-                        }
-                      },
-                    )
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 40,
-            left: 0,
-            child: Container(
-              child: SizedBox(
-                height: 100,
-                child: ScrollablePositionedList.builder(
-                  itemScrollController: numberingController,
-                  itemCount: widget.questions.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, i) {
-                    if (widget.speedTest) return Container();
-                    return Container(
-                        child: SelectText("${(i + 1)}", i == currentQuestion,
-                            normalSize: 28,
-                            selectedSize: 45,
-                            underlineSelected: true,
-                            selectedColor: Color(0xFFFD6363),
-                            color: Colors.white70, select: () {
-                      if (widget.speedTest) {
-                        return;
-                      }
-                      setState(() {
-                        currentQuestion = i;
-                      });
+    return WillPopScope(
+      onWillPop: () async {
+        if (!enabled) {
+          return true;
+        }
+        timerController.pause();
 
-                      controller.jumpToPage(i);
-                      controller.animateToPage(i,
-                          duration: Duration(milliseconds: 1000),
-                          curve: Curves.easeInBack);
-                    }));
-                  },
+        return showPauseDialog();
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(color: Color(0xFF00C664)),
+          child: Stack(children: [
+            Positioned(
+              top: 95,
+              right: -120,
+              left: -100,
+              bottom: 51,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFF595959),
+                ),
+                child: PageView(
+                  controller: controller,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    for (int i = 0; i < widget.questions.length; i++)
+                      QuestionWidget(
+                        widget.questions[i],
+                        position: i,
+                        enabled: enabled,
+                        useTex: useTex,
+                        callback: (Answer answer) {
+                          if (widget.speedTest && answer.value == 0) {
+                            completeQuiz();
+                          } else {
+                            nextButton();
+                          }
+                        },
+                      )
+                  ],
                 ),
               ),
             ),
-          ),
-          Positioned(
-              top: -120,
-              right: -80,
-              child: Image(
-                image: AssetImage('assets/images/white_leave.png'),
-              )),
-          Positioned(
-            key: UniqueKey(),
-            top: 50,
-            right: 15,
-            child: GestureDetector(
-              onTap: () {
-                if (!enabled) {
-                  return;
-                }
-                timerController.pause();
-
-                showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return PauseDialog(
-                        time: countdownInSeconds,
-                        callback: (action) {
-                          Navigator.pop(context);
-                          if (action == "resume") {
-                            startTimer();
-                          } else if (action == "quit") {
-                            Navigator.pushAndRemoveUntil(context,
-                                MaterialPageRoute(builder: (context) {
-                              return MainHomePage(widget.user, index: 1);
-                            }), (route) => false);
-                          } else if (action == "end") {
-                            completeQuiz();
-                          }
-                        },
-                      );
-                    });
-              },
-              child: enabled
-                  ? CustomTimer(
-                      onBuildAction: enabled
-                          ? CustomTimerAction.auto_start
-                          : CustomTimerAction.go_to_end,
-                      builder: (CustomTimerRemainingTime remaining) {
-                        duration = remaining.duration;
-                        countdownInSeconds = remaining.duration.inSeconds;
-                        if (widget.disableTime) {
-                          return Image(
-                              image: AssetImage("assets/images/infinite.png"));
+            Positioned(
+              top: 0,
+              right: 40,
+              left: 0,
+              child: Container(
+                child: SizedBox(
+                  height: 100,
+                  child: ScrollablePositionedList.builder(
+                    itemScrollController: numberingController,
+                    itemCount: widget.questions.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, i) {
+                      if (widget.speedTest) return Container();
+                      return Container(
+                          child: SelectText("${(i + 1)}", i == currentQuestion,
+                              normalSize: 28,
+                              selectedSize: 45,
+                              underlineSelected: true,
+                              selectedColor: Color(0xFFFD6363),
+                              color: Colors.white70, select: () {
+                        if (widget.speedTest) {
+                          return;
                         }
-                        if (remaining.duration.inSeconds == 0) {
-                          return Text("Time Up",
-                              style: TextStyle(
-                                  color: Color(0xFF00C664), fontSize: 18));
-                        }
+                        setState(() {
+                          currentQuestion = i;
+                        });
 
-                        return Text("${remaining.minutes}:${remaining.seconds}",
-                            style: TextStyle(
-                                color: Color(0xFF00C664), fontSize: 28));
-                      },
-                      controller: timerController,
-                      from: duration,
-                      to: Duration(seconds: 0),
-                      onStart: () {},
-                      onPaused: () {},
-                      onReset: () {
-                        print("onReset");
-                      },
-                      onFinish: () {
-                        print("finished");
-                        onEnd();
-                      },
-                    )
-                  : Text("Time Up",
-                      style: TextStyle(color: Color(0xFF00C664), fontSize: 18)),
+                        controller.jumpToPage(i);
+                        controller.animateToPage(i,
+                            duration: Duration(milliseconds: 1000),
+                            curve: Curves.easeInBack);
+                      }));
+                    },
+                  ),
+                ),
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            left: 0,
-            child: Container(
-              child: IntrinsicHeight(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      if (currentQuestion > 0 &&
-                          (!widget.speedTest || widget.speedTest && !enabled))
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              controller.previousPage(
-                                  duration: Duration(milliseconds: 700),
-                                  curve: Curves.ease);
-                              setState(() {
-                                currentQuestion--;
-                                numberingController.scrollTo(
-                                    index: currentQuestion,
-                                    duration: Duration(seconds: 1),
-                                    curve: Curves.easeInOutCubic);
-                              });
-                            },
-                            child: Text(
-                              "Previous",
+            Positioned(
+                top: -120,
+                right: -80,
+                child: Image(
+                  image: AssetImage('assets/images/white_leave.png'),
+                )),
+            Positioned(
+              key: UniqueKey(),
+              top: 50,
+              right: 15,
+              child: GestureDetector(
+                onTap: () {
+                  if (!enabled) {
+                    return;
+                  }
+                  timerController.pause();
+
+                  showPauseDialog();
+                },
+                child: enabled
+                    ? CustomTimer(
+                        onBuildAction: enabled
+                            ? CustomTimerAction.auto_start
+                            : CustomTimerAction.go_to_end,
+                        builder: (CustomTimerRemainingTime remaining) {
+                          duration = remaining.duration;
+                          countdownInSeconds = remaining.duration.inSeconds;
+                          if (widget.disableTime) {
+                            return Image(
+                                image:
+                                    AssetImage("assets/images/infinite.png"));
+                          }
+                          if (remaining.duration.inSeconds == 0) {
+                            return Text("Time Up",
+                                style: TextStyle(
+                                    color: Color(0xFF00C664), fontSize: 18));
+                          }
+
+                          return Text(
+                              "${remaining.minutes}:${remaining.seconds}",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
+                                  color: Color(0xFF00C664), fontSize: 28));
+                        },
+                        controller: timerController,
+                        from: duration,
+                        to: Duration(seconds: 0),
+                        onStart: () {},
+                        onPaused: () {},
+                        onReset: () {
+                          print("onReset");
+                        },
+                        onFinish: () {
+                          print("finished");
+                          onEnd();
+                        },
+                      )
+                    : Text("Time Up",
+                        style:
+                            TextStyle(color: Color(0xFF00C664), fontSize: 18)),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Container(
+                child: IntrinsicHeight(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (currentQuestion > 0 &&
+                            (!widget.speedTest || widget.speedTest && !enabled))
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                controller.previousPage(
+                                    duration: Duration(milliseconds: 700),
+                                    curve: Curves.ease);
+                                setState(() {
+                                  currentQuestion--;
+                                  numberingController.scrollTo(
+                                      index: currentQuestion,
+                                      duration: Duration(seconds: 1),
+                                      curve: Curves.easeInOutCubic);
+                                });
+                              },
+                              child: Text(
+                                "Previous",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      if (currentQuestion < widget.questions.length - 1)
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (currentQuestion < widget.questions.length - 1 &&
-                          !(!enabled &&
-                              widget.speedTest &&
-                              currentQuestion == finalQuestion))
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: nextButton,
-                            child: Text(
-                              "Next",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 21,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (!savedTest &&
-                          currentQuestion == widget.questions.length - 1)
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (!savedTest &&
-                              currentQuestion == widget.questions.length - 1 ||
-                          (enabled &&
-                              widget.speedTest &&
-                              currentQuestion == finalQuestion))
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              completeQuiz();
-                            },
-                            child: Text(
-                              "Complete",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 21,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (savedTest)
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (savedTest)
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            onPressed: () {
-                              viewResults();
-                            },
-                            child: RichText(
-                              softWrap: false,
-                              overflow: TextOverflow.clip,
-                              text: TextSpan(
-                                text: "Results",
+                        if (currentQuestion < widget.questions.length - 1)
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (currentQuestion < widget.questions.length - 1 &&
+                            !(!enabled &&
+                                widget.speedTest &&
+                                currentQuestion == finalQuestion))
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: nextButton,
+                              child: Text(
+                                "Next",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 21,
@@ -535,14 +514,85 @@ class _QuizViewState extends State<QuizView> {
                               ),
                             ),
                           ),
-                        ),
-                    ]),
+                        if (!savedTest &&
+                            currentQuestion == widget.questions.length - 1)
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (!savedTest &&
+                                currentQuestion ==
+                                    widget.questions.length - 1 ||
+                            (enabled &&
+                                widget.speedTest &&
+                                currentQuestion == finalQuestion))
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                completeQuiz();
+                              },
+                              child: Text(
+                                "Complete",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 21,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (savedTest)
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (savedTest)
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              onPressed: () {
+                                viewResults();
+                              },
+                              child: RichText(
+                                softWrap: false,
+                                overflow: TextOverflow.clip,
+                                text: TextSpan(
+                                  text: "Results",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 21,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ]),
+                ),
               ),
-            ),
-          )
-        ]),
+            )
+          ]),
+        ),
       ),
     );
+  }
+
+  Future<bool> showPauseDialog() async {
+    return (await showDialog<bool>(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return PauseDialog(
+                time: countdownInSeconds,
+                callback: (action) {
+                  Navigator.pop(context);
+                  if (action == "resume") {
+                    startTimer();
+                  } else if (action == "quit") {
+                    Navigator.pushAndRemoveUntil(context,
+                        MaterialPageRoute(builder: (context) {
+                      return MainHomePage(widget.user, index: 1);
+                    }), (route) => false);
+                  } else if (action == "end") {
+                    completeQuiz();
+                  }
+                },
+              );
+            })) ??
+        false;
   }
 }
 

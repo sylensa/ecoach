@@ -53,33 +53,41 @@ class ApiCall<T> {
       );
 
       handleResponse(response);
-      if (onMessage != null) {
-        onMessage!(message);
-      }
-      if (onCallback != null) {
-        onCallback!(data);
-      }
-      if (requireLogIn) {
-        showLogoutDialog(context);
-      }
-      return isList
+      var finalData = isList
           ? data
           : data!.length > 0
               ? data![0]
               : null;
+      if (onMessage != null) {
+        onMessage!(message);
+      }
+      if (onCallback != null) {
+        onCallback!(finalData);
+      }
+
+      if (requireLogIn) {
+        showLogoutDialog(context);
+      }
+      print("returning data");
+      return finalData;
     } catch (e) {
+      print(e);
       if (onError != null) {
-        print(e);
         onError!(e);
       }
     }
   }
 
-  post(BuildContext context) async {
+  Future post(BuildContext context) async {
     String token = "";
+    print(user!.toMap());
     if (user == null) {
+      print(user!.toMap());
       token = (await UserPreferences().getUserToken())!;
+    } else {
+      token = user!.token!;
     }
+    print(token);
     try {
       http.Response response = await http.post(
         Uri.parse(url),
@@ -87,34 +95,40 @@ class ApiCall<T> {
             {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
-              'api-token': user != null ? user!.token! : token
+              'api-token': token
             },
         body: jsonEncode(params ?? {}),
       );
 
+      print("got here too");
       handleResponse(response);
+      var finalData = isList
+          ? data
+          : data!.length > 0
+              ? data![0]
+              : null;
       if (onMessage != null) {
         onMessage!(message);
       }
       if (onCallback != null) {
-        onCallback!(data);
+        onCallback!(finalData);
       }
 
       if (requireLogIn) {
         showLogoutDialog(context);
       }
       print("returning data");
-      return isList
-          ? data
-          : data!.length > 0
-              ? data![0]
-              : null;
+      return finalData;
     } catch (e) {
-      onError!(e);
+      print(e);
+      if (onError != null) {
+        onError!(e);
+      }
     }
   }
 
   handleResponse(http.Response response) {
+    print(response.body);
     Map<String, dynamic> responseData = json.decode(response.body);
     message = responseData['message'] ?? "";
     switch (response.statusCode) {
@@ -144,7 +158,10 @@ class ApiCall<T> {
         return create(dataItem);
       });
     } else {
-      onError!(null);
+      if (onError != null) {
+        onError!(null);
+      }
+
       data = null;
     }
   }

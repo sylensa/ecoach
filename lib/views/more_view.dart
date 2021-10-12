@@ -35,14 +35,6 @@ class _MoreViewState extends State<MoreView> {
     super.initState();
 
     subscriptions = widget.user.subscriptions;
-    subscriptions.forEach((subscription) {
-      bundleList.add(Bundle(
-          name: subscription.name!,
-          timeLeft: subscription.endsAt!
-              .difference(DateTime.now())
-              .inDays
-              .toString()));
-    });
 
     userInfo = UserInfo(
       country: 'Ghana',
@@ -109,10 +101,10 @@ class _MoreViewState extends State<MoreView> {
                   padding: EdgeInsets.symmetric(vertical: 20.0),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: bundleList.length,
+                    itemCount: subscriptions.length,
                     itemBuilder: (context, index) {
                       return BundleListItem(
-                        bundle: bundleList[index],
+                        bundle: subscriptions[index],
                         isFirstChild: index == 0,
                         onTap: () {
                           Navigator.push(
@@ -145,7 +137,7 @@ class BundleListItem extends StatelessWidget {
     this.onTap,
   });
 
-  final Bundle bundle;
+  final Subscription bundle;
   final bool isFirstChild;
   final onTap;
 
@@ -177,7 +169,7 @@ class BundleListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    bundle.name,
+                    bundle.name!,
                     style: TextStyle(
                       color: kDefaultBlack,
                       fontSize: 18.0,

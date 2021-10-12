@@ -1,18 +1,23 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ResultView extends StatefulWidget {
-  ResultView(this.user, {Key? key, required this.test, this.diagnostic = false})
+  ResultView(this.user, this.course,
+      {Key? key, required this.test, this.diagnostic = false})
       : super(key: key);
   final User user;
+  final Course course;
   TestTaken test;
   bool diagnostic;
 
@@ -136,6 +141,28 @@ class _ResultViewState extends State<ResultView> {
                               );
                             },
                             child: Text("Store",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 25)),
+                          ),
+                        ),
+                      ),
+                    if (!widget.diagnostic)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(11.0),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil<void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        TestTypeView(
+                                            widget.user, widget.course),
+                                  ), (route) {
+                                return false;
+                              });
+                            },
+                            child: Text("New",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 25)),
                           ),
