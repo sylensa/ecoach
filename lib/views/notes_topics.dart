@@ -1,10 +1,14 @@
+import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/providers/notes_read_db.dart';
 import 'package:ecoach/providers/topics_db.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/notes_bottom_button.dart';
 import 'package:ecoach/widgets/search_bars/notes_search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class NotesTopics extends StatefulWidget {
   const NotesTopics(this.topics, {Key? key});
@@ -26,7 +30,24 @@ class _NotesTopicsState extends State<NotesTopics> {
     super.initState();
     setState(() {
       topics = widget.topics;
-      print(topics);
+    });
+  }
+
+  void _runFilter(String enteredKeyword) {
+    List<Topic> results = [];
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = widget.topics;
+    } else {
+      results = widget.topics
+          .where((topic) =>
+              topic.name!.toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+
+    // Refresh the UI
+    setState(() {
+      topics = results;
     });
   }
 
@@ -44,6 +65,7 @@ class _NotesTopicsState extends State<NotesTopics> {
                 onChanged: (str) {
                   setState(() {
                     searchString = str;
+                    _runFilter(searchString);
                   });
                 },
               ),
@@ -78,6 +100,43 @@ class _NotesTopicsState extends State<NotesTopics> {
               if (selected)
                 NotesBottomButton(
                   label: 'Read Notes',
+                  onTap: () {
+                    Topic topic = topics[selectedTopicIndex];
+                    NotesReadDB().insert(NotesRead(
+                        courseId: topic.courseId,
+                        name: topic.name,
+                        notes: topic.notes,
+                        topicId: topic.id,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now()));
+
+                    print(
+                        "_______________________________________________________");
+                    print(topics[selectedTopicIndex].notes);
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Scaffold(
+                            body: SingleChildScrollView(
+                              child: Container(
+                                child: Column(
+                                  children: [
+                                    Html(
+                                      data: topics[selectedTopicIndex].notes,
+                                      style: {
+                                        // tables will have the below background color
+                                        "body": Style(
+                                          color: Colors.black,
+                                        ),
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        });
+                  },
                 )
             ],
           ),

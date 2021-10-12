@@ -62,7 +62,9 @@ class TopicDB {
     final Database? db = await DBProvider.database;
     print("course id = ${course.id}");
     final List<Map<String, dynamic>> maps = await db!.query('topics',
-        orderBy: "name ASC", where: "course_id = ?", whereArgs: [course.id]);
+        orderBy: "name ASC",
+        where: "course_id = ? AND notes <> '' ",
+        whereArgs: [course.id]);
 
     print('course len=${maps.length}');
     List<Topic> topics = [];

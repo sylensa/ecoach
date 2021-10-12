@@ -1,7 +1,9 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/notes_read_db.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -41,9 +43,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         courseProgress = value is num ? (value * 100).floor() : 0;
       });
     });
-    UserPreferences().getUserLastNote().then((value) {
+    NotesReadDB().lastNotesRead(widget.courseInfo.course.id).then((value) {
       setState(() {
-        lastNote = value!;
+        lastNote = value != null ? value.name! : "No Notes Read Yet";
       });
     });
     TestTakenDB().courseLastTest(widget.courseInfo.course.id).then((value) {
@@ -155,7 +157,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       .getTopicsAndNotes(widget.courseInfo.course);
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return NotesTopics(topics);
-                  }));
+                  })).then((value) {
+                    setState(() {});
+                  });
                 }),
           ),
           Padding(
