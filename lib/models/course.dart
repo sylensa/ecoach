@@ -1,4 +1,5 @@
 import 'package:ecoach/models/course_analysis.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/utils/utf_fix.dart';
 
 import 'level.dart';
@@ -20,7 +21,8 @@ class Course {
       this.n,
       this.p,
       this.editors,
-      this.levels});
+      this.levels,
+      this.questions});
 
   int? id;
   String? packageCode;
@@ -39,6 +41,7 @@ class Course {
   String? editors;
   List<Level>? levels;
   CourseAnalytic? analytic;
+  List<Question>? questions;
 
   factory Course.fromJson(Map<String, dynamic> json) => Course(
         id: json["id"],
@@ -59,6 +62,10 @@ class Course {
         levels: json["levels"] == null
             ? []
             : List<Level>.from(json["levels"].map((x) => Level.fromJson(x))),
+        questions: json["questions"] == null
+            ? []
+            : List<Question>.from(
+                json["questions"].map((x) => Question.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

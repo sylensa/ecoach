@@ -30,8 +30,7 @@ class UserProfile extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 32.0,
                     backgroundColor: Colors.redAccent,
-                    // Quaye, you can use the backgroundImage property
-                    // to insert the image
+                    child: Text(user.initials ?? ""),
                   ),
                 ),
                 SizedBox(height: 2.0),
@@ -118,9 +117,10 @@ class DetailStrip extends StatelessWidget {
 }
 
 class UserInfo {
-  const UserInfo({
+  UserInfo({
     required this.name,
-    required this.profileImageURL,
+    this.profileImageURL,
+    this.initials,
     required this.email,
     required this.phoneNumber,
     required this.country,
@@ -128,7 +128,8 @@ class UserInfo {
   });
 
   final String name;
-  final String? profileImageURL;
+  String? profileImageURL;
+  String? initials;
   final String email;
   final String phoneNumber;
   final String country;

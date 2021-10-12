@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
@@ -151,7 +152,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 courseDetail: courseDetails[1],
                 onTap: () async {
                   List<Topic> topics = await TestController()
-                      .getTopics(widget.courseInfo.course);
+                      .getTopicsAndNotes(widget.courseInfo.course);
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return NotesTopics(topics);
                   }));
@@ -172,9 +173,14 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 subGraphics: 'reload.png',
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(settings: RouteSettings(name: TestTypeView.routeName),builder: (context) {
-                  return TestTypeView(widget.user, widget.courseInfo.course);
-                }));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        settings: RouteSettings(name: TestTypeView.routeName),
+                        builder: (context) {
+                          return TestTypeView(
+                              widget.user, widget.courseInfo.course);
+                        }));
               },
             ),
           ),

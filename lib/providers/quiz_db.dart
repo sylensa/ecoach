@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:ecoach/providers/questions_db.dart';
 import 'package:sqflite/sqflite.dart';
@@ -80,21 +81,6 @@ class QuizDB {
               {'quiz_id': element.id, 'question_id': question.id},
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
-            txn.insert(
-              'questions',
-              question.toJson(),
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-            List<Answer> answers = question.answers!;
-            if (answers.length > 0) {
-              for (int i = 0; i < answers.length; i++) {
-                txn.insert(
-                  'answers',
-                  answers[i].toJson(),
-                  conflictAlgorithm: ConflictAlgorithm.replace,
-                );
-              }
-            }
           }
         }
       }

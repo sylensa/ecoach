@@ -1,3 +1,5 @@
+import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/providers/topics_db.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/notes_bottom_button.dart';
@@ -22,7 +24,10 @@ class _NotesTopicsState extends State<NotesTopics> {
   @override
   void initState() {
     super.initState();
-    topics = widget.topics;
+    setState(() {
+      topics = widget.topics;
+      print(topics);
+    });
   }
 
   @override
@@ -97,52 +102,45 @@ class NotesTopicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Expanded(
-        child: Container(
-          decoration: BoxDecoration(
-            color: isSelected ? kAdeoWhiteAlpha81 : Colors.transparent,
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          padding: EdgeInsets.only(
-            left: 12.0,
-            right: 12.0,
-            top: 28.0,
-            bottom: 16.0,
-          ),
-          child: Column(
-            children: [
-              Container(
-                width: 40.0,
-                height: 40.0,
-                child: Image.asset(
-                  topic.imageURL,
-                  fit: BoxFit.fill,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? kAdeoWhiteAlpha81 : Colors.transparent,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        padding: EdgeInsets.only(
+          left: 12.0,
+          right: 12.0,
+          top: 28.0,
+          bottom: 16.0,
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 40.0,
+              height: 40.0,
+              child: topic.imageURL != null
+                  ? Image.asset(
+                      topic.imageURL!,
+                      fit: BoxFit.fill,
+                    )
+                  : Text(topic.name!.substring(0, 1)),
+            ),
+            SizedBox(height: 8.0),
+            Expanded(
+              child: Text(
+                topic.name!,
+                overflow: TextOverflow.clip,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isSelected ? kDefaultBlack : Colors.white,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 8.0),
-              Expanded(
-                child: Text(
-                  topic.label,
-                  overflow: TextOverflow.clip,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isSelected ? kDefaultBlack : Colors.white,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
   }
-}
-
-class Topic {
-  const Topic({required this.id, required this.label, required this.imageURL});
-  final int id;
-  final String label;
-  final String imageURL;
 }

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/providers/analysis_db.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,6 +20,35 @@ class CourseDB {
         course.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
+      List<Question> questions = course.questions!;
+      if (questions.length > 0) {
+        for (int i = 0; i < questions.length; i++) {
+          Question question = questions[i];
+          txn.insert(
+            'questions',
+            question.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          Topic? topic = question.topic;
+          if (topic != null) {
+            txn.insert(
+              'topics',
+              topic.toJson(),
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+          }
+          List<Answer> answers = question.answers!;
+          if (answers.length > 0) {
+            for (int i = 0; i < answers.length; i++) {
+              txn.insert(
+                'answers',
+                answers[i].toJson(),
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            }
+          }
+        }
+      }
     });
   }
 
@@ -26,7 +57,6 @@ class CourseDB {
     var result = await db!.query("courses", where: "id = ?", whereArgs: [id]);
     Course? course;
     if (result.isNotEmpty) {
-      print("course is not Empty");
       course = Course.fromJson(result.first);
       course.analytic = await AnalysisDB().getAnalysisById(course.id!);
     }

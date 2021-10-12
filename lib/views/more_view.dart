@@ -2,6 +2,7 @@ import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
 import 'package:ecoach/models/ui/bundle.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/bundle_download.dart';
 import 'package:ecoach/widgets/tab_bars/analysis_info_snippet_card_tab_bar.dart';
@@ -34,13 +35,18 @@ class _MoreViewState extends State<MoreView> {
   void initState() {
     super.initState();
 
-    subscriptions = widget.user.subscriptions;
+    UserPreferences().getUser().then((user) {
+      setState(() {
+        subscriptions = user!.subscriptions;
+      });
+    });
 
     userInfo = UserInfo(
       country: 'Ghana',
       dateJoined: widget.user.signupDate!.toString(),
       email: widget.user.email!,
       name: widget.user.name,
+      initials: widget.user.initials,
       phoneNumber: widget.user.phone!,
       profileImageURL: widget.user.avatar != null ? widget.user.avatar! : null,
     );

@@ -4,10 +4,12 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/providers/questions_db.dart';
 import 'package:ecoach/providers/quiz_db.dart';
 import 'package:ecoach/providers/test_taken_db.dart';
+import 'package:ecoach/providers/topics_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/test_type.dart';
@@ -159,24 +161,10 @@ class TestController {
   }
 
   getTopicsAndNotes(Course course) async {
-    Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
-
-    List<TestNameAndCount> testNames = [];
-    for (int i = 0; i < topics.length; i++) {
-      int id = topics.keys.toList()[i];
-      String name = topics.values.toList()[i];
-
-      int count =
-          await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
-      int totalCount = await QuestionDB().getTopicCount(id);
-
-      print("$name c=$count totat count=$totalCount");
-      testNames.add(TestNameAndCount(name, count, totalCount,
-          id: id, category: TestCategory.TOPIC));
-    }
-    topics.forEach((id, name) async {});
-
-    return testNames;
+    List<Topic> topics = await TopicDB().courseTopics(course);
+    print("topics and notes");
+    print(topics);
+    return topics;
   }
 
   getEssays(Course course) async {

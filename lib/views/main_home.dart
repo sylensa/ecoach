@@ -53,7 +53,7 @@ class _MainHomePageState extends State<MainHomePage>
       CoursesPage(widget.user),
       StorePage(widget.user),
       AnalysisView(),
-      MoreView(widget.user),
+      MoreView(widget.user, key: UniqueKey()),
     ];
     currentIndex = widget.index;
     print("init");
@@ -162,11 +162,8 @@ class _MainHomePageState extends State<MainHomePage>
       Map<String, dynamic> responseData = json.decode(response.body);
       // print(responseData);
       if (responseData["status"] == true) {
-        print("messages returned");
-        print(response.body);
-
         return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
+          print(">>>");
           print(dataItem);
           return Subscription.fromJson(dataItem);
         });
@@ -235,7 +232,6 @@ class _MainHomePageState extends State<MainHomePage>
       Map<String, dynamic> responseData = json.decode(body);
       // print(responseData);
       if (responseData["status"] == true) {
-        print("messages returned");
         return SubscriptionItem.fromJson(responseData['data']);
       } else {
         print("not successful event");

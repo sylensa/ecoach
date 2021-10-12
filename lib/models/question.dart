@@ -71,7 +71,6 @@ class Question {
     print(
         "--------------------------------------------------------------------");
     print(json["topic"]);
-    print(json["topic_name"]);
     return Question(
       id: json["id"],
       courseId: json["course_id"],

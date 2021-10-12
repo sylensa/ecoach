@@ -20,8 +20,6 @@ class AnalysisDB {
   Future<CourseAnalytic?> getAnalysisById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("analysis", where: "id = ?", whereArgs: [id]);
-    print("==================================================");
-    print(result);
     return result.isNotEmpty ? CourseAnalytic.fromDB(result.last) : null;
   }
 
