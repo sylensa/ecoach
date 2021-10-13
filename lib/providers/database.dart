@@ -22,7 +22,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.9.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.10.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -90,7 +90,7 @@ class DBProvider {
       await db.execute("""CREATE TABLE 'notes_read' (
         'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'course_id' int DEFAULT NULL,
-        'topic_id' text DEFAULT NULL,
+        'topic_id' int DEFAULT NULL,
         'name' text,
         'image_url' text DEFAULT NULL,
         'author' text DEFAULT NULL,
