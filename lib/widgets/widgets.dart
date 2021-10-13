@@ -33,41 +33,46 @@ showDownloadDialog(BuildContext context,
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-      return Scaffold(
-        body: Container(
-          padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(28.0),
-                child: Text(
-                  "Downloading subscriptions...",
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+      return WillPopScope(
+        onWillPop: () async {
+          return await false;
+        },
+        child: Scaffold(
+          body: Container(
+            padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Text(
+                    "Downloading subscriptions...",
+                    style: TextStyle(color: Colors.black, fontSize: 18),
+                  ),
                 ),
-              ),
-              Spacer(),
-              new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: EdgeInsets.only(left: 7),
-                      child: Text(
-                        message!,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.black),
-                      )),
-                  current != null && current > 0
-                      ? LinearPercentIndicator(
-                          percent: current / total!,
-                        )
-                      : LinearProgressIndicator(),
-                  SizedBox(
-                    height: 50,
-                  )
-                ],
-              ),
-            ],
+                Spacer(),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(left: 7),
+                        child: Text(
+                          message!,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.black),
+                        )),
+                    current != null && current > 0
+                        ? LinearPercentIndicator(
+                            percent: current / total!,
+                          )
+                        : LinearProgressIndicator(),
+                    SizedBox(
+                      height: 50,
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       );
