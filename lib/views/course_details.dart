@@ -152,6 +152,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
             padding: EdgeInsets.only(left: 24.0, right: 24.0),
             child: CourseDetailCard(
                 courseDetail: courseDetails[1],
+                hideProgress: true,
                 onTap: () async {
                   List<Topic> topics = await TestController()
                       .getTopicsAndNotes(widget.courseInfo.course);

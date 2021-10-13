@@ -9,10 +9,12 @@ import 'package:ecoach/widgets/courses/vertical_captioned_image.dart';
 import 'package:flutter/material.dart';
 
 class CourseDetailCard extends StatelessWidget {
-  const CourseDetailCard({required this.courseDetail, this.onTap});
+  CourseDetailCard(
+      {required this.courseDetail, this.hideProgress = false, this.onTap});
 
   final CourseDetail courseDetail;
   final Function()? onTap;
+  bool hideProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +105,11 @@ class CourseDetailCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  CircularProgressIndicatorWrapper(
-                    progress: courseDetail.progress,
-                    progressColor: courseDetail.progressColor,
-                  )
+                  if (!hideProgress)
+                    CircularProgressIndicatorWrapper(
+                      progress: courseDetail.progress,
+                      progressColor: courseDetail.progressColor,
+                    )
                 ],
               ),
             ),
