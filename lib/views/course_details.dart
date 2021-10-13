@@ -156,9 +156,14 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 onTap: () async {
                   List<Topic> topics = await TestController()
                       .getTopicsAndNotes(widget.courseInfo.course);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return NotesTopics(topics);
-                  })).then((value) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          settings:
+                              RouteSettings(name: CourseDetailsPage.routeName),
+                          builder: (context) {
+                            return NotesTopics(widget.user, topics);
+                          })).then((value) {
                     setState(() {});
                   });
                 }),
@@ -181,7 +186,8 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        settings: RouteSettings(name: TestTypeView.routeName),
+                        settings:
+                            RouteSettings(name: CourseDetailsPage.routeName),
                         builder: (context) {
                           return TestTypeView(
                               widget.user, widget.courseInfo.course);

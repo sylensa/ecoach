@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'course_module.dart';
 
 class CourseDetail extends CourseModule {
+  static const String routeName = '/course_details';
   CourseDetail({
     title,
     background,

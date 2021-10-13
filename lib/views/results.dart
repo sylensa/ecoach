@@ -152,8 +152,10 @@ class _ResultViewState extends State<ResultView> {
                           padding: const EdgeInsets.all(11.0),
                           child: TextButton(
                             onPressed: () {
-                              Navigator.popUntil(context,
-                                  ModalRoute.withName(TestTypeView.routeName));
+                              Navigator.popUntil(
+                                  context,
+                                  ModalRoute.withName(
+                                      CourseDetailsPage.routeName));
                             },
                             child: Text("New",
                                 style: TextStyle(

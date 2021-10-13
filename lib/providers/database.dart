@@ -96,8 +96,8 @@ class DBProvider {
         'author' text DEFAULT NULL,
         'description' text DEFAULT NULL,
         'notes' text DEFAULT NULL,
-        'created_at' timestamp NULL DEFAULT NULL,
-        'updated_at' timestamp NULL DEFAULT NULL
+        'created_at' timestamp DEFAULT NULL,
+        'updated_at' timestamp DEFAULT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'courses' (

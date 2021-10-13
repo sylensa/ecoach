@@ -83,7 +83,8 @@ class NotesReadDB {
     var result = await db!.query('notes_read',
         orderBy: "created_at DESC",
         where: "course_id = ?",
-        whereArgs: [courseId]);
+        whereArgs: [courseId],
+        limit: 1);
 
     return result.isNotEmpty ? NotesRead.fromJson(result.last) : null;
   }

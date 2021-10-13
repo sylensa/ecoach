@@ -1,9 +1,17 @@
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/notes_read.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/ui/course_detail.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/notes_read_db.dart';
 import 'package:ecoach/providers/topics_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/notes_bottom_button.dart';
 import 'package:ecoach/widgets/search_bars/notes_search_bar.dart';
@@ -11,8 +19,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class NotesTopics extends StatefulWidget {
-  const NotesTopics(this.topics, {Key? key});
+  static const String routeName = '/notestopic';
+  const NotesTopics(this.user, this.topics, {Key? key});
 
+  final User user;
   final List<Topic> topics;
 
   @override
@@ -118,19 +128,82 @@ class _NotesTopicsState extends State<NotesTopics> {
                         builder: (context) {
                           return Scaffold(
                             body: SingleChildScrollView(
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    Html(
-                                      data: topics[selectedTopicIndex].notes,
-                                      style: {
-                                        // tables will have the below background color
-                                        "body": Style(
-                                          color: Colors.black,
-                                        ),
-                                      },
-                                    ),
-                                  ],
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
+                                child: Container(
+                                  child: Column(
+                                    children: [
+                                      Html(
+                                        data: topics[selectedTopicIndex].notes,
+                                        style: {
+                                          // tables will have the below background color
+                                          "body": Style(
+                                              fontSize: FontSize(15),
+                                              color: Colors.black,
+                                              backgroundColor: Colors.white),
+                                          'table': Style(
+                                              border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 1)),
+                                          'td': Style(
+                                              border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 1)),
+                                          'th': Style(
+                                              backgroundColor: Colors.blue),
+                                        },
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          OutlinedButton(
+                                              onPressed: () async {
+                                                Course? course = await CourseDB()
+                                                    .getCourseById(topics[
+                                                            selectedTopicIndex]
+                                                        .courseId!);
+
+                                                List<Question> questions =
+                                                    await TestController()
+                                                        .getTopicQuestions(
+                                                            [topic.id!],
+                                                            limit: 40);
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return QuizCover(
+                                                    widget.user,
+                                                    questions,
+                                                    name: topic.name!,
+                                                    type: TestType.KNOWLEDGE,
+                                                    category: TestCategory.TOPIC
+                                                        .toString()
+                                                        .split(".")[1],
+                                                    time: questions.length * 60,
+                                                    course: course,
+                                                  );
+                                                }));
+                                              },
+                                              child: Text(
+                                                "Take Test",
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              )),
+                                          OutlinedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                "Finished",
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              )),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
