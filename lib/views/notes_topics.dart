@@ -129,9 +129,10 @@ class _NotesTopicsState extends State<NotesTopics> {
                           return Scaffold(
                             body: SingleChildScrollView(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
+                                padding: const EdgeInsets.all(0),
                                 child: Container(
+                                  color: Color(0xFF009BCB),
+                                  padding: const EdgeInsets.all(0),
                                   child: Column(
                                     children: [
                                       Html(
@@ -139,19 +140,23 @@ class _NotesTopicsState extends State<NotesTopics> {
                                         style: {
                                           // tables will have the below background color
                                           "body": Style(
-                                              fontSize: FontSize(15),
-                                              color: Colors.black,
-                                              backgroundColor: Colors.white),
-                                          'table': Style(
-                                              border: Border.all(
-                                                  color: Colors.black,
-                                                  width: 1)),
+                                            fontSize: FontSize(17),
+                                            color: Colors.white,
+                                            backgroundColor: Color(0xFF009BCB),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8.0, 10, 8, 25),
+                                          ),
+
                                           'td': Style(
                                               border: Border.all(
-                                                  color: Colors.black,
+                                                  color: Colors.white,
                                                   width: 1)),
                                           'th': Style(
                                               backgroundColor: Colors.blue),
+                                          'img': Style(
+                                              width: 200,
+                                              height: 200,
+                                              padding: EdgeInsets.all(10)),
                                         },
                                       ),
                                       Row(
@@ -186,19 +191,35 @@ class _NotesTopicsState extends State<NotesTopics> {
                                                   );
                                                 }));
                                               },
+                                              style: ButtonStyle(
+                                                side: MaterialStateProperty.all(
+                                                    BorderSide(
+                                                        color: Colors.white,
+                                                        width: 1,
+                                                        style:
+                                                            BorderStyle.solid)),
+                                              ),
                                               child: Text(
                                                 "Take Test",
                                                 style: TextStyle(
-                                                    color: Colors.black),
+                                                    color: Colors.white),
                                               )),
                                           OutlinedButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
+                                              style: ButtonStyle(
+                                                side: MaterialStateProperty.all(
+                                                    BorderSide(
+                                                        color: Colors.white,
+                                                        width: 1,
+                                                        style:
+                                                            BorderStyle.solid)),
+                                              ),
                                               child: Text(
                                                 "Finished",
                                                 style: TextStyle(
-                                                    color: Colors.black),
+                                                    color: Colors.white),
                                               )),
                                         ],
                                       )

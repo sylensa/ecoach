@@ -195,14 +195,14 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(courseDetail: courseDetails[3]),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(courseDetail: courseDetails[4]),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          //   child: CourseDetailCard(courseDetail: courseDetails[3]),
+          // ),
+          // Padding(
+          //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          //   child: CourseDetailCard(courseDetail: courseDetails[4]),
+          // ),
         ],
       ),
     );
