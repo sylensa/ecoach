@@ -153,7 +153,7 @@ class _ResetForgotPasswordState extends State<ResetForgotPassword> {
                                   text: "Start process all over again? ",
                                   style: TextStyle(color: Colors.black)),
                               TextSpan(
-                                  text: "Forgot password",
+                                  text: "Forgot password ",
                                   style: TextStyle(
                                       color: Colors.green,
                                       decoration: TextDecoration.underline))
