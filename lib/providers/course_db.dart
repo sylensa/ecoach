@@ -48,6 +48,7 @@ class CourseDB {
             }
           }
         }
+        await Future.delayed(Duration(milliseconds: 250));
       }
     });
   }

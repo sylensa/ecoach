@@ -76,11 +76,11 @@ class ApiCall<T> {
   }
 
   Future post(BuildContext context) async {
-    String token = "";
+    String? token = "";
     print(Uri.parse(url));
-    print(params!);
+    print(params);
     if (user == null) {
-      token = (await UserPreferences().getUserToken())!;
+      token = (await UserPreferences().getUserToken());
     } else {
       token = user!.token!;
     }
@@ -92,7 +92,7 @@ class ApiCall<T> {
             {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
-              'api-token': token
+              'api-token': token ?? ""
             },
         body: jsonEncode(params ?? {}),
       );
@@ -165,10 +165,12 @@ class ApiCall<T> {
   fromMap(dynamic jsonData, Function(Map<String, dynamic>) create) {
     List<T> list = [];
     if (isList) {
-      jsonData.forEach((v) {
-        print("is array");
-        list.add(create(v));
-      });
+      if (jsonData != null) {
+        jsonData.forEach((v) {
+          print("is array");
+          list.add(create(v));
+        });
+      }
     } else {
       print("is object");
       list.add(create(jsonData));

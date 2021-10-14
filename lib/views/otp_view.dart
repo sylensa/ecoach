@@ -28,8 +28,6 @@ class _OTPViewState extends State<OTPView> {
   var onTapRecognizer;
 
   TextEditingController textEditingController = TextEditingController();
-  // ..text = "123456";
-
   StreamController<ErrorAnimationType>? errorController;
 
   bool hasError = false;
@@ -308,7 +306,7 @@ class _OTPViewState extends State<OTPView> {
                     const EdgeInsets.symmetric(vertical: 16.0, horizontal: 30),
                 child: ButtonTheme(
                   height: 50,
-                  child: FlatButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       formKey.currentState!.validate();
                       // conditions for validating

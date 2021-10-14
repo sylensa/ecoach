@@ -6,7 +6,9 @@ class AppUrl {
   static const String login = baseURL + "signin";
   static const String register = baseURL + "signup";
   static const String resend_pin = baseURL + "pin/resend";
-  static const String forgotPassword = baseURL + "forgot-password";
+  static const String forgotPassword = baseURL + "password/forgot";
+  static const String forgotPasswordVerify = baseURL + "password/forgot/verify";
+  static const String forgotPasswordReset = baseURL + "password/reset";
   static const String profile = baseURL + "profile";
   static const String otp_verify = baseURL + "verify";
   static const String change_password = baseURL + "password/reset";
