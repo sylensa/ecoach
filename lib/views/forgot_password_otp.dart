@@ -78,6 +78,7 @@ class _ForgotPasswordOtpState extends State<ForgotPasswordOtp> {
         return ResetForgotPassword(widget.phone);
       }));
     }, onError: (err) {
+      print('onError');
       print(err);
       Navigator.pop(context);
     }, onMessage: (message) {

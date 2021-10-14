@@ -32,9 +32,11 @@ class ApiCall<T> {
       this.onError}) {}
 
   get(BuildContext context) async {
-    String token = "";
+    String? token = "";
     if (user == null) {
-      token = (await UserPreferences().getUserToken())!;
+      token = (await UserPreferences().getUserToken());
+    } else {
+      token = user!.token!;
     }
     try {
       String urlString = url + '?' + Uri(queryParameters: params ?? {}).query;
@@ -45,7 +47,7 @@ class ApiCall<T> {
             {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
-              'api-token': user != null ? user!.token! : token
+              'api-token': token ?? "",
             },
       );
 
@@ -57,9 +59,6 @@ class ApiCall<T> {
               : null;
       if (onMessage != null) {
         onMessage!(message);
-      }
-      if (onCallback != null) {
-        onCallback!(finalData);
       }
 
       if (requireLogIn) {
@@ -84,7 +83,7 @@ class ApiCall<T> {
     } else {
       token = user!.token!;
     }
-    print(token);
+
     try {
       http.Response response = await http.post(
         Uri.parse(url),
@@ -105,9 +104,6 @@ class ApiCall<T> {
               : null;
       if (onMessage != null) {
         onMessage!(message);
-      }
-      if (onCallback != null) {
-        onCallback!(finalData);
       }
 
       if (requireLogIn) {
@@ -134,6 +130,9 @@ class ApiCall<T> {
       case 301:
         break;
       case 400:
+        if (onError != null) {
+          onError!(null);
+        }
         break;
       case 403:
         requireLogIn = true;
@@ -149,11 +148,17 @@ class ApiCall<T> {
   }
 
   handleData(Map<String, dynamic> responseData) {
+    print(responseData["status"]);
     if (responseData["status"] == true) {
+      print('status is true');
       data = fromMap(responseData["data"], (dataItem) {
         return create(dataItem);
       });
+      if (onCallback != null) {
+        onCallback!(data);
+      }
     } else {
+      print('checking on Error');
       if (onError != null) {
         onError!(null);
       }

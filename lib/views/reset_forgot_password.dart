@@ -2,6 +2,7 @@ import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/forgot_password.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class _ResetForgotPasswordState extends State<ResetForgotPassword> {
   final _formKey = GlobalKey<FormState>();
 
   resetPassword(BuildContext context) {
+    if (_formKey.currentState!.validate() == false) return null;
+    _formKey.currentState!.save();
     showLoaderDialog(context, message: "Resetting password....");
     ApiCall(AppUrl.forgotPasswordReset, params: {
       'phone': widget.phone,
@@ -40,7 +43,7 @@ class _ResetForgotPasswordState extends State<ResetForgotPassword> {
     }, onMessage: (message) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
-    }).post(context).then((value) {});
+    }).post(context);
   }
 
   @override
@@ -119,7 +122,7 @@ class _ResetForgotPasswordState extends State<ResetForgotPassword> {
                         ),
                         SizedBox(
                           width: double.infinity,
-                          height: 40,
+                          height: 50,
                           child: ElevatedButton(
                               style: greenButtonStyle,
                               onPressed: () {
@@ -133,6 +136,29 @@ class _ResetForgotPasswordState extends State<ResetForgotPassword> {
                         ),
                         SizedBox(
                           height: 50,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPasswordPage()),
+                                (route) {
+                              return true;
+                            });
+                          },
+                          child: RichText(
+                            text: TextSpan(children: [
+                              TextSpan(
+                                  text: "Start process all over again? ",
+                                  style: TextStyle(color: Colors.black)),
+                              TextSpan(
+                                  text: "Forgot password",
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      decoration: TextDecoration.underline))
+                            ]),
+                          ),
                         ),
                       ],
                     ),
