@@ -129,19 +129,16 @@ class ApiCall<T> {
         break;
       case 301:
         break;
-      case 400:
-        if (onError != null) {
-          onError!(null);
-        }
-        break;
       case 403:
         requireLogIn = true;
         break;
+      case 400:
       case 404:
-        break;
       case 500:
-        break;
       case 501:
+        if (onError != null) {
+          onError!(null);
+        }
         break;
       default:
     }
