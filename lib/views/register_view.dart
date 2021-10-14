@@ -4,6 +4,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/forgot_password.dart';
 import 'package:ecoach/views/login_view.dart';
 import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -265,7 +266,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPasswordPage()),
+                              );
+                            },
                             child: Text("Forgot Password?",
                                 style: TextStyle(
                                   color: Colors.blue,
