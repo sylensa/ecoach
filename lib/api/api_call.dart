@@ -97,11 +97,6 @@ class ApiCall<T> {
       );
 
       handleResponse(response);
-      var finalData = isList
-          ? data
-          : data!.length > 0
-              ? data![0]
-              : null;
       if (onMessage != null) {
         onMessage!(message);
       }
@@ -110,13 +105,21 @@ class ApiCall<T> {
         showLogoutDialog(context);
       }
       print("returning data");
-      return finalData;
+      return getFinalData();
     } catch (e) {
       print(e);
       if (onError != null) {
         onError!(e);
       }
     }
+  }
+
+  getFinalData() {
+    return isList
+        ? data
+        : data!.length > 0
+            ? data![0]
+            : null;
   }
 
   handleResponse(http.Response response) {
@@ -152,7 +155,7 @@ class ApiCall<T> {
         return create(dataItem);
       });
       if (onCallback != null) {
-        onCallback!(data);
+        onCallback!(getFinalData());
       }
     } else {
       print('checking on Error');

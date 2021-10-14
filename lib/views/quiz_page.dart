@@ -231,16 +231,20 @@ class _QuizViewState extends State<QuizView> {
     }, onError: (err) {
       Navigator.pop(context);
     }, onCallback: (data) {
+      print('onCallback');
+      print(data);
       Navigator.pop(context);
       testTakenSaved = data;
       TestController().saveTestTaken(testTakenSaved!);
 
       setState(() {
-        testTaken = testTakenSaved!;
+        print('setState');
+        testTaken = testTakenSaved;
         savedTest = true;
         enabled = false;
       });
     }).post(context).then((value) {
+      print('then>>');
       if (savedTest) {
         viewResults();
       }
