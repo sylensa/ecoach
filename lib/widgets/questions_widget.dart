@@ -1,5 +1,6 @@
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
+import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -13,6 +14,7 @@ class QuestionWidget extends StatefulWidget {
       this.position,
       this.useTex = false,
       this.enabled = true,
+      this.theme = QuizTheme.GREEN,
       this.callback})
       : super(key: key);
   Question question;
@@ -20,6 +22,7 @@ class QuestionWidget extends StatefulWidget {
   bool enabled;
   bool useTex;
   Function(Answer selectedAnswer)? callback;
+  QuizTheme theme;
 
   @override
   _QuestionWidgetState createState() => _QuestionWidgetState();
@@ -28,8 +31,15 @@ class QuestionWidget extends StatefulWidget {
 class _QuestionWidgetState extends State<QuestionWidget> {
   late List<Answer>? answers;
   Answer? selectedAnswer;
+  Color? backgroundColor;
+
   @override
   void initState() {
+    if (widget.theme == QuizTheme.GREEN) {
+      backgroundColor = const Color(0xFF00C664);
+    } else {
+      backgroundColor = const Color(0xFF5DA5EA);
+    }
     answers = widget.question.answers;
     selectedAnswer = widget.question.selectedAnswer;
     print(widget.question.text);
@@ -87,7 +97,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               ),
             ),
             Container(
-              color: Color(0xFF00C664),
+              color: backgroundColor,
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(80, 4, 80, 4),

@@ -71,14 +71,16 @@ class _QuizViewState extends State<QuizView> {
 
   bool useTex = false;
   int finalQuestion = 0;
-  late Color backgroundColor;
+  late Color backgroundColor, backgroundColor2;
 
   @override
   void initState() {
     if (widget.theme == QuizTheme.GREEN) {
       backgroundColor = const Color(0xFF00C664);
+      backgroundColor2 = const Color(0xFF05A958);
     } else {
-      backgroundColor = const Color(0xFF00C664);
+      backgroundColor = const Color(0xFF5DA5EA);
+      backgroundColor2 = const Color(0xFF5DA5CA);
     }
 
     controller = PageController(initialPage: currentQuestion);
@@ -365,6 +367,7 @@ class _QuizViewState extends State<QuizView> {
                         position: i,
                         enabled: enabled,
                         useTex: useTex,
+                        theme: widget.theme,
                         callback: (Answer answer) {
                           if (widget.speedTest && answer.value == 0) {
                             completeQuiz();
@@ -591,6 +594,7 @@ class _QuizViewState extends State<QuizView> {
             builder: (context) {
               return PauseDialog(
                 backgroundColor: backgroundColor,
+                backgroundColor2: backgroundColor2,
                 time: countdownInSeconds,
                 callback: (action) {
                   Navigator.pop(context);
@@ -616,11 +620,12 @@ class PauseDialog extends StatefulWidget {
       {Key? key,
       required this.time,
       required this.callback,
-      required this.backgroundColor})
+      required this.backgroundColor,
+      required this.backgroundColor2})
       : super(key: key);
   int time;
   Function(String action) callback;
-  Color backgroundColor;
+  Color backgroundColor, backgroundColor2;
 
   @override
   _PauseDialogState createState() => _PauseDialogState();
@@ -653,7 +658,7 @@ class _PauseDialogState extends State<PauseDialog> {
                 height: 70,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color(0xFF05A958),
+                      color: widget.backgroundColor2,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(20))),
                   child: Row(
@@ -703,7 +708,7 @@ class _PauseDialogState extends State<PauseDialog> {
                 height: 70,
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Color(0xFF05A958),
+                        color: widget.backgroundColor2,
                         borderRadius:
                             BorderRadius.vertical(bottom: Radius.circular(20))),
                     child: Center(

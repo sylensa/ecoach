@@ -222,7 +222,8 @@ class _HomePageState extends State<HomePage> {
                                               centerRightWidget:
                                                   CircularProgressIndicatorWrapper(
                                                 progress: items[i].correct! /
-                                                    items[i].totalQuestions,
+                                                    items[i].totalQuestions *
+                                                    100,
                                               ),
                                               colors: getColorGradient(
                                                   enumFromString(
