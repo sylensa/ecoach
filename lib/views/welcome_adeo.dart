@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/level.dart';
@@ -35,30 +36,17 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
 
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       showLoaderDialog(context, message: "Loading Diagnostic data ...");
-      getInitialData().then((data) {
-        LevelDB().insertAll(data.data!.levels!);
-        CourseDB().insertAll(data.data!.courses!);
+      ApiCall<Data>(AppUrl.new_user_data, isList: false,
+          create: (Map<String, dynamic> json) {
+        return Data.fromJson(json);
+      }, onCallback: (data) {
+        if (data != null) {
+          LevelDB().insertAll(data!.levels!);
+          CourseDB().insertAll(data!.courses!);
+        }
         Navigator.pop(context);
-      });
+      }).get(context);
     });
-  }
-
-  Future<NewUserData> getInitialData() async {
-    final response = await http.get(
-      Uri.parse(AppUrl.new_user_data),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
-
-    print(response.body);
-    if (response.statusCode == 200) {
-      return NewUserData.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load album');
-    }
   }
 
   @override

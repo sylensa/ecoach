@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -102,145 +103,98 @@ class _MainHomePageState extends State<MainHomePage>
   }
 
   checkSubscription() {
-    getSubscriptions().then((api) {
-      if (api == null) return;
-      List<Subscription> freshSubscriptions = api.data as List<Subscription>;
+    getSubscriptions().then((freshSubscriptions) async {
+      if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
         showLoaderDialog(context,
             message: "downloading subscription\n data.....");
-        getSubscriptionData().then((api) async {
-          print("------------------------------------------------------");
-
-          if (api == null) {
-            Navigator.pop(context);
-            return;
-          }
-          List<Subscription> subscriptions = api.data as List<Subscription>;
-          await SubscriptionDB().insertAll(subscriptions);
+        List<Subscription>? subscriptions = await getSubscriptionData();
+        if (subscriptions == null) {
           Navigator.pop(context);
+          return;
+        }
 
-          List<SubscriptionItem> items =
-              await SubscriptionItemDB().allSubscriptionItems();
-          print(items);
-          print("all sub items");
-          for (int i = 0; i < items.length; i++) {
-            print("downloading ${items[i].name}\n data");
-            showDownloadDialog(context,
-                message: "downloading..... ${items[i].name} data",
-                current: i,
-                total: items.length);
-            SubscriptionItem? subscriptionItem =
-                await getSubscriptionItem(items[i].id!);
-            print(subscriptionItem!);
+        await SubscriptionDB().insertAll(subscriptions);
+        Navigator.pop(context);
 
-            await CourseDB().insert(subscriptionItem.course!);
-            await QuizDB().insertAll(subscriptionItem.quizzes!);
-            Navigator.pop(context);
-          }
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Subscription data download successfully")));
-        });
+        List<SubscriptionItem> items =
+            await SubscriptionItemDB().allSubscriptionItems();
+        print("all subcriptions items");
+        for (int i = 0; i < items.length; i++) {
+          print("downloading ${items[i].name}\n data");
+          showDownloadDialog(context,
+              message: "downloading..... ${items[i].name} data",
+              current: i,
+              total: items.length);
+          SubscriptionItem? subscriptionItem =
+              await getSubscriptionItem(items[i].id!);
+
+          await CourseDB().insert(subscriptionItem!.course!);
+          await QuizDB().insertAll(subscriptionItem.quizzes!);
+          Navigator.pop(context);
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Subscription data download successfully")));
       }
     });
   }
 
-  Future<ApiResponse<Subscription>?> getSubscriptions() async {
-    Map<String, dynamic> queryParams = {};
-    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
-    http.Response response = await http.get(
-      Uri.parse(
-          AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
-          print(">>>");
-          print(dataItem);
-          return Subscription.fromJson(dataItem);
-        });
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.statusCode);
-      print(response.body);
-    }
+  Future<List<Subscription>> getSubscriptions() async {
+    return await ApiCall<Subscription>(AppUrl.subscriptions, create: (json) {
+      return Subscription.fromJson(json);
+    }).get(context);
   }
 
-  Future<ApiResponse<Subscription>?> getSubscriptionData() async {
-    Map<String, dynamic> queryParams = {};
-    print(queryParams);
-    print(AppUrl.subscriptionData +
-        '?' +
-        Uri(queryParameters: queryParams).query);
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.subscriptionData +
-          '?' +
-          Uri(queryParameters: queryParams).query),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        print("messages returned");
-        return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
-          print(dataItem);
-          return Subscription.fromJson(dataItem);
-        });
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.statusCode);
-      print(response.body);
-    }
+  Future<List<Subscription>?> getSubscriptionData() async {
+    return ApiCall<Subscription>(AppUrl.subscriptionData, params: {},
+        create: (json) {
+      return Subscription.fromJson(json);
+    }).get(context);
   }
 
-  Future<SubscriptionItem?> getSubscriptionItem(int itemId) async {
-    Map<String, dynamic> queryParams = {};
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.subscriptionItem +
-          '/$itemId?' +
-          Uri(queryParameters: queryParams).query),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
+  // Future<ApiResponse<Subscription>?> getSubscriptionData() async {
+  //   Map<String, dynamic> queryParams = {};
+  //   print(queryParams);
+  //   print(AppUrl.subscriptionData +
+  //       '?' +
+  //       Uri(queryParameters: queryParams).query);
+  //   http.Response response = await http.get(
+  //     Uri.parse(AppUrl.subscriptionData +
+  //         '?' +
+  //         Uri(queryParameters: queryParams).query),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json',
+  //       'api-token': widget.user.token!
+  //     },
+  //   );
 
-    if (response.statusCode == 200) {
-      String body = utf8.decode(response.bodyBytes);
-      Map<String, dynamic> responseData = json.decode(body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        return SubscriptionItem.fromJson(responseData['data']);
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.statusCode);
-      print(response.body);
-    }
+  //   if (response.statusCode == 200) {
+  //     Map<String, dynamic> responseData = json.decode(response.body);
+  //     // print(responseData);
+  //     if (responseData["status"] == true) {
+  //       print("messages returned");
+  //       return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
+  //         print("it's fine here");
+  //         print(dataItem);
+  //         return Subscription.fromJson(dataItem);
+  //       });
+  //     } else {
+  //       print("not successful event");
+  //     }
+  //   } else {
+  //     print("Failed ....");
+  //     print(response.statusCode);
+  //     print(response.body);
+  //   }
+  // }
+
+  getSubscriptionItem(id) async {
+    return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false,
+        create: (json) {
+      return SubscriptionItem.fromJson(json);
+    }).get(context);
   }
 
   tapping(int index) {

@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:ecoach/api/api_response.dart';
-import 'package:ecoach/models/plan.dart';
-import 'package:ecoach/models/question.dart';
+import 'package:ecoach/utils/general_utils.dart';
+import 'package:ecoach/views/test_type.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -35,10 +35,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    checkSubscription();
-  }
-
-  checkSubscription() {
     List<Subscription> subscriptions = widget.user.subscriptions;
 
     if (subscriptions.length > 0) {
@@ -50,49 +46,37 @@ class _HomePageState extends State<HomePage> {
         futureSubs = null;
       });
     }
+  }
 
-    getSubscriptions().then((api) {
-      List<Subscription> subscriptions = api!.data as List<Subscription>;
-      SubscriptionDB().insertAll(subscriptions);
+  void _runFilter(String enteredKeyword) {
+    var results;
+    if (enteredKeyword.isEmpty) {
+      // if the search field is empty or only contains white-space, we'll display all users
+      results = TestTakenDB().testsTaken(limit: 20);
+    } else {
+      results = TestTakenDB().testsTaken(search: enteredKeyword, limit: 20);
+    }
 
-      // setState(() {
-      //   futureSubs = SubscriptionDB().subscriptions();
-      // });
+    // Refresh the UI
+    setState(() {
+      futureSubs = results;
     });
   }
 
-  Future<ApiResponse<Subscription>?> getSubscriptions() async {
-    Map<String, dynamic> queryParams = {};
-    print(queryParams);
-    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
-    http.Response response = await http.get(
-      Uri.parse(AppUrl.subscriptions + '?' + Uri(queryParameters: queryParams).query),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-token': widget.user.token!
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      // print(responseData);
-      if (responseData["status"] == true) {
-        print("messages returned");
-        print(response.body);
-
-        return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
-          print(dataItem);
-          return Subscription.fromJson(dataItem);
-        });
-      } else {
-        print("not successful event");
-      }
-    } else {
-      print("Failed ....");
-      print(response.statusCode);
-      print(response.body);
+  List<Color> getColorGradient(TestType type) {
+    switch (type) {
+      case TestType.SPEED:
+        return [Color(0xFFFD6363), Color(0xFFFD6363)];
+      case TestType.KNOWLEDGE:
+        return [Color(0xFF3AAFFF), Color(0xFF3AAFFF)];
+      case TestType.UNTIMED:
+        return [Color(0xFF00C664), Color(0xFF00C664)];
+      case TestType.CUSTOMIZED:
+        return [Color(0xFFFFB84F), Color(0xFFFFB84F)];
+      case TestType.DIAGNOSTIC:
+        return [Color(0xFF393FC8), Color(0xFF282D9A)];
+      case TestType.NONE:
+        return [Color(0xFF595959), Color(0xFF595959)];
     }
   }
 
@@ -117,12 +101,15 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Text(
                             "Hello,",
-                            style: TextStyle(color: Colors.black26, fontSize: 12),
+                            style:
+                                TextStyle(color: Colors.black26, fontSize: 12),
                           ),
                           Text(
                             widget.user.name,
                             style: TextStyle(
-                                fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -135,53 +122,6 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 20,
                   ),
-                  // Container(
-                  //   child: FutureBuilder(
-                  //       future: futureSubs,
-                  //       builder: (context, snapshot) {
-                  //         switch (snapshot.connectionState) {
-                  //           case ConnectionState.none:
-                  //             return NoSubWidget(widget.user, widget.callback);
-                  //           case ConnectionState.waiting:
-                  //             return Center(child: CircularProgressIndicator());
-                  //           default:
-                  //             if (snapshot.hasError)
-                  //               return Text('Error: ${snapshot.error}');
-                  //             else if (snapshot.data != null) {
-                  //               List<TestTaken> items = snapshot.data as List<TestTaken>;
-
-                  //               return Expanded(
-                  //                 child: ListView.builder(
-                  //                   shrinkWrap: true,
-                  //                   itemCount: items.length,
-                  //                   itemBuilder: (context, index) {
-                  //                     final item = items[index];
-                  //                     return ListTile(
-                  //                       title: Text(item.testname ?? "no name",
-                  //                           style: TextStyle(color: Colors.black)),
-                  //                       subtitle: Text("${item.totalQuestions}",
-                  //                           style: TextStyle(color: Colors.black)),
-                  //                     );
-                  //                   },
-                  //                 ),
-                  //               );
-                  //             } else if (snapshot.data == null)
-                  //               return NoSubWidget(widget.user, widget.callback);
-                  //             else
-                  //               return Column(
-                  //                 children: [
-                  //                   SizedBox(
-                  //                     height: 100,
-                  //                   ),
-                  //                   Center(
-                  //                       child:
-                  //                           Text(widget.user.email ?? "Something isn't right")),
-                  //                   SizedBox(height: 100),
-                  //                 ],
-                  //               );
-                  //         }
-                  //       }),
-                  // ),
                   Container(
                     height: 48.0,
                     width: double.infinity,
@@ -211,111 +151,107 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
+                      onChanged: (searchString) {
+                        _runFilter(searchString);
+                      },
                     ),
                   ),
-                  SizedBox(height: 12),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 44),
-                          HomeCard(
-                            timeAgo: '1hr',
-                            activityTypeIconURL: 'assets/icons/edit.png',
-                            vendoLogoURL: 'assets/icons/edeo_logo.png',
-                            footerCenterText: '40 Questions',
-                            footerRightText: '5m:30s',
-                            centralWidget: Column(
-                              children: [
-                                Text(
-                                  'Photosynthesis',
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
+                  Container(
+                    child: FutureBuilder(
+                        future: futureSubs,
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                              return NoSubWidget(widget.user, widget.callback);
+                            case ConnectionState.waiting:
+                              return Center(child: CircularProgressIndicator());
+                            default:
+                              if (snapshot.hasError)
+                                return Text('Error: ${snapshot.error}');
+                              else if (snapshot.data != null) {
+                                List<TestTaken> items =
+                                    snapshot.data as List<TestTaken>;
+
+                                return Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 44),
+                                        for (int i = 0; i < items.length; i++)
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 0, 0, 24),
+                                            child: HomeCard(
+                                              timeAgo: timeago
+                                                  .format(items[i].datetime!),
+                                              activityTypeIconURL:
+                                                  'assets/icons/edit.png',
+                                              vendoLogoURL:
+                                                  'assets/icons/edeo_logo.png',
+                                              footerCenterText:
+                                                  '${items[i].jsonResponses.length} Questions',
+                                              footerRightText:
+                                                  items[i].usedTimeText,
+                                              centralWidget: Column(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 210,
+                                                    child: Text(
+                                                      items[i].testname!,
+                                                      softWrap: false,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 18.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    "${items[i].courseName!}",
+                                                    softWrap: true,
+                                                    style: TextStyle(
+                                                      color: Color(0x88FFFFFF),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              centerRightWidget:
+                                                  CircularProgressIndicatorWrapper(
+                                                progress: items[i].correct! /
+                                                    items[i].totalQuestions,
+                                              ),
+                                              colors: getColorGradient(
+                                                  enumFromString(
+                                                          TestType.values,
+                                                          items[i].testType) ??
+                                                      TestType.NONE),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'Int. Science',
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    color: Color(0x88FFFFFF),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            centerRightWidget: CircularProgressIndicatorWrapper(
-                              progress: 80,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          HomeCard(
-                            colors: [Color(0xFFA83AE7), Color(0xFF6D1A9D)],
-                            timeAgo: '2hrs',
-                            activityTypeIconURL: 'assets/icons/wallet.png',
-                            vendoLogoURL: 'assets/icons/ecoach_logo.png',
-                            footerCenterText: 'Balance',
-                            footerRightText: 'Top up',
-                            centralWidget: Column(
-                              children: [
-                                ShadowedText(
-                                  color: Color(0xFF6D1A9D),
-                                  text: '90',
-                                ),
-                                Text(
-                                  'Ghana cedis',
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    color: Color(0x88FFFFFF),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            centerRightWidget: Text(
-                              'GHS 40',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0x88FFFFFF),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          HomeCard(
-                            colors: [Color(0xFF28BFDF), Color(0xFF008FAD)],
-                            timeAgo: '2hrs',
-                            activityTypeIconURL: 'assets/icons/add.png',
-                            vendoLogoURL: 'assets/icons/edeo_logo.png',
-                            footerCenterText: 'subscription',
-                            footerRightText: 'renewal',
-                            centralWidget: Column(
-                              children: [
-                                ShadowedText(
-                                  color: Color(0xFF008FAD),
-                                  text: '95',
-                                ),
-                                Text(
-                                  'days remaining',
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    color: Color(0x88FFFFFF),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            centerRightWidget: Text(
-                              'GHS 599',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0x88FFFFFF),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 24.0),
-                        ],
-                      ),
-                    ),
+                                );
+                              } else if (snapshot.data == null)
+                                return NoSubWidget(
+                                    widget.user, widget.callback);
+                              else
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 100,
+                                    ),
+                                    Center(
+                                        child: Text(widget.user.email ??
+                                            "Something isn't right")),
+                                    SizedBox(height: 100),
+                                  ],
+                                );
+                          }
+                        }),
                   ),
                 ],
               ),
@@ -404,7 +340,10 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                 )),
             TextSpan(
                 text: "No",
-                style: TextStyle(fontSize: 25, color: Colors.red, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold)),
             TextSpan(
                 text: " Subscriptions",
                 style: TextStyle(
@@ -479,9 +418,12 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                 height: 44,
                 child: OutlinedButton(
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
-                      side: MaterialStateProperty.all(
-                          BorderSide(color: Color(0xFF00C664), width: 1, style: BorderStyle.solid)),
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF00C664)),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: Color(0xFF00C664),
+                          width: 1,
+                          style: BorderStyle.solid)),
                     ),
                     onPressed: () {
                       widget.callback!();
@@ -493,12 +435,16 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                 height: 44,
                 child: OutlinedButton(
                     style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Color(0xFF00ABE0)),
-                      side: MaterialStateProperty.all(
-                          BorderSide(color: Color(0xFF00ABE0), width: 1, style: BorderStyle.solid)),
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF00ABE0)),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: Color(0xFF00ABE0),
+                          width: 1,
+                          style: BorderStyle.solid)),
                     ),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return SelectLevel(widget.user);
                       }));
                     },

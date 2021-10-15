@@ -52,11 +52,6 @@ class ApiCall<T> {
       );
 
       handleResponse(response);
-      var finalData = isList
-          ? data
-          : data!.length > 0
-              ? data![0]
-              : null;
       if (onMessage != null) {
         onMessage!(message);
       }
@@ -65,7 +60,7 @@ class ApiCall<T> {
         showLogoutDialog(context);
       }
       print("returning data");
-      return finalData;
+      return getFinalData();
     } catch (e) {
       print(e);
       if (onError != null) {
@@ -115,6 +110,9 @@ class ApiCall<T> {
   }
 
   getFinalData() {
+    if (data == null) {
+      return null;
+    }
     return isList
         ? data
         : data!.length > 0
@@ -124,6 +122,7 @@ class ApiCall<T> {
 
   handleResponse(http.Response response) {
     print(response.body);
+    print(response.statusCode);
     Map<String, dynamic> responseData = json.decode(response.body);
     message = responseData['message'] ?? "";
     switch (response.statusCode) {
@@ -134,6 +133,7 @@ class ApiCall<T> {
         break;
       case 403:
         requireLogIn = true;
+        print("required login");
         break;
       case 400:
       case 404:
@@ -187,51 +187,54 @@ class ApiCall<T> {
   }
 
   void showLogoutDialog(context) {
+    print("show dialog...");
     showDialog(
         context: context,
         builder: (context) {
-          return Center(
-            child: Container(
-              color: Colors.purple,
-              width: 300,
-              height: 200,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 12, 8, 0),
-                    child: Text(
-                      "Logout?",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+          return Material(
+            child: Center(
+              child: Container(
+                color: Colors.purple,
+                width: 300,
+                height: 200,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 12, 8, 0),
+                      child: Text(
+                        "Logout?",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                  Center(child: Text(message)),
-                  Spacer(),
-                  SizedBox(
-                    height: 60,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text("Cancel")),
-                        ),
-                        Expanded(
-                          child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return Logout();
-                                }), (route) => false);
-                              },
-                              child: Text("Logout")),
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                    Spacer(),
+                    Center(child: Text(message)),
+                    Spacer(),
+                    SizedBox(
+                      height: 60,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Cancel")),
+                          ),
+                          Expanded(
+                            child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushAndRemoveUntil(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return Logout();
+                                  }), (route) => false);
+                                },
+                                child: Text("Logout")),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           );

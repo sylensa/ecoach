@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/database.dart';
@@ -96,6 +97,26 @@ class SubscriptionItemDB {
         updatedAt: DateTime.parse(maps[i]["updated_at"]),
         course: await CourseDB().getCourseById(int.parse(maps[i]['tag'])),
       ));
+    }
+    return items;
+  }
+
+  Future<List<Course>> subscriptionCourses(int planId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+        'subscription_items',
+        orderBy: "name ASC",
+        where: "plan_id = ?",
+        whereArgs: [planId]);
+
+    List<Course> items = [];
+    for (int i = 0; i < maps.length; i++) {
+      Course? course =
+          await CourseDB().getCourseById(int.parse(maps[i]['tag']));
+      if (course != null) {
+        items.add(course);
+      }
     }
     return items;
   }
