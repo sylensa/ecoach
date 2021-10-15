@@ -15,7 +15,7 @@ class BorderedDropdownButton extends StatelessWidget {
   final List<String> items;
   final Function? onChanged;
   final bool? isExpanded;
-  final DropdownSize? size;
+  final Sizes? size;
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +27,11 @@ class BorderedDropdownButton extends StatelessWidget {
           child: Container(
             height: () {
               switch (size) {
-                case DropdownSize.small:
+                case Sizes.small:
                   return 24.0;
-                case DropdownSize.medium:
+                case Sizes.medium:
                   return 32.0;
-                case DropdownSize.large:
+                case Sizes.large:
                   return 48.0;
                 default:
                   return 24.0;

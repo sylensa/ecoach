@@ -127,7 +127,7 @@ class _MoreViewState extends State<MoreView> {
                     },
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -160,9 +160,7 @@ class BundleListItem extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           border: Border(
-            top: isFirstChild
-                ? BorderSide(width: 1.0, color: kAdeoGray)
-                : BorderSide.none,
+            top: isFirstChild ? BorderSide(width: 1.0, color: kAdeoGray) : BorderSide.none,
             bottom: BorderSide(width: 1.0, color: kAdeoGray),
           ),
         ),
