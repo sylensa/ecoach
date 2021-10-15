@@ -147,48 +147,11 @@ class _MainHomePageState extends State<MainHomePage>
   }
 
   Future<List<Subscription>?> getSubscriptionData() async {
-    return ApiCall<Subscription>(AppUrl.subscriptionData, params: {},
+    return await ApiCall<Subscription>(AppUrl.subscriptionData, params: {},
         create: (json) {
       return Subscription.fromJson(json);
     }).get(context);
   }
-
-  // Future<ApiResponse<Subscription>?> getSubscriptionData() async {
-  //   Map<String, dynamic> queryParams = {};
-  //   print(queryParams);
-  //   print(AppUrl.subscriptionData +
-  //       '?' +
-  //       Uri(queryParameters: queryParams).query);
-  //   http.Response response = await http.get(
-  //     Uri.parse(AppUrl.subscriptionData +
-  //         '?' +
-  //         Uri(queryParameters: queryParams).query),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Accept': 'application/json',
-  //       'api-token': widget.user.token!
-  //     },
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     Map<String, dynamic> responseData = json.decode(response.body);
-  //     // print(responseData);
-  //     if (responseData["status"] == true) {
-  //       print("messages returned");
-  //       return ApiResponse<Subscription>.fromJson(response.body, (dataItem) {
-  //         print("it's fine here");
-  //         print(dataItem);
-  //         return Subscription.fromJson(dataItem);
-  //       });
-  //     } else {
-  //       print("not successful event");
-  //     }
-  //   } else {
-  //     print("Failed ....");
-  //     print(response.statusCode);
-  //     print(response.body);
-  //   }
-  // }
 
   getSubscriptionItem(id) async {
     return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false,
