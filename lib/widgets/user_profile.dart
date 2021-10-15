@@ -76,7 +76,9 @@ class UserProfile extends StatelessWidget {
                         SizedBox(height: 6),
                         DetailStrip(text: user.country, imageURL: 'flag'),
                         SizedBox(height: 6),
-                        DetailStrip(text: user.dateJoined.split(' ')[0], imageURL: 'date'),
+                        DetailStrip(
+                            text: user.dateJoined.split(' ')[0],
+                            imageURL: 'date'),
                       ],
                     ),
                   ),
@@ -92,7 +94,12 @@ class UserProfile extends StatelessWidget {
                 size: Sizes.small,
                 label: 'Logout',
                 color: kAdeoBlue,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) {
+                    return Logout();
+                  }), (route) => false);
+                },
               ),
             )
           ],
