@@ -102,15 +102,12 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Text(
                             "Hello,",
-                            style:
-                                TextStyle(color: Colors.black26, fontSize: 12),
+                            style: TextStyle(color: Colors.black26, fontSize: 12),
                           ),
                           Text(
                             widget.user.name,
                             style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -170,8 +167,7 @@ class _HomePageState extends State<HomePage> {
                               if (snapshot.hasError)
                                 return Text('Error: ${snapshot.error}');
                               else if (snapshot.data != null) {
-                                List<TestTaken> items =
-                                    snapshot.data as List<TestTaken>;
+                                List<TestTaken> items = snapshot.data as List<TestTaken>;
 
                                 return Expanded(
                                   child: SingleChildScrollView(
@@ -180,34 +176,27 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(height: 44),
                                         for (int i = 0; i < items.length; i++)
                                           Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 0, 24),
+                                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
                                             child: HomeCard(
-                                              timeAgo: timeago
-                                                  .format(items[i].datetime!),
-                                              activityTypeIconURL:
-                                                  'assets/icons/edit.png',
-                                              vendoLogoURL:
-                                                  'assets/icons/edeo_logo.png',
+                                              timeAgo: timeago.format(items[i].datetime!),
+                                              activityTypeIconURL: 'assets/icons/edit.png',
+                                              vendoLogoURL: 'assets/icons/edeo_logo.png',
                                               footerCenterText:
                                                   '${items[i].jsonResponses.length} Questions',
-                                              footerRightText:
-                                                  items[i].usedTimeText,
+                                              footerRightText: items[i].usedTimeText,
                                               centralWidget: Column(
                                                 children: [
                                                   SizedBox(
                                                     width: 210,
                                                     child: Text(
                                                       items[i].testname!,
-                                                      softWrap: false,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textAlign:
-                                                          TextAlign.center,
+                                                      softWrap: true,
+                                                      maxLines: 2,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.center,
                                                       style: TextStyle(
                                                         fontSize: 18.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        fontWeight: FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
@@ -220,17 +209,14 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ],
                                               ),
-                                              centerRightWidget:
-                                                  CircularProgressIndicatorWrapper(
+                                              centerRightWidget: CircularProgressIndicatorWrapper(
                                                 progress: items[i].correct! /
                                                     items[i].totalQuestions *
                                                     100,
                                               ),
-                                              colors: getColorGradient(
-                                                  enumFromString(
-                                                          TestType.values,
-                                                          items[i].testType) ??
-                                                      TestType.NONE),
+                                              // colors: getColorGradient(enumFromString(
+                                              //         TestType.values, items[i].testType) ??
+                                              //     TestType.NONE),
                                             ),
                                           ),
                                       ],
@@ -238,8 +224,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               } else if (snapshot.data == null)
-                                return NoSubWidget(
-                                    widget.user, widget.callback);
+                                return NoSubWidget(widget.user, widget.callback);
                               else
                                 return Column(
                                   children: [
@@ -247,8 +232,7 @@ class _HomePageState extends State<HomePage> {
                                       height: 100,
                                     ),
                                     Center(
-                                        child: Text(widget.user.email ??
-                                            "Something isn't right")),
+                                        child: Text(widget.user.email ?? "Something isn't right")),
                                     SizedBox(height: 100),
                                   ],
                                 );
@@ -342,10 +326,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                 )),
             TextSpan(
                 text: "No",
-                style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 25, color: Colors.red, fontWeight: FontWeight.bold)),
             TextSpan(
                 text: " Subscriptions",
                 style: TextStyle(
@@ -420,12 +401,9 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                 height: 44,
                 child: OutlinedButton(
                     style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all(Color(0xFF00C664)),
-                      side: MaterialStateProperty.all(BorderSide(
-                          color: Color(0xFF00C664),
-                          width: 1,
-                          style: BorderStyle.solid)),
+                      foregroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
+                      side: MaterialStateProperty.all(
+                          BorderSide(color: Color(0xFF00C664), width: 1, style: BorderStyle.solid)),
                     ),
                     onPressed: () {
                       widget.callback!();
@@ -437,16 +415,12 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                 height: 44,
                 child: OutlinedButton(
                     style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all(Color(0xFF00ABE0)),
-                      side: MaterialStateProperty.all(BorderSide(
-                          color: Color(0xFF00ABE0),
-                          width: 1,
-                          style: BorderStyle.solid)),
+                      foregroundColor: MaterialStateProperty.all(Color(0xFF00ABE0)),
+                      side: MaterialStateProperty.all(
+                          BorderSide(color: Color(0xFF00ABE0), width: 1, style: BorderStyle.solid)),
                     ),
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                         return SelectLevel(widget.user);
                       }));
                     },

@@ -1,11 +1,11 @@
-import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
-import 'package:ecoach/widgets/performance_detail_snippet_vertical.dart';
-import 'package:ecoach/widgets/speed_arc.dart';
-import 'package:ecoach/widgets/superscripted_denominator_fraction_horizontal.dart';
+// import 'package:ecoach/utils/constants.dart';
+// import 'package:ecoach/utils/style_sheet.dart';
+// import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
+// import 'package:ecoach/widgets/performance_detail_snippet_vertical.dart';
+// import 'package:ecoach/widgets/speed_arc.dart';
+// import 'package:ecoach/widgets/superscripted_denominator_fraction_horizontal.dart';
 import 'package:flutter/material.dart';
-import 'package:signal_strength_indicator/signal_strength_indicator.dart';
+// import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 
 class HomeCard extends StatefulWidget {
   const HomeCard({
@@ -138,189 +138,189 @@ class _HomeCardState extends State<HomeCard> {
               ],
             ),
           ),
-          if (expanded)
-            Container(
-              width: double.infinity,
-              decoration: gradient,
-              padding: EdgeInsets.only(
-                top: 32.0,
-                bottom: 20.0,
-                left: 16.0,
-                right: 16.0,
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    child: Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            children: [
-                              PerformanceDetailSnippetVertical(
-                                label: 'Rank',
-                                content: SuperScriptedDenominatorFractionHorizontal(
-                                  numerator: 18,
-                                  denomenator: 305,
-                                  numeratorColor: Color(0x44FFFFFF),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/icons/progress_up.png',
-                                    fit: BoxFit.fill,
-                                  ),
-                                  Text(
-                                    '3',
-                                    style: TextStyle(
-                                      color: Color(0x88FFFFFF),
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          SizedBox(width: 12),
-                          Column(
-                            children: [
-                              PerformanceDetailSnippetVertical(
-                                label: 'Points',
-                                content: SuperScriptedDenominatorFractionHorizontal(
-                                  numerator: 205,
-                                  denomenator: 505,
-                                  numeratorColor: Color(0x44FFFFFF),
-                                ),
-                              ),
-                              Text(
-                                '+3pts',
-                                style: TextStyle(
-                                  color: Color(0x88FFFFFF),
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(width: 12),
-                          PerformanceDetailSnippetVertical(
-                            label: 'Strength',
-                            content: Column(
-                              children: [
-                                SignalStrengthIndicator.bars(
-                                  value: 0.8,
-                                  size: 44,
-                                  barCount: 5,
-                                  radius: Radius.circular(4.0),
-                                  levels: <num, Color>{
-                                    0.25: Colors.red,
-                                    0.50: Colors.yellow,
-                                    0.75: Colors.green,
-                                  },
-                                  inactiveColor: Colors.black26,
-                                  activeColor: Colors.white,
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '+2.5% gained',
-                                  style: TextStyle(
-                                    color: Color(0x88FFFFFF),
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    child: Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            children: [
-                              PerformanceDetailSnippetVertical(
-                                label: 'Exposure',
-                                verticalSpacing: 12.0,
-                                content: CircularProgressIndicatorWrapper(
-                                  progress: 65,
-                                  subCenterText: 'complete',
-                                  size: ProgressIndicatorSize.large,
-                                  progressColor: kProgressColors[3],
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                '+2.5% covered',
-                                style: TextStyle(
-                                  color: Color(0x88FFFFFF),
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(width: 12),
-                          Column(
-                            children: [
-                              PerformanceDetailSnippetVertical(
-                                label: 'Mastery',
-                                verticalSpacing: 12.0,
-                                content: CircularProgressIndicatorWrapper(
-                                  progress: 85,
-                                  size: ProgressIndicatorSize.large,
-                                  progressColor: kProgressColors[4],
-                                  subCenterText: 'avg. score',
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                '+2.5% gained',
-                                style: TextStyle(
-                                  color: Color(0x88FFFFFF),
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(width: 12),
-                          PerformanceDetailSnippetVertical(
-                            label: 'Speed',
-                            verticalSpacing: 12.0,
-                            content: Column(
-                              children: [
-                                SpeedArc(speed: 2.5),
-                                SizedBox(height: 4),
-                                Text(
-                                  '+0.5 q/m',
-                                  style: TextStyle(
-                                    color: Color(0x88FFFFFF),
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
+          // if (expanded)
+          //   Container(
+          //     width: double.infinity,
+          //     decoration: gradient,
+          //     padding: EdgeInsets.only(
+          //       top: 32.0,
+          //       bottom: 20.0,
+          //       left: 16.0,
+          //       right: 16.0,
+          //     ),
+          //     child: Column(
+          //       children: [
+          //         Container(
+          //           width: double.infinity,
+          //           child: Expanded(
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 Column(
+          //                   children: [
+          //                     PerformanceDetailSnippetVertical(
+          //                       label: 'Rank',
+          //                       content: SuperScriptedDenominatorFractionHorizontal(
+          //                         numerator: 18,
+          //                         denomenator: 305,
+          //                         numeratorColor: Color(0x44FFFFFF),
+          //                       ),
+          //                     ),
+          //                     Row(
+          //                       children: [
+          //                         Image.asset(
+          //                           'assets/icons/progress_up.png',
+          //                           fit: BoxFit.fill,
+          //                         ),
+          //                         Text(
+          //                           '3',
+          //                           style: TextStyle(
+          //                             color: Color(0x88FFFFFF),
+          //                             fontSize: 12.0,
+          //                             fontWeight: FontWeight.w600,
+          //                           ),
+          //                         ),
+          //                       ],
+          //                     )
+          //                   ],
+          //                 ),
+          //                 SizedBox(width: 12),
+          //                 Column(
+          //                   children: [
+          //                     PerformanceDetailSnippetVertical(
+          //                       label: 'Points',
+          //                       content: SuperScriptedDenominatorFractionHorizontal(
+          //                         numerator: 205,
+          //                         denomenator: 505,
+          //                         numeratorColor: Color(0x44FFFFFF),
+          //                       ),
+          //                     ),
+          //                     Text(
+          //                       '+3pts',
+          //                       style: TextStyle(
+          //                         color: Color(0x88FFFFFF),
+          //                         fontSize: 12.0,
+          //                         fontWeight: FontWeight.w600,
+          //                       ),
+          //                     )
+          //                   ],
+          //                 ),
+          //                 SizedBox(width: 12),
+          //                 PerformanceDetailSnippetVertical(
+          //                   label: 'Strength',
+          //                   content: Column(
+          //                     children: [
+          //                       SignalStrengthIndicator.bars(
+          //                         value: 0.8,
+          //                         size: 44,
+          //                         barCount: 5,
+          //                         radius: Radius.circular(4.0),
+          //                         levels: <num, Color>{
+          //                           0.25: Colors.red,
+          //                           0.50: Colors.yellow,
+          //                           0.75: Colors.green,
+          //                         },
+          //                         inactiveColor: Colors.black26,
+          //                         activeColor: Colors.white,
+          //                       ),
+          //                       SizedBox(height: 4),
+          //                       Text(
+          //                         '+2.5% gained',
+          //                         style: TextStyle(
+          //                           color: Color(0x88FFFFFF),
+          //                           fontSize: 12.0,
+          //                           fontWeight: FontWeight.w600,
+          //                         ),
+          //                       )
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //         SizedBox(height: 20),
+          //         Container(
+          //           width: double.infinity,
+          //           child: Expanded(
+          //             child: Row(
+          //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //               crossAxisAlignment: CrossAxisAlignment.start,
+          //               children: [
+          //                 Column(
+          //                   children: [
+          //                     PerformanceDetailSnippetVertical(
+          //                       label: 'Exposure',
+          //                       verticalSpacing: 12.0,
+          //                       content: CircularProgressIndicatorWrapper(
+          //                         progress: 65,
+          //                         subCenterText: 'complete',
+          //                         size: ProgressIndicatorSize.large,
+          //                         progressColor: kProgressColors[3],
+          //                       ),
+          //                     ),
+          //                     SizedBox(height: 4),
+          //                     Text(
+          //                       '+2.5% covered',
+          //                       style: TextStyle(
+          //                         color: Color(0x88FFFFFF),
+          //                         fontSize: 12.0,
+          //                         fontWeight: FontWeight.w600,
+          //                       ),
+          //                     )
+          //                   ],
+          //                 ),
+          //                 SizedBox(width: 12),
+          //                 Column(
+          //                   children: [
+          //                     PerformanceDetailSnippetVertical(
+          //                       label: 'Mastery',
+          //                       verticalSpacing: 12.0,
+          //                       content: CircularProgressIndicatorWrapper(
+          //                         progress: 85,
+          //                         size: ProgressIndicatorSize.large,
+          //                         progressColor: kProgressColors[4],
+          //                         subCenterText: 'avg. score',
+          //                       ),
+          //                     ),
+          //                     SizedBox(height: 4),
+          //                     Text(
+          //                       '+2.5% gained',
+          //                       style: TextStyle(
+          //                         color: Color(0x88FFFFFF),
+          //                         fontSize: 12.0,
+          //                         fontWeight: FontWeight.w600,
+          //                       ),
+          //                     )
+          //                   ],
+          //                 ),
+          //                 SizedBox(width: 12),
+          //                 PerformanceDetailSnippetVertical(
+          //                   label: 'Speed',
+          //                   verticalSpacing: 12.0,
+          //                   content: Column(
+          //                     children: [
+          //                       SpeedArc(speed: 2.5),
+          //                       SizedBox(height: 4),
+          //                       Text(
+          //                         '+0.5 q/m',
+          //                         style: TextStyle(
+          //                           color: Color(0x88FFFFFF),
+          //                           fontSize: 12.0,
+          //                           fontWeight: FontWeight.w600,
+          //                         ),
+          //                       )
+          //                     ],
+          //                   ),
+          //                 )
+          //               ],
+          //             ),
+          //           ),
+          //         )
+          //       ],
+          //     ),
+          //   )
         ],
       ),
     );
