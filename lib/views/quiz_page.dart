@@ -225,9 +225,7 @@ class _QuizViewState extends State<QuizView> {
         testname: widget.name,
         testType: widget.type.toString(),
         testTime: widget.disableTime ? -1 : duration.inSeconds,
-        usedTime: widget.disableTime
-            ? DateTime.now().difference(startTime).inSeconds
-            : startingDuration.inSeconds - countdownInSeconds,
+        usedTime: DateTime.now().difference(startTime).inSeconds,
         responses: responses,
         score: score,
         correct: correct,
