@@ -62,7 +62,7 @@ class _QuizViewState extends State<QuizView> {
 
   bool enabled = true;
   bool savedTest = false;
-  late Duration duration, resetDuration;
+  late Duration duration, resetDuration, startingDuration;
 
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
@@ -87,6 +87,7 @@ class _QuizViewState extends State<QuizView> {
     numberingController = ItemScrollController();
     duration = Duration(seconds: widget.timeInSec);
     resetDuration = Duration(seconds: widget.timeInSec);
+    startingDuration = duration;
 
     timerController = CustomTimerController();
     timerController.onSetStart(() {});
@@ -226,7 +227,7 @@ class _QuizViewState extends State<QuizView> {
         testTime: widget.disableTime ? -1 : duration.inSeconds,
         usedTime: widget.disableTime
             ? DateTime.now().difference(startTime).inSeconds
-            : duration.inSeconds - countdownInSeconds,
+            : startingDuration.inSeconds - countdownInSeconds,
         responses: responses,
         score: score,
         correct: correct,

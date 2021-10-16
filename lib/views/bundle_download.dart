@@ -27,10 +27,15 @@ class BundleDownload extends StatefulWidget {
 class _BundleDownloadState extends State<BundleDownload> {
   List<Map<String, dynamic>> courseList = [];
   List<Map<String, dynamic>> selectedTableRows = [];
-
+  late String subName;
   @override
   void initState() {
     super.initState();
+
+    subName = widget.bundle.name!;
+    subName =
+        subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
+
     print(widget.bundle.subscriptionItems);
     SubscriptionItemDB().subscriptionItems(widget.bundle.planId!).then((items) {
       setState(() {
@@ -181,13 +186,15 @@ class _BundleDownloadState extends State<BundleDownload> {
                             columns: [
                               DataColumn(label: Text('Time')),
                               DataColumn(label: Text('Course')),
-                              DataColumn(label: Text('Download Status')),
+                              DataColumn(label: Text('Status')),
                             ],
                             rows: [
                               for (int i = 0; i < courseList.length; i++)
                                 makeDataRow(
                                   cell1: courseList[i]['time'],
-                                  cell2: courseList[i]['courseName'],
+                                  cell2: courseList[i]['courseName']
+                                      .toUpperCase()
+                                      .replaceFirst(subName.toUpperCase(), ""),
                                   cell3: courseList[i]['downloadStatus'],
                                   selected:
                                       selectedTableRows.contains(courseList[i]),
@@ -290,22 +297,28 @@ DataRow makeDataRow({
     color: MaterialStateProperty.resolveWith(getColor),
     cells: [
       DataCell(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(cell1['time']),
-            Text(
-              cell1['date'],
-              style: kTableBodySubText.copyWith(
-                color: kBlack38,
+        SizedBox(
+          width: 60,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(cell1['time']),
+              Text(
+                cell1['date'],
+                style: kTableBodySubText.copyWith(
+                  color: kBlack38,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-      DataCell(Text(
-        cell2,
-        softWrap: true,
+      DataCell(SizedBox(
+        width: 100,
+        child: Text(
+          cell2,
+          softWrap: true,
+        ),
       )),
       DataCell(Text(cell3)),
     ],

@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         backgroundColor: Color(0xFFFFFFFF),
         body: Container(
+          color: Color(0xFFFFFFFF),
           child: new Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 30, 24, 0),
             child: Center(
