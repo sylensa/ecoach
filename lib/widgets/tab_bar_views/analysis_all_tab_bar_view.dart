@@ -292,13 +292,19 @@ DataRow makeDataRow({
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Text(cell2Text1), Text(cell2Text2, style: kTableBodySubText)],
+          children: [
+            Text(
+              cell2Text1,
+              softWrap: true,
+            ),
+            Text(cell2Text2, style: kTableBodySubText)
+          ],
         ),
       ),
       DataCell(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text(cell3Text)],
+          children: [Text(cell3Text, softWrap: true)],
         ),
       ),
       DataCell(

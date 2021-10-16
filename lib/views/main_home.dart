@@ -34,8 +34,7 @@ class MainHomePage extends StatefulWidget {
   _MainHomePageState createState() => _MainHomePageState();
 }
 
-class _MainHomePageState extends State<MainHomePage>
-    with WidgetsBindingObserver {
+class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver {
   late List<Widget> _children;
   int currentIndex = 0;
 
@@ -107,8 +106,7 @@ class _MainHomePageState extends State<MainHomePage>
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context,
-            message: "downloading subscription\n data.....");
+        showLoaderDialog(context, message: "downloading subscription\n data.....");
         List<Subscription>? subscriptions = await getSubscriptionData();
         if (subscriptions == null) {
           Navigator.pop(context);
@@ -118,24 +116,20 @@ class _MainHomePageState extends State<MainHomePage>
         await SubscriptionDB().insertAll(subscriptions);
         Navigator.pop(context);
 
-        List<SubscriptionItem> items =
-            await SubscriptionItemDB().allSubscriptionItems();
+        List<SubscriptionItem> items = await SubscriptionItemDB().allSubscriptionItems();
         print("all subcriptions items");
         for (int i = 0; i < items.length; i++) {
           print("downloading ${items[i].name}\n data");
           showDownloadDialog(context,
-              message: "downloading..... ${items[i].name} data",
-              current: i,
-              total: items.length);
-          SubscriptionItem? subscriptionItem =
-              await getSubscriptionItem(items[i].id!);
+              message: "downloading..... ${items[i].name} data", current: i, total: items.length);
+          SubscriptionItem? subscriptionItem = await getSubscriptionItem(items[i].id!);
 
           await CourseDB().insert(subscriptionItem!.course!);
           await QuizDB().insertAll(subscriptionItem.quizzes!);
           Navigator.pop(context);
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Subscription data download successfully")));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Subscription data download successfully")));
       }
     });
   }
@@ -147,15 +141,13 @@ class _MainHomePageState extends State<MainHomePage>
   }
 
   Future<List<Subscription>?> getSubscriptionData() async {
-    return await ApiCall<Subscription>(AppUrl.subscriptionData, params: {},
-        create: (json) {
+    return await ApiCall<Subscription>(AppUrl.subscriptionData, params: {}, create: (json) {
       return Subscription.fromJson(json);
     }).get(context);
   }
 
   getSubscriptionItem(id) async {
-    return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false,
-        create: (json) {
+    return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false, create: (json) {
       return SubscriptionItem.fromJson(json);
     }).get(context);
   }
