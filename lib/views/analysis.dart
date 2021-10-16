@@ -5,6 +5,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
 import 'package:ecoach/widgets/tab_bar_views/exams_tab_bar_view.dart';
+import 'package:ecoach/widgets/tab_bar_views/topics_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 
 class AnalysisView extends StatefulWidget {
@@ -35,7 +36,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
       });
     });
 
-    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 2, length: 4, vsync: this);
   }
 
   @override
@@ -75,7 +76,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
                                 child: Text("No data yet...."),
                               ),
                         ExamsTabBarView(),
-                        Center(child: Text('Topics')),
+                        TopicsTabBarView(),
                         Center(child: Text('Analysis')),
                       ],
                     ),
