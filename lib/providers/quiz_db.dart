@@ -128,6 +128,15 @@ class QuizDB {
     return questions;
   }
 
+  Future<int> quizCount(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!
+        .query('quizzes', where: "course_id = ?", whereArgs: [courseId]);
+
+    return maps.length;
+  }
+
   Future<int> getQuestionsCount(int quizId) async {
     final Database? db = await DBProvider.database;
 

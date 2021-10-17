@@ -472,7 +472,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
         : Container(
             child: Expanded(
               child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                       margin: EdgeInsets.only(left: 7),

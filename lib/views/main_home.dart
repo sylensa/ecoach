@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/api_response.dart';
-import 'package:ecoach/api/file_downloader.dart';
+import 'package:ecoach/api/package_downloader.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
@@ -86,32 +86,6 @@ class _MainHomePageState extends State<MainHomePage>
     }
   }
 
-  Future<bool> packageExist(String name) async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, name);
-
-    final file = File(path);
-    return await file.exists();
-  }
-
-  Future<String> readSubscriptionPlan(String name) async {
-    try {
-      Directory documentsDirectory = await getApplicationDocumentsDirectory();
-      String path = join(documentsDirectory.path, name);
-
-      final file = File(path);
-
-      // Read the file
-      final contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If encountering an error, return 0
-      print(e);
-      return "error";
-    }
-  }
-
   bool compareSubscriptions(
       List<Subscription> freshSubscriptions, List<Subscription> subscriptions) {
     if (freshSubscriptions.length != subscriptions.length) {
@@ -148,52 +122,65 @@ class _MainHomePageState extends State<MainHomePage>
         await SubscriptionDB().insertAll(freshSubscriptions);
         Navigator.pop(context);
 
-        for (int i = 0; i < freshSubscriptions.length; i++) {
-          String filename = freshSubscriptions[i].name!;
-          if (await packageExist(filename)) {
-            continue;
-          }
-          FileDownloader fileDownloader = FileDownloader(
-              AppUrl.subscriptionDownload + '/${freshSubscriptions[i].planId}?',
-              filename: filename);
+        try {
+          for (int i = 0; i < freshSubscriptions.length; i++) {
+            String filename = freshSubscriptions[i].name!;
+            if (await packageExist(filename)) {
+              continue;
+            }
+            FileDownloader fileDownloader = FileDownloader(
+                AppUrl.subscriptionDownload +
+                    '/${freshSubscriptions[i].planId}?',
+                filename: filename);
 
-          await fileDownloader.downloadFile((percentage) {
-            print("download: ${percentage}%");
+            await fileDownloader.downloadFile((percentage) {
+              print("download: ${percentage}%");
+              setState(() {
+                this.percentage = percentage;
+              });
+            });
+          }
+
+          showLoaderDialog(context, message: "finalizing setup.....");
+          for (int i = 0; i < freshSubscriptions.length; i++) {
+            String filename = freshSubscriptions[i].name!;
+            print("reading file $filename");
+            String plan = await readSubscriptionPlan(filename);
+            Map<String, dynamic> response = jsonDecode(plan);
+            List<SubscriptionItem> items = [];
+            response['subscription_items'].forEach((list) {
+              items.add(SubscriptionItem.fromJson(list));
+            });
+
+            for (int i = 0; i < items.length; i++) {
+              print("saving ${items[i].name}\n data");
+              SubscriptionItem? subscriptionItem = items[i];
+
+              await CourseDB().insert(subscriptionItem.course!);
+              await QuizDB().insertAll(subscriptionItem.quizzes!);
+            }
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Subscription data download successfully")));
+        } catch (m, e) {
+          setState(() {
+            percentage = 0;
+          });
+          print("Error>>>>>>>> download failed");
+          print(m);
+          print(e);
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Download failed")));
+        } finally {
+          Navigator.pop(context);
+          UserPreferences().getUser().then((user) {
             setState(() {
-              this.percentage = percentage;
+              percentage = 0;
+              widget.user = user!;
             });
           });
         }
-
-        showLoaderDialog(context, message: "finalizing setup.....");
-        for (int i = 0; i < freshSubscriptions.length; i++) {
-          String filename = freshSubscriptions[i].name!;
-          print("reading file $filename");
-          String plan = await readSubscriptionPlan(filename);
-          Map<String, dynamic> response = jsonDecode(plan);
-          List<SubscriptionItem> items = [];
-          response['subscription_items'].forEach((list) {
-            items.add(SubscriptionItem.fromJson(list));
-          });
-
-          for (int i = 0; i < items.length; i++) {
-            print("saving ${items[i].name}\n data");
-            SubscriptionItem? subscriptionItem = items[i];
-
-            await CourseDB().insert(subscriptionItem.course!);
-            await QuizDB().insertAll(subscriptionItem.quizzes!);
-          }
-        }
-        Navigator.pop(context);
-        UserPreferences().getUser().then((user) {
-          setState(() {
-            percentage = 0;
-            widget.user = user!;
-          });
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Subscription data download successfully")));
       }
     });
   }

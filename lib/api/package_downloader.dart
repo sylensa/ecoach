@@ -33,3 +33,29 @@ class FileDownloader {
     });
   }
 }
+
+Future<bool> packageExist(String name) async {
+  Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  String path = join(documentsDirectory.path, name);
+
+  final file = File(path);
+  return await file.exists();
+}
+
+Future<String> readSubscriptionPlan(String name) async {
+  try {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, name);
+
+    final file = File(path);
+
+    // Read the file
+    final contents = await file.readAsString();
+
+    return contents;
+  } catch (e) {
+    // If encountering an error, return 0
+    print(e);
+    return "error";
+  }
+}
