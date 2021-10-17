@@ -12,6 +12,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/notes_bottom_button.dart';
 import 'package:ecoach/widgets/search_bars/notes_search_bar.dart';
@@ -182,6 +183,7 @@ class _NotesTopicsState extends State<NotesTopics> {
                                                     widget.user,
                                                     questions,
                                                     name: topic.name!,
+                                                    theme: QuizTheme.BLUE,
                                                     type: TestType.KNOWLEDGE,
                                                     category: TestCategory.TOPIC
                                                         .toString()

@@ -1,6 +1,7 @@
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../cards/analysis_info_snippet_card.dart';
 
@@ -43,7 +44,9 @@ class AnalysisInfoSnippetCardTabBar extends StatelessWidget {
                         subLabels![i],
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: theme.toLowerCase() == 'dark' ? Colors.white : kDefaultBlack),
+                            color: theme.toLowerCase() == 'dark'
+                                ? Colors.white
+                                : kDefaultBlack),
                       ),
                     ],
                   ),
@@ -53,7 +56,9 @@ class AnalysisInfoSnippetCardTabBar extends StatelessWidget {
                       SizedBox(height: 4),
                       CustomPaint(
                         painter: TraingularActiveIndicator(
-                          theme.toLowerCase() == 'dark' ? kAnalysisScreenActiveColor : Colors.white,
+                          theme.toLowerCase() == 'dark'
+                              ? kAnalysisScreenActiveColor
+                              : Colors.white,
                         ),
                         size: Size(28.0, 16.0),
                       )

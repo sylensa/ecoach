@@ -15,7 +15,8 @@ class CourseDB {
     }
     final Database? db = await DBProvider.database;
     await db!.transaction((txn) async {
-      txn.insert(
+      Batch batch = txn.batch();
+      batch.insert(
         'courses',
         course.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
@@ -24,14 +25,14 @@ class CourseDB {
       if (questions.length > 0) {
         for (int i = 0; i < questions.length; i++) {
           Question question = questions[i];
-          txn.insert(
+          batch.insert(
             'questions',
             question.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
           Topic? topic = question.topic;
           if (topic != null) {
-            txn.insert(
+            batch.insert(
               'topics',
               topic.toJson(),
               conflictAlgorithm: ConflictAlgorithm.replace,
@@ -40,16 +41,17 @@ class CourseDB {
           List<Answer> answers = question.answers!;
           if (answers.length > 0) {
             for (int i = 0; i < answers.length; i++) {
-              txn.insert(
+              batch.insert(
                 'answers',
                 answers[i].toJson(),
                 conflictAlgorithm: ConflictAlgorithm.replace,
               );
             }
           }
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(Duration(milliseconds: 200));
         }
       }
+      batch.commit();
     });
   }
 

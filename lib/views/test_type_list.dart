@@ -3,6 +3,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -228,6 +229,7 @@ class _MockListViewState extends State<TestTypeListView> {
                                     questions,
                                     name: testsSelected[0].name,
                                     type: widget.type,
+                                    theme: QuizTheme.BLUE,
                                     category: testsSelected[0]
                                         .category
                                         .toString()
@@ -236,7 +238,7 @@ class _MockListViewState extends State<TestTypeListView> {
                                         ? widget.time!
                                         : widget.type == TestType.SPEED
                                             ? 30
-                                            : 40 * 60,
+                                            : questions.length * 60,
                                     course: widget.course,
                                   );
                                 }));

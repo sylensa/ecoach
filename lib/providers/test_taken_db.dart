@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -36,15 +38,31 @@ class TestTakenDB {
     await batch.commit(noResult: true);
   }
 
-  Future<List<TestTaken>> testsTaken() async {
+  Future<List<TestTaken>> testsTaken({String? search, int? limit}) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps =
-        await db!.query('tests_taken', orderBy: "created_at DESC");
+    final List<Map<String, dynamic>> maps = await db!
+        .query('tests_taken', orderBy: "created_at DESC", limit: limit);
 
-    return List.generate(maps.length, (i) {
-      return TestTaken.fromJson(maps[i]);
-    });
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      Course? course = await CourseDB().getCourseById(test.courseId!);
+
+      if (course != null) {
+        test.courseName = course.name!;
+        tests.add(test);
+      }
+    }
+
+    if (search != null) {
+      tests = tests
+          .where((test) =>
+              test.testname!.toLowerCase().contains(search.toLowerCase()))
+          .toList();
+    }
+
+    return tests;
   }
 
   Future<List<TestTaken>> courseTestsTaken(int courseId) async {

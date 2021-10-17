@@ -19,13 +19,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+enum QuizTheme { GREEN, BLUE }
+
 class QuizView extends StatefulWidget {
   QuizView(this.user, this.questions,
       {Key? key,
       this.level,
       this.course,
       required this.name,
-      this.type = "NONE",
+      this.type = TestType.NONE,
+      this.theme = QuizTheme.GREEN,
       this.timeInSec = 60,
       this.speedTest = false,
       this.disableTime = false,
@@ -40,7 +43,8 @@ class QuizView extends StatefulWidget {
   String name;
   bool disableTime;
   bool speedTest;
-  final String type;
+  final TestType type;
+  QuizTheme theme;
 
   @override
   _QuizViewState createState() => _QuizViewState();
@@ -58,7 +62,7 @@ class _QuizViewState extends State<QuizView> {
 
   bool enabled = true;
   bool savedTest = false;
-  late Duration duration, resetDuration;
+  late Duration duration, resetDuration, startingDuration;
 
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
@@ -67,13 +71,23 @@ class _QuizViewState extends State<QuizView> {
 
   bool useTex = false;
   int finalQuestion = 0;
+  late Color backgroundColor, backgroundColor2;
 
   @override
   void initState() {
+    if (widget.theme == QuizTheme.GREEN) {
+      backgroundColor = const Color(0xFF00C664);
+      backgroundColor2 = const Color(0xFF05A958);
+    } else {
+      backgroundColor = const Color(0xFF5DA5EA);
+      backgroundColor2 = const Color(0xFF5DA5CA);
+    }
+
     controller = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
     duration = Duration(seconds: widget.timeInSec);
     resetDuration = Duration(seconds: widget.timeInSec);
+    startingDuration = duration;
 
     timerController = CustomTimerController();
     timerController.onSetStart(() {});
@@ -209,11 +223,9 @@ class _QuizViewState extends State<QuizView> {
         totalQuestions: widget.questions.length,
         courseId: widget.course!.id,
         testname: widget.name,
-        testType: widget.type,
+        testType: widget.type.toString(),
         testTime: widget.disableTime ? -1 : duration.inSeconds,
-        usedTime: widget.disableTime
-            ? DateTime.now().difference(startTime).inSeconds
-            : duration.inSeconds - countdownInSeconds,
+        usedTime: DateTime.now().difference(startTime).inSeconds,
         responses: responses,
         score: score,
         correct: correct,
@@ -333,7 +345,7 @@ class _QuizViewState extends State<QuizView> {
       },
       child: Scaffold(
         body: Container(
-          decoration: BoxDecoration(color: Color(0xFF00C664)),
+          decoration: BoxDecoration(color: backgroundColor),
           child: Stack(children: [
             Positioned(
               top: 95,
@@ -354,6 +366,7 @@ class _QuizViewState extends State<QuizView> {
                         position: i,
                         enabled: enabled,
                         useTex: useTex,
+                        theme: widget.theme,
                         callback: (Answer answer) {
                           if (widget.speedTest && answer.value == 0) {
                             completeQuiz();
@@ -438,13 +451,13 @@ class _QuizViewState extends State<QuizView> {
                           if (remaining.duration.inSeconds == 0) {
                             return Text("Time Up",
                                 style: TextStyle(
-                                    color: Color(0xFF00C664), fontSize: 18));
+                                    color: backgroundColor, fontSize: 18));
                           }
 
                           return Text(
                               "${remaining.minutes}:${remaining.seconds}",
                               style: TextStyle(
-                                  color: Color(0xFF00C664), fontSize: 28));
+                                  color: backgroundColor, fontSize: 28));
                         },
                         controller: timerController,
                         from: duration,
@@ -460,8 +473,7 @@ class _QuizViewState extends State<QuizView> {
                         },
                       )
                     : Text("Time Up",
-                        style:
-                            TextStyle(color: Color(0xFF00C664), fontSize: 18)),
+                        style: TextStyle(color: backgroundColor, fontSize: 18)),
               ),
             ),
             Positioned(
@@ -580,6 +592,8 @@ class _QuizViewState extends State<QuizView> {
             context: context,
             builder: (context) {
               return PauseDialog(
+                backgroundColor: backgroundColor,
+                backgroundColor2: backgroundColor2,
                 time: countdownInSeconds,
                 callback: (action) {
                   Navigator.pop(context);
@@ -601,10 +615,16 @@ class _QuizViewState extends State<QuizView> {
 }
 
 class PauseDialog extends StatefulWidget {
-  PauseDialog({Key? key, required this.time, required this.callback})
+  PauseDialog(
+      {Key? key,
+      required this.time,
+      required this.callback,
+      required this.backgroundColor,
+      required this.backgroundColor2})
       : super(key: key);
   int time;
   Function(String action) callback;
+  Color backgroundColor, backgroundColor2;
 
   @override
   _PauseDialogState createState() => _PauseDialogState();
@@ -629,7 +649,7 @@ class _PauseDialogState extends State<PauseDialog> {
           width: 380,
           height: 560,
           decoration: BoxDecoration(
-              color: Color(0xFF00C664),
+              color: widget.backgroundColor,
               borderRadius: BorderRadius.circular(20)),
           child: Column(
             children: [
@@ -637,7 +657,7 @@ class _PauseDialogState extends State<PauseDialog> {
                 height: 70,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color(0xFF05A958),
+                      color: widget.backgroundColor2,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(20))),
                   child: Row(
@@ -687,7 +707,7 @@ class _PauseDialogState extends State<PauseDialog> {
                 height: 70,
                 child: Container(
                     decoration: BoxDecoration(
-                        color: Color(0xFF05A958),
+                        color: widget.backgroundColor2,
                         borderRadius:
                             BorderRadius.vertical(bottom: Radius.circular(20))),
                     child: Center(

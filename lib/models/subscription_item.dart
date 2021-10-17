@@ -18,7 +18,9 @@ class SubscriptionItem {
       this.createdAt,
       this.updatedAt,
       this.course,
-      this.quizzes});
+      this.quizzes,
+      this.quizCount,
+      this.questionCount});
 
   int? id;
   String? tag;
@@ -33,6 +35,8 @@ class SubscriptionItem {
   DateTime? updatedAt;
   Course? course;
   List<Quiz>? quizzes;
+  int? quizCount;
+  int? questionCount;
 
   get dateOnly {
     return "${createdAt!.day}/${createdAt!.month}/${createdAt!.year}";

@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:intl/intl.dart';
+
 class TestTaken {
   TestTaken({
     this.id,
@@ -27,6 +31,7 @@ class TestTaken {
   int? userId;
   DateTime? datetime;
   int? courseId;
+  String? courseName;
   String? testname;
   String? testType;
   int? testId;
@@ -44,6 +49,16 @@ class TestTaken {
   int? totalRank;
   DateTime? createdAt;
   DateTime? updatedAt;
+
+  get usedTimeText {
+    num min = Duration(seconds: usedTime!).inMinutes;
+    num sec = (Duration(seconds: usedTime!).inSeconds % 60);
+    return "${NumberFormat('00').format(min)}m:${NumberFormat('00').format(sec)}s";
+  }
+
+  get jsonResponses {
+    return jsonDecode(responses);
+  }
 
   factory TestTaken.fromJson(Map<String, dynamic> json) => TestTaken(
         id: json["id"],

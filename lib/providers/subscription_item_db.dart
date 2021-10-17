@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/providers/course_db.dart';
 import 'package:ecoach/providers/database.dart';
+import 'package:ecoach/providers/questions_db.dart';
 import 'package:ecoach/providers/quiz_db.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -95,7 +98,32 @@ class SubscriptionItemDB {
         createdAt: DateTime.parse(maps[i]["created_at"]),
         updatedAt: DateTime.parse(maps[i]["updated_at"]),
         course: await CourseDB().getCourseById(int.parse(maps[i]['tag'])),
+        quizCount: await QuizDB().quizCount(int.parse(maps[i]['tag'])),
+        questionCount:
+            await QuestionDB().getTotalQuestionCount(int.parse(maps[i]['tag'])),
       ));
+    }
+    return items;
+  }
+
+  Future<List<Course>> subscriptionCourses(int planId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+        'subscription_items',
+        orderBy: "name ASC",
+        where: "plan_id = ?",
+        whereArgs: [planId]);
+
+    List<Course> items = [];
+    for (int i = 0; i < maps.length; i++) {
+      Course? course =
+          await CourseDB().getCourseById(int.parse(maps[i]['tag']));
+      print(int.parse(maps[i]['tag']));
+      if (course != null) {
+        print(course.toJson());
+        items.add(course);
+      }
     }
     return items;
   }

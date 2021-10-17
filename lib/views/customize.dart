@@ -173,14 +173,15 @@ class _CustomizeState extends State<Customize> {
 
   showTestCat(TestType testType) {
     Duration timeDuration = Duration(
-        minutes: int.parse(duration.split(":")[0]), seconds: int.parse(duration.split(":")[1]));
+        minutes: int.parse(duration.split(":")[0]),
+        seconds: int.parse(duration.split(":")[1]));
 
     getTest() {
       Future futureList;
       switch (testCategory) {
         case TestCategory.MOCK:
-          futureList =
-              TestController().getMockTests(widget.course, limit: int.parse(numberOfQuestions));
+          futureList = TestController()
+              .getMockTests(widget.course, limit: int.parse(numberOfQuestions));
           break;
 
         case TestCategory.TOPIC:
@@ -213,20 +214,22 @@ class _CustomizeState extends State<Customize> {
                 course: widget.course,
                 type: testType,
                 category: testCategory.toString().split(".")[1],
-                time: testType == TestType.SPEED ? 30 : 40 * 60,
+                time: timeDuration.inSeconds,
                 name: "Mock Test",
               );
               break;
 
             case TestCategory.TOPIC:
-              widgetView = TestTypeListView(widget.user, widget.course, data, testType,
+              widgetView = TestTypeListView(
+                  widget.user, widget.course, data, testType,
                   title: "Topic",
                   multiSelect: true,
                   questionLimit: int.parse(numberOfQuestions),
                   time: timeDuration.inSeconds);
               break;
             case TestCategory.ESSAY:
-              widgetView = TestTypeListView(widget.user, widget.course, data, testType,
+              widgetView = TestTypeListView(
+                  widget.user, widget.course, data, testType,
                   title: "Essay",
                   questionLimit: int.parse(numberOfQuestions),
                   time: timeDuration.inSeconds);
@@ -243,7 +246,8 @@ class _CustomizeState extends State<Customize> {
               );
               break;
             case TestCategory.BANK:
-              widgetView = TestTypeListView(widget.user, widget.course, data, testType,
+              widgetView = TestTypeListView(
+                  widget.user, widget.course, data, testType,
                   title: "Bank",
                   questionLimit: int.parse(numberOfQuestions),
                   time: timeDuration.inSeconds);
@@ -338,7 +342,8 @@ class _CustomizeState extends State<Customize> {
                         Expanded(
                             child: OutlinedButton(
                                 style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(Colors.white)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.white)),
                                 onPressed: () {},
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),

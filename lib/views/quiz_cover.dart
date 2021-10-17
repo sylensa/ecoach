@@ -15,6 +15,7 @@ class QuizCover extends StatelessWidget {
       required this.name,
       this.type = TestType.NONE,
       this.category = "Test",
+      this.theme = QuizTheme.GREEN,
       this.course,
       this.time = 300,
       this.diagnostic = false})
@@ -28,9 +29,16 @@ class QuizCover extends StatelessWidget {
   String? category;
   final TestType type;
   int time;
+  QuizTheme theme;
+  Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
+    if (theme == QuizTheme.GREEN) {
+      backgroundColor = const Color(0xFF00C664);
+    } else {
+      backgroundColor = const Color(0xFFAAD4FA);
+    }
     return Scaffold(
         body: questions.length == 0
             ? Container(
@@ -43,7 +51,7 @@ class QuizCover extends StatelessWidget {
                 ),
               )
             : Container(
-                color: Color(0xFF00C664),
+                color: backgroundColor,
                 child: Stack(children: [
                   Positioned(
                     top: 20,
@@ -54,7 +62,9 @@ class QuizCover extends StatelessWidget {
                       decoration: BoxDecoration(
                           image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage('assets/images/deep_pool_green.png'),
+                        image: theme == QuizTheme.GREEN
+                            ? AssetImage('assets/images/deep_pool_green.png')
+                            : AssetImage('assets/images/deep_pool_blue.png'),
                       )),
                     ),
                   ),
@@ -167,7 +177,8 @@ class QuizCover extends StatelessWidget {
                                           name: name,
                                           course: course,
                                           timeInSec: time,
-                                          type: type.toString().split(".")[1],
+                                          type: type,
+                                          theme: theme,
                                           speedTest: type == TestType.SPEED
                                               ? true
                                               : false,

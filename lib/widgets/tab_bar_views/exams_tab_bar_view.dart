@@ -80,112 +80,112 @@ class _ExamsTabBarViewState extends State<ExamsTabBarView> {
                 onActiveTabChange: handleSelectChanged,
               ),
             ),
-            Container(
-              color: kAnalysisScreenActiveColor,
-              padding: EdgeInsets.only(
-                left: 20.0,
-                right: 20.0,
-                top: 20.0,
-                bottom: 24.0,
-              ),
-              // child: Column(
-              //   children: [
-              //     BorderedDropdownButton(
-              //       value: dropdownValue,
-              //       isExpanded: false,
-              //       size: DropdownSize.medium,
-              //       items: ['all', 'value 2', 'value 3', 'value 4'],
-              //       onChanged: (String? value) {
-              //         setState(() {
-              //           dropdownValue = value ?? '';
-              //         });
-              //       },
-              //     ),
-              //     SizedBox(height: 28),
-              //     Container(
-              //       width: double.infinity,
-              //       child: Expanded(
-              //         child: Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             PerformanceDetailSnippetVertical(
-              //               label: 'Rank',
-              //               content: SuperScriptedDenominatorFractionHorizontal(
-              //                 numerator: 18,
-              //                 denomenator: 305,
-              //                 numeratorColor: Color(0x44FFFFFF),
-              //               ),
-              //             ),
-              //             SizedBox(width: 12),
-              //             PerformanceDetailSnippetVertical(
-              //               label: 'Point',
-              //               content: SuperScriptedDenominatorFractionHorizontal(
-              //                 numerator: 205,
-              //                 denomenator: 505,
-              //                 numeratorColor: Color(0x44FFFFFF),
-              //               ),
-              //             ),
-              //             SizedBox(width: 12),
-              //             PerformanceDetailSnippetVertical(
-              //               label: 'Strength',
-              //               content: SuperScriptedDenominatorFractionHorizontal(
-              //                 numerator: 18,
-              //                 denomenator: 305,
-              //                 numeratorColor: Color(0x44FFFFFF),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //     SizedBox(height: 20),
-              //     Container(
-              //       width: double.infinity,
-              //       child: Expanded(
-              //         child: Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             PerformanceDetailSnippetVertical(
-              //               label: 'Exposure',
-              //               verticalSpacing: 12.0,
-              //               content: CircularProgressIndicatorWrapper(
-              //                 progress: 100,
-              //                 progressPostFix: 'X',
-              //                 useProgressAsMainCenterText: false,
-              //                 mainCenterText: '2',
-              //                 mainCenterTextSize: ProgressIndicatorSize.large,
-              //                 size: ProgressIndicatorSize.large,
-              //                 progressColor: kProgressColors[3],
-              //               ),
-              //             ),
-              //             SizedBox(width: 12),
-              //             PerformanceDetailSnippetVertical(
-              //               label: 'Exposure',
-              //               verticalSpacing: 12.0,
-              //               content: CircularProgressIndicatorWrapper(
-              //                 progress: 85,
-              //                 size: ProgressIndicatorSize.large,
-              //                 progressColor: kProgressColors[4],
-              //                 subCenterText: 'avg. score',
-              //               ),
-              //             ),
-              //             SizedBox(width: 12),
-              //             PerformanceDetailSnippetVertical(
-              //               label: 'Speed',
-              //               verticalSpacing: 12.0,
-              //               content: SpeedArc(speed: 2.5),
-              //             )
-              //           ],
-              //         ),
-              //       ),
-              //     )
-              //   ],
-              // ),
-            ),
-            Divider(
-              height: 1.0,
-            ),
+            // Container(
+            //   color: kAnalysisScreenActiveColor,
+            //   padding: EdgeInsets.only(
+            //     left: 20.0,
+            //     right: 20.0,
+            //     top: 20.0,
+            //     bottom: 24.0,
+            //   ),
+            //   child: Column(
+            //     children: [
+            //       BorderedDropdownButton(
+            //         value: dropdownValue,
+            //         isExpanded: false,
+            //         size: Sizes.medium,
+            //         items: ['all', 'value 2', 'value 3', 'value 4'],
+            //         onChanged: (String? value) {
+            //           setState(() {
+            //             dropdownValue = value ?? '';
+            //           });
+            //         },
+            //       ),
+            //       SizedBox(height: 28),
+            //       Container(
+            //         width: double.infinity,
+            //         child: Expanded(
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //             children: [
+            //               PerformanceDetailSnippetVertical(
+            //                 label: 'Rank',
+            //                 content: SuperScriptedDenominatorFractionHorizontal(
+            //                   numerator: 18,
+            //                   denomenator: 305,
+            //                   numeratorColor: Color(0x44FFFFFF),
+            //                 ),
+            //               ),
+            //               SizedBox(width: 12),
+            //               PerformanceDetailSnippetVertical(
+            //                 label: 'Point',
+            //                 content: SuperScriptedDenominatorFractionHorizontal(
+            //                   numerator: 205,
+            //                   denomenator: 505,
+            //                   numeratorColor: Color(0x44FFFFFF),
+            //                 ),
+            //               ),
+            //               SizedBox(width: 12),
+            //               PerformanceDetailSnippetVertical(
+            //                 label: 'Strength',
+            //                 content: SuperScriptedDenominatorFractionHorizontal(
+            //                   numerator: 18,
+            //                   denomenator: 305,
+            //                   numeratorColor: Color(0x44FFFFFF),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(height: 20),
+            //       Container(
+            //         width: double.infinity,
+            //         child: Expanded(
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               PerformanceDetailSnippetVertical(
+            //                 label: 'Exposure',
+            //                 verticalSpacing: 12.0,
+            //                 content: CircularProgressIndicatorWrapper(
+            //                   progress: 100,
+            //                   progressPostFix: 'X',
+            //                   useProgressAsMainCenterText: false,
+            //                   mainCenterText: '2',
+            //                   mainCenterTextSize: ProgressIndicatorSize.large,
+            //                   size: ProgressIndicatorSize.large,
+            //                   progressColor: kProgressColors[3],
+            //                 ),
+            //               ),
+            //               SizedBox(width: 12),
+            //               PerformanceDetailSnippetVertical(
+            //                 label: 'Exposure',
+            //                 verticalSpacing: 12.0,
+            //                 content: CircularProgressIndicatorWrapper(
+            //                   progress: 85,
+            //                   size: ProgressIndicatorSize.large,
+            //                   progressColor: kProgressColors[4],
+            //                   subCenterText: 'avg. score',
+            //                 ),
+            //               ),
+            //               SizedBox(width: 12),
+            //               PerformanceDetailSnippetVertical(
+            //                 label: 'Speed',
+            //                 verticalSpacing: 12.0,
+            //                 content: SpeedArc(speed: 2.5),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            // ),
+            // Divider(
+            //   height: 1.0,
+            // ),
             Container(
               color: kAnalysisScreenActiveColor,
               width: double.infinity,
