@@ -31,6 +31,7 @@ class QuestionWidget extends StatefulWidget {
 class _QuestionWidgetState extends State<QuestionWidget> {
   late List<Answer>? answers;
   Answer? selectedAnswer;
+  Answer? correctAnswer;
   Color? backgroundColor;
 
   @override
@@ -41,6 +42,14 @@ class _QuestionWidgetState extends State<QuestionWidget> {
       backgroundColor = const Color(0xFF5DA5EA);
     }
     answers = widget.question.answers;
+    if (answers != null) {
+      answers!.forEach((answer) {
+        if (answer.value == 1) {
+          correctAnswer = answer;
+        }
+      });
+    }
+
     selectedAnswer = widget.question.selectedAnswer;
     print(widget.question.text);
     super.initState();
@@ -194,8 +203,8 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
                             child: Html(
-                                data: selectedAnswer != null
-                                    ? selectedAnswer!.solution!
+                                data: correctAnswer != null
+                                    ? correctAnswer!.solution!
                                     : "----",
                                 style: {
                                   // tables will have the below background color
