@@ -88,6 +88,7 @@ class _MainHomePageState extends State<MainHomePage>
 
   bool compareSubscriptions(
       List<Subscription> freshSubscriptions, List<Subscription> subscriptions) {
+    print("${freshSubscriptions.length} ${subscriptions.length}");
     if (freshSubscriptions.length != subscriptions.length) {
       return false;
     }
@@ -102,6 +103,7 @@ class _MainHomePageState extends State<MainHomePage>
       }
     });
 
+    print("same = $same");
     if (same == subscriptions.length) {
       return true;
     }

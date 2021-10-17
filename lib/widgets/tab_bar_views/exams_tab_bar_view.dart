@@ -59,6 +59,13 @@ class _ExamsTabBarViewState extends State<ExamsTabBarView> {
         performanceImproved: false,
         background: kAnalysisInfoSnippetBackground3,
       ),
+      AnalysisInfoSnippet(
+        bodyText: '26.78',
+        footerText: '209.5',
+        performance: '3',
+        performanceImproved: false,
+        background: kAnalysisInfoSnippetBackground3,
+      ),
     ];
   }
 
@@ -75,7 +82,7 @@ class _ExamsTabBarViewState extends State<ExamsTabBarView> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: AnalysisInfoSnippetCardTabBar(
                 infoList: infoList,
-                subLabels: ['Diagnostic1', 'BECE 2020', 'Term 1'],
+                subLabels: ['Diagnostic1', 'BECE 2020', 'Term 1', 'Term 2'],
                 selectedIndex: selectedTabIndex,
                 onActiveTabChange: handleSelectChanged,
               ),
