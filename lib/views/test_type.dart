@@ -177,7 +177,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 course: widget.course,
                 type: testType,
                 category: testCategory.toString().split(".")[1],
-                time: testType == TestType.SPEED ? 30 : 40 * 60,
+                time: testType == TestType.SPEED ? 30 : questions.length * 60,
                 name: "Mock Test",
               );
               break;
@@ -217,7 +217,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 questions,
                 category: testCategory.toString().split(".")[1],
                 course: widget.course,
-                time: testType == TestType.SPEED ? 30 : 40 * 60,
+                time: testType == TestType.SPEED ? 30 : questions.length * 60,
                 name: "Saved Test",
               );
               break;

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
+import 'package:permission_handler/permission_handler.dart';
 
 class FileDownloader {
   final String url;
@@ -12,6 +13,14 @@ class FileDownloader {
   FileDownloader(this.url, {required this.filename});
 
   downloadFile(Function(int percentage) publishSubject) async {
+    PermissionStatus permission = await Permission.storage.status;
+    if (permission != PermissionStatus.granted) {
+      await Permission.storage.request();
+      PermissionStatus permission = await Permission.storage.status;
+      if (permission != PermissionStatus.granted) {
+        return;
+      }
+    }
     Dio dio = Dio();
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, filename);

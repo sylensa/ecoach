@@ -127,9 +127,9 @@ class _MainHomePageState extends State<MainHomePage>
         try {
           for (int i = 0; i < freshSubscriptions.length; i++) {
             String filename = freshSubscriptions[i].name!;
-            if (await packageExist(filename)) {
-              continue;
-            }
+            // if (await packageExist(filename)) {
+            //   continue;
+            // }
             FileDownloader fileDownloader = FileDownloader(
                 AppUrl.subscriptionDownload +
                     '/${freshSubscriptions[i].planId}?',
