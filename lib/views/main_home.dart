@@ -64,66 +64,7 @@ class _MainHomePageState extends State<MainHomePage>
     ];
     currentIndex = widget.index;
     print("init");
-    // checkSubscription();
-    getSubscriptions().then((freshSubscriptions) async {
-      if (freshSubscriptions == null) return;
-      List<Subscription> subscriptions = widget.user.subscriptions;
-      if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context,
-            message: "downloading subscription\n data.....");
-        List<Subscription>? subscriptions = await getSubscriptionData();
-        if (subscriptions == null) {
-          Navigator.pop(context);
-          return;
-        }
-
-        await SubscriptionDB().insertAll(subscriptions);
-        Navigator.pop(context);
-
-        for (int i = 0; i < subscriptions.length; i++) {
-          FileDownloader fileDownloader = FileDownloader(
-              AppUrl.subscriptionDownload + '/${subscriptions[i].planId}?',
-              filename: subscriptions[i].name!);
-
-          await fileDownloader.downloadFile((percentage) {
-            print("download: ${percentage}%");
-            setState(() {
-              this.percentage = percentage;
-            });
-          });
-        }
-
-        showLoaderDialog(context, message: "finalizing setup.....");
-        for (int i = 0; i < subscriptions.length; i++) {
-          String filename = subscriptions[i].name!;
-          print("reading file $filename");
-          String plan = await readSubscriptionPlan(filename);
-          Map<String, dynamic> response = jsonDecode(plan);
-          List<SubscriptionItem> items = [];
-          response['subscription_items'].forEach((list) {
-            items.add(SubscriptionItem.fromJson(list));
-          });
-
-          for (int i = 0; i < items.length; i++) {
-            print("downloading ${items[i].name}\n data");
-            SubscriptionItem? subscriptionItem = items[i];
-
-            await CourseDB().insert(subscriptionItem.course!);
-            await QuizDB().insertAll(subscriptionItem.quizzes!);
-          }
-        }
-        Navigator.pop(context);
-        UserPreferences().getUser().then((user) {
-          setState(() {
-            percentage = 0;
-            widget.user = user!;
-          });
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Subscription data download successfully")));
-      }
-    });
+    checkSubscription();
     super.initState();
   }
 
@@ -143,6 +84,14 @@ class _MainHomePageState extends State<MainHomePage>
     if (state == AppLifecycleState.resumed) {
       // checkSubscription();
     }
+  }
+
+  Future<bool> packageExist(String name) async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, name);
+
+    final file = File(path);
+    return await file.exists();
   }
 
   Future<String> readSubscriptionPlan(String name) async {
@@ -190,33 +139,59 @@ class _MainHomePageState extends State<MainHomePage>
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context,
-            message: "downloading subscription\n data.....");
-        List<Subscription>? subscriptions = await getSubscriptionData();
-        if (subscriptions == null) {
-          Navigator.pop(context);
-          return;
-        }
+        showLoaderDialog(context, message: "updating subscriptions....");
+        Future.delayed(Duration(seconds: 2));
 
-        await SubscriptionDB().insertAll(subscriptions);
+        for (int i = 0; i < subscriptions.length; i++) {
+          await SubscriptionDB().delete(subscriptions[i].id!);
+        }
+        await SubscriptionDB().insertAll(freshSubscriptions);
         Navigator.pop(context);
 
-        List<SubscriptionItem> items =
-            await SubscriptionItemDB().allSubscriptionItems();
-        print("all subcriptions items");
-        for (int i = 0; i < items.length; i++) {
-          print("downloading ${items[i].name}\n data");
-          showDownloadDialog(context,
-              message: "downloading..... ${items[i].name} data",
-              current: i,
-              total: items.length);
-          SubscriptionItem? subscriptionItem =
-              await getSubscriptionItem(items[i].id!);
+        for (int i = 0; i < freshSubscriptions.length; i++) {
+          String filename = freshSubscriptions[i].name!;
+          if (await packageExist(filename)) {
+            continue;
+          }
+          FileDownloader fileDownloader = FileDownloader(
+              AppUrl.subscriptionDownload + '/${freshSubscriptions[i].planId}?',
+              filename: filename);
 
-          await CourseDB().insert(subscriptionItem!.course!);
-          await QuizDB().insertAll(subscriptionItem.quizzes!);
-          Navigator.pop(context);
+          await fileDownloader.downloadFile((percentage) {
+            print("download: ${percentage}%");
+            setState(() {
+              this.percentage = percentage;
+            });
+          });
         }
+
+        showLoaderDialog(context, message: "finalizing setup.....");
+        for (int i = 0; i < freshSubscriptions.length; i++) {
+          String filename = freshSubscriptions[i].name!;
+          print("reading file $filename");
+          String plan = await readSubscriptionPlan(filename);
+          Map<String, dynamic> response = jsonDecode(plan);
+          List<SubscriptionItem> items = [];
+          response['subscription_items'].forEach((list) {
+            items.add(SubscriptionItem.fromJson(list));
+          });
+
+          for (int i = 0; i < items.length; i++) {
+            print("saving ${items[i].name}\n data");
+            SubscriptionItem? subscriptionItem = items[i];
+
+            await CourseDB().insert(subscriptionItem.course!);
+            await QuizDB().insertAll(subscriptionItem.quizzes!);
+          }
+        }
+        Navigator.pop(context);
+        UserPreferences().getUser().then((user) {
+          setState(() {
+            percentage = 0;
+            widget.user = user!;
+          });
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Subscription data download successfully")));
       }
@@ -224,22 +199,8 @@ class _MainHomePageState extends State<MainHomePage>
   }
 
   Future<List<Subscription>> getSubscriptions() async {
-    return await ApiCall<Subscription>(AppUrl.subscriptions, create: (json) {
+    return await ApiCall<Subscription>(AppUrl.subscriptionData, create: (json) {
       return Subscription.fromJson(json);
-    }).get(context);
-  }
-
-  Future<List<Subscription>?> getSubscriptionData() async {
-    return await ApiCall<Subscription>(AppUrl.subscriptionData, params: {},
-        create: (json) {
-      return Subscription.fromJson(json);
-    }).get(context);
-  }
-
-  getSubscriptionItem(id) async {
-    return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false,
-        create: (json) {
-      return SubscriptionItem.fromJson(json);
     }).get(context);
   }
 

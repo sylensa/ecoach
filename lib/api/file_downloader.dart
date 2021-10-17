@@ -26,8 +26,10 @@ class FileDownloader {
             'api-token': token ?? ""
           },
         ), onReceiveProgress: (received, total) {
-      int percentage = ((received / total) * 100).floor();
-      publishSubject(percentage);
+      if (total != -1) {
+        int percentage = ((received / total) * 100).floor();
+        publishSubject(percentage);
+      }
     });
   }
 }

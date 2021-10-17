@@ -114,7 +114,9 @@ class SubscriptionItemDB {
     for (int i = 0; i < maps.length; i++) {
       Course? course =
           await CourseDB().getCourseById(int.parse(maps[i]['tag']));
+      print(int.parse(maps[i]['tag']));
       if (course != null) {
+        print(course.toJson());
         items.add(course);
       }
     }

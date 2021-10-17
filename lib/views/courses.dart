@@ -79,6 +79,7 @@ class _CourseViewState extends State<CourseView> {
   @override
   void initState() {
     super.initState();
+    print("course view");
     subName = widget.subscription.name!;
     subName =
         subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
