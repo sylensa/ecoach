@@ -166,28 +166,28 @@ class _AllTabBarViewState extends State<AllTabBarView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Today',
-                    style: kSixteenPointWhiteText,
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.more_horiz,
-                      color: Colors.white,
-                      size: 28.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 12.0),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            //     children: [
+            //       Text(
+            //         'Today',
+            //         style: kSixteenPointWhiteText,
+            //       ),
+            //       IconButton(
+            //         onPressed: () {},
+            //         icon: Icon(
+            //           Icons.more_horiz,
+            //           color: Colors.white,
+            //           size: 28.0,
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            // ),
+            // SizedBox(height: 12.0),
             Container(
               height: 140.0,
               width: double.infinity,
@@ -208,42 +208,44 @@ class _AllTabBarViewState extends State<AllTabBarView> {
             ),
             SizedBox(height: 32.0),
             Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Color(0x88FFFFFF),
-                    width: 0.5,
+              color: kAnalysisScreenActiveColor,
+              padding: const EdgeInsets.only(
+                top: 4.0,
+                bottom: 24.0,
+              ),
+              child: Center(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    headingTextStyle: kSixteenPointWhiteText,
+                    dataTextStyle: kTableBodyMainText,
+                    dataRowHeight: 72.0,
+                    dividerThickness: 0,
+                    showCheckboxColumn: false,
+                    columns: [
+                      DataColumn(label: Text('Date')),
+                      DataColumn(label: Text('Name')),
+                      DataColumn(label: Text('Time (s)')),
+                      DataColumn(label: Text('Score')),
+                    ],
+                    rows: [
+                      for (int i = 0; i < testsTaken.length; i++)
+                        makeDataRow(
+                          cell1Text1: getTime(testsTaken[i].datetime!),
+                          cell1Text2: getDateOnly(testsTaken[i].datetime!),
+                          cell2Text1: testsTaken[i].testname!,
+                          cell2Text2: testsTaken[i].testType!,
+                          cell3Text: "${testsTaken[i].testTime!}",
+                          progressColor: kCourseColors[i % kCourseColors.length]['progress']!,
+                          progress: testsTaken[i].correct! / testsTaken[i].totalQuestions,
+                          selected: selectedTableRowIndex == i,
+                          onSelectChanged: (selected) {
+                            handleSelectChanged(i);
+                          },
+                        ),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingTextStyle: kSixteenPointWhiteText,
-                dataTextStyle: kTableBodyMainText,
-                dataRowHeight: 64.0,
-                dividerThickness: 0,
-                columns: [
-                  DataColumn(label: Text('Date')),
-                  DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Time')),
-                  DataColumn(label: Text('Score')),
-                ],
-                rows: [
-                  for (int i = 0; i < testsTaken.length; i++)
-                    makeDataRow(
-                      cell1Text1: getTime(testsTaken[i].datetime!),
-                      cell1Text2: getDateOnly(testsTaken[i].datetime!),
-                      cell2Text1: testsTaken[i].testname!,
-                      cell2Text2: testsTaken[i].testType!,
-                      cell3Text: "${testsTaken[i].testTime!}",
-                      progressColor: kCourseColors[i % kCourseColors.length]['progress']!,
-                      progress: testsTaken[i].correct! / testsTaken[i].totalQuestions,
-                      selected: selectedTableRowIndex == i,
-                      onSelectChanged: handleSelectChanged(i),
-                    ),
-                ],
               ),
             )
           ],
@@ -266,13 +268,11 @@ DataRow makeDataRow({
 }) {
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
-      // MaterialState.pressed,
       MaterialState.selected,
-      // MaterialState.hovered,
-      // MaterialState.focused,
+      MaterialState.focused,
     };
     if (states.any(interactiveStates.contains)) {
-      return kAnalysisScreenActiveColor;
+      return kAnalysisScreenBackground;
     }
     return Colors.transparent;
   }
@@ -289,16 +289,20 @@ DataRow makeDataRow({
         ),
       ),
       DataCell(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              cell2Text1,
-              softWrap: true,
-            ),
-            Text(cell2Text2, style: kTableBodySubText)
-          ],
+        Container(
+          width: 120.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                cell2Text1,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(cell2Text2, style: kTableBodySubText)
+            ],
+          ),
         ),
       ),
       DataCell(

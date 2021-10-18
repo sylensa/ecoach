@@ -11,6 +11,7 @@ import 'package:ecoach/widgets/superscripted_denominator_fraction_horizontal.dar
 import 'package:ecoach/widgets/tappable_pill.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 
 import '../tab_bars/analysis_info_snippet_card_tab_bar.dart';
 
@@ -132,10 +133,31 @@ class _TopicsTabBarViewState extends State<TopicsTabBarView> {
                           SizedBox(width: 12),
                           PerformanceDetailSnippetVertical(
                             label: 'Strength',
-                            content: SuperScriptedDenominatorFractionHorizontal(
-                              numerator: 18,
-                              denomenator: 305,
-                              numeratorColor: Color(0x44FFFFFF),
+                            content: Column(
+                              children: [
+                                SignalStrengthIndicator.bars(
+                                  value: 0.8,
+                                  size: 44,
+                                  barCount: 5,
+                                  radius: Radius.circular(4.0),
+                                  levels: <num, Color>{
+                                    0.25: Colors.red,
+                                    0.50: Colors.yellow,
+                                    0.75: Colors.green,
+                                  },
+                                  inactiveColor: Colors.black26,
+                                  activeColor: Colors.white,
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '+2.5% gained',
+                                  style: TextStyle(
+                                    color: Color(0x88FFFFFF),
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ],
@@ -165,7 +187,7 @@ class _TopicsTabBarViewState extends State<TopicsTabBarView> {
                           ),
                           SizedBox(width: 12),
                           PerformanceDetailSnippetVertical(
-                            label: 'Exposure',
+                            label: 'Mastery',
                             verticalSpacing: 12.0,
                             content: CircularProgressIndicatorWrapper(
                               progress: 85,

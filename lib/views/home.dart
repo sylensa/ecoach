@@ -87,9 +87,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xFFFFFFFF),
+        backgroundColor:
+            widget.user.subscriptions.length > 0 ? Color(0xFFF6F6F6) : Color(0xFFFFFFFF),
         body: Container(
-          color: Color(0xFFFFFFFF),
           child: new Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 30, 24, 0),
             child: Center(
@@ -105,15 +105,12 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Text(
                             "Hello,",
-                            style:
-                                TextStyle(color: Colors.black26, fontSize: 12),
+                            style: TextStyle(color: Colors.black26, fontSize: 12),
                           ),
                           Text(
                             widget.user.name,
                             style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -175,8 +172,7 @@ class _HomePageState extends State<HomePage> {
                               if (snapshot.hasError)
                                 return Text('Error: ${snapshot.error}');
                               else if (snapshot.data != null) {
-                                List<TestTaken> items =
-                                    snapshot.data as List<TestTaken>;
+                                List<TestTaken> items = snapshot.data as List<TestTaken>;
 
                                 return Expanded(
                                   child: SingleChildScrollView(
@@ -185,19 +181,14 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(height: 44),
                                         for (int i = 0; i < items.length; i++)
                                           Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 0, 24),
+                                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
                                             child: HomeCard(
-                                              timeAgo: timeago
-                                                  .format(items[i].datetime!),
-                                              activityTypeIconURL:
-                                                  'assets/icons/edit.png',
-                                              vendoLogoURL:
-                                                  'assets/icons/edeo_logo.png',
+                                              timeAgo: timeago.format(items[i].datetime!),
+                                              activityTypeIconURL: 'assets/icons/edit.png',
+                                              vendoLogoURL: 'assets/icons/edeo_logo.png',
                                               footerCenterText:
                                                   '${items[i].jsonResponses.length} Questions',
-                                              footerRightText:
-                                                  items[i].usedTimeText,
+                                              footerRightText: items[i].usedTimeText,
                                               centralWidget: Column(
                                                 children: [
                                                   SizedBox(
@@ -206,14 +197,11 @@ class _HomePageState extends State<HomePage> {
                                                       items[i].testname!,
                                                       softWrap: true,
                                                       maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textAlign:
-                                                          TextAlign.center,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.center,
                                                       style: TextStyle(
                                                         fontSize: 18.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                        fontWeight: FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
@@ -226,8 +214,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ],
                                               ),
-                                              centerRightWidget:
-                                                  CircularProgressIndicatorWrapper(
+                                              centerRightWidget: CircularProgressIndicatorWrapper(
                                                 progress: items[i].correct! /
                                                     items[i].totalQuestions *
                                                     100,
@@ -254,8 +241,7 @@ class _HomePageState extends State<HomePage> {
                                       height: 100,
                                     ),
                                     Center(
-                                        child: Text(widget.user.email ??
-                                            "Something isn't right")),
+                                        child: Text(widget.user.email ?? "Something isn't right")),
                                     SizedBox(height: 100),
                                   ],
                                 );
@@ -355,10 +341,8 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                       )),
                   TextSpan(
                       text: "No",
-                      style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 25, color: Colors.red, fontWeight: FontWeight.bold)),
                   TextSpan(
                       text: " Subscriptions",
                       style: TextStyle(
@@ -388,8 +372,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                       Expanded(
                           child: TextButton(
                               style: ButtonStyle(
-                                  fixedSize:
-                                      MaterialStateProperty.all(Size(267, 88)),
+                                  fixedSize: MaterialStateProperty.all(Size(267, 88)),
                                   backgroundColor: MaterialStateProperty.all(
                                       selection == Selection.SUBSCRIPTION
                                           ? Color(0xFF00C664)
@@ -407,8 +390,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                       Expanded(
                           child: TextButton(
                               style: ButtonStyle(
-                                  fixedSize:
-                                      MaterialStateProperty.all(Size(267, 88)),
+                                  fixedSize: MaterialStateProperty.all(Size(267, 88)),
                                   backgroundColor: MaterialStateProperty.all(
                                       selection == Selection.DIAGNOSTIC
                                           ? Color(0xFF00ABE0)
@@ -435,12 +417,9 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                       height: 44,
                       child: OutlinedButton(
                           style: ButtonStyle(
-                            foregroundColor:
-                                MaterialStateProperty.all(Color(0xFF00C664)),
+                            foregroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
                             side: MaterialStateProperty.all(BorderSide(
-                                color: Color(0xFF00C664),
-                                width: 1,
-                                style: BorderStyle.solid)),
+                                color: Color(0xFF00C664), width: 1, style: BorderStyle.solid)),
                           ),
                           onPressed: () {
                             widget.callback!();
@@ -452,16 +431,12 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                       height: 44,
                       child: OutlinedButton(
                           style: ButtonStyle(
-                            foregroundColor:
-                                MaterialStateProperty.all(Color(0xFF00ABE0)),
+                            foregroundColor: MaterialStateProperty.all(Color(0xFF00ABE0)),
                             side: MaterialStateProperty.all(BorderSide(
-                                color: Color(0xFF00ABE0),
-                                width: 1,
-                                style: BorderStyle.solid)),
+                                color: Color(0xFF00ABE0), width: 1, style: BorderStyle.solid)),
                           ),
                           onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
                               return SelectLevel(widget.user);
                             }));
                           },
