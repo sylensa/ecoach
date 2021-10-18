@@ -43,6 +43,7 @@ class _MainHomePageState extends State<MainHomePage>
   late List<Widget> _children;
   int currentIndex = 0;
   int percentage = 0;
+  String downloadMessage = "";
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _MainHomePageState extends State<MainHomePage>
           tapping(2);
         },
         percentage: percentage,
+        downloadMessage: downloadMessage,
       ),
       CoursesPage(widget.user),
       StorePage(widget.user),
@@ -115,24 +117,26 @@ class _MainHomePageState extends State<MainHomePage>
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        showLoaderDialog(context, message: "updating subscriptions....");
+        showLoaderDialog(context, message: "Initiating download....");
         Future.delayed(Duration(seconds: 2));
 
         for (int i = 0; i < subscriptions.length; i++) {
           await SubscriptionDB().delete(subscriptions[i].id!);
         }
         await SubscriptionDB().insertAll(freshSubscriptions);
-        Navigator.pop(context);
 
+        List<SubscriptionItem> items =
+            await SubscriptionItemDB().allSubscriptionItems();
+
+        Navigator.pop(context);
         try {
-          for (int i = 0; i < freshSubscriptions.length; i++) {
-            String filename = freshSubscriptions[i].name!;
+          for (int i = 0; i < items.length; i++) {
+            String filename = items[i].name!;
             // if (await packageExist(filename)) {
             //   continue;
             // }
             FileDownloader fileDownloader = FileDownloader(
-                AppUrl.subscriptionDownload +
-                    '/${freshSubscriptions[i].planId}?',
+                AppUrl.subscriptionItemDownload + '/${items[i].id}?',
                 filename: filename);
 
             await fileDownloader.downloadFile((percentage) {
@@ -141,26 +145,18 @@ class _MainHomePageState extends State<MainHomePage>
                 this.percentage = percentage;
               });
             });
-          }
 
-          showLoaderDialog(context, message: "finalizing setup.....");
-          for (int i = 0; i < freshSubscriptions.length; i++) {
-            String filename = freshSubscriptions[i].name!;
-            print("reading file $filename");
-            String plan = await readSubscriptionPlan(filename);
-            Map<String, dynamic> response = jsonDecode(plan);
-            List<SubscriptionItem> items = [];
-            response['subscription_items'].forEach((list) {
-              items.add(SubscriptionItem.fromJson(list));
-            });
+            this.downloadMessage = "saving $filename";
+            String subItem = await readSubscriptionPlan(filename);
+            Map<String, dynamic> response = jsonDecode(subItem);
 
-            for (int i = 0; i < items.length; i++) {
-              print("saving ${items[i].name}\n data");
-              SubscriptionItem? subscriptionItem = items[i];
+            SubscriptionItem? subscriptionItem =
+                SubscriptionItem.fromJson(response);
 
-              await CourseDB().insert(subscriptionItem.course!);
-              await QuizDB().insertAll(subscriptionItem.quizzes!);
-            }
+            print("saving ${subscriptionItem.name}\n data");
+
+            await CourseDB().insert(subscriptionItem.course!);
+            await QuizDB().insertAll(subscriptionItem.quizzes!);
           }
 
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -175,7 +171,6 @@ class _MainHomePageState extends State<MainHomePage>
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text("Download failed")));
         } finally {
-          Navigator.pop(context);
           UserPreferences().getUser().then((user) {
             setState(() {
               percentage = 0;
@@ -210,6 +205,7 @@ class _MainHomePageState extends State<MainHomePage>
             tapping(2);
           },
           percentage: percentage,
+          downloadMessage: downloadMessage,
         ),
         CoursesPage(widget.user),
         StorePage(widget.user),

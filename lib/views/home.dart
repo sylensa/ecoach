@@ -25,8 +25,12 @@ class HomePage extends StatefulWidget {
   final User user;
   Function? callback;
   int percentage;
+  String downloadMessage = "";
 
-  HomePage(this.user, {this.callback, this.percentage = 0});
+  HomePage(this.user,
+      {this.callback,
+      this.percentage = 0,
+      this.downloadMessage = "Downloading subscription data. Please wait...."});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -167,8 +171,12 @@ class _HomePageState extends State<HomePage> {
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
-                              return NoSubWidget(widget.user, widget.callback,
-                                  percentage: widget.percentage);
+                              return NoSubWidget(
+                                widget.user,
+                                widget.callback,
+                                percentage: widget.percentage,
+                                downloadMessage: widget.downloadMessage,
+                              );
                             case ConnectionState.waiting:
                               return Center(child: CircularProgressIndicator());
                             default:
@@ -242,11 +250,9 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               } else if (snapshot.data == null)
-                                return NoSubWidget(
-                                  widget.user,
-                                  widget.callback,
-                                  percentage: widget.percentage,
-                                );
+                                return NoSubWidget(widget.user, widget.callback,
+                                    percentage: widget.percentage,
+                                    downloadMessage: widget.downloadMessage);
                               else
                                 return Column(
                                   children: [
@@ -326,10 +332,12 @@ class NoSubWidget extends StatefulWidget {
     this.user,
     this.callback, {
     this.percentage = 0,
+    this.downloadMessage,
   });
   final Function? callback;
   User user;
   int percentage;
+  String? downloadMessage;
 
   @override
   State<NoSubWidget> createState() => _NoSubWidgetState();
@@ -477,7 +485,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                   Container(
                       margin: EdgeInsets.only(left: 7),
                       child: Text(
-                        "Downloading subscription data. Please wait....",
+                        widget.downloadMessage!,
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.black),
