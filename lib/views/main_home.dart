@@ -44,6 +44,7 @@ class _MainHomePageState extends State<MainHomePage>
   int currentIndex = 0;
   int percentage = 0;
   String downloadMessage = "";
+  bool isDownloading = false;
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _MainHomePageState extends State<MainHomePage>
         callback: () {
           tapping(2);
         },
+        isDownloading: isDownloading,
         percentage: percentage,
         downloadMessage: downloadMessage,
       ),
@@ -117,6 +119,10 @@ class _MainHomePageState extends State<MainHomePage>
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
+        setState(() {
+          isDownloading = true;
+        });
+
         showLoaderDialog(context, message: "Initiating download....");
         Future.delayed(Duration(seconds: 2));
 
@@ -139,6 +145,9 @@ class _MainHomePageState extends State<MainHomePage>
                 AppUrl.subscriptionItemDownload + '/${items[i].id}?',
                 filename: filename);
 
+            setState(() {
+              this.downloadMessage = "downloading $filename";
+            });
             await fileDownloader.downloadFile((percentage) {
               print("download: ${percentage}%");
               setState(() {
@@ -146,7 +155,10 @@ class _MainHomePageState extends State<MainHomePage>
               });
             });
 
-            this.downloadMessage = "saving $filename";
+            setState(() {
+              this.downloadMessage = "saving $filename";
+            });
+
             String subItem = await readSubscriptionPlan(filename);
             Map<String, dynamic> response = jsonDecode(subItem);
 
@@ -163,7 +175,7 @@ class _MainHomePageState extends State<MainHomePage>
               content: Text("Subscription data download successfully")));
         } catch (m, e) {
           setState(() {
-            percentage = 0;
+            isDownloading = false;
           });
           print("Error>>>>>>>> download failed");
           print(m);
@@ -173,7 +185,7 @@ class _MainHomePageState extends State<MainHomePage>
         } finally {
           UserPreferences().getUser().then((user) {
             setState(() {
-              percentage = 0;
+              isDownloading = false;
               widget.user = user!;
             });
           });
@@ -204,6 +216,7 @@ class _MainHomePageState extends State<MainHomePage>
           callback: () {
             tapping(2);
           },
+          isDownloading: isDownloading,
           percentage: percentage,
           downloadMessage: downloadMessage,
         ),

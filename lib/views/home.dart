@@ -26,11 +26,13 @@ class HomePage extends StatefulWidget {
   Function? callback;
   int percentage;
   String downloadMessage = "";
+  bool isDownloading;
 
   HomePage(this.user,
       {this.callback,
       this.percentage = 0,
-      this.downloadMessage = "Downloading subscription data. Please wait...."});
+      this.downloadMessage = "Downloading subscription data. Please wait....",
+      this.isDownloading = false});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -130,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 20,
                   ),
-                  if (widget.percentage == 0)
+                  if (!widget.isDownloading)
                     Container(
                       height: 48.0,
                       width: double.infinity,
@@ -174,6 +176,7 @@ class _HomePageState extends State<HomePage> {
                               return NoSubWidget(
                                 widget.user,
                                 widget.callback,
+                                isDownloading: widget.isDownloading,
                                 percentage: widget.percentage,
                                 downloadMessage: widget.downloadMessage,
                               );
@@ -251,6 +254,7 @@ class _HomePageState extends State<HomePage> {
                                 );
                               } else if (snapshot.data == null)
                                 return NoSubWidget(widget.user, widget.callback,
+                                    isDownloading: widget.isDownloading,
                                     percentage: widget.percentage,
                                     downloadMessage: widget.downloadMessage);
                               else
@@ -332,12 +336,14 @@ class NoSubWidget extends StatefulWidget {
     this.user,
     this.callback, {
     this.percentage = 0,
+    this.isDownloading = false,
     this.downloadMessage,
   });
   final Function? callback;
   User user;
   int percentage;
   String? downloadMessage;
+  bool isDownloading;
 
   @override
   State<NoSubWidget> createState() => _NoSubWidgetState();
@@ -348,7 +354,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.percentage == 0 || widget.percentage >= 100
+    return !widget.isDownloading
         ? Container(
             color: Color(0xFFFFFFFF),
             child: Column(
