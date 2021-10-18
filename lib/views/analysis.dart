@@ -36,7 +36,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
       });
     });
 
-    tabController = TabController(initialIndex: 2, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
   }
 
   @override

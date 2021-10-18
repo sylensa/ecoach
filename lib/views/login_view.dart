@@ -31,8 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     http.Response response = await http.post(
       Uri.parse(AppUrl.login),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(
-          <String, dynamic>{'identifier': email, "password": password}),
+      body: jsonEncode(<String, dynamic>{'identifier': email, "password": password}),
     );
 
     print(response.statusCode);
@@ -96,15 +95,17 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           height: 50,
                         ),
-                        Image(image: AssetImage("assets/images/adeo.png")),
+                        Image(
+                          image: AssetImage("assets/images/adeo.png"),
+                          width: 130.0,
+                        ),
                         SizedBox(
                           height: 40,
                         ),
                         TextFormField(
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                              labelText: 'Email or Phone',
-                              border: OutlineInputBorder()),
+                              labelText: 'Email or Phone', border: OutlineInputBorder()),
                           onSaved: (value) {
                             email = value!;
                           },
@@ -115,8 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                             if (text!.isEmpty) {
                               _msg = "Your email is required";
                             } else if (!regex.hasMatch(text)) {
-                              _msg =
-                                  "Please provide a valid email or phone number";
+                              _msg = "Please provide a valid email or phone number";
                             }
                             return _msg;
                           },
@@ -126,9 +126,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         TextFormField(
                           style: TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                              labelText: 'Password',
-                              border: OutlineInputBorder()),
+                          decoration:
+                              InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
                           obscureText: true,
                           onSaved: (value) {
                             password = value!;
@@ -149,9 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ForgotPasswordPage()),
+                                    MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
                                   );
                                 },
                                 child: Text(
@@ -173,8 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               child: Text(
                                 "Login",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               )),
                         ),
                         SizedBox(
@@ -184,8 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => RegisterPage()),
+                              MaterialPageRoute(builder: (context) => RegisterPage()),
                             );
                           },
                           child: RichText(
@@ -196,8 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                               TextSpan(
                                   text: "Create Account",
                                   style: TextStyle(
-                                      color: Colors.green,
-                                      decoration: TextDecoration.underline))
+                                      color: Colors.green, decoration: TextDecoration.underline))
                             ]),
                           ),
                         ),
