@@ -37,7 +37,7 @@ class _AnalysisViewState extends State<AnalysisView>
       });
     });
 
-    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 1, vsync: this);
   }
 
   @override
@@ -76,9 +76,9 @@ class _AnalysisViewState extends State<AnalysisView>
                             : Center(
                                 child: Text("No data yet...."),
                               ),
-                        ExamsTabBarView(),
-                        TopicsTabBarView(),
-                        Center(child: Text('Analysis')),
+                        // ExamsTabBarView(),
+                        // TopicsTabBarView(),
+                        // Center(child: Text('Analysis')),
                       ],
                     ),
                   );

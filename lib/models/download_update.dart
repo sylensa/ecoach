@@ -30,4 +30,9 @@ class DownloadUpdate with ChangeNotifier {
     doneDownloads.add(downloaded);
     notifyListeners();
   }
+
+  void clearDownloads() {
+    doneDownloads.clear();
+    notifyListeners();
+  }
 }

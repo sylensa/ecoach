@@ -163,7 +163,6 @@ class _MainHomePageState extends State<MainHomePage>
 
             context.read<DownloadUpdate>().doneDownlaod("$filename ...  done.");
           }
-
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Subscription data download successfully")));
         } catch (m, e) {
@@ -175,9 +174,10 @@ class _MainHomePageState extends State<MainHomePage>
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text("Download failed")));
         } finally {
-          UserPreferences().getUser().then((user) {
-            context.read<DownloadUpdate>().setDownloading(false);
+          context.read<DownloadUpdate>().clearDownloads();
+          context.read<DownloadUpdate>().setDownloading(false);
 
+          UserPreferences().getUser().then((user) {
             setState(() {
               widget.user = user!;
             });

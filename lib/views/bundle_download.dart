@@ -432,6 +432,8 @@ class _BundleDownloadState extends State<BundleDownload> {
           .showSnackBar(SnackBar(content: Text("Download failed")));
     } finally {
       context.read<DownloadUpdate>().setDownloading(false);
+      context.read<DownloadUpdate>().clearDownloads();
+
       UserPreferences().getUser().then((user) {
         setState(() {
           widget.user = user!;
