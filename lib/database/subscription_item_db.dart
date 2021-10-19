@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/subscription_item.dart';
-import 'package:ecoach/providers/course_db.dart';
-import 'package:ecoach/providers/database.dart';
-import 'package:ecoach/providers/questions_db.dart';
-import 'package:ecoach/providers/quiz_db.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/quiz_db.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SubscriptionItemDB {

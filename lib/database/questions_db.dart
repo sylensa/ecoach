@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/providers/topics_db.dart';
-import 'package:ecoach/providers/answers.dart';
-import 'package:ecoach/providers/database.dart';
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/database/answers.dart';
+import 'package:ecoach/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class QuestionDB {

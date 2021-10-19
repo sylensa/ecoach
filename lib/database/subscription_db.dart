@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
-import 'package:ecoach/providers/database.dart';
-import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SubscriptionDB {

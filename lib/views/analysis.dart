@@ -1,6 +1,6 @@
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/pill.dart';
-import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
@@ -16,7 +16,8 @@ class AnalysisView extends StatefulWidget {
   _AnalysisViewState createState() => _AnalysisViewState();
 }
 
-class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMixin {
+class _AnalysisViewState extends State<AnalysisView>
+    with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
   List<SubscriptionItem> items = [];

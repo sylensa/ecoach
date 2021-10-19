@@ -5,7 +5,7 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/ui/course_info.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/test_taken_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';

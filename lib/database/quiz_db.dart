@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/providers/database.dart';
-import 'package:ecoach/providers/questions_db.dart';
+import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'answers.dart';

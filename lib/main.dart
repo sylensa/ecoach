@@ -1,3 +1,4 @@
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/main_home.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import 'models/user.dart';
 import 'views/login_view.dart';
@@ -22,7 +24,11 @@ void main() {
     SystemUiMode.manual,
     overlays: [SystemUiOverlay.bottom],
   );
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider<DownloadUpdate>(
+      create: (context) {
+        return DownloadUpdate();
+      },
+      child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

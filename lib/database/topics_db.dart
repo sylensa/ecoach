@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/providers/database.dart';
+import 'package:ecoach/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TopicDB {

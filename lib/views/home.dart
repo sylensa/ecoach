@@ -1,16 +1,12 @@
-import 'dart:convert';
-
-import 'package:ecoach/api/api_response.dart';
-import 'package:ecoach/utils/general_utils.dart';
+import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/views/download_page.dart';
 import 'package:ecoach/views/test_type.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/src/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/subscription_db.dart';
-import 'package:ecoach/providers/test_taken_db.dart';
-import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
@@ -18,21 +14,16 @@ import 'package:ecoach/widgets/cards/home_card.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   final User user;
   Function? callback;
-  int percentage;
-  String downloadMessage = "";
-  bool isDownloading;
 
-  HomePage(this.user,
-      {this.callback,
-      this.percentage = 0,
-      this.downloadMessage = "Downloading subscription data. Please wait....",
-      this.isDownloading = false});
+  HomePage(
+    this.user, {
+    this.callback,
+  });
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -93,8 +84,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor:
-            widget.user.subscriptions.length > 0 ? Color(0xFFF6F6F6) : Color(0xFFFFFFFF),
+        backgroundColor: widget.user.subscriptions.length > 0
+            ? Color(0xFFF6F6F6)
+            : Color(0xFFFFFFFF),
         body: Container(
           child: new Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 30, 24, 0),
@@ -111,12 +103,15 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Text(
                             "Hello,",
-                            style: TextStyle(color: Colors.black26, fontSize: 12),
+                            style:
+                                TextStyle(color: Colors.black26, fontSize: 12),
                           ),
                           Text(
                             widget.user.name,
                             style: TextStyle(
-                                fontSize: 17, color: Colors.black, fontWeight: FontWeight.bold),
+                                fontSize: 17,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -129,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 20,
                   ),
-                  if (!widget.isDownloading)
+                  if (!context.read<DownloadUpdate>().isDownloading)
                     Container(
                       height: 48.0,
                       width: double.infinity,
@@ -170,20 +165,22 @@ class _HomePageState extends State<HomePage> {
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
-                              return NoSubWidget(
-                                widget.user,
-                                widget.callback,
-                                isDownloading: widget.isDownloading,
-                                percentage: widget.percentage,
-                                downloadMessage: widget.downloadMessage,
-                              );
+                              return !context
+                                      .watch<DownloadUpdate>()
+                                      .isDownloading
+                                  ? NoSubWidget(
+                                      widget.user,
+                                      widget.callback,
+                                    )
+                                  : DownloadPage();
                             case ConnectionState.waiting:
                               return Center(child: CircularProgressIndicator());
                             default:
                               if (snapshot.hasError)
                                 return Text('Error: ${snapshot.error}');
                               else if (snapshot.data != null) {
-                                List<TestTaken> items = snapshot.data as List<TestTaken>;
+                                List<TestTaken> items =
+                                    snapshot.data as List<TestTaken>;
 
                                 return Expanded(
                                   child: SingleChildScrollView(
@@ -192,14 +189,19 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(height: 44),
                                         for (int i = 0; i < items.length; i++)
                                           Padding(
-                                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 0, 0, 16),
                                             child: HomeCard(
-                                              timeAgo: timeago.format(items[i].datetime!),
-                                              activityTypeIconURL: 'assets/icons/edit.png',
-                                              vendoLogoURL: 'assets/icons/edeo_logo.png',
+                                              timeAgo: timeago
+                                                  .format(items[i].datetime!),
+                                              activityTypeIconURL:
+                                                  'assets/icons/edit.png',
+                                              vendoLogoURL:
+                                                  'assets/icons/edeo_logo.png',
                                               footerCenterText:
                                                   '${items[i].jsonResponses.length} Questions',
-                                              footerRightText: items[i].usedTimeText,
+                                              footerRightText:
+                                                  items[i].usedTimeText,
                                               centralWidget: Column(
                                                 children: [
                                                   SizedBox(
@@ -208,11 +210,14 @@ class _HomePageState extends State<HomePage> {
                                                       items[i].testname!,
                                                       softWrap: true,
                                                       maxLines: 2,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      textAlign: TextAlign.center,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                       style: TextStyle(
                                                         fontSize: 18.0,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
@@ -225,7 +230,8 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                 ],
                                               ),
-                                              centerRightWidget: CircularProgressIndicatorWrapper(
+                                              centerRightWidget:
+                                                  CircularProgressIndicatorWrapper(
                                                 progress: items[i].correct! /
                                                     items[i].totalQuestions *
                                                     100,
@@ -240,10 +246,14 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               } else if (snapshot.data == null)
-                                return NoSubWidget(widget.user, widget.callback,
-                                    isDownloading: widget.isDownloading,
-                                    percentage: widget.percentage,
-                                    downloadMessage: widget.downloadMessage);
+                                return !context
+                                        .watch<DownloadUpdate>()
+                                        .isDownloading
+                                    ? NoSubWidget(
+                                        widget.user,
+                                        widget.callback,
+                                      )
+                                    : DownloadPage();
                               else
                                 return Column(
                                   children: [
@@ -251,7 +261,8 @@ class _HomePageState extends State<HomePage> {
                                       height: 100,
                                     ),
                                     Center(
-                                        child: Text(widget.user.email ?? "Something isn't right")),
+                                        child: Text(widget.user.email ??
+                                            "Something isn't right")),
                                     SizedBox(height: 100),
                                   ],
                                 );
@@ -318,18 +329,9 @@ class ShadowedText extends StatelessWidget {
 enum Selection { SUBSCRIPTION, DIAGNOSTIC, NONE }
 
 class NoSubWidget extends StatefulWidget {
-  NoSubWidget(
-    this.user,
-    this.callback, {
-    this.percentage = 0,
-    this.isDownloading = false,
-    this.downloadMessage,
-  });
+  NoSubWidget(this.user, this.callback);
   final Function? callback;
   User user;
-  int percentage;
-  String? downloadMessage;
-  bool isDownloading;
 
   @override
   State<NoSubWidget> createState() => _NoSubWidgetState();
@@ -340,148 +342,131 @@ class _NoSubWidgetState extends State<NoSubWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return !widget.isDownloading
-        ? Container(
-            color: Color(0xFFFFFFFF),
-            child: Column(
-              children: [
-                RichText(
-                    text: TextSpan(children: [
-                  TextSpan(
-                      text: "You have ",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black26,
-                      )),
-                  TextSpan(
-                      text: "No",
-                      style:
-                          TextStyle(fontSize: 25, color: Colors.red, fontWeight: FontWeight.bold)),
-                  TextSpan(
-                      text: " Subscriptions",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black26,
-                      )),
-                ])),
-                SizedBox(
-                  width: 152,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 28.0, 0, 30),
-                    child: Text(
-                      'Perform an Activity.\nBring your feed to life',
-                      style: TextStyle(color: Color(0xFFD3D3D3)),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                SizedBox(
-                  height: 176,
-                  width: 267,
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: TextButton(
-                              style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all(Size(267, 88)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      selection == Selection.SUBSCRIPTION
-                                          ? Color(0xFF00C664)
-                                          : Color(0xFFFAFAFA)),
-                                  foregroundColor: MaterialStateProperty.all(
-                                      selection == Selection.SUBSCRIPTION
-                                          ? Colors.white
-                                          : Color(0xFFBAC4D9))),
-                              onPressed: () {
-                                setState(() {
-                                  selection = Selection.SUBSCRIPTION;
-                                });
-                              },
-                              child: Text('Subscription'))),
-                      Expanded(
-                          child: TextButton(
-                              style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all(Size(267, 88)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      selection == Selection.DIAGNOSTIC
-                                          ? Color(0xFF00ABE0)
-                                          : Color(0xFFFAFAFA)),
-                                  foregroundColor: MaterialStateProperty.all(
-                                      selection == Selection.DIAGNOSTIC
-                                          ? Colors.white
-                                          : Color(0xFFBAC4D9))),
-                              onPressed: () {
-                                setState(() {
-                                  selection = Selection.DIAGNOSTIC;
-                                });
-                              },
-                              child: Text('Diagnostic'))),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                if (selection == Selection.SUBSCRIPTION)
-                  SizedBox(
-                      width: 150,
-                      height: 44,
-                      child: OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
-                            side: MaterialStateProperty.all(BorderSide(
-                                color: Color(0xFF00C664), width: 1, style: BorderStyle.solid)),
-                          ),
-                          onPressed: () {
-                            widget.callback!();
-                          },
-                          child: Text('Buy'))),
-                if (selection == Selection.DIAGNOSTIC)
-                  SizedBox(
-                      width: 150,
-                      height: 44,
-                      child: OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all(Color(0xFF00ABE0)),
-                            side: MaterialStateProperty.all(BorderSide(
-                                color: Color(0xFF00ABE0), width: 1, style: BorderStyle.solid)),
-                          ),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                              return SelectLevel(widget.user);
-                            }));
-                          },
-                          child: Text('Take'))),
-              ],
-            ),
-          )
-        : Container(
-            child: Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      margin: EdgeInsets.only(left: 7),
-                      child: Text(
-                        widget.downloadMessage!,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.black),
-                      )),
-                  widget.percentage > 0
-                      ? LinearPercentIndicator(
-                          percent: widget.percentage / 100,
-                        )
-                      : LinearProgressIndicator(),
-                  SizedBox(
-                    height: 50,
-                  )
-                ],
+    return Container(
+      color: Color(0xFFFFFFFF),
+      child: Column(
+        children: [
+          RichText(
+              text: TextSpan(children: [
+            TextSpan(
+                text: "You have ",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black26,
+                )),
+            TextSpan(
+                text: "No",
+                style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: " Subscriptions",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black26,
+                )),
+          ])),
+          SizedBox(
+            width: 152,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 28.0, 0, 30),
+              child: Text(
+                'Perform an Activity.\nBring your feed to life',
+                style: TextStyle(color: Color(0xFFD3D3D3)),
+                textAlign: TextAlign.center,
               ),
             ),
-          );
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          SizedBox(
+            height: 176,
+            width: 267,
+            child: Column(
+              children: [
+                Expanded(
+                    child: TextButton(
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(Size(267, 88)),
+                            backgroundColor: MaterialStateProperty.all(
+                                selection == Selection.SUBSCRIPTION
+                                    ? Color(0xFF00C664)
+                                    : Color(0xFFFAFAFA)),
+                            foregroundColor: MaterialStateProperty.all(
+                                selection == Selection.SUBSCRIPTION
+                                    ? Colors.white
+                                    : Color(0xFFBAC4D9))),
+                        onPressed: () {
+                          setState(() {
+                            selection = Selection.SUBSCRIPTION;
+                          });
+                        },
+                        child: Text('Subscription'))),
+                Expanded(
+                    child: TextButton(
+                        style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(Size(267, 88)),
+                            backgroundColor: MaterialStateProperty.all(
+                                selection == Selection.DIAGNOSTIC
+                                    ? Color(0xFF00ABE0)
+                                    : Color(0xFFFAFAFA)),
+                            foregroundColor: MaterialStateProperty.all(
+                                selection == Selection.DIAGNOSTIC
+                                    ? Colors.white
+                                    : Color(0xFFBAC4D9))),
+                        onPressed: () {
+                          setState(() {
+                            selection = Selection.DIAGNOSTIC;
+                          });
+                        },
+                        child: Text('Diagnostic'))),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          if (selection == Selection.SUBSCRIPTION)
+            SizedBox(
+                width: 150,
+                height: 44,
+                child: OutlinedButton(
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF00C664)),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: Color(0xFF00C664),
+                          width: 1,
+                          style: BorderStyle.solid)),
+                    ),
+                    onPressed: () {
+                      widget.callback!();
+                    },
+                    child: Text('Buy'))),
+          if (selection == Selection.DIAGNOSTIC)
+            SizedBox(
+                width: 150,
+                height: 44,
+                child: OutlinedButton(
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all(Color(0xFF00ABE0)),
+                      side: MaterialStateProperty.all(BorderSide(
+                          color: Color(0xFF00ABE0),
+                          width: 1,
+                          style: BorderStyle.solid)),
+                    ),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return SelectLevel(widget.user);
+                      }));
+                    },
+                    child: Text('Take'))),
+        ],
+      ),
+    );
   }
 }

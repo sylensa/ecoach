@@ -2,27 +2,29 @@ import 'dart:convert';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/bundle.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/course_db.dart';
-import 'package:ecoach/providers/quiz_db.dart';
-import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/manip.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/more_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/src/provider.dart';
 
 class BundleDownload extends StatefulWidget {
-  const BundleDownload(this.user, {Key? key, required this.bundle})
-      : super(key: key);
+  BundleDownload(this.user, {Key? key, required this.bundle}) : super(key: key);
 
   final Subscription bundle;
-  final User user;
+  User user;
 
   @override
   _BundleDownloadState createState() => _BundleDownloadState();
@@ -213,7 +215,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                                 ),
                               ),
                               child: DataTable(
-                                showCheckboxColumn: false,
+                                showCheckboxColumn: true,
                                 headingTextStyle:
                                     kSixteenPointWhiteText.copyWith(
                                   color: kDefaultBlack,
@@ -267,7 +269,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                     ),
                   ),
                 ),
-                if (percentage > 0 && percentage < 100)
+                if (context.watch<DownloadUpdate>().isDownloading)
                   Container(
                     child: Expanded(
                       child: new Column(
@@ -276,26 +278,52 @@ class _BundleDownloadState extends State<BundleDownload> {
                           Container(
                               margin: EdgeInsets.only(left: 7),
                               child: Text(
-                                "Downloading subscription data. Please wait....",
+                                context.read<DownloadUpdate>().message!,
                                 softWrap: true,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.start,
                                 style: TextStyle(color: Colors.black),
                               )),
-                          percentage > 0
+                          context.read<DownloadUpdate>().percentage > 0 &&
+                                  context.read<DownloadUpdate>().percentage <
+                                      100
                               ? LinearPercentIndicator(
-                                  percent: percentage / 100,
+                                  percent: context
+                                          .read<DownloadUpdate>()
+                                          .percentage /
+                                      100,
                                 )
                               : LinearProgressIndicator(),
                           SizedBox(
-                            height: 50,
-                          )
+                            height: 10,
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: context
+                                  .read<DownloadUpdate>()
+                                  .doneDownloads
+                                  .length,
+                              itemBuilder: (context, index) {
+                                print("showing courses downloaded");
+                                return Text(
+                                  context
+                                      .read<DownloadUpdate>()
+                                      .doneDownloads[index],
+                                  style: TextStyle(color: Colors.black),
+                                );
+                              }),
                         ],
                       ),
                     ),
                   ),
                 GestureDetector(
                   onTap: () async {
+                    if (selectedTableRows.length < 1) {
+                      return;
+                    }
+                    if (context.read<DownloadUpdate>().isDownloading) {
+                      return;
+                    }
                     setState(() {
                       showDialog(
                           context: context,
@@ -314,7 +342,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                                 ElevatedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      downloadSubscription();
+                                      downloadSubscription(selectedTableRows);
                                     },
                                     child: Text("Yes")),
                                 ElevatedButton(
@@ -357,51 +385,58 @@ class _BundleDownloadState extends State<BundleDownload> {
     }).get(context);
   }
 
-  downloadSubscription() async {
+  downloadSubscription(List<Map<String, dynamic>> items) async {
     try {
-      showLoaderDialog(context,
-          message: "starting download\nScroll below for progress");
+      context.read<DownloadUpdate>().setDownloading(true);
+      showLoaderDialog(context, message: "starting downloads");
       Future.delayed(Duration(seconds: 2));
       Navigator.pop(context);
-      String filename = widget.bundle.name!;
-
-      FileDownloader fileDownloader = FileDownloader(
-          AppUrl.subscriptionDownload + '/${widget.bundle.planId}?',
-          filename: filename);
-
-      await fileDownloader.downloadFile((percentage) {
-        print("download: ${percentage}%");
-        setState(() {
-          this.percentage = percentage;
-        });
-      });
-
-      showLoaderDialog(context, message: "finalizing setup.....");
-      filename = widget.bundle.name!;
-      print("reading file $filename");
-      String plan = await readSubscriptionPlan(filename);
-      Map<String, dynamic> response = jsonDecode(plan);
-      List<SubscriptionItem> items = [];
-      response['subscription_items'].forEach((list) {
-        items.add(SubscriptionItem.fromJson(list));
-      });
-
       for (int i = 0; i < items.length; i++) {
-        print("saving ${items[i].name}\n data");
-        SubscriptionItem? subscriptionItem = items[i];
+        String filename = items[i]['courseName']!;
+        // if (await packageExist(filename)) {
+        //   continue;
+        // }
+        FileDownloader fileDownloader = FileDownloader(
+            AppUrl.subscriptionItemDownload + '/${items[i]['id']}?',
+            filename: filename);
+
+        context.read<DownloadUpdate>().updateMessage("downloading $filename");
+        await fileDownloader.downloadFile((percentage) {
+          print("download: ${percentage}%");
+          context.read<DownloadUpdate>().updatePercentage(percentage);
+        });
+
+        context.read<DownloadUpdate>().updateMessage("saving $filename");
+
+        String subItem = await readSubscriptionPlan(filename);
+        Map<String, dynamic> response = jsonDecode(subItem);
+
+        SubscriptionItem? subscriptionItem =
+            SubscriptionItem.fromJson(response);
+
+        print("saving ${subscriptionItem.name}\n data");
 
         await CourseDB().insert(subscriptionItem.course!);
         await QuizDB().insertAll(subscriptionItem.quizzes!);
+
+        context.read<DownloadUpdate>().doneDownlaod("$filename ...  done.");
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Subscription data download successfully")));
     } catch (m, e) {
-      setState(() {
-        percentage = 0;
-      });
       print("Error>>>>>>>> download failed");
       print(m);
       print(e);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Download failed")));
+    } finally {
+      context.read<DownloadUpdate>().setDownloading(false);
+      UserPreferences().getUser().then((user) {
+        setState(() {
+          widget.user = user!;
+        });
+      });
     }
   }
 }

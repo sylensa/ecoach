@@ -4,8 +4,8 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/providers/analysis_db.dart';
-import 'package:ecoach/providers/database.dart';
+import 'package:ecoach/database/analysis_db.dart';
+import 'package:ecoach/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CourseDB {
