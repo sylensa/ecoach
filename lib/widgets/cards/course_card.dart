@@ -38,6 +38,8 @@ class _CourseCardState extends State<CourseCard> {
         .then((value) {
       setState(() {
         courseProgress = value is num ? (value * 100).floor() : 0;
+        print(
+            "course progress for ${widget.courseInfo.title} = $courseProgress, value=$value");
       });
     });
   }

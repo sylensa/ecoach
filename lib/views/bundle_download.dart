@@ -44,6 +44,10 @@ class _BundleDownloadState extends State<BundleDownload> {
         subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
 
     print(widget.bundle.subscriptionItems);
+    getSubscriptionItems();
+  }
+
+  getSubscriptionItems() {
     SubscriptionItemDB().subscriptionItems(widget.bundle.planId!).then((items) {
       setState(() {
         for (int i = 0; i < items.length; i++) {
@@ -56,6 +60,11 @@ class _BundleDownloadState extends State<BundleDownload> {
         }
       });
     });
+  }
+
+  clearList() {
+    courseList.clear();
+    selectedTableRows.clear();
   }
 
   @override
@@ -439,6 +448,8 @@ class _BundleDownloadState extends State<BundleDownload> {
           widget.user = user!;
         });
       });
+      clearList();
+      getSubscriptionItems();
     }
   }
 }

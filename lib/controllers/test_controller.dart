@@ -270,7 +270,7 @@ class TestController {
     int totalTaken =
         await getQuestionsAnsweredCount(courseId, onlyAttempted: true);
     int totalQuestions = await QuestionDB().getTotalQuestionCount(courseId);
-    if (totalQuestions == 0) totalQuestions = 1;
+    if (totalQuestions == 0) return 0;
     return totalTaken / totalQuestions;
   }
 
