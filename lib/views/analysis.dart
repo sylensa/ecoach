@@ -37,7 +37,7 @@ class _AnalysisViewState extends State<AnalysisView>
       });
     });
 
-    tabController = TabController(initialIndex: 0, length: 1, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 0, vsync: this);
   }
 
   @override
@@ -64,24 +64,32 @@ class _AnalysisViewState extends State<AnalysisView>
                 valueListenable: ValueNotifier(currentPillIndex),
                 builder: (context, dynamic value, Widget? child) {
                   print(value);
-                  return Expanded(
-                    child: TabBarView(
-                      controller: tabController,
-                      children: [
-                        items.length > 0
-                            ? AllTabBarView(
-                                items[currentPillIndex],
-                                key: UniqueKey(),
-                              )
-                            : Center(
-                                child: Text("No data yet...."),
-                              ),
-                        // ExamsTabBarView(),
-                        // TopicsTabBarView(),
-                        // Center(child: Text('Analysis')),
-                      ],
-                    ),
-                  );
+                  return items.length > 0
+                      ? AllTabBarView(
+                          items[currentPillIndex],
+                          key: UniqueKey(),
+                        )
+                      : Center(
+                          child: Text("No data yet...."),
+                        );
+                  // return Expanded(
+                  //   child: TabBarView(
+                  //     controller: tabController,
+                  //     children: [
+                  //       items.length > 0
+                  //           ? AllTabBarView(
+                  //               items[currentPillIndex],
+                  //               key: UniqueKey(),
+                  //             )
+                  //           : Center(
+                  //               child: Text("No data yet...."),
+                  //             ),
+                  //       // ExamsTabBarView(),
+                  //       // TopicsTabBarView(),
+                  //       // Center(child: Text('Analysis')),
+                  //     ],
+                  //   ),
+                  // );
                 }),
           ],
         ),

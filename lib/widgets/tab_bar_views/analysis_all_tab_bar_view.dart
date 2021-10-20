@@ -285,6 +285,10 @@ DataRow makeDataRow({
     return Colors.transparent;
   }
 
+  print("progress= $progress");
+  List<String> type = cell2Text2.split(".");
+  String testType = type.length > 1 ? type[1] : type[0];
+
   return DataRow(
     selected: selected,
     onSelectChanged: onSelectChanged,
@@ -311,7 +315,7 @@ DataRow makeDataRow({
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
               ),
-              Text(cell2Text2, style: kTableBodySubText)
+              Text(testType, style: kTableBodySubText)
             ],
           ),
         ),
