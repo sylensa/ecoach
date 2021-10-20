@@ -46,6 +46,7 @@ const kAdeoGreen = Color(0xFF00C664);
 const kAdeoWhiteAlpha40 = Color(0x66FFFFFF);
 const kAdeoWhiteAlpha81 = Color(0xCFFFFFFF);
 const kAdeoGray = Color(0xFFF1F1F1);
+const kAdeoGray2 = Color(0xFF707070);
 
 const kSixteenPointWhiteText = TextStyle(
   fontSize: 16,

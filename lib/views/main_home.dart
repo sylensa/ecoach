@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
-import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/api/package_downloader.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -16,17 +14,14 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/more_view.dart';
 import 'package:ecoach/widgets/adeo_bottom_navigation_bar.dart';
+import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' show join;
 
 class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
@@ -38,8 +33,7 @@ class MainHomePage extends StatefulWidget {
   _MainHomePageState createState() => _MainHomePageState();
 }
 
-class _MainHomePageState extends State<MainHomePage>
-    with WidgetsBindingObserver {
+class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver {
   late List<Widget> _children;
   int currentIndex = 0;
   int percentage = 0;
@@ -131,8 +125,7 @@ class _MainHomePageState extends State<MainHomePage>
         }
         await SubscriptionDB().insertAll(freshSubscriptions);
 
-        List<SubscriptionItem> items =
-            await SubscriptionItemDB().allSubscriptionItems();
+        List<SubscriptionItem> items = await SubscriptionItemDB().allSubscriptionItems();
 
         Navigator.pop(context);
         try {
@@ -162,8 +155,7 @@ class _MainHomePageState extends State<MainHomePage>
             String subItem = await readSubscriptionPlan(filename);
             Map<String, dynamic> response = jsonDecode(subItem);
 
-            SubscriptionItem? subscriptionItem =
-                SubscriptionItem.fromJson(response);
+            SubscriptionItem? subscriptionItem = SubscriptionItem.fromJson(response);
 
             print("saving ${subscriptionItem.name}\n data");
 
@@ -171,8 +163,8 @@ class _MainHomePageState extends State<MainHomePage>
             await QuizDB().insertAll(subscriptionItem.quizzes!);
           }
 
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Subscription data download successfully")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Subscription data download successfully")));
         } catch (m, e) {
           setState(() {
             isDownloading = false;
@@ -180,8 +172,7 @@ class _MainHomePageState extends State<MainHomePage>
           print("Error>>>>>>>> download failed");
           print(m);
           print(e);
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Download failed")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Download failed")));
         } finally {
           UserPreferences().getUser().then((user) {
             setState(() {
