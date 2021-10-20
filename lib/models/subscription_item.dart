@@ -1,7 +1,7 @@
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
-import 'package:ecoach/providers/course_db.dart';
-import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:flutter/material.dart';
 
 class SubscriptionItem {

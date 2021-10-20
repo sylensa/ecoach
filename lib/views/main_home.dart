@@ -3,17 +3,20 @@ import 'dart:convert';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/course_db.dart';
-import 'package:ecoach/providers/quiz_db.dart';
-import 'package:ecoach/providers/subscription_db.dart';
-import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/database/subscription_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/views/customize.dart';
+import 'package:ecoach/views/download_page.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/more_view.dart';
@@ -22,6 +25,10 @@ import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' show join;
+import 'package:provider/src/provider.dart';
 
 class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
@@ -36,9 +43,6 @@ class MainHomePage extends StatefulWidget {
 class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver {
   late List<Widget> _children;
   int currentIndex = 0;
-  int percentage = 0;
-  String downloadMessage = "";
-  bool isDownloading = false;
 
   @override
   void initState() {
@@ -51,14 +55,11 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
         callback: () {
           tapping(2);
         },
-        isDownloading: isDownloading,
-        percentage: percentage,
-        downloadMessage: downloadMessage,
       ),
       CoursesPage(widget.user),
       StorePage(widget.user),
       AnalysisView(),
-      MoreView(widget.user, key: UniqueKey()),
+      MoreView(widget.user),
     ];
     currentIndex = widget.index;
     print("init");
@@ -113,9 +114,7 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = widget.user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        setState(() {
-          isDownloading = true;
-        });
+        context.read<DownloadUpdate>().setDownloading(true);
 
         showLoaderDialog(context, message: "Initiating download....");
         Future.delayed(Duration(seconds: 2));
@@ -138,19 +137,13 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
                 AppUrl.subscriptionItemDownload + '/${items[i].id}?',
                 filename: filename);
 
-            setState(() {
-              this.downloadMessage = "downloading $filename";
-            });
+            context.read<DownloadUpdate>().updateMessage("downloading $filename");
             await fileDownloader.downloadFile((percentage) {
               print("download: ${percentage}%");
-              setState(() {
-                this.percentage = percentage;
-              });
+              context.read<DownloadUpdate>().updatePercentage(percentage);
             });
 
-            setState(() {
-              this.downloadMessage = "saving $filename";
-            });
+            context.read<DownloadUpdate>().updateMessage("saving $filename");
 
             String subItem = await readSubscriptionPlan(filename);
             Map<String, dynamic> response = jsonDecode(subItem);
@@ -161,22 +154,24 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
 
             await CourseDB().insert(subscriptionItem.course!);
             await QuizDB().insertAll(subscriptionItem.quizzes!);
-          }
 
+            context.read<DownloadUpdate>().doneDownlaod("$filename ...  done.");
+          }
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text("Subscription data download successfully")));
         } catch (m, e) {
-          setState(() {
-            isDownloading = false;
-          });
+          context.read<DownloadUpdate>().setDownloading(false);
+
           print("Error>>>>>>>> download failed");
           print(m);
           print(e);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Download failed")));
         } finally {
+          context.read<DownloadUpdate>().clearDownloads();
+          context.read<DownloadUpdate>().setDownloading(false);
+
           UserPreferences().getUser().then((user) {
             setState(() {
-              isDownloading = false;
               widget.user = user!;
             });
           });
@@ -201,21 +196,7 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: AppDrawer(user: widget.user),
-      body: [
-        HomePage(
-          widget.user,
-          callback: () {
-            tapping(2);
-          },
-          isDownloading: isDownloading,
-          percentage: percentage,
-          downloadMessage: downloadMessage,
-        ),
-        CoursesPage(widget.user),
-        StorePage(widget.user),
-        AnalysisView(),
-        MoreView(widget.user, key: UniqueKey()),
-      ][currentIndex],
+      body: _children[currentIndex],
       bottomNavigationBar: AdeoBottomNavigationBar(
         selectedIndex: currentIndex,
         onItemSelected: tapping,

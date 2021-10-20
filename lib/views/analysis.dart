@@ -1,6 +1,6 @@
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/pill.dart';
-import 'package:ecoach/providers/subscription_item_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
@@ -16,7 +16,8 @@ class AnalysisView extends StatefulWidget {
   _AnalysisViewState createState() => _AnalysisViewState();
 }
 
-class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMixin {
+class _AnalysisViewState extends State<AnalysisView>
+    with TickerProviderStateMixin {
   int currentPillIndex = 0;
   List<Pill> coursePillList = [];
   List<SubscriptionItem> items = [];
@@ -36,7 +37,7 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
       });
     });
 
-    tabController = TabController(initialIndex: 0, length: 4, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 0, vsync: this);
   }
 
   @override
@@ -63,24 +64,32 @@ class _AnalysisViewState extends State<AnalysisView> with TickerProviderStateMix
                 valueListenable: ValueNotifier(currentPillIndex),
                 builder: (context, dynamic value, Widget? child) {
                   print(value);
-                  return Expanded(
-                    child: TabBarView(
-                      controller: tabController,
-                      children: [
-                        items.length > 0
-                            ? AllTabBarView(
-                                items[currentPillIndex],
-                                key: UniqueKey(),
-                              )
-                            : Center(
-                                child: Text("No data yet...."),
-                              ),
-                        ExamsTabBarView(),
-                        TopicsTabBarView(),
-                        Center(child: Text('Analysis')),
-                      ],
-                    ),
-                  );
+                  return items.length > 0
+                      ? AllTabBarView(
+                          items[currentPillIndex],
+                          key: UniqueKey(),
+                        )
+                      : Center(
+                          child: Text("No data yet...."),
+                        );
+                  // return Expanded(
+                  //   child: TabBarView(
+                  //     controller: tabController,
+                  //     children: [
+                  //       items.length > 0
+                  //           ? AllTabBarView(
+                  //               items[currentPillIndex],
+                  //               key: UniqueKey(),
+                  //             )
+                  //           : Center(
+                  //               child: Text("No data yet...."),
+                  //             ),
+                  //       // ExamsTabBarView(),
+                  //       // TopicsTabBarView(),
+                  //       // Center(child: Text('Analysis')),
+                  //     ],
+                  //   ),
+                  // );
                 }),
           ],
         ),

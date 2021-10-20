@@ -143,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (text!.isEmpty) {
                               _msg = "Your name is required";
                             }
-                            if (text.split(" ").length != 2) {
+                            if (text.trim().split(" ").length != 2) {
                               _msg =
                                   "Please enter First name and Surname. Should be exactly 2";
                             }

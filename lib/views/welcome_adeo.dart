@@ -7,8 +7,8 @@ import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/new_user_data.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/course_db.dart';
-import 'package:ecoach/providers/level_db.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/level_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/quiz_cover.dart';
@@ -36,7 +36,8 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
 
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       showLoaderDialog(context, message: "Loading Diagnostic data ...");
-      ApiCall<Data>(AppUrl.new_user_data, isList: false, create: (Map<String, dynamic> json) {
+      ApiCall<Data>(AppUrl.new_user_data, isList: false,
+          create: (Map<String, dynamic> json) {
         return Data.fromJson(json);
       }, onCallback: (data) {
         if (data != null) {
@@ -64,8 +65,10 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                     Text(
                       'Welcome to the\nAdeo Experience',
                       textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                     SizedBox(
                       height: 40,
@@ -133,21 +136,27 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                     ),
                     OutlinedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
                           return SelectLevel(widget.user);
                         }));
                       },
                       child: Text(
                         "Next",
                         style: TextStyle(
-                            color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500),
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500),
                       ),
                       style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(60, 10, 60, 10)),
-                        side: MaterialStateProperty.all(
-                            BorderSide(color: Colors.white, width: 1, style: BorderStyle.solid)),
-                        shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
+                        padding: MaterialStateProperty.all(
+                            EdgeInsets.fromLTRB(60, 10, 60, 10)),
+                        side: MaterialStateProperty.all(BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                            style: BorderStyle.solid)),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0))),
                       ),
                     ),
                   ],
@@ -293,11 +302,13 @@ class _SelectLevelState extends State<SelectLevel> {
                             if (snapshot.hasError)
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child:
-                                    SizedBox(width: 400, child: Text('Error: ${snapshot.error}')),
+                                child: SizedBox(
+                                    width: 400,
+                                    child: Text('Error: ${snapshot.error}')),
                               );
                             else if (snapshot.data != null) {
-                              List<String> levels = snapshot.data as List<String>;
+                              List<String> levels =
+                                  snapshot.data as List<String>;
                               print(levels);
                               return Flexible(
                                 child: ListView.builder(
@@ -306,7 +317,8 @@ class _SelectLevelState extends State<SelectLevel> {
                                     itemBuilder: (context, index) {
                                       String name = levels[index];
                                       print(name);
-                                      return SelectText(name, levels[index] == selectedLevel,
+                                      return SelectText(
+                                          name, levels[index] == selectedLevel,
                                           select: () {
                                         setState(() {
                                           selectedLevel = levels[index];
@@ -328,13 +340,15 @@ class _SelectLevelState extends State<SelectLevel> {
             right: 0,
             left: 0,
             child: Container(
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 OutlinedButton(
                   onPressed: () {
                     if (selectedLevel == null) {
                       return;
                     }
-                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
                       return SelectCourse(widget.user, selectedLevel!);
                     }));
                   },
@@ -346,11 +360,14 @@ class _SelectLevelState extends State<SelectLevel> {
                     ),
                   ),
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(60, 10, 60, 10)),
-                    side: MaterialStateProperty.all(
-                        BorderSide(color: Colors.white, width: 1, style: BorderStyle.solid)),
-                    shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.fromLTRB(60, 10, 60, 10)),
+                    side: MaterialStateProperty.all(BorderSide(
+                        color: Colors.white,
+                        width: 1,
+                        style: BorderStyle.solid)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0))),
                   ),
                 ),
               ]),
@@ -448,7 +465,8 @@ class _SelectCourseState extends State<SelectCourse> {
                               switch (snapshot.connectionState) {
                                 case ConnectionState.none:
                                 case ConnectionState.waiting:
-                                  return Center(child: CircularProgressIndicator());
+                                  return Center(
+                                      child: CircularProgressIndicator());
                                 default:
                                   if (snapshot.hasError)
                                     return Padding(
@@ -456,7 +474,8 @@ class _SelectCourseState extends State<SelectCourse> {
                                       child: Text('Error: ${snapshot.error}'),
                                     );
                                   else if (snapshot.data != null) {
-                                    List<Level> levels = snapshot.data as List<Level>;
+                                    List<Level> levels =
+                                        snapshot.data as List<Level>;
                                     return Column(
                                       children: [
                                         SizedBox(
@@ -465,19 +484,28 @@ class _SelectCourseState extends State<SelectCourse> {
                                         SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              for (int i = 0; i < levels.length; i++)
+                                              for (int i = 0;
+                                                  i < levels.length;
+                                                  i++)
                                                 SelectText(
-                                                    levels[i].name!.split(
-                                                        " ")[levels[i].name!.split(" ").length - 1],
+                                                    levels[i].name!.split(" ")[
+                                                        levels[i]
+                                                                .name!
+                                                                .split(" ")
+                                                                .length -
+                                                            1],
                                                     levels[i] == selectedLevel,
                                                     normalSize: 25,
-                                                    selectedSize: 30, select: () {
+                                                    selectedSize: 30,
+                                                    select: () {
                                                   setState(() {
                                                     selectedLevel = levels[i];
                                                   });
-                                                  futureCourses = getCourses(levels[i].id!);
+                                                  futureCourses =
+                                                      getCourses(levels[i].id!);
                                                 }),
                                             ],
                                           ),
@@ -511,16 +539,18 @@ class _SelectCourseState extends State<SelectCourse> {
                                   child: Text('Error: ${snapshot.error}'),
                                 );
                               else if (snapshot.data != null) {
-                                List<Course> courses = snapshot.data as List<Course>;
+                                List<Course> courses =
+                                    snapshot.data as List<Course>;
 
                                 return Expanded(
                                   child: ListView.builder(
                                       shrinkWrap: true,
                                       itemCount: courses.length,
                                       itemBuilder: (context, index) {
-                                        return SelectText(
-                                            courses[index].name!, courses[index] == selectedCourse,
-                                            normalSize: 25, selectedSize: 30, select: () {
+                                        return SelectText(courses[index].name!,
+                                            courses[index] == selectedCourse,
+                                            normalSize: 25,
+                                            selectedSize: 30, select: () {
                                           setState(() {
                                             selectedCourse = courses[index];
                                           });
@@ -542,19 +572,21 @@ class _SelectCourseState extends State<SelectCourse> {
             right: 0,
             left: 0,
             child: Container(
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 OutlinedButton(
                   onPressed: () {
                     if (selectedLevel == null || selectedCourse == null) {
                       return;
                     }
                     showLoaderDialog(context);
-                    Future futureList =
-                        TestController().loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
+                    Future futureList = TestController()
+                        .loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
 
                     futureList.then((apiResponse) {
                       Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
                         return QuizCover(
                           widget.user,
                           apiResponse.data,
@@ -574,11 +606,14 @@ class _SelectCourseState extends State<SelectCourse> {
                     ),
                   ),
                   style: ButtonStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(60, 10, 60, 10)),
-                    side: MaterialStateProperty.all(
-                        BorderSide(color: Colors.white, width: 1, style: BorderStyle.solid)),
-                    shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0))),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.fromLTRB(60, 10, 60, 10)),
+                    side: MaterialStateProperty.all(BorderSide(
+                        color: Colors.white,
+                        width: 1,
+                        style: BorderStyle.solid)),
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0))),
                   ),
                 ),
               ]),

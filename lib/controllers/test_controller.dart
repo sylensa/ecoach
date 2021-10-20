@@ -6,10 +6,10 @@ import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/providers/questions_db.dart';
-import 'package:ecoach/providers/quiz_db.dart';
-import 'package:ecoach/providers/test_taken_db.dart';
-import 'package:ecoach/providers/topics_db.dart';
+import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/test_type.dart';
@@ -270,7 +270,7 @@ class TestController {
     int totalTaken =
         await getQuestionsAnsweredCount(courseId, onlyAttempted: true);
     int totalQuestions = await QuestionDB().getTotalQuestionCount(courseId);
-    if (totalQuestions == 0) totalQuestions = 1;
+    if (totalQuestions == 0) return 0;
     return totalTaken / totalQuestions;
   }
 

@@ -6,7 +6,6 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/store.dart';
-import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -140,7 +139,7 @@ class _ResultViewState extends State<ResultView> {
                                 ),
                               );
                             },
-                            child: Text("Store",
+                            child: Text("Purchase",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 25)),
                           ),

@@ -135,7 +135,7 @@ class _QuizViewState extends State<QuizView> {
       currentQuestion++;
 
       controller.nextPage(
-          duration: Duration(milliseconds: 700), curve: Curves.ease);
+          duration: Duration(milliseconds: 1), curve: Curves.ease);
 
       numberingController.scrollTo(
           index: currentQuestion,
@@ -407,9 +407,6 @@ class _QuizViewState extends State<QuizView> {
                         });
 
                         controller.jumpToPage(i);
-                        controller.animateToPage(i,
-                            duration: Duration(milliseconds: 1000),
-                            curve: Curves.easeInBack);
                       }));
                     },
                   ),
@@ -492,7 +489,7 @@ class _QuizViewState extends State<QuizView> {
                             child: TextButton(
                               onPressed: () {
                                 controller.previousPage(
-                                    duration: Duration(milliseconds: 700),
+                                    duration: Duration(milliseconds: 1),
                                     curve: Curves.ease);
                                 setState(() {
                                   currentQuestion--;
