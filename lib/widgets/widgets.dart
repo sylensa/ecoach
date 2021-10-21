@@ -143,6 +143,12 @@ String getTime(DateTime dateTime) {
   return "${NumberFormat('00').format(dateTime.hour)}:${NumberFormat('00').format(dateTime.second)}";
 }
 
+String getDurationTime(Duration duration) {
+  int min = (duration.inSeconds / 60).floor();
+  int sec = duration.inSeconds % 60;
+  return "${NumberFormat('00').format(min)}:${NumberFormat('00').format(sec)}";
+}
+
 String getDateOnly(DateTime dateTime) {
   return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
 }

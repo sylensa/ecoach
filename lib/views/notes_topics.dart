@@ -11,6 +11,7 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/note_view.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
@@ -127,110 +128,7 @@ class _NotesTopicsState extends State<NotesTopics> {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return Scaffold(
-                            body: SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: Container(
-                                  color: Color(0xFF009BCB),
-                                  padding: const EdgeInsets.all(0),
-                                  child: Column(
-                                    children: [
-                                      Html(
-                                        data: topics[selectedTopicIndex].notes,
-                                        style: {
-                                          // tables will have the below background color
-                                          "body": Style(
-                                            fontSize: FontSize(17),
-                                            color: Colors.white,
-                                            backgroundColor: Color(0xFF009BCB),
-                                            padding: const EdgeInsets.fromLTRB(
-                                                8.0, 10, 8, 25),
-                                          ),
-
-                                          'td': Style(
-                                              border: Border.all(
-                                                  color: Colors.white,
-                                                  width: 1)),
-                                          'th': Style(
-                                              backgroundColor: Colors.blue),
-                                          'img': Style(
-                                              width: 200,
-                                              height: 200,
-                                              padding: EdgeInsets.all(10)),
-                                        },
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          OutlinedButton(
-                                              onPressed: () async {
-                                                Course? course = await CourseDB()
-                                                    .getCourseById(topics[
-                                                            selectedTopicIndex]
-                                                        .courseId!);
-
-                                                List<Question> questions =
-                                                    await TestController()
-                                                        .getTopicQuestions(
-                                                            [topic.id!],
-                                                            limit: 40);
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) {
-                                                  return QuizCover(
-                                                    widget.user,
-                                                    questions,
-                                                    name: topic.name!,
-                                                    theme: QuizTheme.BLUE,
-                                                    type: TestType.KNOWLEDGE,
-                                                    category: TestCategory.TOPIC
-                                                        .toString()
-                                                        .split(".")[1],
-                                                    time: questions.length * 60,
-                                                    course: course,
-                                                  );
-                                                }));
-                                              },
-                                              style: ButtonStyle(
-                                                side: MaterialStateProperty.all(
-                                                    BorderSide(
-                                                        color: Colors.white,
-                                                        width: 1,
-                                                        style:
-                                                            BorderStyle.solid)),
-                                              ),
-                                              child: Text(
-                                                "Take Test",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              )),
-                                          OutlinedButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              style: ButtonStyle(
-                                                side: MaterialStateProperty.all(
-                                                    BorderSide(
-                                                        color: Colors.white,
-                                                        width: 1,
-                                                        style:
-                                                            BorderStyle.solid)),
-                                              ),
-                                              child: Text(
-                                                "Finished",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              )),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
+                          return NoteView(widget.user, topic);
                         });
                   },
                 )

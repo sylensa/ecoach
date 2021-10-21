@@ -3,6 +3,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/customize.dart';
+import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type_list.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -176,6 +177,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 questions,
                 course: widget.course,
                 type: testType,
+                theme: QuizTheme.BLUE,
                 category: testCategory.toString().split(".")[1],
                 time: testType == TestType.SPEED ? 30 : questions.length * 60,
                 name: "Mock Test",
@@ -209,6 +211,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 questions,
                 category: testCategory.toString().split(".")[1],
                 course: widget.course,
+                theme: QuizTheme.BLUE,
                 time: questions.length * 60 * 15,
                 name: "Essays",
               );
@@ -220,6 +223,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 questions,
                 category: testCategory.toString().split(".")[1],
                 course: widget.course,
+                theme: QuizTheme.BLUE,
                 time: testType == TestType.SPEED ? 30 : questions.length * 60,
                 name: "Saved Test",
               );

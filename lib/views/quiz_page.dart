@@ -11,6 +11,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results.dart';
+import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/questions_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
@@ -317,7 +318,7 @@ class _QuizViewState extends State<QuizView> {
     Navigator.push<void>(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => ResultView(
+        builder: (BuildContext context) => ResultsView(
           widget.user,
           widget.course!,
           test: testTakenSaved!,

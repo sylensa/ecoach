@@ -23,10 +23,33 @@ class TopicDB {
 
   Future<Topic?> getTopicById(int id) async {
     final db = await DBProvider.database;
+
     var result = await db!.query("topics", where: "id = ?", whereArgs: [id]);
     Topic? topic = result.isNotEmpty ? Topic.fromJson(result.first) : null;
 
     return topic;
+  }
+
+  Future<List<Topic>> getTopics(List<int> topicIds) async {
+    final Database? db = await DBProvider.database;
+
+    String ids = "";
+    for (int i = 0; i < topicIds.length; i++) {
+      ids += "${topicIds[i]}";
+      if (i < topicIds.length - 1) {
+        ids += ",";
+      }
+    }
+
+    final List<Map<String, dynamic>> maps = await db!
+        .rawQuery("SELECT * FROM topics WHERE id IN ($ids) ORDER BY name");
+
+    List<Topic> topics = [];
+    for (int i = 0; i < maps.length; i++) {
+      Topic topic = Topic.fromJson(maps[i]);
+      topics.add(topic);
+    }
+    return topics;
   }
 
   Future<void> insertAll(List<Topic> topics) async {

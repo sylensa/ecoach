@@ -60,6 +60,20 @@ class TestTaken {
     return jsonDecode(responses);
   }
 
+  get numberOfQuestions {
+    Map respones = jsonResponses;
+    return respones.length;
+  }
+
+  List<int> getTopicIds() {
+    List<int> ids = [];
+    Map responses = jsonResponses;
+    responses.forEach((key, answer) {
+      if (!ids.contains(answer['topic_id'])) ids.add(answer['topic_id']);
+    });
+    return ids;
+  }
+
   factory TestTaken.fromJson(Map<String, dynamic> json) => TestTaken(
         id: json["id"],
         userId: json["user_id"],

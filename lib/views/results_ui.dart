@@ -1,10 +1,31 @@
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/topic_analysis.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/note_view.dart';
+import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:ecoach/widgets/courses/linear_percent_indicator_wrapper.dart';
+import 'package:ecoach/widgets/toast.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
 class ResultsView extends StatefulWidget {
+  ResultsView(this.user, this.course,
+      {Key? key, required this.test, this.diagnostic = false})
+      : super(key: key);
+  final User user;
+  final Course course;
+  TestTaken test;
+  bool diagnostic;
+
   @override
   State<ResultsView> createState() => _ResultsViewState();
 }
@@ -29,6 +50,23 @@ class _ResultsViewState extends State<ResultsView> {
     });
   }
 
+  List<TopicAnalysis> topics = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    print("test id = ${widget.test.id}");
+    TestController().topicsAnalysis(widget.test).then((mapList) {
+      mapList.keys.forEach((key) {
+        List<TestAnswer> answers = mapList[key]!;
+        topics.add(TopicAnalysis(key, answers));
+      });
+
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +83,7 @@ class _ResultsViewState extends State<ResultsView> {
                     children: [
                       CircularProgressIndicatorWrapper(
                         subCenterText: 'avg. score',
-                        progress: 85,
+                        progress: widget.test.score!,
                         progressColor: kAdeoGreen,
                         size: ProgressIndicatorSize.large,
                       ),
@@ -55,13 +93,17 @@ class _ResultsViewState extends State<ResultsView> {
                   ),
                   Column(
                     children: [
-                      Text('01:30', style: _topMainTextStyle),
+                      Text(
+                          getDurationTime(
+                              Duration(seconds: widget.test.usedTime ?? 0)),
+                          style: _topMainTextStyle),
                       Text('Time Taken', style: _topLabelStyle)
                     ],
                   ),
                   Column(
                     children: [
-                      Text('40', style: _topMainTextStyle),
+                      Text("${widget.test.numberOfQuestions}",
+                          style: _topMainTextStyle),
                       Text('Questions', style: _topLabelStyle)
                     ],
                   )
@@ -70,7 +112,7 @@ class _ResultsViewState extends State<ResultsView> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.vertical,
                 child: DataTable(
                   headingTextStyle: kSixteenPointWhiteText.copyWith(
                     color: kDefaultBlack,
@@ -87,56 +129,18 @@ class _ResultsViewState extends State<ResultsView> {
                     DataColumn(label: Text('Performance')),
                   ],
                   rows: [
-                    makeDataRow(
-                      cell1Text: 'Density',
-                      cell2Text: '5.2s',
-                      progressColor: kCourseColors[0]['progress']!,
-                      progress: 0.4,
-                      selected: selectedTableRowIndex == 0,
-                      onSelectChanged: (selected) {
-                        handleTableSelectChanged(0);
-                      },
-                    ),
-                    makeDataRow(
-                      cell1Text: 'Photosynthesis',
-                      cell2Text: '5.2s',
-                      progressColor: kCourseColors[4]['background']!,
-                      progress: 1.0,
-                      selected: selectedTableRowIndex == 1,
-                      onSelectChanged: (selected) {
-                        handleTableSelectChanged(1);
-                      },
-                    ),
-                    makeDataRow(
-                      cell1Text: 'Pollination',
-                      cell2Text: '5.2s',
-                      progressColor: kCourseColors[2]['background']!,
-                      progress: 0.8,
-                      selected: selectedTableRowIndex == 2,
-                      onSelectChanged: (selected) {
-                        handleTableSelectChanged(2);
-                      },
-                    ),
-                    makeDataRow(
-                      cell1Text: 'Valency',
-                      cell2Text: '5.2s',
-                      progressColor: kCourseColors[6]['background']!,
-                      progress: 0.2,
-                      selected: selectedTableRowIndex == 3,
-                      onSelectChanged: (selected) {
-                        handleTableSelectChanged(3);
-                      },
-                    ),
-                    makeDataRow(
-                      cell1Text: 'Viscosity',
-                      cell2Text: '5.2s',
-                      progressColor: kCourseColors[6]['background']!,
-                      progress: 0.3,
-                      selected: selectedTableRowIndex == 4,
-                      onSelectChanged: (selected) {
-                        handleTableSelectChanged(4);
-                      },
-                    ),
+                    for (int i = 0; i < topics.length; i++)
+                      makeDataRow(
+                        cell1Text: topics[i].name,
+                        cell2Text: "${topics[i].time}s",
+                        progressColor: kCourseColors[i % kCourseColors.length]
+                            ['progress']!,
+                        progress: topics[i].performace,
+                        selected: selectedTableRowIndex == i,
+                        onSelectChanged: (selected) {
+                          handleTableSelectChanged(i);
+                        },
+                      ),
                   ],
                 ),
               ),
@@ -150,17 +154,39 @@ class _ResultsViewState extends State<ResultsView> {
                 children: [
                   Button(
                     label: 'review',
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                   Container(width: 1.0, color: kNavigationTopBorderColor),
                   Button(
                     label: 'revise',
-                    onPressed: () {},
+                    onPressed: () async {
+                      int topicId =
+                          topics[selectedTableRowIndex].answers[0].topicId!;
+                      Topic? topic = await TopicDB().getTopicById(topicId);
+
+                      if (topic != null) {
+                        print(
+                            "_______________________________________________________");
+                        print(topic.notes);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return NoteView(widget.user, topic);
+                            });
+                      } else {
+                        showFeedback(context, "No notes available");
+                      }
+                    },
                   ),
                   Container(width: 1.0, color: kNavigationTopBorderColor),
                   Button(
                     label: 'new test',
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.popUntil(context,
+                          ModalRoute.withName(CourseDetailsPage.routeName));
+                    },
                   ),
                 ],
               ),
@@ -222,9 +248,11 @@ DataRow makeDataRow({
     color: MaterialStateProperty.resolveWith(getColor),
     cells: [
       DataCell(
-        Expanded(
+        SizedBox(
+          width: 100,
           child: Text(
             cell1Text,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: selected ? Colors.white : kDefaultBlack,
             ),
@@ -232,25 +260,21 @@ DataRow makeDataRow({
         ),
       ),
       DataCell(
-        Expanded(
-          child: Text(
-            cell2Text,
-            style: TextStyle(
-              color: selected ? Colors.white : kDefaultBlack,
-            ),
+        Text(
+          cell2Text,
+          style: TextStyle(
+            color: selected ? Colors.white : kDefaultBlack,
           ),
         ),
       ),
       DataCell(
-        Expanded(
-          child: Center(
-            widthFactor: 1,
-            child: LinearPercentIndicatorWrapper(
-              percent: progress,
-              progressColor: progressColor,
-              backgroundColor: Color(0xFF363636),
-              label: (progress * 100).toString(),
-            ),
+        Center(
+          widthFactor: 1,
+          child: LinearPercentIndicatorWrapper(
+            percent: progress,
+            progressColor: progressColor,
+            backgroundColor: Color(0xFF363636),
+            label: (progress * 100).toString(),
           ),
         ),
       ),
