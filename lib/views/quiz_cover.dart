@@ -112,7 +112,10 @@ class QuizCover extends StatelessWidget {
                               ),
                               SizedBox(
                                 width: 160,
-                                child: Text(":${questions.length}",
+                                child: Text(
+                                    type != TestType.SPEED
+                                        ? ":${questions.length}"
+                                        : "---",
                                     style: TextStyle(
                                         fontSize: 22,
                                         color: Colors.white,

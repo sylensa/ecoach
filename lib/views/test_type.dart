@@ -150,7 +150,7 @@ class _TestTypeViewState extends State<TestTypeView> {
           futureList = TestController().getTopics(widget.course);
           break;
         case TestCategory.ESSAY:
-          futureList = TestController().getEssays(widget.course);
+          futureList = TestController().getEssays(widget.course, 5);
           break;
         case TestCategory.SAVED:
           futureList = TestController().getSavedTests(widget.course);
@@ -198,16 +198,19 @@ class _TestTypeViewState extends State<TestTypeView> {
                 data,
                 testType,
                 title: "Topic",
+                questionLimit: 10,
                 multiSelect: true,
               );
               break;
             case TestCategory.ESSAY:
-              widgetView = TestTypeListView(
+              List<Question> questions = data as List<Question>;
+              widgetView = QuizCover(
                 widget.user,
-                widget.course,
-                data,
-                testType,
-                title: "Essay",
+                questions,
+                category: testCategory.toString().split(".")[1],
+                course: widget.course,
+                time: questions.length * 60 * 15,
+                name: "Essays",
               );
               break;
             case TestCategory.SAVED:
@@ -280,10 +283,11 @@ class _TestTypeViewState extends State<TestTypeView> {
                               testCategory = TestCategory.MOCK;
                               getTest();
                             }),
-                            getTestCatButton("Exam", () {
-                              testCategory = TestCategory.EXAM;
-                              getTest();
-                            }),
+                            if (testType != TestType.UNTIMED)
+                              getTestCatButton("Exam", () {
+                                testCategory = TestCategory.EXAM;
+                                getTest();
+                              }),
                           ],
                         ),
                         Column(
@@ -292,19 +296,20 @@ class _TestTypeViewState extends State<TestTypeView> {
                               testCategory = TestCategory.TOPIC;
                               getTest();
                             }),
-                            getTestCatButton("Essay", () {
-                              testCategory = TestCategory.ESSAY;
-                              getTest();
-                            }),
+                            if (testType != TestType.SPEED)
+                              getTestCatButton("Essay", () {
+                                testCategory = TestCategory.ESSAY;
+                                getTest();
+                              }),
                           ],
                         ),
                         Column(
                           children: [
-                            getTestCatButton("Saved", () {
-                              testCategory = TestCategory.SAVED;
+                            // getTestCatButton("Saved", () {
+                            //   testCategory = TestCategory.SAVED;
 
-                              getTest();
-                            }),
+                            //   getTest();
+                            // }),
                             getTestCatButton("Bank", () {
                               testCategory = TestCategory.BANK;
 

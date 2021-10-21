@@ -13,6 +13,7 @@ class TestTypeListView extends StatefulWidget {
       {Key? key,
       this.title,
       this.multiSelect = false,
+      this.testCategory = TestCategory.NONE,
       this.questionLimit = 40,
       this.time})
       : super(key: key);
@@ -21,6 +22,7 @@ class TestTypeListView extends StatefulWidget {
   final Course course;
   final List<TestNameAndCount> tests;
   final TestType type;
+  final TestCategory testCategory;
   String? title;
   bool multiSelect;
   int? questionLimit;
@@ -215,7 +217,9 @@ class _MockListViewState extends State<TestTypeListView> {
                                     });
                                     questions = await TestController()
                                         .getTopicQuestions(topicIds,
-                                            limit: widget.questionLimit);
+                                            limit: widget.type != TestType.SPEED
+                                                ? 10
+                                                : 1000);
                                     break;
                                   default:
                                     questions = await TestController()

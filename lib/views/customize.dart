@@ -188,7 +188,8 @@ class _CustomizeState extends State<Customize> {
           futureList = TestController().getTopics(widget.course);
           break;
         case TestCategory.ESSAY:
-          futureList = TestController().getEssays(widget.course);
+          futureList = TestController()
+              .getEssays(widget.course, int.parse(numberOfQuestions));
           break;
         case TestCategory.SAVED:
           futureList = TestController().getSavedTests(widget.course);
@@ -228,11 +229,15 @@ class _CustomizeState extends State<Customize> {
                   time: timeDuration.inSeconds);
               break;
             case TestCategory.ESSAY:
-              widgetView = TestTypeListView(
-                  widget.user, widget.course, data, testType,
-                  title: "Essay",
-                  questionLimit: int.parse(numberOfQuestions),
-                  time: timeDuration.inSeconds);
+              List<Question> questions = data as List<Question>;
+              widgetView = QuizCover(
+                widget.user,
+                questions,
+                category: testCategory.toString().split(".")[1],
+                course: widget.course,
+                time: timeDuration.inSeconds,
+                name: "Essays",
+              );
               break;
             case TestCategory.SAVED:
               List<Question> questions = data as List<Question>;
@@ -322,10 +327,10 @@ class _CustomizeState extends State<Customize> {
                         ),
                         Column(
                           children: [
-                            getTestCatButton("Saved", () {
-                              testCategory = TestCategory.SAVED;
-                              getTest();
-                            }),
+                            // getTestCatButton("Saved", () {
+                            //   testCategory = TestCategory.SAVED;
+                            //   getTest();
+                            // }),
                             getTestCatButton("Bank", () {
                               testCategory = TestCategory.BANK;
                               getTest();

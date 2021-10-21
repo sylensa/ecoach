@@ -163,6 +163,26 @@ class QuestionDB {
     return questions;
   }
 
+  Future<List<Question>> getQuestionsByType(
+      int courseId, String type, int limit) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('questions',
+        orderBy: "created_at DESC",
+        where: "course_id = ? AND qtype = ?",
+        whereArgs: [courseId, type],
+        limit: limit);
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
   Future<int> getTotalQuestionCount(int courseId) async {
     final Database? db = await DBProvider.database;
 

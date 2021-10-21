@@ -33,7 +33,6 @@ class BundleDownload extends StatefulWidget {
 class _BundleDownloadState extends State<BundleDownload> {
   List<Map<String, dynamic>> courseList = [];
   List<Map<String, dynamic>> selectedTableRows = [];
-  int percentage = 0;
   late String subName;
   @override
   void initState() {
@@ -45,6 +44,11 @@ class _BundleDownloadState extends State<BundleDownload> {
 
     print(widget.bundle.subscriptionItems);
     getSubscriptionItems();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
   }
 
   getSubscriptionItems() {
@@ -72,7 +76,7 @@ class _BundleDownloadState extends State<BundleDownload> {
     return WillPopScope(
       onWillPop: () async {
         bool canExit = true;
-        if (percentage > 0 && percentage < 100)
+        if (context.read<DownloadUpdate>().isDownloading)
           await showDialog<bool>(
               context: context,
               builder: (context) {

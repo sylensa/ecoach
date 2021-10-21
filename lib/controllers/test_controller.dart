@@ -167,18 +167,11 @@ class TestController {
     return topics;
   }
 
-  getEssays(Course course) async {
-    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "ESSAY");
+  getEssays(Course course, int limit) async {
+    List<Question> questions =
+        await QuestionDB().getQuestionsByType(course.id!, "ESSAY", limit);
 
-    List<TestNameAndCount> testNames = [];
-    for (int i = 0; i < quizzes.length; i++) {
-      Quiz quiz = quizzes[i];
-      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
-      testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
-          id: quiz.id, category: TestCategory.ESSAY));
-    }
-
-    return testNames;
+    return questions;
   }
 
   Future<List<Question>> getSavedTests(Course course) async {
