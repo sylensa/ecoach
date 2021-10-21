@@ -221,45 +221,43 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                   bottom: 24.0,
                 ),
                 child: Center(
-                  child: Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columnSpacing: 8,
-                        headingTextStyle: kSixteenPointWhiteText,
-                        dataTextStyle: kTableBodyMainText,
-                        dataRowHeight: 72.0,
-                        dividerThickness: 0,
-                        showCheckboxColumn: false,
-                        columns: [
-                          DataColumn(label: Text('Date')),
-                          DataColumn(
-                              label: Text(
-                            'Name',
-                            textAlign: TextAlign.center,
-                          )),
-                          DataColumn(label: Text('Time (s)')),
-                          DataColumn(label: Text('Score')),
-                        ],
-                        rows: [
-                          for (int i = 0; i < testsTaken.length; i++)
-                            makeDataRow(
-                              cell1Text1: getTime(testsTaken[i].datetime!),
-                              cell1Text2: getDateOnly(testsTaken[i].datetime!),
-                              cell2Text1: testsTaken[i].testname!,
-                              cell2Text2: testsTaken[i].testType!,
-                              cell3Text: "${testsTaken[i].usedTime!}",
-                              progressColor:
-                                  kCourseColors[i % kCourseColors.length]
-                                      ['progress']!,
-                              progress: testsTaken[i].performace,
-                              selected: selectedTableRowIndex == i,
-                              onSelectChanged: (selected) {
-                                handleSelectChanged(i);
-                              },
-                            ),
-                        ],
-                      ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columnSpacing: 8,
+                      headingTextStyle: kSixteenPointWhiteText,
+                      dataTextStyle: kTableBodyMainText,
+                      dataRowHeight: 72.0,
+                      dividerThickness: 0,
+                      showCheckboxColumn: false,
+                      columns: [
+                        DataColumn(label: Text('Date')),
+                        DataColumn(
+                            label: Text(
+                          'Name',
+                          textAlign: TextAlign.center,
+                        )),
+                        DataColumn(label: Text('Time (s)')),
+                        DataColumn(label: Text('Score')),
+                      ],
+                      rows: [
+                        for (int i = 0; i < testsTaken.length; i++)
+                          makeDataRow(
+                            cell1Text1: getTime(testsTaken[i].datetime!),
+                            cell1Text2: getDateOnly(testsTaken[i].datetime!),
+                            cell2Text1: testsTaken[i].testname!,
+                            cell2Text2: testsTaken[i].testType!,
+                            cell3Text: "${testsTaken[i].usedTime!}",
+                            progressColor:
+                                kCourseColors[i % kCourseColors.length]
+                                    ['progress']!,
+                            progress: testsTaken[i].performace,
+                            selected: selectedTableRowIndex == i,
+                            onSelectChanged: (selected) {
+                              handleSelectChanged(i);
+                            },
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -318,7 +316,7 @@ DataRow makeDataRow({
       ),
       DataCell(
         Container(
-          width: 120.0,
+          width: 115.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,7 +347,7 @@ DataRow makeDataRow({
         Center(
           widthFactor: 1,
           child: SizedBox(
-            width: 80,
+            width: 75,
             child: LinearPercentIndicatorWrapper(
               percent: progress,
               progressColor: progressColor,
