@@ -10,6 +10,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/note_view.dart';
 import 'package:ecoach/views/notes_topics.dart';
+import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:ecoach/widgets/courses/linear_percent_indicator_wrapper.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -159,27 +160,41 @@ class _ResultsViewState extends State<ResultsView> {
                     },
                   ),
                   Container(width: 1.0, color: kNavigationTopBorderColor),
-                  Button(
-                    label: 'revise',
-                    onPressed: () async {
-                      int topicId =
-                          topics[selectedTableRowIndex].answers[0].topicId!;
-                      Topic? topic = await TopicDB().getTopicById(topicId);
+                  if (!widget.diagnostic)
+                    Button(
+                      label: 'revise',
+                      onPressed: () async {
+                        int topicId =
+                            topics[selectedTableRowIndex].answers[0].topicId!;
+                        Topic? topic = await TopicDB().getTopicById(topicId);
 
-                      if (topic != null) {
-                        print(
-                            "_______________________________________________________");
-                        print(topic.notes);
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return NoteView(widget.user, topic);
-                            });
-                      } else {
-                        showFeedback(context, "No notes available");
-                      }
-                    },
-                  ),
+                        if (topic != null) {
+                          print(
+                              "_______________________________________________________");
+                          print(topic.notes);
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return NoteView(widget.user, topic);
+                              });
+                        } else {
+                          showFeedback(context, "No notes available");
+                        }
+                      },
+                    ),
+                  if (widget.diagnostic)
+                    Button(
+                      label: 'Purchase',
+                      onPressed: () {
+                        Navigator.push<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) =>
+                                StorePage(widget.user),
+                          ),
+                        );
+                      },
+                    ),
                   Container(width: 1.0, color: kNavigationTopBorderColor),
                   Button(
                     label: 'new test',

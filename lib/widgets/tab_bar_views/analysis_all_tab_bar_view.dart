@@ -225,6 +225,7 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: DataTable(
+                        columnSpacing: 8,
                         headingTextStyle: kSixteenPointWhiteText,
                         dataTextStyle: kTableBodyMainText,
                         dataRowHeight: 72.0,
@@ -232,7 +233,11 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                         showCheckboxColumn: false,
                         columns: [
                           DataColumn(label: Text('Date')),
-                          DataColumn(label: Text('Name')),
+                          DataColumn(
+                              label: Text(
+                            'Name',
+                            textAlign: TextAlign.center,
+                          )),
                           DataColumn(label: Text('Time (s)')),
                           DataColumn(label: Text('Score')),
                         ],
@@ -243,7 +248,7 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                               cell1Text2: getDateOnly(testsTaken[i].datetime!),
                               cell2Text1: testsTaken[i].testname!,
                               cell2Text2: testsTaken[i].testType!,
-                              cell3Text: "${testsTaken[i].testTime!}",
+                              cell3Text: "${testsTaken[i].usedTime!}",
                               progressColor:
                                   kCourseColors[i % kCourseColors.length]
                                       ['progress']!,
@@ -299,17 +304,21 @@ DataRow makeDataRow({
     color: MaterialStateProperty.resolveWith(getColor),
     cells: [
       DataCell(
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(cell1Text1),
-            Text(cell1Text2, style: kTableBodySubText)
-          ],
+        Container(
+          width: 80,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(cell1Text1),
+              Text(cell1Text2, style: kTableBodySubText)
+            ],
+          ),
         ),
       ),
       DataCell(
         Container(
-          width: 100.0,
+          width: 120.0,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,17 +336,26 @@ DataRow makeDataRow({
       DataCell(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text(cell3Text, softWrap: true)],
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              cell3Text,
+              textAlign: TextAlign.center,
+            )
+          ],
         ),
       ),
       DataCell(
         Center(
           widthFactor: 1,
-          child: LinearPercentIndicatorWrapper(
-            percent: progress,
-            progressColor: progressColor,
-            backgroundColor: Color(0xFF363636),
-            label: (progress * 100).toString(),
+          child: SizedBox(
+            width: 80,
+            child: LinearPercentIndicatorWrapper(
+              percent: progress,
+              progressColor: progressColor,
+              backgroundColor: Color(0xFF363636),
+              label: (progress * 100).toStringAsFixed(2),
+            ),
           ),
         ),
       ),
