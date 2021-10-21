@@ -247,8 +247,7 @@ class _AllTabBarViewState extends State<AllTabBarView> {
                               progressColor:
                                   kCourseColors[i % kCourseColors.length]
                                       ['progress']!,
-                              progress: testsTaken[i].correct! /
-                                  testsTaken[i].totalQuestions,
+                              progress: testsTaken[i].performace,
                               selected: selectedTableRowIndex == i,
                               onSelectChanged: (selected) {
                                 handleSelectChanged(i);

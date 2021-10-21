@@ -74,6 +74,12 @@ class TestTaken {
     return ids;
   }
 
+  double get performace {
+    if (totalQuestions == 0) return 0;
+    double performace = correct! / totalQuestions;
+    return double.parse(performace.toStringAsFixed(2));
+  }
+
   factory TestTaken.fromJson(Map<String, dynamic> json) => TestTaken(
         id: json["id"],
         userId: json["user_id"],
