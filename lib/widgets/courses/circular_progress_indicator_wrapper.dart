@@ -27,7 +27,7 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
 
   static const TextStyle centerTextStyle = TextStyle(
     fontSize: 10.0,
-    color: Colors.white,
+    color: Colors.black,
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w700,
   );
@@ -59,7 +59,7 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
             }()),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.black12,
+              color: Colors.white,
             ),
           ),
           CircularPercentIndicator(
@@ -77,10 +77,14 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  (useProgressAsMainCenterText ? progress.toInt().toString() : mainCenterText!) +
+                  (useProgressAsMainCenterText
+                          ? progress.toInt().toString()
+                          : mainCenterText!) +
                       progressPostFix,
                   style: centerTextStyle.copyWith(
-                    fontSize: mainCenterTextSize == ProgressIndicatorSize.large ? 20.0 : 10.0,
+                    fontSize: mainCenterTextSize == ProgressIndicatorSize.large
+                        ? 20.0
+                        : 10.0,
                   ),
                 ),
                 if (subCenterText != null)
@@ -92,7 +96,7 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
             ),
             progressColor: progressColor,
             circularStrokeCap: CircularStrokeCap.round,
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.black12,
           ),
         ],
       ),
