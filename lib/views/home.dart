@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 20,
                   ),
-                  if (!context.read<DownloadUpdate>().isDownloading)
+                  if (!context.watch<DownloadUpdate>().isDownloading)
                     Container(
                       height: 48.0,
                       width: double.infinity,
@@ -160,118 +160,117 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                  Container(
-                    child: FutureBuilder(
-                        future: futureSubs,
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.none:
-                              return !context
-                                      .watch<DownloadUpdate>()
-                                      .isDownloading
-                                  ? NoSubWidget(
-                                      widget.user,
-                                      widget.callback,
-                                    )
-                                  : DownloadPage();
-                            case ConnectionState.waiting:
-                              return Center(child: CircularProgressIndicator());
-                            default:
-                              if (snapshot.hasError)
-                                return Text('Error: ${snapshot.error}');
-                              else if (snapshot.data != null) {
-                                List<TestTaken> items =
-                                    snapshot.data as List<TestTaken>;
+                  if (!context.watch<DownloadUpdate>().isDownloading)
+                    Container(
+                      child: FutureBuilder(
+                          future: futureSubs,
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.none:
+                                return NoSubWidget(
+                                  widget.user,
+                                  widget.callback,
+                                );
+                              case ConnectionState.waiting:
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              default:
+                                if (snapshot.hasError)
+                                  return Text('Error: ${snapshot.error}');
+                                else if (snapshot.data != null) {
+                                  List<TestTaken> items =
+                                      snapshot.data as List<TestTaken>;
 
-                                return Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 44),
-                                        for (int i = 0; i < items.length; i++)
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 0, 16),
-                                            child: HomeCard(
-                                              timeAgo: timeago
-                                                  .format(items[i].datetime!),
-                                              activityTypeIconURL:
-                                                  'assets/icons/edit.png',
-                                              vendoLogoURL:
-                                                  'assets/icons/edeo_logo.png',
-                                              footerCenterText:
-                                                  '${items[i].jsonResponses.length} Questions',
-                                              footerRightText:
-                                                  items[i].usedTimeText,
-                                              centralWidget: Column(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 210,
-                                                    child: Text(
-                                                      items[i].testname!,
-                                                      softWrap: true,
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 18.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                  return Expanded(
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(height: 44),
+                                          for (int i = 0; i < items.length; i++)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 16),
+                                              child: HomeCard(
+                                                timeAgo: timeago
+                                                    .format(items[i].datetime!),
+                                                activityTypeIconURL:
+                                                    'assets/icons/edit.png',
+                                                vendoLogoURL:
+                                                    'assets/icons/edeo_logo.png',
+                                                footerCenterText:
+                                                    '${items[i].jsonResponses.length} Questions',
+                                                footerRightText:
+                                                    items[i].usedTimeText,
+                                                centralWidget: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 210,
+                                                      child: Text(
+                                                        items[i].testname!,
+                                                        softWrap: true,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 18.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Text(
-                                                    "${items[i].courseName!}",
-                                                    softWrap: true,
-                                                    style: TextStyle(
-                                                      color: Color(0x88FFFFFF),
+                                                    Text(
+                                                      "${items[i].courseName!}",
+                                                      softWrap: true,
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0x88FFFFFF),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
+                                                centerRightWidget:
+                                                    CircularProgressIndicatorWrapper(
+                                                  progress: items[i].correct! /
+                                                      items[i].totalQuestions *
+                                                      100,
+                                                ),
+                                                colors: getColorGradient(
+                                                    enumFromString(
+                                                            TestType.values,
+                                                            items[i]
+                                                                .testType) ??
+                                                        TestType.NONE),
                                               ),
-                                              centerRightWidget:
-                                                  CircularProgressIndicatorWrapper(
-                                                progress: items[i].correct! /
-                                                    items[i].totalQuestions *
-                                                    100,
-                                              ),
-                                              colors: getColorGradient(
-                                                  enumFromString(
-                                                          TestType.values,
-                                                          items[i].testType) ??
-                                                      TestType.NONE),
                                             ),
-                                          ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              } else if (snapshot.data == null)
-                                return !context
-                                        .watch<DownloadUpdate>()
-                                        .isDownloading
-                                    ? NoSubWidget(
-                                        widget.user,
-                                        widget.callback,
-                                      )
-                                    : DownloadPage();
-                              else
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 100,
-                                    ),
-                                    Center(
-                                        child: Text(widget.user.email ??
-                                            "Something isn't right")),
-                                    SizedBox(height: 100),
-                                  ],
-                                );
-                          }
-                        }),
-                  ),
+                                  );
+                                } else if (snapshot.data == null)
+                                  return NoSubWidget(
+                                    widget.user,
+                                    widget.callback,
+                                  );
+                                else
+                                  return Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 100,
+                                      ),
+                                      Center(
+                                          child: Text(widget.user.email ??
+                                              "Something isn't right")),
+                                      SizedBox(height: 100),
+                                    ],
+                                  );
+                            }
+                          }),
+                    ),
+                  if (context.watch<DownloadUpdate>().isDownloading)
+                    DownloadPage()
                 ],
               ),
             ),
