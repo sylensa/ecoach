@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:ecoach/api/api_call.dart';
@@ -72,30 +73,37 @@ class _AllTabBarViewState extends State<AllTabBarView> {
 
   getAnalytics() {
     AnalysisDB().getAnalysisById(int.parse(widget.item.tag!)).then((analytic) {
-      // print(analytic!.toJson());
-      setInfoList(analytic);
+      if (analytic != null) {
+        print(analytic.toJson());
+        setInfoList(analytic);
+      }
 
       ApiCall<CourseAnalytic>(AppUrl.analysis + '/' + widget.item.tag!,
               isList: false, create: (dataItem) {
+        print("fromJson");
+        print(dataItem);
         return CourseAnalytic.fromJson(dataItem);
       }, onError: (e) {
+        print("Error>>>>>>>>>>");
         print(e);
       },
               params: analytic != null
                   ? {
-                      'points': analytic.coursePoint ?? null,
-                      'last_points': analytic.lastCoursePoint ?? null,
-                      'rank': analytic.userRank ?? null,
-                      'last_rank': analytic.lastUserRank ?? null,
-                      'total_rank': analytic.totalRank ?? null,
-                      'mastery': analytic.mastery ?? null,
-                      'last_mastery': analytic.lastMastery ?? null,
-                      'speed': analytic.usedSpeed ?? null,
-                      'last_speed': analytic.lastSpeed ?? null,
+                      'points': jsonEncode(analytic.coursePoint),
+                      'last_points': jsonEncode(analytic.lastCoursePoint),
+                      'rank': jsonEncode(analytic.userRank),
+                      'last_rank': jsonEncode(analytic.lastUserRank),
+                      'total_rank': jsonEncode(analytic.totalRank),
+                      'mastery': jsonEncode(analytic.mastery),
+                      'last_mastery': jsonEncode(analytic.lastMastery),
+                      'speed': jsonEncode(analytic.usedSpeed),
+                      'last_speed': jsonEncode(analytic.lastSpeed),
                     }
                   : {})
           .get(context)
           .then((analytic) {
+        print(">>>>>>>>>>>>>>>");
+        print(analytic);
         if (analytic == null) return;
         AnalysisDB().insert(analytic);
         setState(() {
@@ -173,28 +181,28 @@ class _AllTabBarViewState extends State<AllTabBarView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     crossAxisAlignment: CrossAxisAlignment.center,
-              //     children: [
-              //       Text(
-              //         'Today',
-              //         style: kSixteenPointWhiteText,
-              //       ),
-              //       IconButton(
-              //         onPressed: () {},
-              //         icon: Icon(
-              //           Icons.more_horiz,
-              //           color: Colors.white,
-              //           size: 28.0,
-              //         ),
-              //       )
-              //     ],
-              //   ),
-              // ),
-              // SizedBox(height: 12.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Today',
+                      style: kSixteenPointWhiteText,
+                    ),
+                    // IconButton(
+                    //   onPressed: () {},
+                    //   icon: Icon(
+                    //     Icons.more_horiz,
+                    //     color: Colors.white,
+                    //     size: 28.0,
+                    //   ),
+                    // )
+                  ],
+                ),
+              ),
+              SizedBox(height: 12.0),
               Container(
                 height: 140.0,
                 width: double.infinity,

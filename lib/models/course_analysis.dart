@@ -33,23 +33,37 @@ class CourseAnalytic {
       this.user,
       this.course});
 
-  factory CourseAnalytic.fromJson(Map<String, dynamic> json) => CourseAnalytic(
-        id: json['id'] is String ? int.parse(json['id']) : json['id'],
-        userRank: json['rank'] != null ? json['rank']['rank'] : null,
-        lastUserRank:
-            json['rank'] != null ? json['rank']['last_rank'] ?? null : null,
-        totalRank: json['rank'] != null ? json['rank']['total'] : null,
-        mastery: json["mastery"].toDouble(),
-        lastMastery: json["last_mastery"] != null
-            ? json["last_mastery"].toDouble()
-            : null,
-        coursePoint: json["points"] != null ? json["points"].toDouble() : null,
-        lastCoursePoint:
-            json["last_points"] != null ? json["last_points"].toDouble() : null,
-        usedSpeed: json['speed'] != null ? json['speed']['used'] : null,
-        lastSpeed: json['speed'] != null ? json['speed']['last_used'] : null,
-        totalSpeed: json['speed'] != null ? json['speed']['total'] : null,
-      );
+  factory CourseAnalytic.fromJson(Map<String, dynamic> json) {
+    return CourseAnalytic(
+      id: json['id'] is String ? int.parse(json['id']) : json['id'],
+      userRank: json['rank'] != null ? json['rank']['rank'] : null,
+      lastUserRank: json['rank'] == null || !(json['rank']['last_rank'] is num)
+          ? null
+          : jsonDecode(json['rank']['last_rank']) ?? null,
+      totalRank: json['rank'] == null || !(json['rank']['total'] is num)
+          ? null
+          : json['rank']['total'],
+      mastery: json["mastery"].toDouble(),
+      lastMastery:
+          json["last_mastery"] == null || !(json["last_mastery"] is num)
+              ? null
+              : json["last_mastery"].toDouble(),
+      coursePoint: json["points"] != null ? json["points"].toDouble() : null,
+      lastCoursePoint:
+          json["last_points"] == null || !(json["last_points"] is num)
+              ? null
+              : json["last_points"].toDouble(),
+      usedSpeed: json['speed'] == null || !(json['speed']['used'] is num)
+          ? null
+          : json['speed']['used'],
+      lastSpeed: json['speed'] == null || !(json['speed']['last_used'] is num)
+          ? null
+          : json['speed']['last_used'],
+      totalSpeed: json['speed'] == null || !(json['speed']['total'] is num)
+          ? null
+          : json['speed']['total'],
+    );
+  }
 
   factory CourseAnalytic.fromDB(Map<String, dynamic> json) => CourseAnalytic(
         id: json['id'] is String ? int.parse(json['id']) : json['id'],

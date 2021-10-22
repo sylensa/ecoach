@@ -58,7 +58,7 @@ class _NoteViewState extends State<NoteView> {
                               .getCourseById(widget.topic.courseId!);
 
                           List<Question> questions = await TestController()
-                              .getTopicQuestions([widget.topic.id!], limit: 40);
+                              .getTopicQuestions([widget.topic.id!], limit: 10);
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return QuizCover(

@@ -61,7 +61,8 @@ class ApiCall<T> {
       }
       print("returning data");
       return getFinalData();
-    } catch (e) {
+    } catch (m, e) {
+      print(m);
       print(e);
       if (onError != null) {
         onError!(e);
@@ -101,7 +102,8 @@ class ApiCall<T> {
       }
       print("returning data");
       return getFinalData();
-    } catch (e) {
+    } catch (m, e) {
+      print(m);
       print(e);
       if (onError != null) {
         onError!(e);
