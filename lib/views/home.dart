@@ -1,4 +1,5 @@
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/views/download_page.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:provider/src/provider.dart';
@@ -236,9 +237,11 @@ class _HomePageState extends State<HomePage> {
                                                     items[i].totalQuestions *
                                                     100,
                                               ),
-                                              // colors: getColorGradient(enumFromString(
-                                              //         TestType.values, items[i].testType) ??
-                                              //     TestType.NONE),
+                                              colors: getColorGradient(
+                                                  enumFromString(
+                                                          TestType.values,
+                                                          items[i].testType) ??
+                                                      TestType.NONE),
                                             ),
                                           ),
                                       ],

@@ -48,7 +48,8 @@ class TestTakenDB {
     for (int i = 0; i < maps.length; i++) {
       TestTaken test = TestTaken.fromJson(maps[i]);
       Course? course = await CourseDB().getCourseById(test.courseId!);
-
+      print("------------------------------------------------");
+      print(test.toJson());
       if (course != null) {
         test.courseName = course.name!;
         tests.add(test);
