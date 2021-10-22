@@ -41,8 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'Accept': 'application/json'
       },
       body: jsonEncode(<String, dynamic>{
-        'fname': name.split(" ")[0],
-        'lname': name.split(" ")[1],
+        'name': name,
         'gender': "----",
         'email': email,
         'phone': phone,
@@ -85,11 +84,12 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Server Error"),
+        ));
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Server Error"),
-      ));
       return;
     }
   }
@@ -143,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (text!.isEmpty) {
                               _msg = "Your name is required";
                             }
-                            if (text.trim().split(" ").length != 2) {
+                            if (text.trim().split(" ").length < 2) {
                               _msg =
                                   "Please enter First name and Surname. Should be exactly 2";
                             }

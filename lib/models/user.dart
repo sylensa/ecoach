@@ -5,8 +5,7 @@ import 'subscription.dart';
 class User {
   int? id;
   String? uuid;
-  String? fname;
-  String? lname;
+  String? name;
   String? email;
   String? password;
   String? passwordConfirm;
@@ -15,7 +14,7 @@ class User {
   String? gender;
   String? token;
   DateTime? lastLoggedIn;
-  String? username;
+  String? nickname;
   String? avatar;
   bool activated;
   DateTime? signupDate;
@@ -27,9 +26,8 @@ class User {
   User(
       {this.id,
       this.uuid,
-      this.fname,
-      this.lname,
-      this.username,
+      this.name,
+      this.nickname,
       this.email,
       this.phone,
       this.password,
@@ -42,13 +40,11 @@ class User {
       this.activated = false,
       this.signupDate});
 
-  String get name {
-    return fname! + " " + lname!;
-  }
-
   String get initials {
-    return fname!.substring(0, 1).toUpperCase() +
-        lname!.substring(0, 1).toUpperCase();
+    String fname = name!.split(" ")[0];
+    String lname = name!.split(" ")[1];
+    return fname.substring(0, 1).toUpperCase() +
+        lname.substring(0, 1).toUpperCase();
   }
 
   factory User.fromJson(Map<String, dynamic> responseData) {
@@ -58,23 +54,23 @@ class User {
   factory User.fromMap(Map<String, dynamic> json) => new User(
       id: json['id'],
       uuid: json['uuid'],
-      fname: json['fname'],
-      lname: json['lname'],
-      username: json['username'],
+      name: json['name'],
+      nickname: json['nickname'],
       email: json['email'],
       phone: json['phone'],
       type: json['type'],
       gender: json['gender'],
       token: json['api_token'],
       avatar: json['avatar'],
+      activated:
+          json['activated'] is int && json['activated'] == 1 ? true : false,
       signupDate: DateTime.parse(json['signup_date']));
 
   fromMap(Map<String, dynamic> json) {
     id = json['id'];
     uuid = json['uuid'];
-    fname = json['fname'];
-    lname = json['lname'];
-    username = json['username'];
+    name = json['name'];
+    nickname = json['nickname'];
     email = json['email'];
     phone = json['phone'];
     type = json['type'];
@@ -87,9 +83,8 @@ class User {
   Map<String, dynamic> toMap() => {
         "id": id,
         "uuid": uuid,
-        "fname": fname,
-        "lname": lname,
-        "username": username,
+        "name": name,
+        "nickname": nickname,
         "email": email,
         "phone": phone,
         "type": type,

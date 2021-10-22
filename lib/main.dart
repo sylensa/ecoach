@@ -60,8 +60,10 @@ class MyApp extends StatelessWidget {
                 } else if (snapshot.data != null) {
                   User user = snapshot.data as User;
 
-                  if (!user.activated) {
+                  if (!user.activated && user.token != null) {
                     return OTPView(user);
+                  } else if (!user.activated) {
+                    return LoginPage();
                   }
 
                   if (user.subscriptions.length == 0 && !user.hasTakenTest) {

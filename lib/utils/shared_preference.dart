@@ -12,8 +12,7 @@ class UserPreferences {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     prefs.setInt("id", user!.id!);
-    prefs.setString("fname", user.fname!);
-    prefs.setString("lname", user.lname!);
+    prefs.setString("name", user.name!);
     prefs.setString("email", user.email!);
     prefs.setString("phone", user.phone!);
     prefs.setBool("activated", user.activated);
@@ -28,8 +27,7 @@ class UserPreferences {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     int? id = prefs.getInt("id");
-    String? fname = prefs.getString("fname");
-    String? lname = prefs.getString("lname");
+    String? name = prefs.getString("name");
     String? email = prefs.getString("email");
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
@@ -42,8 +40,7 @@ class UserPreferences {
 
     User user = User(
         id: id,
-        fname: fname,
-        lname: lname,
+        name: name,
         email: email,
         phone: phone,
         token: token,

@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                                 TextStyle(color: Colors.black26, fontSize: 12),
                           ),
                           Text(
-                            widget.user.name,
+                            widget.user.name!,
                             style: TextStyle(
                                 fontSize: 17,
                                 color: Colors.black,

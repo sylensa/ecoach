@@ -5,6 +5,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/forgot_password.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/views/register_view.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -31,7 +32,8 @@ class _LoginPageState extends State<LoginPage> {
     http.Response response = await http.post(
       Uri.parse(AppUrl.login),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(<String, dynamic>{'identifier': email, "password": password}),
+      body: jsonEncode(
+          <String, dynamic>{'identifier': email, "password": password}),
     );
 
     print(response.statusCode);
@@ -41,10 +43,15 @@ class _LoginPageState extends State<LoginPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
-        user.activated = true;
+        print("login: token=${user.token}");
         UserPreferences().setUser(user);
         Navigator.pop(context);
-        if (user.subscriptions.length == 0) {
+        if (!user.activated) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => OTPView(user)),
+          );
+        } else if (user.subscriptions.length == 0) {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => WelcomeAdeo(user)),
@@ -105,7 +112,8 @@ class _LoginPageState extends State<LoginPage> {
                         TextFormField(
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                              labelText: 'Email or Phone', border: OutlineInputBorder()),
+                              labelText: 'Email or Phone',
+                              border: OutlineInputBorder()),
                           onSaved: (value) {
                             email = value!;
                           },
@@ -116,7 +124,8 @@ class _LoginPageState extends State<LoginPage> {
                             if (text!.isEmpty) {
                               _msg = "Your email is required";
                             } else if (!regex.hasMatch(text)) {
-                              _msg = "Please provide a valid email or phone number";
+                              _msg =
+                                  "Please provide a valid email or phone number";
                             }
                             return _msg;
                           },
@@ -126,8 +135,9 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         TextFormField(
                           style: TextStyle(color: Colors.black),
-                          decoration:
-                              InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
+                          decoration: InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder()),
                           obscureText: true,
                           onSaved: (value) {
                             password = value!;
@@ -148,7 +158,9 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPasswordPage()),
                                   );
                                 },
                                 child: Text(
@@ -162,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(
                           width: double.infinity,
-                          height: 40,
+                          height: 50,
                           child: ElevatedButton(
                               style: greenButtonStyle,
                               onPressed: () {
@@ -170,7 +182,8 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               child: Text(
                                 "Login",
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
                               )),
                         ),
                         SizedBox(
@@ -180,7 +193,8 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => RegisterPage()),
+                              MaterialPageRoute(
+                                  builder: (context) => RegisterPage()),
                             );
                           },
                           child: RichText(
@@ -191,7 +205,8 @@ class _LoginPageState extends State<LoginPage> {
                               TextSpan(
                                   text: "Create Account",
                                   style: TextStyle(
-                                      color: Colors.green, decoration: TextDecoration.underline))
+                                      color: Colors.green,
+                                      decoration: TextDecoration.underline))
                             ]),
                           ),
                         ),

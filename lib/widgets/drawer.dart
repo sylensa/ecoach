@@ -58,7 +58,7 @@ class AppDrawer extends StatelessWidget {
 
   Widget _createUserAccountHeader(User user) {
     return UserAccountsDrawerHeader(
-      accountName: Text(user.name),
+      accountName: Text(user.name!),
       accountEmail: Text(user.phone!),
       currentAccountPicture: CircleAvatar(
         backgroundColor: Colors.black,

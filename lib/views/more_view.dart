@@ -45,7 +45,7 @@ class _MoreViewState extends State<MoreView> {
       country: 'Ghana',
       dateJoined: widget.user.signupDate!.toString(),
       email: widget.user.email!,
-      name: widget.user.name,
+      name: widget.user.name!,
       initials: widget.user.initials,
       phoneNumber: widget.user.phone!,
       profileImageURL: widget.user.avatar != null ? widget.user.avatar! : null,
@@ -160,7 +160,9 @@ class BundleListItem extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           border: Border(
-            top: isFirstChild ? BorderSide(width: 1.0, color: kAdeoGray) : BorderSide.none,
+            top: isFirstChild
+                ? BorderSide(width: 1.0, color: kAdeoGray)
+                : BorderSide.none,
             bottom: BorderSide(width: 1.0, color: kAdeoGray),
           ),
         ),
