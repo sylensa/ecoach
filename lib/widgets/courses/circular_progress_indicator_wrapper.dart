@@ -12,6 +12,7 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
     this.subCenterText,
     this.useProgressAsMainCenterText = true,
     this.mainCenterText,
+    this.resultType = false,
     this.mainCenterTextSize = ProgressIndicatorSize.small,
   });
 
@@ -24,10 +25,11 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
   final bool useProgressAsMainCenterText;
   final String? mainCenterText;
   final ProgressIndicatorSize? mainCenterTextSize;
+  final bool resultType;
 
   static const TextStyle centerTextStyle = TextStyle(
     fontSize: 10.0,
-    color: Colors.black,
+    color: Colors.white,
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w700,
   );
@@ -59,7 +61,7 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
             }()),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white,
+              color: resultType ? Colors.white : Colors.black12,
             ),
           ),
           CircularPercentIndicator(
@@ -82,6 +84,7 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
                           : mainCenterText!) +
                       progressPostFix,
                   style: centerTextStyle.copyWith(
+                    color: resultType ? Colors.black : Colors.white,
                     fontSize: mainCenterTextSize == ProgressIndicatorSize.large
                         ? 20.0
                         : 10.0,
@@ -90,13 +93,14 @@ class CircularProgressIndicatorWrapper extends StatelessWidget {
                 if (subCenterText != null)
                   Text(
                     subCenterText!,
-                    style: centerTextStyle,
+                    style: centerTextStyle.copyWith(
+                        color: resultType ? Colors.black : Colors.white),
                   )
               ],
             ),
             progressColor: progressColor,
             circularStrokeCap: CircularStrokeCap.round,
-            backgroundColor: Colors.black12,
+            backgroundColor: resultType ? Colors.black12 : Colors.transparent,
           ),
         ],
       ),

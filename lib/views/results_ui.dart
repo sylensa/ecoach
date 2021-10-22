@@ -114,6 +114,7 @@ class _ResultsViewState extends State<ResultsView> {
                         progress: widget.test.score!,
                         progressColor: kAdeoGreen,
                         size: ProgressIndicatorSize.large,
+                        resultType: true,
                       ),
                       SizedBox(height: 12.0),
                       Text('Score', style: _topLabelStyle)
