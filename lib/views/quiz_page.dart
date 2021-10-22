@@ -9,6 +9,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -338,7 +339,7 @@ class _QuizViewState extends State<QuizView> {
     return WillPopScope(
       onWillPop: () async {
         if (!enabled) {
-          return true;
+          return showExitDialog();
         }
         timerController.pause();
 
@@ -582,6 +583,44 @@ class _QuizViewState extends State<QuizView> {
         ),
       ),
     );
+  }
+
+  Future<bool> showExitDialog() async {
+    bool canExit = true;
+    await showDialog<bool>(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Exit?",
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              'Are you sure you want to close this quiz?',
+              style: TextStyle(color: Colors.black),
+            ),
+            actions: [
+              Button(
+                label: "Yes",
+                onPressed: () {
+                  canExit = true;
+                  Navigator.popUntil(context,
+                      ModalRoute.withName(CourseDetailsPage.routeName));
+                },
+              ),
+              Button(
+                label: "No",
+                onPressed: () {
+                  canExit = false;
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+    return Future.value(canExit);
   }
 
   Future<bool> showPauseDialog() async {

@@ -241,31 +241,6 @@ class _ResultsViewState extends State<ResultsView> {
   }
 }
 
-class Button extends StatelessWidget {
-  const Button({
-    required this.label,
-    this.onPressed,
-  });
-
-  final String label;
-  final onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: MaterialButton(
-        onPressed: onPressed,
-        child: Text(
-          label,
-          style: TextStyle(fontSize: 20.0),
-        ),
-        height: 48.0,
-        textColor: Color(0xFFA2A2A2),
-      ),
-    );
-  }
-}
-
 DataRow makeDataRow({
   required String cell1Text,
   required String cell2Text,
