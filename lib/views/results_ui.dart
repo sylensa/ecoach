@@ -8,6 +8,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/note_view.dart';
 import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/views/store.dart';
@@ -74,6 +75,32 @@ class _ResultsViewState extends State<ResultsView> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) => MainHomePage(
+                              widget.user,
+                              index: 1,
+                            ),
+                          ), (route) {
+                        return false;
+                      });
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.red,
+                    ),
+                  )
+                ],
+              ),
+            ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
               color: Colors.white,
