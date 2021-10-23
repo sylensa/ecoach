@@ -224,13 +224,14 @@ class _ResultsViewState extends State<ResultsView> {
                       },
                     ),
                   Container(width: 1.0, color: kNavigationTopBorderColor),
-                  Button(
-                    label: 'new test',
-                    onPressed: () {
-                      Navigator.popUntil(context,
-                          ModalRoute.withName(CourseDetailsPage.routeName));
-                    },
-                  ),
+                  if (!widget.diagnostic)
+                    Button(
+                      label: 'new test',
+                      onPressed: () {
+                        Navigator.popUntil(context,
+                            ModalRoute.withName(CourseDetailsPage.routeName));
+                      },
+                    ),
                 ],
               ),
             )

@@ -47,6 +47,7 @@ dependencies:
   carousel_slider: ^4.0.0
   signal_strength_indicator: ^0.4.1
   fl_chart: ^0.40.2
+  wakelock: ^0.5.6
 
   cupertino_icons: ^1.0.3
   intl: ^0.17.0

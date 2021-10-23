@@ -17,6 +17,7 @@ import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/download_page.dart';
+import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/views/home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/more_view.dart';
@@ -40,7 +41,8 @@ class MainHomePage extends StatefulWidget {
   _MainHomePageState createState() => _MainHomePageState();
 }
 
-class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver {
+class _MainHomePageState extends State<MainHomePage>
+    with WidgetsBindingObserver {
   late List<Widget> _children;
   int currentIndex = 0;
 
@@ -81,7 +83,12 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // checkSubscription();
+      if (context.read<DownloadUpdate>().isDownloading) {
+        Wakelock.enable();
+      }
+    }
+    if (state == AppLifecycleState.paused) {
+      Wakelock.disable();
     }
   }
 
@@ -118,13 +125,15 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
 
         showLoaderDialog(context, message: "Initiating download....");
         Future.delayed(Duration(seconds: 2));
+        Wakelock.enable();
 
         for (int i = 0; i < subscriptions.length; i++) {
           await SubscriptionDB().delete(subscriptions[i].id!);
         }
         await SubscriptionDB().insertAll(freshSubscriptions);
 
-        List<SubscriptionItem> items = await SubscriptionItemDB().allSubscriptionItems();
+        List<SubscriptionItem> items =
+            await SubscriptionItemDB().allSubscriptionItems();
 
         Navigator.pop(context);
         try {
@@ -137,7 +146,9 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
                 AppUrl.subscriptionItemDownload + '/${items[i].id}?',
                 filename: filename);
 
-            context.read<DownloadUpdate>().updateMessage("downloading $filename");
+            context
+                .read<DownloadUpdate>()
+                .updateMessage("downloading $filename");
             await fileDownloader.downloadFile((percentage) {
               print("download: ${percentage}%");
               context.read<DownloadUpdate>().updatePercentage(percentage);
@@ -148,7 +159,8 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
             String subItem = await readSubscriptionPlan(filename);
             Map<String, dynamic> response = jsonDecode(subItem);
 
-            SubscriptionItem? subscriptionItem = SubscriptionItem.fromJson(response);
+            SubscriptionItem? subscriptionItem =
+                SubscriptionItem.fromJson(response);
 
             print("saving ${subscriptionItem.name}\n data");
 
@@ -157,16 +169,18 @@ class _MainHomePageState extends State<MainHomePage> with WidgetsBindingObserver
 
             context.read<DownloadUpdate>().doneDownlaod("$filename ...  done.");
           }
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Subscription data download successfully")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Subscription data download successfully")));
         } catch (m, e) {
           context.read<DownloadUpdate>().setDownloading(false);
 
           print("Error>>>>>>>> download failed");
           print(m);
           print(e);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Download failed")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Download failed")));
         } finally {
+          Wakelock.disable();
           context.read<DownloadUpdate>().clearDownloads();
           context.read<DownloadUpdate>().setDownloading(false);
 

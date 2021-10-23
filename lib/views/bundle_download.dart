@@ -19,6 +19,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/src/provider.dart';
+import 'package:wakelock/wakelock.dart';
 
 class BundleDownload extends StatefulWidget {
   BundleDownload(this.user, {Key? key, required this.bundle}) : super(key: key);
@@ -401,6 +402,7 @@ class _BundleDownloadState extends State<BundleDownload> {
   downloadSubscription(List<Map<String, dynamic>> items) async {
     try {
       context.read<DownloadUpdate>().setDownloading(true);
+      Wakelock.enable();
       showLoaderDialog(context, message: "starting downloads");
       Future.delayed(Duration(seconds: 2));
       Navigator.pop(context);
@@ -444,6 +446,7 @@ class _BundleDownloadState extends State<BundleDownload> {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Download failed")));
     } finally {
+      Wakelock.disable();
       context.read<DownloadUpdate>().setDownloading(false);
       context.read<DownloadUpdate>().clearDownloads();
 

@@ -48,7 +48,7 @@ class CourseDB {
               );
             }
           }
-          await Future.delayed(Duration(milliseconds: 200));
+          await Future.delayed(Duration(milliseconds: 90));
         }
       }
       batch.commit();
