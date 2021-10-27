@@ -45,6 +45,19 @@ class Subscription {
   DateTime? updatedAt;
   List<SubscriptionItem>? subscriptionItems;
 
+  get isDownloading {
+    if (subscriptionItems == null) {
+      return false;
+    }
+
+    for (int i = 0; i < subscriptionItems!.length; i++) {
+      if (subscriptionItems![i].isDownloading) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   get timeLeft {
     return endsAt!.difference(DateTime.now()).inDays.toString();
   }

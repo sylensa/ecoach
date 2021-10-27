@@ -1,3 +1,4 @@
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
 import 'package:ecoach/models/ui/bundle.dart';
@@ -8,6 +9,7 @@ import 'package:ecoach/views/bundle_download.dart';
 import 'package:ecoach/widgets/tab_bars/analysis_info_snippet_card_tab_bar.dart';
 import 'package:ecoach/widgets/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 
 class MoreView extends StatefulWidget {
   static const String routeName = '/more';
@@ -193,6 +195,8 @@ class BundleListItem extends StatelessWidget {
                 ],
               ),
             ),
+            Text(
+                "${context.watch<DownloadUpdate>().getDownloadStatus(bundle.id!)}"),
             Container(
               width: 32.0,
               height: 32.0,

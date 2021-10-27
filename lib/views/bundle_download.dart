@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
+import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -32,8 +33,9 @@ class BundleDownload extends StatefulWidget {
 }
 
 class _BundleDownloadState extends State<BundleDownload> {
-  List<Map<String, dynamic>> courseList = [];
-  List<Map<String, dynamic>> selectedTableRows = [];
+  List<SubscriptionItem> selectedTableRows = [];
+  List<SubscriptionItem> items = [];
+
   late String subName;
   @override
   void initState() {
@@ -55,20 +57,13 @@ class _BundleDownloadState extends State<BundleDownload> {
   getSubscriptionItems() {
     SubscriptionItemDB().subscriptionItems(widget.bundle.planId!).then((items) {
       setState(() {
-        for (int i = 0; i < items.length; i++) {
-          courseList.add({
-            'id': items[i].id,
-            'courseName': items[i].name,
-            'quiz_count': items[i].quizCount,
-            'question_count': items[i].questionCount
-          });
-        }
+        this.items = items;
       });
     });
   }
 
   clearList() {
-    courseList.clear();
+    items.clear();
     selectedTableRows.clear();
   }
 
@@ -248,19 +243,20 @@ class _BundleDownloadState extends State<BundleDownload> {
                                   DataColumn(label: Text('Questions')),
                                 ],
                                 rows: [
-                                  for (int i = 0; i < courseList.length; i++)
+                                  for (int i = 0; i < items.length; i++)
                                     makeDataRow(
-                                      cell1: courseList[i]['courseName']
+                                      cell1: items[i]
+                                          .name!
                                           .toUpperCase()
                                           .replaceFirst(
                                               subName.toUpperCase(), ""),
-                                      cell2: courseList[i]['quiz_count'],
-                                      cell3: courseList[i]['question_count'],
-                                      selected: selectedTableRows
-                                          .contains(courseList[i]),
+                                      cell2: items[i].quizCount!,
+                                      cell3: items[i].questionCount!,
+                                      selected:
+                                          selectedTableRows.contains(items[i]),
                                       onSelectChanged: (isSelected) {
-                                        final Map<String, dynamic> course =
-                                            courseList[i];
+                                        final SubscriptionItem course =
+                                            items[i];
 
                                         setState(() {
                                           final bool isAdding =
@@ -356,7 +352,30 @@ class _BundleDownloadState extends State<BundleDownload> {
                                 ElevatedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      downloadSubscription(selectedTableRows);
+
+                                      MainController(
+                                              context,
+                                              context.read<DownloadUpdate>(),
+                                              widget.user)
+                                          .downloadSubscription(
+                                              selectedTableRows, (success) {
+                                        if (success) {
+                                          // ScaffoldMessenger.of(context)
+                                          //     .showSnackBar(SnackBar(
+                                          //         content: Text(
+                                          //             "Subscription data download successfully")));
+                                        }
+
+                                        UserPreferences()
+                                            .getUser()
+                                            .then((user) {
+                                          setState(() {
+                                            widget.user = user!;
+                                          });
+                                        });
+                                        clearList();
+                                        getSubscriptionItems();
+                                      });
                                     },
                                     child: Text("Yes")),
                                 ElevatedButton(
@@ -374,7 +393,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                     color: kAdeoGreen,
                     child: Center(
                       child: Text(
-                        'Re-download Package',
+                        'Download Package',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,
@@ -390,74 +409,6 @@ class _BundleDownloadState extends State<BundleDownload> {
         ),
       ),
     );
-  }
-
-  getSubscriptionItem(id) async {
-    return await ApiCall(AppUrl.subscriptionItem + '/$id?', isList: false,
-        create: (json) {
-      return SubscriptionItem.fromJson(json);
-    }).get(context);
-  }
-
-  downloadSubscription(List<Map<String, dynamic>> items) async {
-    try {
-      context.read<DownloadUpdate>().setDownloading(true);
-      Wakelock.enable();
-      showLoaderDialog(context, message: "starting downloads");
-      Future.delayed(Duration(seconds: 2));
-      Navigator.pop(context);
-      for (int i = 0; i < items.length; i++) {
-        String filename = items[i]['courseName']!;
-        // if (await packageExist(filename)) {
-        //   continue;
-        // }
-        FileDownloader fileDownloader = FileDownloader(
-            AppUrl.subscriptionItemDownload + '/${items[i]['id']}?',
-            filename: filename);
-
-        context.read<DownloadUpdate>().updateMessage("downloading $filename");
-        await fileDownloader.downloadFile((percentage) {
-          print("download: ${percentage}%");
-          context.read<DownloadUpdate>().updatePercentage(percentage);
-        });
-
-        context.read<DownloadUpdate>().updateMessage("saving $filename");
-
-        String subItem = await readSubscriptionPlan(filename);
-        Map<String, dynamic> response = jsonDecode(subItem);
-
-        SubscriptionItem? subscriptionItem =
-            SubscriptionItem.fromJson(response);
-
-        print("saving ${subscriptionItem.name}\n data");
-
-        await CourseDB().insert(subscriptionItem.course!);
-        await QuizDB().insertAll(subscriptionItem.quizzes!);
-
-        context.read<DownloadUpdate>().doneDownlaod("$filename ...  done.");
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Subscription data download successfully")));
-    } catch (m, e) {
-      print("Error>>>>>>>> download failed");
-      print(m);
-      print(e);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Download failed")));
-    } finally {
-      Wakelock.disable();
-      context.read<DownloadUpdate>().setDownloading(false);
-      context.read<DownloadUpdate>().clearDownloads();
-
-      UserPreferences().getUser().then((user) {
-        setState(() {
-          widget.user = user!;
-        });
-      });
-      clearList();
-      getSubscriptionItems();
-    }
   }
 }
 

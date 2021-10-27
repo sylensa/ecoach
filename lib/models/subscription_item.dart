@@ -1,8 +1,5 @@
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
-import 'package:ecoach/database/course_db.dart';
-import 'package:ecoach/database/subscription_item_db.dart';
-import 'package:flutter/material.dart';
 
 class SubscriptionItem {
   SubscriptionItem(
@@ -37,6 +34,8 @@ class SubscriptionItem {
   List<Quiz>? quizzes;
   int? quizCount;
   int? questionCount;
+
+  bool isDownloading = false;
 
   get dateOnly {
     return "${createdAt!.day}/${createdAt!.month}/${createdAt!.year}";
