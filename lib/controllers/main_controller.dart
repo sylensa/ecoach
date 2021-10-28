@@ -12,6 +12,7 @@ import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -26,6 +27,14 @@ class MainController {
   MainController(this.context, this.provider, this.user) {
     print(context);
     print("----------------------------");
+  }
+
+  void setSubscriptions(List<Subscription> subscriptions) {
+    provider.setSubscriptions(subscriptions);
+  }
+
+  List<Subscription> getSubscriptions() {
+    return provider.plans!;
   }
 
   bool compareSubscriptions(
@@ -53,7 +62,7 @@ class MainController {
   }
 
   checkSubscription(Function(bool success) finallyCallback) {
-    getSubscriptions().then((freshSubscriptions) async {
+    makeSubscriptionsCall().then((freshSubscriptions) async {
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
@@ -70,7 +79,7 @@ class MainController {
     });
   }
 
-  Future<List<Subscription>> getSubscriptions() async {
+  Future<List<Subscription>> makeSubscriptionsCall() async {
     return await ApiCall<Subscription>(AppUrl.subscriptionData, create: (json) {
       return Subscription.fromJson(json);
     }).get(context);
@@ -126,6 +135,8 @@ class MainController {
       }
       provider.setNotificationUp(false, 0);
       downloadSuccessful = true;
+      NotificationService().showNotification('Download complete',
+          'subscription items downloaded successfully', "download");
     } catch (m, e) {
       provider.updateMessage("$m");
       provider.setDownloading(false);
@@ -133,6 +144,8 @@ class MainController {
         currentItem.isDownloading = false;
         provider.setState();
       }
+      NotificationService().showNotification('Download Failed',
+          'subscription items could not download successfully', "download");
       print("Error>>>>>>>> download failed");
       print(m);
       print(e);

@@ -27,11 +27,13 @@ class _MainHomePageState extends State<MainHomePage>
     with WidgetsBindingObserver {
   late List<Widget> _children;
   int currentIndex = 0;
+  late MainController mainController;
 
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
-
+    mainController =
+        MainController(context, context.read<DownloadUpdate>(), widget.user);
     print("main_home");
     _children = [
       HomePage(
@@ -43,12 +45,14 @@ class _MainHomePageState extends State<MainHomePage>
       CoursesPage(widget.user),
       StorePage(widget.user),
       AnalysisView(),
-      MoreView(widget.user),
+      MoreView(
+        widget.user,
+        controller: mainController,
+      ),
     ];
     currentIndex = widget.index;
     print("init");
-    MainController(context, context.read<DownloadUpdate>(), widget.user)
-        .checkSubscription((success) {
+    mainController.checkSubscription((success) {
       UserPreferences().getUser().then((user) {
         setState(() {
           widget.user = user!;

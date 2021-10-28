@@ -23,10 +23,13 @@ import 'package:provider/src/provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 class BundleDownload extends StatefulWidget {
-  BundleDownload(this.user, {Key? key, required this.bundle}) : super(key: key);
+  BundleDownload(this.user,
+      {Key? key, required this.bundle, required this.controller})
+      : super(key: key);
 
   final Subscription bundle;
   User user;
+  MainController controller;
 
   @override
   _BundleDownloadState createState() => _BundleDownloadState();
@@ -352,20 +355,8 @@ class _BundleDownloadState extends State<BundleDownload> {
                                 ElevatedButton(
                                     onPressed: () {
                                       Navigator.pop(context);
-
-                                      MainController(
-                                              context,
-                                              context.read<DownloadUpdate>(),
-                                              widget.user)
-                                          .downloadSubscription(
-                                              selectedTableRows, (success) {
-                                        if (success) {
-                                          // ScaffoldMessenger.of(context)
-                                          //     .showSnackBar(SnackBar(
-                                          //         content: Text(
-                                          //             "Subscription data download successfully")));
-                                        }
-
+                                      widget.controller.downloadSubscription(
+                                          selectedTableRows, (success) {
                                         UserPreferences()
                                             .getUser()
                                             .then((user) {

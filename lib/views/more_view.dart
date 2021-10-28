@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/ui/analysis_info_snippet.dart';
@@ -13,8 +14,10 @@ import 'package:provider/src/provider.dart';
 
 class MoreView extends StatefulWidget {
   static const String routeName = '/more';
-  const MoreView(this.user, {Key? key}) : super(key: key);
+  const MoreView(this.user, {Key? key, required this.controller})
+      : super(key: key);
   final User user;
+  final MainController controller;
 
   @override
   _MoreViewState createState() => _MoreViewState();
@@ -40,6 +43,7 @@ class _MoreViewState extends State<MoreView> {
     UserPreferences().getUser().then((user) {
       setState(() {
         subscriptions = user!.subscriptions;
+        context.read<DownloadUpdate>().setSubscriptions(subscriptions);
       });
     });
 
@@ -109,10 +113,10 @@ class _MoreViewState extends State<MoreView> {
                   padding: EdgeInsets.symmetric(vertical: 20.0),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: subscriptions.length,
+                    itemCount: context.read<DownloadUpdate>().plans!.length,
                     itemBuilder: (context, index) {
                       return BundleListItem(
-                        bundle: subscriptions[index],
+                        bundle: widget.controller.provider.plans![index],
                         isFirstChild: index == 0,
                         onTap: () {
                           Navigator.push(
@@ -120,7 +124,9 @@ class _MoreViewState extends State<MoreView> {
                             MaterialPageRoute(
                               builder: (context) => BundleDownload(
                                 widget.user,
-                                bundle: subscriptions[index],
+                                controller: widget.controller,
+                                bundle:
+                                    widget.controller.provider.plans![index],
                               ),
                             ),
                           );

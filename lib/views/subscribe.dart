@@ -6,7 +6,9 @@ import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/store_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/user_setup.dart';
 import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/select_tile.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -107,7 +109,7 @@ class _SubscribePageState extends State<SubscribePage>
         return WebView(
           javascriptMode: JavascriptMode.unrestricted,
           initialUrl: authorizationUrl,
-          navigationDelegate: (navigation) {
+          navigationDelegate: (navigation) async {
             //Listen for callback URL
             if (navigation.url.contains('https://standard.paystack.co/close')) {
               Navigator.of(context).pop(); //close webview
@@ -116,10 +118,11 @@ class _SubscribePageState extends State<SubscribePage>
               Navigator.of(context).pop(); //close webview
 
               setState(() {});
+
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MainHomePage(widget.user)),
+                      builder: (context) => UserSetup(widget.user)),
                   (Route<dynamic> route) => false);
             }
             return NavigationDecision.navigate;

@@ -11,8 +11,10 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'models/user.dart';
+import 'utils/notification_service.dart';
 import 'views/login_view.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 void main() {
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('google_fonts/OFL.txt');
@@ -24,6 +26,9 @@ void main() {
     SystemUiMode.manual,
     overlays: [SystemUiOverlay.bottom],
   );
+
+  NotificationService().init();
+
   runApp(ChangeNotifierProvider<DownloadUpdate>(
       create: (context) {
         return DownloadUpdate();
