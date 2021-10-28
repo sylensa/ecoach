@@ -77,6 +77,37 @@ class MainController {
         provider.setSubscriptions(freshSubscriptions);
         await SubscriptionDB().insertAll(freshSubscriptions);
         provider.setNotificationUp(true, newSubs);
+        List<SubscriptionItem> items =
+            await SubscriptionItemDB().undownloadedItems();
+
+        if (items.length > 0) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text("Download Subscription",
+                      style: TextStyle(color: Colors.black)),
+                  content: Text(
+                    "You have new subscriptions. Do you want to download them now?",
+                    softWrap: true,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: () async {
+                          downloadSubscription(items, (success) => null);
+                          Navigator.pop(context);
+                        },
+                        child: Text("Yes")),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("No"))
+                  ],
+                );
+              });
+        }
       }
     });
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecoach/api/package_downloader.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -57,6 +58,35 @@ class SubscriptionItemDB {
 
     List<SubscriptionItem> items = [];
     for (int i = 0; i < maps.length; i++) {
+      items.add(SubscriptionItem(
+        id: maps[i]["id"],
+        tag: maps[i]["tag"],
+        name: maps[i]["name"],
+        description: maps[i]["description"],
+        planId: maps[i]["plan_id"],
+        value: maps[i]["value"],
+        sortOrder: maps[i]["sort_order"],
+        resettableInterval: maps[i]["resettable_interval"],
+        resettablePeriod: maps[i]["resettable_period"],
+        createdAt: DateTime.parse(maps[i]["created_at"]),
+        updatedAt: DateTime.parse(maps[i]["updated_at"]),
+      ));
+    }
+    return items;
+  }
+
+  Future<List<SubscriptionItem>> undownloadedItems() async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'subscription_items',
+      orderBy: "name ASC",
+    );
+
+    List<SubscriptionItem> items = [];
+    for (int i = 0; i < maps.length; i++) {
+      bool exist = await packageExist(maps[i]['name']);
+      if (exist) continue;
       items.add(SubscriptionItem(
         id: maps[i]["id"],
         tag: maps[i]["tag"],
