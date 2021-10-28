@@ -22,3 +22,16 @@ showFeedback(BuildContext context, String message,
     messages.add(message);
   }
 }
+
+showNoConnectionToast(
+  BuildContext context,
+) {
+  String message = "No Internet connection.";
+  showToast(message,
+      context: context,
+      duration: Duration(seconds: 10),
+      backgroundColor: Colors.red,
+      position: StyledToastPosition.top,
+      fullWidth: true,
+      onDismiss: () {});
+}

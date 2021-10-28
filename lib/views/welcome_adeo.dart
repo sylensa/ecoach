@@ -45,6 +45,8 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
           CourseDB().insertAll(data!.courses!);
         }
         Navigator.pop(context);
+      }, onError: (e) {
+        Navigator.pop(context);
       }).get(context);
     });
   }

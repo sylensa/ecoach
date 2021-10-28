@@ -8,13 +8,15 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
     content: new Row(
       children: [
         CircularProgressIndicator(),
-        Container(
-            margin: EdgeInsets.only(left: 7),
-            child: Text(
-              message!,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Colors.black),
-            )),
+        Expanded(
+          child: Container(
+              margin: EdgeInsets.only(left: 7),
+              child: Text(
+                message!,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.black),
+              )),
+        ),
       ],
     ),
   );
@@ -23,59 +25,6 @@ showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
     context: context,
     builder: (BuildContext context) {
       return alert;
-    },
-  );
-}
-
-showDownloadDialog(BuildContext context,
-    {String? message = "loading...", int? current, int? total}) {
-  showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return WillPopScope(
-        onWillPop: () async {
-          return await false;
-        },
-        child: Scaffold(
-          body: Container(
-            padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Text(
-                    "Downloading subscriptions...",
-                    style: TextStyle(color: Colors.black, fontSize: 18),
-                  ),
-                ),
-                Spacer(),
-                new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                        margin: EdgeInsets.only(left: 7),
-                        child: Text(
-                          message!,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.black),
-                        )),
-                    current != null && current > 0
-                        ? LinearPercentIndicator(
-                            percent: current / total!,
-                          )
-                        : LinearProgressIndicator(),
-                    SizedBox(
-                      height: 50,
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
     },
   );
 }

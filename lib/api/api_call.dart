@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/logout.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCall<T> {
@@ -61,6 +64,13 @@ class ApiCall<T> {
       }
       print("returning data");
       return getFinalData();
+    } on SocketException catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+      showNoConnectionToast(context);
+      if (onError != null) {
+        onError!(e);
+      }
     } catch (m, e) {
       print(m);
       print(e);
