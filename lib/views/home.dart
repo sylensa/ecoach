@@ -311,14 +311,16 @@ class _SubscriptionNotificationWidgetState
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-              margin: EdgeInsets.only(left: 7),
-              child: Text(
-                context.read<DownloadUpdate>().notificationMessage!,
-                softWrap: true,
-                overflow: TextOverflow.visible,
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              )),
+          Expanded(
+            child: Container(
+                margin: EdgeInsets.only(left: 7),
+                child: Text(
+                  context.read<DownloadUpdate>().notificationMessage!,
+                  softWrap: true,
+                  overflow: TextOverflow.visible,
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                )),
+          ),
           ElevatedButton(
             child: Text("Download"),
             style: ButtonStyle(
