@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
@@ -13,6 +14,7 @@ import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/notification_service.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -137,6 +139,10 @@ class MainController {
       downloadSuccessful = true;
       NotificationService().showNotification('Download complete',
           'subscription items downloaded successfully', "download");
+    } on SocketException catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
+      showNoConnectionToast(context);
     } catch (m, e) {
       provider.updateMessage("$m");
       provider.setDownloading(false);
