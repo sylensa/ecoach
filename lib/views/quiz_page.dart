@@ -369,7 +369,8 @@ class _QuizViewState extends State<QuizView> {
                         enabled: enabled,
                         useTex: useTex,
                         theme: widget.theme,
-                        callback: (Answer answer) {
+                        callback: (Answer answer) async {
+                          await Future.delayed(Duration(seconds: 1));
                           if (widget.speedTest && answer.value == 0) {
                             completeQuiz();
                           } else {
