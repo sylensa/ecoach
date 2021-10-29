@@ -86,6 +86,7 @@ class SubscriptionItemDB {
     List<SubscriptionItem> items = [];
     for (int i = 0; i < maps.length; i++) {
       bool exist = await packageExist(maps[i]['name']);
+      print("package ${maps[i]['name']} exist? $exist");
       if (exist) continue;
       items.add(SubscriptionItem(
         id: maps[i]["id"],

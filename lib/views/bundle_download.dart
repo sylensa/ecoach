@@ -75,35 +75,35 @@ class _BundleDownloadState extends State<BundleDownload> {
     return WillPopScope(
       onWillPop: () async {
         bool canExit = true;
-        if (context.read<DownloadUpdate>().isDownloading)
-          await showDialog<bool>(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                    "Exist?",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  content: Text(
-                    "Are you sure you want to quit the download and leave?",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          canExit = true;
-                          Navigator.pop(context);
-                        },
-                        child: Text("Yes")),
-                    ElevatedButton(
-                        onPressed: () {
-                          canExit = false;
-                          Navigator.pop(context);
-                        },
-                        child: Text("No"))
-                  ],
-                );
-              });
+        // if (context.read<DownloadUpdate>().isDownloading)
+        //   await showDialog<bool>(
+        //       context: context,
+        //       builder: (context) {
+        //         return AlertDialog(
+        //           title: Text(
+        //             "Exist?",
+        //             style: TextStyle(color: Colors.black),
+        //           ),
+        //           content: Text(
+        //             "Are you sure you want to quit the download and leave?",
+        //             style: TextStyle(color: Colors.black),
+        //           ),
+        //           actions: [
+        //             ElevatedButton(
+        //                 onPressed: () {
+        //                   canExit = true;
+        //                   Navigator.pop(context);
+        //                 },
+        //                 child: Text("Yes")),
+        //             ElevatedButton(
+        //                 onPressed: () {
+        //                   canExit = false;
+        //                   Navigator.pop(context);
+        //                 },
+        //                 child: Text("No"))
+        //           ],
+        //         );
+        //       });
 
         return Future.value(canExit);
       },

@@ -321,14 +321,15 @@ class _SubscriptionNotificationWidgetState
                   style: TextStyle(color: Colors.black, fontSize: 16),
                 )),
           ),
-          ElevatedButton(
-            child: Text("Download"),
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.green)),
-            onPressed: () {
-              widget.callback(4);
-            },
-          )
+          if (context.read<DownloadUpdate>().newSubscriptions >= 0)
+            ElevatedButton(
+              child: Text("Download"),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green)),
+              onPressed: () {
+                widget.callback(4);
+              },
+            )
         ],
       ),
     );

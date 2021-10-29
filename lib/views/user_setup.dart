@@ -37,8 +37,11 @@ class _UserSetupState extends State<UserSetup> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Setting up user ..."),
-            Center(
-              child: LinearProgressIndicator(),
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Center(
+                child: LinearProgressIndicator(),
+              ),
             )
           ],
         ),

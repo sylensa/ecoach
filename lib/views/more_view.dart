@@ -91,21 +91,21 @@ class _MoreViewState extends State<MoreView> {
           child: Column(
             children: [
               UserProfile(userInfo),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 12.0,
-                  right: 12.0,
-                  top: 12.0,
-                ),
-                child: AnalysisInfoSnippetCardTabBar(
-                  infoList: infoList,
-                  subLabels: ['referrals', 'subscriptions', 'wallet'],
-                  selectedIndex: selectedTabIndex,
-                  onActiveTabChange: handleSelectChanged,
-                  theme: 'light',
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(
+              //     left: 12.0,
+              //     right: 12.0,
+              //     top: 12.0,
+              //   ),
+              //   child: AnalysisInfoSnippetCardTabBar(
+              //     infoList: infoList,
+              //     subLabels: ['referrals', 'subscriptions', 'wallet'],
+              //     selectedIndex: selectedTabIndex,
+              //     onActiveTabChange: handleSelectChanged,
+              //     theme: 'light',
+              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   ),
+              // ),
               Expanded(
                 child: Container(
                   color: Colors.white,
