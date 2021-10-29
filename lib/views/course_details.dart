@@ -7,6 +7,7 @@ import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
@@ -145,7 +146,20 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         children: [
           Padding(
             padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(courseDetail: courseDetails[0]),
+            child: CourseDetailCard(
+              courseDetail: courseDetails[0],
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        settings:
+                            RouteSettings(name: CourseDetailsPage.routeName),
+                        builder: (context) {
+                          return LearnMode(
+                              widget.user, widget.courseInfo.course);
+                        }));
+              },
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 24.0, right: 24.0),
