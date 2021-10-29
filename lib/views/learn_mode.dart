@@ -1,5 +1,9 @@
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/learn_course_completion.dart';
+import 'package:ecoach/views/learn_mastery_improvement.dart';
+import 'package:ecoach/views/learn_revision.dart';
+import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:flutter/material.dart';
 
 enum Selection {
@@ -11,7 +15,7 @@ enum Selection {
 }
 
 class LearnMode extends StatefulWidget {
-  const LearnMode(this.user, this.course, {Key? key}) : super(key: key);
+  LearnMode(this.user, this.course, {Key? key}) : super(key: key);
   final User user;
   final Course course;
 
@@ -63,7 +67,7 @@ class _LearnModeState extends State<LearnMode> {
                     fontStyle: FontStyle.italic),
               ),
               SizedBox(
-                height: 20,
+                height: 22,
               ),
               IntrinsicHeight(
                 child: Column(
@@ -96,27 +100,27 @@ class _LearnModeState extends State<LearnMode> {
                               style: BorderStyle.solid)),
                         ),
                         onPressed: () {
-                          Widget? widget = null;
+                          Widget? view = null;
                           switch (selection) {
                             case Selection.REVISION:
-                              // TODO: Handle this case.
+                              view = LearnRevision(widget.user, widget.course);
                               break;
                             case Selection.COURSE_COMPLETION:
-                              // TODO: Handle this case.
+                              view = LearnCourseCompletion(
+                                  widget.user, widget.course);
                               break;
                             case Selection.SPEED_ENHANCEMENT:
-                              // TODO: Handle this case.
+                              view = LearnSpeed(widget.user, widget.course);
                               break;
                             case Selection.MASTERY_IMPROVEMENT:
-                              // TODO: Handle this case.
+                              view = LearnMastery(widget.user, widget.course);
                               break;
                             case Selection.NONE:
-                              // TODO: Handle this case.
                               break;
                           }
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return widget!;
+                            return view!;
                           }));
                         },
                         child: Text(
