@@ -4,6 +4,7 @@ import 'package:ecoach/views/learn_course_completion.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn_revision.dart';
 import 'package:ecoach/views/learn_speed_enhancement.dart';
+import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
 enum Selection {
@@ -25,111 +26,131 @@ class LearnMode extends StatefulWidget {
 
 class _LearnModeState extends State<LearnMode> {
   Selection selection = Selection.NONE;
+  bool introView = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-        child: Container(
-          padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-          color: Color(0xFFFFFFFF),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'exit',
-                        style:
-                            TextStyle(color: Color(0xFFFB7B76), fontSize: 11),
-                      )),
-                  SizedBox(
-                    width: 30,
-                  )
-                ],
-              ),
-              Text(
-                "Welcome to the Learn Mode",
-                style: TextStyle(color: Color(0xFFACACAC), fontSize: 18),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "What is your current goal ?",
-                style: TextStyle(
-                    color: Color(0xFFD3D3D3),
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic),
-              ),
-              SizedBox(
-                height: 22,
-              ),
-              IntrinsicHeight(
+      body: introView
+          ? LearnPeripheralWidget(
+              heroText: 'welcome',
+              subText:
+                  'We saved your previous session so you can continue where you left off',
+              heroImageURL: 'assets/images/revision_module/welcome.png',
+              mainActionLabel: 'continue',
+              mainActionBackground: Color(0xFFF0F0F2),
+              mainActionOnPressed: () {
+                setState(() {
+                  introView = false;
+                });
+              },
+              topActionLabel: 'switch mode',
+              topActionOnPressed: () {},
+            )
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
+              child: Container(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                color: Color(0xFFFFFFFF),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    getSelectButton(
-                        Selection.REVISION, "Revision", Color(0xFF00C664)),
-                    getSelectButton(Selection.COURSE_COMPLETION,
-                        "Course Completion", Color(0xFF00ABE0)),
-                    getSelectButton(Selection.SPEED_ENHANCEMENT,
-                        "Speed Enhancement", Color(0xFFFB7B76)),
-                    getSelectButton(Selection.MASTERY_IMPROVEMENT,
-                        "Mastery Improvement", Color(0xFFFFB444)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'exit',
+                              style: TextStyle(
+                                  color: Color(0xFFFB7B76), fontSize: 11),
+                            )),
+                        SizedBox(
+                          width: 30,
+                        )
+                      ],
+                    ),
+                    Text(
+                      "Welcome to the Learn Mode",
+                      style: TextStyle(color: Color(0xFFACACAC), fontSize: 18),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "What is your current goal ?",
+                      style: TextStyle(
+                          color: Color(0xFFD3D3D3),
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic),
+                    ),
+                    SizedBox(
+                      height: 22,
+                    ),
+                    IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          getSelectButton(Selection.REVISION, "Revision",
+                              Color(0xFF00C664)),
+                          getSelectButton(Selection.COURSE_COMPLETION,
+                              "Course Completion", Color(0xFF00ABE0)),
+                          getSelectButton(Selection.SPEED_ENHANCEMENT,
+                              "Speed Enhancement", Color(0xFFFB7B76)),
+                          getSelectButton(Selection.MASTERY_IMPROVEMENT,
+                              "Mastery Improvement", Color(0xFFFFB444)),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    if (selection != Selection.NONE)
+                      SizedBox(
+                          width: 150,
+                          height: 44,
+                          child: OutlinedButton(
+                              style: ButtonStyle(
+                                foregroundColor: MaterialStateProperty.all(
+                                    getButtonColor(selection)),
+                                side: MaterialStateProperty.all(BorderSide(
+                                    color: getButtonColor(selection),
+                                    width: 1,
+                                    style: BorderStyle.solid)),
+                              ),
+                              onPressed: () {
+                                Widget? view = null;
+                                switch (selection) {
+                                  case Selection.REVISION:
+                                    view = LearnRevision(
+                                        widget.user, widget.course);
+                                    break;
+                                  case Selection.COURSE_COMPLETION:
+                                    view = LearnCourseCompletion(
+                                        widget.user, widget.course);
+                                    break;
+                                  case Selection.SPEED_ENHANCEMENT:
+                                    view =
+                                        LearnSpeed(widget.user, widget.course);
+                                    break;
+                                  case Selection.MASTERY_IMPROVEMENT:
+                                    view = LearnMastery(
+                                        widget.user, widget.course);
+                                    break;
+                                  case Selection.NONE:
+                                    break;
+                                }
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return view!;
+                                }));
+                              },
+                              child: Text(
+                                "Let's go",
+                              ))),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 50,
-              ),
-              if (selection != Selection.NONE)
-                SizedBox(
-                    width: 150,
-                    height: 44,
-                    child: OutlinedButton(
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all(
-                              getButtonColor(selection)),
-                          side: MaterialStateProperty.all(BorderSide(
-                              color: getButtonColor(selection),
-                              width: 1,
-                              style: BorderStyle.solid)),
-                        ),
-                        onPressed: () {
-                          Widget? view = null;
-                          switch (selection) {
-                            case Selection.REVISION:
-                              view = LearnRevision(widget.user, widget.course);
-                              break;
-                            case Selection.COURSE_COMPLETION:
-                              view = LearnCourseCompletion(
-                                  widget.user, widget.course);
-                              break;
-                            case Selection.SPEED_ENHANCEMENT:
-                              view = LearnSpeed(widget.user, widget.course);
-                              break;
-                            case Selection.MASTERY_IMPROVEMENT:
-                              view = LearnMastery(widget.user, widget.course);
-                              break;
-                            case Selection.NONE:
-                              break;
-                          }
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return view!;
-                          }));
-                        },
-                        child: Text(
-                          "Let's go",
-                        ))),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
