@@ -1,8 +1,6 @@
-import 'package:carousel_slider/carousel_controller.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
+import 'package:ecoach/views/learning_widget.dart';
 import 'package:flutter/material.dart';
 
 class LearnRevision extends StatefulWidget {
@@ -15,56 +13,81 @@ class LearnRevision extends StatefulWidget {
 }
 
 class _LearnRevisionState extends State<LearnRevision> {
-  final CarouselController controller = CarouselController();
-  int currentSliderIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CarouselSlider(
-        items: [
-          LearnPeripheralWidget(
-            heroText: 'Great Job',
-            subText: 'Matter\ncompleted',
-            heroImageURL: 'assets/images/revision_module/module_completed.png',
-            mainActionLabel: 'Next topic',
-            mainActionColor: Color(0xFFFB7B76),
-            mainActionOnPressed: () {
-              controller.nextPage();
-            },
-            topActionLabel: 'exit',
-            topActionColor: Color(0xFFFB7B76),
-            topActionOnPressed: () {},
-            largeSubs: true,
+        body: Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              OutlinedButton(
+                  onPressed: () {},
+                  child: Text(
+                    "return",
+                    style: TextStyle(color: Color(0xFF9C9C9C)),
+                  )),
+              SizedBox(
+                width: 50,
+              )
+            ],
           ),
-          LearnPeripheralWidget(
-            heroText: 'Yeah!!!',
-            subText: 'Mission\ncompleted',
-            heroImageURL:
-                'assets/images/revision_module/mission_accomplished.png',
-            mainActionLabel: 'Next mission',
-            mainActionColor: Color(0xFFFB7B76),
-            mainActionBackground: Color(0xFFF0F0F2),
-            mainActionOnPressed: () {
-              controller.nextPage();
-            },
-            topActionLabel: 'return',
-            topActionOnPressed: () {},
-            largeSubs: true,
+          SizedBox(
+            height: 30,
+          ),
+          Text(
+            "Revision Mode",
+            style: TextStyle(
+                color: Color(0xFF00C664),
+                fontSize: 29,
+                fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            width: 232,
+            child: Text(
+              "We will take you through a series of questions. Whilst we do that we will help you revise topics you seem to struggle with.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: Color(0xFFA39A9A)),
+            ),
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          Image(
+            image: AssetImage('assets/images/learning_revision.png'),
+            width: 282,
+            height: 282,
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return LearningWidget();
+                }));
+              },
+              child: Text("Enter"),
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all(Size(150, 44)),
+                foregroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
+                side: MaterialStateProperty.all(BorderSide(
+                    color: Color(0xFF00C664),
+                    width: 1,
+                    style: BorderStyle.solid)),
+              ),
+            ),
           ),
         ],
-        carouselController: controller,
-        options: CarouselOptions(
-            aspectRatio: 1 / 2,
-            viewportFraction: 1,
-            scrollPhysics: NeverScrollableScrollPhysics(),
-            enableInfiniteScroll: false,
-            onPageChanged: (index, reason) {
-              setState(() {
-                currentSliderIndex = index;
-              });
-            }),
       ),
-    );
+    ));
   }
 }
