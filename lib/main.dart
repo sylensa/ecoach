@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.orange,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           fontFamily: 'Poppins',
+          scaffoldBackgroundColor: Colors.white,
           textTheme: Theme.of(context).textTheme.apply(
                 bodyColor: Colors.white,
                 displayColor: Colors.white,
