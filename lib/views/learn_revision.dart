@@ -53,7 +53,7 @@ class _LearnRevisionState extends State<LearnRevision> {
               "We will take you through a series of questions. Whilst we do that we will help you revise topics you seem to struggle with.",
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 12,
                   fontStyle: FontStyle.italic,
                   color: Color(0xFFA39A9A)),
             ),

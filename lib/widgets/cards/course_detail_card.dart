@@ -64,11 +64,14 @@ class CourseDetailCard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                courseDetail.title,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
+                              Container(
+                                width: !hideProgress ? 160.0 : 240.0,
+                                child: Text(
+                                  courseDetail.title,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                               if (courseDetail.subtitle1 != null)

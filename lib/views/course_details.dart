@@ -139,10 +139,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         ),
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
-        // automaticallyImplyLeading: false,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 24.0, right: 24.0),
