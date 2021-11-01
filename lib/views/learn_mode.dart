@@ -36,7 +36,7 @@ class _LearnModeState extends State<LearnMode> {
               heroText: 'welcome',
               subText:
                   'We saved your previous session so you can continue where you left off',
-              heroImageURL: 'assets/images/revision_module/welcome.png',
+              heroImageURL: 'assets/images/learn_module/welcome.png',
               mainActionLabel: 'continue',
               mainActionBackground: Color(0xFFF0F0F2),
               mainActionOnPressed: () {

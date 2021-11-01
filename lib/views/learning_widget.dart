@@ -23,7 +23,7 @@ class _LearningWidgetState extends State<LearningWidget> {
           LearnPeripheralWidget(
             heroText: 'Great Job',
             subText: 'Matter\ncompleted',
-            heroImageURL: 'assets/images/revision_module/module_completed.png',
+            heroImageURL: 'assets/images/learn_module/module_completed.png',
             mainActionLabel: 'Next topic',
             mainActionColor: Color(0xFFFB7B76),
             mainActionOnPressed: () {
@@ -37,8 +37,7 @@ class _LearningWidgetState extends State<LearningWidget> {
           LearnPeripheralWidget(
             heroText: 'Yeah!!!',
             subText: 'Mission\ncompleted',
-            heroImageURL:
-                'assets/images/revision_module/mission_accomplished.png',
+            heroImageURL: 'assets/images/learn_module/mission_accomplished.png',
             mainActionLabel: 'Next mission',
             mainActionColor: Color(0xFFFB7B76),
             mainActionBackground: Color(0xFFF0F0F2),
@@ -52,15 +51,16 @@ class _LearningWidgetState extends State<LearningWidget> {
         ],
         carouselController: controller,
         options: CarouselOptions(
-            aspectRatio: 1 / 2,
-            viewportFraction: 1,
-            scrollPhysics: NeverScrollableScrollPhysics(),
-            enableInfiniteScroll: false,
-            onPageChanged: (index, reason) {
-              setState(() {
-                currentSliderIndex = index;
-              });
-            }),
+          aspectRatio: 1 / 2,
+          viewportFraction: 1,
+          scrollPhysics: NeverScrollableScrollPhysics(),
+          enableInfiniteScroll: false,
+          onPageChanged: (index, reason) {
+            setState(() {
+              currentSliderIndex = index;
+            });
+          },
+        ),
       ),
     );
   }

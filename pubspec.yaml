@@ -51,6 +51,7 @@ dependencies:
   flutter_local_notifications: ^9.0.1
   common_utils: ^2.0.2
   change_app_package_name: ^1.0.0
+  another_xlider: ^1.0.0
 
   cupertino_icons: ^1.0.3
   intl: ^0.17.0
@@ -72,7 +73,7 @@ flutter:
     - assets/flags/
     - assets/images/
     - assets/images/notes/
-    - assets/images/revision_module/
+    - assets/images/learn_module/
     - assets/icons/
     - assets/icons/navigation/
     - assets/icons/arrows/

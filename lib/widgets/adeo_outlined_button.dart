@@ -8,6 +8,7 @@ class AdeoOutlinedButton extends StatelessWidget {
     this.color,
     this.ignoring = false,
     this.size,
+    this.borderRadius,
   });
 
   final String label;
@@ -15,6 +16,7 @@ class AdeoOutlinedButton extends StatelessWidget {
   final onPressed;
   final bool ignoring;
   final Sizes? size;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +26,12 @@ class AdeoOutlinedButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           primary: color ?? Colors.white,
           textStyle: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-          ),
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins'),
           side: BorderSide(color: color ?? Colors.white),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(44)),
+            borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 44)),
           ),
           padding: EdgeInsets.symmetric(
             horizontal: () {
