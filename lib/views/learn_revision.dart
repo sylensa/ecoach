@@ -72,7 +72,7 @@ class _LearnRevisionState extends State<LearnRevision> {
             child: OutlinedButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return LearningWidget();
+                  return LearningWidget(widget.user, widget.course);
                 }));
               },
               child: Text("Enter"),

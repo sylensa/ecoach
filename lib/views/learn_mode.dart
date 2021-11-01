@@ -7,7 +7,7 @@ import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
-enum Selection {
+enum StudyType {
   REVISION,
   COURSE_COMPLETION,
   SPEED_ENHANCEMENT,
@@ -25,7 +25,7 @@ class LearnMode extends StatefulWidget {
 }
 
 class _LearnModeState extends State<LearnMode> {
-  Selection selection = Selection.NONE;
+  StudyType studyType = StudyType.NONE;
   bool introView = true;
 
   @override
@@ -90,13 +90,13 @@ class _LearnModeState extends State<LearnMode> {
                     IntrinsicHeight(
                       child: Column(
                         children: [
-                          getSelectButton(Selection.REVISION, "Revision",
+                          getSelectButton(StudyType.REVISION, "Revision",
                               Color(0xFF00C664)),
-                          getSelectButton(Selection.COURSE_COMPLETION,
+                          getSelectButton(StudyType.COURSE_COMPLETION,
                               "Course Completion", Color(0xFF00ABE0)),
-                          getSelectButton(Selection.SPEED_ENHANCEMENT,
+                          getSelectButton(StudyType.SPEED_ENHANCEMENT,
                               "Speed Enhancement", Color(0xFFFB7B76)),
-                          getSelectButton(Selection.MASTERY_IMPROVEMENT,
+                          getSelectButton(StudyType.MASTERY_IMPROVEMENT,
                               "Mastery Improvement", Color(0xFFFFB444)),
                         ],
                       ),
@@ -104,39 +104,39 @@ class _LearnModeState extends State<LearnMode> {
                     SizedBox(
                       height: 50,
                     ),
-                    if (selection != Selection.NONE)
+                    if (studyType != StudyType.NONE)
                       SizedBox(
                           width: 150,
                           height: 44,
                           child: OutlinedButton(
                               style: ButtonStyle(
                                 foregroundColor: MaterialStateProperty.all(
-                                    getButtonColor(selection)),
+                                    getButtonColor(studyType)),
                                 side: MaterialStateProperty.all(BorderSide(
-                                    color: getButtonColor(selection),
+                                    color: getButtonColor(studyType),
                                     width: 1,
                                     style: BorderStyle.solid)),
                               ),
                               onPressed: () {
                                 Widget? view = null;
-                                switch (selection) {
-                                  case Selection.REVISION:
+                                switch (studyType) {
+                                  case StudyType.REVISION:
                                     view = LearnRevision(
                                         widget.user, widget.course);
                                     break;
-                                  case Selection.COURSE_COMPLETION:
+                                  case StudyType.COURSE_COMPLETION:
                                     view = LearnCourseCompletion(
                                         widget.user, widget.course);
                                     break;
-                                  case Selection.SPEED_ENHANCEMENT:
+                                  case StudyType.SPEED_ENHANCEMENT:
                                     view =
                                         LearnSpeed(widget.user, widget.course);
                                     break;
-                                  case Selection.MASTERY_IMPROVEMENT:
+                                  case StudyType.MASTERY_IMPROVEMENT:
                                     view = LearnMastery(
                                         widget.user, widget.course);
                                     break;
-                                  case Selection.NONE:
+                                  case StudyType.NONE:
                                     break;
                                 }
                                 Navigator.push(context,
@@ -154,22 +154,22 @@ class _LearnModeState extends State<LearnMode> {
     );
   }
 
-  Color getButtonColor(Selection selected) {
+  Color getButtonColor(StudyType selected) {
     Color? color;
     switch (selected) {
-      case Selection.REVISION:
+      case StudyType.REVISION:
         color = Color(0xFF00C664);
         break;
-      case Selection.COURSE_COMPLETION:
+      case StudyType.COURSE_COMPLETION:
         color = Color(0xFF00ABE0);
         break;
-      case Selection.SPEED_ENHANCEMENT:
+      case StudyType.SPEED_ENHANCEMENT:
         color = Color(0xFFFB7B76);
         break;
-      case Selection.MASTERY_IMPROVEMENT:
+      case StudyType.MASTERY_IMPROVEMENT:
         color = Color(0xFFFFB444);
         break;
-      case Selection.NONE:
+      case StudyType.NONE:
         break;
     }
 
@@ -177,28 +177,28 @@ class _LearnModeState extends State<LearnMode> {
   }
 
   Widget getSelectButton(
-    Selection selected,
+    StudyType selected,
     String selectionText,
     Color selectedColor,
   ) {
     return Expanded(
         child: TextButton(
             style: ButtonStyle(
-                fixedSize: selection == selected
+                fixedSize: studyType == selected
                     ? MaterialStateProperty.all(Size(310, 102))
                     : MaterialStateProperty.all(Size(267, 88)),
                 backgroundColor: MaterialStateProperty.all(
-                    selection == selected ? selectedColor : Color(0xFFFAFAFA)),
+                    studyType == selected ? selectedColor : Color(0xFFFAFAFA)),
                 foregroundColor: MaterialStateProperty.all(
-                    selection == selected ? Colors.white : Color(0xFFBEC7DB))),
+                    studyType == selected ? Colors.white : Color(0xFFBEC7DB))),
             onPressed: () {
               setState(() {
-                selection = selected;
+                studyType = selected;
               });
             },
             child: Text(
               selectionText,
-              style: TextStyle(fontSize: selection == selected ? 25 : 20),
+              style: TextStyle(fontSize: studyType == selected ? 25 : 20),
             )));
   }
 }

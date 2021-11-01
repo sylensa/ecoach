@@ -236,7 +236,6 @@ class _QuizViewState extends State<QuizView> {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
 
-    // saveTestTaken(testTaken!).then((value) {});
     ApiCall<TestTaken>(AppUrl.testTaken,
         user: widget.user,
         isList: false,
@@ -263,54 +262,6 @@ class _QuizViewState extends State<QuizView> {
         viewResults();
       }
     });
-  }
-
-  Future<void> saveTestTaken(TestTaken testTaken) async {
-    print("save TEst");
-    try {
-      http.Response response = await http.post(
-        Uri.parse(AppUrl.testTaken),
-        headers: {
-          "api-token": widget.user.token!,
-          "Content-Type": "application/json"
-        },
-        body: json.encode(testTaken.toJson()),
-      );
-      print("got here");
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseData = json.decode(response.body);
-        print(responseData);
-        if (responseData["status"] == true) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(responseData['message'])));
-          print(response.body);
-          print(responseData['data']);
-          testTakenSaved = TestTaken.fromJson(responseData['data']);
-          TestController().saveTestTaken(testTakenSaved!);
-
-          setState(() {
-            testTaken = testTakenSaved!;
-            savedTest = true;
-            enabled = false;
-          });
-        } else {
-          print("not successful event");
-        }
-      } else {
-        print("Failed ....");
-        print(response.statusCode);
-        print(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to save test. Please try again")));
-      }
-    } catch (e) {
-      print(e);
-    } finally {
-      Navigator.pop(context);
-      if (savedTest) {
-        viewResults();
-      }
-    }
   }
 
   viewResults() {
