@@ -57,9 +57,10 @@ class LearnPeripheralWidget extends StatelessWidget {
                   heroText,
                   overflow: TextOverflow.clip,
                   maxLines: 1,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFFACACAC),
-                    fontSize: 80.0,
+                    fontSize: 72.0,
                   ),
                 ),
                 Padding(

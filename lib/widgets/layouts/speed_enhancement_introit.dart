@@ -10,7 +10,9 @@ class SpeedEnhancementIntroit extends StatelessWidget {
     required this.heroText,
     required this.subText,
     required this.heroImageURL,
-    required this.stage,
+    this.stage,
+    this.mainActionLabel = 'Proceed',
+    this.color,
     this.topActionOnPressed,
     this.mainActionOnPressed,
   });
@@ -18,7 +20,9 @@ class SpeedEnhancementIntroit extends StatelessWidget {
   final String heroText;
   final String subText;
   final String heroImageURL;
-  final int stage;
+  final int? stage;
+  final String mainActionLabel;
+  final Color? color;
   final mainActionOnPressed;
   final topActionOnPressed;
 
@@ -33,30 +37,33 @@ class SpeedEnhancementIntroit extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: stage != null
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircularPercentIndicator(
-                  radius: 32.0,
-                  lineWidth: 4.0,
-                  percent: stage / 3,
-                  center: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        stage.toString(),
-                        style: TextStyle(
-                          color: kAdeoCoral,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w600,
+                if (stage != null)
+                  CircularPercentIndicator(
+                    radius: 32.0,
+                    lineWidth: 4.0,
+                    percent: stage! / 3,
+                    center: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          stage.toString(),
+                          style: TextStyle(
+                            color: color ?? kAdeoCoral,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    progressColor: color ?? kAdeoCoral,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    backgroundColor: Colors.transparent,
                   ),
-                  progressColor: kAdeoCoral,
-                  circularStrokeCap: CircularStrokeCap.round,
-                  backgroundColor: Colors.transparent,
-                ),
                 AdeoGrayOutlinedButton(
                   label: 'return',
                   onPressed: topActionOnPressed,
@@ -73,7 +80,7 @@ class SpeedEnhancementIntroit extends StatelessWidget {
                     heroText,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: kAdeoCoral,
+                      color: color ?? kAdeoCoral,
                       fontWeight: FontWeight.w600,
                       fontSize: 32.0,
                     ),
@@ -85,7 +92,7 @@ class SpeedEnhancementIntroit extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFFACACAC),
-                        fontSize: 16.0,
+                        fontSize: 14.0,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -104,9 +111,9 @@ class SpeedEnhancementIntroit extends StatelessWidget {
             ),
           ),
           AdeoOutlinedButton(
-            label: 'Proceed',
+            label: mainActionLabel,
             onPressed: mainActionOnPressed,
-            color: kAdeoCoral,
+            color: color ?? kAdeoCoral,
             borderRadius: 0,
           ),
           SizedBox(height: 48.0),

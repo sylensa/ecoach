@@ -26,9 +26,11 @@ class AdeoOutlinedButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           primary: color ?? Colors.white,
           textStyle: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Poppins'),
+            fontSize: 20.0,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Poppins',
+            color: color,
+          ),
           side: BorderSide(color: color ?? Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 44)),
