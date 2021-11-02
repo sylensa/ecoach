@@ -27,6 +27,7 @@ class StudyController {
 
   bool enabled = true;
   bool savedTest = false;
+  Map<int, bool> saveQuestion = new Map();
 
   int currentQuestion = 0;
   int finalQuestion = 0;
@@ -83,7 +84,7 @@ class StudyController {
                 : "unattempted",
       };
 
-      responses["$i"] = answer;
+      responses["Q$i"] = answer;
       i++;
     });
     return jsonEncode(responses);
@@ -119,5 +120,16 @@ class StudyController {
       TestController().saveTestTaken(data!);
       callback(data, true);
     }).post(context);
+  }
+
+  saveAnswer() {}
+
+  enableQuestion(bool state) {
+    saveQuestion[currentQuestion] = state;
+  }
+
+  questionEnabled(int i) {
+    if (i > saveQuestion.length - 1) return enabled;
+    return saveQuestion[i];
   }
 }

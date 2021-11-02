@@ -9,9 +9,11 @@ import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
 class LearningWidget extends StatefulWidget {
-  const LearningWidget(this.user, this.course, {Key? key}) : super(key: key);
+  const LearningWidget(this.user, this.course, this.type, {Key? key})
+      : super(key: key);
   final User user;
   final Course course;
+  final StudyType type;
 
   @override
   _LearningWidgetState createState() => _LearningWidgetState();

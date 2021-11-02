@@ -145,7 +145,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     StudyQuestionWidget(
                       controller.questions[i],
                       position: i,
-                      // enabled: enabled,
+                      enabled: controller.questionEnabled(i),
                       // useTex: useTex,
                       callback: (Answer answer) async {
                         await Future.delayed(Duration(seconds: 1));
@@ -186,6 +186,22 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (!controller.savedTest && !controller.enabled)
+                      VerticalDivider(width: 2, color: Colors.white),
+                    if (!controller.savedTest && !controller.enabled)
+                      Expanded(
+                        flex: 2,
+                        child: TextButton(
+                          onPressed: controller.enableQuestion(false),
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 21,
                             ),
                           ),
                         ),
