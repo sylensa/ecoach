@@ -139,6 +139,10 @@ class TestController {
     return testNames;
   }
 
+  getLevelTopic(Course course, int? level) {
+    return TopicDB().getLevelTopic(course.id!, level!);
+  }
+
   getTopics(Course course) async {
     Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 

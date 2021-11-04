@@ -30,6 +30,19 @@ class TopicDB {
     return topic;
   }
 
+  Future<Topic?> getLevelTopic(int courseId, int level) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('topics',
+        orderBy: "name ASC", where: "course_id = ?", whereArgs: [courseId]);
+
+    if (level > maps.length || level < 1) {
+      return null;
+    }
+
+    return Topic.fromJson(maps[level - 1]);
+  }
+
   Future<List<Topic>> getTopics(List<int> topicIds) async {
     final Database? db = await DBProvider.database;
 

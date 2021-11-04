@@ -1,4 +1,8 @@
+import 'package:ecoach/database/study_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/study.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';
@@ -117,12 +121,50 @@ class _LearnModeState extends State<LearnMode> {
                                     width: 1,
                                     style: BorderStyle.solid)),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 Widget? view = null;
                                 switch (studyType) {
                                   case StudyType.REVISION:
+                                    Study? study = await StudyDB()
+                                        .getStudyByType(StudyType.REVISION);
+                                    Topic? topic;
+                                    if (study == null) {
+                                      topic = await TopicDB()
+                                          .getLevelTopic(widget.course.id!, 1);
+                                      if (topic != null) {
+                                        study = Study(
+                                            id: topic.id,
+                                            courseId: widget.course.id!,
+                                            name: topic.name,
+                                            type: StudyType.REVISION.toString(),
+                                            currentTopicId: topic.id,
+                                            userId: widget.user.id!,
+                                            createdAt: DateTime.now(),
+                                            updatedAt: DateTime.now());
+                                        await StudyDB().insert(study);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    "This course has no topics")));
+                                        return;
+                                      }
+                                    }
+                                    StudyProgress? progress = await StudyDB()
+                                        .getCurrentProgress(study.id!);
+
+                                    if (progress == null) {
+                                      progress = StudyProgress(
+                                          id: topic!.id,
+                                          studyId: study.id,
+                                          level: 1,
+                                          topicId: topic.id,
+                                          createdAt: DateTime.now(),
+                                          updatedAt: DateTime.now());
+                                      await StudyDB().insertProgress(progress);
+                                    }
                                     view = LearnRevision(
-                                        widget.user, widget.course);
+                                        widget.user, widget.course, progress);
                                     break;
                                   case StudyType.COURSE_COMPLETION:
                                     view = LearnCourseCompletion(

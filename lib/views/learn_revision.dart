@@ -1,12 +1,20 @@
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learning_widget.dart';
 import 'package:flutter/material.dart';
 
 class LearnRevision extends StatefulWidget {
-  const LearnRevision(this.user, this.course, {Key? key}) : super(key: key);
+  const LearnRevision(this.user, this.course, this.progress, {Key? key})
+      : super(key: key);
   final User user;
   final Course course;
+  final StudyProgress progress;
 
   @override
   _LearnRevisionState createState() => _LearnRevisionState();
@@ -70,9 +78,15 @@ class _LearnRevisionState extends State<LearnRevision> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
             child: OutlinedButton(
-              onPressed: () {
+              onPressed: () async {
+                int topicId = widget.progress.topicId!;
+                List<Question> questions =
+                    await QuestionDB().getTopicQuestions([topicId], 10);
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return LearningWidget(widget.user, widget.course);
+                  return LearningWidget(widget.user, widget.course,
+                      questions: questions,
+                      type: StudyType.REVISION,
+                      progress: widget.progress);
                 }));
               },
               child: Text("Enter"),

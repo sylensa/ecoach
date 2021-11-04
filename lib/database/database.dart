@@ -22,7 +22,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.74.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.75.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -272,6 +272,29 @@ class DBProvider {
               FOREIGN KEY (level_id) REFERENCES levels (id) 
                 ON DELETE NO ACTION ON UPDATE NO ACTION
             )""");
+
+      await db.execute("""CREATE TABLE 'studies' (
+        id INTEGER PRIMARY KEY, 
+        'user_id' int NOT NULL,
+        'name' varchar(255)  NOT NULL,
+        'current_topic_id' int NULL,
+        'course_id' int NOT NULL,
+        'type' varchar(255)  NOT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
+
+      await db.execute("""CREATE TABLE 'study_progress' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'score' double DEFAULT NULL,
+        'passed' tinyint(1) NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
     }, onUpgrade: (db, oldVersion, newVersion) {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
