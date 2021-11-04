@@ -77,7 +77,7 @@ class StudyProgress {
         level: map['level'],
         testId: map['test_id'],
         topicId: map['topic_id'],
-        passed: map['passed'],
+        passed: map['passed'] == 1 ? true : false,
         score: map['score'],
         createdAt: DateTime.parse(map['created_at']),
         updatedAt: DateTime.parse(map['updated_at']));

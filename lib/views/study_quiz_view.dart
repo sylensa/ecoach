@@ -10,6 +10,7 @@ import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class StudyQuizView extends StatefulWidget {
@@ -305,6 +306,31 @@ class StudyQuestionWidget extends StatefulWidget {
 }
 
 class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
+  Color textColor = Color(0xFFBABABA);
+  Color textColor2 = Color(0xFFACACAC);
+  Color textColor3 = Color(0xFFC3CCDE);
+  Color textColor4 = Color(0xFFA2A2A2);
+
+  late List<Answer>? answers;
+  Answer? selectedAnswer;
+  Answer? correctAnswer;
+
+  @override
+  void initState() {
+    answers = widget.question.answers;
+    if (answers != null) {
+      answers!.forEach((answer) {
+        if (answer.value == 1) {
+          correctAnswer = answer;
+        }
+      });
+    }
+
+    selectedAnswer = widget.question.selectedAnswer;
+    print(widget.question.text);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -312,12 +338,70 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
       child: Column(
         children: [
           Container(
-            height: 47,
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+            margin: EdgeInsets.only(bottom: 2),
             color: Color(0xFFF6F6F6),
-            child: Text(widget.question.instructions!),
+            child: Text(
+              widget.question.instructions!,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: textColor),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+            color: Color(0xFFF6F6F6),
+            constraints: BoxConstraints(minHeight: 135),
+            child: Align(
+              alignment: Alignment.center,
+              child: Html(data: "${widget.question.text ?? ''}", style: {
+                // tables will have the below background color
+                "body": Style(
+                    color: textColor,
+                    fontSize: FontSize(18),
+                    textAlign: TextAlign.center),
+              }),
+            ),
+          ),
+          Container(
+            child: Column(
+              children: [
+                for (int i = 0; i < answers!.length; i++)
+                  SelectAnswerWidget(answers![i], Color(0xFF00C664),
+                      (answerSelected) {
+                    widget.callback!(answerSelected);
+                  }),
+              ],
+            ),
           ),
         ],
       ),
     ));
+  }
+
+  Widget SelectAnswerWidget(Answer answer, Color selectedColor,
+      Function(Answer selectedAnswer)? callback) {
+    return TextButton(
+      style: ButtonStyle(
+          fixedSize: selectedAnswer == answer
+              ? MaterialStateProperty.all(Size(310, 102))
+              : MaterialStateProperty.all(Size(267, 88)),
+          backgroundColor: MaterialStateProperty.all(
+              selectedAnswer == answer ? selectedColor : Color(0xFFFAFAFA)),
+          foregroundColor: MaterialStateProperty.all(
+              selectedAnswer == answer ? Colors.white : Color(0xFFBEC7DB))),
+      onPressed: () {
+        setState(() {
+          selectedAnswer = answer;
+          callback!(selectedAnswer!);
+        });
+      },
+      child: Html(data: "${answer.text!}", style: {
+        // tables will have the below background color
+        "body": Style(
+            color: selectedAnswer == answer ? Colors.white : textColor,
+            fontSize: selectedAnswer == answer ? FontSize(25) : FontSize(20),
+            textAlign: TextAlign.center),
+      }),
+    );
   }
 }
