@@ -50,6 +50,7 @@ dependencies:
   wakelock: ^0.5.6
   flutter_local_notifications: ^9.0.1
   common_utils: ^2.0.2
+  basic_utils: ^3.7.0
   change_app_package_name: ^1.0.0
   another_xlider: ^1.0.0
 

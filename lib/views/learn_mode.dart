@@ -1,4 +1,8 @@
+import 'package:ecoach/database/study_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/study.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';
