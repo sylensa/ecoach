@@ -32,70 +32,74 @@ class LearnPeripheralWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AdeoGrayOutlinedButton(
-                  label: topActionLabel,
-                  onPressed: topActionOnPressed,
-                  size: Sizes.small,
-                  color: topActionColor,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  heroText,
-                  overflow: TextOverflow.clip,
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFFACACAC),
-                    fontSize: 72.0,
+    return SingleChildScrollView(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  AdeoGrayOutlinedButton(
+                    label: topActionLabel,
+                    onPressed: topActionOnPressed,
+                    size: Sizes.small,
+                    color: topActionColor,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Text(
-                    subText,
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    heroText,
+                    overflow: TextOverflow.clip,
+                    maxLines: 1,
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'Hamelin',
                       color: Color(0xFFACACAC),
-                      fontSize: largeSubs ? 24.0 : 16.0,
-                      fontWeight: FontWeight.w500,
-                      fontStyle:
-                          largeSubs ? FontStyle.italic : FontStyle.normal,
+                      fontSize: 72.0,
                     ),
                   ),
-                ),
-                SizedBox(height: 12.0),
-                Container(
-                  height: 270.0,
-                  width: double.infinity,
-                  child: Image.asset(
-                    heroImageURL,
-                    fit: BoxFit.cover,
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Text(
+                      subText,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFFACACAC),
+                        fontSize: largeSubs ? 24.0 : 16.0,
+                        fontWeight: FontWeight.w500,
+                        fontStyle:
+                            largeSubs ? FontStyle.italic : FontStyle.normal,
+                      ),
+                    ),
                   ),
-                )
-              ],
+                  SizedBox(height: 12.0),
+                  Container(
+                    height: 270.0,
+                    width: double.infinity,
+                    child: Image.asset(
+                      heroImageURL,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          AdeoTextButton(
-            label: mainActionLabel,
-            onPressed: mainActionOnPressed,
-            color: mainActionColor,
-            background: mainActionBackground,
-          )
-        ],
+            AdeoTextButton(
+              label: mainActionLabel,
+              onPressed: mainActionOnPressed,
+              color: mainActionColor,
+              background: mainActionBackground,
+            )
+          ],
+        ),
       ),
     );
   }

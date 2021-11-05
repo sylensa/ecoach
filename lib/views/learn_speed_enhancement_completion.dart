@@ -14,81 +14,83 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      color: Colors.white,
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AdeoGrayOutlinedButton(
-                  label: 'return',
-                  onPressed: () {},
-                  size: Sizes.small,
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.white,
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AdeoGrayOutlinedButton(
+                      label: 'return',
+                      onPressed: () {},
+                      size: Sizes.small,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    level['level'] > 1 ? 'Congratulations' : 'Aww',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: kAdeoCoral,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 28.0,
-                    ),
-                  ),
-                  SizedBox(height: 32.0),
-                  Text(
-                    'You moved up to level ${level['level'].toString()}, the ${level['name']} zone',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFFACACAC),
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  SizedBox(height: 40.0),
-                  Text(
-                    '${level['duration'].toString()} sec : ${level['questions'].toString()} question(s)',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: kAdeoBlue,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 48.0),
-                  Container(
-                    width: 240.0,
-                    child: Image.asset(
-                      'assets/images/learn_module/${level['name']}.png',
-                      fit: BoxFit.contain,
-                    ),
-                  )
-                ],
               ),
-            ),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      level['level'] > 1 ? 'Congratulations' : 'Aww',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: kAdeoCoral,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 28.0,
+                      ),
+                    ),
+                    SizedBox(height: 32.0),
+                    Text(
+                      'You moved up to level ${level['level'].toString()}, the ${level['name']} zone',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFFACACAC),
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    SizedBox(height: 40.0),
+                    Text(
+                      '${level['duration'].toString()} sec : ${level['questions'].toString()} question(s)',
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: kAdeoBlue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 48.0),
+                    Container(
+                      width: 240.0,
+                      child: Image.asset(
+                        'assets/images/learn_module/${level['name']}.png',
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              AdeoOutlinedButton(
+                label: 'OK',
+                onPressed: () {},
+                color: kAdeoBlue,
+                borderRadius: 0,
+              ),
+              SizedBox(height: 48.0),
+            ],
           ),
-          AdeoOutlinedButton(
-            label: 'OK',
-            onPressed: () {},
-            color: kAdeoBlue,
-            borderRadius: 0,
-          ),
-          SizedBox(height: 48.0),
-        ],
+        ),
       ),
-    ));
+    );
   }
 }

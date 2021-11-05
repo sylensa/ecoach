@@ -89,10 +89,25 @@ class _NotesTopicsState extends State<NotesTopics> {
                     right: 24.0,
                     bottom: 56.0,
                   ),
-                  child: GridView.count(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 12.0,
-                    mainAxisSpacing: 12.0,
+                  // child: GridView.count(
+                  //   crossAxisCount: 3,
+                  //   crossAxisSpacing: 12.0,
+                  //   mainAxisSpacing: 12.0,
+                  //   children: topics.map((topic) {
+                  //     int index = topics.indexOf(topic);
+                  //     return NotesTopicCard(
+                  //       topic: topic,
+                  //       isSelected: selectedTopicIndex == index,
+                  //       onTap: () {
+                  //         setState(() {
+                  //           selected = true;
+                  //           selectedTopicIndex = index;
+                  //         });
+                  //       },
+                  //     );
+                  //   }).toList(),
+                  // ),
+                  child: ListView(
                     children: topics.map((topic) {
                       int index = topics.indexOf(topic);
                       return NotesTopicCard(
@@ -156,6 +171,7 @@ class NotesTopicCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           color: isSelected ? kAdeoWhiteAlpha81 : Colors.transparent,
           borderRadius: BorderRadius.circular(12.0),
@@ -163,30 +179,40 @@ class NotesTopicCard extends StatelessWidget {
         padding: EdgeInsets.only(
           left: 12.0,
           right: 12.0,
-          top: 28.0,
+          top: 16.0,
           bottom: 16.0,
         ),
-        child: Column(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 40.0,
               height: 40.0,
               child: topic.imageURL != null
-                  ? Image.asset(
-                      topic.imageURL!,
-                      fit: BoxFit.fill,
+                  ? Center(
+                      child: Image.asset(
+                        topic.imageURL!,
+                        fit: BoxFit.fill,
+                      ),
                     )
-                  : Text(topic.name!.substring(0, 1)),
+                  : Center(
+                      child: Text(
+                        topic.name!.substring(0, 1),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: isSelected ? kDefaultBlack : Colors.white,
+                          fontSize: 32,
+                        ),
+                      ),
+                    ),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 topic.name!,
-                overflow: TextOverflow.clip,
-                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isSelected ? kDefaultBlack : Colors.white,
-                  fontSize: 16.0,
+                  fontSize: 15.0,
                   fontWeight: FontWeight.w600,
                 ),
               ),

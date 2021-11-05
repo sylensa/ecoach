@@ -141,7 +141,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         shadowColor: Colors.transparent,
       ),
       body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(left: 24.0, right: 24.0),

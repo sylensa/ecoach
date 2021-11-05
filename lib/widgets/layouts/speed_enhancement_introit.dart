@@ -28,53 +28,54 @@ class SpeedEnhancementIntroit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: stage != null
-                  ? MainAxisAlignment.spaceBetween
-                  : MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (stage != null)
-                  CircularPercentIndicator(
-                    radius: 32.0,
-                    lineWidth: 4.0,
-                    percent: stage! / 3,
-                    center: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          stage.toString(),
-                          style: TextStyle(
-                            color: color ?? kAdeoCoral,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w600,
+    return SingleChildScrollView(
+      child: Container(
+        color: Colors.white,
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                mainAxisAlignment: stage != null
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (stage != null)
+                    CircularPercentIndicator(
+                      radius: 32.0,
+                      lineWidth: 4.0,
+                      percent: stage! / 3,
+                      center: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            stage.toString(),
+                            style: TextStyle(
+                              color: color ?? kAdeoCoral,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      progressColor: color ?? kAdeoCoral,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      backgroundColor: Colors.transparent,
                     ),
-                    progressColor: color ?? kAdeoCoral,
-                    circularStrokeCap: CircularStrokeCap.round,
-                    backgroundColor: Colors.transparent,
+                  AdeoGrayOutlinedButton(
+                    label: 'return',
+                    onPressed: topActionOnPressed,
+                    size: Sizes.small,
                   ),
-                AdeoGrayOutlinedButton(
-                  label: 'return',
-                  onPressed: topActionOnPressed,
-                  size: Sizes.small,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+            Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     heroText,
@@ -109,15 +110,15 @@ class SpeedEnhancementIntroit extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          AdeoOutlinedButton(
-            label: mainActionLabel,
-            onPressed: mainActionOnPressed,
-            color: color ?? kAdeoCoral,
-            borderRadius: 0,
-          ),
-          SizedBox(height: 48.0),
-        ],
+            AdeoOutlinedButton(
+              label: mainActionLabel,
+              onPressed: mainActionOnPressed,
+              color: color ?? kAdeoCoral,
+              borderRadius: 0,
+            ),
+            SizedBox(height: 48.0),
+          ],
+        ),
       ),
     );
   }

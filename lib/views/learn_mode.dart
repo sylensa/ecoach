@@ -47,108 +47,112 @@ class _LearnModeState extends State<LearnMode> {
               topActionLabel: 'switch mode',
               topActionOnPressed: () {},
             )
-          : Padding(
-              padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
-              child: Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                color: Color(0xFFFFFFFF),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'exit',
-                              style: TextStyle(
-                                  color: Color(0xFFFB7B76), fontSize: 11),
-                            )),
-                        SizedBox(
-                          width: 30,
-                        )
-                      ],
-                    ),
-                    Text(
-                      "Welcome to the Learn Mode",
-                      style: TextStyle(color: Color(0xFFACACAC), fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "What is your current goal ?",
-                      style: TextStyle(
-                          color: Color(0xFFD3D3D3),
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic),
-                    ),
-                    SizedBox(
-                      height: 22,
-                    ),
-                    IntrinsicHeight(
-                      child: Column(
+          : Container(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              color: Color(0xFFFFFFFF),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'exit',
+                            style: TextStyle(
+                                color: Color(0xFFFB7B76), fontSize: 11),
+                          )),
+                      SizedBox(
+                        width: 30,
+                      )
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          getSelectButton(StudyType.REVISION, "Revision",
-                              Color(0xFF00C664)),
-                          getSelectButton(StudyType.COURSE_COMPLETION,
-                              "Course Completion", Color(0xFF00ABE0)),
-                          getSelectButton(StudyType.SPEED_ENHANCEMENT,
-                              "Speed Enhancement", Color(0xFFFB7B76)),
-                          getSelectButton(StudyType.MASTERY_IMPROVEMENT,
-                              "Mastery Improvement", Color(0xFFFFB444)),
-                        ],
+                          Text(
+                            "Welcome to the Learn Mode",
+                            style: TextStyle(
+                                color: Color(0xFFACACAC), fontSize: 18),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "What is your current goal?",
+                            style: TextStyle(
+                                color: Color(0xFFD3D3D3),
+                                fontSize: 14,
+                                fontStyle: FontStyle.italic),
+                          ),
+                          SizedBox(
+                            height: 22,
+                          ),
+                          IntrinsicHeight(
+                            child: Column(
+                              children: [
+                                getSelectButton(StudyType.REVISION, "Revision",
+                                    Color(0xFF00C664)),
+                                getSelectButton(StudyType.COURSE_COMPLETION,
+                                    "Course Completion", Color(0xFF00ABE0)),
+                                getSelectButton(StudyType.SPEED_ENHANCEMENT,
+                                    "Speed Enhancement", Color(0xFFFB7B76)),
+                                getSelectButton(StudyType.MASTERY_IMPROVEMENT,
+                                    "Mastery Improvement", Color(0xFFFFB444)),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 50,
+                          ),
+                        ]),
+                  ),
+                  if (studyType != StudyType.NONE)
+                    SizedBox(
+                      width: 150,
+                      height: 44,
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.all(
+                              getButtonColor(studyType)),
+                          side: MaterialStateProperty.all(BorderSide(
+                              color: getButtonColor(studyType),
+                              width: 1,
+                              style: BorderStyle.solid)),
+                        ),
+                        onPressed: () {
+                          Widget? view = null;
+                          switch (studyType) {
+                            case StudyType.REVISION:
+                              view = LearnRevision(widget.user, widget.course);
+                              break;
+                            case StudyType.COURSE_COMPLETION:
+                              view = LearnCourseCompletion(
+                                  widget.user, widget.course);
+                              break;
+                            case StudyType.SPEED_ENHANCEMENT:
+                              view = LearnSpeed(widget.user, widget.course);
+                              break;
+                            case StudyType.MASTERY_IMPROVEMENT:
+                              view = LearnMastery(widget.user, widget.course);
+                              break;
+                            case StudyType.NONE:
+                              break;
+                          }
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return view!;
+                          }));
+                        },
+                        child: Text(
+                          "Let's go",
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    if (studyType != StudyType.NONE)
-                      SizedBox(
-                          width: 150,
-                          height: 44,
-                          child: OutlinedButton(
-                              style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(
-                                    getButtonColor(studyType)),
-                                side: MaterialStateProperty.all(BorderSide(
-                                    color: getButtonColor(studyType),
-                                    width: 1,
-                                    style: BorderStyle.solid)),
-                              ),
-                              onPressed: () {
-                                Widget? view = null;
-                                switch (studyType) {
-                                  case StudyType.REVISION:
-                                    view = LearnRevision(
-                                        widget.user, widget.course);
-                                    break;
-                                  case StudyType.COURSE_COMPLETION:
-                                    view = LearnCourseCompletion(
-                                        widget.user, widget.course);
-                                    break;
-                                  case StudyType.SPEED_ENHANCEMENT:
-                                    view =
-                                        LearnSpeed(widget.user, widget.course);
-                                    break;
-                                  case StudyType.MASTERY_IMPROVEMENT:
-                                    view = LearnMastery(
-                                        widget.user, widget.course);
-                                    break;
-                                  case StudyType.NONE:
-                                    break;
-                                }
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return view!;
-                                }));
-                              },
-                              child: Text(
-                                "Let's go",
-                              ))),
-                  ],
-                ),
+                  SizedBox(height: 24.0),
+                ],
               ),
             ),
     );

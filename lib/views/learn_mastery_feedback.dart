@@ -49,17 +49,27 @@ class LearnMasteryFeedback extends StatelessWidget {
                     Text('Score', style: _topLabelStyle)
                   ],
                 ),
-                Column(
-                  children: [
-                    Text('08:30', style: _topMainTextStyle),
-                    Text('Time Taken', style: _topLabelStyle)
-                  ],
+                Container(
+                  height: 120.0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 12.0),
+                      Text('08:30', style: _topMainTextStyle),
+                      Text('Time Taken', style: _topLabelStyle)
+                    ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Text('10', style: _topMainTextStyle),
-                    Text('Questions', style: _topLabelStyle)
-                  ],
+                Container(
+                  height: 120.0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 12.0),
+                      Text('10', style: _topMainTextStyle),
+                      Text('Questions', style: _topLabelStyle)
+                    ],
+                  ),
                 )
               ],
             ),
@@ -67,6 +77,7 @@ class LearnMasteryFeedback extends StatelessWidget {
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   height: 290.0,
