@@ -1,6 +1,4 @@
-import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
-import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
@@ -10,6 +8,7 @@ import 'package:ecoach/views/learning_widget.dart';
 import 'package:flutter/material.dart';
 
 class LearnRevision extends StatefulWidget {
+  static const String routeName = '/learning/revision';
   const LearnRevision(this.user, this.course, this.progress, {Key? key})
       : super(key: key);
   final User user;
@@ -91,13 +90,17 @@ class _LearnRevisionState extends State<LearnRevision> {
                     int topicId = widget.progress.topicId!;
                     List<Question> questions =
                         await QuestionDB().getTopicQuestions([topicId], 10);
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return LearningWidget(widget.user, widget.course,
-                          questions: questions,
-                          type: StudyType.REVISION,
-                          progress: widget.progress);
-                    }));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            settings:
+                                RouteSettings(name: LearnRevision.routeName),
+                            builder: (context) {
+                              return LearningWidget(widget.user, widget.course,
+                                  questions: questions,
+                                  type: StudyType.REVISION,
+                                  progress: widget.progress);
+                            }));
                   },
                   child: Text("Enter"),
                   style: ButtonStyle(

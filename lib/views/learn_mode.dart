@@ -20,6 +20,7 @@ enum StudyType {
 }
 
 class LearnMode extends StatefulWidget {
+  static const String routeName = '/learning/mode';
   LearnMode(this.user, this.course, {Key? key}) : super(key: key);
   final User user;
   final Course course;
@@ -188,10 +189,14 @@ class _LearnModeState extends State<LearnMode> {
                             case StudyType.NONE:
                               break;
                           }
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return view!;
-                          }));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  settings:
+                                      RouteSettings(name: LearnMode.routeName),
+                                  builder: (context) {
+                                    return view!;
+                                  }));
                         },
                         child: Text(
                           "Let's go",

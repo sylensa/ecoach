@@ -5,6 +5,7 @@ import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_revision.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
@@ -50,7 +51,7 @@ class LearnImageScreens extends StatelessWidget {
                     MaterialPageRoute(builder: (context) {
                   return LearnRevision(
                       studyController.user, studyController.course, progress);
-                }), (route) => false);
+                }), ModalRoute.withName(LearnRevision.routeName));
               } else {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text("No more topics")));
@@ -58,7 +59,10 @@ class LearnImageScreens extends StatelessWidget {
             },
             topActionLabel: 'exit',
             topActionColor: Color(0xFFFB7B76),
-            topActionOnPressed: () {},
+            topActionOnPressed: () {
+              Navigator.popUntil(
+                  context, ModalRoute.withName(CourseDetail.routeName));
+            },
             largeSubs: true,
           ),
           LearnPeripheralWidget(
@@ -73,10 +77,13 @@ class LearnImageScreens extends StatelessWidget {
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (context) {
                 return LearnMode(studyController.user, studyController.course);
-              }), (route) => false);
+              }), ModalRoute.withName(LearnMode.routeName));
             },
             topActionLabel: 'return',
-            topActionOnPressed: () {},
+            topActionOnPressed: () {
+              Navigator.popUntil(
+                  context, ModalRoute.withName(CourseDetail.routeName));
+            },
             largeSubs: true,
           ),
         ],

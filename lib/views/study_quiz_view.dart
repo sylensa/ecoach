@@ -197,10 +197,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         fontWeight: FontWeight.w500)),
                 OutlinedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                        "Coming soon",
-                      )));
+                      Navigator.popUntil(
+                          context, ModalRoute.withName(LearnMode.routeName));
                     },
                     child: Text("Exit"))
               ],

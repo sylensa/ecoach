@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learning_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -46,10 +47,8 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                         fontWeight: FontWeight.w500)),
                 OutlinedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                        "Coming soon",
-                      )));
+                      Navigator.popUntil(
+                          context, ModalRoute.withName(LearnMode.routeName));
                     },
                     child: Text("Exit"))
               ],
