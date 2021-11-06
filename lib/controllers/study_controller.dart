@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
@@ -11,21 +13,21 @@ import 'package:ecoach/views/learn_mode.dart';
 import 'package:flutter/cupertino.dart';
 
 class StudyController {
-  StudyController(
-    this.user,
-    this.questions, {
-    this.course,
-    required this.name,
-    this.type = StudyType.NONE,
-  });
+  StudyController(this.user, this.questions,
+      {required this.course,
+      required this.name,
+      this.type = StudyType.NONE,
+      required this.progress}) {}
 
   final User user;
-  final Course? course;
+  final Course course;
   final List<Question> questions;
   final String name;
   final StudyType type;
+  final StudyProgress progress;
 
   bool enabled = true;
+  bool reviewMode = false;
   bool savedTest = false;
   Map<int, bool> saveQuestion = new Map();
 
@@ -33,7 +35,16 @@ class StudyController {
   int finalQuestion = 0;
 
   DateTime startTime = DateTime.now();
-  late Duration duration, resetDuration, startingDuration;
+  Duration? duration, resetDuration, startingDuration;
+
+  int get nextLevel {
+    return progress.level! + 1;
+  }
+
+  double get percentageCompleted {
+    if (questions.length < 1) return 0;
+    return (currentQuestion + 1) / questions.length;
+  }
 
   double get score {
     int totalQuestions = questions.length;
@@ -96,10 +107,10 @@ class StudyController {
         userId: user.id,
         datetime: startTime,
         totalQuestions: questions.length,
-        courseId: course!.id,
+        courseId: course.id,
         testname: name,
         testType: type.toString(),
-        testTime: duration.inSeconds,
+        testTime: StudyType.REVISION == type ? -1 : duration!.inSeconds,
         usedTime: DateTime.now().difference(startTime).inSeconds,
         responses: responses,
         score: score,
@@ -118,8 +129,20 @@ class StudyController {
       print('onCallback');
       print(data);
       TestController().saveTestTaken(data!);
+
       callback(data, true);
     }).post(context);
+  }
+
+  updateProgress(TestTaken test) {
+    progress.testId = test.id;
+    progress.score = score;
+    progress.passed = score >= 70 ? true : false;
+    progress.updatedAt = DateTime.now();
+
+    StudyDB().updateProgress(progress);
+
+    return progress;
   }
 
   saveAnswer() {}

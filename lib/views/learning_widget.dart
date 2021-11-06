@@ -39,9 +39,10 @@ class _LearningWidgetState extends State<LearningWidget> {
         backgroundColor: Colors.white,
         body: StudyQuizView(
           controller: StudyController(widget.user, widget.questions,
-              name: widget.course.name!,
+              name: widget.progress.name ?? widget.course.name!,
               course: widget.course,
-              type: StudyType.REVISION),
+              type: widget.type,
+              progress: widget.progress),
         ));
   }
 }

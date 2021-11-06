@@ -87,10 +87,16 @@ class _LearnRevisionState extends State<LearnRevision> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
                 child: OutlinedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    int topicId = widget.progress.topicId!;
+                    List<Question> questions =
+                        await QuestionDB().getTopicQuestions([topicId], 10);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return LearningWidget(widget.user, widget.course);
+                      return LearningWidget(widget.user, widget.course,
+                          questions: questions,
+                          type: StudyType.REVISION,
+                          progress: widget.progress);
                     }));
                   },
                   child: Text("Enter"),

@@ -1,13 +1,20 @@
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/views/learn_image_screens.dart';
 import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learning_widget.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/study_notes_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -31,6 +38,10 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   TestTaken? testTaken;
   TestTaken? testTakenSaved;
+  bool showSubmit = false;
+  bool answeredWrong = false;
+  bool showNext = false;
+  bool showComplete = false;
 
   @override
   void initState() {
@@ -45,6 +56,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     }
     setState(() {
       controller.currentQuestion++;
+      showNext = false;
+      controller.enabled = true;
 
       pageController.nextPage(
           duration: Duration(milliseconds: 1), curve: Curves.ease);
@@ -52,6 +65,37 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       if (controller.type == StudyType.SPEED_ENHANCEMENT &&
           controller.enabled) {
         // resetTimer();
+      }
+    });
+  }
+
+  notesButton() async {
+    Topic? topic = await TopicDB().getTopicById(controller.progress.topicId!);
+    controller.saveTest(context, (test, success) async {
+      if (topic!.notes != "") {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return StudyNoteView(topic, controller: controller);
+        }));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("This topic has no notes")));
+
+        List<Question> questions =
+            await QuestionDB().getTopicQuestions([topic.id!], 10);
+
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+          builder: (context) {
+            return LearningWidget(
+              controller.user,
+              controller.course,
+              type: controller.type,
+              progress: controller.progress,
+              questions: questions,
+            );
+          },
+        ), (predicate) {
+          return false;
+        });
       }
     });
   }
@@ -68,14 +112,38 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       Navigator.pop(context);
       if (success) {
         setState(() {
-          print('setState');
           testTakenSaved = test;
           controller.savedTest = true;
           controller.enabled = false;
         });
-        viewResults();
+        if (controller.type == StudyType.REVISION) {
+          controller.updateProgress(test!);
+          progressCompleteView();
+        } else {
+          viewResults();
+        }
       }
     });
+  }
+
+  progressCompleteView() async {
+    print("viewing results");
+    print(testTakenSaved!.toJson().toString());
+    int pageIndex = 0;
+    int nextLevel = controller.nextLevel;
+    Topic? topic =
+        await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
+    if (topic == null) pageIndex = 1;
+
+    Navigator.push<void>(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => LearnImageScreens(
+          studyController: controller,
+          pageIndex: pageIndex,
+        ),
+      ),
+    );
   }
 
   viewResults() {
@@ -86,7 +154,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       MaterialPageRoute<void>(
         builder: (BuildContext context) => ResultsView(
           controller.user,
-          controller.course!,
+          controller.course,
           test: testTakenSaved!,
           diagnostic: false,
         ),
@@ -94,6 +162,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     ).then((value) {
       setState(() {
         controller.currentQuestion = 0;
+        controller.reviewMode = true;
         pageController.jumpToPage(controller.currentQuestion);
       });
     });
@@ -115,8 +184,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                   lineWidth: 3,
                   progressColor: Color(0xFF707070),
                   backgroundColor: Colors.transparent,
+                  percent: controller.percentageCompleted,
                   center: Text(
-                    "1",
+                    "${controller.currentQuestion + 1}",
                     style: TextStyle(fontSize: 14, color: Color(0xFF969696)),
                   ),
                 ),
@@ -148,14 +218,14 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                       position: i,
                       enabled: controller.questionEnabled(i),
                       // useTex: useTex,
-                      callback: (Answer answer) async {
-                        await Future.delayed(Duration(seconds: 1));
-                        if (controller.type == StudyType.SPEED_ENHANCEMENT &&
-                            answer.value == 0) {
-                          // completeQuiz();
-                        } else {
-                          // nextButton();
-                        }
+                      callback: (Answer answer, correct) async {
+                        setState(() {
+                          showSubmit = true;
+                          if (correct)
+                            answeredWrong = false;
+                          else
+                            answeredWrong = true;
+                        });
                       },
                     )
                 ],
@@ -170,7 +240,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     if (controller.currentQuestion > 0 &&
                         ((controller.type == StudyType.COURSE_COMPLETION &&
                                 controller.enabled) ||
-                            !controller.enabled))
+                            controller.reviewMode))
                       Expanded(
                         flex: 2,
                         child: TextButton(
@@ -185,61 +255,73 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           child: Text(
                             "Previous",
                             style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
+                              color: Color(0xFFA2A2A2),
+                              fontSize: 21,
                             ),
                           ),
                         ),
                       ),
-                    if (!controller.savedTest && !controller.enabled)
+                    if (showSubmit)
                       VerticalDivider(width: 2, color: Colors.white),
-                    if (!controller.savedTest && !controller.enabled)
+                    if (showSubmit)
                       Expanded(
                         flex: 2,
                         child: TextButton(
-                          onPressed: controller.enableQuestion(false),
+                          onPressed: () {
+                            setState(() {
+                              showSubmit = false;
+                              showNext = true;
+                              controller.enabled = false;
+
+                              if (!controller.savedTest &&
+                                      controller.currentQuestion ==
+                                          controller.questions.length - 1 ||
+                                  (controller.enabled &&
+                                      controller.type ==
+                                          StudyType.SPEED_ENHANCEMENT &&
+                                      controller.currentQuestion ==
+                                          controller.finalQuestion)) {
+                                showComplete = true;
+                                showNext = false;
+                              }
+                            });
+                          },
                           child: Text(
                             "Submit",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFFA2A2A2),
                               fontSize: 21,
                             ),
                           ),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xFFF6F6F6))),
                         ),
                       ),
-                    if (controller.currentQuestion <
-                        controller.questions.length - 1)
+                    if (showNext || controller.reviewMode)
                       VerticalDivider(width: 2, color: Colors.white),
-                    if (controller.currentQuestion <
-                            controller.questions.length - 1 &&
-                        !(!controller.enabled &&
-                            controller.type == StudyType.SPEED_ENHANCEMENT &&
-                            controller.currentQuestion ==
-                                controller.finalQuestion))
+                    if (showNext || controller.reviewMode)
                       Expanded(
                         flex: 2,
                         child: TextButton(
-                          onPressed: nextButton,
+                          onPressed: answeredWrong ? notesButton : nextButton,
                           child: Text(
-                            "Next",
+                            answeredWrong ? "Test" : "Next",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFFA2A2A2),
                               fontSize: 21,
                             ),
                           ),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xFFF6F6F6))),
                         ),
                       ),
                     if (!controller.savedTest &&
                         controller.currentQuestion ==
                             controller.questions.length - 1)
                       VerticalDivider(width: 2, color: Colors.white),
-                    if (!controller.savedTest &&
-                            controller.currentQuestion ==
-                                controller.questions.length - 1 ||
-                        (controller.enabled &&
-                            controller.type == StudyType.SPEED_ENHANCEMENT &&
-                            controller.currentQuestion ==
-                                controller.finalQuestion))
+                    if (showComplete)
                       Expanded(
                         flex: 2,
                         child: TextButton(
@@ -249,10 +331,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           child: Text(
                             "Complete",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFFA2A2A2),
                               fontSize: 21,
                             ),
                           ),
+                          style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Color(0xFFF6F6F6))),
                         ),
                       ),
                     if (controller.savedTest)
@@ -270,7 +355,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                             text: TextSpan(
                               text: "Results",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Color(0xFFA2A2A2),
                                 fontSize: 21,
                               ),
                             ),
@@ -299,7 +384,7 @@ class StudyQuestionWidget extends StatefulWidget {
   int? position;
   bool enabled;
   bool useTex;
-  Function(Answer selectedAnswer)? callback;
+  Function(Answer selectedAnswer, bool correct)? callback;
 
   @override
   _StudyQuestionWidgetState createState() => _StudyQuestionWidgetState();
@@ -314,9 +399,14 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   late List<Answer>? answers;
   Answer? selectedAnswer;
   Answer? correctAnswer;
+  bool isAnswered = false;
 
   @override
   void initState() {
+    if (!widget.enabled) {
+      isAnswered = true;
+    }
+
     answers = widget.question.answers;
     if (answers != null) {
       answers!.forEach((answer) {
@@ -333,75 +423,145 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-        child: Container(
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
-            margin: EdgeInsets.only(bottom: 2),
-            color: Color(0xFFF6F6F6),
-            child: Text(
-              widget.question.instructions!,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: textColor),
+    return SingleChildScrollView(
+      child: Material(
+          child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+              margin: EdgeInsets.only(bottom: 2),
+              color: Color(0xFFF6F6F6),
+              child: Text(
+                widget.question.instructions!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: textColor),
+              ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
-            color: Color(0xFFF6F6F6),
-            constraints: BoxConstraints(minHeight: 135),
-            child: Align(
-              alignment: Alignment.center,
-              child: Html(data: "${widget.question.text ?? ''}", style: {
-                // tables will have the below background color
-                "body": Style(
-                    color: textColor,
-                    fontSize: FontSize(18),
-                    textAlign: TextAlign.center),
-              }),
-            ),
-          ),
-          Container(
-            child: Column(
-              children: [
-                for (int i = 0; i < answers!.length; i++)
-                  SelectAnswerWidget(answers![i], Color(0xFF00C664),
-                      (answerSelected) {
-                    widget.callback!(answerSelected);
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+              color: Color(0xFFF6F6F6),
+              constraints: BoxConstraints(minHeight: 135),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Html(data: "${widget.question.text ?? ''}", style: {
+                    // tables will have the below background color
+                    "body": Style(
+                        color: textColor,
+                        fontSize: FontSize(18),
+                        textAlign: TextAlign.center),
                   }),
-              ],
+                  if (widget.question.resource != null &&
+                      widget.question.resource != "")
+                    Container(
+                      padding: EdgeInsets.fromLTRB(2, 12, 2, 4),
+                      decoration: BoxDecoration(
+                          color: Color(0xFF444444),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Resource",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Html(
+                              data: "${widget.question.resource ?? ''}",
+                              style: {
+                                // tables will have the below background color
+                                "body": Style(
+                                    color: Colors.white,
+                                    fontSize: FontSize(23),
+                                    textAlign: TextAlign.center),
+                              }),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    ));
+            Container(
+              margin: EdgeInsets.only(top: 20),
+              child: Column(
+                children: [
+                  for (int i = 0; i < answers!.length; i++)
+                    SelectAnswerWidget(answers![i], Color(0xFF00C664), (
+                      answerSelected,
+                    ) {
+                      widget.callback!(
+                          answerSelected, answerSelected == correctAnswer);
+                    }),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )),
+    );
   }
 
   Widget SelectAnswerWidget(Answer answer, Color selectedColor,
       Function(Answer selectedAnswer)? callback) {
     return TextButton(
       style: ButtonStyle(
-          fixedSize: selectedAnswer == answer
-              ? MaterialStateProperty.all(Size(310, 102))
-              : MaterialStateProperty.all(Size(267, 88)),
+          fixedSize: MaterialStateProperty.all(getWidgetSize(answer)),
           backgroundColor: MaterialStateProperty.all(
-              selectedAnswer == answer ? selectedColor : Color(0xFFFAFAFA)),
-          foregroundColor: MaterialStateProperty.all(
-              selectedAnswer == answer ? Colors.white : Color(0xFFBEC7DB))),
+              getBackgroundColor(answer, selectedColor)),
+          foregroundColor:
+              MaterialStateProperty.all(getForegroundColor(answer))),
       onPressed: () {
+        if (!widget.enabled) {
+          return;
+        }
         setState(() {
-          selectedAnswer = answer;
-          callback!(selectedAnswer!);
+          selectedAnswer = widget.question.selectedAnswer = answer;
+          callback!(answer);
         });
       },
       child: Html(data: "${answer.text!}", style: {
         // tables will have the below background color
         "body": Style(
-            color: selectedAnswer == answer ? Colors.white : textColor,
+            color: getForegroundColor(answer),
             fontSize: selectedAnswer == answer ? FontSize(25) : FontSize(20),
             textAlign: TextAlign.center),
       }),
     );
+  }
+
+  Size getWidgetSize(Answer answer) {
+    if (widget.enabled) {
+      if (selectedAnswer == answer) {
+        return Size(310, 102);
+      }
+    } else {
+      if (selectedAnswer == answer && answer == correctAnswer) {
+        return Size(310, 102);
+      } else if (answer == correctAnswer) {
+        return Size(267, 88);
+      }
+    }
+    return Size(267, 88);
+  }
+
+  Color getBackgroundColor(Answer answer, Color selectedColor) {
+    if (widget.enabled && selectedAnswer == answer) {
+      return selectedColor;
+    } else if (!widget.enabled && answer == correctAnswer) {
+      return selectedColor;
+    } else if (!widget.enabled && answer == selectedAnswer) {
+      return Color(0xFFFB7B76);
+    }
+    return Color(0xFFFAFAFA);
+  }
+
+  Color getForegroundColor(Answer answer) {
+    if (selectedAnswer == answer ||
+        !widget.enabled && correctAnswer == answer) {
+      return Colors.white;
+    }
+    return Color(0xFFBEC7DB);
   }
 }

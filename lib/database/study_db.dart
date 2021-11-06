@@ -38,11 +38,12 @@ class StudyDB {
     return study;
   }
 
-  Future<Study?> getStudyByType(StudyType type) async {
+  Future<Study?> getStudyByType(int courseId, StudyType type) async {
     final db = await DBProvider.database;
 
-    var result = await db!
-        .query("studies", where: "type = ?", whereArgs: [type.toString()]);
+    var result = await db!.query("studies",
+        where: "course_id= ? AND type = ?",
+        whereArgs: [courseId, type.toString()]);
     Study? study = result.isNotEmpty ? Study.fromJson(result.first) : null;
 
     return study;
@@ -146,6 +147,18 @@ class StudyDB {
       study.toJson(),
       where: "id = ?",
       whereArgs: [study.id],
+    );
+  }
+
+  Future<void> updateProgress(StudyProgress progress) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'study_progress',
+      progress.toJson(),
+      where: "id = ?",
+      whereArgs: [progress.id],
     );
   }
 

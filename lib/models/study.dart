@@ -52,6 +52,7 @@ class StudyProgress {
   int? topicId;
   int? testId;
   int? level;
+  String? name;
   double? score;
   bool? passed;
   DateTime? createdAt;
@@ -64,6 +65,7 @@ class StudyProgress {
       this.topicId,
       this.testId,
       this.level,
+      this.name,
       this.score,
       this.passed,
       this.createdAt,
@@ -77,6 +79,7 @@ class StudyProgress {
         level: map['level'],
         testId: map['test_id'],
         topicId: map['topic_id'],
+        name: map['name'],
         passed: map['passed'] == 1 ? true : false,
         score: map['score'],
         createdAt: DateTime.parse(map['created_at']),
@@ -90,6 +93,7 @@ class StudyProgress {
       'level': level,
       'test_id': testId,
       'topic_id': topicId,
+      'name': name,
       'passed': passed,
       'score': score,
       'created_at': createdAt!.toIso8601String(),

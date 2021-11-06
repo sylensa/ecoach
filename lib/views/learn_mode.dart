@@ -126,12 +126,55 @@ class _LearnModeState extends State<LearnMode> {
                               width: 1,
                               style: BorderStyle.solid)),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           Widget? view = null;
                           switch (studyType) {
                             case StudyType.REVISION:
-                              view = LearnRevision(widget.user, widget.course);
+                              Study? study = await StudyDB().getStudyByType(
+                                  widget.course.id!, StudyType.REVISION);
+                              Topic? topic;
+                              StudyProgress? progress;
+                              if (study == null) {
+                                topic = await TopicDB()
+                                    .getLevelTopic(widget.course.id!, 1);
+                                if (topic != null) {
+                                  study = Study(
+                                      id: topic.id,
+                                      courseId: widget.course.id!,
+                                      name: topic.name,
+                                      type: StudyType.REVISION.toString(),
+                                      currentTopicId: topic.id,
+                                      userId: widget.user.id!,
+                                      createdAt: DateTime.now(),
+                                      updatedAt: DateTime.now());
+                                  await StudyDB().insert(study);
+
+                                  progress = StudyProgress(
+                                      id: topic.id,
+                                      studyId: study.id,
+                                      level: 1,
+                                      name: topic.name,
+                                      topicId: topic.id,
+                                      createdAt: DateTime.now(),
+                                      updatedAt: DateTime.now());
+                                  await StudyDB().insertProgress(progress);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "This course has no topics")));
+                                  return;
+                                }
+                              } else {
+                                print("p=${study.id}");
+                                progress = await StudyDB()
+                                    .getCurrentProgress(study.id!);
+                              }
+                              print(progress);
+                              view = LearnRevision(
+                                  widget.user, widget.course, progress!);
                               break;
+
                             case StudyType.COURSE_COMPLETION:
                               view = LearnCourseCompletion(
                                   widget.user, widget.course);
