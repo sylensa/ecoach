@@ -163,7 +163,7 @@ class _LearnModeState extends State<LearnMode> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content: Text(
-                                              "This course has no topics")));
+                                              "Please download course first")));
                                   return;
                                 }
                               } else {

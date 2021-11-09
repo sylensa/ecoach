@@ -175,7 +175,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (!controller.enabled) {
+        if (!controller.enabled && !showNext) {
           return showExitDialog();
         }
         // timerController.pause();
@@ -202,15 +202,19 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                       style: TextStyle(fontSize: 14, color: Color(0xFF969696)),
                     ),
                   ),
-                  Text(controller.name,
-                      style: TextStyle(
-                          color: Color(0xFF15CA70),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500)),
+                  Expanded(
+                    child: Text(controller.name,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color(0xFF15CA70),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500)),
+                  ),
                   OutlinedButton(
                       onPressed: () {
-                        Navigator.popUntil(
-                            context, ModalRoute.withName(LearnMode.routeName));
+                        showPauseDialog();
                       },
                       child: Text("Exit"))
                 ],
@@ -698,14 +702,8 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
 
   Widget SelectAnswerWidget(Answer answer, Color selectedColor,
       Function(Answer selectedAnswer)? callback) {
-    return TextButton(
-      style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all(getWidgetSize(answer)),
-          backgroundColor: MaterialStateProperty.all(
-              getBackgroundColor(answer, selectedColor)),
-          foregroundColor:
-              MaterialStateProperty.all(getForegroundColor(answer))),
-      onPressed: () {
+    return GestureDetector(
+      onTap: () {
         if (!widget.enabled) {
           return;
         }
@@ -714,13 +712,25 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
           callback!(answer);
         });
       },
-      child: Html(data: "${answer.text!}", style: {
-        // tables will have the below background color
-        "body": Style(
-            color: getForegroundColor(answer),
-            fontSize: selectedAnswer == answer ? FontSize(25) : FontSize(20),
-            textAlign: TextAlign.center),
-      }),
+      child: Container(
+        color: getBackgroundColor(answer, selectedColor),
+        margin: EdgeInsets.zero,
+        width: getWidgetSize(answer).width,
+        constraints: BoxConstraints(
+          minHeight: getWidgetSize(answer).height,
+        ),
+        child: Align(
+          alignment: Alignment.center,
+          child: Html(shrinkWrap: true, data: "${answer.text!}", style: {
+            // tables will have the below background color
+            "body": Style(
+                color: getForegroundColor(answer),
+                fontSize:
+                    selectedAnswer == answer ? FontSize(25) : FontSize(20),
+                textAlign: TextAlign.center),
+          }),
+        ),
+      ),
     );
   }
 
