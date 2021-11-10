@@ -16,6 +16,7 @@ import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learning_widget.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/study_cc_results.dart';
 import 'package:ecoach/views/study_notes_view.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -86,14 +87,11 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         List<Question> questions =
             await QuestionDB().getTopicQuestions([topic.id!], 10);
 
+        controller.questions = questions;
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
           builder: (context) {
             return LearningWidget(
-              controller.user,
-              controller.course,
-              type: controller.type,
-              progress: controller.progress,
-              questions: questions,
+              controller: controller,
             );
           },
         ), (predicate) {
@@ -119,7 +117,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           controller.savedTest = true;
           controller.enabled = false;
         });
-        if (controller.type == StudyType.REVISION) {
+        if (controller.type == StudyType.REVISION ||
+            controller.type == StudyType.COURSE_COMPLETION) {
           controller.updateProgress(test!);
           progressCompleteView();
         } else {
@@ -140,12 +139,14 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     Navigator.push<void>(
       context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => LearnImageScreens(
+      MaterialPageRoute<void>(builder: (BuildContext context) {
+        if (StudyType.COURSE_COMPLETION == controller.type)
+          return StudyCCResults(test: testTakenSaved!, controller: controller);
+        return LearnImageScreens(
           studyController: controller,
           pageIndex: pageIndex,
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -235,10 +236,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         callback: (Answer answer, correct) async {
                           setState(() {
                             showSubmit = true;
-                            if (correct)
-                              answeredWrong = false;
-                            else
-                              answeredWrong = true;
+                            if (controller.type == StudyType.REVISION) {
+                              if (correct)
+                                answeredWrong = false;
+                              else
+                                answeredWrong = true;
+                            }
                           });
                         },
                       )
@@ -251,10 +254,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      if (controller.currentQuestion > 0 &&
-                          ((controller.type == StudyType.COURSE_COMPLETION &&
-                                  controller.enabled) ||
-                              controller.reviewMode))
+                      if (showPreviousButton())
                         Expanded(
                           flex: 2,
                           child: TextButton(
@@ -275,9 +275,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                             ),
                           ),
                         ),
-                      if (showSubmit)
+                      if (showSubmitButton())
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (showSubmit)
+                      if (showSubmitButton())
                         Expanded(
                           flex: 2,
                           child: TextButton(
@@ -312,15 +312,15 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     Color(0xFFF6F6F6))),
                           ),
                         ),
-                      if (showNext || controller.reviewMode)
+                      if (showNextButton())
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (showNext || controller.reviewMode)
+                      if (showNextButton())
                         Expanded(
                           flex: 2,
                           child: TextButton(
                             onPressed: answeredWrong ? notesButton : nextButton,
                             child: Text(
-                              answeredWrong ? "Test" : "Next",
+                              answeredWrong ? "Study Notes" : "Next",
                               style: TextStyle(
                                 color: Color(0xFFA2A2A2),
                                 fontSize: 21,
@@ -331,11 +331,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     Color(0xFFF6F6F6))),
                           ),
                         ),
-                      if (!controller.savedTest &&
-                          controller.currentQuestion ==
-                              controller.questions.length - 1)
+                      if (showCompleteButton())
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (showComplete)
+                      if (showCompleteButton())
                         Expanded(
                           flex: 2,
                           child: TextButton(
@@ -354,9 +352,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     Color(0xFFF6F6F6))),
                           ),
                         ),
-                      if (controller.savedTest)
+                      if (showResultButton())
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (controller.savedTest)
+                      if (showResultButton())
                         Expanded(
                           flex: 1,
                           child: TextButton(
@@ -383,6 +381,89 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         ),
       )),
     );
+  }
+
+  bool showPreviousButton() {
+    switch (controller.type) {
+      case StudyType.REVISION:
+        if (controller.reviewMode) return true;
+        break;
+      case StudyType.COURSE_COMPLETION:
+        if (controller.currentQuestion > 0) return true;
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        break;
+      case StudyType.NONE:
+        break;
+    }
+    return false;
+  }
+
+  bool showSubmitButton() {
+    switch (controller.type) {
+      case StudyType.REVISION:
+        break;
+      case StudyType.COURSE_COMPLETION:
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        break;
+      case StudyType.NONE:
+        break;
+    }
+    return showSubmit;
+  }
+
+  bool showNextButton() {
+    switch (controller.type) {
+      case StudyType.REVISION:
+        break;
+      case StudyType.COURSE_COMPLETION:
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        break;
+      case StudyType.NONE:
+        break;
+    }
+    return showNext || controller.reviewMode;
+  }
+
+  bool showCompleteButton() {
+    switch (controller.type) {
+      case StudyType.REVISION:
+        break;
+      case StudyType.COURSE_COMPLETION:
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        break;
+      case StudyType.NONE:
+        break;
+    }
+    return showComplete;
+  }
+
+  bool showResultButton() {
+    switch (controller.type) {
+      case StudyType.REVISION:
+        break;
+      case StudyType.COURSE_COMPLETION:
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        break;
+      case StudyType.NONE:
+        break;
+    }
+
+    return controller.savedTest;
   }
 
   Future<bool> showExitDialog() async {

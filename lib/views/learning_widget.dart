@@ -11,19 +11,12 @@ import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
 class LearningWidget extends StatefulWidget {
-  const LearningWidget(
-    this.user,
-    this.course, {
+  const LearningWidget({
     Key? key,
-    required this.questions,
-    required this.type,
-    required this.progress,
+    required this.controller,
   }) : super(key: key);
-  final User user;
-  final Course course;
-  final StudyType type;
-  final StudyProgress progress;
-  final List<Question> questions;
+
+  final StudyController controller;
 
   @override
   _LearningWidgetState createState() => _LearningWidgetState();
@@ -37,12 +30,6 @@ class _LearningWidgetState extends State<LearningWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        body: StudyQuizView(
-          controller: StudyController(widget.user, widget.questions,
-              name: widget.progress.name ?? widget.course.name!,
-              course: widget.course,
-              type: widget.type,
-              progress: widget.progress),
-        ));
+        body: StudyQuizView(controller: widget.controller));
   }
 }

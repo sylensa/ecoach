@@ -33,6 +33,46 @@ class _LearnModeState extends State<LearnMode> {
   StudyType studyType = StudyType.NONE;
   bool introView = true;
 
+  Future<StudyProgress?> getStudyProgress(StudyType type) async {
+    Study? study = await StudyDB().getStudyByType(widget.course.id!, type);
+    Topic? topic;
+    StudyProgress? progress;
+    if (study == null) {
+      topic = await TopicDB().getLevelTopic(widget.course.id!, 1);
+      if (topic != null) {
+        study = Study(
+            id: topic.id,
+            courseId: widget.course.id!,
+            name: topic.name,
+            type: type.toString(),
+            currentTopicId: topic.id,
+            userId: widget.user.id!,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now());
+        await StudyDB().insert(study);
+
+        progress = StudyProgress(
+            id: topic.id,
+            studyId: study.id,
+            level: 1,
+            name: topic.name,
+            topicId: topic.id,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now());
+        await StudyDB().insertProgress(progress);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Please download course first")));
+        return null;
+      }
+    } else {
+      print("p=${study.id}");
+      progress = await StudyDB().getCurrentProgress(study.id!);
+    }
+
+    return progress;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,54 +171,25 @@ class _LearnModeState extends State<LearnMode> {
                           Widget? view = null;
                           switch (studyType) {
                             case StudyType.REVISION:
-                              Study? study = await StudyDB().getStudyByType(
-                                  widget.course.id!, StudyType.REVISION);
-                              Topic? topic;
-                              StudyProgress? progress;
-                              if (study == null) {
-                                topic = await TopicDB()
-                                    .getLevelTopic(widget.course.id!, 1);
-                                if (topic != null) {
-                                  study = Study(
-                                      id: topic.id,
-                                      courseId: widget.course.id!,
-                                      name: topic.name,
-                                      type: StudyType.REVISION.toString(),
-                                      currentTopicId: topic.id,
-                                      userId: widget.user.id!,
-                                      createdAt: DateTime.now(),
-                                      updatedAt: DateTime.now());
-                                  await StudyDB().insert(study);
-
-                                  progress = StudyProgress(
-                                      id: topic.id,
-                                      studyId: study.id,
-                                      level: 1,
-                                      name: topic.name,
-                                      topicId: topic.id,
-                                      createdAt: DateTime.now(),
-                                      updatedAt: DateTime.now());
-                                  await StudyDB().insertProgress(progress);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              "Please download course first")));
-                                  return;
-                                }
-                              } else {
-                                print("p=${study.id}");
-                                progress = await StudyDB()
-                                    .getCurrentProgress(study.id!);
-                              }
+                              StudyProgress? progress =
+                                  await getStudyProgress(StudyType.REVISION);
                               print(progress);
+                              if (progress == null) {
+                                return;
+                              }
                               view = LearnRevision(
-                                  widget.user, widget.course, progress!);
+                                  widget.user, widget.course, progress);
                               break;
 
                             case StudyType.COURSE_COMPLETION:
+                              StudyProgress? progress = await getStudyProgress(
+                                  StudyType.COURSE_COMPLETION);
+                              print(progress);
+                              if (progress == null) {
+                                return;
+                              }
                               view = LearnCourseCompletion(
-                                  widget.user, widget.course);
+                                  widget.user, widget.course, progress);
                               break;
                             case StudyType.SPEED_ENHANCEMENT:
                               view = LearnSpeed(widget.user, widget.course);

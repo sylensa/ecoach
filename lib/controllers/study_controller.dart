@@ -13,15 +13,19 @@ import 'package:ecoach/views/learn_mode.dart';
 import 'package:flutter/cupertino.dart';
 
 class StudyController {
-  StudyController(this.user, this.questions,
-      {required this.course,
+  StudyController(this.user, this.course,
+      {this.questions = const [],
       required this.name,
       this.type = StudyType.NONE,
-      required this.progress}) {}
+      required this.progress}) {
+    if (type == StudyType.COURSE_COMPLETION) {
+      duration = Duration(minutes: 10);
+    }
+  }
 
   final User user;
   final Course course;
-  final List<Question> questions;
+  List<Question> questions;
   final String name;
   final StudyType type;
   final StudyProgress progress;

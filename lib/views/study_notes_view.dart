@@ -93,14 +93,11 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                 List<Question> questions = await QuestionDB()
                                     .getTopicQuestions([topicId], 10);
 
+                                controller.questions = questions;
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
                                   return LearningWidget(
-                                    controller.user,
-                                    controller.course,
-                                    type: controller.type,
-                                    progress: controller.progress,
-                                    questions: questions,
+                                    controller: controller,
                                   );
                                 }));
                               },
