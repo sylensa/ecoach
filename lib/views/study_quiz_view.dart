@@ -515,10 +515,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.NONE:
         break;
     }
+    print("show Next= $showNext");
     return showNext || controller.reviewMode;
   }
 
   bool showCompleteButton() {
+    if (controller.reviewMode) return false;
+
     switch (controller.type) {
       case StudyType.REVISION:
         break;
@@ -538,7 +541,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   bool showResultButton() {
     switch (controller.type) {
       case StudyType.REVISION:
-        break;
+        return false;
       case StudyType.COURSE_COMPLETION:
         break;
       case StudyType.SPEED_ENHANCEMENT:

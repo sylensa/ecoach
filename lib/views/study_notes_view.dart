@@ -24,10 +24,13 @@ class StudyNoteView extends StatefulWidget {
 
 class _StudyNoteViewState extends State<StudyNoteView> {
   late StudyController controller;
+  bool notesExit = true;
 
   @override
   void initState() {
     controller = widget.controller;
+    notesExit =
+        widget.topic.notes != null && widget.topic.notes!.trim().length > 0;
     super.initState();
   }
 
@@ -68,28 +71,39 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                     padding: const EdgeInsets.all(0),
                     child: Column(
                       children: [
-                        Html(
-                          data: widget.topic.notes,
-                          style: {
-                            // tables will have the below background color
-                            "body": Style(
-                              fontSize: FontSize(17),
-                              color: Colors.black,
-                              backgroundColor: Color(0xFFF6F6F6),
-                              padding:
-                                  const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
-                            ),
+                        notesExit
+                            ? Html(
+                                data: widget.topic.notes,
+                                style: {
+                                  // tables will have the below background color
+                                  "body": Style(
+                                    fontSize: FontSize(17),
+                                    color: Colors.black,
+                                    backgroundColor: Color(0xFFF6F6F6),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        8.0, 10, 8, 25),
+                                  ),
 
-                            'td': Style(
-                                border:
-                                    Border.all(color: Colors.black, width: 1)),
-                            'th': Style(backgroundColor: Colors.white),
-                            'img': Style(
-                                width: 200,
-                                height: 200,
-                                padding: EdgeInsets.all(10)),
-                          },
-                        ),
+                                  'td': Style(
+                                      border: Border.all(
+                                          color: Colors.black, width: 1)),
+                                  'th': Style(backgroundColor: Colors.white),
+                                  'img': Style(
+                                      width: 200,
+                                      height: 200,
+                                      padding: EdgeInsets.all(10)),
+                                },
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Center(
+                                    child: Text(
+                                  "No notes for this topic",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontStyle: FontStyle.italic),
+                                )),
+                              ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -127,7 +141,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                 },
                                 style: ButtonStyle(
                                   side: MaterialStateProperty.all(BorderSide(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       width: 1,
                                       style: BorderStyle.solid)),
                                 ),
