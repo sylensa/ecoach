@@ -51,9 +51,9 @@ class _StudyCCResultsState extends State<StudyCCResults> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
           children: [
             Container(
               color: Colors.white,
@@ -133,67 +133,73 @@ class _StudyCCResultsState extends State<StudyCCResults> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Button(
-                    label: 'review',
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                  Expanded(
+                    child: Button(
+                      label: 'review',
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
                   Container(width: 1.0, color: kNavigationTopBorderColor),
                   if (!controller.progress.passed!)
-                    Button(
-                      label: 'revise',
-                      onPressed: () async {
-                        Topic? topic = await TopicDB()
-                            .getTopicById(controller.progress.topicId!);
+                    Expanded(
+                      child: Button(
+                        label: 'revise',
+                        onPressed: () async {
+                          Topic? topic = await TopicDB()
+                              .getTopicById(controller.progress.topicId!);
 
-                        if (topic != null) {
-                          print(
-                              "_______________________________________________________");
-                          print(topic.notes);
-                          await controller.updateProgessSection(1);
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return StudyNoteView(
-                                  topic,
-                                  controller: controller,
-                                );
-                              });
-                        } else {
-                          showFeedback(context, "No notes available");
-                        }
-                      },
+                          if (topic != null) {
+                            print(
+                                "_______________________________________________________");
+                            print(topic.notes);
+                            await controller.updateProgessSection(1);
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return StudyNoteView(
+                                    topic,
+                                    controller: controller,
+                                  );
+                                });
+                          } else {
+                            showFeedback(context, "No notes available");
+                          }
+                        },
+                      ),
                     ),
                   if (controller.progress.passed!)
-                    Button(
-                      label: 'Continue',
-                      onPressed: () async {
-                        int nextLevel = controller.nextLevel;
-                        Topic? topic = await TopicDB()
-                            .getLevelTopic(controller.course.id!, nextLevel);
-                        if (topic!.notes != "") {
-                          print("${topic.name}");
-                          StudyProgress progress = StudyProgress(
-                              id: topic.id,
-                              studyId: controller.progress.studyId!,
-                              level: nextLevel,
-                              section: 1,
-                              topicId: topic.id,
-                              name: topic.name,
-                              createdAt: DateTime.now(),
-                              updatedAt: DateTime.now());
-                          await StudyDB().insertProgress(progress);
+                    Expanded(
+                      child: Button(
+                        label: 'Continue',
+                        onPressed: () async {
+                          int nextLevel = controller.nextLevel;
+                          Topic? topic = await TopicDB()
+                              .getLevelTopic(controller.course.id!, nextLevel);
+                          if (topic!.notes != "") {
+                            print("${topic.name}");
+                            StudyProgress progress = StudyProgress(
+                                id: topic.id,
+                                studyId: controller.progress.studyId!,
+                                level: nextLevel,
+                                section: 1,
+                                topicId: topic.id,
+                                name: topic.name,
+                                createdAt: DateTime.now(),
+                                updatedAt: DateTime.now());
+                            await StudyDB().insertProgress(progress);
 
-                          Navigator.pushAndRemoveUntil(context,
-                              MaterialPageRoute(builder: (context) {
-                            return LearnCourseCompletion(
-                                controller.user, controller.course, progress);
-                          }),
-                              ModalRoute.withName(
-                                  LearnCourseCompletion.routeName));
-                        }
-                      },
+                            Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(builder: (context) {
+                              return LearnCourseCompletion(
+                                  controller.user, controller.course, progress);
+                            }),
+                                ModalRoute.withName(
+                                    LearnCourseCompletion.routeName));
+                          }
+                        },
+                      ),
                     ),
                 ],
               ),

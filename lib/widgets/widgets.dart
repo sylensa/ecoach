@@ -117,6 +117,7 @@ class Button extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         label,
+        textAlign: TextAlign.center,
         style: TextStyle(fontSize: 20.0),
       ),
       height: 48.0,

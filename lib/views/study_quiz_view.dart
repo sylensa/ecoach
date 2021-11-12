@@ -183,204 +183,106 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (!controller.enabled && !showNext) {
-          return showExitDialog();
-        }
-        // timerController.pause();
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () async {
+          if (!controller.enabled && !showNext) {
+            return showExitDialog();
+          }
+          // timerController.pause();
 
-        return showPauseDialog();
-      },
-      child: Scaffold(
-          body: Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CircularPercentIndicator(
-                    radius: 25,
-                    lineWidth: 3,
-                    progressColor: Color(0xFF707070),
-                    backgroundColor: Colors.transparent,
-                    percent: controller.percentageCompleted,
-                    center: Text(
-                      "${controller.currentQuestion + 1}",
-                      style: TextStyle(fontSize: 14, color: Color(0xFF969696)),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(controller.name,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Color(0xFF15CA70),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500)),
-                  ),
-                  if (controller.type == StudyType.REVISION)
-                    OutlinedButton(
-                        onPressed: () {
-                          showPauseDialog();
-                        },
-                        child: Text("Exit")),
-                  if (controller.type == StudyType.COURSE_COMPLETION)
-                    getTimerWidget(),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: PageView(
-                  controller: pageController,
-                  physics: NeverScrollableScrollPhysics(),
+          return showPauseDialog();
+        },
+        child: Scaffold(
+            body: Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    for (int i = 0; i < controller.questions.length; i++)
-                      StudyQuestionWidget(
-                        controller.questions[i],
-                        position: i,
-                        enabled: controller.questionEnabled(i),
-                        type: controller.type,
-                        // useTex: useTex,
-                        callback: (Answer answer, correct) async {
-                          setState(() {
-                            showSubmit = true;
-                            if (controller.type == StudyType.REVISION) {
-                              if (correct)
-                                answeredWrong = false;
-                              else
-                                answeredWrong = true;
-                            }
-                          });
-                        },
-                      )
+                    CircularPercentIndicator(
+                      radius: 25,
+                      lineWidth: 3,
+                      progressColor: Color(0xFF707070),
+                      backgroundColor: Colors.transparent,
+                      percent: controller.percentageCompleted,
+                      center: Text(
+                        "${controller.currentQuestion + 1}",
+                        style:
+                            TextStyle(fontSize: 14, color: Color(0xFF969696)),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(controller.name,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Color(0xFF15CA70),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    if (controller.type == StudyType.REVISION)
+                      OutlinedButton(
+                          onPressed: () {
+                            showPauseDialog();
+                          },
+                          child: Text("Exit")),
+                    if (controller.type == StudyType.COURSE_COMPLETION)
+                      getTimerWidget(),
                   ],
                 ),
               ),
-            ),
-            Container(
-              child: IntrinsicHeight(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              Expanded(
+                child: Container(
+                  child: PageView(
+                    controller: pageController,
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
-                      if (showPreviousButton())
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              pageController.previousPage(
-                                  duration: Duration(milliseconds: 1),
-                                  curve: Curves.ease);
-                              setState(() {
-                                controller.currentQuestion--;
-                              });
-                            },
-                            child: Text(
-                              "Previous",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (showSubmitButton())
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (showSubmitButton())
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() {
-                                showSubmit = false;
-                                showNext = true;
-                                if (controller.type == StudyType.REVISION) {
-                                  controller.enabled = false;
-                                }
-
-                                if (!controller.savedTest &&
-                                        controller.currentQuestion ==
-                                            controller.questions.length - 1 ||
-                                    (controller.enabled &&
-                                        controller.type ==
-                                            StudyType.SPEED_ENHANCEMENT &&
-                                        controller.currentQuestion ==
-                                            controller.finalQuestion)) {
-                                  showComplete = true;
-                                  showNext = false;
-                                }
-                              });
-                            },
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Color(0xFFF6F6F6))),
-                          ),
-                        ),
-                      if (showNextButton())
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (showNextButton())
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: answeredWrong ? notesButton : nextButton,
-                            child: Text(
-                              answeredWrong ? "Study Notes" : "Next",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Color(0xFFF6F6F6))),
-                          ),
-                        ),
-                      if (showCompleteButton())
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (showCompleteButton())
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              completeQuiz();
-                            },
-                            child: Text(
-                              "Complete",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Color(0xFFF6F6F6))),
-                          ),
-                        ),
-                      if (showResultButton())
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (showResultButton())
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            onPressed: () {
-                              viewResults();
-                            },
-                            child: RichText(
-                              softWrap: false,
-                              overflow: TextOverflow.clip,
-                              text: TextSpan(
-                                text: "Results",
+                      for (int i = 0; i < controller.questions.length; i++)
+                        StudyQuestionWidget(
+                          controller.questions[i],
+                          position: i,
+                          enabled: controller.questionEnabled(i),
+                          type: controller.type,
+                          // useTex: useTex,
+                          callback: (Answer answer, correct) async {
+                            setState(() {
+                              showSubmit = true;
+                              if (controller.type == StudyType.REVISION) {
+                                if (correct)
+                                  answeredWrong = false;
+                                else
+                                  answeredWrong = true;
+                              }
+                            });
+                          },
+                        )
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                child: IntrinsicHeight(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (showPreviousButton())
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                pageController.previousPage(
+                                    duration: Duration(milliseconds: 1),
+                                    curve: Curves.ease);
+                                setState(() {
+                                  controller.currentQuestion--;
+                                });
+                              },
+                              child: Text(
+                                "Previous",
                                 style: TextStyle(
                                   color: Color(0xFFA2A2A2),
                                   fontSize: 21,
@@ -388,13 +290,115 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                               ),
                             ),
                           ),
-                        ),
-                    ]),
+                        if (showSubmitButton())
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (showSubmitButton())
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  showSubmit = false;
+                                  showNext = true;
+                                  if (controller.type == StudyType.REVISION) {
+                                    controller.enabled = false;
+                                  }
+
+                                  if (!controller.savedTest &&
+                                          controller.currentQuestion ==
+                                              controller.questions.length - 1 ||
+                                      (controller.enabled &&
+                                          controller.type ==
+                                              StudyType.SPEED_ENHANCEMENT &&
+                                          controller.currentQuestion ==
+                                              controller.finalQuestion)) {
+                                    showComplete = true;
+                                    showNext = false;
+                                  }
+                                });
+                              },
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                  color: Color(0xFFA2A2A2),
+                                  fontSize: 21,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Color(0xFFF6F6F6))),
+                            ),
+                          ),
+                        if (showNextButton())
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (showNextButton())
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed:
+                                  answeredWrong ? notesButton : nextButton,
+                              child: Text(
+                                answeredWrong ? "Study Notes" : "Next",
+                                style: TextStyle(
+                                  color: Color(0xFFA2A2A2),
+                                  fontSize: 21,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Color(0xFFF6F6F6))),
+                            ),
+                          ),
+                        if (showCompleteButton())
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (showCompleteButton())
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                completeQuiz();
+                              },
+                              child: Text(
+                                "Complete",
+                                style: TextStyle(
+                                  color: Color(0xFFA2A2A2),
+                                  fontSize: 21,
+                                ),
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Color(0xFFF6F6F6))),
+                            ),
+                          ),
+                        if (showResultButton())
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (showResultButton())
+                          Expanded(
+                            flex: 1,
+                            child: TextButton(
+                              onPressed: () {
+                                viewResults();
+                              },
+                              child: RichText(
+                                softWrap: false,
+                                overflow: TextOverflow.clip,
+                                text: TextSpan(
+                                  text: "Results",
+                                  style: TextStyle(
+                                    color: Color(0xFFA2A2A2),
+                                    fontSize: 21,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ]),
+                ),
               ),
-            ),
-          ],
-        ),
-      )),
+            ],
+          ),
+        )),
+      ),
     );
   }
 
