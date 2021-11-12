@@ -2,7 +2,11 @@ import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/views/learn_course_completion.dart';
+import 'package:ecoach/views/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn_revision.dart';
+import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/views/learning_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -89,16 +93,34 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                         children: [
                           OutlinedButton(
                               onPressed: () async {
-                                int topicId = controller.progress.topicId!;
-                                List<Question> questions = await QuestionDB()
-                                    .getTopicQuestions([topicId], 10);
-
-                                controller.questions = questions;
+                                if (controller.type ==
+                                    StudyType.COURSE_COMPLETION) {
+                                  await controller.updateProgessSection(2);
+                                }
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return LearningWidget(
-                                    controller: controller,
-                                  );
+                                  switch (controller.type) {
+                                    case StudyType.REVISION:
+                                      return LearnRevision(
+                                          controller.user,
+                                          controller.course,
+                                          controller.progress);
+                                    case StudyType.COURSE_COMPLETION:
+                                      return LearnCourseCompletion(
+                                          controller.user,
+                                          controller.course,
+                                          controller.progress);
+                                    case StudyType.SPEED_ENHANCEMENT:
+                                      return LearnSpeed(
+                                          controller.user, controller.course);
+                                    case StudyType.MASTERY_IMPROVEMENT:
+                                      return LearnMastery(
+                                          controller.user, controller.course);
+                                    case StudyType.NONE:
+                                      return Container(
+                                        child: Text("Study type is none"),
+                                      );
+                                  }
                                 }));
                               },
                               style: ButtonStyle(

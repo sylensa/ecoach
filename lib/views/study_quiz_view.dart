@@ -1,4 +1,6 @@
+import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
@@ -46,11 +48,14 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   bool answeredWrong = false;
   bool showNext = false;
   bool showComplete = false;
+  List<bool> isAnsweredQuestions = [];
 
   @override
   void initState() {
     controller = widget.controller;
     pageController = PageController(initialPage: controller.currentQuestion);
+
+    controller.startTest();
     super.initState();
   }
 
@@ -61,7 +66,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     setState(() {
       controller.currentQuestion++;
       showNext = false;
-      controller.enabled = true;
+      if (controller.type == StudyType.REVISION) {
+        controller.enabled = true;
+      }
 
       pageController.nextPage(
           duration: Duration(milliseconds: 1), curve: Curves.ease);
@@ -147,7 +154,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           pageIndex: pageIndex,
         );
       }),
-    );
+    ).then((value) {
+      setState(() {
+        controller.currentQuestion = 0;
+        controller.reviewMode = true;
+        pageController.jumpToPage(controller.currentQuestion);
+      });
+    });
   }
 
   viewResults() {
@@ -156,12 +169,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     Navigator.push<void>(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => ResultsView(
-          controller.user,
-          controller.course,
-          test: testTakenSaved!,
-          diagnostic: false,
-        ),
+        builder: (BuildContext context) =>
+            StudyCCResults(test: testTakenSaved!, controller: controller),
       ),
     ).then((value) {
       setState(() {
@@ -213,11 +222,14 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                             fontSize: 18,
                             fontWeight: FontWeight.w500)),
                   ),
-                  OutlinedButton(
-                      onPressed: () {
-                        showPauseDialog();
-                      },
-                      child: Text("Exit"))
+                  if (controller.type == StudyType.REVISION)
+                    OutlinedButton(
+                        onPressed: () {
+                          showPauseDialog();
+                        },
+                        child: Text("Exit")),
+                  if (controller.type == StudyType.COURSE_COMPLETION)
+                    getTimerWidget(),
                 ],
               ),
             ),
@@ -232,6 +244,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         controller.questions[i],
                         position: i,
                         enabled: controller.questionEnabled(i),
+                        type: controller.type,
                         // useTex: useTex,
                         callback: (Answer answer, correct) async {
                           setState(() {
@@ -285,7 +298,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                               setState(() {
                                 showSubmit = false;
                                 showNext = true;
-                                controller.enabled = false;
+                                if (controller.type == StudyType.REVISION) {
+                                  controller.enabled = false;
+                                }
 
                                 if (!controller.savedTest &&
                                         controller.currentQuestion ==
@@ -383,6 +398,72 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     );
   }
 
+  Widget getTimerWidget() {
+    return GestureDetector(
+      onTap: () {
+        if (!controller.enabled) {
+          return;
+        }
+        ((controller) as CourseCompletionController).pauseTimer();
+
+        showPauseDialog();
+      },
+      child: controller.enabled
+          ? Row(
+              children: [
+                Image(image: AssetImage('assets/images/watch.png')),
+                SizedBox(
+                  width: 2,
+                ),
+                Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Color(0xFF969696),
+                        width: 1,
+                      )),
+                  child: CustomTimer(
+                    onBuildAction: controller.enabled
+                        ? CustomTimerAction.auto_start
+                        : CustomTimerAction.go_to_end,
+                    builder: (CustomTimerRemainingTime remaining) {
+                      controller.duration = remaining.duration;
+                      controller.countdownInSeconds =
+                          remaining.duration.inSeconds;
+                      if (remaining.duration.inSeconds == 0) {
+                        return Text("Time Up",
+                            style: TextStyle(
+                                color: Color(0xFF969696), fontSize: 14));
+                      }
+
+                      return Text(
+                          "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
+                          style: TextStyle(
+                              color: Color(0xFF969696), fontSize: 14));
+                    },
+                    controller: ((controller) as CourseCompletionController)
+                        .timerController,
+                    from: controller.duration!,
+                    to: Duration(seconds: 0),
+                    onStart: () {},
+                    onPaused: () {},
+                    onReset: () {
+                      print("onReset");
+                    },
+                    onFinish: () {
+                      print("finished");
+                      completeQuiz();
+                    },
+                  ),
+                ),
+              ],
+            )
+          : Text("Time Up",
+              style: TextStyle(color: Color(0xFF969696), fontSize: 18)),
+    );
+  }
+
   bool showPreviousButton() {
     switch (controller.type) {
       case StudyType.REVISION:
@@ -406,7 +487,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.REVISION:
         break;
       case StudyType.COURSE_COMPLETION:
-        break;
+        return false;
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
@@ -422,7 +503,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.REVISION:
         break;
       case StudyType.COURSE_COMPLETION:
-        break;
+        return controller.currentQuestion < controller.questions.length - 1;
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
@@ -438,7 +519,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.REVISION:
         break;
       case StudyType.COURSE_COMPLETION:
-        break;
+        if (!controller.enabled) return false;
+        return controller.currentQuestion == controller.questions.length - 1;
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
@@ -655,6 +737,7 @@ class StudyQuestionWidget extends StatefulWidget {
       this.position,
       this.useTex = false,
       this.enabled = true,
+      required this.type,
       this.callback})
       : super(key: key);
 
@@ -662,6 +745,7 @@ class StudyQuestionWidget extends StatefulWidget {
   int? position;
   bool enabled;
   bool useTex;
+  StudyType type;
   Function(Answer selectedAnswer, bool correct)? callback;
 
   @override
@@ -677,12 +761,11 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   late List<Answer>? answers;
   Answer? selectedAnswer;
   Answer? correctAnswer;
-  bool isAnswered = false;
 
   @override
   void initState() {
     if (!widget.enabled) {
-      isAnswered = true;
+      // widget.isAnswered = true;
     }
 
     answers = widget.question.answers;
@@ -816,6 +899,18 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   }
 
   Size getWidgetSize(Answer answer) {
+    switch (widget.type) {
+      case StudyType.REVISION:
+        break;
+      case StudyType.COURSE_COMPLETION:
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        break;
+      case StudyType.NONE:
+        break;
+    }
     if (widget.enabled) {
       if (selectedAnswer == answer) {
         return Size(310, 102);
@@ -831,6 +926,32 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   }
 
   Color getBackgroundColor(Answer answer, Color selectedColor) {
+    // switch (widget.type) {
+    //   case StudyType.REVISION:
+    //     if (widget.enabled && selectedAnswer == answer) {
+    //       return selectedColor;
+    //     } else if (!widget.enabled && answer == correctAnswer) {
+    //       return selectedColor;
+    //     } else if (!widget.enabled && answer == selectedAnswer) {
+    //       return Color(0xFFFB7B76);
+    //     }
+    //     break;
+    //   case StudyType.COURSE_COMPLETION:
+    //     if (widget.enabled && selectedAnswer == answer) {
+    //       return selectedColor;
+    //     } else if (!widget.enabled && answer == correctAnswer) {
+    //       return selectedColor;
+    //     } else if (!widget.enabled && answer == selectedAnswer) {
+    //       return Color(0xFFFB7B76);
+    //     }
+    //     break;
+    //   case StudyType.SPEED_ENHANCEMENT:
+    //     break;
+    //   case StudyType.MASTERY_IMPROVEMENT:
+    //     break;
+    //   case StudyType.NONE:
+    //     break;
+    // }
     if (widget.enabled && selectedAnswer == answer) {
       return selectedColor;
     } else if (!widget.enabled && answer == correctAnswer) {

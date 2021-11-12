@@ -55,6 +55,7 @@ class _LearnModeState extends State<LearnMode> {
             id: topic.id,
             studyId: study.id,
             level: 1,
+            section: 1,
             name: topic.name,
             topicId: topic.id,
             createdAt: DateTime.now(),

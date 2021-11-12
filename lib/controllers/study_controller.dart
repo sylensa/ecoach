@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/study_db.dart';
@@ -27,7 +28,7 @@ class StudyController {
   final Course course;
   List<Question> questions;
   final String name;
-  final StudyType type;
+  StudyType type;
   final StudyProgress progress;
 
   bool enabled = true;
@@ -38,8 +39,14 @@ class StudyController {
   int currentQuestion = 0;
   int finalQuestion = 0;
 
-  DateTime startTime = DateTime.now();
+  DateTime? startTime;
   Duration? duration, resetDuration, startingDuration;
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
+  CustomTimerController? timerController;
+  int countdownInSeconds = 0;
+  startTest() {
+    startTime = DateTime.now();
+  }
 
   int get nextLevel {
     return progress.level! + 1;
@@ -114,8 +121,8 @@ class StudyController {
         courseId: course.id,
         testname: name,
         testType: type.toString(),
-        testTime: StudyType.REVISION == type ? -1 : duration!.inSeconds,
-        usedTime: DateTime.now().difference(startTime).inSeconds,
+        testTime: duration == null ? -1 : duration!.inSeconds,
+        usedTime: DateTime.now().difference(startTime!).inSeconds,
         responses: responses,
         score: score,
         correct: correct,
@@ -138,13 +145,20 @@ class StudyController {
     }).post(context);
   }
 
-  updateProgress(TestTaken test) {
+  updateProgress(TestTaken test) async {
     progress.testId = test.id;
     progress.score = score;
     progress.passed = score >= 70 ? true : false;
     progress.updatedAt = DateTime.now();
 
-    StudyDB().updateProgress(progress);
+    await StudyDB().updateProgress(progress);
+
+    return progress;
+  }
+
+  updateProgessSection(int section) async {
+    progress.section = section;
+    await StudyDB().updateProgress(progress);
 
     return progress;
   }

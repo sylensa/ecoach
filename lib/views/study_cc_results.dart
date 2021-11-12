@@ -151,6 +151,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                           print(
                               "_______________________________________________________");
                           print(topic.notes);
+                          await controller.updateProgessSection(1);
                           showDialog(
                               context: context,
                               builder: (context) {
@@ -177,6 +178,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                               id: topic.id,
                               studyId: controller.progress.studyId!,
                               level: nextLevel,
+                              section: 1,
                               topicId: topic.id,
                               name: topic.name,
                               createdAt: DateTime.now(),
@@ -214,6 +216,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
         ),
         Text(
           subText,
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: 10, color: Color(0xFFA2A2A2)),
         )
       ],

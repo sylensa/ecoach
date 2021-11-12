@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -28,7 +29,7 @@ class LearnCourseCompletion extends StatefulWidget {
 class _LearnCourseCompletionState extends State<LearnCourseCompletion> {
   @override
   Widget build(BuildContext context) {
-    bool showTopic = widget.progress.level! % 2 == 1 ? true : false;
+    bool showTopic = widget.progress.section! % 2 == 1 ? true : false;
     return showTopic
         ? TopicCover(widget.user, widget.course, widget.progress)
         : QuizCover(widget.user, widget.course, widget.progress);
@@ -127,11 +128,10 @@ class _TopicCoverState extends State<TopicCover> {
                               builder: (context) {
                                 return StudyNoteView(
                                   topic!,
-                                  controller: StudyController(
+                                  controller: CourseCompletionController(
                                     widget.user,
                                     widget.course,
                                     name: topic.name!,
-                                    type: StudyType.COURSE_COMPLETION,
                                     progress: widget.progress,
                                   ),
                                 );
@@ -261,11 +261,10 @@ class _QuizCoverState extends State<QuizCover> {
                                   name: LearnCourseCompletion.routeName),
                               builder: (context) {
                                 return LearningWidget(
-                                  controller: StudyController(
+                                  controller: CourseCompletionController(
                                     widget.user,
                                     widget.course,
                                     name: widget.progress.name!,
-                                    type: StudyType.COURSE_COMPLETION,
                                     questions: questions,
                                     progress: widget.progress,
                                   ),

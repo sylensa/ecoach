@@ -52,6 +52,7 @@ class StudyProgress {
   int? topicId;
   int? testId;
   int? level;
+  int? section;
   String? name;
   double? score;
   bool? passed;
@@ -65,9 +66,10 @@ class StudyProgress {
       this.topicId,
       this.testId,
       this.level,
+      this.section,
       this.name,
       this.score,
-      this.passed,
+      this.passed = false,
       this.createdAt,
       this.updatedAt,
       this.completedAt});
@@ -77,6 +79,7 @@ class StudyProgress {
         id: map['id'],
         studyId: map['study_id'],
         level: map['level'],
+        section: map['section'],
         testId: map['test_id'],
         topicId: map['topic_id'],
         name: map['name'],
@@ -91,6 +94,7 @@ class StudyProgress {
       'id': id,
       'study_id': studyId,
       'level': level,
+      'section': section,
       'test_id': testId,
       'topic_id': topicId,
       'name': name,
