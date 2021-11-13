@@ -1,11 +1,15 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/study_speed_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_speed_enhancement_questions_placeholder.dart';
+import 'package:ecoach/views/study_quiz_view.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_gray_outlined_button.dart';
 import 'package:ecoach/widgets/layouts/speed_enhancement_introit.dart';
@@ -53,9 +57,16 @@ class _LearnSpeedState extends State<LearnSpeed> {
                 'If you answer 10 questions correctly , you move to the next level\nif you fail 3 questions consecutive questions,\nyou go back to the previous level.\nFor every wrong answer, the test restarts.',
             heroImageURL: 'assets/images/learn_module/speed_enhancement_3.png',
             stage: 3,
-            mainActionOnPressed: () {
+            mainActionOnPressed: () async {
+              int topicId = widget.progress.topicId!;
+              List<Question> questions =
+                  await QuestionDB().getTopicQuestions([topicId], 10);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return LearnSpeedEnhancementQuestionsPlaceholder();
+                return StudyQuizView(
+                    controller: SpeedController(widget.user, widget.course,
+                        questions: questions,
+                        name: widget.progress.name!,
+                        progress: widget.progress));
               }));
             },
           ),

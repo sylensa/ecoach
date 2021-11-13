@@ -2,6 +2,7 @@ import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -39,7 +40,7 @@ class StudyQuizView extends StatefulWidget {
 }
 
 class _StudyQuizViewState extends State<StudyQuizView> {
-  late StudyController controller;
+  late var controller;
   late final PageController pageController;
 
   TestTaken? testTaken;
@@ -75,7 +76,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
       if (controller.type == StudyType.SPEED_ENHANCEMENT &&
           controller.enabled) {
-        // resetTimer();
+        ((controller) as SpeedController).resetTimer();
       }
     });
   }
@@ -230,7 +231,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                             showPauseDialog();
                           },
                           child: Text("Exit")),
-                    if (controller.type == StudyType.COURSE_COMPLETION)
+                    if (controller.type == StudyType.COURSE_COMPLETION ||
+                        controller.type == StudyType.SPEED_ENHANCEMENT)
                       getTimerWidget(),
                   ],
                 ),
@@ -408,7 +410,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         if (!controller.enabled) {
           return;
         }
-        ((controller) as CourseCompletionController).pauseTimer();
+        controller.pauseTimer();
 
         showPauseDialog();
       },
@@ -446,8 +448,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           style: TextStyle(
                               color: Color(0xFF969696), fontSize: 14));
                     },
-                    controller: ((controller) as CourseCompletionController)
-                        .timerController,
+                    controller: controller.timerController,
                     from: controller.duration!,
                     to: Duration(seconds: 0),
                     onStart: () {},

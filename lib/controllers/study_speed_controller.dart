@@ -10,9 +10,30 @@ class SpeedController extends StudyController {
   SpeedController(this.user, this.course,
       {this.questions = const [], required this.name, required this.progress})
       : super(user, course, name: name, progress: progress) {
-    type = StudyType.COURSE_COMPLETION;
-    duration = Duration(minutes: 10);
-    resetDuration = Duration(seconds: 10);
+    type = StudyType.SPEED_ENHANCEMENT;
+    int seconds = 0;
+    switch (progress.section) {
+      case 1:
+        seconds = 120;
+        break;
+      case 2:
+        seconds = 90;
+        break;
+      case 3:
+        seconds = 60;
+        break;
+      case 4:
+        seconds = 30;
+        break;
+      case 5:
+        seconds = 15;
+        break;
+      case 6:
+        seconds = 10;
+        break;
+    }
+    duration = Duration(seconds: seconds);
+    resetDuration = Duration(seconds: seconds);
     startingDuration = duration;
 
     timerController = CustomTimerController();
@@ -33,5 +54,9 @@ class SpeedController extends StudyController {
 
   pauseTimer() {
     timerController!.pause();
+  }
+
+  resetTimer() {
+    duration = resetDuration;
   }
 }
