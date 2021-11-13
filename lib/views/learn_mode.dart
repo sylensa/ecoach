@@ -193,7 +193,14 @@ class _LearnModeState extends State<LearnMode> {
                                   widget.user, widget.course, progress);
                               break;
                             case StudyType.SPEED_ENHANCEMENT:
-                              view = LearnSpeed(widget.user, widget.course);
+                              StudyProgress? progress = await getStudyProgress(
+                                  StudyType.SPEED_ENHANCEMENT);
+                              print(progress);
+                              if (progress == null) {
+                                return;
+                              }
+                              view = LearnSpeed(
+                                  widget.user, widget.course, progress);
                               break;
                             case StudyType.MASTERY_IMPROVEMENT:
                               view = LearnMastery(widget.user, widget.course);

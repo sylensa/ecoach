@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -13,9 +14,11 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:another_xlider/another_xlider.dart';
 
 class LearnSpeed extends StatefulWidget {
-  const LearnSpeed(this.user, this.course, {Key? key}) : super(key: key);
+  const LearnSpeed(this.user, this.course, this.progress, {Key? key})
+      : super(key: key);
   final User user;
   final Course course;
+  final StudyProgress progress;
 
   @override
   _LearnSpeedState createState() => _LearnSpeedState();
@@ -40,7 +43,10 @@ class _LearnSpeedState extends State<LearnSpeed> {
               controller.nextPage();
             },
           ),
-          SecondComponent(controller: controller),
+          SecondComponent(
+            controller: controller,
+            progress: widget.progress,
+          ),
           SpeedEnhancementIntroit(
             heroText: 'Speed Test',
             subText:
@@ -72,12 +78,20 @@ class _LearnSpeedState extends State<LearnSpeed> {
 }
 
 class SecondComponent extends StatelessWidget {
-  const SecondComponent({
+  SecondComponent({
     Key? key,
     required this.controller,
-  }) : super(key: key);
+    required this.progress,
+  }) : super(key: key) {
+    int? section = progress.section;
+    if (section == null) section = 0;
+
+    sliderValue = section * 20 - 18;
+  }
 
   final CarouselController controller;
+  final StudyProgress progress;
+  double sliderValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -147,37 +161,39 @@ class SecondComponent extends StatelessWidget {
                           height: 550.0,
                           // color: Colors.red.shade100,
                           child: FlutterSlider(
-                            values: [10, 15, 30, 60, 90, 120],
+                            rtl: true,
+                            values: [sliderValue],
                             max: 120,
-                            min: 10,
+                            min: 1,
                             fixedValues: [
                               FlutterSliderFixedValue(
-                                percent: 5,
-                                value: '10sec',
+                                percent: 1,
+                                value: '120sec',
                               ),
                               FlutterSliderFixedValue(
-                                percent: 22,
-                                value: '15sec',
-                              ),
-                              FlutterSliderFixedValue(
-                                percent: 40,
-                                value: '30sec',
-                              ),
-                              FlutterSliderFixedValue(
-                                percent: 58,
-                                value: '60sec',
-                              ),
-                              FlutterSliderFixedValue(
-                                percent: 76,
+                                percent: 18,
                                 value: '90sec',
                               ),
                               FlutterSliderFixedValue(
-                                percent: 96,
-                                value: '120sec',
+                                percent: 36,
+                                value: '60sec',
+                              ),
+                              FlutterSliderFixedValue(
+                                percent: 54,
+                                value: '30sec',
+                              ),
+                              FlutterSliderFixedValue(
+                                percent: 72,
+                                value: '15sec',
+                              ),
+                              FlutterSliderFixedValue(
+                                percent: 92,
+                                value: '10sec',
                               ),
                             ],
                             axis: Axis.vertical,
                             jump: true,
+                            disabled: true,
                           ),
                         ),
                       ),

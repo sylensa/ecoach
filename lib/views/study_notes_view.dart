@@ -128,7 +128,9 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                             controller.progress);
                                       case StudyType.SPEED_ENHANCEMENT:
                                         return LearnSpeed(
-                                            controller.user, controller.course);
+                                            controller.user,
+                                            controller.course,
+                                            controller.progress);
                                       case StudyType.MASTERY_IMPROVEMENT:
                                         return LearnMastery(
                                             controller.user, controller.course);
