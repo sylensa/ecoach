@@ -16,6 +16,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/learn_image_screens.dart';
 import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/views/learn_speed_enhancement_completion.dart';
 import 'package:ecoach/views/learning_widget.dart';
 import 'package:ecoach/views/main_home.dart';
@@ -109,6 +110,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         });
       }
     });
+  }
+
+  endSpeedSession() async {
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
+      return LearnSpeed(
+          controller.user, controller.course, controller.progress);
+    }), ModalRoute.withName(LearnSpeed.routeName));
   }
 
   completeQuiz() async {
@@ -361,8 +369,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           Expanded(
                             flex: 2,
                             child: TextButton(
-                              onPressed:
-                                  answeredWrong ? notesButton : nextButton,
+                              onPressed: answeredWrong
+                                  ? wrongAnswerAction()
+                                  : nextButton,
                               child: Text(
                                 answeredWrong ? "Study Notes" : "Next",
                                 style: TextStyle(
@@ -426,6 +435,16 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         )),
       ),
     );
+  }
+
+  Function()? wrongAnswerAction() {
+    if (controller.type == StudyType.REVISION) {
+      return notesButton();
+    } else if (controller.type == StudyType.SPEED_ENHANCEMENT) {
+      return endSpeedSession();
+    } else {
+      return () {};
+    }
   }
 
   Widget getTimerWidget() {
