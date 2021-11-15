@@ -18,6 +18,8 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:another_xlider/another_xlider.dart';
 
 class LearnSpeed extends StatefulWidget {
+  static const String routeName = '/learning/speed';
+
   const LearnSpeed(this.user, this.course, this.progress, {Key? key})
       : super(key: key);
   final User user;

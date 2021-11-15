@@ -1,15 +1,33 @@
+import 'package:ecoach/controllers/study_speed_controller.dart';
+import 'package:ecoach/database/study_db.dart';
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/study.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_gray_outlined_button.dart';
 import 'package:flutter/material.dart';
 
 class LearnSpeedEnhancementCompletion extends StatelessWidget {
   const LearnSpeedEnhancementCompletion({
+    required this.controller,
     required this.level,
+    this.moveUp = true,
   });
 
+  final SpeedController controller;
   final Map<String, dynamic> level;
+  final bool moveUp;
+  final List<String> images = const [
+    'tortoise',
+    'fowl',
+    'antelope',
+    'cheetah',
+    'falcon',
+    'eagle'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +59,7 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      level['level'] > 1 ? 'Congratulations' : 'Aww',
+                      moveUp ? 'Congratulations' : 'Aww',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: kAdeoCoral,
@@ -51,7 +69,9 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                     ),
                     SizedBox(height: 32.0),
                     Text(
-                      'You moved up to level ${level['level'].toString()}, the ${level['name']} zone',
+                      moveUp
+                          ? 'You moved up to level ${level['level'].toString()}, the ${images[level['level'] - 1]} zone'
+                          : 'You moved down to level ${level['level'].toString()}, the ${images[level['level'] - 1]} zone',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFFACACAC),
@@ -73,7 +93,7 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                     Container(
                       width: 240.0,
                       child: Image.asset(
-                        'assets/images/learn_module/${level['name']}.png',
+                        'assets/images/learn_module/${images[level['level'] - 1]}.png',
                         fit: BoxFit.contain,
                       ),
                     )
@@ -82,7 +102,40 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
               ),
               AdeoOutlinedButton(
                 label: 'OK',
-                onPressed: () {},
+                onPressed: () async {
+                  if (controller.progress.section! == 6) {
+                    int nextLevel = controller.nextLevel;
+                    Topic? topic = await TopicDB()
+                        .getLevelTopic(controller.course.id!, nextLevel);
+                    if (topic != null) {
+                      print("${topic.name}");
+                      StudyProgress progress = StudyProgress(
+                          id: topic.id,
+                          studyId: controller.progress.studyId!,
+                          level: nextLevel,
+                          topicId: topic.id,
+                          name: topic.name,
+                          createdAt: DateTime.now(),
+                          updatedAt: DateTime.now());
+                      await StudyDB().insertProgress(progress);
+
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (context) {
+                        return LearnSpeed(
+                            controller.user, controller.course, progress);
+                      }), ModalRoute.withName(LearnSpeed.routeName));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("No more topics")));
+                    }
+                  } else {
+                    Navigator.pushAndRemoveUntil(context,
+                        MaterialPageRoute(builder: (context) {
+                      return LearnSpeed(controller.user, controller.course,
+                          controller.progress);
+                    }), ModalRoute.withName(LearnSpeed.routeName));
+                  }
+                },
                 color: kAdeoBlue,
                 borderRadius: 0,
               ),

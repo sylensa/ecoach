@@ -16,6 +16,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/learn_image_screens.dart';
 import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn_speed_enhancement_completion.dart';
 import 'package:ecoach/views/learning_widget.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -67,7 +68,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     setState(() {
       controller.currentQuestion++;
       showNext = false;
-      if (controller.type == StudyType.REVISION) {
+      if (controller.type == StudyType.REVISION ||
+          controller.type == StudyType.SPEED_ENHANCEMENT) {
         controller.enabled = true;
       }
 
@@ -126,8 +128,16 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           controller.enabled = false;
         });
         if (controller.type == StudyType.REVISION ||
-            controller.type == StudyType.COURSE_COMPLETION) {
+            controller.type == StudyType.COURSE_COMPLETION ||
+            controller.type == StudyType.SPEED_ENHANCEMENT) {
           controller.updateProgress(test!);
+          if (controller.progress.passed) {
+            if (controller.type == StudyType.SPEED_ENHANCEMENT) {
+              int section = controller.progress.section! + 1;
+              controller.updateProgessSection(section);
+            }
+          } else {}
+
           progressCompleteView();
         } else {
           viewResults();
@@ -150,6 +160,16 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       MaterialPageRoute<void>(builder: (BuildContext context) {
         if (StudyType.COURSE_COMPLETION == controller.type)
           return StudyCCResults(test: testTakenSaved!, controller: controller);
+        if (StudyType.SPEED_ENHANCEMENT == controller.type)
+          return LearnSpeedEnhancementCompletion(
+              controller: controller,
+              moveUp: controller.progress.passed!,
+              level: {
+                'level': controller.progress.section!,
+                'name': 'falcon',
+                'duration': controller.resetDuration.inSeconds,
+                'questions': 1
+              });
         return LearnImageScreens(
           studyController: controller,
           pageIndex: pageIndex,
@@ -253,7 +273,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           callback: (Answer answer, correct) async {
                             setState(() {
                               showSubmit = true;
-                              if (controller.type == StudyType.REVISION) {
+                              if (controller.type == StudyType.REVISION ||
+                                  controller.type ==
+                                      StudyType.SPEED_ENHANCEMENT) {
                                 if (correct)
                                   answeredWrong = false;
                                 else
@@ -302,7 +324,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 setState(() {
                                   showSubmit = false;
                                   showNext = true;
-                                  if (controller.type == StudyType.REVISION) {
+                                  if (controller.type == StudyType.REVISION ||
+                                      controller.type ==
+                                          StudyType.SPEED_ENHANCEMENT) {
                                     controller.enabled = false;
                                   }
 

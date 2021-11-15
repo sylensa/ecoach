@@ -14,16 +14,7 @@ class LearnSpeedEnhancementQuestionsPlaceholder extends StatelessWidget {
           color: kAdeoCoral,
           label: 'End Test',
           borderRadius: 0,
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return LearnSpeedEnhancementCompletion(level: {
-                'level': 5,
-                'name': 'falcon',
-                'duration': 15,
-                'questions': 1
-              });
-            }));
-          },
+          onPressed: () {},
         ),
       ),
     ));

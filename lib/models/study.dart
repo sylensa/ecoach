@@ -53,6 +53,7 @@ class StudyProgress {
   int? testId;
   int? level;
   int? section;
+  int? noFailed;
   String? name;
   double? score;
   bool? passed;
@@ -69,10 +70,22 @@ class StudyProgress {
       this.section,
       this.name,
       this.score,
+      this.noFailed,
       this.passed = false,
       this.createdAt,
       this.updatedAt,
       this.completedAt});
+
+  increaseFailedTimes() {
+    if (noFailed == null)
+      noFailed = 1;
+    else
+      noFailed = noFailed! + 1;
+  }
+
+  resetFailedTimes() {
+    noFailed = 0;
+  }
 
   static StudyProgress fromJson(Map<String, dynamic> map) {
     return StudyProgress(
@@ -85,6 +98,7 @@ class StudyProgress {
         name: map['name'],
         passed: map['passed'] == 1 ? true : false,
         score: map['score'],
+        noFailed: map['no_failed'],
         createdAt: DateTime.parse(map['created_at']),
         updatedAt: DateTime.parse(map['updated_at']));
   }
@@ -100,6 +114,7 @@ class StudyProgress {
       'name': name,
       'passed': passed,
       'score': score,
+      'no_failed': noFailed,
       'created_at': createdAt!.toIso8601String(),
       'updated_at': updatedAt!.toIso8601String()
     };
