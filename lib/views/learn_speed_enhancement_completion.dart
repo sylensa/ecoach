@@ -103,37 +103,35 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
               AdeoOutlinedButton(
                 label: 'OK',
                 onPressed: () async {
-                  if (controller.progress.section! == 6) {
-                    int nextLevel = controller.nextLevel;
-                    Topic? topic = await TopicDB()
-                        .getLevelTopic(controller.course.id!, nextLevel);
-                    if (topic != null) {
-                      print("${topic.name}");
-                      StudyProgress progress = StudyProgress(
-                          id: topic.id,
-                          studyId: controller.progress.studyId!,
-                          level: nextLevel,
-                          topicId: topic.id,
-                          name: topic.name,
-                          createdAt: DateTime.now(),
-                          updatedAt: DateTime.now());
-                      await StudyDB().insertProgress(progress);
+                  int nextLevel = moveUp
+                      ? controller.nextLevel
+                      : controller.progress.level! - 1;
+                  if (nextLevel < 1) {
+                    nextLevel = 1;
+                  }
 
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (context) {
-                        return LearnSpeed(
-                            controller.user, controller.course, progress);
-                      }), ModalRoute.withName(LearnSpeed.routeName));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("No more topics")));
-                    }
-                  } else {
+                  Topic? topic =
+                      await TopicDB().getLevelTopic(controller.course.id!, 1);
+                  if (topic != null) {
+                    print("${topic.name}");
+                    StudyProgress progress = StudyProgress(
+                        id: topic.id,
+                        studyId: controller.progress.studyId!,
+                        level: nextLevel,
+                        topicId: topic.id,
+                        name: topic.name,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now());
+                    await StudyDB().insertProgress(progress);
+
                     Navigator.pushAndRemoveUntil(context,
                         MaterialPageRoute(builder: (context) {
-                      return LearnSpeed(controller.user, controller.course,
-                          controller.progress);
+                      return LearnSpeed(
+                          controller.user, controller.course, progress);
                     }), ModalRoute.withName(LearnSpeed.routeName));
+                  } else {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text("No topics")));
                   }
                 },
                 color: kAdeoBlue,

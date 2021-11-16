@@ -157,11 +157,14 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   progressCompleteView() async {
     print("viewing results");
     print(testTakenSaved!.toJson().toString());
+
     int pageIndex = 0;
-    int nextLevel = controller.nextLevel;
-    Topic? topic =
-        await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
-    if (topic == null) pageIndex = 1;
+    if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+      int nextLevel = controller.nextLevel;
+      Topic? topic =
+          await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
+      if (topic == null) pageIndex = 1;
+    }
 
     Navigator.push<void>(
       context,

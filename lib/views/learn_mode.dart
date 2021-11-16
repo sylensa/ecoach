@@ -43,9 +43,12 @@ class _LearnModeState extends State<LearnMode> {
         study = Study(
             id: topic.id,
             courseId: widget.course.id!,
-            name: topic.name,
+            name: type == StudyType.SPEED_ENHANCEMENT
+                ? widget.course.name
+                : topic.name,
             type: type.toString(),
-            currentTopicId: topic.id,
+            currentTopicId:
+                type == StudyType.SPEED_ENHANCEMENT ? null : topic.id,
             userId: widget.user.id!,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now());
@@ -56,8 +59,10 @@ class _LearnModeState extends State<LearnMode> {
             studyId: study.id,
             level: 1,
             section: 1,
-            name: topic.name,
-            topicId: topic.id,
+            name: type == StudyType.SPEED_ENHANCEMENT
+                ? widget.course.name
+                : topic.name,
+            topicId: type == StudyType.SPEED_ENHANCEMENT ? null : topic.id,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now());
         await StudyDB().insertProgress(progress);

@@ -60,9 +60,8 @@ class _LearnSpeedState extends State<LearnSpeed> {
             heroImageURL: 'assets/images/learn_module/speed_enhancement_3.png',
             stage: 3,
             mainActionOnPressed: () async {
-              int topicId = widget.progress.topicId!;
               List<Question> questions =
-                  await QuestionDB().getTopicQuestions([topicId], 10);
+                  await QuestionDB().getRandomQuestions(widget.course.id!, 10);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return StudyQuizView(
                     controller: SpeedController(widget.user, widget.course,
