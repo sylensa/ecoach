@@ -75,6 +75,8 @@ class _SubscribePageState extends State<SubscribePage>
         },
       );
 
+      print(response.body);
+
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       print("url = $responseData['data']");
@@ -86,6 +88,8 @@ class _SubscribePageState extends State<SubscribePage>
         ));
       }
     } catch (e, m) {
+      print(e);
+      print(m);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
             "There was a problem initializing payment. Please try again later"),
