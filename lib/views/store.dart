@@ -23,31 +23,23 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   SubscribeController subscribeController = Get.put(SubscribeController());
-  List<bool> _isSelected = [false, true];
 
   List<Plan> monthlyPlan = [];
   List<Plan> annuallyPlan = [];
+
+  Future? futureItem;
 
   @override
   void initState() {
     super.initState();
 
-    ApiCall<Plan>(AppUrl.plans, user: widget.user, create: (dataItem) {
-      return Plan.fromJson(dataItem);
-    }, onCallback: (plans) {
-      print("plans coming=====");
-      print(plans);
-      if (plans == null) return;
-      plans.forEach((plan) {
-        if (plan.invoiceInterval == "month") {
-          monthlyPlan.add(plan);
-        } else if (plan.invoiceInterval == "year") {
-          annuallyPlan.add(plan);
-        }
-      });
-
-      setState(() {});
-    }).get(context);
+    futureItem = ApiCall<Plan>(
+      AppUrl.plans,
+      user: widget.user,
+      create: (dataItem) {
+        return Plan.fromJson(dataItem);
+      },
+    ).get(context);
   }
 
   @override
@@ -86,77 +78,109 @@ class _StorePageState extends State<StorePage> {
                       Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Container(
-                            child: monthlyPlan.length > 0
-                                ? Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: monthlyPlan.length,
-                                        itemBuilder: (context, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                20, 12, 20, 12),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) {
-                                                  return SubscribePage(
-                                                      widget.user,
-                                                      monthlyPlan[index]);
-                                                }));
-                                              },
-                                              highlightColor:
-                                                  Colors.blue.shade600,
-                                              child: Container(
-                                                // height: 80,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: Colors.white),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      14.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                          monthlyPlan[index]
-                                                              .name!,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      Spacer(),
-                                                      Text(
-                                                          money(
+                            child: FutureBuilder(
+                                future: futureItem,
+                                builder: (context, snapshot) {
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.none:
+                                      return Container();
+
+                                    case ConnectionState.waiting:
+                                    case ConnectionState.active:
+                                      return Center(
+                                          child: CircularProgressIndicator());
+
+                                    case ConnectionState.done:
+                                      if (snapshot.data != null) {
+                                        monthlyPlan.clear();
+                                        List<Plan> plans =
+                                            snapshot.data as List<Plan>;
+                                        plans.forEach((plan) {
+                                          if (plan.invoiceInterval == "month") {
+                                            monthlyPlan.add(plan);
+                                          }
+                                        });
+                                        return ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: monthlyPlan.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        20, 12, 20, 12),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) {
+                                                      return SubscribePage(
+                                                          widget.user,
+                                                          monthlyPlan[index]);
+                                                    }));
+                                                  },
+                                                  highlightColor:
+                                                      Colors.blue.shade600,
+                                                  child: Container(
+                                                    // height: 80,
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                            width: 1,
+                                                            color:
+                                                                Colors.white),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10)),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              14.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Text(
                                                               monthlyPlan[index]
+                                                                  .name!,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                          Spacer(),
+                                                          Text(
+                                                              money(monthlyPlan[
+                                                                      index]
                                                                   .price!),
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 18)),
-                                                    ],
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      18)),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                  )
-                                : Container(
-                                    child: SizedBox(
-                                      height: 400,
-                                      child: Center(
-                                        child: Text(
-                                            "There are no items in the store"),
-                                      ),
-                                    ),
-                                  ),
+                                              );
+                                            });
+                                      } else if (snapshot.hasError) {
+                                        return Center(
+                                          child: Text(
+                                            "A problem ocurred",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        );
+                                      } else {
+                                        return Center(
+                                          child: Text(
+                                            "There are no items in the store",
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          ),
+                                        );
+                                      }
+                                  }
+                                }),
                           )),
                     ],
                   ),
@@ -170,80 +194,109 @@ class _StorePageState extends State<StorePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Container(
-                            child: annuallyPlan.length > 0
-                                ? Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: annuallyPlan.length,
-                                        itemBuilder: (context, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                20, 12, 20, 12),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) {
-                                                  return SubscribePage(
-                                                      widget.user,
-                                                      annuallyPlan[index]);
-                                                }));
-                                              },
-                                              highlightColor:
-                                                  Colors.blue.shade600,
-                                              child: Container(
-                                                // height: 80,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: Colors.white),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      14.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                          annuallyPlan[index]
-                                                              .name!,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold)),
-                                                      Spacer(),
-                                                      Text(
-                                                          money(annuallyPlan[
-                                                                  index]
-                                                              .price!),
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 18)),
-                                                    ],
+                        padding: const EdgeInsets.all(12.0),
+                        child: Container(
+                          child: FutureBuilder(
+                              future: futureItem,
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.none:
+                                    return Container();
+                                  case ConnectionState.waiting:
+                                  case ConnectionState.active:
+                                    return Center(
+                                        child: CircularProgressIndicator());
+
+                                  case ConnectionState.done:
+                                    if (snapshot.data != null) {
+                                      annuallyPlan.clear();
+                                      List<Plan> plans =
+                                          snapshot.data as List<Plan>;
+                                      plans.forEach((plan) {
+                                        if (plan.invoiceInterval == "year") {
+                                          annuallyPlan.add(plan);
+                                        }
+                                      });
+                                      return ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: annuallyPlan.length,
+                                          itemBuilder: (context, index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      20, 12, 20, 12),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.push(context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return SubscribePage(
+                                                        widget.user,
+                                                        annuallyPlan[index]);
+                                                  }));
+                                                },
+                                                highlightColor:
+                                                    Colors.blue.shade600,
+                                                child: Container(
+                                                  // height: 80,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          width: 1,
+                                                          color: Colors.white),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            14.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                            annuallyPlan[index]
+                                                                .name!,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                        Spacer(),
+                                                        Text(
+                                                            money(annuallyPlan[
+                                                                    index]
+                                                                .price!),
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 18)),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        }),
-                                  )
-                                : Container(
-                                    child: SizedBox(
-                                      height: 400,
-                                      child: Center(
+                                            );
+                                          });
+                                    } else if (snapshot.hasError) {
+                                      return Center(
                                         child: Text(
-                                            "There are no items in the store"),
-                                      ),
-                                    ),
-                                  ),
-                          )),
+                                          "A problem ocurred",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      );
+                                    } else {
+                                      return Center(
+                                        child: Text(
+                                          "There are no items in the store",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      );
+                                    }
+                                }
+                              }),
+                        ),
+                      )
                     ],
                   ),
                 ),

@@ -376,7 +376,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                   ? wrongAnswerAction()
                                   : nextButton,
                               child: Text(
-                                answeredWrong ? "Study Notes" : "Next",
+                                answeredWrong ? getWrongAnswerText() : "Next",
                                 style: TextStyle(
                                   color: Color(0xFFA2A2A2),
                                   fontSize: 21,
@@ -448,6 +448,16 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     } else {
       return () {};
     }
+  }
+
+  String getWrongAnswerText() {
+    if (controller.type == StudyType.REVISION) {
+      return "Study Notes";
+    } else if (controller.type == StudyType.SPEED_ENHANCEMENT) {
+      return "Start Over";
+    }
+
+    return "Any Action";
   }
 
   Widget getTimerWidget() {
