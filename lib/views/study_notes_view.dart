@@ -48,11 +48,14 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                   SizedBox(
                     width: 20,
                   ),
-                  Text(controller.name,
-                      style: TextStyle(
-                          color: Color(0xFF15CA70),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500)),
+                  Expanded(
+                    child: Text(controller.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Color(0xFF15CA70),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500)),
+                  ),
                   OutlinedButton(
                       onPressed: () {
                         Navigator.popUntil(

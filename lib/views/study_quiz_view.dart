@@ -87,28 +87,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   notesButton() async {
     Topic? topic = await TopicDB().getTopicById(controller.progress.topicId!);
     controller.saveTest(context, (test, success) async {
-      if (topic!.notes != "") {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return StudyNoteView(topic, controller: controller);
-        }));
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("This topic has no notes")));
-
-        List<Question> questions =
-            await QuestionDB().getTopicQuestions([topic.id!], 10);
-
-        controller.questions = questions;
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-          builder: (context) {
-            return LearningWidget(
-              controller: controller,
-            );
-          },
-        ), (predicate) {
-          return false;
-        });
-      }
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return StudyNoteView(topic!, controller: controller);
+      }));
     });
   }
 
@@ -458,7 +439,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   Function()? wrongAnswerAction() {
     if (controller.type == StudyType.REVISION) {
-      return notesButton();
+      return () {
+        return notesButton();
+      };
     } else if (controller.type == StudyType.SPEED_ENHANCEMENT) {
       return () {
         return endSpeedSession();
