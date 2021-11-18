@@ -11,8 +11,8 @@ class SpeedController extends StudyController {
       {this.questions = const [], required this.name, required this.progress})
       : super(user, course, name: name, progress: progress) {
     type = StudyType.SPEED_ENHANCEMENT;
-    int seconds = 0;
-    switch (progress.section) {
+    int seconds = 120;
+    switch (progress.level) {
       case 1:
         seconds = 120;
         break;

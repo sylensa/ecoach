@@ -5,6 +5,7 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_gray_outlined_button.dart';
@@ -29,6 +30,8 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
     'eagle'
   ];
 
+  final List<int> seconds = const [120, 90, 60, 30, 15, 10];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +50,10 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                   children: [
                     AdeoGrayOutlinedButton(
                       label: 'return',
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.popUntil(
+                            context, ModalRoute.withName(LearnMode.routeName));
+                      },
                       size: Sizes.small,
                     ),
                   ],
@@ -82,7 +88,7 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                     ),
                     SizedBox(height: 40.0),
                     Text(
-                      '${level['duration'].toString()} sec : ${level['questions'].toString()} question(s)',
+                      '${seconds[level['level'] - 1].toString()} sec : ${level['questions'].toString()} question(s)',
                       style: TextStyle(
                         fontSize: 14.0,
                         color: kAdeoBlue,
@@ -119,7 +125,8 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                         studyId: controller.progress.studyId!,
                         level: nextLevel,
                         topicId: topic.id,
-                        name: topic.name,
+                        section: 1,
+                        name: controller.progress.name,
                         createdAt: DateTime.now(),
                         updatedAt: DateTime.now());
                     await StudyDB().insertProgress(progress);

@@ -154,7 +154,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                             print(
                                 "_______________________________________________________");
                             print(topic.notes);
-                            await controller.updateProgessSection(1);
+                            await controller.updateProgressSection(1);
                             showDialog(
                                 context: context,
                                 builder: (context) {

@@ -151,8 +151,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        settings:
-                            RouteSettings(name: CourseDetailsPage.routeName),
+                        settings: RouteSettings(name: LearnMode.routeName),
                         builder: (context) {
                           return LearnMode(
                               widget.user, widget.courseInfo.course);

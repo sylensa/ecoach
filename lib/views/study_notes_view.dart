@@ -111,7 +111,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                 onPressed: () async {
                                   if (controller.type ==
                                       StudyType.COURSE_COMPLETION) {
-                                    await controller.updateProgessSection(2);
+                                    await controller.updateProgressSection(2);
                                   }
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {

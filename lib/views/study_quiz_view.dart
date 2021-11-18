@@ -115,7 +115,11 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   endSpeedSession() async {
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
       return LearnSpeed(
-          controller.user, controller.course, controller.progress);
+        controller.user,
+        controller.course,
+        controller.progress,
+        page: 1,
+      );
     }), ModalRoute.withName(LearnSpeed.routeName));
   }
 
@@ -139,12 +143,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             controller.type == StudyType.COURSE_COMPLETION ||
             controller.type == StudyType.SPEED_ENHANCEMENT) {
           controller.updateProgress(test!);
-          if (controller.progress.passed) {
-            if (controller.type == StudyType.SPEED_ENHANCEMENT) {
-              int section = controller.progress.section! + 1;
-              controller.updateProgessSection(section);
-            }
-          } else {}
 
           progressCompleteView();
         } else {
@@ -171,16 +169,21 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       MaterialPageRoute<void>(builder: (BuildContext context) {
         if (StudyType.COURSE_COMPLETION == controller.type)
           return StudyCCResults(test: testTakenSaved!, controller: controller);
-        if (StudyType.SPEED_ENHANCEMENT == controller.type)
+        if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+          bool moveUp = controller.progress.section == null ||
+              controller.progress.section! <= 3;
+          if (moveUp) {
+            moveUp = controller.progress.passed!;
+          }
           return LearnSpeedEnhancementCompletion(
               controller: controller,
-              moveUp: controller.progress.passed!,
+              moveUp: moveUp,
               level: {
-                'level': controller.progress.section!,
-                'name': 'falcon',
+                'level': controller.nextLevel!,
                 'duration': controller.resetDuration.inSeconds,
                 'questions': 1
               });
+        }
         return LearnImageScreens(
           studyController: controller,
           pageIndex: pageIndex,
@@ -352,6 +355,19 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     showComplete = true;
                                     showNext = false;
                                   }
+
+                                  if (answeredWrong &&
+                                      controller.type ==
+                                          StudyType.SPEED_ENHANCEMENT) {
+                                    int section =
+                                        controller.progress.section ?? 1;
+                                    controller
+                                        .updateProgressSection(section + 1);
+                                    if (section >= 3) {
+                                      showComplete = true;
+                                      showNext = false;
+                                    }
+                                  }
                                 });
                               },
                               child: Text(
@@ -444,7 +460,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     if (controller.type == StudyType.REVISION) {
       return notesButton();
     } else if (controller.type == StudyType.SPEED_ENHANCEMENT) {
-      return endSpeedSession();
+      return () {
+        return endSpeedSession();
+      };
     } else {
       return () {};
     }
@@ -514,7 +532,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     },
                     onFinish: () {
                       print("finished");
-                      completeQuiz();
+                      endSpeedSession();
                     },
                   ),
                 ),

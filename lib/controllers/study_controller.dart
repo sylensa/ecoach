@@ -156,7 +156,7 @@ class StudyController {
     return progress;
   }
 
-  updateProgessSection(int section) async {
+  updateProgressSection(int section) async {
     progress.section = section;
     await StudyDB().updateProgress(progress);
 

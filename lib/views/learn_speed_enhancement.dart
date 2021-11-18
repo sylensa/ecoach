@@ -8,6 +8,7 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_speed_enhancement_questions_placeholder.dart';
 import 'package:ecoach/views/study_quiz_view.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -20,11 +21,12 @@ import 'package:another_xlider/another_xlider.dart';
 class LearnSpeed extends StatefulWidget {
   static const String routeName = '/learning/speed';
 
-  const LearnSpeed(this.user, this.course, this.progress, {Key? key})
+  LearnSpeed(this.user, this.course, this.progress, {Key? key, this.page = 0})
       : super(key: key);
   final User user;
   final Course course;
   final StudyProgress progress;
+  int? page;
 
   @override
   _LearnSpeedState createState() => _LearnSpeedState();
@@ -48,6 +50,10 @@ class _LearnSpeedState extends State<LearnSpeed> {
             mainActionOnPressed: () {
               controller.nextPage();
             },
+            topActionOnPressed: () {
+              Navigator.popUntil(
+                  context, ModalRoute.withName(LearnMode.routeName));
+            },
           ),
           SecondComponent(
             controller: controller,
@@ -59,6 +65,10 @@ class _LearnSpeedState extends State<LearnSpeed> {
                 'If you answer 10 questions correctly , you move to the next level\nif you fail 3 questions consecutive questions,\nyou go back to the previous level.\nFor every wrong answer, the test restarts.',
             heroImageURL: 'assets/images/learn_module/speed_enhancement_3.png',
             stage: 3,
+            topActionOnPressed: () {
+              Navigator.popUntil(
+                  context, ModalRoute.withName(LearnMode.routeName));
+            },
             mainActionOnPressed: () async {
               List<Question> questions =
                   await QuestionDB().getRandomQuestions(widget.course.id!, 10);
@@ -78,6 +88,7 @@ class _LearnSpeedState extends State<LearnSpeed> {
           viewportFraction: 1,
           scrollPhysics: NeverScrollableScrollPhysics(),
           enableInfiniteScroll: false,
+          initialPage: widget.page!,
           onPageChanged: (index, reason) {
             setState(() {
               currentSliderIndex = index;
@@ -95,10 +106,10 @@ class SecondComponent extends StatelessWidget {
     required this.controller,
     required this.progress,
   }) : super(key: key) {
-    int? section = progress.section;
-    if (section == null) section = 0;
+    int? level = progress.level;
+    if (level == null) level = 0;
 
-    sliderValue = section * 20 - 18;
+    sliderValue = level * 20 - 18;
   }
 
   final CarouselController controller;
@@ -143,7 +154,10 @@ class SecondComponent extends StatelessWidget {
               ),
               AdeoGrayOutlinedButton(
                 label: 'return',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.popUntil(
+                      context, ModalRoute.withName(LearnMode.routeName));
+                },
                 size: Sizes.small,
               ),
             ],
