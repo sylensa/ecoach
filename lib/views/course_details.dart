@@ -1,4 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
@@ -56,14 +58,18 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       });
     });
 
-    UserPreferences().getUserLastStudy().then((value) {
-      setState(() {
-        lastStudy = value!;
+    StudyDB().courseLastStudy(widget.courseInfo.course.id).then((value) {
+      CourseDB().getCourseById(value!.courseId!).then((value) {
+        setState(() {
+          if (value == null) lastStudy = "";
+          lastStudy = value!.name!;
+        });
       });
     });
-    UserPreferences().getUserLastStudyTopic().then((value) {
+    StudyDB().courseLastStudy(widget.courseInfo.course.id).then((value) {
       setState(() {
-        lastStudyTopic = value!;
+        if (value == null) lastStudyTopic = "";
+        lastStudyTopic = value!.name!;
       });
     });
   }

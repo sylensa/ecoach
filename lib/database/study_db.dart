@@ -138,6 +138,17 @@ class StudyDB {
     return studies;
   }
 
+  Future<Study?> courseLastStudy(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('studies',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId]);
+
+    return result.isNotEmpty ? Study.fromJson(result.last) : null;
+  }
+
   Future<void> update(Study study) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;

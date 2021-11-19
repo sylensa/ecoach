@@ -60,49 +60,52 @@ class CourseDetailCard extends StatelessWidget {
                                 width: 32.0,
                               ),
                         SizedBox(width: 12),
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: !hideProgress ? 160.0 : 240.0,
-                                child: Text(
-                                  courseDetail.title,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: !hideProgress ? 160.0 : 240.0,
+                                  child: Text(
+                                    courseDetail.title,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              if (courseDetail.subtitle1 != null)
-                                Column(
-                                  children: [
-                                    SizedBox(height: 4),
-                                    Text(
-                                      courseDetail.subtitle1.toString(),
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xCCFFFFFF),
+                                if (courseDetail.subtitle1 != null)
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 4),
+                                      Text(
+                                        courseDetail.subtitle1.toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xCCFFFFFF),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              if (courseDetail.subtitle2 != null)
-                                Column(
-                                  children: [
-                                    SizedBox(height: 4),
-                                    Text(
-                                      courseDetail.subtitle2.toString(),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xCCFFFFFF),
+                                    ],
+                                  ),
+                                if (courseDetail.subtitle2 != null)
+                                  Column(
+                                    children: [
+                                      SizedBox(height: 4),
+                                      Text(
+                                        courseDetail.subtitle2.toString(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xCCFFFFFF),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                            ],
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

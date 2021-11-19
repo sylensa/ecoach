@@ -909,6 +909,50 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                 ],
               ),
             ),
+            if (!widget.enabled &&
+                selectedAnswer != null &&
+                selectedAnswer!.solution != null &&
+                selectedAnswer!.solution != "")
+              Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: double.infinity,
+                      child: Container(
+                        color: Colors.amber.shade200,
+                        child: Center(
+                          child: Text(
+                            "Solution",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (selectedAnswer != null &&
+                        selectedAnswer!.solution != null &&
+                        selectedAnswer!.solution != "")
+                      Container(
+                        color: Colors.orange,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
+                            child: Html(
+                                data: correctAnswer != null
+                                    ? correctAnswer!.solution!
+                                    : "----",
+                                style: {
+                                  // tables will have the below background color
+                                  "body": Style(
+                                    color: Colors.white,
+                                  ),
+                                }),
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
             Container(
               margin: EdgeInsets.only(top: 20),
               child: Column(
