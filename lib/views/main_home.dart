@@ -93,13 +93,51 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: AppDrawer(user: widget.user),
-      body: _children[currentIndex],
-      bottomNavigationBar: AdeoBottomNavigationBar(
-        selectedIndex: currentIndex,
-        onItemSelected: tapping,
-        items: ['home', 'courses', 'adeo', 'analysis', 'account'],
+    return WillPopScope(
+      onWillPop: () async {
+        bool canExit = true;
+
+        await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  "Exist?",
+                  style: TextStyle(color: Colors.black),
+                ),
+                content: Text(
+                  "Are you sure you want to leave?",
+                  style: TextStyle(color: Colors.black),
+                ),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        canExit = true;
+                        Navigator.pop(context);
+                      },
+                      child: Text("Yes")),
+                  ElevatedButton(
+                      onPressed: () {
+                        canExit = false;
+                        Navigator.pop(context);
+                      },
+                      child: Text("No"))
+                ],
+              );
+            });
+
+        return Future.value(canExit);
+      },
+      child: SafeArea(
+        child: Scaffold(
+          drawer: AppDrawer(user: widget.user),
+          body: _children[currentIndex],
+          bottomNavigationBar: AdeoBottomNavigationBar(
+            selectedIndex: currentIndex,
+            onItemSelected: tapping,
+            items: ['home', 'courses', 'adeo', 'analysis', 'account'],
+          ),
+        ),
       ),
     );
   }

@@ -59,7 +59,11 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
     });
 
     StudyDB().courseLastStudy(widget.courseInfo.course.id).then((value) {
-      CourseDB().getCourseById(value!.courseId!).then((value) {
+      if (value == null) {
+        lastStudy = "No Study Yet";
+        return;
+      }
+      CourseDB().getCourseById(value.courseId!).then((value) {
         setState(() {
           if (value == null) lastStudy = "";
           lastStudy = value!.name!;

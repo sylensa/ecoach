@@ -1,14 +1,22 @@
+import 'package:ecoach/controllers/study_mastery_controller.dart';
+import 'package:ecoach/controllers/study_speed_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_attention_topics.dart';
+import 'package:ecoach/views/study_quiz_view.dart';
 import 'package:ecoach/widgets/layouts/speed_enhancement_introit.dart';
 import 'package:flutter/material.dart';
 
 class LearnMastery extends StatefulWidget {
-  const LearnMastery(this.user, this.course, {Key? key}) : super(key: key);
+  const LearnMastery(this.user, this.course, this.progress, {Key? key})
+      : super(key: key);
   final User user;
   final Course course;
+  final StudyProgress progress;
 
   @override
   _LearnMasteryState createState() => _LearnMasteryState();
@@ -25,9 +33,15 @@ class _LearnMasteryState extends State<LearnMastery> {
         heroImageURL: 'assets/images/learn_module/mastery_improvement.png',
         mainActionLabel: 'Enter',
         color: kAdeoTaupe,
-        mainActionOnPressed: () {
+        mainActionOnPressed: () async {
+          List<Question> questions =
+              await QuestionDB().getMasteryQuestions(widget.course.id!, 10);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return LearnAttentionTopics();
+            return StudyQuizView(
+                controller: MasteryController(widget.user, widget.course,
+                    questions: questions,
+                    name: widget.progress.name!,
+                    progress: widget.progress));
           }));
         },
       ),

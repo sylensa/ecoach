@@ -43,12 +43,15 @@ class _LearnModeState extends State<LearnMode> {
         study = Study(
             id: topic.id,
             courseId: widget.course.id!,
-            name: type == StudyType.SPEED_ENHANCEMENT
+            name: type == StudyType.SPEED_ENHANCEMENT ||
+                    type == StudyType.MASTERY_IMPROVEMENT
                 ? widget.course.name
                 : topic.name,
             type: type.toString(),
-            currentTopicId:
-                type == StudyType.SPEED_ENHANCEMENT ? null : topic.id,
+            currentTopicId: type == StudyType.SPEED_ENHANCEMENT ||
+                    type == StudyType.MASTERY_IMPROVEMENT
+                ? null
+                : topic.id,
             userId: widget.user.id!,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now());
@@ -59,10 +62,14 @@ class _LearnModeState extends State<LearnMode> {
             studyId: study.id,
             level: 1,
             section: 1,
-            name: type == StudyType.SPEED_ENHANCEMENT
+            name: type == StudyType.SPEED_ENHANCEMENT ||
+                    type == StudyType.MASTERY_IMPROVEMENT
                 ? widget.course.name
                 : topic.name,
-            topicId: type == StudyType.SPEED_ENHANCEMENT ? null : topic.id,
+            topicId: type == StudyType.SPEED_ENHANCEMENT ||
+                    type == StudyType.MASTERY_IMPROVEMENT
+                ? null
+                : topic.id,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now());
         await StudyDB().insertProgress(progress);
@@ -208,7 +215,14 @@ class _LearnModeState extends State<LearnMode> {
                                   widget.user, widget.course, progress);
                               break;
                             case StudyType.MASTERY_IMPROVEMENT:
-                              view = LearnMastery(widget.user, widget.course);
+                              StudyProgress? progress = await getStudyProgress(
+                                  StudyType.MASTERY_IMPROVEMENT);
+                              print(progress);
+                              if (progress == null) {
+                                return;
+                              }
+                              view = LearnMastery(
+                                  widget.user, widget.course, progress);
                               break;
                             case StudyType.NONE:
                               break;

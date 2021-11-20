@@ -22,6 +22,7 @@ import 'package:ecoach/views/learning_widget.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/views/study_cc_results.dart';
+import 'package:ecoach/views/study_mastery_results.dart';
 import 'package:ecoach/views/study_notes_view.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -112,7 +113,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     await Future.delayed(Duration(seconds: 1));
 
-    controller.saveTest(context, (test, success) {
+    controller.saveTest(context, (test, success) async {
       Navigator.pop(context);
       if (success) {
         setState(() {
@@ -120,15 +121,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           controller.savedTest = true;
           controller.enabled = false;
         });
-        if (controller.type == StudyType.REVISION ||
-            controller.type == StudyType.COURSE_COMPLETION ||
-            controller.type == StudyType.SPEED_ENHANCEMENT) {
-          controller.updateProgress(test!);
-
-          progressCompleteView();
-        } else {
-          viewResults();
-        }
+        await controller.updateProgress(test!);
+        progressCompleteView();
       }
     });
   }
@@ -165,6 +159,21 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                 'questions': 1
               });
         }
+        if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
+          int level = controller.progress.level;
+          print("level $level");
+          if (level == 1) {
+            return StudyMasteryResults(
+              test: testTakenSaved!,
+              controller: controller,
+            );
+          }
+
+          return LearnImageScreens(
+            studyController: controller,
+            pageIndex: pageIndex,
+          );
+        }
         return LearnImageScreens(
           studyController: controller,
           pageIndex: pageIndex,
@@ -185,8 +194,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     Navigator.push<void>(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            StudyCCResults(test: testTakenSaved!, controller: controller),
+        builder: (BuildContext context) {
+          if (controller.type == StudyType.MASTERY_IMPROVEMENT)
+            return StudyMasteryResults(
+                test: testTakenSaved!, controller: controller);
+          return StudyCCResults(test: testTakenSaved!, controller: controller);
+        },
       ),
     ).then((value) {
       setState(() {

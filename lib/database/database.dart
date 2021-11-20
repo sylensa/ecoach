@@ -22,7 +22,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.80.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.81.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -298,6 +298,17 @@ class DBProvider {
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
+
+      await db.execute("""CREATE TABLE 'mastery_courses' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'level' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' varchar(255) NOT NULL,
+        'passed' tinyint(1) NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
     }, onUpgrade: (db, oldVersion, newVersion) {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
