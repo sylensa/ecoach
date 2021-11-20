@@ -198,6 +198,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           if (controller.type == StudyType.MASTERY_IMPROVEMENT)
             return StudyMasteryResults(
                 test: testTakenSaved!, controller: controller);
+
           return StudyCCResults(test: testTakenSaved!, controller: controller);
         },
       ),
