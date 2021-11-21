@@ -179,6 +179,23 @@ class QuestionDB {
     return questions;
   }
 
+  Future<List<Question>> getMasteryTopicQuestions(
+      int topicId, int limit) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE topic_id = $topicId ORDER BY RANDOM() LIMIT $limit");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
   Future<List<Question>> getQuestionsByType(
       int courseId, String type, int limit) async {
     final Database? db = await DBProvider.database;

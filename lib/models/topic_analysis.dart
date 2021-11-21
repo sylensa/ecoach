@@ -1,8 +1,10 @@
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 
 class TopicAnalysis {
   List<TestAnswer> answers;
   String name;
+  Topic? topic;
 
   TopicAnalysis(this.name, this.answers);
 

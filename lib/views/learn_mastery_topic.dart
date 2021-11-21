@@ -1,34 +1,44 @@
 import 'package:ecoach/controllers/study_mastery_controller.dart';
-import 'package:ecoach/database/mastery_course_db.dart';
+import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
-import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/topic_analysis.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/learn_mastery_feedback.dart';
-import 'package:ecoach/views/learn_mastery_topic.dart';
+import 'package:ecoach/views/study_quiz_view.dart';
 import 'package:flutter/material.dart';
 
-class LearnAttentionTopics extends StatelessWidget {
-  TextStyle auxTextStyle = TextStyle(
+class LearnMasteryTopic extends StatelessWidget {
+  const LearnMasteryTopic(
+    this.user,
+    this.course,
+    this.progress, {
+    Key? key,
+    required this.topics,
+  }) : super(key: key);
+  final User user;
+  final Course course;
+  final StudyProgress progress;
+  final List<MasteryCourse> topics;
+
+  final TextStyle auxTextStyle = const TextStyle(
     fontSize: 20.0,
     color: kAdeoGray3,
     fontWeight: FontWeight.w500,
   );
 
-  TextStyle listStyle = TextStyle(
+  final TextStyle listStyle = const TextStyle(
     fontSize: 15.0,
     color: kDefaultBlack,
     height: 3.0,
   );
 
-  LearnAttentionTopics({required this.topics, required this.controller});
-  final List<Topic> topics;
-  final MasteryController controller;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       body: Column(
         children: [
           Container(
@@ -72,11 +82,17 @@ class LearnAttentionTopics extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  'topics',
+                  'Topic',
                   style: auxTextStyle,
                 ),
+                SizedBox(
+                  width: 222.0,
+                  child: Divider(
+                    color: kAdeoGray2,
+                  ),
+                ),
                 Text(
-                  'need your attention',
+                  topics[0].topicName!,
                   style: auxTextStyle,
                 ),
                 SizedBox(
@@ -89,24 +105,10 @@ class LearnAttentionTopics extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        for (int i = 0; i < topics.length; i++)
-                          Text(topics[i].name!, style: listStyle),
+                        for (int i = 1; i < topics.length; i++)
+                          Text(topics[i].topicName!, style: listStyle),
                       ],
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: 222.0,
-                  child: Divider(
-                    color: kAdeoGray2,
-                  ),
-                ),
-                SizedBox(height: 24.0),
-                Text(
-                  'click on the button below to improve\nyour performance in those topics',
-                  style: auxTextStyle.copyWith(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 14.0,
                   ),
                 ),
               ],
@@ -114,12 +116,14 @@ class LearnAttentionTopics extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              List<MasteryCourse> topics = await MasteryCourseDB()
-                  .getMasteryTopics(controller.progress.studyId!);
+              List<Question> questions = await QuestionDB()
+                  .getMasteryTopicQuestions(topics[0].topicId!, 10);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return LearnMasteryTopic(
-                    controller.user, controller.course, controller.progress,
-                    topics: topics);
+                return StudyQuizView(
+                    controller: MasteryController(user, course,
+                        questions: questions,
+                        name: progress.name!,
+                        progress: progress));
               }));
             },
             child: Container(
@@ -139,6 +143,6 @@ class LearnAttentionTopics extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }

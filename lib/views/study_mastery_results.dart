@@ -1,8 +1,13 @@
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/mastery_course.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -62,9 +67,11 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
     controller = widget.controller;
     print("test id = ${widget.test.id}");
     TestController().topicsAnalysis(widget.test).then((mapList) {
-      mapList.keys.forEach((key) {
+      mapList.keys.forEach((key) async {
         List<TestAnswer> answers = mapList[key]!;
-        topics.add(TopicAnalysis(key, answers));
+        TopicAnalysis analysis = TopicAnalysis(key, answers);
+        analysis.topic = await TopicDB().getTopicById(answers[0].topicId!);
+        topics.add(analysis);
       });
 
       setState(() {});
@@ -196,10 +203,49 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
                     child: Button(
                         label: 'Continue',
                         onPressed: () async {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return LearnAttentionTopics();
-                          }));
+                          List<Topic> topicsToRevise = [];
+                          topics.forEach((topic) {
+                            if (topic.correct < 3 && topic.topic != null) {
+                              topicsToRevise.add(topic.topic!);
+                            }
+                          });
+
+                          if (topicsToRevise.length > 0) {
+                            StudyProgress progress = StudyProgress(
+                                id: topicsToRevise[0].id,
+                                studyId: controller.progress.studyId!,
+                                level: 2,
+                                section: 1,
+                                topicId: topicsToRevise[0].id,
+                                name: topicsToRevise[0].name,
+                                createdAt: DateTime.now(),
+                                updatedAt: DateTime.now());
+                            await StudyDB().insertProgress(progress);
+
+                            for (int i = 0; i < topicsToRevise.length; i++) {
+                              await MasteryCourseDB().insert(MasteryCourse(
+                                  level: controller.progress.level,
+                                  passed: false,
+                                  studyId: controller.progress.studyId,
+                                  topicId: topicsToRevise[i].id,
+                                  topicName: topicsToRevise[i].name,
+                                  createdAt: DateTime.now(),
+                                  updatedAt: DateTime.now()));
+                            }
+
+                            Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(
+                              builder: (context) {
+                                return LearnAttentionTopics(
+                                  controller: MasteryController(
+                                      controller.user, controller.course,
+                                      name: controller.name,
+                                      progress: progress),
+                                  topics: topicsToRevise,
+                                );
+                              },
+                            ), ModalRoute.withName(LearnMode.routeName));
+                          } else {}
                         }),
                   ),
                 ],

@@ -1,11 +1,14 @@
+import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';
+import 'package:ecoach/views/learn_mastery_topic.dart';
 import 'package:ecoach/views/learn_revision.dart';
 import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
@@ -221,8 +224,17 @@ class _LearnModeState extends State<LearnMode> {
                               if (progress == null) {
                                 return;
                               }
-                              view = LearnMastery(
-                                  widget.user, widget.course, progress);
+                              List<MasteryCourse> mcs = await MasteryCourseDB()
+                                  .getMasteryTopics(progress.studyId!);
+                              if (progress.level == 1 || mcs.length == 0) {
+                                view = LearnMastery(
+                                    widget.user, widget.course, progress);
+                              } else {
+                                view = LearnMasteryTopic(
+                                    widget.user, widget.course, progress,
+                                    topics: mcs);
+                              }
+
                               break;
                             case StudyType.NONE:
                               break;

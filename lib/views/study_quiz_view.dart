@@ -15,6 +15,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/learn_image_screens.dart';
+import 'package:ecoach/views/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/views/learn_speed_enhancement_completion.dart';
@@ -169,9 +170,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             );
           }
 
-          return LearnImageScreens(
-            studyController: controller,
-            pageIndex: pageIndex,
+          return LearnMasteryFeedback(
+            passed: controller.progress.passed!,
+            topic: controller.progress.name,
           );
         }
         return LearnImageScreens(
