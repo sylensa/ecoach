@@ -6,6 +6,8 @@ import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn_mastery_topic.dart';
@@ -118,7 +120,10 @@ class _LearnModeState extends State<LearnMode> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.popUntil(context,
+                                ModalRoute.withName(CoursesPage.routeName));
+                          },
                           child: Text(
                             'exit',
                             style: TextStyle(
@@ -239,14 +244,10 @@ class _LearnModeState extends State<LearnMode> {
                             case StudyType.NONE:
                               break;
                           }
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  settings:
-                                      RouteSettings(name: LearnMode.routeName),
-                                  builder: (context) {
-                                    return view!;
-                                  }));
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return view!;
+                          }));
                         },
                         child: Text(
                           "Let's go",

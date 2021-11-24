@@ -75,7 +75,13 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         if (value == null) {
           lastStudyTopic = "----";
         } else
-          lastStudyTopic = value.name!;
+          StudyDB().getCurrentProgress(value.id!).then((value) {
+            if (value == null) {
+              lastStudyTopic = "----";
+            } else {
+              lastStudyTopic = value.name!;
+            }
+          });
       });
     });
   }

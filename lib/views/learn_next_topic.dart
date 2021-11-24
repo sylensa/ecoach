@@ -7,6 +7,7 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/study_notes_view.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,9 @@ class LearnNextTopic extends StatelessWidget {
         subText: topic.topicName!,
         heroImageURL: 'assets/images/learn_module/next_topic.png',
         topActionLabel: 'exit',
-        topActionOnPressed: () {},
+        topActionOnPressed: () {
+          Navigator.popUntil(context, ModalRoute.withName(LearnMode.routeName));
+        },
         topActionColor: kAdeoCoral,
         mainActionLabel: 'let\'s go',
         mainActionColor: kAdeoCoral,

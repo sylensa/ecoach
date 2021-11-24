@@ -9,6 +9,7 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:ecoach/widgets/courses/vertical_captioned_image.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +52,7 @@ class _CourseCardState extends State<CourseCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
+            settings: RouteSettings(name: CoursesPage.routeName),
             builder: (context) =>
                 CourseDetailsPage(widget.user, courseInfo: widget.courseInfo),
           ),

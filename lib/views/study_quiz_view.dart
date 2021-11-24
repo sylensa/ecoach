@@ -702,10 +702,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                   if (action == "resume") {
                     // startTimer();
                   } else if (action == "quit") {
-                    Navigator.pushAndRemoveUntil(context,
-                        MaterialPageRoute(builder: (context) {
-                      return MainHomePage(controller.user, index: 1);
-                    }), (route) => false);
+                    Navigator.popUntil(
+                        context, ModalRoute.withName(LearnMode.routeName));
                   }
                 },
               );
@@ -957,7 +955,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                       height: 30,
                       width: double.infinity,
                       child: Container(
-                        color: Color(0xFFBCBCBC),
+                        color: Color(0xFFF6F6F6),
                         child: Center(
                           child: Text(
                             "Solution",

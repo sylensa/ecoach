@@ -29,6 +29,9 @@ class _LearnMasteryState extends State<LearnMastery> {
         subText:
             'Let\'s help you Improve your average score on a subject,\none topic at a time',
         heroImageURL: 'assets/images/learn_module/mastery_improvement.png',
+        topActionOnPressed: () {
+          Navigator.pop(context);
+        },
         mainActionLabel: 'Enter',
         color: kAdeoTaupe,
         mainActionOnPressed: () async {
