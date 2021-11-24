@@ -54,7 +54,7 @@ class LearnMasteryTopic extends StatelessWidget {
                 Stack(
                   children: [
                     Text(
-                      '10',
+                      '${topics.length}',
                       style: TextStyle(
                         color: kAdeoGray3,
                         fontSize: 100.0,

@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
@@ -102,12 +103,11 @@ class _LearnRevisionState extends State<LearnRevision> {
                               RouteSettings(name: LearnRevision.routeName),
                           builder: (context) {
                             return LearningWidget(
-                              controller: StudyController(
+                              controller: RevisionController(
                                   widget.user, widget.course,
                                   name: widget.progress.name ??
                                       widget.course.name!,
                                   questions: questions,
-                                  type: StudyType.REVISION,
                                   progress: widget.progress),
                             );
                           },

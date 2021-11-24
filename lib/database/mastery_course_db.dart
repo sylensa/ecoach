@@ -49,7 +49,7 @@ class MasteryCourseDB {
 
     final List<Map<String, dynamic>> maps = await db!.query('mastery_courses',
         orderBy: "created_at ASC",
-        where: "study_id = ? AND passed = false",
+        where: "study_id = ? AND passed = 0",
         whereArgs: [studyId]);
 
     List<MasteryCourse> mc = [];
@@ -62,11 +62,11 @@ class MasteryCourseDB {
 
   Future<MasteryCourse?> getCurrentTopic(int studyId) async {
     final Database? db = await DBProvider.database;
-
+    print('study id = $studyId');
     var result = await db!.query('mastery_courses',
-        orderBy: "created_at DESC",
-        where: "study_id = ? AND passed = ?",
-        whereArgs: [studyId, false],
+        orderBy: "created_at ASC",
+        where: "study_id = ? AND passed = 0",
+        whereArgs: [studyId],
         limit: 1);
 
     MasteryCourse? progress =
@@ -106,7 +106,7 @@ class MasteryCourseDB {
     return mc;
   }
 
-  Future<void> updateProgress(MasteryCourse mc) async {
+  Future<void> update(MasteryCourse mc) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;
 

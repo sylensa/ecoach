@@ -290,7 +290,7 @@ class _LearnModeState extends State<LearnMode> {
     return Expanded(
         child: TextButton(
             style: ButtonStyle(
-                fixedSize: studyType == selected
+                minimumSize: studyType == selected
                     ? MaterialStateProperty.all(Size(310, 102))
                     : MaterialStateProperty.all(Size(267, 88)),
                 backgroundColor: MaterialStateProperty.all(

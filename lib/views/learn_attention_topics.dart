@@ -7,6 +7,7 @@ import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn_mastery_topic.dart';
+import 'package:ecoach/views/learn_next_topic.dart';
 import 'package:flutter/material.dart';
 
 class LearnAttentionTopics extends StatelessWidget {
@@ -44,7 +45,7 @@ class LearnAttentionTopics extends StatelessWidget {
                 Stack(
                   children: [
                     Text(
-                      '10',
+                      "${topics.length}",
                       style: TextStyle(
                         color: kAdeoGray3,
                         fontSize: 100.0,
@@ -114,13 +115,21 @@ class LearnAttentionTopics extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              List<MasteryCourse> topics = await MasteryCourseDB()
-                  .getMasteryTopics(controller.progress.studyId!);
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return LearnMasteryTopic(
-                    controller.user, controller.course, controller.progress,
-                    topics: topics);
-              }));
+              MasteryCourse? topic = await MasteryCourseDB()
+                  .getCurrentTopic(controller.progress.studyId!);
+              if (topic != null) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return LearnNextTopic(
+                    controller.user,
+                    controller.course,
+                    controller.progress,
+                    topic: topic,
+                  );
+                }));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Mastery topic does not exist")));
+              }
             },
             child: Container(
               alignment: Alignment.center,

@@ -2,11 +2,13 @@ import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -44,7 +46,7 @@ class StudyQuizView extends StatefulWidget {
 }
 
 class _StudyQuizViewState extends State<StudyQuizView> {
-  late var controller;
+  late StudyController controller;
   late final PageController pageController;
 
   TestTaken? testTaken;
@@ -152,28 +154,29 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             moveUp = controller.progress.passed!;
           }
           return LearnSpeedEnhancementCompletion(
-              controller: controller,
+              controller: controller as SpeedController,
               moveUp: moveUp,
               level: {
-                'level': controller.nextLevel!,
-                'duration': controller.resetDuration.inSeconds,
+                'level': controller.nextLevel,
+                'duration': controller.resetDuration!.inSeconds,
                 'questions': 1
               });
         }
         if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
-          int level = controller.progress.level;
+          int level = controller.progress.level!;
+          controller.updateProgressSection(2);
           print("level $level");
           if (level == 1) {
             return StudyMasteryResults(
               test: testTakenSaved!,
-              controller: controller,
+              controller: controller as MasteryController,
             );
           }
 
           return LearnMasteryFeedback(
-            passed: controller.progress.passed!,
-            topic: controller.progress.name,
-          );
+              passed: controller.progress.passed!,
+              topic: controller.progress.name!,
+              controller: controller as MasteryController);
         }
         return LearnImageScreens(
           studyController: controller,
@@ -196,9 +199,18 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          if (controller.type == StudyType.MASTERY_IMPROVEMENT)
-            return StudyMasteryResults(
-                test: testTakenSaved!, controller: controller);
+          if (controller.type == StudyType.MASTERY_IMPROVEMENT) {
+            if (controller.progress.level == 1)
+              return StudyMasteryResults(
+                  test: testTakenSaved!,
+                  controller: controller as MasteryController);
+            if (controller.progress.level == 2)
+              return LearnMasteryFeedback(
+                passed: controller.progress.passed!,
+                topic: controller.progress.name!,
+                controller: controller as MasteryController,
+              );
+          }
 
           return StudyCCResults(test: testTakenSaved!, controller: controller);
         },
@@ -255,7 +267,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                               fontSize: 18,
                               fontWeight: FontWeight.w500)),
                     ),
-                    if (controller.type == StudyType.REVISION)
+                    if (controller.type == StudyType.REVISION ||
+                        controller.type == StudyType.MASTERY_IMPROVEMENT)
                       OutlinedButton(
                           onPressed: () {
                             showPauseDialog();
@@ -973,7 +986,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    SelectAnswerWidget(answers![i], Color(0xFF00C664), (
+                    selectAnswerWidget(answers![i], Color(0xFF00C664), (
                       answerSelected,
                     ) {
                       widget.callback!(
@@ -988,37 +1001,41 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
     );
   }
 
-  Widget SelectAnswerWidget(Answer answer, Color selectedColor,
+  Widget selectAnswerWidget(Answer answer, Color selectedColor,
       Function(Answer selectedAnswer)? callback) {
-    return GestureDetector(
-      onTap: () {
-        if (!widget.enabled) {
-          return;
-        }
-        setState(() {
-          selectedAnswer = widget.question.selectedAnswer = answer;
-          callback!(answer);
-        });
-      },
-      child: Container(
-        color: getBackgroundColor(answer, selectedColor),
-        margin: EdgeInsets.zero,
-        width: getWidgetSize(answer).width,
-        constraints: BoxConstraints(
-          minHeight: getWidgetSize(answer).height,
-        ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Html(shrinkWrap: true, data: "${answer.text!}", style: {
-            // tables will have the below background color
-            "body": Style(
-                color: getForegroundColor(answer),
-                fontSize:
-                    selectedAnswer == answer ? FontSize(25) : FontSize(20),
-                textAlign: TextAlign.center),
-          }),
-        ),
-      ),
+    return SizedBox(
+      width: getWidgetSize(answer).width,
+      child: Stack(children: [
+        TextButton(
+            style: ButtonStyle(
+                shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                    side: BorderSide(
+                        color: getBackgroundColor(answer, selectedColor)))),
+                minimumSize: MaterialStateProperty.all(getWidgetSize(answer)),
+                backgroundColor: MaterialStateProperty.all(
+                  Color(0xFFFAFAFA),
+                ),
+                foregroundColor: MaterialStateProperty.all(
+                    getBackgroundColor(answer, selectedColor))),
+            onPressed: () {
+              if (!widget.enabled) {
+                return;
+              }
+              setState(() {
+                selectedAnswer = widget.question.selectedAnswer = answer;
+                callback!(answer);
+              });
+            },
+            child: Html(shrinkWrap: true, data: "${answer.text!}", style: {
+              "body": Style(
+                  color: getForegroundColor(answer),
+                  fontSize:
+                      selectedAnswer == answer ? FontSize(25) : FontSize(20),
+                  textAlign: TextAlign.center),
+            })),
+        getAnswerMarker(answer)
+      ]),
     );
   }
 
@@ -1050,32 +1067,6 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   }
 
   Color getBackgroundColor(Answer answer, Color selectedColor) {
-    // switch (widget.type) {
-    //   case StudyType.REVISION:
-    //     if (widget.enabled && selectedAnswer == answer) {
-    //       return selectedColor;
-    //     } else if (!widget.enabled && answer == correctAnswer) {
-    //       return selectedColor;
-    //     } else if (!widget.enabled && answer == selectedAnswer) {
-    //       return Color(0xFFFB7B76);
-    //     }
-    //     break;
-    //   case StudyType.COURSE_COMPLETION:
-    //     if (widget.enabled && selectedAnswer == answer) {
-    //       return selectedColor;
-    //     } else if (!widget.enabled && answer == correctAnswer) {
-    //       return selectedColor;
-    //     } else if (!widget.enabled && answer == selectedAnswer) {
-    //       return Color(0xFFFB7B76);
-    //     }
-    //     break;
-    //   case StudyType.SPEED_ENHANCEMENT:
-    //     break;
-    //   case StudyType.MASTERY_IMPROVEMENT:
-    //     break;
-    //   case StudyType.NONE:
-    //     break;
-    // }
     if (widget.enabled && selectedAnswer == answer) {
       return selectedColor;
     } else if (!widget.enabled && answer == correctAnswer) {
@@ -1083,14 +1074,33 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
     } else if (!widget.enabled && answer == selectedAnswer) {
       return Color(0xFFFB7B76);
     }
-    return Color(0xFFFAFAFA);
+    return Colors.transparent; //Color(0xFFFAFAFA);
+  }
+
+  Positioned getAnswerMarker(Answer answer) {
+    if (!widget.enabled && answer == correctAnswer) {
+      return Positioned(
+          left: 0,
+          bottom: 0,
+          child: Image(
+            image: AssetImage('assets/images/correct.png'),
+          ));
+    } else if (!widget.enabled && answer == selectedAnswer) {
+      return Positioned(
+          left: 0,
+          bottom: 0,
+          child: Image(
+            image: AssetImage('assets/images/wrong.png'),
+          ));
+    }
+    return Positioned(child: Container());
   }
 
   Color getForegroundColor(Answer answer) {
-    if (selectedAnswer == answer ||
-        !widget.enabled && correctAnswer == answer) {
-      return Colors.white;
-    }
-    return Color(0xFFBEC7DB);
+    // if (selectedAnswer == answer ||
+    //     !widget.enabled && correctAnswer == answer) {
+    //   return Colors.white;
+    // }
+    return Color(0xFFBAC4D9);
   }
 }

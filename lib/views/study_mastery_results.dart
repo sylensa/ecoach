@@ -66,13 +66,16 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
 
     controller = widget.controller;
     print("test id = ${widget.test.id}");
-    TestController().topicsAnalysis(widget.test).then((mapList) {
-      mapList.keys.forEach((key) async {
-        List<TestAnswer> answers = mapList[key]!;
-        TopicAnalysis analysis = TopicAnalysis(key, answers);
+    TestController().topicsAnalysis(widget.test).then((mapList) async {
+      Iterable<String> keys = mapList.keys;
+      for (int i = 0; i < keys.length; i++) {
+        List<TestAnswer> answers = mapList[keys.elementAt(i)]!;
+        TopicAnalysis analysis = TopicAnalysis(keys.elementAt(i), answers);
         analysis.topic = await TopicDB().getTopicById(answers[0].topicId!);
         topics.add(analysis);
-      });
+        print("----------------------------------");
+        print("add topic ${analysis.name}");
+      }
 
       setState(() {});
     });
@@ -211,8 +214,10 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
                           });
 
                           if (topicsToRevise.length > 0) {
+                            print("Adding new progress");
+                            print(
+                                "revise topics length = ${topicsToRevise.length}");
                             StudyProgress progress = StudyProgress(
-                                id: topicsToRevise[0].id,
                                 studyId: controller.progress.studyId!,
                                 level: 2,
                                 section: 1,
@@ -223,10 +228,11 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
                             await StudyDB().insertProgress(progress);
 
                             for (int i = 0; i < topicsToRevise.length; i++) {
+                              print("saving mastery ....");
                               await MasteryCourseDB().insert(MasteryCourse(
-                                  level: controller.progress.level,
+                                  level: progress.level,
                                   passed: false,
-                                  studyId: controller.progress.studyId,
+                                  studyId: progress.studyId,
                                   topicId: topicsToRevise[i].id,
                                   topicName: topicsToRevise[i].name,
                                   createdAt: DateTime.now(),

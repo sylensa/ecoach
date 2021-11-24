@@ -1,13 +1,17 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/controllers/study_revision_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_revision.dart';
+import 'package:ecoach/views/study_quiz_cover.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +32,7 @@ class LearnImageScreens extends StatelessWidget {
           LearnPeripheralWidget(
             heroText: 'Great Job',
             subText: '${studyController.name}\ncompleted',
-            heroImageURL: 'assets/images/revision_module/module_completed.png',
+            heroImageURL: 'assets/images/learn_module/module_completed.png',
             mainActionLabel: 'Next topic',
             mainActionColor: Color(0xFFFB7B76),
             mainActionOnPressed: () async {
@@ -46,11 +50,18 @@ class LearnImageScreens extends StatelessWidget {
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now());
                 await StudyDB().insertProgress(progress);
+                List<Question> questions =
+                    await QuestionDB().getTopicQuestions([topic.id!], 10);
 
                 Navigator.pushAndRemoveUntil(context,
                     MaterialPageRoute(builder: (context) {
-                  return LearnRevision(
-                      studyController.user, studyController.course, progress);
+                  return StudyQuizCover(
+                      topicName: topic.name,
+                      controller: RevisionController(
+                          studyController.user, studyController.course,
+                          questions: questions,
+                          name: progress.name!,
+                          progress: progress));
                 }), ModalRoute.withName(LearnRevision.routeName));
               } else {
                 ScaffoldMessenger.of(context)

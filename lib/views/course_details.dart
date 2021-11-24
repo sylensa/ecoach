@@ -72,8 +72,10 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
     });
     StudyDB().courseLastStudy(widget.courseInfo.course.id).then((value) {
       setState(() {
-        if (value == null) lastStudyTopic = "";
-        lastStudyTopic = value!.name!;
+        if (value == null) {
+          lastStudyTopic = "----";
+        } else
+          lastStudyTopic = value.name!;
       });
     });
   }

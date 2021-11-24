@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
@@ -8,6 +9,7 @@ import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_revision.dart';
 import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/views/learning_widget.dart';
+import 'package:ecoach/views/study_quiz_cover.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -116,6 +118,14 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                       StudyType.COURSE_COMPLETION) {
                                     await controller.updateProgressSection(2);
                                   }
+                                  List<Question>? questions;
+                                  if (controller.type ==
+                                      StudyType.MASTERY_IMPROVEMENT) {
+                                    await controller.updateProgressSection(2);
+                                    questions = await QuestionDB()
+                                        .getMasteryTopicQuestions(
+                                            controller.progress.topicId!, 5);
+                                  }
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
                                     switch (controller.type) {
@@ -135,10 +145,15 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                             controller.course,
                                             controller.progress);
                                       case StudyType.MASTERY_IMPROVEMENT:
-                                        return LearnMastery(
-                                            controller.user,
-                                            controller.course,
-                                            controller.progress);
+                                        return StudyQuizCover(
+                                            topicName:
+                                                controller.progress.name!,
+                                            controller: MasteryController(
+                                                controller.user,
+                                                controller.course,
+                                                questions: questions!,
+                                                name: controller.progress.name!,
+                                                progress: controller.progress));
                                       case StudyType.NONE:
                                         return Container(
                                           child: Text("Study type is none"),

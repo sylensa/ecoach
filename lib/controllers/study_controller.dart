@@ -3,17 +3,20 @@ import 'dart:convert';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:flutter/cupertino.dart';
 
-class StudyController {
+abstract class StudyController {
   StudyController(this.user, this.course,
       {this.questions = const [],
       required this.name,
@@ -44,6 +47,7 @@ class StudyController {
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
   CustomTimerController? timerController;
   int countdownInSeconds = 0;
+
   startTest() {
     startTime = DateTime.now();
   }
@@ -173,4 +177,6 @@ class StudyController {
     if (i > saveQuestion.length - 1) return enabled;
     return saveQuestion[i];
   }
+
+  pauseTimer() {}
 }

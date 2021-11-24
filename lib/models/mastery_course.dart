@@ -38,7 +38,7 @@ class MasteryCourse {
       'level': level,
       'topic_id': topicId,
       'topic_name': topicName,
-      'passed': passed,
+      'passed': passed! ? 1 : 0,
       'created_at': createdAt!.toIso8601String(),
       'updated_at': updatedAt!.toIso8601String()
     };

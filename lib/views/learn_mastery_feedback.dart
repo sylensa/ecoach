@@ -1,6 +1,14 @@
+import 'package:ecoach/controllers/study_mastery_controller.dart';
+import 'package:ecoach/database/mastery_course_db.dart';
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/mastery_course.dart';
+import 'package:ecoach/models/study.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/learn_completed.dart';
 import 'package:ecoach/views/learn_next_topic.dart';
+import 'package:ecoach/views/study_notes_view.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +17,12 @@ class LearnMasteryFeedback extends StatelessWidget {
   const LearnMasteryFeedback({
     required this.passed,
     required this.topic,
+    required this.controller,
   });
 
   final bool passed;
   final String topic;
+  final MasteryController controller;
 
   static const TextStyle _topLabelStyle = TextStyle(
     fontSize: 15.0,
@@ -40,7 +50,7 @@ class LearnMasteryFeedback extends StatelessWidget {
                   children: [
                     CircularProgressIndicatorWrapper(
                       subCenterText: 'avg. score',
-                      progress: 80,
+                      progress: controller.score,
                       progressColor: passed ? kAdeoGreen : kAdeoCoral,
                       size: ProgressIndicatorSize.large,
                       resultType: true,
@@ -55,7 +65,8 @@ class LearnMasteryFeedback extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(height: 12.0),
-                      Text('08:30', style: _topMainTextStyle),
+                      Text(getDurationTime(controller.getTestDuration()),
+                          style: _topMainTextStyle),
                       Text('Time Taken', style: _topLabelStyle)
                     ],
                   ),
@@ -66,7 +77,8 @@ class LearnMasteryFeedback extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(height: 12.0),
-                      Text('10', style: _topMainTextStyle),
+                      Text("${controller.questions.length}",
+                          style: _topMainTextStyle),
                       Text('Questions', style: _topLabelStyle)
                     ],
                   ),
@@ -126,12 +138,37 @@ class LearnMasteryFeedback extends StatelessWidget {
                 Expanded(
                   child: Button(
                     label: passed ? 'continue' : 'revise',
-                    onPressed: () {
-                      if (passed)
+                    onPressed: () async {
+                      if (passed) {
+                        StudyProgress progress =
+                            await controller.updateMasteryCourse();
+                        MasteryCourse? topic = await MasteryCourseDB()
+                            .getCurrentTopic(controller.progress.studyId!);
+                        controller.updateProgressSection(2);
+
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return LearnNextTopic();
+                          if (topic != null) {
+                            return LearnNextTopic(
+                              controller.user,
+                              controller.course,
+                              progress,
+                              topic: topic,
+                            );
+                          } else {
+                            return LearnCompleted(controller: controller);
+                          }
                         }));
+                      }
+                      if (!passed) {
+                        Topic? topic = await TopicDB()
+                            .getTopicById(controller.progress.topicId!);
+                        controller.updateProgressSection(1);
+                        Navigator.pushAndRemoveUntil(context,
+                            MaterialPageRoute(builder: (context) {
+                          return StudyNoteView(topic!, controller: controller);
+                        }), (route) => false);
+                      }
                     },
                   ),
                 ),
