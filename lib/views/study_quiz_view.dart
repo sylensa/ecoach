@@ -572,7 +572,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
-        if (controller.reviewMode) return true;
+        if (controller.reviewMode && controller.currentQuestion > 0)
+          return true;
         break;
       case StudyType.NONE:
         break;
@@ -610,7 +611,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         break;
     }
     print("show Next= $showNext");
-    return showNext || controller.reviewMode;
+    return showNext || (controller.reviewMode && !controller.lastQuestion);
   }
 
   bool showCompleteButton() {
@@ -670,8 +671,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                 label: "Yes",
                 onPressed: () {
                   canExit = true;
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                  Navigator.popUntil(
+                      context, ModalRoute.withName(LearnMode.routeName));
                 },
               ),
               Button(

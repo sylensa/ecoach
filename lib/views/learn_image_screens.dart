@@ -72,7 +72,7 @@ class LearnImageScreens extends StatelessWidget {
             topActionColor: Color(0xFFFB7B76),
             topActionOnPressed: () {
               Navigator.popUntil(
-                  context, ModalRoute.withName(CourseDetail.routeName));
+                  context, ModalRoute.withName(LearnMode.routeName));
             },
             largeSubs: true,
           ),
@@ -93,7 +93,7 @@ class LearnImageScreens extends StatelessWidget {
             topActionLabel: 'return',
             topActionOnPressed: () {
               Navigator.popUntil(
-                  context, ModalRoute.withName(CourseDetail.routeName));
+                  context, ModalRoute.withName(LearnMode.routeName));
             },
             largeSubs: true,
           ),
