@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
+import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
@@ -114,11 +115,16 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                           children: [
                             OutlinedButton(
                                 onPressed: () async {
+                                  List<Question>? questions;
+                                  if (controller.type == StudyType.REVISION) {
+                                    questions = await QuestionDB()
+                                        .getTopicQuestions(
+                                            [controller.progress.topicId!], 10);
+                                  }
                                   if (controller.type ==
                                       StudyType.COURSE_COMPLETION) {
                                     await controller.updateProgressSection(2);
                                   }
-                                  List<Question>? questions;
                                   if (controller.type ==
                                       StudyType.MASTERY_IMPROVEMENT) {
                                     await controller.updateProgressSection(2);
@@ -130,10 +136,15 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                       MaterialPageRoute(builder: (context) {
                                     switch (controller.type) {
                                       case StudyType.REVISION:
-                                        return LearnRevision(
-                                            controller.user,
-                                            controller.course,
-                                            controller.progress);
+                                        return StudyQuizCover(
+                                          topicName: controller.progress.name!,
+                                          controller: RevisionController(
+                                              controller.user,
+                                              controller.course,
+                                              questions: questions!,
+                                              name: controller.progress.name!,
+                                              progress: controller.progress),
+                                        );
                                       case StudyType.COURSE_COMPLETION:
                                         return LearnCourseCompletion(
                                             controller.user,
