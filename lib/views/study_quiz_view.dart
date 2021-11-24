@@ -1022,10 +1022,10 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                     side: BorderSide(
-                        color: getBackgroundColor(answer, selectedColor)))),
+                        color: getOutlineColor(answer, selectedColor)))),
                 minimumSize: MaterialStateProperty.all(getWidgetSize(answer)),
                 backgroundColor: MaterialStateProperty.all(
-                  Color(0xFFFAFAFA),
+                  getBackgroundColor(answer, selectedColor),
                 ),
                 foregroundColor: MaterialStateProperty.all(
                     getBackgroundColor(answer, selectedColor))),
@@ -1077,7 +1077,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
     return Size(267, 88);
   }
 
-  Color getBackgroundColor(Answer answer, Color selectedColor) {
+  Color getOutlineColor(Answer answer, Color selectedColor) {
     if (widget.enabled && selectedAnswer == answer) {
       return selectedColor;
     } else if (!widget.enabled && answer == correctAnswer) {
@@ -1085,21 +1085,28 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
     } else if (!widget.enabled && answer == selectedAnswer) {
       return Color(0xFFFB7B76);
     }
-    return Colors.transparent; //Color(0xFFFAFAFA);
+    return Color(0xFFFAFAFA);
+  }
+
+  Color getBackgroundColor(Answer answer, Color selectedColor) {
+    if (!widget.enabled && answer == selectedAnswer) {
+      return Color(0xFFFB7B76);
+    }
+    return Color(0xFFFAFAFA);
   }
 
   Positioned getAnswerMarker(Answer answer) {
     if (!widget.enabled && answer == correctAnswer) {
       return Positioned(
-          left: 0,
-          bottom: 0,
+          left: 5,
+          bottom: 5,
           child: Image(
             image: AssetImage('assets/images/correct.png'),
           ));
     } else if (!widget.enabled && answer == selectedAnswer) {
       return Positioned(
-          left: 0,
-          bottom: 0,
+          left: 5,
+          bottom: 5,
           child: Image(
             image: AssetImage('assets/images/wrong.png'),
           ));
@@ -1108,10 +1115,12 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   }
 
   Color getForegroundColor(Answer answer) {
-    // if (selectedAnswer == answer ||
-    //     !widget.enabled && correctAnswer == answer) {
-    //   return Colors.white;
-    // }
+    if (!widget.enabled && answer == correctAnswer) {
+      return Colors.black;
+    } else if (selectedAnswer == answer ||
+        !widget.enabled && correctAnswer == answer) {
+      return Colors.white;
+    }
     return Color(0xFFBAC4D9);
   }
 }
