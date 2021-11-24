@@ -956,11 +956,13 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                       height: 30,
                       width: double.infinity,
                       child: Container(
-                        color: Colors.amber.shade200,
+                        color: Color(0xFFF6F6F6),
                         child: Center(
                           child: Text(
                             "Solution",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
                         ),
                       ),
@@ -969,7 +971,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                         selectedAnswer!.solution != null &&
                         selectedAnswer!.solution != "")
                       Container(
-                        color: Colors.orange,
+                        color: Color(0xFFF6F6F6),
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
@@ -980,7 +982,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                                 style: {
                                   // tables will have the below background color
                                   "body": Style(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 }),
                           ),
