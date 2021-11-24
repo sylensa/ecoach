@@ -303,6 +303,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                   answeredWrong = false;
                                 else
                                   answeredWrong = true;
+                              } else if (controller.type ==
+                                  StudyType.MASTERY_IMPROVEMENT) {
+                                showNext = true;
+                                if (controller.lastQuestion) {
+                                  showNext = false;
+                                  showComplete = true;
+                                }
                               }
                             });
                           },
@@ -565,6 +572,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
+        if (controller.reviewMode) return true;
         break;
       case StudyType.NONE:
         break;
@@ -581,7 +589,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
-        break;
+        return false;
       case StudyType.NONE:
         break;
     }
@@ -613,7 +621,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         break;
       case StudyType.COURSE_COMPLETION:
         if (!controller.enabled) return false;
-        return controller.currentQuestion == controller.questions.length - 1;
+        return controller.lastQuestion;
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:

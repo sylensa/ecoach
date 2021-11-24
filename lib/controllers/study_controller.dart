@@ -56,6 +56,10 @@ abstract class StudyController {
     return progress.level! + 1;
   }
 
+  bool get lastQuestion {
+    return currentQuestion == questions.length - 1;
+  }
+
   double get percentageCompleted {
     if (questions.length < 1) return 0;
     return (currentQuestion + 1) / questions.length;
