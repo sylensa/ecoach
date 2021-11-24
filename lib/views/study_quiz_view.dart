@@ -956,7 +956,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                       height: 30,
                       width: double.infinity,
                       child: Container(
-                        color: Color(0xFFF6F6F6),
+                        color: Color(0xFFBCBCBC),
                         child: Center(
                           child: Text(
                             "Solution",
