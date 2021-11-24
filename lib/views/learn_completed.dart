@@ -22,11 +22,13 @@ class _LearnCompletedState extends State<LearnCompleted> {
         subText:
             'Congratulation! You have completed this ${getTypeString(widget.controller.type)} for ${widget.controller.course.name}',
         heroImageURL: 'assets/images/learn_module/mission_accomplished.png',
-        mainActionLabel: 'Enter',
+        topActionOnPressed: () {
+          Navigator.popUntil(context, ModalRoute.withName(LearnMode.routeName));
+        },
+        mainActionLabel: 'Done',
         color: kAdeoTaupe,
         mainActionOnPressed: () async {
-          Navigator.popUntil(
-              context, ModalRoute.withName(CourseDetail.routeName));
+          Navigator.popUntil(context, ModalRoute.withName(LearnMode.routeName));
         },
       ),
     );
