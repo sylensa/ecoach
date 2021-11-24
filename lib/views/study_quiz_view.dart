@@ -1089,7 +1089,9 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
   }
 
   Color getBackgroundColor(Answer answer, Color selectedColor) {
-    if (!widget.enabled && answer == selectedAnswer) {
+    if (!widget.enabled && answer == correctAnswer) {
+      return Color(0xFFFAFAFA);
+    } else if (!widget.enabled && answer == selectedAnswer) {
       return Color(0xFFFB7B76);
     }
     return Color(0xFFFAFAFA);
