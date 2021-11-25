@@ -161,7 +161,7 @@ class _ResultsViewState extends State<ResultsView> {
                     for (int i = 0; i < topics.length; i++)
                       makeDataRow(
                         cell1Text: topics[i].name,
-                        cell2Text: "${topics[i].time}s",
+                        cell2Text: "${topics[i].time}",
                         progressColor: kCourseColors[i % kCourseColors.length]
                             ['progress']!,
                         progress: topics[i].performace,

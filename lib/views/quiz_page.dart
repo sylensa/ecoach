@@ -558,8 +558,7 @@ class _QuizViewState extends State<QuizView> {
                 label: "Yes",
                 onPressed: () {
                   canExit = true;
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                  Navigator.pop(context);
                 },
               ),
               Button(
