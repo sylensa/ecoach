@@ -44,153 +44,157 @@ class _ResultViewState extends State<ResultView> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF28BFDF),
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8.0, 10, 8, 40),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    getScoreWidget(widget.test.score! / 100),
-                    getRankWidget(
-                        widget.test.userRank!, widget.test.totalRank!),
-                    getTimeWidget(Duration(seconds: widget.test.usedTime ?? 0))
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Color(0xFF636363),
-                child: SingleChildScrollView(
-                  child: Column(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color(0xFF28BFDF),
+        body: Container(
+          child: Column(
+            children: [
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 10, 8, 40),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 30.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 140,
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                                child: Text(
-                                  "Topic",
-                                  style: TextStyle(fontSize: 15),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                                width: 120,
-                                child: Text("Correct",
-                                    style: TextStyle(fontSize: 15))),
-                            Expanded(
-                                child: Text("Performance",
-                                    style: TextStyle(fontSize: 15))),
-                          ],
-                        ),
-                      ),
-                      for (int i = 0; i < analysisWidgets.length; i++)
-                        analysisWidgets[i],
+                      getScoreWidget(widget.test.score! / 100),
+                      getRankWidget(
+                          widget.test.userRank!, widget.test.totalRank!),
+                      getTimeWidget(
+                          Duration(seconds: widget.test.usedTime ?? 0))
                     ],
                   ),
                 ),
               ),
-            ),
-            Container(
-              child: IntrinsicHeight(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(11.0),
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text("Review",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 25)),
-                        ),
-                      ),
-                    ),
-                    if (widget.diagnostic)
-                      VerticalDivider(
-                        width: 2,
-                        color: Colors.white,
-                      ),
-                    if (widget.diagnostic)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(11.0),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push<void>(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      StorePage(widget.user),
+              Expanded(
+                child: Container(
+                  color: Color(0xFF636363),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 30.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 140,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                                  child: Text(
+                                    "Topic",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
                                 ),
-                              );
-                            },
-                            child: Text("Purchase",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 25)),
+                              ),
+                              SizedBox(
+                                  width: 120,
+                                  child: Text("Correct",
+                                      style: TextStyle(fontSize: 15))),
+                              Expanded(
+                                  child: Text("Performance",
+                                      style: TextStyle(fontSize: 15))),
+                            ],
                           ),
                         ),
-                      ),
-                    if (!widget.diagnostic)
+                        for (int i = 0; i < analysisWidgets.length; i++)
+                          analysisWidgets[i],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                child: IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(11.0),
                           child: TextButton(
                             onPressed: () {
-                              Navigator.popUntil(
-                                  context,
-                                  ModalRoute.withName(
-                                      CourseDetailsPage.routeName));
+                              Navigator.pop(context);
                             },
-                            child: Text("New",
+                            child: Text("Review",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 25)),
                           ),
                         ),
                       ),
-                    if (!widget.diagnostic)
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(11.0),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil<void>(
+                      if (widget.diagnostic)
+                        VerticalDivider(
+                          width: 2,
+                          color: Colors.white,
+                        ),
+                      if (widget.diagnostic)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(11.0),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push<void>(
                                   context,
                                   MaterialPageRoute<void>(
                                     builder: (BuildContext context) =>
-                                        MainHomePage(
-                                      widget.user,
-                                      index: 1,
-                                    ),
-                                  ), (route) {
-                                return false;
-                              });
-                            },
-                            child: Text("Close",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 25)),
+                                        StorePage(widget.user),
+                                  ),
+                                );
+                              },
+                              child: Text("Purchase",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 25)),
+                            ),
                           ),
                         ),
-                      )
-                  ],
+                      if (!widget.diagnostic)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(11.0),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.popUntil(
+                                    context,
+                                    ModalRoute.withName(
+                                        CourseDetailsPage.routeName));
+                              },
+                              child: Text("New",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 25)),
+                            ),
+                          ),
+                        ),
+                      if (!widget.diagnostic)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(11.0),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil<void>(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          MainHomePage(
+                                        widget.user,
+                                        index: 1,
+                                      ),
+                                    ), (route) {
+                                  return false;
+                                });
+                              },
+                              child: Text("Close",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 25)),
+                            ),
+                          ),
+                        )
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
