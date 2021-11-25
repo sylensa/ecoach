@@ -28,37 +28,40 @@ class LearnNextTopic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: LearnPeripheralWidget(
-        heroText: 'Next Topic',
-        subText: topic.topicName!,
-        heroImageURL: 'assets/images/learn_module/next_topic.png',
-        topActionLabel: 'exit',
-        topActionOnPressed: () {
-          Navigator.popUntil(context, ModalRoute.withName(LearnMode.routeName));
-        },
-        topActionColor: kAdeoCoral,
-        mainActionLabel: 'let\'s go',
-        mainActionColor: kAdeoCoral,
-        mainActionOnPressed: () async {
-          int topicId = topic.topicId!;
-          Topic? currentTopic = await TopicDB().getTopicById(topicId);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  settings: RouteSettings(name: LearnNextTopic.routeName),
-                  builder: (context) {
-                    return StudyNoteView(
-                      currentTopic!,
-                      controller: MasteryController(
-                        user,
-                        course,
-                        name: currentTopic.name!,
-                        progress: progress,
-                      ),
-                    );
-                  }));
-        },
+    return SafeArea(
+      child: Scaffold(
+        body: LearnPeripheralWidget(
+          heroText: 'Next Topic',
+          subText: topic.topicName!,
+          heroImageURL: 'assets/images/learn_module/next_topic.png',
+          topActionLabel: 'exit',
+          topActionOnPressed: () {
+            Navigator.popUntil(
+                context, ModalRoute.withName(LearnMode.routeName));
+          },
+          topActionColor: kAdeoCoral,
+          mainActionLabel: 'let\'s go',
+          mainActionColor: kAdeoCoral,
+          mainActionOnPressed: () async {
+            int topicId = topic.topicId!;
+            Topic? currentTopic = await TopicDB().getTopicById(topicId);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    settings: RouteSettings(name: LearnNextTopic.routeName),
+                    builder: (context) {
+                      return StudyNoteView(
+                        currentTopic!,
+                        controller: MasteryController(
+                          user,
+                          course,
+                          name: currentTopic.name!,
+                          progress: progress,
+                        ),
+                      );
+                    }));
+          },
+        ),
       ),
     );
   }

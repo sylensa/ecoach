@@ -22,7 +22,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.83.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.84.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);

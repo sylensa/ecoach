@@ -6,7 +6,9 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/learn_completed.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
+import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/study_notes_view.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -62,16 +64,8 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil<void>(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (BuildContext context) => MainHomePage(
-                              controller.user,
-                              index: 1,
-                            ),
-                          ), (route) {
-                        return false;
-                      });
+                      Navigator.popUntil(
+                          context, ModalRoute.withName(LearnMode.routeName));
                     },
                     child: Icon(
                       Icons.close,
@@ -177,7 +171,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                           int nextLevel = controller.nextLevel;
                           Topic? topic = await TopicDB()
                               .getLevelTopic(controller.course.id!, nextLevel);
-                          if (topic!.notes != "") {
+                          if (topic != null) {
                             print("${topic.name}");
                             StudyProgress progress = StudyProgress(
                                 id: topic.id,
@@ -194,9 +188,12 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                                 MaterialPageRoute(builder: (context) {
                               return LearnCourseCompletion(
                                   controller.user, controller.course, progress);
-                            }),
-                                ModalRoute.withName(
-                                    LearnCourseCompletion.routeName));
+                            }), ModalRoute.withName(LearnMode.routeName));
+                          } else {
+                            Navigator.pushAndRemoveUntil(context,
+                                MaterialPageRoute(builder: (context) {
+                              return LearnCompleted(controller: controller);
+                            }), ModalRoute.withName(LearnMode.routeName));
                           }
                         },
                       ),

@@ -23,7 +23,7 @@ class TestController {
     Map<String, dynamic> queryParams = {
       'level_id': jsonEncode(level.id),
       'course_id': jsonEncode(course.id),
-      'limit': jsonEncode(5)
+      'limit': jsonEncode(20)
     };
     print(queryParams);
     print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);

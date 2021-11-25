@@ -1,26 +1,16 @@
-import 'dart:convert';
 
-import 'package:ecoach/api/api_call.dart';
-import 'package:ecoach/api/package_downloader.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
-import 'package:ecoach/models/ui/bundle.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/database/course_db.dart';
-import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
-import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/more_view.dart';
-import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/src/provider.dart';
-import 'package:wakelock/wakelock.dart';
 
 class BundleDownload extends StatefulWidget {
   BundleDownload(this.user,

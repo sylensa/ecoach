@@ -157,7 +157,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
               controller: controller as SpeedController,
               moveUp: moveUp,
               level: {
-                'level': controller.nextLevel,
+                'level':
+                    moveUp ? controller.nextLevel : controller.progress.level,
                 'duration': controller.resetDuration!.inSeconds,
                 'questions': 1
               });
@@ -226,16 +227,16 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async {
-          if (!controller.enabled && !showNext) {
-            return showExitDialog();
-          }
-          // timerController.pause();
+    return WillPopScope(
+      onWillPop: () async {
+        if (!controller.enabled && !showNext) {
+          return showExitDialog();
+        }
+        // timerController.pause();
 
-          return showPauseDialog();
-        },
+        return showPauseDialog();
+      },
+      child: SafeArea(
         child: Scaffold(
             body: Container(
           child: Column(
@@ -370,6 +371,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                               controller.finalQuestion)) {
                                     showComplete = true;
                                     showNext = false;
+                                  }
+
+                                  if (answeredWrong &&
+                                      controller.type == StudyType.REVISION) {
+                                    showNext = true;
+                                    showComplete = false;
                                   }
 
                                   if (answeredWrong &&
