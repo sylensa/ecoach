@@ -166,7 +166,7 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
                   showCheckboxColumn: false,
                   columns: [
                     DataColumn(label: Text('Topic')),
-                    DataColumn(label: Text('Time')),
+                    DataColumn(label: Text('Correct')),
                     DataColumn(label: Text('Performance')),
                   ],
                   rows: [

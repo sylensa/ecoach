@@ -87,7 +87,7 @@ class _ResultViewState extends State<ResultView> {
                             ),
                             SizedBox(
                                 width: 120,
-                                child: Text("Time",
+                                child: Text("Correct",
                                     style: TextStyle(fontSize: 15))),
                             Expanded(
                                 child: Text("Performance",

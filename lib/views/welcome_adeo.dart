@@ -595,6 +595,7 @@ class _SelectCourseState extends State<SelectCourse> {
                           name: "Test Diagnostic",
                           level: selectedLevel!,
                           course: selectedCourse!,
+                          time: 60 * 20,
                           diagnostic: true,
                         );
                       }));
