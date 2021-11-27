@@ -68,14 +68,14 @@ class _StorePageState extends State<StorePage> {
           ),
           body: TabBarView(
             children: [
-              SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Container(
                             child: FutureBuilder(
@@ -182,18 +182,18 @@ class _StorePageState extends State<StorePage> {
                                   }
                                 }),
                           )),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Container(
                           child: FutureBuilder(
@@ -296,9 +296,9 @@ class _StorePageState extends State<StorePage> {
                                 }
                               }),
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ],
