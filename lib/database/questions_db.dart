@@ -73,8 +73,8 @@ class QuestionDB {
   Future<List<Question>> questions() async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps =
-        await db!.query('questions', orderBy: "created_at DESC");
+    final List<Map<String, dynamic>> maps = await db!.query('questions',
+        where: "qtype = ?", whereArgs: ['SINGLE'], orderBy: "created_at DESC");
 
     return List.generate(maps.length, (i) {
       return Question(
@@ -101,8 +101,8 @@ class QuestionDB {
         orderBy: "topic_name ASC",
         columns: ["topic_id", "topic_name"],
         distinct: true,
-        where: "course_id = ?",
-        whereArgs: [courseId]);
+        where: "course_id = ? AND qtype = ?",
+        whereArgs: [courseId, 'SINGLE']);
 
     Map<int, String> topicNames = Map();
     for (int i = 0; i < maps.length; i++) {
@@ -135,7 +135,7 @@ class QuestionDB {
     }
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM questions WHERE topic_id IN ($amps) ORDER BY RANDOM() LIMIT $limit");
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND topic_id IN ($amps) ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
@@ -151,7 +151,7 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM questions WHERE course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
@@ -167,7 +167,7 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM questions WHERE course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
@@ -184,7 +184,7 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM questions WHERE topic_id = $topicId ORDER BY RANDOM() LIMIT $limit");
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND topic_id = $topicId ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {

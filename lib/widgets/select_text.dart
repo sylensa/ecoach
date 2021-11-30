@@ -1,5 +1,6 @@
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -167,14 +168,6 @@ class _SelectHtmlState extends State<SelectHtml> {
           )),
     );
   }
-}
-
-String parseHtmlString(String htmlString) {
-  final document = htmlparser.parse(htmlString);
-  final String parsedString =
-      htmlparser.parse(document.body!.text).documentElement!.text;
-
-  return parsedString;
 }
 
 class SelectTex extends StatefulWidget {

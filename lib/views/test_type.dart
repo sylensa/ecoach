@@ -200,7 +200,6 @@ class _TestTypeViewState extends State<TestTypeView> {
                 data,
                 testType,
                 title: "Topic",
-                questionLimit: 10,
                 multiSelect: true,
               );
               break;
@@ -211,6 +210,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                 questions,
                 category: testCategory.toString().split(".")[1],
                 course: widget.course,
+                type: testType,
                 theme: QuizTheme.BLUE,
                 time: questions.length * 60 * 15,
                 name: "Essays",

@@ -2,6 +2,7 @@ import 'package:ecoach/models/topic_analysis.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:html/parser.dart' as htmlparser;
 
 showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
   AlertDialog alert = AlertDialog(
@@ -124,4 +125,12 @@ class Button extends StatelessWidget {
       textColor: Color(0xFFA2A2A2),
     );
   }
+}
+
+String parseHtmlString(String htmlString) {
+  final document = htmlparser.parse(htmlString);
+  final String parsedString =
+      htmlparser.parse(document.body!.text).documentElement!.text;
+
+  return parsedString;
 }

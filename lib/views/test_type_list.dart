@@ -216,10 +216,13 @@ class _MockListViewState extends State<TestTypeListView> {
                                       topicIds.add(element.id!);
                                     });
                                     questions = await TestController()
-                                        .getTopicQuestions(topicIds,
-                                            limit: widget.type != TestType.SPEED
-                                                ? 10
-                                                : 1000);
+                                        .getTopicQuestions(topicIds, limit: () {
+                                      if (widget.type == TestType.CUSTOMIZED)
+                                        return widget.questionLimit;
+                                      return widget.type != TestType.SPEED
+                                          ? 10
+                                          : 1000;
+                                    }());
                                     break;
                                   default:
                                     questions = await TestController()

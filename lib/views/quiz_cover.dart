@@ -2,6 +2,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/quiz_essay_page.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:flutter/cupertino.dart';
@@ -173,6 +174,19 @@ class QuizCover extends StatelessWidget {
                                     onPressed: () {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) {
+                                        if (category ==
+                                            TestCategory.ESSAY
+                                                .toString()
+                                                .split(".")[1])
+                                          return QuizEssayView(
+                                            user,
+                                            questions,
+                                            name: name,
+                                            course: course,
+                                            timeInSec: time,
+                                            type: type,
+                                            level: level,
+                                          );
                                         return QuizView(
                                           user,
                                           questions,
