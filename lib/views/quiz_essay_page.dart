@@ -642,28 +642,35 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               child: SizedBox(
                 width: screenWidth(context) + 20,
                 child: ExpansionPanelList(
+                  dividerColor: Color(0xFF444444),
+                  elevation: 0,
                   children: [
                     for (int i = 0; i < answers!.length; i++)
                       ExpansionPanel(
                         isExpanded: expand[i],
                         canTapOnHeader: !widget.enabled,
                         headerBuilder: (context, isOpen) {
-                          return Html(data: answers![i].text!);
+                          return Html(data: answers![i].text!, style: {
+                            // tables will have the below background color
+                            "body": Style(
+                              fontSize: FontSize(20),
+                            ),
+                          });
                         },
                         backgroundColor: Color(0xFF444444),
                         body: Html(data: answers![i].solution!, style: {
                           // tables will have the below background color
                           "body": Style(
                             color: Colors.white,
-                            backgroundColor: Color(0xFF444444),
-                            fontSize: FontSize(23),
+                            backgroundColor: Color(0xFF595959),
+                            fontSize: FontSize(15),
                           ),
                         }),
                       )
                   ],
                   expansionCallback: (index, isOpen) {
                     setState(() {
-                      expand[index] = isOpen;
+                      expand[index] = !isOpen;
                     });
                   },
                 ),
