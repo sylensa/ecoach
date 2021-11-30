@@ -644,6 +644,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                 child: ExpansionPanelList(
                   dividerColor: Color(0xFF444444),
                   elevation: 0,
+                  animationDuration: Duration(seconds: 1),
                   children: [
                     for (int i = 0; i < answers!.length; i++)
                       ExpansionPanel(
