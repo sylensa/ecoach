@@ -1,15 +1,15 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/select_text.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_tex/flutter_tex.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class QuestionWidget extends StatefulWidget {
-  QuestionWidget(this.question,
+  QuestionWidget(this.user, this.question,
       {Key? key,
       this.position,
       this.useTex = false,
@@ -17,6 +17,7 @@ class QuestionWidget extends StatefulWidget {
       this.theme = QuizTheme.GREEN,
       this.callback})
       : super(key: key);
+  User user;
   Question question;
   int? position;
   bool enabled;
@@ -75,13 +76,32 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         height: 12,
                       ),
                       if (!widget.useTex)
-                        Html(data: "${widget.question.text ?? ''}", style: {
-                          // tables will have the below background color
-                          "body": Style(
-                            color: Colors.white,
-                            fontSize: FontSize(23),
-                          ),
-                        }),
+                        Html(
+                          data: "${widget.question.text ?? ''}",
+                          style: {
+                            // tables will have the below background color
+                            "body": Style(
+                              color: Colors.white,
+                              fontSize: FontSize(23),
+                            ),
+                          },
+                          customImageRenders: {
+                            networkSourceMatcher():
+                                (context, attributes, element) {
+                              String? link = attributes['src'];
+                              if (link != null) {
+                                String name =
+                                    link.substring(link.lastIndexOf("/") + 1);
+                                print("Image: $name");
+
+                                return Image.file(
+                                  widget.user.getImageFile(name),
+                                );
+                              }
+                              return Text("No link");
+                            },
+                          },
+                        ),
                       if (widget.useTex)
                         SizedBox(
                           width: screenWidth(context),
@@ -141,14 +161,31 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                             ),
                             if (!widget.useTex)
                               Html(
-                                  data: "${widget.question.resource ?? ''}",
-                                  style: {
-                                    // tables will have the below background color
-                                    "body": Style(
-                                      color: Colors.white,
-                                      fontSize: FontSize(23),
-                                    ),
-                                  }),
+                                data: "${widget.question.resource ?? ''}",
+                                style: {
+                                  // tables will have the below background color
+                                  "body": Style(
+                                    color: Colors.white,
+                                    fontSize: FontSize(23),
+                                  ),
+                                },
+                                customImageRenders: {
+                                  networkSourceMatcher():
+                                      (context, attributes, element) {
+                                    String? link = attributes['src'];
+                                    if (link != null) {
+                                      String name = link
+                                          .substring(link.lastIndexOf("/") + 1);
+                                      print("Image: $name");
+
+                                      return Image.file(
+                                        widget.user.getImageFile(name),
+                                      );
+                                    }
+                                    return Text("No link");
+                                  },
+                                },
+                              ),
                             if (widget.useTex)
                               SizedBox(
                                 width: screenWidth(context),
@@ -206,15 +243,32 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
                             child: Html(
-                                data: correctAnswer != null
-                                    ? correctAnswer!.solution!
-                                    : "----",
-                                style: {
-                                  // tables will have the below background color
-                                  "body": Style(
-                                    color: Colors.white,
-                                  ),
-                                }),
+                              data: correctAnswer != null
+                                  ? correctAnswer!.solution!
+                                  : "----",
+                              style: {
+                                // tables will have the below background color
+                                "body": Style(
+                                  color: Colors.white,
+                                ),
+                              },
+                              customImageRenders: {
+                                networkSourceMatcher():
+                                    (context, attributes, element) {
+                                  String? link = attributes['src'];
+                                  if (link != null) {
+                                    String name = link
+                                        .substring(link.lastIndexOf("/") + 1);
+                                    print("Image: $name");
+
+                                    return Image.file(
+                                      widget.user.getImageFile(name),
+                                    );
+                                  }
+                                  return Text("No link");
+                                },
+                              },
+                            ),
                           ),
                         ),
                       )
@@ -249,7 +303,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                   : Column(
                       children: [
                         for (int i = 0; i < answers!.length; i++)
-                          SelectHtml(answers![i].text!,
+                          SelectHtml(widget.user, answers![i].text!,
                               widget.question.selectedAnswer == answers![i],
                               useTex: widget.useTex,
                               normalSize: 15,

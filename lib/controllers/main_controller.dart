@@ -4,7 +4,9 @@ import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/image.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
@@ -161,6 +163,15 @@ class MainController {
 
         await CourseDB().insert(subscriptionItem.course!);
         await QuizDB().insertAll(subscriptionItem.quizzes!);
+        await TopicDB().insertAll(subscriptionItem.topics!);
+
+        List<ImageFile> images = subscriptionItem.images!;
+
+        for (int i = 0; i < images.length; i++) {
+          ImageFile image = images[i];
+          if (image.base64 == null) continue;
+          await saveBase64(image.base64!, image.name);
+        }
 
         provider.doneDownlaod("$filename ...  done.");
         currentItem.isDownloading = false;

@@ -289,6 +289,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     children: [
                       for (int i = 0; i < controller.questions.length; i++)
                         StudyQuestionWidget(
+                          controller.user,
                           controller.questions[i],
                           position: i,
                           enabled: controller.questionEnabled(i),
@@ -839,7 +840,7 @@ class _PauseDialogState extends State<PauseDialog> {
 }
 
 class StudyQuestionWidget extends StatefulWidget {
-  StudyQuestionWidget(this.question,
+  StudyQuestionWidget(this.user, this.question,
       {Key? key,
       this.position,
       this.useTex = false,
@@ -848,6 +849,7 @@ class StudyQuestionWidget extends StatefulWidget {
       this.callback})
       : super(key: key);
 
+  final User user;
   final Question question;
   int? position;
   bool enabled;
@@ -921,6 +923,19 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                         color: textColor,
                         fontSize: FontSize(18),
                         textAlign: TextAlign.center),
+                  }, customImageRenders: {
+                    networkSourceMatcher(): (context, attributes, element) {
+                      String? link = attributes['src'];
+                      if (link != null) {
+                        String name = link.substring(link.lastIndexOf("/") + 1);
+                        print("Image: $name");
+
+                        return Image.file(
+                          widget.user.getImageFile(name),
+                        );
+                      }
+                      return Text("No link");
+                    },
                   }),
                   if (widget.question.resource != null &&
                       widget.question.resource != "")
@@ -944,6 +959,22 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                                     color: Colors.white,
                                     fontSize: FontSize(23),
                                     textAlign: TextAlign.center),
+                              },
+                              customImageRenders: {
+                                networkSourceMatcher():
+                                    (context, attributes, element) {
+                                  String? link = attributes['src'];
+                                  if (link != null) {
+                                    String name = link
+                                        .substring(link.lastIndexOf("/") + 1);
+                                    print("Image: $name");
+
+                                    return Image.file(
+                                      widget.user.getImageFile(name),
+                                    );
+                                  }
+                                  return Text("No link");
+                                },
                               }),
                         ],
                       ),
@@ -990,6 +1021,22 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                                   "body": Style(
                                     color: Colors.black,
                                   ),
+                                },
+                                customImageRenders: {
+                                  networkSourceMatcher():
+                                      (context, attributes, element) {
+                                    String? link = attributes['src'];
+                                    if (link != null) {
+                                      String name = link
+                                          .substring(link.lastIndexOf("/") + 1);
+                                      print("Image: $name");
+
+                                      return Image.file(
+                                        widget.user.getImageFile(name),
+                                      );
+                                    }
+                                    return Text("No link");
+                                  },
                                 }),
                           ),
                         ),
@@ -1049,6 +1096,19 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                   fontSize:
                       selectedAnswer == answer ? FontSize(25) : FontSize(20),
                   textAlign: TextAlign.center),
+            }, customImageRenders: {
+              networkSourceMatcher(): (context, attributes, element) {
+                String? link = attributes['src'];
+                if (link != null) {
+                  String name = link.substring(link.lastIndexOf("/") + 1);
+                  print("Image: $name");
+
+                  return Image.file(
+                    widget.user.getImageFile(name),
+                  );
+                }
+                return Text("No link");
+              },
             })),
         getAnswerMarker(answer)
       ]),

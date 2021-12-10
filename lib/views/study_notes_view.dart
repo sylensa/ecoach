@@ -78,28 +78,40 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                     child: Column(
                       children: [
                         notesExit
-                            ? Html(
-                                data: widget.topic.notes,
-                                style: {
-                                  // tables will have the below background color
-                                  "body": Style(
-                                    fontSize: FontSize(17),
-                                    color: Colors.black,
-                                    backgroundColor: Color(0xFFF6F6F6),
-                                    padding: const EdgeInsets.fromLTRB(
-                                        8.0, 10, 8, 25),
-                                  ),
+                            ? Html(data: widget.topic.notes, style: {
+                                // tables will have the below background color
+                                "body": Style(
+                                  fontSize: FontSize(17),
+                                  color: Colors.black,
+                                  backgroundColor: Color(0xFFF6F6F6),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
+                                ),
 
-                                  'td': Style(
-                                      border: Border.all(
-                                          color: Colors.black, width: 1)),
-                                  'th': Style(backgroundColor: Colors.white),
-                                  'img': Style(
-                                      width: 200,
-                                      height: 200,
-                                      padding: EdgeInsets.all(10)),
+                                'td': Style(
+                                    border: Border.all(
+                                        color: Colors.black, width: 1)),
+                                'th': Style(backgroundColor: Colors.white),
+                                'img': Style(
+                                    width: 200,
+                                    height: 200,
+                                    padding: EdgeInsets.all(10)),
+                              }, customImageRenders: {
+                                networkSourceMatcher():
+                                    (context, attributes, element) {
+                                  String? link = attributes['src'];
+                                  if (link != null) {
+                                    String name = link
+                                        .substring(link.lastIndexOf("/") + 1);
+                                    print("Image: $name");
+
+                                    return Image.file(
+                                      controller.user.getImageFile(name),
+                                    );
+                                  }
+                                  return Text("No link");
                                 },
-                              )
+                              })
                             : Padding(
                                 padding: const EdgeInsets.all(18.0),
                                 child: Center(
