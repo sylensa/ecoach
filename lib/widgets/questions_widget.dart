@@ -6,6 +6,7 @@ import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 
 class QuestionWidget extends StatefulWidget {
@@ -56,6 +57,45 @@ class _QuestionWidgetState extends State<QuestionWidget> {
     super.initState();
   }
 
+  String getMathText(String? text) {
+    if (text == null) return "";
+    text = parseHtmlString(text);
+    print(text);
+    text = text.replaceAll('\(', "").replaceAll('\)', "");
+    print(text);
+    text = text.replaceAll(" ", "︎⁠​​\u1160");
+    print("️|‍\u1160‌︎​|");
+    print('_________________');
+    text = String.fromCharCodes(new Runes(text));
+    return r'' + '$text';
+  }
+
+  getTex(String? text) {
+    if (text == null) return "";
+
+    RegExp reg = RegExp(r'\\\((.+?)\\\)');
+    Iterable<RegExpMatch> matches = reg.allMatches(text);
+    print("matches count=${matches.length}");
+    List<String> subTexts = [];
+    matches.forEach((m) {
+      String mathEquation = text!.substring(m.start, m.end);
+      print("Match: ${mathEquation}");
+      subTexts.add(mathEquation);
+    });
+    subTexts.forEach((equation) {
+      text = text!.replaceAll(equation, "<tex> $equation </tex>");
+    });
+
+    text = text!
+        .replaceAll("<tex><tex>", "<tex>")
+        .replaceAll("</tex></tex>", "</tex>")
+        .replaceAll('\\(', "")
+        .replaceAll('\\)', "");
+
+    print(text);
+    return text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -75,51 +115,42 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       SizedBox(
                         height: 12,
                       ),
-                      if (!widget.useTex)
-                        Html(
-                          data: "${widget.question.text ?? ''}",
-                          style: {
-                            // tables will have the below background color
-                            "body": Style(
-                              color: Colors.white,
-                              fontSize: FontSize(23),
-                            ),
-                          },
-                          customImageRenders: {
-                            networkSourceMatcher():
-                                (context, attributes, element) {
-                              String? link = attributes['src'];
-                              if (link != null) {
-                                String name =
-                                    link.substring(link.lastIndexOf("/") + 1);
-                                print("Image: $name");
-
-                                return Image.file(
-                                  widget.user.getImageFile(name),
-                                );
-                              }
-                              return Text("No link");
-                            },
-                          },
-                        ),
-                      if (widget.useTex)
-                        SizedBox(
-                          width: screenWidth(context),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: TeXView(
-                              renderingEngine: TeXViewRenderingEngine.katex(),
-                              child: TeXViewDocument(widget.question.text ?? "",
-                                  style: TeXViewStyle(
-                                    backgroundColor: Color(0xFF444444),
-                                    contentColor: Colors.white,
-                                    fontStyle: TeXViewFontStyle(
-                                      fontSize: 23,
-                                    ),
-                                  )),
-                            ),
+                      Html(
+                        data: getTex(widget.question.text),
+                        style: {
+                          "body": Style(
+                            color: Colors.white,
+                            fontSize: FontSize(23),
                           ),
-                        )
+                        },
+                        customImageRenders: {
+                          networkSourceMatcher():
+                              (context, attributes, element) {
+                            String? link = attributes['src'];
+                            if (link != null) {
+                              String name =
+                                  link.substring(link.lastIndexOf("/") + 1);
+                              print("Image: $name");
+
+                              return Image.file(
+                                widget.user.getImageFile(name),
+                              );
+                            }
+                            return Text("No link");
+                          },
+                        },
+                        customRender: {
+                          'tex': (RenderContext context, child) {
+                            return Math.tex(
+                              context.tree.element!.text,
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                              ),
+                            );
+                          },
+                        },
+                        tagsList: Html.tags..addAll(["tex"]),
+                      ),
                     ],
                   ),
                 ),
@@ -159,52 +190,43 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                             SizedBox(
                               height: 12,
                             ),
-                            if (!widget.useTex)
-                              Html(
-                                data: "${widget.question.resource ?? ''}",
-                                style: {
-                                  // tables will have the below background color
-                                  "body": Style(
-                                    color: Colors.white,
-                                    fontSize: FontSize(23),
-                                  ),
-                                },
-                                customImageRenders: {
-                                  networkSourceMatcher():
-                                      (context, attributes, element) {
-                                    String? link = attributes['src'];
-                                    if (link != null) {
-                                      String name = link
-                                          .substring(link.lastIndexOf("/") + 1);
-                                      print("Image: $name");
-
-                                      return Image.file(
-                                        widget.user.getImageFile(name),
-                                      );
-                                    }
-                                    return Text("No link");
-                                  },
-                                },
-                              ),
-                            if (widget.useTex)
-                              SizedBox(
-                                width: screenWidth(context),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                  child: TeXView(
-                                    child: TeXViewDocument(
-                                        widget.question.resource ?? "",
-                                        style: TeXViewStyle(
-                                          backgroundColor: Color(0xFF444444),
-                                          contentColor: Colors.white,
-                                          fontStyle: TeXViewFontStyle(
-                                            fontSize: 23,
-                                          ),
-                                        )),
-                                  ),
+                            Html(
+                              data: getTex(widget.question.resource),
+                              style: {
+                                // tables will have the below background color
+                                "body": Style(
+                                  color: Colors.white,
+                                  fontSize: FontSize(23),
                                 ),
-                              )
+                              },
+                              customImageRenders: {
+                                networkSourceMatcher():
+                                    (context, attributes, element) {
+                                  String? link = attributes['src'];
+                                  if (link != null) {
+                                    String name = link
+                                        .substring(link.lastIndexOf("/") + 1);
+                                    print("Image: $name");
+
+                                    return Image.file(
+                                      widget.user.getImageFile(name),
+                                    );
+                                  }
+                                  return Text("No link");
+                                },
+                              },
+                              customRender: {
+                                'tex': (RenderContext context, child) {
+                                  return Math.tex(
+                                    context.tree.element!.text,
+                                    textStyle: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  );
+                                },
+                              },
+                              tagsList: Html.tags..addAll(["tex"]),
+                            ),
                           ],
                         ),
                       ),
@@ -244,7 +266,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                             padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
                             child: Html(
                               data: correctAnswer != null
-                                  ? correctAnswer!.solution!
+                                  ? getTex(correctAnswer!.solution)
                                   : "----",
                               style: {
                                 // tables will have the below background color
@@ -268,6 +290,17 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                                   return Text("No link");
                                 },
                               },
+                              customRender: {
+                                'tex': (RenderContext context, child) {
+                                  return Math.tex(
+                                    context.tree.element!.text,
+                                    textStyle: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  );
+                                },
+                              },
+                              tagsList: Html.tags..addAll(["tex"]),
                             ),
                           ),
                         ),

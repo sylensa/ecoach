@@ -7,8 +7,11 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:flutter_tex/flutter_tex.dart';
 
 class NoteView extends StatefulWidget {
   const NoteView(this.user, this.topic, {Key? key}) : super(key: key);
@@ -20,6 +23,48 @@ class NoteView extends StatefulWidget {
 }
 
 class _NoteViewState extends State<NoteView> {
+  String getMathText(String? text) {
+    if (text == null) return "";
+    // text = parseHtmlString(text);
+    print(text);
+    text = text
+        .replaceAll('\\(', "")
+        .replaceAll('\\)', "")
+        .replaceAll("\\\\", "\\");
+    print(text);
+    // text = text.replaceAll(" ", "︎⁠​​\u1160");
+    print("️|‍\u1160‌︎​|");
+    print('_________________');
+    text = String.fromCharCodes(new Runes(text));
+    return r'' + '$text';
+  }
+
+  getTex(String? text) {
+    if (text == null) return "";
+
+    RegExp reg = RegExp(r'\\\((.+?)\\\)');
+    Iterable<RegExpMatch> matches = reg.allMatches(text);
+    print("matches count=${matches.length}");
+    List<String> subTexts = [];
+    matches.forEach((m) {
+      String mathEquation = text!.substring(m.start, m.end);
+      print("Match: ${mathEquation}");
+      subTexts.add(mathEquation);
+    });
+    subTexts.forEach((equation) {
+      text = text!.replaceAll(equation, "<tex> $equation </tex>");
+    });
+
+    text = text!
+        .replaceAll("<tex><tex>", "<tex>")
+        .replaceAll("</tex></tex>", "</tex>")
+        .replaceAll('\\(', "")
+        .replaceAll('\\)', "");
+
+    print(text);
+    return text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,34 +76,49 @@ class _NoteViewState extends State<NoteView> {
             padding: const EdgeInsets.all(0),
             child: Column(
               children: [
-                Html(data: widget.topic.notes, style: {
-                  // tables will have the below background color
-                  "body": Style(
-                    fontSize: FontSize(17),
-                    color: Colors.white,
-                    backgroundColor: Color(0xFF009BCB),
-                    padding: const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
-                  ),
+                Html(
+                  data: getTex(widget.topic.notes),
+                  style: {
+                    // tables will have the below background color
+                    "body": Style(
+                      fontSize: FontSize(17),
+                      color: Colors.white,
+                      backgroundColor: Color(0xFF009BCB),
+                      padding: const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
+                    ),
 
-                  'td':
-                      Style(border: Border.all(color: Colors.white, width: 1)),
-                  'th': Style(backgroundColor: Colors.blue),
-                  'img': Style(
-                      width: 200, height: 200, padding: EdgeInsets.all(10)),
-                }, customImageRenders: {
-                  networkSourceMatcher(): (context, attributes, element) {
-                    String? link = attributes['src'];
-                    if (link != null) {
-                      String name = link.substring(link.lastIndexOf("/") + 1);
-                      print("Image: $name");
-
-                      return Image.file(
-                        widget.user.getImageFile(name),
-                      );
-                    }
-                    return Text("No link");
+                    'td': Style(
+                        border: Border.all(color: Colors.white, width: 1)),
+                    'th': Style(backgroundColor: Colors.blue),
+                    'img': Style(
+                        width: 200, height: 200, padding: EdgeInsets.all(10)),
                   },
-                }),
+                  customImageRenders: {
+                    networkSourceMatcher(): (context, attributes, element) {
+                      String? link = attributes['src'];
+                      if (link != null) {
+                        String name = link.substring(link.lastIndexOf("/") + 1);
+                        print("Image: $name");
+
+                        return Image.file(
+                          widget.user.getImageFile(name),
+                        );
+                      }
+                      return Text("No link");
+                    },
+                  },
+                  customRender: {
+                    'tex': (RenderContext context, child) {
+                      return Math.tex(
+                        context.tree.element!.text,
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                        ),
+                      );
+                    },
+                  },
+                  tagsList: Html.tags..addAll(["tex"]),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

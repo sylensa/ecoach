@@ -145,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             }
                             if (text.trim().split(" ").length < 2) {
                               _msg =
-                                  "Please enter First name and Surname. Should be exactly 2";
+                                  "Please enter First name and Surname. Exactly 2 names";
                             }
                             return _msg;
                           },
@@ -163,9 +163,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           validator: (text) {
                             String? _msg;
+                            text = text!.trim();
                             RegExp regex = new RegExp(
                                 r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-                            if (text!.isEmpty) {
+                            if (text.isEmpty) {
                               _msg = "Your email is required";
                             } else if (!regex.hasMatch(text)) {
                               _msg = "Please provide a valid email address";
