@@ -17,11 +17,10 @@ import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/notification_service.dart';
 import 'package:ecoach/widgets/toast.dart';
-import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/provider.dart';
 
 class MainController {
   User user;
@@ -171,6 +170,13 @@ class MainController {
           ImageFile image = images[i];
           if (image.base64 == null) continue;
           await saveBase64(image.base64!, image.name);
+
+          File file = user.getImageFile(image.name);
+          if (await file.exists()) {
+            print("--------------> File exists");
+          } else {
+            print("--------------> File does not exists");
+          }
         }
 
         provider.doneDownlaod("$filename ...  done.");

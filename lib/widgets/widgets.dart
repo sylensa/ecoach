@@ -10,6 +10,7 @@ import 'package:html/parser.dart' as htmlparser;
 import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
   AlertDialog alert = AlertDialog(
@@ -162,7 +163,12 @@ saveImageToDir(var _byteImage, String name) async {
     file.create(recursive: true);
   }
   print('writing to file .................. .');
-  await file.writeAsBytes(_byteImage);
+  File f = await file.writeAsBytes(_byteImage);
+  if (await f.exists()) {
+    print("file exists");
+  } else {
+    print("file does not exist");
+  }
 }
 
 saveBase64(String base64, String name) async {

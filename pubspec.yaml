@@ -60,7 +60,7 @@ dependencies:
   custom_timer: ^0.0.6
   timeago: ^3.1.0
   dio: ^4.0.0
-  permission_handler: ^8.2.5
+  permission_handler: ^8.3.0
   flutter_styled_toast: ^2.0.0
 
 dev_dependencies:
