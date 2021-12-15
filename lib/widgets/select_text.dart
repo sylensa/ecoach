@@ -1,4 +1,5 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -71,7 +72,7 @@ class _SelectTextState extends State<SelectText> {
 }
 
 class SelectHtml extends StatefulWidget {
-  SelectHtml(this.text, this.selected,
+  SelectHtml(this.user, this.text, this.selected,
       {Key? key,
       this.id = "1",
       required this.select,
@@ -84,6 +85,7 @@ class SelectHtml extends StatefulWidget {
       this.imposedColor})
       : super(key: key);
 
+  User user;
   String id;
   String text;
   bool selected;
@@ -119,21 +121,40 @@ class _SelectHtmlState extends State<SelectHtml> {
           child: Container(
             child: Center(
                 child: !widget.useTex
-                    ? Html(data: parseHtmlString(widget.text), style: {
-                        // tables will have the below background color
-                        "body": Style(
-                          color: widget.imposedColor != null
-                              ? widget.imposedColor
-                              : widget.selected
-                                  ? widget.selectedColor
-                                  : widget.color,
-                          fontSize: widget.imposedSize != null
-                              ? FontSize(widget.imposedSize)
-                              : widget.selected
-                                  ? FontSize(widget.selectedSize ?? 40)
-                                  : FontSize(widget.normalSize ?? 16),
-                        ),
-                      })
+                    ? Html(
+                        data: parseHtmlString(widget.text),
+                        style: {
+                          // tables will have the below background color
+                          "body": Style(
+                            color: widget.imposedColor != null
+                                ? widget.imposedColor
+                                : widget.selected
+                                    ? widget.selectedColor
+                                    : widget.color,
+                            fontSize: widget.imposedSize != null
+                                ? FontSize(widget.imposedSize)
+                                : widget.selected
+                                    ? FontSize(widget.selectedSize ?? 40)
+                                    : FontSize(widget.normalSize ?? 16),
+                          ),
+                        },
+                        customImageRenders: {
+                          networkSourceMatcher():
+                              (context, attributes, element) {
+                            String? link = attributes['src'];
+                            if (link != null) {
+                              String name =
+                                  link.substring(link.lastIndexOf("/") + 1);
+                              print("Image: $name");
+
+                              return Image.file(
+                                widget.user.getImageFile(name),
+                              );
+                            }
+                            return Text("No link");
+                          },
+                        },
+                      )
                     : SizedBox(
                         width: screenWidth(context),
                         child: TeXView(

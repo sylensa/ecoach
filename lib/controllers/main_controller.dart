@@ -4,7 +4,9 @@ import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/image.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
@@ -15,11 +17,10 @@ import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/notification_service.dart';
 import 'package:ecoach/widgets/toast.dart';
-import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/src/provider.dart';
 
 class MainController {
   User user;
@@ -161,6 +162,24 @@ class MainController {
 
         await CourseDB().insert(subscriptionItem.course!);
         await QuizDB().insertAll(subscriptionItem.quizzes!);
+        await TopicDB().insertAll(subscriptionItem.topics!);
+
+        List<ImageFile> images = subscriptionItem.images!;
+
+        for (int i = 0; i < images.length; i++) {
+          ImageFile image = images[i];
+          if (image.base64 == null) continue;
+          await saveBase64(image.base64!, image.name);
+
+          File file = user.getImageFile(image.name);
+          if (await file.exists()) {
+            print("--------------> File exists");
+          } else {
+            print("--------------> File does not exists");
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("File does not save")));
+          }
+        }
 
         provider.doneDownlaod("$filename ...  done.");
         currentItem.isDownloading = false;

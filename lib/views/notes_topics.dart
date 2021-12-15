@@ -1,24 +1,12 @@
-import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/notes_read.dart';
-import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/notes_read_db.dart';
-import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/note_view.dart';
-import 'package:ecoach/views/quiz_cover.dart';
-import 'package:ecoach/views/quiz_page.dart';
-import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/notes_bottom_button.dart';
 import 'package:ecoach/widgets/search_bars/notes_search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 class NotesTopics extends StatefulWidget {
   static const String routeName = '/notestopic';

@@ -35,7 +35,7 @@ dependencies:
    flutter_svg: ^0.23.0 # help us to use SVG in our app
    # file_picker_cross: ^4.2.6
    get: ^4.3.8
-   flutter_tex: ^4.0.3
+   flutter_tex: ^4.0.3+1
    pin_code_fields: ^7.3.0
    webview_flutter: ^2.0.6
    intl_phone_field: ^2.0.1
@@ -60,7 +60,7 @@ dependencies:
    custom_timer: ^0.0.6
    timeago: ^3.1.0
    dio: ^4.0.0
-   permission_handler: ^8.2.5
+   permission_handler: ^8.3.0
    flutter_styled_toast: ^2.0.0
 
 dev_dependencies:

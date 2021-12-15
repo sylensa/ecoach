@@ -1,5 +1,7 @@
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/image.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/topic.dart';
 
 class SubscriptionItem {
   SubscriptionItem(
@@ -16,6 +18,8 @@ class SubscriptionItem {
       this.updatedAt,
       this.course,
       this.quizzes,
+      this.topics,
+      this.images,
       this.quizCount,
       this.questionCount});
 
@@ -32,6 +36,8 @@ class SubscriptionItem {
   DateTime? updatedAt;
   Course? course;
   List<Quiz>? quizzes;
+  List<Topic>? topics;
+  List<ImageFile>? images;
   int? quizCount;
   int? questionCount;
 
@@ -66,6 +72,12 @@ class SubscriptionItem {
         quizzes: json["quizzes"] == null
             ? []
             : List<Quiz>.from(json["quizzes"].map((x) => Quiz.fromJson(x))),
+        topics: json["topics"] == null
+            ? []
+            : List<Topic>.from(json["topics"].map((x) => Topic.fromJson(x))),
+        images: json["images"] == null
+            ? []
+            : List<ImageFile>.from(json["images"].map((x) => ImageFile.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

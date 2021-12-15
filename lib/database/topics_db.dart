@@ -67,17 +67,19 @@ class TopicDB {
 
   Future<void> insertAll(List<Topic> topics) async {
     final Database? db = await DBProvider.database;
-    Batch batch = db!.batch();
-    topics.forEach((element) {
-      // print(element.toJson());
-      batch.insert(
-        'topics',
-        element.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    });
+    await db!.transaction((txn) async {
+      Batch batch = txn.batch();
+      topics.forEach((element) {
+        // print(element.toJson());
+        batch.insert(
+          'topics',
+          element.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      });
 
-    await batch.commit(noResult: true);
+      await batch.commit(noResult: true);
+    });
   }
 
   Future<List<Topic>> topics() async {

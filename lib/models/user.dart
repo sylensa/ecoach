@@ -1,6 +1,9 @@
-import 'package:ecoach/models/plan.dart';
+import 'dart:io';
 
+import 'dart:convert';
 import 'subscription.dart';
+
+import 'package:path/path.dart';
 
 class User {
   int? id;
@@ -22,6 +25,7 @@ class User {
   Wallet wallet = Wallet();
   List<Subscription> subscriptions = [];
   bool hasTakenTest = false;
+  String applicationDirPath = "";
 
   User(
       {this.id,
@@ -45,6 +49,11 @@ class User {
     String lname = name!.split(" ")[1];
     return fname.substring(0, 1).toUpperCase() +
         lname.substring(0, 1).toUpperCase();
+  }
+
+  File getImageFile(String name) {
+    File file = new File(join(applicationDirPath + '/images', name));
+    return file;
   }
 
   factory User.fromJson(Map<String, dynamic> responseData) {

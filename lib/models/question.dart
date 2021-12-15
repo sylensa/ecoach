@@ -68,16 +68,11 @@ class Question {
   }
 
   factory Question.fromJson(Map<String, dynamic> json) {
-    print(
-        "--------------------------------------------------------------------");
-    print(json["topic"]);
     return Question(
       id: json["id"],
       courseId: json["course_id"],
       topicId: json["topic_id"],
-      topicName: json["topic"] != null
-          ? json['topic']['name']
-          : json["topic_name"] ?? "topic id: ${json["topic_id"]}",
+      topicName: json["topic_name"],
       qid: json["qid"],
       text: json["text"],
       instructions: json["instructions"],

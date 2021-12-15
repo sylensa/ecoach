@@ -1,8 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:html/parser.dart' as htmlparser;
+import 'package:html/dom.dart' as dom;
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 showLoaderDialog(BuildContext context, {String? message = "loading..."}) {
   AlertDialog alert = AlertDialog(
@@ -133,4 +141,40 @@ String parseHtmlString(String htmlString) {
       htmlparser.parse(document.body!.text).documentElement!.text;
 
   return parsedString;
+}
+
+List<String> getHtmlImageLinks(String body) {
+  var document = htmlparser.parse(body);
+  List<dom.Element> links = document.querySelectorAll('img');
+  List<String> imageLinks = [];
+  links.forEach((link) {
+    String imageLink = link.attributes['src'] ?? '';
+    imageLinks.add(imageLink);
+  });
+
+  return imageLinks;
+}
+
+saveImageToDir(var _byteImage, String name) async {
+  Directory documentDirectory = await getApplicationDocumentsDirectory();
+  File file = new File(join(documentDirectory.path + '/images', name));
+  if (!(await file.exists())) {
+    print("file doesnt exist. creating ... ");
+    file.create(recursive: true);
+  }
+  print('writing to file .................. .');
+  File f = await file.writeAsBytes(_byteImage);
+  if (await f.exists()) {
+    print("file exists");
+  } else {
+    print("file does not exist");
+    
+  }
+}
+
+saveBase64(String base64, String name) async {
+  print('saving base 64');
+  print(base64);
+  final _byteImage = Base64Decoder().convert(base64);
+  await saveImageToDir(_byteImage, name);
 }

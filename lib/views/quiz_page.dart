@@ -316,6 +316,7 @@ class _QuizViewState extends State<QuizView> {
                     children: [
                       for (int i = 0; i < widget.questions.length; i++)
                         QuestionWidget(
+                          widget.user,
                           widget.questions[i],
                           position: i,
                           enabled: enabled,

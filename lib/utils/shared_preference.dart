@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
@@ -46,10 +49,13 @@ class UserPreferences {
         token: token,
         activated: activated,
         signupDate: signupDate != null ? DateTime.parse(signupDate) : null);
+
     List<Subscription> plans = await SubscriptionDB().subscriptions();
     user.subscriptions = plans;
     List<TestTaken> tests = await TestTakenDB().testsTaken();
     user.hasTakenTest = tests.length > 0 ? true : false;
+    Directory documentDirectory = await getApplicationDocumentsDirectory();
+    user.applicationDirPath = documentDirectory.path;
 
     return user;
   }
