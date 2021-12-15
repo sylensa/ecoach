@@ -176,6 +176,8 @@ class MainController {
             print("--------------> File exists");
           } else {
             print("--------------> File does not exists");
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("File does not save")));
           }
         }
 

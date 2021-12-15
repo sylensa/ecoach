@@ -168,6 +168,7 @@ saveImageToDir(var _byteImage, String name) async {
     print("file exists");
   } else {
     print("file does not exist");
+    
   }
 }
 
