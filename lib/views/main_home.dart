@@ -17,7 +17,7 @@ class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 0});
+  MainHomePage(this.user, {this.index = 2});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
@@ -42,8 +42,8 @@ class _MainHomePageState extends State<MainHomePage>
           tapping(tabNumber);
         },
       ),
-      CoursesPage(widget.user),
       StorePage(widget.user),
+      CoursesPage(widget.user),
       AnalysisView(),
       MoreView(
         widget.user,
@@ -102,7 +102,7 @@ class _MainHomePageState extends State<MainHomePage>
             builder: (context) {
               return AlertDialog(
                 title: Text(
-                  "Exist?",
+                  "Exit?",
                   style: TextStyle(color: Colors.black),
                 ),
                 content: Text(
@@ -135,7 +135,7 @@ class _MainHomePageState extends State<MainHomePage>
           bottomNavigationBar: AdeoBottomNavigationBar(
             selectedIndex: currentIndex,
             onItemSelected: tapping,
-            items: ['home', 'courses', 'adeo', 'analysis', 'account'],
+            items: ['home', 'adeo', 'courses', 'analysis', 'account'],
           ),
         ),
       ),

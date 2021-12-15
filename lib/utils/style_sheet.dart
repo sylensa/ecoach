@@ -49,6 +49,8 @@ const kAdeoGray = Color(0xFFF1F1F1);
 const kAdeoGray2 = Color(0xFF707070);
 const kAdeoGray3 = Color(0xFFA2A2A2);
 const kAdeoCoral = Color(0xFFFB7B76);
+const kPageBackgroundGray = Color(0xFFF0F0F0);
+const kDividerColor = Color(0xFF707070);
 
 const kSixteenPointWhiteText = TextStyle(
   fontSize: 16,
@@ -80,4 +82,10 @@ const kPinInputTextStyle = TextStyle(
   fontWeight: FontWeight.normal,
   color: kDefaultBlack,
   height: 1.1,
+);
+
+const kPageHeaderStyle = TextStyle(
+  color: Color(0xFF2A9CEA),
+  fontFamily: 'Helvetica Rounded',
+  fontSize: 28,
 );

@@ -90,98 +90,130 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
   Widget build(BuildContext context) {
     List<CourseDetail> courseDetails = [
       CourseDetail(
-        title: lastStudy,
-        background: kCourseColors[4]['background'],
-        icon: 'learn.png',
-        progress: 75,
-        progressColor: kCourseColors[4]['progress'],
-        iconLabel: 'Learn',
-        subtitle1: lastStudyTopic,
-        subtitle2: '',
-        subGraphicsIsIcon: true,
-        subGraphics: Icons.play_arrow_sharp,
+        title: 'Learn',
+        subTitle: 'Different modes to help you master a course',
+        iconURL: 'assets/icons/courses/learn.png',
       ),
       CourseDetail(
-        title: lastNote,
-        background: kCourseColors[5]['background'],
-        icon: 'notes.png',
-        progress: 80,
-        progressColor: kCourseColors[5]['progress'],
-        iconLabel: 'Notes',
-        subGraphicsIsIcon: true,
-        subGraphics: Icons.pause,
+        title: 'Notes',
+        subTitle: 'Self-explanatory notes on various topics',
+        iconURL: 'assets/icons/courses/notes.png',
       ),
       CourseDetail(
-        title: 'BECE 2020',
-        background: kCourseColors[6]['background'],
-        icon: 'tests.png',
-        progress: 50,
-        progressColor: kCourseColors[6]['progress'],
-        iconLabel: 'Tests',
-        subtitle1: 'Rank: $rank',
-        subGraphicsIsIcon: false,
-        subGraphics: 'reload.png',
+        title: 'Tests',
+        subTitle: 'Different test modes to get you exam-ready',
+        iconURL: 'assets/icons/courses/tests.png',
       ),
       CourseDetail(
-        title: 'Challenge',
-        background: kCourseColors[7]['background'],
-        icon: 'games.png',
-        progress: 50,
-        progressColor: kCourseColors[7]['progress'],
-        iconLabel: 'Games',
-        subtitle1: 'Rank: 5th',
-        subGraphicsIsIcon: false,
-        subGraphics: 'challenge.png',
+        title: 'Live',
+        subTitle: 'Live sessions',
+        iconURL: 'assets/icons/courses/live.png',
       ),
       CourseDetail(
-        title: 'LeaderBoard',
-        background: kCourseColors[8]['background'],
-        icon: 'progress.png',
-        progress: 75,
-        progressColor: kCourseColors[8]['progress'],
-        iconLabel: 'Progress',
-        subtitle1: 'Rank: 2nd',
-        subGraphicsIsIcon: false,
-        subGraphics: 'leaderboard.png',
-      )
+        title: 'Games',
+        subTitle: 'Educational games based on the course',
+        iconURL: 'assets/icons/courses/games.png',
+      ),
+      CourseDetail(
+        title: 'Progress',
+        subTitle: 'Track your progress',
+        iconURL: 'assets/icons/courses/progress.png',
+      ),
+      // CourseDetail(
+      //   title: lastStudy,
+      //   background: kCourseColors[4]['background'],
+      //   icon: 'learn.png',
+      //   progress: 75,
+      //   progressColor: kCourseColors[4]['progress'],
+      //   iconLabel: 'Learn',
+      //   subtitle1: lastStudyTopic,
+      //   subtitle2: '',
+      //   subGraphicsIsIcon: true,
+      //   subGraphics: Icons.play_arrow_sharp,
+      // ),
+      // CourseDetail(
+      //   title: lastNote,
+      //   background: kCourseColors[5]['background'],
+      //   icon: 'notes.png',
+      //   progress: 80,
+      //   progressColor: kCourseColors[5]['progress'],
+      //   iconLabel: 'Notes',
+      //   subGraphicsIsIcon: true,
+      //   subGraphics: Icons.pause,
+      // ),
+      // CourseDetail(
+      //   title: 'BECE 2020',
+      //   background: kCourseColors[6]['background'],
+      //   icon: 'tests.png',
+      //   progress: 50,
+      //   progressColor: kCourseColors[6]['progress'],
+      //   iconLabel: 'Tests',
+      //   subtitle1: 'Rank: $rank',
+      //   subGraphicsIsIcon: false,
+      //   subGraphics: 'reload.png',
+      // ),
+      // CourseDetail(
+      //   title: 'Challenge',
+      //   background: kCourseColors[7]['background'],
+      //   icon: 'games.png',
+      //   progress: 50,
+      //   progressColor: kCourseColors[7]['progress'],
+      //   iconLabel: 'Games',
+      //   subtitle1: 'Rank: 5th',
+      //   subGraphicsIsIcon: false,
+      //   subGraphics: 'challenge.png',
+      // ),
+      // CourseDetail(
+      //   title: 'LeaderBoard',
+      //   background: kCourseColors[8]['background'],
+      //   icon: 'progress.png',
+      //   progress: 75,
+      //   progressColor: kCourseColors[8]['progress'],
+      //   iconLabel: 'Progress',
+      //   subtitle1: 'Rank: 2nd',
+      //   subGraphicsIsIcon: false,
+      //   subGraphics: 'leaderboard.png',
+      // )
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          kCapitalizeString(widget.courseInfo.title),
-          style: TextStyle(
-            fontSize: 24.0,
-            color: Color(0x99000000),
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(
-              courseDetail: courseDetails[0],
-              onTap: () {
-                Navigator.push(
+      backgroundColor: kPageBackgroundGray,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              height: 120,
+              child: Padding(
+                padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                child: Center(
+                  child: Text(
+                    widget.courseInfo.title,
+                    style: kPageHeaderStyle,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: courseDetails[0],
+                onTap: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                        settings: RouteSettings(name: LearnMode.routeName),
-                        builder: (context) {
-                          return LearnMode(
-                              widget.user, widget.courseInfo.course);
-                        }));
-              },
+                      settings: RouteSettings(name: LearnMode.routeName),
+                      builder: (context) {
+                        return LearnMode(widget.user, widget.courseInfo.course);
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
                 courseDetail: courseDetails[1],
-                hideProgress: true,
                 onTap: () async {
                   List<Topic> topics = await TestController()
                       .getTopicsAndNotes(widget.courseInfo.course);
@@ -195,44 +227,119 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                           })).then((value) {
                     setState(() {});
                   });
-                }),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            child: CourseDetailCard(
-              courseDetail: CourseDetail(
-                title: lastTest,
-                background: kCourseColors[6]['background'],
-                icon: 'tests.png',
-                progress: courseProgress,
-                progressColor: kCourseColors[6]['progress'],
-                iconLabel: 'Tests',
-                subtitle1: 'Rank: $rank',
-                subGraphicsIsIcon: false,
-                subGraphics: 'reload.png',
+                },
               ),
-              onTap: () {
-                Navigator.push(
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: courseDetails[2],
+                onTap: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                        settings:
-                            RouteSettings(name: CourseDetailsPage.routeName),
-                        builder: (context) {
-                          return TestTypeView(
-                              widget.user, widget.courseInfo.course);
-                        }));
-              },
+                      settings:
+                          RouteSettings(name: CourseDetailsPage.routeName),
+                      builder: (context) {
+                        return TestTypeView(
+                            widget.user, widget.courseInfo.course);
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          // Padding(
-          //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          //   child: CourseDetailCard(courseDetail: courseDetails[3]),
-          // ),
-          // Padding(
-          //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          //   child: CourseDetailCard(courseDetail: courseDetails[4]),
-          // ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: courseDetails[3],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: courseDetails[4],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: courseDetails[5],
+              ),
+            ),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            //   child: CourseDetailCard(
+            //     courseDetail: courseDetails[0],
+            //     onTap: () {
+            //       Navigator.push(
+            //           context,
+            //           MaterialPageRoute(
+            //               settings: RouteSettings(name: LearnMode.routeName),
+            //               builder: (context) {
+            //                 return LearnMode(
+            //                     widget.user, widget.courseInfo.course);
+            //               }));
+            //     },
+            //   ),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            //   child: CourseDetailCard(
+            //       courseDetail: courseDetails[1],
+            //       hideProgress: true,
+            //       onTap: () async {
+            //         List<Topic> topics = await TestController()
+            //             .getTopicsAndNotes(widget.courseInfo.course);
+            //         Navigator.push(
+            //             context,
+            //             MaterialPageRoute(
+            //                 settings: RouteSettings(
+            //                     name: CourseDetailsPage.routeName),
+            //                 builder: (context) {
+            //                   return NotesTopics(widget.user, topics);
+            //                 })).then((value) {
+            //           setState(() {});
+            //         });
+            //       }),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            //   child: CourseDetailCard(
+            //     courseDetail: CourseDetail(
+            //       title: lastTest,
+            //       background: kCourseColors[6]['background'],
+            //       icon: 'tests.png',
+            //       progress: courseProgress,
+            //       progressColor: kCourseColors[6]['progress'],
+            //       iconLabel: 'Tests',
+            //       subtitle1: 'Rank: $rank',
+            //       subGraphicsIsIcon: false,
+            //       subGraphics: 'reload.png',
+            //     ),
+            //     onTap: () {
+            //       Navigator.push(
+            //           context,
+            //           MaterialPageRoute(
+            //               settings:
+            //                   RouteSettings(name: CourseDetailsPage.routeName),
+            //               builder: (context) {
+            //                 return TestTypeView(
+            //                     widget.user, widget.courseInfo.course);
+            //               }));
+            //     },
+            //   ),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            //   child: CourseDetailCard(courseDetail: courseDetails[3]),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
+            //   child: CourseDetailCard(courseDetail: courseDetails[4]),
+            // ),
+          ],
+        ),
       ),
     );
   }
