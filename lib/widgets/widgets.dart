@@ -135,14 +135,6 @@ class Button extends StatelessWidget {
   }
 }
 
-String parseHtmlString(String htmlString) {
-  final document = htmlparser.parse(htmlString);
-  final String parsedString =
-      htmlparser.parse(document.body!.text).documentElement!.text;
-
-  return parsedString;
-}
-
 List<String> getHtmlImageLinks(String body) {
   var document = htmlparser.parse(body);
   List<dom.Element> links = document.querySelectorAll('img');
