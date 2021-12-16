@@ -53,6 +53,7 @@ dependencies:
   basic_utils: ^3.7.0
   change_app_package_name: ^1.0.0
   another_xlider: ^1.0.0
+  local_image_saver: ^0.0.2+2
 
   cupertino_icons: ^1.0.3
   intl: ^0.17.0

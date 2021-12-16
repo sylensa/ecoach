@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
@@ -11,6 +12,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:path_provider/path_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -59,6 +61,8 @@ class _RegisterPageState extends State<RegisterPage> {
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
         print("registering: token=${user.token}");
+        Directory documentDirectory = await getApplicationDocumentsDirectory();
+        user.applicationDirPath = documentDirectory.path;
         UserPreferences().setUser(user);
         Navigator.pop(context);
         Navigator.push(context, MaterialPageRoute(builder: (context) {
