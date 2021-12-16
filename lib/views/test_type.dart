@@ -2,10 +2,12 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type_list.dart';
 import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -34,79 +36,138 @@ class _TestTypeViewState extends State<TestTypeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        leading: GestureDetector(
-          child: Icon(Icons.arrow_back_ios),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   shadowColor: Colors.transparent,
+      //   leading: GestureDetector(
+      //     child: Icon(Icons.arrow_back_ios),
+      //     onTap: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      // ),
       backgroundColor: Color(0xFFF6F6F6),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Container(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 24.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Text(
-                    "Choose your test type",
-                    style: TextStyle(color: Colors.black38),
-                    textAlign: TextAlign.left,
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Text(
+              //       "Choose your test type",
+              //       style: kPageHeaderStyle,
+              //       textAlign: TextAlign.center,
+              //     ),
+              //   ],
+              // ),
+              // SizedBox(height: 12),
+              // Container(
+              //   width: 280,
+              //   child: Divider(
+              //     thickness: 1.5,
+              //     color: kDividerColor,
+              //   ),
+              // ),
+              // SizedBox(height: 32),
+              Container(
+                height: 120,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                  child: Center(
+                    child: Text(
+                      "Choose your test type",
+                      style: kPageHeaderStyle,
+                    ),
                   ),
-                ],
+                ),
               ),
-              Divider(
-                thickness: 2,
-                color: Colors.black38,
+              MultiPurposeCourseCard(
+                title: 'Speed',
+                subTitle: 'Accuracy matters , don\'t let the clock run down',
+                iconURL: 'assets/icons/courses/speed.png',
+                onTap: () {
+                  showTestCat(TestType.SPEED);
+                },
               ),
-              SizedBox(
-                height: 40,
+              MultiPurposeCourseCard(
+                title: 'Knowledge',
+                subTitle: 'Standard test',
+                iconURL: 'assets/icons/courses/knowledge.png',
+                onTap: () {
+                  showTestCat(TestType.KNOWLEDGE);
+                },
               ),
-              GridView(
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                children: [
-                  getTypeButton(
-                      AssetImage("assets/images/speedometer.png"), "Speed", () {
-                    showTestCat(TestType.SPEED);
-                  }),
-                  getTypeButton(
-                      AssetImage("assets/images/brain.png"), "Knowledge", () {
-                    showTestCat(TestType.KNOWLEDGE);
-                  }),
-                  getTypeButton(
-                      AssetImage("assets/images/infinite.png"), "Untimed", () {
-                    showTestCat(TestType.UNTIMED);
-                  }),
-                  getTypeButton(
-                      AssetImage("assets/images/customize.png"), "Customized",
-                      () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return Customize(widget.user, widget.course);
-                    }));
-                  }),
-                ],
+              MultiPurposeCourseCard(
+                title: 'Marathon',
+                subTitle: 'Race to complete all questions ',
+                iconURL: 'assets/icons/courses/marathon.png',
+                onTap: () {},
               ),
-              Row(
-                children: [
-                  Expanded(
-                      child: OutlinedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.white)),
-                          onPressed: () {},
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Text('View Analysis'),
-                          ))),
-                ],
-              )
+              MultiPurposeCourseCard(
+                title: 'Autopilot',
+                subTitle: 'Completing a course one topic at a time',
+                iconURL: 'assets/icons/courses/autopilot.png',
+                onTap: () {},
+              ),
+              MultiPurposeCourseCard(
+                title: 'Customised',
+                subTitle: 'Create your own kind of quiz',
+                iconURL: 'assets/icons/courses/customised.png',
+                onTap: () {
+                  showTestCat(TestType.CUSTOMIZED);
+                },
+              ),
+              MultiPurposeCourseCard(
+                title: 'Untimed',
+                subTitle: 'Practice mode , no pressure',
+                iconURL: 'assets/icons/courses/untimed.png',
+                onTap: () {
+                  showTestCat(TestType.UNTIMED);
+                },
+              ),
+              // GridView(
+              //   shrinkWrap: true,
+              //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              //       crossAxisCount: 2),
+              //   children: [
+              //     getTypeButton(
+              //         AssetImage("assets/images/speedometer.png"), "Speed", () {
+              //       showTestCat(TestType.SPEED);
+              //     }),
+              //     getTypeButton(
+              //         AssetImage("assets/images/brain.png"), "Knowledge", () {
+              //       showTestCat(TestType.KNOWLEDGE);
+              //     }),
+              //     getTypeButton(
+              //         AssetImage("assets/images/infinite.png"), "Untimed", () {
+              //       showTestCat(TestType.UNTIMED);
+              //     }),
+              //     getTypeButton(
+              //         AssetImage("assets/images/customize.png"), "Customized",
+              //         () {
+              //       Navigator.push(context,
+              //           MaterialPageRoute(builder: (context) {
+              //         return Customize(widget.user, widget.course);
+              //       }));
+              //     }),
+              //   ],
+              // ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //         child: OutlinedButton(
+              //             style: ButtonStyle(
+              //                 backgroundColor:
+              //                     MaterialStateProperty.all(Colors.white)),
+              //             onPressed: () {},
+              //             child: Padding(
+              //               padding: const EdgeInsets.all(15.0),
+              //               child: Text('View Analysis'),
+              //             ))),
+              //   ],
+              // )
             ],
           ),
         ),
@@ -245,101 +306,170 @@ class _TestTypeViewState extends State<TestTypeView> {
         context: context,
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              leading: GestureDetector(
-                child: Icon(Icons.arrow_back_ios),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            backgroundColor: Color(0xFFF6F6F6),
+            // appBar: AppBar(
+            //   backgroundColor: Colors.transparent,
+            //   shadowColor: Colors.transparent,
+            //   leading: GestureDetector(
+            //     child: Icon(Icons.arrow_back_ios),
+            //     onTap: () {
+            //       Navigator.pop(context);
+            //     },
+            //   ),
+            // ),
+            backgroundColor: kPageBackgroundGray,
             body: Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Container(
+              padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Choose your test type",
-                          style: TextStyle(color: Colors.black38),
-                          textAlign: TextAlign.left,
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text(
+                    //       "Choose Your Challenge",
+                    //       style: kPageHeaderStyle,
+                    //       textAlign: TextAlign.center,
+                    //     ),
+                    //   ],
+                    // ),
+                    // SizedBox(height: 12),
+                    // Container(
+                    //   width: 280,
+                    //   child: Divider(
+                    //     thickness: 1.5,
+                    //     color: kDividerColor,
+                    //   ),
+                    // ),
+                    // SizedBox(height: 32),
+                    Container(
+                      height: 120,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                        child: Center(
+                          child: Text(
+                            "Choose Your Challenge",
+                            style: kPageHeaderStyle,
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                    Divider(
-                      thickness: 2,
-                      color: Colors.black38,
+                    MultiPurposeCourseCard(
+                      title: 'Mock',
+                      subTitle: 'Take  a random test across topics',
+                      iconURL: 'assets/icons/courses/mock.png',
+                      onTap: () {
+                        testCategory = TestCategory.MOCK;
+                        getTest();
+                      },
                     ),
-                    SizedBox(
-                      height: 80,
+                    MultiPurposeCourseCard(
+                      title: 'Topic',
+                      subTitle: 'Take a test on any topic',
+                      iconURL: 'assets/icons/courses/topic.png',
+                      onTap: () {
+                        testCategory = TestCategory.TOPIC;
+                        getTest();
+                      },
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            getTestCatButton("Mock", () {
-                              testCategory = TestCategory.MOCK;
-                              getTest();
-                            }),
-                            if (testType != TestType.UNTIMED)
-                              getTestCatButton("Exam", () {
-                                testCategory = TestCategory.EXAM;
-                                getTest();
-                              }),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            getTestCatButton("Topic", () {
-                              testCategory = TestCategory.TOPIC;
-                              getTest();
-                            }),
-                            if (testType != TestType.SPEED)
-                              getTestCatButton("Essay", () {
-                                testCategory = TestCategory.ESSAY;
-                                getTest();
-                              }),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            // getTestCatButton("Saved", () {
-                            //   testCategory = TestCategory.SAVED;
+                    MultiPurposeCourseCard(
+                      title: 'Exam',
+                      subTitle: 'Try out sample exams ie. objectives',
+                      iconURL: 'assets/icons/courses/exam.png',
+                      onTap: () {
+                        testCategory = TestCategory.EXAM;
+                        getTest();
+                      },
+                    ),
+                    MultiPurposeCourseCard(
+                      title: 'Essay',
+                      subTitle: 'Essay type questions',
+                      iconURL: 'assets/icons/courses/essay.png',
+                      onTap: () {
+                        testCategory = TestCategory.ESSAY;
+                        getTest();
+                      },
+                    ),
+                    MultiPurposeCourseCard(
+                      title: 'Bank',
+                      subTitle: 'Curated Test banks',
+                      iconURL: 'assets/icons/courses/bank.png',
+                      onTap: () {
+                        testCategory = TestCategory.BANK;
+                        getTest();
+                      },
+                    ),
+                    MultiPurposeCourseCard(
+                      title: 'Saved',
+                      subTitle: 'The questions that matter to you',
+                      iconURL: 'assets/icons/courses/bank.png',
+                      onTap: () {
+                        testCategory = TestCategory.SAVED;
+                        getTest();
+                      },
+                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //   children: [
+                    //     Column(
+                    //       children: [
+                    //         getTestCatButton("Mock", () {
+                    //           testCategory = TestCategory.MOCK;
+                    //           getTest();
+                    //         }),
+                    //         if (testType != TestType.UNTIMED)
+                    //           getTestCatButton("Exam", () {
+                    //             testCategory = TestCategory.EXAM;
+                    //             getTest();
+                    //           }),
+                    //       ],
+                    //     ),
+                    //     Column(
+                    //       children: [
+                    //         getTestCatButton("Topic", () {
+                    //           testCategory = TestCategory.TOPIC;
+                    //           getTest();
+                    //         }),
+                    //         if (testType != TestType.SPEED)
+                    //           getTestCatButton("Essay", () {
+                    //             testCategory = TestCategory.ESSAY;
+                    //             getTest();
+                    //           }),
+                    //       ],
+                    //     ),
+                    //     Column(
+                    //       children: [
+                    //         // getTestCatButton("Saved", () {
+                    //         //   testCategory = TestCategory.SAVED;
 
-                            //   getTest();
-                            // }),
-                            getTestCatButton("Bank", () {
-                              testCategory = TestCategory.BANK;
+                    //         //   getTest();
+                    //         // }),
+                    //         getTestCatButton("Bank", () {
+                    //           testCategory = TestCategory.BANK;
 
-                              getTest();
-                            }),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 60,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: OutlinedButton(
-                                style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.white)),
-                                onPressed: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text('View Analysis'),
-                                ))),
-                      ],
-                    )
+                    //           getTest();
+                    //         }),
+                    //       ],
+                    //     )
+                    //   ],
+                    // ),
+                    // SizedBox(
+                    //   height: 60,
+                    // ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //         child: OutlinedButton(
+                    //             style: ButtonStyle(
+                    //                 backgroundColor: MaterialStateProperty.all(
+                    //                     Colors.white)),
+                    //             onPressed: () {},
+                    //             child: Padding(
+                    //               padding: const EdgeInsets.all(15.0),
+                    //               child: Text('View Analysis'),
+                    //             ))),
+                    //   ],
+                    // )
                   ],
                 ),
               ),
@@ -352,19 +482,20 @@ class _TestTypeViewState extends State<TestTypeView> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 12, 8, 12),
       child: OutlinedButton(
-          style: ButtonStyle(
-              fixedSize: MaterialStateProperty.all(Size(100, 132)),
-              backgroundColor: MaterialStateProperty.all(Colors.white)),
-          onPressed: callback != null ? callback : null,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                name,
-                style: TextStyle(color: Colors.black38),
-              ),
-            ],
-          )),
+        style: ButtonStyle(
+            fixedSize: MaterialStateProperty.all(Size(100, 132)),
+            backgroundColor: MaterialStateProperty.all(Colors.white)),
+        onPressed: callback != null ? callback : null,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              name,
+              style: TextStyle(color: Colors.black38),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

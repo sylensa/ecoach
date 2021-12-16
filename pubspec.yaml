@@ -18,81 +18,84 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  flutter:
-    sdk: flutter
-  provider: ^6.0.1
-  http: ^0.13.3
-  shared_preferences: ^2.0.7
-  sqflite: ^2.0.0+3
-  path_provider: ^2.0.2
-  validators: ^3.0.0
-  datetime_picker_formfield: ^2.0.0
-  cached_network_image: ^3.1.0
-  image_picker: ^0.8.3+3
-  flutter_svg: ^0.23.0 # help us to use SVG in our app
-  # file_picker_cross: ^4.2.6
-  get: ^4.3.8
-  flutter_tex: ^4.0.3+1
-  pin_code_fields: ^7.3.0
-  webview_flutter: ^2.0.6
-  intl_phone_field: ^2.0.1
-  flutter_html: ^2.1.2
-  percent_indicator: ^3.0.1
-  scrollable_positioned_list: ^0.2.0-nullsafety.0
-  google_fonts: ^2.1.0
-  flutter_math_fork: ^0.5.0
-  carousel_slider: ^4.0.0
-  signal_strength_indicator: ^0.4.1
-  fl_chart: ^0.40.2
-  wakelock: ^0.5.6
-  flutter_local_notifications: ^9.0.1
-  common_utils: ^2.0.2
-  basic_utils: ^3.7.0
-  change_app_package_name: ^1.0.0
-  another_xlider: ^1.0.0
-  local_image_saver: ^0.0.2+2
+   flutter:
+      sdk: flutter
+   provider: ^6.0.1
+   http: ^0.13.3
+   shared_preferences: ^2.0.7
+   sqflite: ^2.0.0+3
+   path_provider: ^2.0.2
+   validators: ^3.0.0
+   datetime_picker_formfield: ^2.0.0
+   cached_network_image: ^3.1.0
+   image_picker: ^0.8.3+3
+   flutter_svg: ^0.23.0 # help us to use SVG in our app
+   # file_picker_cross: ^4.2.6
+   get: ^4.3.8
+   flutter_tex: ^4.0.3+1
+   pin_code_fields: ^7.3.0
+   webview_flutter: ^2.0.6
+   intl_phone_field: ^2.0.1
+   flutter_html: ^2.1.2
+   percent_indicator: ^3.0.1
+   scrollable_positioned_list: ^0.2.0-nullsafety.0
+   google_fonts: ^2.1.0
+   flutter_math_fork: ^0.5.0
+   carousel_slider: ^4.0.0
+   signal_strength_indicator: ^0.4.1
+   fl_chart: ^0.40.2
+   wakelock: ^0.5.6
+   flutter_local_notifications: ^9.0.1
+   common_utils: ^2.0.2
+   basic_utils: ^3.7.0
+   change_app_package_name: ^1.0.0
+   another_xlider: ^1.0.0
 
-  cupertino_icons: ^1.0.3
-  intl: ^0.17.0
-  # catex: ^0.0.1+8
-  custom_timer: ^0.0.6
-  timeago: ^3.1.0
-  dio: ^4.0.0
-  permission_handler: ^8.3.0
-  flutter_styled_toast: ^2.0.0
+   cupertino_icons: ^1.0.3
+   intl: ^0.17.0
+   # catex: ^0.0.1+8
+   custom_timer: ^0.0.6
+   timeago: ^3.1.0
+   dio: ^4.0.0
+   permission_handler: ^8.3.0
+   flutter_styled_toast: ^2.0.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+   flutter_test:
+      sdk: flutter
 
 flutter:
-  uses-material-design: true
+   uses-material-design: true
 
-  assets:
-    - assets/flags/
-    - assets/images/
-    - assets/images/notes/
-    - assets/images/learn_module/
-    - assets/icons/
-    - assets/icons/navigation/
-    - assets/icons/arrows/
-    - assets/icons/topics/
+   assets:
+      - assets/flags/
+      - assets/images/
+      - assets/images/notes/
+      - assets/images/learn_module/
+      - assets/icons/
+      - assets/icons/navigation/
+      - assets/icons/arrows/
+      - assets/icons/topics/
+      - assets/icons/courses/
 
-  fonts:
-    - family: 'Poppins'
-      fonts:
-        - asset: assets/fonts/Poppins-Regular.ttf
-        - asset: assets/fonts/Poppins-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/Poppins-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Poppins-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Poppins-Bold.ttf
-          weight: 700
-    - family: 'Hamelin'
-      fonts:
-        - asset: assets/fonts/Hamelin.ttf
+   fonts:
+      - family: 'Poppins'
+        fonts:
+           - asset: assets/fonts/Poppins-Regular.ttf
+           - asset: assets/fonts/Poppins-ExtraLight.ttf
+             weight: 200
+           - asset: assets/fonts/Poppins-Medium.ttf
+             weight: 500
+           - asset: assets/fonts/Poppins-SemiBold.ttf
+             weight: 600
+           - asset: assets/fonts/Poppins-Bold.ttf
+             weight: 700
+      - family: 'Hamelin'
+        fonts:
+           - asset: assets/fonts/Hamelin.ttf
+      - family: 'Helvetica Rounded'
+        fonts:
+           - asset: assets/fonts/HelveticaRoundedLTStd-Bd.otf
