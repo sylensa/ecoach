@@ -7,11 +7,10 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
-import 'package:ecoach/widgets/widgets.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
-import 'package:flutter_tex/flutter_tex.dart';
 
 class NoteView extends StatefulWidget {
   const NoteView(this.user, this.topic, {Key? key}) : super(key: key);
@@ -23,48 +22,6 @@ class NoteView extends StatefulWidget {
 }
 
 class _NoteViewState extends State<NoteView> {
-  String getMathText(String? text) {
-    if (text == null) return "";
-    // text = parseHtmlString(text);
-    print(text);
-    text = text
-        .replaceAll('\\(', "")
-        .replaceAll('\\)', "")
-        .replaceAll("\\\\", "\\");
-    print(text);
-    // text = text.replaceAll(" ", "︎⁠​​\u1160");
-    print("️|‍\u1160‌︎​|");
-    print('_________________');
-    text = String.fromCharCodes(new Runes(text));
-    return r'' + '$text';
-  }
-
-  getTex(String? text) {
-    if (text == null) return "";
-
-    RegExp reg = RegExp(r'\\\((.+?)\\\)');
-    Iterable<RegExpMatch> matches = reg.allMatches(text);
-    print("matches count=${matches.length}");
-    List<String> subTexts = [];
-    matches.forEach((m) {
-      String mathEquation = text!.substring(m.start, m.end);
-      print("Match: ${mathEquation}");
-      subTexts.add(mathEquation);
-    });
-    subTexts.forEach((equation) {
-      text = text!.replaceAll(equation, "<tex> $equation </tex>");
-    });
-
-    text = text!
-        .replaceAll("<tex><tex>", "<tex>")
-        .replaceAll("</tex></tex>", "</tex>")
-        .replaceAll('\\(', "")
-        .replaceAll('\\)', "");
-
-    print(text);
-    return text;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +34,7 @@ class _NoteViewState extends State<NoteView> {
             child: Column(
               children: [
                 Html(
-                  data: getTex(widget.topic.notes),
+                  data: setTexTags(widget.topic.notes),
                   style: {
                     // tables will have the below background color
                     "body": Style(

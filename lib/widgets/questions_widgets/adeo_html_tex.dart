@@ -11,12 +11,14 @@ class AdeoHtmlTex extends StatefulWidget {
     this.text, {
     Key? key,
     this.textColor = Colors.white,
+    this.fontSize = 23,
     this.removeTags = false,
   }) : super(key: key);
 
   final User user;
   final String text;
   final Color textColor;
+  final double fontSize;
   final bool removeTags;
 
   @override
@@ -30,9 +32,9 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
       data: setTexTags(widget.text, removeTags: widget.removeTags),
       style: {
         "body": Style(
-          color: widget.textColor,
-          fontSize: FontSize(23),
-        ),
+            color: widget.textColor,
+            fontSize: FontSize(widget.fontSize),
+            textAlign: TextAlign.center),
       },
       customImageRenders: {
         networkSourceMatcher(): (context, attributes, element) {
@@ -128,7 +130,16 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
           return Math.tex(
             context.tree.element!.text,
             textStyle: TextStyle(
-              fontSize: 16,
+              color: widget.imposedColor != null
+                  ? widget.imposedColor
+                  : widget.selected
+                      ? widget.selectedColor
+                      : widget.color,
+              fontSize: widget.imposedSize != null
+                  ? widget.imposedSize
+                  : widget.selected
+                      ? widget.selectedSize ?? 40
+                      : widget.normalSize ?? 16,
             ),
           );
         },
