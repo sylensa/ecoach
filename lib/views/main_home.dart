@@ -34,7 +34,6 @@ class _MainHomePageState extends State<MainHomePage>
     WidgetsBinding.instance!.addObserver(this);
     mainController =
         MainController(context, context.read<DownloadUpdate>(), widget.user);
-    print("main_home");
     _children = [
       HomePage(
         widget.user,
@@ -51,7 +50,6 @@ class _MainHomePageState extends State<MainHomePage>
       ),
     ];
     currentIndex = widget.index;
-    print("init");
     mainController.checkSubscription((success) {
       UserPreferences().getUser().then((user) {
         setState(() {
@@ -135,7 +133,7 @@ class _MainHomePageState extends State<MainHomePage>
           bottomNavigationBar: AdeoBottomNavigationBar(
             selectedIndex: currentIndex,
             onItemSelected: tapping,
-            items: ['home', 'adeo', 'courses', 'analysis', 'account'],
+            items: ['home', 'courses', 'adeo', 'analysis', 'account'],
           ),
         ),
       ),

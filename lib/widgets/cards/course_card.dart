@@ -48,7 +48,7 @@ class _CourseCardState extends State<CourseCard> {
   @override
   Widget build(BuildContext context) {
     return MultiPurposeCourseCard(
-      title: kCapitalizeString(widget.courseInfo.title),
+      title: widget.courseInfo.title,
       subTitle: widget.courseInfo.subTitle,
       progress: widget.courseInfo.progress,
       hasProgressed: false,

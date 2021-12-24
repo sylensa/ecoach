@@ -6,10 +6,11 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/widgets/CoursesPageHeader.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+// import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class TestTypeListView extends StatefulWidget {
   TestTypeListView(this.user, this.course, this.tests, this.type,
@@ -87,17 +88,8 @@ class _MockListViewState extends State<TestTypeListView> {
           //   ),
           // ),
           // SizedBox(height: 32),
-          Container(
-            height: 120,
-            child: Padding(
-              padding: EdgeInsets.only(left: 12.0, right: 12.0),
-              child: Center(
-                child: Text(
-                  "Select Your ${widget.title ?? 'Test'}",
-                  style: kPageHeaderStyle,
-                ),
-              ),
-            ),
+          CoursesPageHeader(
+            pageHeading: "Select Your ${widget.title ?? 'Test'}",
           ),
           Expanded(
             child: Padding(
@@ -113,12 +105,13 @@ class _MockListViewState extends State<TestTypeListView> {
                     TestNameAndCount test = widget.tests[index];
                     return MultiPurposeCourseCard(
                       title: test.name,
-                      subTitle: 'subTitle',
+                      subTitle: '',
                       progress: test.category == TestCategory.TOPIC
                           ? double.parse(
                               (test.progress * 100).toStringAsFixed(2))
                           : double.parse(test.totalCount.toStringAsFixed(2)),
                       isActive: isSelected(test),
+                      hasSmallHeading: true,
                       onTap: () {
                         if (isSelected(test)) {
                           testsSelected.remove(test);

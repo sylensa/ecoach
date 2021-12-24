@@ -80,6 +80,7 @@ flutter:
       - assets/icons/arrows/
       - assets/icons/topics/
       - assets/icons/courses/
+      - assets/icons/subscriptions/
 
    fonts:
       - family: 'Poppins'

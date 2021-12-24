@@ -15,6 +15,10 @@ import 'package:ecoach/models/user.dart';
 // import 'package:ecoach/utils/style_sheet.dart';
 // import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 
+getSubscriptionSubName(String name) {
+  return name.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
+}
+
 class CoursesPage extends StatefulWidget {
   static const String routeName = '/courses';
   CoursesPage(this.user, {Key? key}) : super(key: key);
@@ -25,13 +29,15 @@ class CoursesPage extends StatefulWidget {
 }
 
 class _CoursesPageState extends State<CoursesPage> {
-  late final PageController controller;
+  late int page;
+  late PageController controller;
   List<Subscription> subscriptions = [];
 
   @override
   void initState() {
     super.initState();
-    controller = PageController(initialPage: 0);
+    page = 0;
+    controller = PageController();
     var futureSubs = SubscriptionDB().subscriptions();
     futureSubs.then((List<Subscription> subscriptions) {
       if (subscriptions.length > 0) {
@@ -43,36 +49,139 @@ class _CoursesPageState extends State<CoursesPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  goToPreviousPage() {
+    setState(() {
+      page -= 1;
+      controller.previousPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+  goToFirstPage() {
+    setState(() {
+      page = 0;
+      controller.animateToPage(
+        0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+  goToLastPage() {
+    setState(() {
+      page = subscriptions.length - 1;
+      controller.animateToPage(
+        subscriptions.length - 1,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+  goToNextPage() {
+    setState(() {
+      page += 1;
+      controller.nextPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPageBackgroundGray,
       body: SafeArea(
-        child: PageView(
-          controller: controller,
+        child: Column(
           children: [
-            for (int i = 0; i < subscriptions.length; i++)
-              CourseView(
-                widget.user,
-                subscriptions[i],
-                i,
-                subscriptions.length,
-                () {
-                  setState(() {
-                    this.controller.previousPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.ease,
-                        );
-                  });
+            Container(
+              height: 120,
+              child: Padding(
+                padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (page == 0)
+                          goToLastPage();
+                        else
+                          goToPreviousPage();
+                      },
+                      child: Container(
+                        width: 44.0,
+                        height: 32.0,
+                        child: Image.asset(
+                          'assets/icons/arrows/chevron_left.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      getSubscriptionSubName(subscriptions[page].name!),
+                      style: kPageHeaderStyle,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (page == subscriptions.length - 1)
+                          goToFirstPage();
+                        else
+                          goToNextPage();
+                      },
+                      child: Container(
+                        width: 44.0,
+                        height: 32.0,
+                        child: Image.asset(
+                          'assets/icons/arrows/chevron_right.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onHorizontalDragEnd: (dragEndDetails) {
+                  // left to right
+                  if (dragEndDetails.primaryVelocity! > 0) {
+                    if (page == 0)
+                      goToLastPage();
+                    else
+                      goToPreviousPage();
+                  }
+                  // right to left
+                  else if (dragEndDetails.primaryVelocity! < 0) {
+                    if (page == subscriptions.length - 1)
+                      goToFirstPage();
+                    else
+                      goToNextPage();
+                  }
                 },
-                () {
-                  setState(() {
-                    this.controller.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.ease,
-                        );
-                  });
-                },
-              )
+                child: PageView(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: controller,
+                  children: subscriptions
+                      .map(
+                        (subscription) => CourseView(
+                          widget.user,
+                          subscription,
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -84,18 +193,10 @@ class CourseView extends StatefulWidget {
   CourseView(
     this.user,
     this.subscription,
-    this.currentSubscriptionIndex,
-    this.subscriptionLength,
-    this.goToPrevious,
-    this.goToNext,
   );
 
   final User user;
   final Subscription subscription;
-  final int currentSubscriptionIndex;
-  final int subscriptionLength;
-  final goToPrevious;
-  final goToNext;
 
   @override
   _CourseViewState createState() => _CourseViewState();
@@ -109,164 +210,105 @@ class _CourseViewState extends State<CourseView> {
   @override
   void initState() {
     super.initState();
-    print("course view");
     subName = widget.subscription.name!;
     subName =
         subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
-    print(subName);
     futureItems =
         SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            height: 120,
-            child: Padding(
-              padding: EdgeInsets.only(left: 12.0, right: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (widget.currentSubscriptionIndex > 0)
-                    GestureDetector(
-                      onTap: widget.goToPrevious,
-                      child: Container(
-                        width: 44.0,
-                        height: 32.0,
-                        child: Image.asset(
-                          'assets/icons/arrows/chevron_left.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    )
-                  else
-                    Container(
-                      width: 44.0,
-                      height: 32.0,
-                    ),
-                  Text(
-                    subName,
-                    style: kPageHeaderStyle,
-                  ),
-                  if (widget.currentSubscriptionIndex <
-                      widget.subscriptionLength - 1)
-                    GestureDetector(
-                      onTap: widget.goToNext,
-                      child: Container(
-                        width: 44.0,
-                        height: 32.0,
-                        child: Image.asset(
-                          'assets/icons/arrows/chevron_right.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    )
-                  else
-                    Container(
-                      width: 44.0,
-                      height: 32.0,
-                    ),
-                ],
-              ),
-            ),
-          ),
-          FutureBuilder(
-              future: futureItems,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Container();
-                  case ConnectionState.waiting:
-                    return Center(child: CircularProgressIndicator());
-                  default:
-                    if (snapshot.hasError)
-                      return Text('Error: ${snapshot.error}');
-                    else if (snapshot.data != null) {
-                      List<Course> items = snapshot.data! as List<Course>;
+    return FutureBuilder(
+        future: futureItems,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Container();
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            default:
+              if (snapshot.hasError)
+                return Text('Error: ${snapshot.error}');
+              else if (snapshot.data != null) {
+                List<Course> items = snapshot.data! as List<Course>;
 
-                      return Expanded(
-                        child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            CourseAnalytic? analytic = items[index].analytic;
-                            return Padding(
-                              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                              child: CourseCard(
-                                widget.user,
-                                courseInfo: CourseInfo(
-                                  course: items[index],
-                                  title: items[index].name!.replaceFirst(
-                                        subName,
-                                        "",
-                                      ),
-                                  subTitle: 'Take  a random test across topics',
-                                  progress: 51,
+                return Expanded(
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      CourseAnalytic? analytic = items[index].analytic;
+                      return Padding(
+                        padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                        child: CourseCard(
+                          widget.user,
+                          courseInfo: CourseInfo(
+                            course: items[index],
+                            title: items[index].name!.replaceFirst(
+                                  subName,
+                                  "",
                                 ),
-                              ),
-                              //   child: CourseCard(widget.user,
-                              //       courseInfo: CourseInfo(
-                              //         course: items[index],
-                              //         title: items[index]
-                              //             .name!
-                              //             .toUpperCase()
-                              //             .replaceFirst(
-                              //                 subName.toUpperCase(), ""),
-                              //         background: kCourseColors[index %
-                              //             kCourseColors.length]['background'],
-                              //         icon: 'ict.png',
-                              //         progress: 51,
-                              //         progressColor: kCourseColors[index %
-                              //             kCourseColors.length]['progress'],
-                              //         rank: {
-                              //           'position': analytic != null
-                              //               ? analytic.userRank
-                              //               : 0,
-                              //           'numberOnRoll': analytic != null
-                              //               ? analytic.totalRank
-                              //               : 0,
-                              //         },
-                              //         tests: {
-                              //           'testsTaken': 132,
-                              //           'totalNumberOfTests': 3254,
-                              //         },
-                              //         totalPoints: analytic != null
-                              //             ? analytic.coursePoint!
-                              //             : 0,
-                              //         times: analytic != null
-                              //             ? analytic.usedSpeed!
-                              //             : 0,
-                              //         totalTimes: analytic != null
-                              //             ? analytic.totalSpeed!
-                              //             : 0,
-                              //       )),
-                            );
-                          },
-                        ),
-                      );
-                    } else if (snapshot.data == null)
-                      return Container();
-                    else
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 100,
+                            subTitle: 'Take a random test across topics',
+                            progress: 51,
                           ),
-                          Center(
-                              child: Text(widget.user.email ??
-                                  "Something isn't right")),
-                          SizedBox(height: 100),
-                        ],
+                        ),
+                        //   child: CourseCard(widget.user,
+                        //       courseInfo: CourseInfo(
+                        //         course: items[index],
+                        //         title: items[index]
+                        //             .name!
+                        //             .toUpperCase()
+                        //             .replaceFirst(
+                        //                 subName.toUpperCase(), ""),
+                        //         background: kCourseColors[index %
+                        //             kCourseColors.length]['background'],
+                        //         icon: 'ict.png',
+                        //         progress: 51,
+                        //         progressColor: kCourseColors[index %
+                        //             kCourseColors.length]['progress'],
+                        //         rank: {
+                        //           'position': analytic != null
+                        //               ? analytic.userRank
+                        //               : 0,
+                        //           'numberOnRoll': analytic != null
+                        //               ? analytic.totalRank
+                        //               : 0,
+                        //         },
+                        //         tests: {
+                        //           'testsTaken': 132,
+                        //           'totalNumberOfTests': 3254,
+                        //         },
+                        //         totalPoints: analytic != null
+                        //             ? analytic.coursePoint!
+                        //             : 0,
+                        //         times: analytic != null
+                        //             ? analytic.usedSpeed!
+                        //             : 0,
+                        //         totalTimes: analytic != null
+                        //             ? analytic.totalSpeed!
+                        //             : 0,
+                        //       )),
                       );
-                }
-              }),
-        ],
-      ),
-    );
+                    },
+                  ),
+                );
+              } else if (snapshot.data == null)
+                return Container();
+              else
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                    ),
+                    Center(
+                      child: Text(widget.user.email ?? "Something isn't right"),
+                    ),
+                    SizedBox(height: 100),
+                  ],
+                );
+          }
+        });
   }
 }

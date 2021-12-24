@@ -27,3 +27,13 @@ Color lighten(Color c, [int percent = 10]) {
       c.green + ((255 - c.green) * p).round(),
       c.blue + ((255 - c.blue) * p).round());
 }
+
+extension StringExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1)}' : '';
+
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
+}

@@ -7,6 +7,7 @@ import 'package:ecoach/views/customize.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type_list.dart';
 import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/widgets/CoursesPageHeader.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -71,17 +72,8 @@ class _TestTypeViewState extends State<TestTypeView> {
               //   ),
               // ),
               // SizedBox(height: 32),
-              Container(
-                height: 120,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 12.0, right: 12.0),
-                  child: Center(
-                    child: Text(
-                      "Choose your test type",
-                      style: kPageHeaderStyle,
-                    ),
-                  ),
-                ),
+              CoursesPageHeader(
+                pageHeading: "Choose your test type",
               ),
               MultiPurposeCourseCard(
                 title: 'Speed',
@@ -319,159 +311,156 @@ class _TestTypeViewState extends State<TestTypeView> {
             backgroundColor: kPageBackgroundGray,
             body: Padding(
               padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text(
-                    //       "Choose Your Challenge",
-                    //       style: kPageHeaderStyle,
-                    //       textAlign: TextAlign.center,
-                    //     ),
-                    //   ],
-                    // ),
-                    // SizedBox(height: 12),
-                    // Container(
-                    //   width: 280,
-                    //   child: Divider(
-                    //     thickness: 1.5,
-                    //     color: kDividerColor,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 32),
-                    Container(
-                      height: 120,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 12.0, right: 12.0),
-                        child: Center(
-                          child: Text(
-                            "Choose Your Challenge",
-                            style: kPageHeaderStyle,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(
+                  //       "Choose Your Challenge",
+                  //       style: kPageHeaderStyle,
+                  //       textAlign: TextAlign.center,
+                  //     ),
+                  //   ],
+                  // ),
+                  // SizedBox(height: 12),
+                  // Container(
+                  //   width: 280,
+                  //   child: Divider(
+                  //     thickness: 1.5,
+                  //     color: kDividerColor,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 32),
+                  CoursesPageHeader(
+                    pageHeading: "Choose Your Challenge",
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          MultiPurposeCourseCard(
+                            title: 'Mock',
+                            subTitle: 'Take  a random test across topics',
+                            iconURL: 'assets/icons/courses/mock.png',
+                            onTap: () {
+                              testCategory = TestCategory.MOCK;
+                              getTest();
+                            },
                           ),
-                        ),
+                          MultiPurposeCourseCard(
+                            title: 'Topic',
+                            subTitle: 'Take a test on any topic',
+                            iconURL: 'assets/icons/courses/topic.png',
+                            onTap: () {
+                              testCategory = TestCategory.TOPIC;
+                              getTest();
+                            },
+                          ),
+                          MultiPurposeCourseCard(
+                            title: 'Exam',
+                            subTitle: 'Try out sample exams ie. objectives',
+                            iconURL: 'assets/icons/courses/exam.png',
+                            onTap: () {
+                              testCategory = TestCategory.EXAM;
+                              getTest();
+                            },
+                          ),
+                          MultiPurposeCourseCard(
+                            title: 'Essay',
+                            subTitle: 'Essay type questions',
+                            iconURL: 'assets/icons/courses/essay.png',
+                            onTap: () {
+                              testCategory = TestCategory.ESSAY;
+                              getTest();
+                            },
+                          ),
+                          MultiPurposeCourseCard(
+                            title: 'Bank',
+                            subTitle: 'Curated Test banks',
+                            iconURL: 'assets/icons/courses/bank.png',
+                            onTap: () {
+                              testCategory = TestCategory.BANK;
+                              getTest();
+                            },
+                          ),
+                          MultiPurposeCourseCard(
+                            title: 'Saved',
+                            subTitle: 'The questions that matter to you',
+                            iconURL: 'assets/icons/courses/saved.png',
+                            onTap: () {
+                              testCategory = TestCategory.SAVED;
+                              getTest();
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    MultiPurposeCourseCard(
-                      title: 'Mock',
-                      subTitle: 'Take  a random test across topics',
-                      iconURL: 'assets/icons/courses/mock.png',
-                      onTap: () {
-                        testCategory = TestCategory.MOCK;
-                        getTest();
-                      },
-                    ),
-                    MultiPurposeCourseCard(
-                      title: 'Topic',
-                      subTitle: 'Take a test on any topic',
-                      iconURL: 'assets/icons/courses/topic.png',
-                      onTap: () {
-                        testCategory = TestCategory.TOPIC;
-                        getTest();
-                      },
-                    ),
-                    MultiPurposeCourseCard(
-                      title: 'Exam',
-                      subTitle: 'Try out sample exams ie. objectives',
-                      iconURL: 'assets/icons/courses/exam.png',
-                      onTap: () {
-                        testCategory = TestCategory.EXAM;
-                        getTest();
-                      },
-                    ),
-                    MultiPurposeCourseCard(
-                      title: 'Essay',
-                      subTitle: 'Essay type questions',
-                      iconURL: 'assets/icons/courses/essay.png',
-                      onTap: () {
-                        testCategory = TestCategory.ESSAY;
-                        getTest();
-                      },
-                    ),
-                    MultiPurposeCourseCard(
-                      title: 'Bank',
-                      subTitle: 'Curated Test banks',
-                      iconURL: 'assets/icons/courses/bank.png',
-                      onTap: () {
-                        testCategory = TestCategory.BANK;
-                        getTest();
-                      },
-                    ),
-                    MultiPurposeCourseCard(
-                      title: 'Saved',
-                      subTitle: 'The questions that matter to you',
-                      iconURL: 'assets/icons/courses/bank.png',
-                      onTap: () {
-                        testCategory = TestCategory.SAVED;
-                        getTest();
-                      },
-                    ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //   children: [
-                    //     Column(
-                    //       children: [
-                    //         getTestCatButton("Mock", () {
-                    //           testCategory = TestCategory.MOCK;
-                    //           getTest();
-                    //         }),
-                    //         if (testType != TestType.UNTIMED)
-                    //           getTestCatButton("Exam", () {
-                    //             testCategory = TestCategory.EXAM;
-                    //             getTest();
-                    //           }),
-                    //       ],
-                    //     ),
-                    //     Column(
-                    //       children: [
-                    //         getTestCatButton("Topic", () {
-                    //           testCategory = TestCategory.TOPIC;
-                    //           getTest();
-                    //         }),
-                    //         if (testType != TestType.SPEED)
-                    //           getTestCatButton("Essay", () {
-                    //             testCategory = TestCategory.ESSAY;
-                    //             getTest();
-                    //           }),
-                    //       ],
-                    //     ),
-                    //     Column(
-                    //       children: [
-                    //         // getTestCatButton("Saved", () {
-                    //         //   testCategory = TestCategory.SAVED;
+                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //   children: [
+                  //     Column(
+                  //       children: [
+                  //         getTestCatButton("Mock", () {
+                  //           testCategory = TestCategory.MOCK;
+                  //           getTest();
+                  //         }),
+                  //         if (testType != TestType.UNTIMED)
+                  //           getTestCatButton("Exam", () {
+                  //             testCategory = TestCategory.EXAM;
+                  //             getTest();
+                  //           }),
+                  //       ],
+                  //     ),
+                  //     Column(
+                  //       children: [
+                  //         getTestCatButton("Topic", () {
+                  //           testCategory = TestCategory.TOPIC;
+                  //           getTest();
+                  //         }),
+                  //         if (testType != TestType.SPEED)
+                  //           getTestCatButton("Essay", () {
+                  //             testCategory = TestCategory.ESSAY;
+                  //             getTest();
+                  //           }),
+                  //       ],
+                  //     ),
+                  //     Column(
+                  //       children: [
+                  //         // getTestCatButton("Saved", () {
+                  //         //   testCategory = TestCategory.SAVED;
 
-                    //         //   getTest();
-                    //         // }),
-                    //         getTestCatButton("Bank", () {
-                    //           testCategory = TestCategory.BANK;
+                  //         //   getTest();
+                  //         // }),
+                  //         getTestCatButton("Bank", () {
+                  //           testCategory = TestCategory.BANK;
 
-                    //           getTest();
-                    //         }),
-                    //       ],
-                    //     )
-                    //   ],
-                    // ),
-                    // SizedBox(
-                    //   height: 60,
-                    // ),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //         child: OutlinedButton(
-                    //             style: ButtonStyle(
-                    //                 backgroundColor: MaterialStateProperty.all(
-                    //                     Colors.white)),
-                    //             onPressed: () {},
-                    //             child: Padding(
-                    //               padding: const EdgeInsets.all(15.0),
-                    //               child: Text('View Analysis'),
-                    //             ))),
-                    //   ],
-                    // )
-                  ],
-                ),
+                  //           getTest();
+                  //         }),
+                  //       ],
+                  //     )
+                  //   ],
+                  // ),
+                  // SizedBox(
+                  //   height: 60,
+                  // ),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //         child: OutlinedButton(
+                  //             style: ButtonStyle(
+                  //                 backgroundColor: MaterialStateProperty.all(
+                  //                     Colors.white)),
+                  //             onPressed: () {},
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.all(15.0),
+                  //               child: Text('View Analysis'),
+                  //             ))),
+                  //   ],
+                  // )
+                ],
               ),
             ),
           );

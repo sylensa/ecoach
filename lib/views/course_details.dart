@@ -12,6 +12,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/widgets/CoursesPageHeader.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ecoach/utils/manip.dart';
@@ -181,90 +182,91 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              height: 120,
-              child: Padding(
-                padding: EdgeInsets.only(left: 12.0, right: 12.0),
-                child: Center(
-                  child: Text(
-                    widget.courseInfo.title,
-                    style: kPageHeaderStyle,
-                  ),
+            CoursesPageHeader(
+              pageHeading: widget.courseInfo.title,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      child: CourseDetailCard(
+                        courseDetail: courseDetails[0],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings:
+                                  RouteSettings(name: LearnMode.routeName),
+                              builder: (context) {
+                                return LearnMode(
+                                    widget.user, widget.courseInfo.course);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      child: CourseDetailCard(
+                        courseDetail: courseDetails[1],
+                        onTap: () async {
+                          List<Topic> topics = await TestController()
+                              .getTopicsAndNotes(widget.courseInfo.course);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  settings: RouteSettings(
+                                      name: CourseDetailsPage.routeName),
+                                  builder: (context) {
+                                    return NotesTopics(widget.user, topics);
+                                  })).then((value) {
+                            setState(() {});
+                          });
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      child: CourseDetailCard(
+                        courseDetail: courseDetails[2],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(
+                                  name: CourseDetailsPage.routeName),
+                              builder: (context) {
+                                return TestTypeView(
+                                    widget.user, widget.courseInfo.course);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      child: CourseDetailCard(
+                        courseDetail: courseDetails[3],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      child: CourseDetailCard(
+                        courseDetail: courseDetails[4],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                      child: CourseDetailCard(
+                        courseDetail: courseDetails[5],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: courseDetails[0],
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: LearnMode.routeName),
-                      builder: (context) {
-                        return LearnMode(widget.user, widget.courseInfo.course);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: courseDetails[1],
-                onTap: () async {
-                  List<Topic> topics = await TestController()
-                      .getTopicsAndNotes(widget.courseInfo.course);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          settings:
-                              RouteSettings(name: CourseDetailsPage.routeName),
-                          builder: (context) {
-                            return NotesTopics(widget.user, topics);
-                          })).then((value) {
-                    setState(() {});
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: courseDetails[2],
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings:
-                          RouteSettings(name: CourseDetailsPage.routeName),
-                      builder: (context) {
-                        return TestTypeView(
-                            widget.user, widget.courseInfo.course);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: courseDetails[3],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: courseDetails[4],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: courseDetails[5],
               ),
             ),
             // Padding(
