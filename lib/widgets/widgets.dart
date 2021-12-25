@@ -135,14 +135,6 @@ class Button extends StatelessWidget {
   }
 }
 
-String parseHtmlString(String htmlString) {
-  final document = htmlparser.parse(htmlString);
-  final String parsedString =
-      htmlparser.parse(document.body!.text).documentElement!.text;
-
-  return parsedString;
-}
-
 List<String> getHtmlImageLinks(String body) {
   var document = htmlparser.parse(body);
   List<dom.Element> links = document.querySelectorAll('img');
@@ -155,26 +147,23 @@ List<String> getHtmlImageLinks(String body) {
   return imageLinks;
 }
 
-saveImageToDir(var _byteImage, String name) async {
+Future<File> saveImageToDir(var _byteImage, String name) async {
   Directory documentDirectory = await getApplicationDocumentsDirectory();
-  File file = new File(join(documentDirectory.path + '/images', name));
-  if (!(await file.exists())) {
-    print("file doesnt exist. creating ... ");
-    file.create(recursive: true);
-  }
+  File file = new File(join(documentDirectory.path, name));
   print('writing to file .................. .');
-  File f = await file.writeAsBytes(_byteImage);
-  if (await f.exists()) {
-    print("file exists");
-  } else {
-    print("file does not exist");
-    
-  }
+  return await file.writeAsBytes(_byteImage);
 }
 
 saveBase64(String base64, String name) async {
   print('saving base 64');
   print(base64);
+
   final _byteImage = Base64Decoder().convert(base64);
-  await saveImageToDir(_byteImage, name);
+  File f = await saveImageToDir(_byteImage, name);
+  print(f.path);
+  if (await f.exists()) {
+    print("file exists");
+  } else {
+    print("file does not exist");
+  }
 }

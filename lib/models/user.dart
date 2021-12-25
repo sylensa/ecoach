@@ -52,7 +52,7 @@ class User {
   }
 
   File getImageFile(String name) {
-    File file = new File(join(applicationDirPath + '/images', name));
+    File file = new File(join(applicationDirPath, name));
     return file;
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
@@ -12,6 +14,8 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:path_provider/path_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -44,6 +48,8 @@ class _LoginPageState extends State<LoginPage> {
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
         print("login: token=${user.token}");
+        Directory documentDirectory = await getApplicationDocumentsDirectory();
+        user.applicationDirPath = documentDirectory.path;
         UserPreferences().setUser(user);
         Navigator.pop(context);
         if (!user.activated) {

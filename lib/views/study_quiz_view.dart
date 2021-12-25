@@ -27,6 +27,7 @@ import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/views/study_cc_results.dart';
 import 'package:ecoach/views/study_mastery_results.dart';
 import 'package:ecoach/views/study_notes_view.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -892,32 +893,6 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
     super.initState();
   }
 
-  getTex(String? text) {
-    if (text == null) return "";
-
-    RegExp reg = RegExp(r'\\\((.+?)\\\)');
-    Iterable<RegExpMatch> matches = reg.allMatches(text);
-    print("matches count=${matches.length}");
-    List<String> subTexts = [];
-    matches.forEach((m) {
-      String mathEquation = text!.substring(m.start, m.end);
-      print("Match: ${mathEquation}");
-      subTexts.add(mathEquation);
-    });
-    subTexts.forEach((equation) {
-      text = text!.replaceAll(equation, "<tex> $equation </tex>");
-    });
-
-    text = text!
-        .replaceAll("<tex><tex>", "<tex>")
-        .replaceAll("</tex></tex>", "</tex>")
-        .replaceAll('\\(', "")
-        .replaceAll('\\)', "");
-
-    print(text);
-    return text;
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -944,41 +919,11 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Html(
-                    data: getTex(widget.question.text),
-                    style: {
-                      // tables will have the below background color
-                      "body": Style(
-                          color: textColor,
-                          fontSize: FontSize(18),
-                          textAlign: TextAlign.center),
-                    },
-                    customImageRenders: {
-                      networkSourceMatcher(): (context, attributes, element) {
-                        String? link = attributes['src'];
-                        if (link != null) {
-                          String name =
-                              link.substring(link.lastIndexOf("/") + 1);
-                          print("Image: $name");
-
-                          return Image.file(
-                            widget.user.getImageFile(name),
-                          );
-                        }
-                        return Text("No link");
-                      },
-                    },
-                    customRender: {
-                      'tex': (RenderContext context, child) {
-                        return Math.tex(
-                          context.tree.element!.text,
-                          textStyle: TextStyle(
-                            fontSize: 16,
-                          ),
-                        );
-                      },
-                    },
-                    tagsList: Html.tags..addAll(["tex"]),
+                  AdeoHtmlTex(
+                    widget.user,
+                    widget.question.text!,
+                    fontSize: 18,
+                    textColor: textColor,
                   ),
                   if (widget.question.resource != null &&
                       widget.question.resource != "")
@@ -994,42 +939,10 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 12),
                           ),
-                          Html(
-                            data: getTex(widget.question.resource),
-                            style: {
-                              // tables will have the below background color
-                              "body": Style(
-                                  color: Colors.white,
-                                  fontSize: FontSize(23),
-                                  textAlign: TextAlign.center),
-                            },
-                            customImageRenders: {
-                              networkSourceMatcher():
-                                  (context, attributes, element) {
-                                String? link = attributes['src'];
-                                if (link != null) {
-                                  String name =
-                                      link.substring(link.lastIndexOf("/") + 1);
-                                  print("Image: $name");
-
-                                  return Image.file(
-                                    widget.user.getImageFile(name),
-                                  );
-                                }
-                                return Text("No link");
-                              },
-                            },
-                            customRender: {
-                              'tex': (RenderContext context, child) {
-                                return Math.tex(
-                                  context.tree.element!.text,
-                                  textStyle: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                );
-                              },
-                            },
-                            tagsList: Html.tags..addAll(["tex"]),
+                          AdeoHtmlTex(
+                            widget.user,
+                            widget.question.resource!,
+                            textColor: Colors.white,
                           ),
                         ],
                       ),
@@ -1067,43 +980,12 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
-                            child: Html(
-                              data: correctAnswer != null
-                                  ? getTex(correctAnswer!.solution)
+                            child: AdeoHtmlTex(
+                              widget.user,
+                              correctAnswer != null
+                                  ? correctAnswer!.solution!
                                   : "----",
-                              style: {
-                                // tables will have the below background color
-                                "body": Style(
-                                  color: Colors.black,
-                                ),
-                              },
-                              customImageRenders: {
-                                networkSourceMatcher():
-                                    (context, attributes, element) {
-                                  String? link = attributes['src'];
-                                  if (link != null) {
-                                    String name = link
-                                        .substring(link.lastIndexOf("/") + 1);
-                                    print("Image: $name");
-
-                                    return Image.file(
-                                      widget.user.getImageFile(name),
-                                    );
-                                  }
-                                  return Text("No link");
-                                },
-                              },
-                              customRender: {
-                                'tex': (RenderContext context, child) {
-                                  return Math.tex(
-                                    context.tree.element!.text,
-                                    textStyle: TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                  );
-                                },
-                              },
-                              tagsList: Html.tags..addAll(["tex"]),
+                              textColor: Colors.black,
                             ),
                           ),
                         ),
@@ -1137,62 +1019,33 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
       width: getWidgetSize(answer).width,
       child: Stack(children: [
         TextButton(
-            style: ButtonStyle(
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                    side: BorderSide(
-                        color: getOutlineColor(answer, selectedColor)))),
-                minimumSize: MaterialStateProperty.all(getWidgetSize(answer)),
-                backgroundColor: MaterialStateProperty.all(
-                  getBackgroundColor(answer, selectedColor),
-                ),
-                foregroundColor: MaterialStateProperty.all(
-                    getBackgroundColor(answer, selectedColor))),
-            onPressed: () {
-              if (!widget.enabled) {
-                return;
-              }
-              setState(() {
-                selectedAnswer = widget.question.selectedAnswer = answer;
-                callback!(answer);
-              });
-            },
-            child: Html(
-              shrinkWrap: true,
-              data: getTex(answer.text),
-              style: {
-                "body": Style(
-                    color: getForegroundColor(answer),
-                    fontSize:
-                        selectedAnswer == answer ? FontSize(25) : FontSize(20),
-                    textAlign: TextAlign.center),
-              },
-              customImageRenders: {
-                networkSourceMatcher(): (context, attributes, element) {
-                  String? link = attributes['src'];
-                  if (link != null) {
-                    String name = link.substring(link.lastIndexOf("/") + 1);
-                    print("Image: $name");
-
-                    return Image.file(
-                      widget.user.getImageFile(name),
-                    );
-                  }
-                  return Text("No link");
-                },
-              },
-              customRender: {
-                'tex': (RenderContext context, child) {
-                  return Math.tex(
-                    context.tree.element!.text,
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                    ),
-                  );
-                },
-              },
-              tagsList: Html.tags..addAll(["tex"]),
-            )),
+          style: ButtonStyle(
+              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                  side: BorderSide(
+                      color: getOutlineColor(answer, selectedColor)))),
+              minimumSize: MaterialStateProperty.all(getWidgetSize(answer)),
+              backgroundColor: MaterialStateProperty.all(
+                getBackgroundColor(answer, selectedColor),
+              ),
+              foregroundColor: MaterialStateProperty.all(
+                  getBackgroundColor(answer, selectedColor))),
+          onPressed: () {
+            if (!widget.enabled) {
+              return;
+            }
+            setState(() {
+              selectedAnswer = widget.question.selectedAnswer = answer;
+              callback!(answer);
+            });
+          },
+          child: AdeoHtmlTex(
+            widget.user,
+            answer.text!,
+            textColor: getForegroundColor(answer),
+            fontSize: selectedAnswer == answer ? 25 : 20,
+          ),
+        ),
         getAnswerMarker(answer)
       ]),
     );

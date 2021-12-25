@@ -308,6 +308,12 @@ class DBProvider {
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       )""");
+
+      await db.execute("""CREATE TABLE 'images' (
+        id INTEGER PRIMARY KEY, 
+        'name' varchar(255) NOT NULL,
+        'base64' text NOT NULL
+      )""");
     }, onUpgrade: (db, oldVersion, newVersion) {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
