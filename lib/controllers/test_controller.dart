@@ -11,6 +11,7 @@ import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/test_type.dart';
 import 'package:http/http.dart' as http;
@@ -19,21 +20,21 @@ import 'dart:convert';
 class TestController {
   loadDiagnoticQuestion(Level level, Course course) async {
     User? user = await UserPreferences().getUser();
-    print(user!.token!);
+    // print(user!.token!);
     Map<String, dynamic> queryParams = {
       'level_id': jsonEncode(level.id),
       'course_id': jsonEncode(course.id),
       'limit': jsonEncode(20)
     };
-    print(queryParams);
-    print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    // print(queryParams);
+    // print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
     http.Response response = await http.get(
       Uri.parse(
           AppUrl.questions + '?' + Uri(queryParameters: queryParams).query),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'api-token': user.token!
+        'api-token': user!.token!
       },
     );
 
@@ -41,20 +42,20 @@ class TestController {
       Map<String, dynamic> responseData = json.decode(response.body);
       // print(responseData);
       if (responseData["status"] == true) {
-        print("messages returned");
-        print(response.body);
+        // print("messages returned");
+        // print(response.body);
 
         return ApiResponse<Question>.fromJson(response.body, (dataItem) {
-          print("it's fine here");
+          // print("it's fine here");
           return Question.fromJson(dataItem);
         });
       } else {
-        print("not successful event");
+        // print("not successful event");
       }
     } else {
-      print("Failed ....");
-      print(response.statusCode);
-      print(response.body);
+      // print("Failed ....");
+      // print(response.statusCode);
+      // print(response.body);
     }
   }
 
@@ -83,15 +84,15 @@ class TestController {
     Map<String, List<TestAnswer>> topicsMap = Map();
 
     String responses = test.responses;
-    print("respones:");
+    // print("respones:");
 
     responses = responses.replaceAll("(", "").replaceAll(")", "");
     // responses = jsonEncode(responses);
-    print(responses);
+    // print(responses);
     Map<String, dynamic> res = json.decode(responses);
-    print(res.runtimeType);
+    // print(res.runtimeType);
     List<TestAnswer>? answers = fromMap(res, (answer) {
-      print(answer);
+      // print(answer);
       return TestAnswer.fromJson(answer);
     });
 
@@ -110,11 +111,11 @@ class TestController {
   fromMap(Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
     List<TestAnswer> data = [];
     json.forEach((k, v) {
-      print(k);
+      // print(k);
       data.add(create(v));
     });
 
-    print(data);
+    // print(data);
     return data;
   }
 
@@ -155,7 +156,7 @@ class TestController {
           await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
       int totalCount = await QuestionDB().getTopicCount(id);
 
-      print("$name c=$count totat count=$totalCount");
+      // print("$name c=$count totat count=$totalCount");
       testNames.add(TestNameAndCount(name, count, totalCount,
           id: id, category: TestCategory.TOPIC));
     }
@@ -166,8 +167,8 @@ class TestController {
 
   getTopicsAndNotes(Course course) async {
     List<Topic> topics = await TopicDB().courseTopics(course);
-    print("topics and notes");
-    print(topics);
+    // print("topics and notes");
+    // print(topics);
     return topics;
   }
 
@@ -236,7 +237,7 @@ class TestController {
   Future<int> getQuestionsAnsweredCount(int courseId,
       {bool onlyAttempted = false, bool onlyCorrect = false}) async {
     List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
-    print("number of test= ${tests.length}");
+    // print("number of test= ${tests.length}");
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
       responses.addAll(jsonDecode(test.responses));

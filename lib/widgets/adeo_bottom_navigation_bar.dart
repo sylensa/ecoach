@@ -27,33 +27,39 @@ class AdeoBottomNavigationBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: items.map((item) {
           int index = items.indexOf(item);
+
           return GestureDetector(
-            onTap: () {
+            onTap: Feedback.wrapForTap(() {
               onItemSelected(index);
-            },
-            child: Container(
-              width: navbarHeight,
-              height: navbarHeight,
-              child: Stack(
-                children: [
-                  // if (selectedIndex == index)
-                  //   Container(
-                  //     width: double.infinity,
-                  //     height: 2.0,
-                  //     color: Color(0xFF00C664),
-                  //   ),
-                  Container(
-                    color: Colors.transparent,
-                    child: Center(
-                      child: Image.asset(
-                        'assets/icons/navigation/${item + '_'}${index == selectedIndex ? 'active' : 'inactive'}.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  )
-                ],
-              ),
+            }, context),
+            child: Icon(
+              index == selectedIndex ? item['active'] : item['inactive'],
+              size: index == selectedIndex ? 44 : 32,
+              color: index == selectedIndex ? Color(0xFF2A9CEA) : kAdeoGray3,
             ),
+            // child: Container(
+            //   width: navbarHeight,
+            //   height: navbarHeight,
+            //   child: Stack(
+            //     children: [
+            //       // if (selectedIndex == index)
+            //       //   Container(
+            //       //     width: double.infinity,
+            //       //     height: 2.0,
+            //       //     color: Color(0xFF00C664),
+            //       //   ),
+            //       Container(
+            //         color: Colors.transparent,
+            //         child: Center(
+            //           child: Image.asset(
+            //             'assets/icons/navigation/${item + '_'}${index == selectedIndex ? 'active' : 'inactive'}.png',
+            //             fit: BoxFit.fill,
+            //           ),
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            // ),
           );
         }).toList(),
       ),

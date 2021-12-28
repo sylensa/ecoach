@@ -157,7 +157,7 @@ class NotesTopicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: Feedback.wrapForTap(onTap, context),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(

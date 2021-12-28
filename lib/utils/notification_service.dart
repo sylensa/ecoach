@@ -35,7 +35,7 @@ class NotificationService {
 
   Future<dynamic> selectNotification(String? payload) async {
     if (payload == "download") {
-      print("Notification printout $payload");
+      // print("Notification printout $payload");
       User? user = await UserPreferences().getUser();
       navigatorKey.currentState!.pushAndRemoveUntil(
           MaterialPageRoute(
@@ -52,7 +52,7 @@ class NotificationService {
     String nowDate = nowDateStr.toString();
     nowDate = nowDate.substring(4);
     int id = int.parse(nowDate);
-    print("This is your id $id");
+    // print("This is your id $id");
     await flutterLocalNotificationsPlugin.show(
       id,
       title,

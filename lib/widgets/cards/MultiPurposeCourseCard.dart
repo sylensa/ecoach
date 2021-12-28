@@ -31,7 +31,7 @@ class MultiPurposeCourseCard extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: onTap,
+          onTap: Feedback.wrapForTap(onTap, context),
           child: Container(
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(

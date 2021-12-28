@@ -63,7 +63,7 @@ class NotesButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: onPressed,
+      onPressed: Feedback.wrapForTap(onPressed, context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

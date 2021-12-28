@@ -17,7 +17,7 @@ class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 2});
+  MainHomePage(this.user, {this.index = 1});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
@@ -41,8 +41,8 @@ class _MainHomePageState extends State<MainHomePage>
           tapping(tabNumber);
         },
       ),
-      StorePage(widget.user),
       CoursesPage(widget.user),
+      StorePage(widget.user),
       AnalysisView(),
       MoreView(
         widget.user,
@@ -133,7 +133,28 @@ class _MainHomePageState extends State<MainHomePage>
           bottomNavigationBar: AdeoBottomNavigationBar(
             selectedIndex: currentIndex,
             onItemSelected: tapping,
-            items: ['home', 'courses', 'adeo', 'analysis', 'account'],
+            items: [
+              {
+                'active': Icons.home_filled,
+                'inactive': Icons.home_outlined,
+              },
+              {
+                'active': Icons.school_rounded,
+                'inactive': Icons.school_outlined
+              },
+              {
+                'active': Icons.shop_rounded,
+                'inactive': Icons.shop_outlined,
+              },
+              {
+                'active': Icons.bar_chart,
+                'inactive': Icons.bar_chart_outlined,
+              },
+              {
+                'active': Icons.account_circle_rounded,
+                'inactive': Icons.account_circle_outlined,
+              },
+            ],
           ),
         ),
       ),

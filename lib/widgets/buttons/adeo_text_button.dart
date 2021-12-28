@@ -30,7 +30,7 @@ class AdeoTextButton extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        onPressed: onPressed,
+        onPressed: Feedback.wrapForTap(onPressed, context),
       ),
     );
   }

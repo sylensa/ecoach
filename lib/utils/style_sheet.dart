@@ -78,7 +78,7 @@ const kTwentyFourPointText = TextStyle(
 );
 
 const kPinInputTextStyle = TextStyle(
-  fontSize: 88.0,
+  fontSize: 102.0,
   fontWeight: FontWeight.normal,
   color: kDefaultBlack,
   height: 1.1,
@@ -88,4 +88,9 @@ const kPageHeaderStyle = TextStyle(
   color: Color(0xFF2A9CEA),
   fontFamily: 'Helvetica Rounded',
   fontSize: 28,
+);
+
+const kCustomizedTestSubtextStyle = TextStyle(
+  color: kDefaultBlack,
+  fontSize: 16.0,
 );

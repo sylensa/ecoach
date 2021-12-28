@@ -4,7 +4,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/widgets/AdeoTabControl.dart';
+import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/tab_bar_views/results_page_questions_view.dart';
 import 'package:ecoach/widgets/tab_bar_views/results_page_topics_view.dart';
 import 'package:ecoach/widgets/widgets.dart';

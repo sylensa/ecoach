@@ -12,7 +12,8 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/views/test_type.dart';
-import 'package:ecoach/widgets/CoursesPageHeader.dart';
+import 'package:ecoach/widgets/adeo_dialog.dart';
+import 'package:ecoach/widgets/courses_page_header.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ecoach/utils/manip.dart';
@@ -251,95 +252,83 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       padding: EdgeInsets.only(left: 24.0, right: 24.0),
                       child: CourseDetailCard(
                         courseDetail: courseDetails[3],
+                        onTap: () {
+                          return showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AdeoDialog(
+                                title: 'Live',
+                                content: 'Live sessions feature coming soon.',
+                                actions: [
+                                  AdeoDialogAction(
+                                    label: 'Dismiss',
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 24.0, right: 24.0),
                       child: CourseDetailCard(
                         courseDetail: courseDetails[4],
+                        onTap: () {
+                          return showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AdeoDialog(
+                                title: 'Games',
+                                content:
+                                    'Play educational games based on a course. Feature coming soon.',
+                                actions: [
+                                  AdeoDialogAction(
+                                    label: 'Dismiss',
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 24.0, right: 24.0),
                       child: CourseDetailCard(
                         courseDetail: courseDetails[5],
+                        onTap: () {
+                          return showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AdeoDialog(
+                                title: 'Progress',
+                                content:
+                                    'Track your progress feature coming soon.',
+                                actions: [
+                                  AdeoDialogAction(
+                                    label: 'Dismiss',
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            // Padding(
-            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            //   child: CourseDetailCard(
-            //     courseDetail: courseDetails[0],
-            //     onTap: () {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //               settings: RouteSettings(name: LearnMode.routeName),
-            //               builder: (context) {
-            //                 return LearnMode(
-            //                     widget.user, widget.courseInfo.course);
-            //               }));
-            //     },
-            //   ),
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            //   child: CourseDetailCard(
-            //       courseDetail: courseDetails[1],
-            //       hideProgress: true,
-            //       onTap: () async {
-            //         List<Topic> topics = await TestController()
-            //             .getTopicsAndNotes(widget.courseInfo.course);
-            //         Navigator.push(
-            //             context,
-            //             MaterialPageRoute(
-            //                 settings: RouteSettings(
-            //                     name: CourseDetailsPage.routeName),
-            //                 builder: (context) {
-            //                   return NotesTopics(widget.user, topics);
-            //                 })).then((value) {
-            //           setState(() {});
-            //         });
-            //       }),
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            //   child: CourseDetailCard(
-            //     courseDetail: CourseDetail(
-            //       title: lastTest,
-            //       background: kCourseColors[6]['background'],
-            //       icon: 'tests.png',
-            //       progress: courseProgress,
-            //       progressColor: kCourseColors[6]['progress'],
-            //       iconLabel: 'Tests',
-            //       subtitle1: 'Rank: $rank',
-            //       subGraphicsIsIcon: false,
-            //       subGraphics: 'reload.png',
-            //     ),
-            //     onTap: () {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //               settings:
-            //                   RouteSettings(name: CourseDetailsPage.routeName),
-            //               builder: (context) {
-            //                 return TestTypeView(
-            //                     widget.user, widget.courseInfo.course);
-            //               }));
-            //     },
-            //   ),
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            //   child: CourseDetailCard(courseDetail: courseDetails[3]),
-            // ),
-            // Padding(
-            //   padding: EdgeInsets.only(left: 24.0, right: 24.0),
-            //   child: CourseDetailCard(courseDetail: courseDetails[4]),
-            // ),
           ],
         ),
       ),

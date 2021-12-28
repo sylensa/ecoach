@@ -107,9 +107,9 @@ class AdeoTabButton extends StatelessWidget {
     return Row(
       children: [
         GestureDetector(
-          onTap: () {
+          onTap: Feedback.wrapForTap(() {
             onTap(pageNumber);
-          },
+          }, context),
           child: AnimatedContainer(
             duration: Duration(milliseconds: 500),
             curve: Curves.fastLinearToSlowEaseIn,

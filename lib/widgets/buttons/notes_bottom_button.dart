@@ -17,7 +17,7 @@ class NotesBottomButton extends StatelessWidget {
     return IgnorePointer(
       ignoring: ignore,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: Feedback.wrapForTap(onTap, context),
         child: Container(
           alignment: Alignment.center,
           height: 72.0,

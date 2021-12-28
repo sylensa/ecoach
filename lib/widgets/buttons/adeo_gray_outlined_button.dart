@@ -56,7 +56,7 @@ class AdeoGrayOutlinedButton extends StatelessWidget {
         ),
       ),
       child: Text(label),
-      onPressed: onPressed,
+      onPressed: Feedback.wrapForTap(onPressed, context),
     );
   }
 }

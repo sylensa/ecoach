@@ -5,9 +5,12 @@ ToastFuture? toast;
 List<String> messages = [];
 List<String> onlineMessages = [];
 
-showFeedback(BuildContext context, String message,
-    {duration = const Duration(seconds: 3),
-    position = StyledToastPosition.top}) {
+showFeedback(
+  BuildContext context,
+  String message, {
+  duration = const Duration(seconds: 3),
+  position = StyledToastPosition.top,
+}) {
   if (toast == null) {
     toast = showToast(message,
         context: context,

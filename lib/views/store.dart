@@ -5,7 +5,7 @@ import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/widgets/CoursesPageHeader.dart';
+import 'package:ecoach/widgets/courses_page_header.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';

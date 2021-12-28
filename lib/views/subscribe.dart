@@ -10,7 +10,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/user_setup.dart';
-import 'package:ecoach/widgets/AdeoTabControl.dart';
+import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/select_tile.dart';

@@ -1,8 +1,6 @@
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/general_utils.dart';
-import 'package:ecoach/views/download_page.dart';
-import 'package:ecoach/views/test_type.dart';
-import 'package:ecoach/widgets/widgets.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/src/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -17,6 +15,9 @@ import 'package:ecoach/widgets/cards/home_card.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// import 'package:ecoach/views/download_page.dart';
+// import 'package:ecoach/views/test_type.dart';
+// import 'package:ecoach/widgets/widgets.dart';
 
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
@@ -163,6 +164,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
+                  SizedBox(height: 12),
                   if (context.watch<DownloadUpdate>().isDownloading ||
                       context.watch<DownloadUpdate>().notificationUp)
                     SubscriptionNotificationWidget(
@@ -191,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                                   child: SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        SizedBox(height: 44),
+                                        SizedBox(height: 32),
                                         for (int i = 0; i < items.length; i++)
                                           Padding(
                                             padding: const EdgeInsets.fromLTRB(
