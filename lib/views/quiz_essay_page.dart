@@ -642,6 +642,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               child: SizedBox(
                 width: screenWidth(context) + 20,
                 child: ExpansionPanelList(
+                  //start changes here
                   dividerColor: Color(0xFF444444),
                   elevation: 0,
                   animationDuration: Duration(seconds: 1),

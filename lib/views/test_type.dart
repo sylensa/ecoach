@@ -4,7 +4,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/customized_test_introit.dart';
 import 'package:ecoach/views/test_challenge_list.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
-import 'package:ecoach/widgets/courses_page_header.dart';
+import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +36,7 @@ class _TestTypeViewState extends State<TestTypeView> {
           padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 24.0),
           child: Column(
             children: [
-              CoursesPageHeader(
+              PageHeader(
                 pageHeading: "Choose your test type",
               ),
               MultiPurposeCourseCard(

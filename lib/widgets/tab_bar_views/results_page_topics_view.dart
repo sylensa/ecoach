@@ -1,8 +1,9 @@
+import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/store.dart';
-import 'package:ecoach/widgets/adeo_switch.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
+import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,6 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     );
   }
 
-  calculatePercentage(int totalNumberOfQuestions, int correctlyAnswered) {
-    double fraction = correctlyAnswered / totalNumberOfQuestions;
-    double percentage = fraction * 100;
-    return percentage.toString() + '%';
-  }
-
   handleSelection(topic) {
     if (selected.contains(topic))
       setState(() {
@@ -63,43 +58,13 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     return Column(
       children: [
         SizedBox(height: 25),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    showInPercentage = !showInPercentage;
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      '%',
-                      style: TextStyle(
-                        color: Color(0xFF2A9CEA),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(width: 5),
-                    SizedBox(width: 5),
-                    AdeoSwitch(
-                      value: showInPercentage,
-                      activeColor: Color(0xFF2A9CEA),
-                      onChanged: (bool value) {
-                        setState(() {
-                          showInPercentage = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        PercentageSwitch(
+          showInPercentage: showInPercentage,
+          onChanged: (value) {
+            setState(() {
+              showInPercentage = value;
+            });
+          },
         ),
         SizedBox(height: 8),
         Expanded(
@@ -110,48 +75,60 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: MultiPurposeCourseCard(
-                  onTap: () {
-                    handleSelection(widget.topics[i]);
-                  },
-                  isActive: selected.contains(widget.topics[i]),
-                  title: widget.topics[i]['name'],
-                  subTitle: widget.topics[i]['rating'],
-                  rightWidget: showInPercentage
-                      ? Text(
-                          calculatePercentage(
-                            widget.topics[i]['total_questions'],
-                            widget.topics[i]['correctly_answered'],
-                          ),
-                          style: rightWidgetStyle(
-                            selected.contains(widget.topics[i]),
-                          ).copyWith(fontWeight: FontWeight.w700),
-                        )
-                      : Row(
-                          children: [
-                            Text(
-                              widget.topics[i]['correctly_answered'].toString(),
-                              style: rightWidgetStyle(
-                                selected.contains(widget.topics[i]),
-                              ).copyWith(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              '/',
-                              style: rightWidgetStyle(
-                                selected.contains(widget.topics[i]),
-                              ),
-                            ),
-                            Text(
-                              widget.topics[i]['total_questions'].toString(),
-                              style: rightWidgetStyle(
-                                selected.contains(widget.topics[i]),
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
+                    onTap: () {
+                      handleSelection(widget.topics[i]);
+                    },
+                    isActive: selected.contains(widget.topics[i]),
+                    title: widget.topics[i]['name'],
+                    subTitle: widget.topics[i]['rating'],
+                    rightWidget: showInPercentage
+                        ? PercentageSnippet(
+                            correctlyAnswered: widget.topics[i]
+                                ['correctly_answered'],
+                            totalQuestions: widget.topics[i]['total_questions'],
+                            isSelected: selected.contains(widget.topics[i]),
+                          )
+                        // Text(
+                        //     calculatePercentage(
+                        //       widget.topics[i]['total_questions'],
+                        //       widget.topics[i]['correctly_answered'],
+                        //     ),
+                        //     style: rightWidgetStyle(
+                        //       selected.contains(widget.topics[i]),
+                        //     ).copyWith(fontWeight: FontWeight.w700),
+                        //   )
+                        : FractionSnippet(
+                            correctlyAnswered: widget.topics[i]
+                                ['correctly_answered'],
+                            totalQuestions: widget.topics[i]['total_questions'],
+                            isSelected: selected.contains(widget.topics[i]),
+                          )
+                    // Row(
+                    //     children: [
+                    //       Text(
+                    //         widget.topics[i]['correctly_answered'].toString(),
+                    //         style: rightWidgetStyle(
+                    //           selected.contains(widget.topics[i]),
+                    //         ).copyWith(
+                    //           fontSize: 20,
+                    //           fontWeight: FontWeight.w600,
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         '/',
+                    //         style: rightWidgetStyle(
+                    //           selected.contains(widget.topics[i]),
+                    //         ),
+                    //       ),
+                    //       Text(
+                    //         widget.topics[i]['total_questions'].toString(),
+                    //         style: rightWidgetStyle(
+                    //           selected.contains(widget.topics[i]),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    ),
               );
             },
           ),

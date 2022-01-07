@@ -153,7 +153,7 @@ class CustomizeModeSelector extends StatelessWidget {
                 )
               : Border(),
         ),
-        duration: Duration(milliseconds: 300),
+        duration: Duration(milliseconds: 100),
         child: Text(
           label,
           textAlign: TextAlign.center,

@@ -458,14 +458,15 @@ class QuestionTabView extends StatelessWidget {
         var question = questions[i];
 
         return QuestionCard(
-            question: question,
-            questionNumber: (i + 1).toString(),
-            isSaved: savedQuestions.contains(question['id']),
-            isSelected: selectedQuestions.contains(question),
-            onSaveToggled: onQuestionToggled,
-            onSelected: () {
-              onSelected(question);
-            });
+          question: question,
+          questionNumber: (i + 1).toString(),
+          isSaved: savedQuestions.contains(question['id']),
+          isSelected: selectedQuestions.contains(question),
+          onSaveToggled: onQuestionToggled,
+          onSelected: () {
+            onSelected(question);
+          },
+        );
       },
     );
   }

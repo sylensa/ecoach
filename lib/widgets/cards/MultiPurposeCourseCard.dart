@@ -1,4 +1,6 @@
+import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/utils/manip.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
 class MultiPurposeCourseCard extends StatelessWidget {
@@ -121,6 +123,68 @@ class MultiPurposeCourseCard extends StatelessWidget {
         ),
         SizedBox(height: 16),
       ],
+    );
+  }
+}
+
+class FractionSnippet extends StatelessWidget {
+  const FractionSnippet({
+    Key? key,
+    required this.correctlyAnswered,
+    required this.totalQuestions,
+    required this.isSelected,
+  }) : super(key: key);
+
+  final correctlyAnswered;
+  final totalQuestions;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          correctlyAnswered.toString(),
+          style: kRightWidgetStyle(isSelected).copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Text(
+          '/',
+          style: kRightWidgetStyle(isSelected),
+        ),
+        Text(
+          totalQuestions.toString(),
+          style: kRightWidgetStyle(isSelected),
+        ),
+      ],
+    );
+  }
+}
+
+class PercentageSnippet extends StatelessWidget {
+  const PercentageSnippet({
+    Key? key,
+    required this.correctlyAnswered,
+    required this.totalQuestions,
+    required this.isSelected,
+  }) : super(key: key);
+
+  final correctlyAnswered;
+  final totalQuestions;
+  final bool isSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      calculatePercentage(
+        totalQuestions,
+        correctlyAnswered,
+      ),
+      style: kRightWidgetStyle(isSelected).copyWith(
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 }
