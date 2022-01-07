@@ -21,6 +21,7 @@ class Quiz {
       this.confirmed,
       this.questions});
 
+  int? key;
   int? id;
   int? courseId;
   int? topicId;

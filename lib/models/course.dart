@@ -24,6 +24,7 @@ class Course {
       this.levels,
       this.questions});
 
+  int? key;
   int? id;
   String? packageCode;
   String? courseId;

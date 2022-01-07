@@ -8,6 +8,8 @@ class Topic {
       this.name,
       this.imageURL,
       this.notes});
+
+  int? key;
   int? id;
   int? courseId;
   String? topicId;
