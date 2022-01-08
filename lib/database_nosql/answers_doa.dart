@@ -45,12 +45,15 @@ class AnswerDao {
     return map == null ? null : Answer.fromJson(map.value);
   }
 
-  Future<void> insertAll(List<Answer> answers) async {
+  Future<void> insertAll(txn, List<Answer> answers) async {
+    print("save answer len=${answers.length}");
     List<Map<String, Object?>> jsons = [];
     for (int i = 0; i < answers.length; i++) {
       jsons.add(answers[i].toJson());
     }
-    await _answerStore.addAll(await _db, jsons);
+
+    await _answerStore.addAll(txn, jsons);
+    print("done");
   }
 
   Future<List<Answer>> answers() async {

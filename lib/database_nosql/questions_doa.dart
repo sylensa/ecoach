@@ -59,16 +59,24 @@ class QuestionDao {
     return question;
   }
 
-  Future<void> insertAll(List<Question> questions) async {
+  Future<void> insertAll(txn, List<Question> questions) async {
+    print("inser questions");
     List<Map<String, Object?>> jsons = [];
     List<Answer> answers = [];
     for (int i = 0; i < questions.length; i++) {
       jsons.add(questions[i].toJson());
       answers.addAll(questions[i].answers!);
     }
-    await _questionStore.addAll(await _db, jsons);
+    print("questions = ${jsons.length}");
+
+    // for (int i = 0; i < jsons.length; i++) {
+    //   print("saving a question id = $i");
+    //   await _questionStore.add(txn, jsons[i]);
+    // }
+    await _questionStore.addAll(txn, jsons);
+    print("saving answers");
     if (answers.length > 0) {
-      await AnswerDao().insertAll(answers);
+      await AnswerDao().insertAll(txn, answers);
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:ecoach/database_nosql/questions_doa.dart';
 import 'package:ecoach/database_nosql/sem_doa.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:sembast/sembast.dart';
 
@@ -22,9 +23,12 @@ class CourseDao {
 
       List<Question> questions = course.questions!;
       if (questions.length > 0) {
-        QuestionDao().insertAll(questions);
+        print("saving questions for ${course.name}");
+        await QuestionDao().insertAll(txn, questions);
+        print("done saving questions");
       }
     });
+    print("transaction is done");
   }
 
   Future update(Course course) async {
@@ -54,10 +58,29 @@ class CourseDao {
 
   Future<void> insertAll(List<Course> courses) async {
     List<Map<String, Object?>> jsons = [];
+    List<Map<String, Object?>> courseLevel = [];
     for (int i = 0; i < courses.length; i++) {
       jsons.add(courses[i].toJson());
+      List<Level> levels = courses[i].levels!;
+      if (levels.length > 0) {
+        for (int j = 0; j < levels.length; j++) {
+          Level level = levels[j];
+          courseLevel.add({'course_id': courses[i].id, 'level_id': level.id});
+        }
+      }
     }
-    await _courseStore.addAll(await _db, jsons);
+
+    Database db = await _db;
+    await db.transaction((txn) async {
+      await _courseStore.addAll(await _db, jsons);
+
+      StoreRef<int, Map<String, Object?>> _coursesLevelStore =
+          intMapStoreFactory.store("courses_levels");
+      await _coursesLevelStore.delete(
+        txn,
+      );
+      await _coursesLevelStore.addAll(await _db, courseLevel);
+    });
   }
 
   Future<List<Course>> courses() async {

@@ -22,7 +22,7 @@ class QuizDao {
 
       List<Question> questions = quizze.questions!;
       if (questions.length > 0) {
-        QuestionDao().insertAll(questions);
+        await QuestionDao().insertAll(txn, questions);
       }
     });
   }
@@ -53,25 +53,26 @@ class QuizDao {
   }
 
   Future<void> insertAll(List<Quiz> quizzes) async {
+    print("inserting all quizzes");
     List<Map<String, Object?>> jsons = [];
     List<Map<String, Object?>> quizItems = [];
     for (int i = 0; i < quizzes.length; i++) {
       jsons.add(quizzes[i].toJson());
       List<Question> questions = quizzes[i].questions!;
       if (questions.length > 0) {
-        for (int i = 0; i < questions.length; i++) {
-          Question question = questions[i];
+        for (int j = 0; j < questions.length; j++) {
+          Question question = questions[j];
           quizItems.add({'quiz_id': quizzes[i].id, 'question_id': question.id});
         }
       }
     }
     Database db = await _db;
     await db.transaction((txn) async {
-      await _quizStore.addAll(await _db, jsons);
+      await _quizStore.addAll(txn, jsons);
 
       StoreRef<int, Map<String, Object?>> _quizItemStore =
           intMapStoreFactory.store("quiz_items");
-      await _quizItemStore.addAll(await _db, quizItems);
+      await _quizItemStore.addAll(txn, quizItems);
     });
   }
 

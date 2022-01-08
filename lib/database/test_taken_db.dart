@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ecoach/database_nosql/course_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/database/course_db.dart';
@@ -47,7 +48,7 @@ class TestTakenDB {
     List<TestTaken> tests = [];
     for (int i = 0; i < maps.length; i++) {
       TestTaken test = TestTaken.fromJson(maps[i]);
-      Course? course = await CourseDB().getCourseById(test.courseId!);
+      Course? course = await CourseDao().getCourseById(test.courseId!);
 
       if (course != null) {
         test.courseName = course.name!;

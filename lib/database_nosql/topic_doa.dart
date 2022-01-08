@@ -51,6 +51,7 @@ class TopicDao {
     for (int i = 0; i < topics.length; i++) {
       jsons.add(topics[i].toJson());
     }
+    print("insert all topics len=${jsons.length}");
     await _topicStore.addAll(await _db, jsons);
   }
 
