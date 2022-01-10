@@ -1,4 +1,3 @@
-
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
@@ -160,7 +159,7 @@ class _BundleDownloadState extends State<BundleDownload> {
                             Text(
                               widget.bundle.name!.toUpperCase(),
                               style: TextStyle(
-                                fontSize: 40.0,
+                                fontSize: 30.0,
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500,
                               ),
