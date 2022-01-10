@@ -1,7 +1,4 @@
 import 'package:ecoach/api/api_response.dart';
-import 'package:ecoach/database_nosql/questions_doa.dart';
-import 'package:ecoach/database_nosql/quiz_doa.dart';
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
@@ -63,7 +60,7 @@ class TestController {
   }
 
 //  saveQuestionsLocally (List<Question> questions) {
-//     QuestionDao().insertAll(questions);
+//     QuestionDB().insertAll(questions);
 //   }
 
   saveTestTaken(TestTaken test) {
@@ -71,16 +68,16 @@ class TestController {
   }
 
   Future<List<Question>> getQuizQuestions(int quizId, {int? limit = 40}) {
-    return QuizDao().getQuestions(quizId, limit!);
+    return QuizDB().getQuestions(quizId, limit!);
   }
 
   Future<List<Question>> getMockQuestions(int courseId, {int? limit = 40}) {
-    return QuestionDao().getRandomQuestions(courseId, limit!);
+    return QuestionDB().getRandomQuestions(courseId, limit!);
   }
 
   Future<List<Question>> getTopicQuestions(List<int> topicIds,
       {int? limit = 40}) {
-    return QuestionDao().getTopicQuestions(topicIds, limit!);
+    return QuestionDB().getTopicQuestions(topicIds, limit!);
   }
 
   Future<Map<String, List<TestAnswer>>> topicsAnalysis(TestTaken test) async {
@@ -124,18 +121,18 @@ class TestController {
 
   getMockTests(Course course, {limit = 40}) async {
     List<Question> questions =
-        await QuestionDao().getRandomQuestions(course.id!, limit);
+        await QuestionDB().getRandomQuestions(course.id!, limit);
 
     return questions;
   }
 
   getExamTests(Course course) async {
-    List<Quiz> quizzes = await QuizDao().getQuizzesByType(course.id!, "EXAM");
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "EXAM");
 
     List<TestNameAndCount> testNames = [];
     for (int i = 0; i < quizzes.length; i++) {
       Quiz quiz = quizzes[i];
-      int totalCount = await QuizDao().getQuestionsCount(quiz.id!);
+      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
       testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
           id: quiz.id, category: TestCategory.EXAM));
     }
@@ -144,11 +141,11 @@ class TestController {
   }
 
   getLevelTopic(Course course, int? level) {
-    return TopicDao().getLevelTopic(course.id!, level!);
+    return TopicDB().getLevelTopic(course.id!, level!);
   }
 
   getTopics(Course course) async {
-    Map<int, String> topics = await QuestionDao().questionTopics(course.id!);
+    Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 
     List<TestNameAndCount> testNames = [];
     for (int i = 0; i < topics.length; i++) {
@@ -157,7 +154,7 @@ class TestController {
 
       int count =
           await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
-      int totalCount = await QuestionDao().getTopicCount(id);
+      int totalCount = await QuestionDB().getTopicCount(id);
 
       // print("$name c=$count totat count=$totalCount");
       testNames.add(TestNameAndCount(name, count, totalCount,
@@ -169,7 +166,7 @@ class TestController {
   }
 
   getTopicsAndNotes(Course course) async {
-    List<Topic> topics = await TopicDao().courseTopics(course);
+    List<Topic> topics = await TopicDB().courseTopics(course);
     // print("topics and notes");
     // print(topics);
     return topics;
@@ -177,13 +174,13 @@ class TestController {
 
   getEssays(Course course, int limit) async {
     List<Question> questions =
-        await QuestionDao().getQuestionsByType(course.id!, "ESSAY", limit);
+        await QuestionDB().getQuestionsByType(course.id!, "ESSAY", limit);
 
     return questions;
   }
 
   Future<List<Question>> getSavedTests(Course course) async {
-    // List<Quiz> quizzes = await QuizDao().getQuizzesByType(course.id!, "SAVED");
+    // List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "SAVED");
 
     // List<TestNameAndCount> testNames = [];
     // quizzes.forEach((quiz) {
@@ -195,12 +192,12 @@ class TestController {
   }
 
   getBankTest(Course course) async {
-    List<Quiz> quizzes = await QuizDao().getQuizzesByName(course.id!, "BANK");
+    List<Quiz> quizzes = await QuizDB().getQuizzesByName(course.id!, "BANK");
 
     List<TestNameAndCount> testNames = [];
     for (int i = 0; i < quizzes.length; i++) {
       Quiz quiz = quizzes[i];
-      int totalCount = await QuizDao().getQuestionsCount(quiz.id!);
+      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
       testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
           id: quiz.id, category: TestCategory.BANK));
     }
@@ -270,7 +267,7 @@ class TestController {
   Future<double> getCourseProgress(courseId) async {
     int totalTaken =
         await getQuestionsAnsweredCount(courseId, onlyAttempted: true);
-    int totalQuestions = await QuestionDao().getTotalQuestionCount(courseId);
+    int totalQuestions = await QuestionDB().getTotalQuestionCount(courseId);
     if (totalQuestions == 0) return 0;
     return totalTaken / totalQuestions;
   }
@@ -282,7 +279,7 @@ class TestController {
   Future<List<Question>> getCustomizedQuestions(
       Course course, int numberOfQuestions) async {
     List<Question> questions =
-        await QuestionDao().getRandomQuestions(course.id!, numberOfQuestions);
+        await QuestionDB().getRandomQuestions(course.id!, numberOfQuestions);
 
     return questions;
   }

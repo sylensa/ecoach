@@ -1,7 +1,6 @@
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
@@ -142,7 +141,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                       child: Button(
                         label: 'revise',
                         onPressed: () async {
-                          Topic? topic = await TopicDao()
+                          Topic? topic = await TopicDB()
                               .getTopicById(controller.progress.topicId!);
 
                           if (topic != null) {
@@ -170,7 +169,7 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                         label: 'Continue',
                         onPressed: () async {
                           int nextLevel = controller.nextLevel;
-                          Topic? topic = await TopicDao()
+                          Topic? topic = await TopicDB()
                               .getLevelTopic(controller.course.id!, nextLevel);
                           if (topic != null) {
                             print("${topic.name}");

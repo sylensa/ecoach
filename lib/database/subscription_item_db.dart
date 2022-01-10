@@ -1,8 +1,5 @@
 import 'dart:convert';
 import 'package:ecoach/api/package_downloader.dart';
-import 'package:ecoach/database_nosql/course_doa.dart';
-import 'package:ecoach/database_nosql/questions_doa.dart';
-import 'package:ecoach/database_nosql/quiz_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -23,8 +20,10 @@ class SubscriptionItemDB {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       if (subscriptionItem.course != null) {
-        await CourseDao().insert(subscriptionItem.course!);
-        await QuizDao().insertAll(subscriptionItem.quizzes!);
+        Batch batch = txn.batch();
+        await CourseDB().insert(batch, subscriptionItem.course!);
+        await QuizDB().insertAll(batch, subscriptionItem.quizzes!);
+        batch.commit();
       }
     });
   }
@@ -131,10 +130,10 @@ class SubscriptionItemDB {
         resettablePeriod: maps[i]["resettable_period"],
         createdAt: DateTime.parse(maps[i]["created_at"]),
         updatedAt: DateTime.parse(maps[i]["updated_at"]),
-        course: await CourseDao().getCourseById(int.parse(maps[i]['tag'])),
-        quizCount: await QuizDao().quizCount(int.parse(maps[i]['tag'])),
-        questionCount: await QuestionDao()
-            .getTotalQuestionCount(int.parse(maps[i]['tag'])),
+        course: await CourseDB().getCourseById(int.parse(maps[i]['tag'])),
+        quizCount: await QuizDB().quizCount(int.parse(maps[i]['tag'])),
+        questionCount:
+            await QuestionDB().getTotalQuestionCount(int.parse(maps[i]['tag'])),
       ));
     }
     return items;
@@ -152,7 +151,7 @@ class SubscriptionItemDB {
     List<Course> items = [];
     for (int i = 0; i < maps.length; i++) {
       Course? course =
-          await CourseDao().getCourseById(int.parse(maps[i]['tag']));
+          await CourseDB().getCourseById(int.parse(maps[i]['tag']));
       print(int.parse(maps[i]['tag']));
       if (course != null) {
         print(course.toJson());

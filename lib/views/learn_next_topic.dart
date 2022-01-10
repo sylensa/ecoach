@@ -1,6 +1,5 @@
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
@@ -45,7 +44,7 @@ class LearnNextTopic extends StatelessWidget {
           mainActionColor: kAdeoCoral,
           mainActionOnPressed: () async {
             int topicId = topic.topicId!;
-            Topic? currentTopic = await TopicDao().getTopicById(topicId);
+            Topic? currentTopic = await TopicDB().getTopicById(topicId);
             Navigator.push(
                 context,
                 MaterialPageRoute(

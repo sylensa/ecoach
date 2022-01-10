@@ -57,29 +57,26 @@ class QuizDB {
     });
   }
 
-  Future<void> insertAll(List<Quiz> quizzes) async {
-    final Database? db = await DBProvider.database;
-    await db!.transaction((txn) async {
-      for (int i = 0; i < quizzes.length; i++) {
-        Quiz element = quizzes[i];
-        txn.insert(
-          'quizzes',
-          element.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-        List<Question> questions = element.questions!;
-        if (questions.length > 0) {
-          for (int i = 0; i < questions.length; i++) {
-            Question question = questions[i];
-            txn.insert(
-              "quiz_items",
-              {'quiz_id': element.id, 'question_id': question.id},
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-          }
+  Future<void> insertAll(Batch batch, List<Quiz> quizzes) async {
+    for (int i = 0; i < quizzes.length; i++) {
+      Quiz element = quizzes[i];
+      batch.insert(
+        'quizzes',
+        element.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      List<Question> questions = element.questions!;
+      if (questions.length > 0) {
+        for (int i = 0; i < questions.length; i++) {
+          Question question = questions[i];
+          batch.insert(
+            "quiz_items",
+            {'quiz_id': element.id, 'question_id': question.id},
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
         }
       }
-    });
+    }
   }
 
   Future<List<Quiz>> quizzes() async {

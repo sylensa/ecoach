@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -23,7 +22,7 @@ class QuestionDB {
       );
       Topic? topic = question.topic;
       if (topic != null) {
-        await TopicDao().insert(topic);
+        await TopicDB().insert(topic);
       }
       List<Answer> answers = question.answers!;
       if (answers.length > 0) {
@@ -58,7 +57,7 @@ class QuestionDB {
       );
       Topic? topic = element.topic;
       if (topic != null) {
-        await TopicDao().insert(topic);
+        await TopicDB().insert(topic);
       }
       List<Answer> answers = element.answers!;
       if (answers.length > 0) {

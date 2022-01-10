@@ -7,7 +7,6 @@ import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
@@ -92,7 +91,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   notesButton() async {
-    Topic? topic = await TopicDao().getTopicById(controller.progress.topicId!);
+    Topic? topic = await TopicDB().getTopicById(controller.progress.topicId!);
     controller.saveTest(context, (test, success) async {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return StudyNoteView(topic!, controller: controller);
@@ -141,7 +140,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
       int nextLevel = controller.nextLevel;
       Topic? topic =
-          await TopicDao().getLevelTopic(controller.course.id!, nextLevel);
+          await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
       if (topic == null) pageIndex = 1;
     }
 

@@ -1,7 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/study_db.dart';
-import 'package:ecoach/database_nosql/course_doa.dart';
 import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
@@ -67,7 +66,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
         lastStudy = "No Study Yet";
         return;
       }
-      CourseDao().getCourseById(value.courseId!).then((value) {
+      CourseDB().getCourseById(value.courseId!).then((value) {
         setState(() {
           if (value == null) lastStudy = "";
           lastStudy = value!.name!;

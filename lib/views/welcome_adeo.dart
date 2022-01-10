@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/api/api_response.dart';
-import 'package:ecoach/database_nosql/course_doa.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/new_user_data.dart';
@@ -43,7 +42,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
       }, onCallback: (data) {
         if (data != null) {
           LevelDB().insertAll(data!.levels!);
-          CourseDao().insertAll(data!.courses!);
+          CourseDB().insertAll(data!.courses!);
         }
         Navigator.pop(context);
       }, onError: (e) {
@@ -405,7 +404,7 @@ class _SelectCourseState extends State<SelectCourse> {
   }
 
   getCourses(int levelId) async {
-    return await CourseDao().levelCourses(levelId);
+    return await CourseDB().levelCourses(levelId);
   }
 
   @override

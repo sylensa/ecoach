@@ -1,7 +1,6 @@
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -118,7 +117,7 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                   }
 
                   Topic? topic =
-                      await TopicDao().getLevelTopic(controller.course.id!, 1);
+                      await TopicDB().getLevelTopic(controller.course.id!, 1);
                   if (topic != null) {
                     print("${topic.name}");
                     StudyProgress progress = StudyProgress(

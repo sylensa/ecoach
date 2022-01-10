@@ -5,8 +5,6 @@ import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/database_nosql/questions_doa.dart';
-import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
@@ -39,7 +37,7 @@ class LearnImageScreens extends StatelessWidget {
             mainActionColor: Color(0xFFFB7B76),
             mainActionOnPressed: () async {
               int nextLevel = studyController.nextLevel;
-              Topic? topic = await TopicDao()
+              Topic? topic = await TopicDB()
                   .getLevelTopic(studyController.course.id!, nextLevel);
               if (topic != null) {
                 print("${topic.name}");
@@ -53,7 +51,7 @@ class LearnImageScreens extends StatelessWidget {
                     updatedAt: DateTime.now());
                 await StudyDB().insertProgress(progress);
                 List<Question> questions =
-                    await QuestionDao().getTopicQuestions([topic.id!], 10);
+                    await QuestionDB().getTopicQuestions([topic.id!], 10);
 
                 Navigator.pushAndRemoveUntil(context,
                     MaterialPageRoute(builder: (context) {
