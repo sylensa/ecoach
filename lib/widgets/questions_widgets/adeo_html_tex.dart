@@ -1,4 +1,3 @@
-import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';

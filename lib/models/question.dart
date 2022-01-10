@@ -24,6 +24,7 @@ class Question {
     this.topic,
   });
 
+  int? key;
   int? id;
   int? courseId;
   int? topicId;
@@ -128,6 +129,7 @@ class Answer {
     this.editors,
   });
 
+  int? key;
   int? id;
   int? questionId;
   String? text;

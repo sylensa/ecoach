@@ -5,6 +5,9 @@ import 'dart:io';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/database_nosql/course_doa.dart';
+import 'package:ecoach/database_nosql/quiz_doa.dart';
+import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/image.dart';
 import 'package:ecoach/models/subscription.dart';
@@ -160,10 +163,17 @@ class MainController {
 
         print("saving ${subscriptionItem.name}\n data");
 
-        await CourseDB().insert(subscriptionItem.course!);
-        await QuizDB().insertAll(subscriptionItem.quizzes!);
-        await TopicDB().insertAll(subscriptionItem.topics!);
+        // await CourseDB().insert(subscriptionItem.course!);
+        // await QuizDB().insertAll(subscriptionItem.quizzes!);
+        // await TopicDB().insertAll(subscriptionItem.topics!);
 
+        await CourseDao().insert(subscriptionItem.course!);
+        provider.updateMessage("saving $filename quizzes");
+        await QuizDao().insertAll(subscriptionItem.quizzes!);
+        provider.updateMessage("saving $filename topics");
+        await TopicDao().insertAll(subscriptionItem.topics!);
+
+provider.updateMessage("saving $filename images");
         List<ImageFile> images = subscriptionItem.images!;
 
         for (int i = 0; i < images.length; i++) {

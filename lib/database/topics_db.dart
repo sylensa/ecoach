@@ -7,9 +7,6 @@ import 'package:sqflite/sqflite.dart';
 
 class TopicDB {
   Future<void> insert(Topic topic) async {
-    if (topic == null) {
-      return;
-    }
     // print(topic.toJson());
     final Database? db = await DBProvider.database;
     db!.transaction((txn) async {
