@@ -42,6 +42,8 @@ const kAnalysisInfoSnippetBackground3 = Color(0xFF13BFA3);
 const kNavigationTopBorderColor = Color(0xFFC0C0C0);
 const kAdeoTaupe = Color(0xFFFFB444);
 const kAdeoBlue = Color(0xFF00ABE0);
+const kAdeoBlue2 = Color(0xFF2A9CEA);
+const kAdeoBlueAccent = Color(0xFF9EE4FF);
 const kAdeoGreen = Color(0xFF00C664);
 const kAdeoWhiteAlpha40 = Color(0x66FFFFFF);
 const kAdeoWhiteAlpha81 = Color(0xCFFFFFFF);
@@ -49,6 +51,8 @@ const kAdeoGray = Color(0xFFF1F1F1);
 const kAdeoGray2 = Color(0xFF707070);
 const kAdeoGray3 = Color(0xFFA2A2A2);
 const kAdeoCoral = Color(0xFFFB7B76);
+const kAdeoOrange = Color(0xFFFF4F18);
+const kAdeoRoyalBlue = Color(0xFF2D3E50);
 const kPageBackgroundGray = Color(0xFFF0F0F0);
 const kDividerColor = Color(0xFF707070);
 
@@ -94,3 +98,32 @@ const kCustomizedTestSubtextStyle = TextStyle(
   color: kDefaultBlack,
   fontSize: 16.0,
 );
+
+const kSpeedTestSubtextStyle = TextStyle(
+  color: Colors.white,
+  fontSize: 18.0,
+);
+
+TextStyle kRightWidgetStyle(bool isSelected) {
+  return TextStyle(
+    fontSize: 11,
+    color: isSelected ? Colors.white : Color(0xFF2A9CEA),
+  );
+}
+
+TextStyle kIntroitScreenHeadingStyle({Color color = kDefaultBlack}) {
+  return TextStyle(
+    color: color,
+    fontSize: 40,
+    fontFamily: 'Hamelin',
+  );
+}
+
+TextStyle kIntroitScreenSubHeadingStyle({Color color = kDefaultBlack}) {
+  return TextStyle(
+    color: color,
+    fontSize: 11,
+    fontWeight: FontWeight.w500,
+    fontStyle: FontStyle.italic,
+  );
+}

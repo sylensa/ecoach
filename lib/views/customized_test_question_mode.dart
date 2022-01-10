@@ -1,7 +1,7 @@
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test_new_screen.dart';
 import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
-import 'package:ecoach/widgets/layouts/customised_test_layout.dart';
+import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:flutter/material.dart';
 
 class CustomizedTestQuestionMode extends StatelessWidget {
@@ -11,9 +11,11 @@ class CustomizedTestQuestionMode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomizedTestLayout(
+    return TestIntroitLayout(
+      background: kAdeoTaupe,
+      backgroundImageURL: 'assets/images/deep_pool_taupe.png',
       pages: [
-        CustomizedLayoutPage(
+        TestIntroitLayoutPage(
           title: 'Time',
           subText: 'Allocation per question',
           middlePiece: Column(
@@ -32,10 +34,10 @@ class CustomizedTestQuestionMode extends StatelessWidget {
           ),
           footer: AdeoOutlinedButton(
             label: 'Next',
-            onPressed: CustomizedTestLayout.goForward,
+            onPressed: TestIntroitLayout.goForward,
           ),
         ),
-        CustomizedLayoutPage(
+        TestIntroitLayoutPage(
           title: 'Questions',
           subText: 'Enter your preferred number',
           middlePiece: Column(
@@ -57,12 +59,12 @@ class CustomizedTestQuestionMode extends StatelessWidget {
             children: [
               AdeoOutlinedButton(
                 label: 'Previous',
-                onPressed: CustomizedTestLayout.goBack,
+                onPressed: TestIntroitLayout.goBack,
               ),
               SizedBox(width: 8.0),
               AdeoOutlinedButton(
                 label: 'Next',
-                onPressed: CustomizedTestLayout.goForward,
+                onPressed: TestIntroitLayout.goForward,
               )
             ],
           ),
@@ -72,8 +74,8 @@ class CustomizedTestQuestionMode extends StatelessWidget {
     );
   }
 
-  CustomizedLayoutPage getInstructionsPage(BuildContext context) {
-    return CustomizedLayoutPage(
+  TestIntroitLayoutPage getInstructionsPage(BuildContext context) {
+    return TestIntroitLayoutPage(
       title: 'Instructions',
       middlePiece: Container(
         width: double.infinity,
@@ -145,7 +147,7 @@ class CustomizedTestQuestionMode extends StatelessWidget {
         children: [
           AdeoOutlinedButton(
             label: 'Previous',
-            onPressed: CustomizedTestLayout.goBack,
+            onPressed: TestIntroitLayout.goBack,
           ),
           SizedBox(width: 8.0),
           AdeoOutlinedButton(

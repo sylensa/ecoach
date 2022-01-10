@@ -7,7 +7,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
-import 'package:ecoach/widgets/courses_page_header.dart';
+import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ class _MockListViewState extends State<TestTypeListView> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CoursesPageHeader(
+          PageHeader(
             pageHeading: "Select Your ${widget.title ?? 'Test'}",
           ),
           Expanded(

@@ -4,7 +4,6 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test_question_mode.dart';
 import 'package:ecoach/views/customized_test_quiz_mode.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
-import 'package:ecoach/widgets/layouts/customised_test_layout.dart';
 import 'package:flutter/material.dart';
 
 class CustomizedTestIntroit extends StatefulWidget {
@@ -153,7 +152,7 @@ class CustomizeModeSelector extends StatelessWidget {
                 )
               : Border(),
         ),
-        duration: Duration(milliseconds: 300),
+        duration: Duration(milliseconds: 100),
         child: Text(
           label,
           textAlign: TextAlign.center,

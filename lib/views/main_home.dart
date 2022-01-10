@@ -17,7 +17,7 @@ class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 1});
+  MainHomePage(this.user, {this.index = 0});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
@@ -41,8 +41,8 @@ class _MainHomePageState extends State<MainHomePage>
           tapping(tabNumber);
         },
       ),
-      CoursesPage(widget.user),
       StorePage(widget.user),
+      CoursesPage(widget.user),
       AnalysisView(),
       MoreView(
         widget.user,
@@ -96,33 +96,35 @@ class _MainHomePageState extends State<MainHomePage>
         bool canExit = true;
 
         await showDialog<bool>(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(
-                  "Exit?",
-                  style: TextStyle(color: Colors.black),
-                ),
-                content: Text(
-                  "Are you sure you want to leave?",
-                  style: TextStyle(color: Colors.black),
-                ),
-                actions: [
-                  ElevatedButton(
-                      onPressed: () {
-                        canExit = true;
-                        Navigator.pop(context);
-                      },
-                      child: Text("Yes")),
-                  ElevatedButton(
-                      onPressed: () {
-                        canExit = false;
-                        Navigator.pop(context);
-                      },
-                      child: Text("No"))
-                ],
-              );
-            });
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                "Exit?",
+                style: TextStyle(color: Colors.black),
+              ),
+              content: Text(
+                "Are you sure you want to leave?",
+                style: TextStyle(color: Colors.black),
+              ),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      canExit = true;
+                      Navigator.pop(context);
+                    },
+                    child: Text("Yes")),
+                ElevatedButton(
+                  onPressed: () {
+                    canExit = false;
+                    Navigator.pop(context);
+                  },
+                  child: Text("No"),
+                )
+              ],
+            );
+          },
+        );
 
         return Future.value(canExit);
       },
@@ -139,12 +141,12 @@ class _MainHomePageState extends State<MainHomePage>
                 'inactive': Icons.home_outlined,
               },
               {
-                'active': Icons.school_rounded,
-                'inactive': Icons.school_outlined
-              },
-              {
                 'active': Icons.shop_rounded,
                 'inactive': Icons.shop_outlined,
+              },
+              {
+                'active': Icons.school_rounded,
+                'inactive': Icons.school_outlined
               },
               {
                 'active': Icons.bar_chart,

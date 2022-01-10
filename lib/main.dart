@@ -31,11 +31,14 @@ void main() {
   NotificationService().init();
   disableSembastCooperator();
 
-  runApp(ChangeNotifierProvider<DownloadUpdate>(
+  runApp(
+    ChangeNotifierProvider<DownloadUpdate>(
       create: (context) {
         return DownloadUpdate();
       },
-      child: MyApp()));
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -46,46 +49,48 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Adeo',
       theme: ThemeData(
-          primarySwatch: Colors.orange,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          fontFamily: 'Poppins',
-          scaffoldBackgroundColor: Colors.white,
-          textTheme: Theme.of(context).textTheme.apply(
-                bodyColor: Colors.white,
-                displayColor: Colors.white,
-                fontFamily: 'Poppins',
-              )),
+        primarySwatch: Colors.orange,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Poppins',
+        scaffoldBackgroundColor: Colors.white,
+        textTheme: Theme.of(context).textTheme.apply(
+              bodyColor: Colors.white,
+              displayColor: Colors.white,
+              fontFamily: 'Poppins',
+            ),
+      ),
       home: FutureBuilder(
-          future: UserPreferences().getUser(),
-          builder: (context, AsyncSnapshot<User?> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
-              default:
-                if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                } else if (snapshot.data != null) {
-                  User user = snapshot.data as User;
+        future: UserPreferences().getUser(),
+        builder: (context, AsyncSnapshot<User?> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            default:
+              if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              } else if (snapshot.data != null) {
+                User user = snapshot.data as User;
 
-                  if (!user.activated && user.token != null) {
-                    return OTPView(user);
-                  } else if (!user.activated) {
-                    return LoginPage();
-                  }
-
-                  if (user.subscriptions.length == 0 && !user.hasTakenTest) {
-                    return WelcomeAdeo(user);
-                  }
-
-                  return MainHomePage(user);
-                } else if (snapshot.data == null) {
+                if (!user.activated && user.token != null) {
+                  return OTPView(user);
+                } else if (!user.activated) {
                   return LoginPage();
-                } else {
-                  return CircularProgressIndicator();
                 }
-            }
-          }),
+
+                if (user.subscriptions.length == 0 && !user.hasTakenTest) {
+                  return WelcomeAdeo(user);
+                }
+
+                return MainHomePage(user);
+              } else if (snapshot.data == null) {
+                return LoginPage();
+              } else {
+                return CircularProgressIndicator();
+              }
+          }
+        },
+      ),
       routes: routes,
     );
   }

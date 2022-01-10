@@ -103,9 +103,9 @@ class _CoursesPageState extends State<CoursesPage> {
         child: Column(
           children: [
             Container(
-              height: 120,
+              // height: 120,
               child: Padding(
-                padding: EdgeInsets.only(left: 12.0, right: 12.0),
+                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -130,6 +130,7 @@ class _CoursesPageState extends State<CoursesPage> {
                       subscriptions.length > 0
                           ? getSubscriptionSubName(subscriptions[page].name!)
                           : 'Loading...',
+                      textAlign: TextAlign.center,
                       style: kPageHeaderStyle,
                     ),
                     GestureDetector(

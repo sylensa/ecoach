@@ -1,4 +1,5 @@
 import 'package:ecoach/utils/manip.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
 class AdeoTabControl extends StatefulWidget {
@@ -6,13 +7,13 @@ class AdeoTabControl extends StatefulWidget {
     required this.tabs,
     this.tabPages,
     this.onPageChange,
-    this.variant,
+    this.variant = 'default',
     Key? key,
   }) : super(key: key);
 
   final List<String> tabs;
   final List<Widget>? tabPages;
-  final String? variant;
+  final String variant;
   final Function? onPageChange;
 
   @override
@@ -44,7 +45,7 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
         curve: Curves.fastLinearToSlowEaseIn,
       );
     });
-    widget.onPageChange!(page);
+    if (widget.onPageChange != null) widget.onPageChange!(page);
   }
 
   @override
@@ -52,21 +53,37 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
     return Expanded(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.tabs
-                .map(
-                  (tab) => AdeoTabButton(
-                    variant: widget.variant!,
-                    onTap: changePage,
-                    text: tab,
-                    pageNumber: widget.tabs.indexOf(tab),
-                    count: widget.tabs.length,
-                    isSelected: currentPageNumber == widget.tabs.indexOf(tab),
-                  ),
-                )
-                .toList(),
-          ),
+          if (widget.variant.toUpperCase() == 'SQUARE')
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widget.tabs
+                  .map(
+                    (tab) => AdeoSquareTabButton(
+                      onTap: changePage,
+                      text: tab,
+                      pageNumber: widget.tabs.indexOf(tab),
+                      count: widget.tabs.length,
+                      isSelected: currentPageNumber == widget.tabs.indexOf(tab),
+                    ),
+                  )
+                  .toList(),
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widget.tabs
+                  .map(
+                    (tab) => AdeoTabButton(
+                      variant: widget.variant,
+                      onTap: changePage,
+                      text: tab,
+                      pageNumber: widget.tabs.indexOf(tab),
+                      count: widget.tabs.length,
+                      isSelected: currentPageNumber == widget.tabs.indexOf(tab),
+                    ),
+                  )
+                  .toList(),
+            ),
           Expanded(
             child: PageView(
               controller: pageController,
@@ -79,6 +96,56 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class AdeoSquareTabButton extends StatelessWidget {
+  const AdeoSquareTabButton({
+    required this.text,
+    required this.onTap,
+    required this.pageNumber,
+    required this.count,
+    this.isSelected: false,
+    Key? key,
+  }) : super(key: key);
+
+  final String text;
+  final int pageNumber;
+  final bool isSelected;
+  final int count;
+  final Function onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: Feedback.wrapForTap(() {
+        onTap(pageNumber);
+      }, context),
+      child: AnimatedContainer(
+        curve: Curves.fastLinearToSlowEaseIn,
+        duration: Duration(milliseconds: 300),
+        height: 48.0,
+        padding: EdgeInsets.only(left: 28.0, right: 28.0),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: isSelected ? kAdeoGray2 : Colors.white,
+              width: 3,
+            ),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            text.toTitleCase(),
+            style: TextStyle(
+              color: isSelected ? Colors.black : Color(0x80000000),
+              fontWeight: FontWeight.w500,
+              fontSize: 15,
+            ),
+          ),
+        ),
       ),
     );
   }

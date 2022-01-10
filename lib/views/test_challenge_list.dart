@@ -7,7 +7,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type_list.dart';
-import 'package:ecoach/widgets/courses_page_header.dart';
+import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
@@ -143,7 +143,7 @@ class TestChallengeList extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            CoursesPageHeader(
+            PageHeader(
               pageHeading: "Choose Your Challenge",
             ),
             Expanded(
