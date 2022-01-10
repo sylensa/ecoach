@@ -221,12 +221,6 @@ class MainController {
           batch.commit(noResult: true);
         });
 
-        // await CourseDao().insert(subscriptionItem.course!);
-        // provider.updateMessage("saving $filename quizzes");
-        // await QuizDao().insertAll(subscriptionItem.quizzes!);
-        // provider.updateMessage("saving $filename topics");
-        // await TopicDao().insertAll(subscriptionItem.topics!);
-
         provider.updateMessage("saving $filename images");
         List<ImageFile> images = subscriptionItem.images!;
 
