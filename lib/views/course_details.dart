@@ -9,6 +9,7 @@ import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/notes_topics.dart';
 import 'package:ecoach/views/test_type.dart';
@@ -249,23 +250,16 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[5],
                         onTap: () {
-                          return showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AdeoDialog(
-                                title: 'Progress',
-                                content:
-                                    'Track your progress feature coming soon.',
-                                actions: [
-                                  AdeoDialogAction(
-                                    label: 'Dismiss',
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return AnalysisView(
+                                    // widget.user,
+                                    // widget.courseInfo.course,
+                                    );
+                              },
+                            ),
                           );
                         },
                       ),

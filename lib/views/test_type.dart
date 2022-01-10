@@ -2,6 +2,8 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/customized_test_introit.dart';
+import 'package:ecoach/views/marathon_introit.dart';
+import 'package:ecoach/views/speed_test_introit.dart';
 import 'package:ecoach/views/test_challenge_list.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/page_header.dart';
@@ -49,10 +51,9 @@ class _TestTypeViewState extends State<TestTypeView> {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return TestChallengeList(
-                          testType: TestType.SPEED,
-                          course: widget.course,
+                        return SpeedTestIntroit(
                           user: widget.user,
+                          course: widget.course,
                         );
                       },
                     ),
@@ -84,23 +85,13 @@ class _TestTypeViewState extends State<TestTypeView> {
                 subTitle: 'Race to complete all questions ',
                 iconURL: 'assets/icons/courses/marathon.png',
                 onTap: () {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AdeoDialog(
-                        title: 'Marathon',
-                        content:
-                            'Race to complete all questions. Feature coming soon.',
-                        actions: [
-                          AdeoDialogAction(
-                            label: 'Dismiss',
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return MarathonIntroit();
+                      },
+                    ),
                   );
                 },
               ),

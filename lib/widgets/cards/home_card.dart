@@ -1,11 +1,4 @@
-// import 'package:ecoach/utils/constants.dart';
-// import 'package:ecoach/utils/style_sheet.dart';
-// import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
-// import 'package:ecoach/widgets/performance_detail_snippet_vertical.dart';
-// import 'package:ecoach/widgets/speed_arc.dart';
-// import 'package:ecoach/widgets/superscripted_denominator_fraction_horizontal.dart';
 import 'package:flutter/material.dart';
-// import 'package:signal_strength_indicator/signal_strength_indicator.dart';
 
 class HomeCard extends StatefulWidget {
   const HomeCard({

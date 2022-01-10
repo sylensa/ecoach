@@ -382,28 +382,29 @@ class _QuizEssayViewState extends State<QuizEssayView> {
 
   Future<bool> showPauseDialog() async {
     return (await showDialog<bool>(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) {
-              return PauseDialog(
-                backgroundColor: backgroundColor,
-                backgroundColor2: backgroundColor2,
-                time: countdownInSeconds,
-                callback: (action) {
-                  Navigator.pop(context);
-                  if (action == "resume") {
-                    startTimer();
-                  } else if (action == "quit") {
-                    Navigator.pushAndRemoveUntil(context,
-                        MaterialPageRoute(builder: (context) {
-                      return MainHomePage(widget.user, index: 1);
-                    }), (route) => false);
-                  } else if (action == "end") {
-                    completeQuiz();
-                  }
-                },
-              );
-            })) ??
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return PauseDialog(
+              backgroundColor: backgroundColor,
+              backgroundColor2: backgroundColor2,
+              time: countdownInSeconds,
+              callback: (action) {
+                Navigator.pop(context);
+                if (action == "resume") {
+                  startTimer();
+                } else if (action == "quit") {
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) {
+                    return MainHomePage(widget.user, index: 1);
+                  }), (route) => false);
+                } else if (action == "end") {
+                  completeQuiz();
+                }
+              },
+            );
+          },
+        )) ??
         false;
   }
 }
@@ -500,12 +501,12 @@ class _PauseDialogState extends State<PauseDialog> {
               SizedBox(
                 height: 70,
                 child: Container(
-                    decoration: BoxDecoration(
-                        color: widget.backgroundColor2,
-                        borderRadius:
-                            BorderRadius.vertical(bottom: Radius.circular(20))),
-                    child: Center(
-                        child: TextButton(
+                  decoration: BoxDecoration(
+                      color: widget.backgroundColor2,
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(20))),
+                  child: Center(
+                    child: TextButton(
                       onPressed: () {
                         if (action == "") {
                           return;
@@ -517,7 +518,9 @@ class _PauseDialogState extends State<PauseDialog> {
                               color: Colors.white,
                               fontSize: 22,
                               decoration: TextDecoration.none)),
-                    ))),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

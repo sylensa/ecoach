@@ -4,7 +4,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/test_challenge_list.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
-import 'package:ecoach/widgets/layouts/customised_test_layout.dart';
+import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/pin_input.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +27,11 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomizedTestLayout(
+    return TestIntroitLayout(
+      background: kAdeoTaupe,
+      backgroundImageURL: 'assets/images/deep_pool_taupe.png',
       pages: [
-        CustomizedLayoutPage(
+        TestIntroitLayoutPage(
           title: 'Questions',
           subText: 'Enter your preferred number',
           middlePiece: Column(
@@ -53,7 +55,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
             label: 'Next',
             onPressed: () {
               if (numberOfQuestions.length > 0)
-                CustomizedTestLayout.goForward();
+                TestIntroitLayout.goForward();
               else
                 showFeedback(
                   context,
@@ -62,7 +64,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
             },
           ),
         ),
-        CustomizedLayoutPage(
+        TestIntroitLayoutPage(
           title: 'Time',
           subText: 'Enter your preferred number',
           middlePiece: Column(
@@ -105,7 +107,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
             children: [
               AdeoOutlinedButton(
                 label: 'Previous',
-                onPressed: CustomizedTestLayout.goBack,
+                onPressed: TestIntroitLayout.goBack,
               ),
               SizedBox(width: 8.0),
               AdeoOutlinedButton(

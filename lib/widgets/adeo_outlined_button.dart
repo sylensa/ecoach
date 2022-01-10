@@ -9,6 +9,7 @@ class AdeoOutlinedButton extends StatelessWidget {
     this.ignoring = false,
     this.size,
     this.borderRadius,
+    this.fontSize,
   });
 
   final String label;
@@ -17,6 +18,7 @@ class AdeoOutlinedButton extends StatelessWidget {
   final bool ignoring;
   final Sizes? size;
   final double? borderRadius;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class AdeoOutlinedButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           primary: color ?? Colors.white,
           textStyle: TextStyle(
-            fontSize: 20.0,
+            fontSize: fontSize ?? 20.0,
             fontWeight: FontWeight.w600,
             fontFamily: 'Poppins',
             color: color,

@@ -1,5 +1,6 @@
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/buttons/arrow_button.dart';
 import 'package:flutter/material.dart';
 
 class StatsSliderCard extends StatefulWidget {
@@ -157,37 +158,6 @@ class _StatsSliderCardState extends State<StatsSliderCard> {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ArrowButton extends StatelessWidget {
-  const ArrowButton({
-    required this.arrow,
-    this.onPressed,
-    Key? key,
-  }) : super(key: key);
-
-  final String arrow;
-  final onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      style: ButtonStyle(
-        overlayColor: MaterialStateProperty.resolveWith(
-          (states) => Color(0x402A9CEA),
-        ),
-      ),
-      child: Container(
-        width: 32,
-        height: 32,
-        child: Image.asset(
-          arrow,
-          fit: BoxFit.contain,
-        ),
       ),
     );
   }

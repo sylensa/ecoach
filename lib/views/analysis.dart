@@ -113,6 +113,7 @@ class AnalysisCard extends StatelessWidget {
     required this.activity,
     required this.activityType,
     this.onTap,
+    this.variant = CardVariant.DARK,
     Key? key,
   }) : super(key: key);
 
@@ -122,11 +123,16 @@ class AnalysisCard extends StatelessWidget {
   final String activity;
   final String activityType;
   final onTap;
+  final CardVariant variant;
 
-  TextStyle metaDataStyle = TextStyle(
-    fontSize: 9,
-    color: Color(0x99000000),
-  );
+  TextStyle metaDataStyle({CardVariant variant = CardVariant.DARK}) {
+    return TextStyle(
+      fontSize: 9,
+      fontWeight: FontWeight.w600,
+      color:
+          variant == CardVariant.DARK ? Color(0x99000000) : Color(0x99FFFFFF),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,9 +145,18 @@ class AnalysisCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(metaData.date, style: metaDataStyle),
-                Text(metaData.time, style: metaDataStyle),
-                Text(metaData.duration, style: metaDataStyle),
+                Text(
+                  metaData.date,
+                  style: metaDataStyle(variant: variant),
+                ),
+                Text(
+                  metaData.time,
+                  style: metaDataStyle(variant: variant),
+                ),
+                Text(
+                  metaData.duration,
+                  style: metaDataStyle(variant: variant),
+                ),
               ],
             ),
           ),
