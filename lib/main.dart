@@ -29,7 +29,6 @@ void main() {
   );
 
   NotificationService().init();
-  disableSembastCooperator();
 
   runApp(
     ChangeNotifierProvider<DownloadUpdate>(
