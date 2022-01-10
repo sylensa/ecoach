@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database_nosql/questions_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
@@ -71,7 +72,7 @@ class _LearnSpeedState extends State<LearnSpeed> {
             },
             mainActionOnPressed: () async {
               List<Question> questions =
-                  await QuestionDB().getRandomQuestions(widget.course.id!, 10);
+                  await QuestionDao().getRandomQuestions(widget.course.id!, 10);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return StudyQuizView(
                     controller: SpeedController(widget.user, widget.course,

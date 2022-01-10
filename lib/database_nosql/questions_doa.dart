@@ -167,6 +167,7 @@ class QuestionDao {
   }
 
   Future<List<Question>> getRandomQuestions(int courseId, int limit) async {
+    print("getting random questions");
     final finder = Finder(
       filter: Filter.and([
         Filter.equals("course_id", courseId),
@@ -178,21 +179,23 @@ class QuestionDao {
       await _db,
       finder: finder,
     );
+    print("record snapshot taking");
     List<Map<String, dynamic>> maps = recordSnapshots.map((snapshot) {
       return snapshot.value;
     }).toList();
-
+    print("shuffling map");
     maps.shuffle();
     Iterable<Map<String, dynamic>> listMaps = maps.getRange(0, limit);
     maps = listMaps.toList();
-
+    print("shuffling done");
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
+      print('getting questions $i');
       Question question = Question.fromJson(maps[i]);
       question.answers = await AnswerDao().questoinAnswers(question.id!);
       questions.add(question);
     }
-
+    print("returning questions");
     return questions;
   }
 

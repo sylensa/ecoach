@@ -78,15 +78,13 @@ class AnswerDao {
 
   Future<List<Answer>> questoinAnswers(int questionId) async {
     // Finder object can also sort data.
-    final finder = Finder(sortOrders: [
-      SortOrder('created_at', false),
-    ], filter: Filter.equals("question_id", questionId));
-
+    final finder = Finder(filter: Filter.equals("question_id", questionId));
+    print("getting answers");
     final recordSnapshots = await _answerStore.find(
       await _db,
       finder: finder,
     );
-
+    print('making list');
     // Making a List<Answer> out of List<RecordSnapshot>
     List<Answer> answers = recordSnapshots.map<Answer>((snapshot) {
       final answer = Answer.fromJson(snapshot.value);
@@ -95,6 +93,7 @@ class AnswerDao {
       return answer;
     }).toList();
 
+    print('returning answers');
     return answers;
   }
 }

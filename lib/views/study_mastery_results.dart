@@ -3,6 +3,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
@@ -71,7 +72,7 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
       for (int i = 0; i < keys.length; i++) {
         List<TestAnswer> answers = mapList[keys.elementAt(i)]!;
         TopicAnalysis analysis = TopicAnalysis(keys.elementAt(i), answers);
-        analysis.topic = await TopicDB().getTopicById(answers[0].topicId!);
+        analysis.topic = await TopicDao().getTopicById(answers[0].topicId!);
         topics.add(analysis);
         print("----------------------------------");
         print("add topic ${analysis.name}");

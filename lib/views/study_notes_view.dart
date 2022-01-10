@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database_nosql/questions_doa.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
@@ -129,7 +130,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                 onPressed: () async {
                                   List<Question>? questions;
                                   if (controller.type == StudyType.REVISION) {
-                                    questions = await QuestionDB()
+                                    questions = await QuestionDao()
                                         .getTopicQuestions(
                                             [controller.progress.topicId!], 10);
                                   }
@@ -140,7 +141,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                   if (controller.type ==
                                       StudyType.MASTERY_IMPROVEMENT) {
                                     await controller.updateProgressSection(2);
-                                    questions = await QuestionDB()
+                                    questions = await QuestionDao()
                                         .getMasteryTopicQuestions(
                                             controller.progress.topicId!, 5);
                                   }

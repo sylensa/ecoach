@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:sembast/sembast.dart';
 
 import 'models/user.dart';
 import 'utils/notification_service.dart';
@@ -28,6 +29,7 @@ void main() {
   );
 
   NotificationService().init();
+  disableSembastCooperator();
 
   runApp(ChangeNotifierProvider<DownloadUpdate>(
       create: (context) {

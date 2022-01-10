@@ -1,6 +1,7 @@
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
@@ -43,7 +44,7 @@ class _LearnModeState extends State<LearnMode> {
     Topic? topic;
     StudyProgress? progress;
     if (study == null) {
-      topic = await TopicDB().getLevelTopic(widget.course.id!, 1);
+      topic = await TopicDao().getLevelTopic(widget.course.id!, 1);
       if (topic != null) {
         study = Study(
             id: topic.id,

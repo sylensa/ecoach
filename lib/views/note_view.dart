@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database_nosql/course_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
@@ -81,7 +82,7 @@ class _NoteViewState extends State<NoteView> {
                   children: [
                     OutlinedButton(
                         onPressed: () async {
-                          Course? course = await CourseDB()
+                          Course? course = await CourseDao()
                               .getCourseById(widget.topic.courseId!);
 
                           List<Question> questions = await TestController()

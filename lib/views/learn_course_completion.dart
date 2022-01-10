@@ -2,6 +2,8 @@ import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/database_nosql/questions_doa.dart';
+import 'package:ecoach/database_nosql/topic_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
@@ -119,7 +121,7 @@ class _TopicCoverState extends State<TopicCover> {
                   child: OutlinedButton(
                     onPressed: () async {
                       int topicId = widget.progress.topicId!;
-                      Topic? topic = await TopicDB().getTopicById(topicId);
+                      Topic? topic = await TopicDao().getTopicById(topicId);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -253,7 +255,7 @@ class _QuizCoverState extends State<QuizCover> {
                     onPressed: () async {
                       int topicId = widget.progress.topicId!;
                       List<Question> questions =
-                          await QuestionDB().getTopicQuestions([topicId], 10);
+                          await QuestionDao().getTopicQuestions([topicId], 10);
                       Navigator.push(
                           context,
                           MaterialPageRoute(

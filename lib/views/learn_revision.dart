@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database_nosql/questions_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
@@ -95,7 +96,7 @@ class _LearnRevisionState extends State<LearnRevision> {
                     onPressed: () async {
                       int topicId = widget.progress.topicId!;
                       List<Question> questions =
-                          await QuestionDB().getTopicQuestions([topicId], 10);
+                          await QuestionDao().getTopicQuestions([topicId], 10);
                       Navigator.push(
                         context,
                         MaterialPageRoute(

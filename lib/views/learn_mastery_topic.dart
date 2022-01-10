@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database_nosql/questions_doa.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
@@ -116,7 +117,7 @@ class LearnMasteryTopic extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              List<Question> questions = await QuestionDB()
+              List<Question> questions = await QuestionDao()
                   .getMasteryTopicQuestions(topics[0].topicId!, 10);
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return StudyQuizView(

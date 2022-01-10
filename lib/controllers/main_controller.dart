@@ -173,7 +173,7 @@ class MainController {
         provider.updateMessage("saving $filename topics");
         await TopicDao().insertAll(subscriptionItem.topics!);
 
-provider.updateMessage("saving $filename images");
+        provider.updateMessage("saving $filename images");
         List<ImageFile> images = subscriptionItem.images!;
 
         for (int i = 0; i < images.length; i++) {

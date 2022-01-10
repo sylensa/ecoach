@@ -23,8 +23,8 @@ class SubscriptionItemDB {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       if (subscriptionItem.course != null) {
-        await CourseDB().insert(subscriptionItem.course!);
-        await QuizDB().insertAll(subscriptionItem.quizzes!);
+        await CourseDao().insert(subscriptionItem.course!);
+        await QuizDao().insertAll(subscriptionItem.quizzes!);
       }
     });
   }
@@ -152,7 +152,7 @@ class SubscriptionItemDB {
     List<Course> items = [];
     for (int i = 0; i < maps.length; i++) {
       Course? course =
-          await CourseDB().getCourseById(int.parse(maps[i]['tag']));
+          await CourseDao().getCourseById(int.parse(maps[i]['tag']));
       print(int.parse(maps[i]['tag']));
       if (course != null) {
         print(course.toJson());
