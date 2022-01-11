@@ -299,21 +299,23 @@ class _BundleDownloadState extends State<BundleDownload> {
                           SizedBox(
                             height: 10,
                           ),
-                          ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: context
-                                  .read<DownloadUpdate>()
-                                  .doneDownloads
-                                  .length,
-                              itemBuilder: (context, index) {
-                                print("showing courses downloaded");
-                                return Text(
-                                  context
-                                      .read<DownloadUpdate>()
-                                      .doneDownloads[index],
-                                  style: TextStyle(color: Colors.black),
-                                );
-                              }),
+                          SingleChildScrollView(
+                            child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: context
+                                    .read<DownloadUpdate>()
+                                    .doneDownloads
+                                    .length,
+                                itemBuilder: (context, index) {
+                                  print("showing courses downloaded");
+                                  return Text(
+                                    context
+                                        .read<DownloadUpdate>()
+                                        .doneDownloads[index],
+                                    style: TextStyle(color: Colors.black),
+                                  );
+                                }),
+                          ),
                         ],
                       ),
                     ),
