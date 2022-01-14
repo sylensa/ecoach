@@ -11,7 +11,6 @@ import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
-// import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class TestTypeListView extends StatefulWidget {
   TestTypeListView(

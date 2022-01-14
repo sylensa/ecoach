@@ -173,8 +173,11 @@ class TestController {
   }
 
   getEssays(Course course, int limit) async {
-    List<Question> questions =
-        await QuestionDB().getQuestionsByType(course.id!, "ESSAY", limit);
+    List<Question> questions = await QuestionDB().getQuestionsByType(
+      course.id!,
+      "ESSAY",
+      limit,
+    );
 
     return questions;
   }

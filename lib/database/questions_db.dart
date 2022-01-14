@@ -197,7 +197,10 @@ class QuestionDB {
   }
 
   Future<List<Question>> getQuestionsByType(
-      int courseId, String type, int limit) async {
+    int courseId,
+    String type,
+    int limit,
+  ) async {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.query('questions',
