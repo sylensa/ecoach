@@ -9,50 +9,42 @@ import 'package:ecoach/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CourseDB {
-  Future<void> insert(Course course) async {
-    if (course == null) {
-      return;
-    }
-    final Database? db = await DBProvider.database;
-    await db!.transaction((txn) async {
-      Batch batch = txn.batch();
-      batch.insert(
-        'courses',
-        course.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      List<Question> questions = course.questions!;
-      if (questions.length > 0) {
-        for (int i = 0; i < questions.length; i++) {
-          Question question = questions[i];
+  Future<void> insert(Batch batch, Course course) async {
+    batch.insert(
+      'courses',
+      course.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    List<Question> questions = course.questions!;
+    if (questions.length > 0) {
+      for (int i = 0; i < questions.length; i++) {
+        Question question = questions[i];
+        batch.insert(
+          'questions',
+          question.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        Topic? topic = question.topic;
+        if (topic != null) {
           batch.insert(
-            'questions',
-            question.toJson(),
+            'topics',
+            topic.toJson(),
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          Topic? topic = question.topic;
-          if (topic != null) {
+        }
+        List<Answer> answers = question.answers!;
+        if (answers.length > 0) {
+          for (int i = 0; i < answers.length; i++) {
             batch.insert(
-              'topics',
-              topic.toJson(),
+              'answers',
+              answers[i].toJson(),
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
           }
-          List<Answer> answers = question.answers!;
-          if (answers.length > 0) {
-            for (int i = 0; i < answers.length; i++) {
-              batch.insert(
-                'answers',
-                answers[i].toJson(),
-                conflictAlgorithm: ConflictAlgorithm.replace,
-              );
-            }
-          }
-          await Future.delayed(Duration(milliseconds: 90));
         }
+        // await Future.delayed(Duration(milliseconds: 90));
       }
-      batch.commit();
-    });
+    }
   }
 
   Future<Course?> getCourseById(int id) async {

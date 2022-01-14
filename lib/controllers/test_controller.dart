@@ -59,9 +59,9 @@ class TestController {
     }
   }
 
-  saveQuestionsLocally(List<Question> questions) {
-    QuestionDB().insertAll(questions);
-  }
+//  saveQuestionsLocally (List<Question> questions) {
+//     QuestionDB().insertAll(questions);
+//   }
 
   saveTestTaken(TestTaken test) {
     TestTakenDB().insert(test);
