@@ -28,10 +28,17 @@ class SubscriptionItemDB {
     });
   }
 
-  Future<SubscriptionItem?> getMessageById(int id) async {
+  Future<SubscriptionItem?> getSubscriptionItemById(int id) async {
     final db = await DBProvider.database;
     var result =
         await db!.query("subscription_items", where: "id = ?", whereArgs: [id]);
+    return result.isNotEmpty ? SubscriptionItem.fromJson(result.first) : null;
+  }
+
+  Future<SubscriptionItem?> getSubscriptionItemByTag(String tag) async {
+    final db = await DBProvider.database;
+    var result = await db!
+        .query("subscription_items", where: "tag = ?", whereArgs: [tag]);
     return result.isNotEmpty ? SubscriptionItem.fromJson(result.first) : null;
   }
 

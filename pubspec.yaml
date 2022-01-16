@@ -62,6 +62,7 @@ dependencies:
    dio: ^4.0.0
    permission_handler: ^8.3.0
    flutter_styled_toast: ^2.0.0
+   accordion: ^2.1.2
 
 dev_dependencies:
    flutter_test:

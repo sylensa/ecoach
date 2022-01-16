@@ -6,12 +6,14 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/widgets/essay_test_question_widgets.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:accordion/accordion.dart';
 
 class QuizEssayView extends StatefulWidget {
   QuizEssayView(
@@ -42,6 +44,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
   late final PageController controller;
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
+  String currentStage = 'QUESTION';
 
   late CustomTimerController timerController;
   int countdownInSeconds = 0;
@@ -118,16 +121,22 @@ class _QuizEssayViewState extends State<QuizEssayView> {
   }
 
   completeQuiz() async {
-    if (!widget.disableTime) {
-      timerController.dispose();
-    }
+    if (currentStage.toUpperCase() == 'QUESTION') {
+      if (!widget.disableTime) {
+        timerController.dispose();
+      }
 
-    setState(() {
-      enabled = false;
-    });
-    showLoaderDialog(context, message: "Completing test ...");
-    await Future.delayed(Duration(seconds: 3));
-    Navigator.pop(context);
+      showLoaderDialog(context, message: "Fetching answers...");
+      await Future.delayed(Duration(seconds: 3), () {
+        setState(() {
+          enabled = false;
+          currentStage = 'ANSWER';
+          currentQuestion = 0;
+          controller.jumpToPage(0);
+        });
+        Navigator.pop(context);
+      });
+    }
   }
 
   @override
@@ -148,8 +157,8 @@ class _QuizEssayViewState extends State<QuizEssayView> {
             child: Stack(children: [
               Positioned(
                 top: 95,
-                right: -120,
-                left: -100,
+                right: 0,
+                left: 0,
                 bottom: 51,
                 child: Container(
                   decoration: BoxDecoration(
@@ -165,6 +174,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
                           position: i,
                           enabled: enabled,
                           useTex: useTex,
+                          currentStage: currentStage,
                         )
                     ],
                   ),
@@ -269,70 +279,88 @@ class _QuizEssayViewState extends State<QuizEssayView> {
                 child: Container(
                   child: IntrinsicHeight(
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (currentQuestion > 0)
-                            Expanded(
-                              flex: 2,
-                              child: TextButton(
-                                onPressed: () {
-                                  controller.previousPage(
-                                      duration: Duration(milliseconds: 1),
-                                      curve: Curves.ease);
-                                  setState(() {
-                                    currentQuestion--;
-                                    numberingController.scrollTo(
-                                        index: currentQuestion,
-                                        duration: Duration(seconds: 1),
-                                        curve: Curves.easeInOutCubic);
-                                  });
-                                },
-                                child: Text(
-                                  "Previous",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                  ),
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (currentQuestion > 0)
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                controller.previousPage(
+                                    duration: Duration(milliseconds: 1),
+                                    curve: Curves.ease);
+                                setState(() {
+                                  currentQuestion--;
+                                  numberingController.scrollTo(
+                                      index: currentQuestion,
+                                      duration: Duration(seconds: 1),
+                                      curve: Curves.easeInOutCubic);
+                                });
+                              },
+                              child: Text(
+                                "Previous",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
                                 ),
                               ),
                             ),
-                          if (currentQuestion < widget.questions.length - 1)
-                            VerticalDivider(width: 2, color: Colors.white),
-                          if (currentQuestion < widget.questions.length - 1)
-                            Expanded(
-                              flex: 2,
-                              child: TextButton(
-                                onPressed: nextButton,
-                                child: Text(
-                                  "Next",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 21,
-                                  ),
+                          ),
+                        if (currentQuestion < widget.questions.length - 1)
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (currentQuestion < widget.questions.length - 1)
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: nextButton,
+                              child: Text(
+                                "Next",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 21,
                                 ),
                               ),
                             ),
-                          if (enabled &&
-                              currentQuestion == widget.questions.length - 1)
-                            VerticalDivider(width: 2, color: Colors.white),
-                          if (enabled &&
-                              currentQuestion == widget.questions.length - 1)
-                            Expanded(
-                              flex: 2,
-                              child: TextButton(
-                                onPressed: () {
-                                  completeQuiz();
-                                },
-                                child: Text(
-                                  "Complete",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 21,
-                                  ),
+                          ),
+                        if (enabled &&
+                            currentQuestion == widget.questions.length - 1)
+                          VerticalDivider(width: 2, color: Colors.white),
+                        if (enabled &&
+                            currentQuestion == widget.questions.length - 1)
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                completeQuiz();
+                              },
+                              child: Text(
+                                "Complete",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 21,
                                 ),
                               ),
                             ),
-                        ]),
+                          ),
+                        if (!enabled &&
+                            currentQuestion == widget.questions.length - 1)
+                          Expanded(
+                            flex: 2,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "End Test",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 21,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -429,6 +457,7 @@ class _PauseDialogState extends State<PauseDialog> {
   String action = "";
   int min = 0;
   int sec = 0;
+
   @override
   void initState() {
     min = (widget.time / 60).floor();
@@ -444,30 +473,39 @@ class _PauseDialogState extends State<PauseDialog> {
           width: 380,
           height: 560,
           decoration: BoxDecoration(
-              color: widget.backgroundColor,
-              borderRadius: BorderRadius.circular(20)),
+            color: widget.backgroundColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: Column(
             children: [
               SizedBox(
                 height: 70,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: widget.backgroundColor2,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20))),
+                    color: widget.backgroundColor2,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Time Remaining ",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              decoration: TextDecoration.none)),
-                      Text("$min:$sec",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              decoration: TextDecoration.none))
+                      Text(
+                        "Time Remaining ",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      Text(
+                        "$min:$sec",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          decoration: TextDecoration.none,
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -530,160 +568,129 @@ class _PauseDialogState extends State<PauseDialog> {
   }
 }
 
-class QuestionWidget extends StatefulWidget {
-  QuestionWidget(
-    this.question, {
-    Key? key,
-    this.position,
-    this.useTex = false,
-    this.enabled = true,
-  }) : super(key: key);
-  Question question;
-  int? position;
-  bool enabled;
-  bool useTex;
 
-  @override
-  _QuestionWidgetState createState() => _QuestionWidgetState();
-}
 
-class _QuestionWidgetState extends State<QuestionWidget> {
-  late List<Answer>? answers;
-  Color? backgroundColor;
-  List<bool> expand = [];
 
-  @override
-  void initState() {
-    backgroundColor = const Color(0xFF5DA5EA);
-    answers = widget.question.answers;
-    answers!.forEach((answer) {
-      expand.add(false);
-    });
-
-    print(widget.question.text);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        color: Color(0xFF595959),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              color: Color(0xFF444444),
-              child: Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 12,
-                      ),
-                      if (!widget.useTex)
-                        Html(data: "${widget.question.text ?? ''}", style: {
-                          // tables will have the below background color
-                          "body": Style(
-                            backgroundColor: Color(0xFF444444),
-                            color: Colors.white,
-                            fontSize: FontSize(23),
-                          ),
-                        }),
-                      if (widget.useTex)
-                        SizedBox(
-                          width: screenWidth(context),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                            child: TeXView(
-                              renderingEngine: TeXViewRenderingEngine.katex(),
-                              child: TeXViewDocument(widget.question.text ?? "",
-                                  style: TeXViewStyle(
-                                    backgroundColor: Color(0xFF444444),
-                                    contentColor: Colors.white,
-                                    fontStyle: TeXViewFontStyle(
-                                      fontSize: 23,
-                                    ),
-                                  )),
-                            ),
-                          ),
-                        )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              color: backgroundColor,
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(80, 4, 80, 4),
-                  child: widget.question.instructions != null &&
-                          widget.question.instructions!.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.fromLTRB(40, 8.0, 40, 8),
-                          child: Text(
-                            widget.question.instructions!,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.white),
-                          ),
-                        )
-                      : null,
-                ),
-              ),
-            ),
-            Container(
-              color: backgroundColor,
-              height: 2,
-            ),
-            Container(
-              color: Color(0xFF595959),
-              child: SizedBox(
-                width: screenWidth(context) + 20,
-                child: ExpansionPanelList(
-                  //start changes here
-                  dividerColor: Color(0xFF444444),
-                  elevation: 0,
-                  animationDuration: Duration(seconds: 1),
-                  children: [
-                    for (int i = 0; i < answers!.length; i++)
-                      ExpansionPanel(
-                        isExpanded: expand[i],
-                        canTapOnHeader: !widget.enabled,
-                        headerBuilder: (context, isOpen) {
-                          return Html(data: answers![i].text!, style: {
-                            // tables will have the below background color
-                            "body": Style(
-                              fontSize: FontSize(20),
-                            ),
-                          });
-                        },
-                        backgroundColor: Color(0xFF444444),
-                        body: Html(data: answers![i].solution!, style: {
-                          // tables will have the below background color
-                          "body": Style(
-                            color: Colors.white,
-                            backgroundColor: Color(0xFF595959),
-                            fontSize: FontSize(15),
-                          ),
-                        }),
-                      )
-                  ],
-                  expansionCallback: (index, isOpen) {
-                    setState(() {
-                      expand[index] = !isOpen;
-                    });
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
+// Container(
+//   color: Color(0xFF595959),
+//   child: Column(
+//     mainAxisAlignment: MainAxisAlignment.start,
+//     children: [
+//       Container(
+//         color: Color(0xFF444444),
+//         child: Padding(
+//           padding: const EdgeInsets.all(18.0),
+//           child: FittedBox(
+//             fit: BoxFit.cover,
+//             child: Column(
+//               children: [
+//                 SizedBox(
+//                   height: 12,
+//                 ),
+//                 if (!widget.useTex)
+//                   Html(
+//                       data: "${widget.question.text ?? ''}",
+//                       style: {
+//                         // tables will have the below background color
+//                         "body": Style(
+//                           backgroundColor: Color(0xFF444444),
+//                           color: Colors.white,
+//                           fontSize: FontSize(23),
+//                         ),
+//                       }),
+//                 if (widget.useTex)
+//                   SizedBox(
+//                     width: screenWidth(context),
+//                     child: Padding(
+//                       padding:
+//                           const EdgeInsets.fromLTRB(0, 0, 10, 0),
+//                       child: TeXView(
+//                         renderingEngine:
+//                             TeXViewRenderingEngine.katex(),
+//                         child: TeXViewDocument(
+//                             widget.question.text ?? "",
+//                             style: TeXViewStyle(
+//                               backgroundColor: Color(0xFF444444),
+//                               contentColor: Colors.white,
+//                               fontStyle: TeXViewFontStyle(
+//                                 fontSize: 23,
+//                               ),
+//                             )),
+//                       ),
+//                     ),
+//                   )
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//       Container(
+//         color: backgroundColor,
+//         child: Center(
+//           child: Padding(
+//             padding: EdgeInsets.fromLTRB(80, 4, 80, 4),
+//             child: widget.question.instructions != null &&
+//                     widget.question.instructions!.isNotEmpty
+//                 ? Padding(
+//                     padding:
+//                         const EdgeInsets.fromLTRB(40, 8.0, 40, 8),
+//                     child: Text(
+//                       widget.question.instructions!,
+//                       style: TextStyle(
+//                           fontSize: 15,
+//                           fontStyle: FontStyle.italic,
+//                           color: Colors.white),
+//                     ),
+//                   )
+//                 : null,
+//           ),
+//         ),
+//       ),
+//       Container(
+//         color: backgroundColor,
+//         height: 2,
+//       ),
+//       Container(
+//         color: Color(0xFF595959),
+//         child: SizedBox(
+//           width: screenWidth(context) + 20,
+//           child: ExpansionPanelList(
+//             //start changes here
+//             dividerColor: Color(0xFF444444),
+//             elevation: 0,
+//             animationDuration: Duration(seconds: 1),
+//             children: [
+//               for (int i = 0; i < answers!.length; i++)
+//                 ExpansionPanel(
+//                   isExpanded: expand[i],
+//                   canTapOnHeader: !widget.enabled,
+//                   headerBuilder: (context, isOpen) {
+//                     return Html(data: answers![i].text!, style: {
+//                       // tables will have the below background color
+//                       "body": Style(
+//                         fontSize: FontSize(20),
+//                       ),
+//                     });
+//                   },
+//                   backgroundColor: Color(0xFF444444),
+//                   body: Html(data: answers![i].solution!, style: {
+//                     // tables will have the below background color
+//                     "body": Style(
+//                       color: Colors.white,
+//                       backgroundColor: Color(0xFF595959),
+//                       fontSize: FontSize(15),
+//                     ),
+//                   }),
+//                 )
+//             ],
+//             expansionCallback: (index, isOpen) {
+//               setState(() {
+//                 expand[index] = !isOpen;
+//               });
+//             },
+//           ),
+//         ),
+//       )
+//     ],
+//   ),
+// ),

@@ -1,3 +1,4 @@
+import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/ui/pill.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
@@ -41,6 +42,11 @@ class _AnalysisViewState extends State<AnalysisView> {
         });
       });
     });
+    // CourseDB().courses().then((courses) {
+    //   courses.forEach((element) {
+    //     // print(element.name);
+    //   });
+    // });
   }
 
   @override
@@ -80,7 +86,7 @@ class _AnalysisViewState extends State<AnalysisView> {
             SizedBox(height: 4),
             AdeoTabControl(
               variant: 'square',
-              tabs: ['all', 'exams', 'topics', 'analyse'],
+              tabs: ['all', 'exams', 'topics', 'others'],
               tabPages: [
                 AllTabPage(),
                 ExamsTabPage(),
