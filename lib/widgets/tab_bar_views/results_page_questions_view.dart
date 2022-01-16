@@ -325,20 +325,20 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                     ],
                   ),
                 ),
-              if (!widget.diagnostic && selected.length > 0)
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Button(
-                          label: 'revise',
-                          onPressed: () async {},
-                        ),
-                      ),
-                      Container(width: 1.0, color: kPageBackgroundGray),
-                    ],
-                  ),
-                ),
+              // if (!widget.diagnostic && selected.length > 0)
+              //   Expanded(
+              //     child: Row(
+              //       children: [
+              //         Expanded(
+              //           child: Button(
+              //             label: 'revise',
+              //             onPressed: () async {},
+              //           ),
+              //         ),
+              //         Container(width: 1.0, color: kPageBackgroundGray),
+              //       ],
+              //     ),
+              //   ),
               if (!widget.diagnostic)
                 Expanded(
                   child: Button(
