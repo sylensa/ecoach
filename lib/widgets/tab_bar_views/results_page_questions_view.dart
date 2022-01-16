@@ -316,7 +316,9 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                       Expanded(
                         child: Button(
                           label: 'review',
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                       Container(width: 1.0, color: kPageBackgroundGray),
