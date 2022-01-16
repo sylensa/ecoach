@@ -1,8 +1,11 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/tab_bar_views/results_page_questions_view.dart';
@@ -36,70 +39,59 @@ class _ResultsViewState extends State<ResultsView> {
   );
 
   List<TopicAnalysis> topics = [];
-  List topicsPlaceholder = [
-    {
-      'name': 'Density',
-      'rating': 'Excellent',
-      'total_questions': 10,
-      'correctly_answered': 10,
-    },
-    {
-      'name': 'Volume',
-      'rating': 'Good performance',
-      'total_questions': 10,
-      'correctly_answered': 8,
-    },
-    {
-      'name': 'Nervous System',
-      'rating': 'More room for improvement',
-      'total_questions': 10,
-      'correctly_answered': 5,
-    },
-    {
-      'name': 'Cells',
-      'rating': 'Good performance',
-      'total_questions': 10,
-      'correctly_answered': 8,
-    },
-    {
-      'name': 'Density',
-      'rating': 'Excellent',
-      'total_questions': 10,
-      'correctly_answered': 10,
-    },
-    {
-      'name': 'Volume',
-      'rating': 'Good performance',
-      'total_questions': 10,
-      'correctly_answered': 8,
-    },
-    {
-      'name': 'Nervous System',
-      'rating': 'More room for improvement',
-      'total_questions': 10,
-      'correctly_answered': 5,
-    },
-    {
-      'name': 'Cells',
-      'rating': 'Good performance',
-      'total_questions': 10,
-      'correctly_answered': 8,
-    },
-  ];
+  List topicsPlaceholder = [];
+  List questionPlaceholder = [];
 
   @override
   void initState() {
     super.initState();
 
-    // print("test id = ${widget.test.id}");
-    TestController().topicsAnalysis(widget.test).then((mapList) {
+    List<TestAnswer>? answers;
+
+    TestController().topicsAnalysis(widget.test).then((mapList) async {
       mapList.keys.forEach((key) {
-        List<TestAnswer> answers = mapList[key]!;
-        topics.add(TopicAnalysis(key, answers));
+        answers = mapList[key]!;
+        TopicAnalysis analysis = TopicAnalysis(key, answers!);
+
+        topicsPlaceholder.add({
+          'topicId': analysis.answers[0].topicId,
+          'name': analysis.name,
+          'rating': analysis.performanceNote,
+          'total_questions': analysis.total,
+          'correctly_answered': analysis.correct,
+        });
       });
 
+      List<Question> questions =
+          await TestController().getAllQuestions(widget.test);
+
+      print("questions=${questions.length}");
+      for (int i = 0; i < questions.length; i++) {
+        Question? question = questions[i];
+
+        questionPlaceholder.add({
+          'id': question.id,
+          'question': question.text,
+          'score': getScoreEnum(question),
+        });
+      }
       setState(() {});
     });
+  }
+
+  getScoreEnum(Question question) {
+    print('get score');
+    if (question.isCorrect) {
+      print('question is correct');
+      return ExamScore.CORRECTLY_ANSWERED;
+    }
+    if (question.isWrong) {
+      print('question is wrong');
+      return ExamScore.WRONGLY_ANSWERED;
+    }
+
+    print('question is not attempted');
+    return ExamScore.NOT_ATTEMPTED;
   }
 
   @override
@@ -178,7 +170,7 @@ class _ResultsViewState extends State<ResultsView> {
                   user: widget.user,
                 ),
                 QuestionsTabPage(
-                  questions: topicsPlaceholder,
+                  questions: questionPlaceholder,
                   diagnostic: widget.diagnostic,
                   user: widget.user,
                 ),

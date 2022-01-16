@@ -1,5 +1,6 @@
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/widgets/adeo_switch.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 
 class QuestionCard extends StatelessWidget {
@@ -65,7 +66,7 @@ class QuestionCard extends StatelessWidget {
                     SizedBox(width: 13),
                     Expanded(
                       child: Text(
-                        question['question'],
+                        parseHtmlString(question['question']),
                         style: questionStyle(isSelected),
                       ),
                     ),

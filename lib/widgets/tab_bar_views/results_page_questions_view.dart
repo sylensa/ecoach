@@ -3,7 +3,6 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/QuestionCard.dart';
-import 'package:ecoach/widgets/adeo_switch.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -45,68 +44,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
       'icon': 'assets/icons/courses/not_attempted.png',
     }
   ];
-  List questions = [
-    {
-      'id': 1,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.CORRECTLY_ANSWERED
-    },
-    {
-      'id': 2,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.WRONGLY_ANSWERED
-    },
-    {
-      'id': 3,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.NOT_ATTEMPTED
-    },
-    {
-      'id': 4,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.CORRECTLY_ANSWERED
-    },
-    {
-      'id': 5,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.CORRECTLY_ANSWERED
-    },
-    {
-      'id': 6,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.NOT_ATTEMPTED
-    },
-    {
-      'id': 7,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.NOT_ATTEMPTED
-    },
-    {
-      'id': 8,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.CORRECTLY_ANSWERED
-    },
-    {
-      'id': 9,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.WRONGLY_ANSWERED
-    },
-    {
-      'id': 10,
-      'question':
-          'In the state of attention, find how many decibels of inattention, needed to distract someone who is focused in life',
-      'score': ExamScore.CORRECTLY_ANSWERED
-    },
-  ];
+  late List questions;
 
   List savedQuestions = [2, 4, 3, 5];
 
@@ -123,6 +61,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
   void initState() {
     page = 0;
     controller = PageController();
+    questions = widget.questions;
     super.initState();
   }
 
@@ -214,9 +153,9 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                 child: PageView(
                   controller: controller,
                   onPageChanged: (newPage) {
-                    setState(() {
-                      page = newPage;
-                    });
+                    // setState(() {
+                    //   page = newPage;
+                    // });
                   },
                   children: [
                     QuestionTabView(
@@ -377,27 +316,29 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                       Expanded(
                         child: Button(
                           label: 'review',
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                       Container(width: 1.0, color: kPageBackgroundGray),
                     ],
                   ),
                 ),
-              if (!widget.diagnostic && selected.length > 0)
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Button(
-                          label: 'revise',
-                          onPressed: () async {},
-                        ),
-                      ),
-                      Container(width: 1.0, color: kPageBackgroundGray),
-                    ],
-                  ),
-                ),
+              // if (!widget.diagnostic && selected.length > 0)
+              //   Expanded(
+              //     child: Row(
+              //       children: [
+              //         Expanded(
+              //           child: Button(
+              //             label: 'revise',
+              //             onPressed: () async {},
+              //           ),
+              //         ),
+              //         Container(width: 1.0, color: kPageBackgroundGray),
+              //       ],
+              //     ),
+              //   ),
               if (!widget.diagnostic)
                 Expanded(
                   child: Button(

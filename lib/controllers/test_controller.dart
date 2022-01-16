@@ -1,4 +1,5 @@
 import 'package:ecoach/api/api_response.dart';
+import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
@@ -106,6 +107,38 @@ class TestController {
     });
 
     return topicsMap;
+  }
+
+  Future<List<Question>> getAllQuestions(TestTaken test) async {
+    String responses = test.responses;
+    // print("respones:");
+
+    responses = responses.replaceAll("(", "").replaceAll(")", "");
+    // responses = jsonEncode(responses);
+    // print(responses);
+    Map<String, dynamic> res = json.decode(responses);
+    // print(res.runtimeType);
+    List<TestAnswer>? answers = fromMap(res, (answer) {
+      // print(answer);
+      return TestAnswer.fromJson(answer);
+    });
+
+    List<Question> questions = [];
+    for (int i = 0; i < answers!.length; i++) {
+      TestAnswer answer = answers[i];
+      Question? question =
+          await QuestionDB().getQuestionById(answer.questionId!);
+      if (question != null) {
+        if (answer.selectedAnswerId != null) {
+          question.selectedAnswer =
+              await AnswerDB().getAnswerById(answer.selectedAnswerId!);
+        }
+
+        questions.add(question);
+      }
+    }
+
+    return questions;
   }
 
   fromMap(Map<String, dynamic> json, Function(Map<String, dynamic>) create) {

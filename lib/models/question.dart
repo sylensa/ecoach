@@ -57,14 +57,18 @@ class Question {
   }
 
   bool get isCorrect {
-    return correctAnswer != null && correctAnswer == selectedAnswer;
+    print("isCorrect");
+    if (selectedAnswer == null) return false;
+    return correctAnswer != null && correctAnswer!.id! == selectedAnswer!.id!;
   }
 
   bool get isWrong {
-    return !unattempted && correctAnswer == selectedAnswer;
+    print("isWrong");
+    return !unattempted && correctAnswer != selectedAnswer;
   }
 
   bool get unattempted {
+    print("unattempted");
     return selectedAnswer == null;
   }
 

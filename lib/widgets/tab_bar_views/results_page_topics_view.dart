@@ -1,9 +1,13 @@
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/note_view.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +153,9 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                       Expanded(
                         child: Button(
                           label: 'review',
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                       Container(width: 1.0, color: kPageBackgroundGray),
@@ -163,7 +169,24 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                       Expanded(
                         child: Button(
                           label: 'revise',
-                          onPressed: () async {},
+                          onPressed: () async {
+                            int topicId = selected[0]['topicId']!;
+                            Topic? topic =
+                                await TopicDB().getTopicById(topicId);
+
+                            if (topic != null) {
+                              print(
+                                  "_______________________________________________________");
+                              print(topic.notes);
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return NoteView(widget.user, topic);
+                                  });
+                            } else {
+                              showFeedback(context, "No notes available");
+                            }
+                          },
                         ),
                       ),
                       Container(width: 1.0, color: kPageBackgroundGray),
