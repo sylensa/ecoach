@@ -18,6 +18,10 @@ class TopicAnalysis {
     return time;
   }
 
+  int get total {
+    return answers.length;
+  }
+
   int get correct {
     int score = 0;
     answers.forEach((question) {
@@ -45,5 +49,19 @@ class TopicAnalysis {
   double get performace {
     double performace = correct / answers.length;
     return double.parse(performace.toStringAsFixed(2));
+  }
+
+  String get performanceNote {
+    if (performace == 95) {
+      return "Excellent";
+    } else if (performace >= 80) {
+      return "Very Good";
+    } else if (performace >= 60) {
+      return "Good, more room for improvement";
+    } else if (performace >= 40) {
+      return "Average Performance, need improvement";
+    } else {
+      return "Poor Performance";
+    }
   }
 }
