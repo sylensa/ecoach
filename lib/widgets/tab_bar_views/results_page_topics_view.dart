@@ -1,6 +1,5 @@
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/note_view.dart';
@@ -30,7 +29,7 @@ class TopicsTabPage extends StatefulWidget {
 
 class _TopicsTabPageState extends State<TopicsTabPage> {
   late bool showInPercentage;
-  List selected = [];
+  late dynamic selected;
 
   TextStyle rightWidgetStyle(bool isSelected) {
     return TextStyle(
@@ -40,20 +39,18 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
   }
 
   handleSelection(topic) {
-    if (selected.contains(topic))
-      setState(() {
-        selected =
-            selected.where((selectedTopic) => selectedTopic != topic).toList();
-      });
-    else
-      setState(() {
-        selected = [...selected, topic];
-      });
+    setState(() {
+      if (selected == topic)
+        selected = null;
+      else
+        selected = topic;
+    });
   }
 
   @override
   void initState() {
     showInPercentage = false;
+    selected = null;
     super.initState();
   }
 
@@ -82,7 +79,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                     onTap: () {
                       handleSelection(widget.topics[i]);
                     },
-                    isActive: selected.contains(widget.topics[i]),
+                    isActive: selected == widget.topics[i],
                     title: widget.topics[i]['name'],
                     subTitle: widget.topics[i]['rating'],
                     rightWidget: showInPercentage
@@ -90,49 +87,14 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                             correctlyAnswered: widget.topics[i]
                                 ['correctly_answered'],
                             totalQuestions: widget.topics[i]['total_questions'],
-                            isSelected: selected.contains(widget.topics[i]),
+                            isSelected: selected == widget.topics[i],
                           )
-                        // Text(
-                        //     calculatePercentage(
-                        //       widget.topics[i]['total_questions'],
-                        //       widget.topics[i]['correctly_answered'],
-                        //     ),
-                        //     style: rightWidgetStyle(
-                        //       selected.contains(widget.topics[i]),
-                        //     ).copyWith(fontWeight: FontWeight.w700),
-                        //   )
                         : FractionSnippet(
                             correctlyAnswered: widget.topics[i]
                                 ['correctly_answered'],
                             totalQuestions: widget.topics[i]['total_questions'],
-                            isSelected: selected.contains(widget.topics[i]),
-                          )
-                    // Row(
-                    //     children: [
-                    //       Text(
-                    //         widget.topics[i]['correctly_answered'].toString(),
-                    //         style: rightWidgetStyle(
-                    //           selected.contains(widget.topics[i]),
-                    //         ).copyWith(
-                    //           fontSize: 20,
-                    //           fontWeight: FontWeight.w600,
-                    //         ),
-                    //       ),
-                    //       Text(
-                    //         '/',
-                    //         style: rightWidgetStyle(
-                    //           selected.contains(widget.topics[i]),
-                    //         ),
-                    //       ),
-                    //       Text(
-                    //         widget.topics[i]['total_questions'].toString(),
-                    //         style: rightWidgetStyle(
-                    //           selected.contains(widget.topics[i]),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    ),
+                            isSelected: selected == widget.topics[i],
+                          )),
               );
             },
           ),
@@ -146,7 +108,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
           height: 48.0,
           child: Row(
             children: [
-              if (selected.length > 0)
+              if (selected != null)
                 Expanded(
                   child: Row(
                     children: [
@@ -162,7 +124,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                     ],
                   ),
                 ),
-              if (!widget.diagnostic && selected.length > 0)
+              if (!widget.diagnostic && selected != null)
                 Expanded(
                   child: Row(
                     children: [
@@ -170,14 +132,14 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                         child: Button(
                           label: 'revise',
                           onPressed: () async {
-                            int topicId = selected[0]['topicId']!;
+                            int topicId = selected['topicId']!;
                             Topic? topic =
                                 await TopicDB().getTopicById(topicId);
 
                             if (topic != null) {
-                              print(
-                                  "_______________________________________________________");
-                              print(topic.notes);
+                              // print(
+                              //     "_______________________________________________________");
+                              // print(topic.notes);
                               showDialog(
                                   context: context,
                                   builder: (context) {

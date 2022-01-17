@@ -1,27 +1,35 @@
 import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
-import 'package:ecoach/models/ui/pill.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
-import 'package:ecoach/widgets/analysis_app_bar.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/cards/stats_slider_card.dart';
 import 'package:ecoach/widgets/dropdowns/adeo_dropdown_borderless.dart';
 import 'package:ecoach/widgets/page_header.dart';
-import 'package:ecoach/widgets/percentage_switch.dart';
-import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
-import 'package:ecoach/widgets/tab_bar_views/exams_tab_bar_view.dart';
 import 'package:ecoach/widgets/tab_bar_views/reporting_all_tab_page.dart';
 import 'package:ecoach/widgets/tab_bar_views/reporting_exams_tab_page.dart';
 import 'package:ecoach/widgets/tab_bar_views/reporting_topics_tab_page.dart';
 import 'package:flutter/material.dart';
+// import 'package:ecoach/database/course_db.dart';
+// import 'package:ecoach/models/ui/pill.dart';
+// import 'package:ecoach/utils/manip.dart';
+// import 'package:ecoach/widgets/analysis_app_bar.dart';
+// import 'package:ecoach/widgets/percentage_switch.dart';
+// import 'package:ecoach/widgets/tab_bar_views/analysis_all_tab_bar_view.dart';
+// import 'package:ecoach/widgets/tab_bar_views/exams_tab_bar_view.dart';
 
 class AnalysisView extends StatefulWidget {
   static const String routeName = '/analysis';
-  const AnalysisView({Key? key}) : super(key: key);
+  final Course? course;
+  final User user;
+
+  const AnalysisView({required this.user, this.course, Key? key})
+      : super(key: key);
 
   @override
   _AnalysisViewState createState() => _AnalysisViewState();
@@ -29,24 +37,36 @@ class AnalysisView extends StatefulWidget {
 
 class _AnalysisViewState extends State<AnalysisView> {
   List<SubscriptionItem> subscriptions = [];
-  String selectedSubscription = '';
+  String subscription = '';
+  late SubscriptionItem subscriptionObject;
 
   @override
   void initState() {
     super.initState();
     SubscriptionItemDB().allSubscriptionItems().then((subscriptionItems) {
       setState(() {
-        selectedSubscription = subscriptionItems[0].name!;
         subscriptionItems.forEach((item) {
           subscriptions.add(item);
         });
+
+        if (widget.course != null)
+          getSubscriptionItemByTag(
+            widget.course!.id!.toString(),
+            (foundItem) {
+              subscription = foundItem!.name!;
+              subscriptionObject = foundItem;
+            },
+          );
+        else {
+          subscription = subscriptionItems[0].name!;
+          subscriptionObject = subscriptionItems[0];
+        }
       });
     });
-    // CourseDB().courses().then((courses) {
-    //   courses.forEach((element) {
-    //     // print(element.name);
-    //   });
-    // });
+  }
+
+  getSubscriptionItemByTag(tag, callback) {
+    SubscriptionItemDB().getSubscriptionItemByTag(tag).then(callback);
   }
 
   @override
@@ -60,16 +80,17 @@ class _AnalysisViewState extends State<AnalysisView> {
               pageHeading: 'Track your progress',
               size: Sizes.small,
             ),
-            AdeoDropdownBorderless(
-              value: selectedSubscription,
-              items: subscriptions.map((item) => item.name).toList(),
-              onChanged: (item) {
-                setState(() {
-                  selectedSubscription = item;
-                });
-              },
-            ),
-            SizedBox(height: 12),
+            if (subscription != '')
+              AdeoDropdownBorderless(
+                value: subscription,
+                items: subscriptions.map((item) => item.name).toList(),
+                onChanged: (item) {
+                  setState(() {
+                    subscription = item;
+                  });
+                },
+              ),
+            SizedBox(height: 26),
             StatsSliderCard(
               items: [
                 Stat(
@@ -82,8 +103,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                 Stat(value: '1.5 q/m', statLabel: 'speed'),
               ],
             ),
-            // Container(height: 1, color: Colors.white),
-            SizedBox(height: 4),
+            SizedBox(height: 26),
             AdeoTabControl(
               variant: 'square',
               tabs: ['all', 'exams', 'topics', 'others'],

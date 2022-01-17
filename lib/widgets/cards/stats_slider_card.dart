@@ -32,8 +32,8 @@ class _StatsSliderCardState extends State<StatsSliderCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 115,
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: 90),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -62,77 +62,74 @@ class _StatsSliderCardState extends State<StatsSliderCard> {
             },
           ),
           Expanded(
-            child: Container(
-              height: 80,
-              child: PageView(
-                controller: controller,
-                physics: NeverScrollableScrollPhysics(),
-                children: widget.items
-                    .map(
-                      (item) => Column(
-                        children: [
-                          if (item.hasStandaloneWidgetAsValue == true)
-                            Column(
-                              children: [
-                                item.value,
-                                SizedBox(height: 6),
-                              ],
-                            )
-                          else
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                if (item.hasAppreciated == true)
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 24,
-                                        height: 20,
-                                        child: Image.asset(
-                                          'assets/icons/progress_up.png',
-                                          // fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                      SizedBox(width: 12)
-                                    ],
-                                  )
-                                else if (item.hasDeprecated == true)
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 24,
-                                        height: 20,
-                                        child: Image.asset(
-                                          'assets/icons/progress_down.png',
-                                          // fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                      SizedBox(width: 12)
-                                    ],
-                                  ),
-                                Text(
-                                  item.value,
-                                  style: TextStyle(
-                                    color: kAdeoBlue2,
-                                    fontSize: 41,
-                                    fontFamily: 'Helvetica Rounded',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          Text(
-                            item.statLabel.toTitleCase(),
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0x80000000),
-                            ),
+            child: PageView(
+              controller: controller,
+              physics: NeverScrollableScrollPhysics(),
+              children: widget.items
+                  .map(
+                    (item) => Column(
+                      children: [
+                        if (item.hasStandaloneWidgetAsValue == true)
+                          Column(
+                            children: [
+                              item.value,
+                              SizedBox(height: 6),
+                            ],
                           )
-                        ],
-                      ),
-                    )
-                    .toList(),
-              ),
+                        else
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (item.hasAppreciated == true)
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 24,
+                                      height: 20,
+                                      child: Image.asset(
+                                        'assets/icons/progress_up.png',
+                                        // fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12)
+                                  ],
+                                )
+                              else if (item.hasDeprecated == true)
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 24,
+                                      height: 20,
+                                      child: Image.asset(
+                                        'assets/icons/progress_down.png',
+                                        // fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12)
+                                  ],
+                                ),
+                              Text(
+                                item.value,
+                                style: TextStyle(
+                                  color: kAdeoBlue2,
+                                  fontSize: 41,
+                                  fontFamily: 'Helvetica Rounded',
+                                ),
+                              ),
+                            ],
+                          ),
+                        Text(
+                          item.statLabel.toTitleCase(),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0x80000000),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           ArrowButton(

@@ -73,6 +73,7 @@ class _ResultsViewState extends State<ResultsView> {
           'id': question.id,
           'question': question.text,
           'score': getScoreEnum(question),
+          'position': i + 1,
         });
       }
       setState(() {});

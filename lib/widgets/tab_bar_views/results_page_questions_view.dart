@@ -153,9 +153,9 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                 child: PageView(
                   controller: controller,
                   onPageChanged: (newPage) {
-                    // setState(() {
-                    //   page = newPage;
-                    // });
+                    setState(() {
+                      page = newPage;
+                    });
                   },
                   children: [
                     QuestionTabView(
@@ -400,7 +400,7 @@ class QuestionTabView extends StatelessWidget {
 
         return QuestionCard(
           question: question,
-          questionNumber: (i + 1).toString(),
+          questionNumber: question['position'].toString(),
           isSaved: savedQuestions.contains(question['id']),
           isSelected: selectedQuestions.contains(question),
           onSaveToggled: onQuestionToggled,

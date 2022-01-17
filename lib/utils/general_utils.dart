@@ -11,5 +11,5 @@ dynamic enumFromString(List values, String? comp) {
 calculatePercentage(int totalNumberOfQuestions, int correctlyAnswered) {
   double fraction = correctlyAnswered / totalNumberOfQuestions;
   double percentage = fraction * 100;
-  return percentage.toString() + '%';
+  return percentage.toStringAsFixed(1) + '%';
 }
