@@ -17,12 +17,14 @@ class TopicsTabPage extends StatefulWidget {
     required this.topics,
     required this.diagnostic,
     required this.user,
+    this.history = false,
     Key? key,
   }) : super(key: key);
 
   final List topics;
   final diagnostic;
   final user;
+  final bool history;
 
   @override
   _TopicsTabPageState createState() => _TopicsTabPageState();
@@ -154,7 +156,10 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                         child: Button(
                           label: 'review',
                           onPressed: () {
-                            Navigator.pop(context);
+                            if (widget.history) {
+                            } else {
+                              Navigator.pop(context);
+                            }
                           },
                         ),
                       ),

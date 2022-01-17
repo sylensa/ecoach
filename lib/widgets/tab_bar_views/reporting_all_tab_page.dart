@@ -1,13 +1,15 @@
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:flutter/material.dart';
 
 class AllTabPage extends StatefulWidget {
-  const AllTabPage({
-    Key? key,
-  }) : super(key: key);
+  const AllTabPage({Key? key}) : super(key: key);
 
   @override
   State<AllTabPage> createState() => _AllTabPageState();
@@ -192,7 +194,14 @@ class _AllTabPageState extends State<AllTabPage> {
                                 label: 'result',
                                 fontSize: 16,
                                 color: kAdeoBlue2,
-                                onPressed: () async {},
+                                onPressed: () async {
+                                  // Navigator.push(context,
+                                  //     MaterialPageRoute(builder: (context) {
+                                  //   return ResultsView(
+                                  //       widget.user, widget.course,
+                                  //       test: selectedTest);
+                                  // }));
+                                },
                               ),
                             ),
                             Container(width: 1.0, color: kPageBackgroundGray),
