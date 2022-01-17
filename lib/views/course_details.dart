@@ -255,9 +255,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return AnalysisView(
-                                    // widget.user,
-                                    // widget.courseInfo.course,
-                                    );
+                                  user: widget.user,
+                                  course: widget.courseInfo.course,
+                                );
                               },
                             ),
                           );

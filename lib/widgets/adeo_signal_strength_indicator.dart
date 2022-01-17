@@ -12,8 +12,8 @@ class AdeoSignalStrengthIndicator extends StatelessWidget {
   final Sizes size;
 
   bool getStrengthOfLevel(level) {
-    int singalCount = 7;
-    double percentageOfCount = strength / 100 * singalCount;
+    double countPercentage = 7 / 100;
+    double percentageOfCount = strength * countPercentage;
     return percentageOfCount / level >= 1;
   }
 

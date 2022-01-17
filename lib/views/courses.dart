@@ -247,10 +247,13 @@ class _CourseViewState extends State<CourseView> {
                       widget.user,
                       courseInfo: CourseInfo(
                         course: items[index],
-                        title: items[index].name!.replaceFirst(
+                        title: items[index]
+                            .name!
+                            .replaceFirst(
                               subName,
                               "",
-                            ),
+                            )
+                            .replaceFirst(subName.toUpperCase(), ""),
                         subTitle: 'Take a random test across topics',
                         progress: 51,
                       ),
