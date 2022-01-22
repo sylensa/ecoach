@@ -28,6 +28,7 @@ class QuizView extends StatefulWidget {
       this.course,
       required this.name,
       this.type = TestType.NONE,
+      this.challengeType = TestCategory.NONE,
       this.theme = QuizTheme.GREEN,
       this.timeInSec = 60,
       this.speedTest = false,
@@ -44,6 +45,7 @@ class QuizView extends StatefulWidget {
   bool disableTime;
   bool speedTest;
   final TestType type;
+  final TestCategory challengeType;
   QuizTheme theme;
 
   @override
@@ -224,6 +226,7 @@ class _QuizViewState extends State<QuizView> {
         courseId: widget.course!.id,
         testname: widget.name,
         testType: widget.type.toString(),
+        challengeType: widget.challengeType.toString(),
         testTime: widget.disableTime ? -1 : duration.inSeconds,
         usedTime: DateTime.now().difference(startTime).inSeconds,
         responses: responses,

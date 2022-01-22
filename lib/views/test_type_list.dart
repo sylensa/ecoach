@@ -143,8 +143,7 @@ class _MockListViewState extends State<TestTypeListView> {
                         name: testsSelected[0].name,
                         type: widget.type,
                         theme: QuizTheme.BLUE,
-                        category:
-                            testsSelected[0].category.toString().split(".")[1],
+                        category: testsSelected[0].category!,
                         time: widget.time != null
                             ? widget.time!
                             : widget.type == TestType.SPEED

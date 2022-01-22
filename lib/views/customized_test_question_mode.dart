@@ -1,13 +1,17 @@
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test_new_screen.dart';
 import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
+import 'package:ecoach/widgets/customize_input_field.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:flutter/material.dart';
 
 class CustomizedTestQuestionMode extends StatelessWidget {
-  const CustomizedTestQuestionMode({
-    Key? key,
-  }) : super(key: key);
+  const CustomizedTestQuestionMode(this.user, this.course, {Key? key})
+      : super(key: key);
+  final User user;
+  final Course course;
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +24,8 @@ class CustomizedTestQuestionMode extends StatelessWidget {
           subText: 'Allocation per question',
           middlePiece: Column(
             children: [
-              SizedBox(height: 40),
-              Text(
-                'Quaye, your custom number picker comes here',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: kDefaultBlack,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              SizedBox(height: 20),
+              CustomizeInputField(),
             ],
           ),
           footer: AdeoOutlinedButton(

@@ -106,7 +106,8 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return CustomizedTestQuestionMode();
+                            return CustomizedTestQuestionMode(widget.user,
+                              widget.course,);
                           },
                         ),
                       );

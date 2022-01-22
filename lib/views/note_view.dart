@@ -94,8 +94,7 @@ class _NoteViewState extends State<NoteView> {
                               name: widget.topic.name!,
                               theme: QuizTheme.BLUE,
                               type: TestType.KNOWLEDGE,
-                              category:
-                                  TestCategory.TOPIC.toString().split(".")[1],
+                              category: TestCategory.TOPIC,
                               time: questions.length * 60,
                               course: course,
                             );

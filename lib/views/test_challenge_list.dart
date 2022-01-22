@@ -69,7 +69,7 @@ class TestChallengeList extends StatelessWidget {
                     course: course,
                     type: testType,
                     theme: QuizTheme.BLUE,
-                    category: testCategory.toString().split(".")[1],
+                    category: testCategory,
                     time:
                         testType == TestType.SPEED ? 30 : questions.length * 60,
                     name: "Mock Test",
@@ -99,7 +99,7 @@ class TestChallengeList extends StatelessWidget {
                   widgetView = QuizCover(
                     user,
                     questions,
-                    category: testCategory.toString().split(".")[1],
+                    category: testCategory,
                     course: course,
                     type: testType,
                     theme: QuizTheme.BLUE,
@@ -120,7 +120,7 @@ class TestChallengeList extends StatelessWidget {
                   widgetView = QuizCover(
                     user,
                     questions,
-                    category: testCategory.toString().split(".")[1],
+                    category: testCategory,
                     course: course,
                     theme: QuizTheme.BLUE,
                     time:

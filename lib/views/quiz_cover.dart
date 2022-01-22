@@ -20,7 +20,7 @@ class QuizCover extends StatelessWidget {
     this.level,
     required this.name,
     this.type = TestType.NONE,
-    this.category = "Test",
+    this.category = TestCategory.NONE,
     this.theme = QuizTheme.GREEN,
     this.course,
     this.time = 300,
@@ -33,7 +33,7 @@ class QuizCover extends StatelessWidget {
   List<Question> questions;
   bool diagnostic;
   String name;
-  String? category;
+  final TestCategory category;
   final TestType type;
   int time;
   QuizTheme theme;
@@ -128,7 +128,8 @@ class QuizCover extends StatelessWidget {
                               ),
                               SizedBox(
                                 width: 160,
-                                child: Text(":${category}",
+                                child: Text(
+                                    ":${category.toString().split(".")[1]}",
                                     style: TextStyle(
                                         fontSize: 22,
                                         color: Colors.white,
@@ -213,10 +214,7 @@ class QuizCover extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                      if (category ==
-                                          TestCategory.ESSAY
-                                              .toString()
-                                              .split(".")[1])
+                                      if (category == TestCategory.ESSAY)
                                         return QuizEssayView(
                                           user,
                                           questions,
@@ -234,6 +232,7 @@ class QuizCover extends StatelessWidget {
                                         course: course,
                                         timeInSec: time,
                                         type: type,
+                                        challengeType: category,
                                         theme: theme,
                                         speedTest: type == TestType.SPEED
                                             ? true
