@@ -87,6 +87,8 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                           children: [
                             AnalysisCard(
                               variant: CardVariant.LIGHT,
+                              correctlyAnswered: 5,
+                              totalQuestions: 10,
                               activity: 'Using The Internet To Communicate',
                               activityType: 'Exam',
                               showInPercentage: showInPercentage,
@@ -102,6 +104,8 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                             ),
                             AnalysisCard(
                               variant: CardVariant.LIGHT,
+                              correctlyAnswered: 5,
+                              totalQuestions: 10,
                               activity: 'Using The Internet To Communicate',
                               activityType: 'Exam',
                               showInPercentage: showInPercentage,
@@ -117,6 +121,8 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                             ),
                             AnalysisCard(
                               variant: CardVariant.LIGHT,
+                              correctlyAnswered: 5,
+                              totalQuestions: 10,
                               activity: 'Using The Internet To Communicate',
                               activityType: 'Exam',
                               showInPercentage: showInPercentage,
@@ -132,6 +138,8 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                             ),
                             AnalysisCard(
                               variant: CardVariant.LIGHT,
+                              correctlyAnswered: 5,
+                              totalQuestions: 10,
                               activity: 'Using The Internet To Communicate',
                               activityType: 'Exam',
                               showInPercentage: showInPercentage,
@@ -147,6 +155,8 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                             ),
                             AnalysisCard(
                               variant: CardVariant.LIGHT,
+                              correctlyAnswered: 5,
+                              totalQuestions: 10,
                               activity: 'Using The Internet To Communicate',
                               activityType: 'Exam',
                               showInPercentage: showInPercentage,
@@ -180,14 +190,14 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                         background: kAdeoBlue,
                         color: Colors.white,
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return CompareView();
-                              },
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) {
+                          //       return CompareView(user: widget.user, operands: [],);
+                          //     },
+                          //   ),
+                          // );
                         },
                       ),
                     )

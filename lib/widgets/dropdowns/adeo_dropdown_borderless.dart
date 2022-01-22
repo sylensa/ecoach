@@ -1,4 +1,4 @@
-import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +9,8 @@ class AdeoDropdownBorderless extends StatelessWidget {
     required this.onChanged,
   });
 
-  final String value;
-  final List items;
+  final SubscriptionItem value;
+  final List<SubscriptionItem> items;
   final onChanged;
 
   @override
@@ -22,7 +22,7 @@ class AdeoDropdownBorderless extends StatelessWidget {
         color: Colors.white,
         padding: EdgeInsets.symmetric(horizontal: 18),
         child: DropdownButtonHideUnderline(
-          child: DropdownButton(
+          child: DropdownButton<SubscriptionItem>(
             value: value,
             itemHeight: 48,
             style: TextStyle(
@@ -32,10 +32,10 @@ class AdeoDropdownBorderless extends StatelessWidget {
             onChanged: onChanged,
             items: items
                 .map(
-                  (item) => DropdownMenuItem(
+                  (item) => DropdownMenuItem<SubscriptionItem>(
                     value: item,
                     child: Text(
-                      item,
+                      item.name!,
                       style: TextStyle(
                         color: kDefaultBlack,
                         fontSize: 16,

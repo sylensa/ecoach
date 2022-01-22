@@ -84,8 +84,8 @@ class _StatsSliderCardState extends State<StatsSliderCard> {
                                 Row(
                                   children: [
                                     Container(
-                                      width: 24,
-                                      height: 20,
+                                      width: 20,
+                                      height: 16,
                                       child: Image.asset(
                                         'assets/icons/progress_up.png',
                                         // fit: BoxFit.contain,
@@ -98,8 +98,8 @@ class _StatsSliderCardState extends State<StatsSliderCard> {
                                 Row(
                                   children: [
                                     Container(
-                                      width: 24,
-                                      height: 20,
+                                      width: 20,
+                                      height: 16,
                                       child: Image.asset(
                                         'assets/icons/progress_down.png',
                                         // fit: BoxFit.contain,

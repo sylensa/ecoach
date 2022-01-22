@@ -127,3 +127,8 @@ TextStyle kIntroitScreenSubHeadingStyle({Color color = kDefaultBlack}) {
     fontStyle: FontStyle.italic,
   );
 }
+
+TextStyle inlinePromptStyle = TextStyle(
+  fontSize: 14,
+  color: Colors.grey,
+);

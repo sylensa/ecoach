@@ -33,4 +33,5 @@ class AppUrl {
       baseURL + 'subscriptions/feature/download';
 
   static const String analysis = baseURL + 'analysis/course';
+  static const String report = baseURL + 'report';
 }

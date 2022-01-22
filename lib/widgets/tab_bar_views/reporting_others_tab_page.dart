@@ -4,14 +4,13 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/compare.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:flutter/material.dart';
 
-class ExamsTabPage extends StatefulWidget {
-  const ExamsTabPage({
+class OthersTabPage extends StatefulWidget {
+  const OthersTabPage({
     required this.course,
     required this.user,
     Key? key,
@@ -20,20 +19,20 @@ class ExamsTabPage extends StatefulWidget {
   final User user;
 
   @override
-  State<ExamsTabPage> createState() => _ExamsTabPageState();
+  State<OthersTabPage> createState() => _OthersTabPageState();
 }
 
-class _ExamsTabPageState extends State<ExamsTabPage> {
+class _OthersTabPageState extends State<OthersTabPage> {
   late bool showInPercentage;
-  List<TestTaken> selected = [];
+  dynamic selected = null;
   Future<List<TestTaken>>? tests;
 
   handleSelection(test) {
     setState(() {
-      if (selected.contains(test))
-        selected = selected.where((item) => item != test).toList();
+      if (selected == test)
+        selected = null;
       else
-        selected = [...selected, test];
+        selected = test;
     });
   }
 
@@ -109,7 +108,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                                         ),
                                         child: AnalysisCard(
                                           showInPercentage: showInPercentage,
-                                          isSelected: selected.contains(test),
+                                          isSelected: selected == test,
                                           metaData: ActivityMetaData(
                                             date: test.datetime
                                                 .toString()
@@ -146,87 +145,66 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
             }
           },
         ),
-        if (selected.length > 0)
+        if (selected != null)
           Container(
             height: 48.0,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
             ),
-            child: selected.length > 1
-                ? Expanded(
-                    child: AdeoTextButton(
-                      label: 'analyse',
-                      fontSize: 16,
-                      color: kAdeoBlue2,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return CompareView(
-                                user: widget.user,
-                                operands: selected,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : Row(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
                     children: [
                       Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: AdeoTextButton(
-                                label: 'review',
-                                fontSize: 16,
-                                color: kAdeoBlue2,
-                                onPressed: () {},
-                              ),
-                            ),
-                            Container(width: 1.0, color: kPageBackgroundGray),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: AdeoTextButton(
-                                label: 'result',
-                                fontSize: 16,
-                                color: kAdeoBlue2,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (BuildContext) {
-                                      return ResultsView(
-                                        widget.user,
-                                        widget.course,
-                                        test: selected[0],
-                                      );
-                                    }),
-                                  );
-                                },
-                              ),
-                            ),
-                            Container(width: 1.0, color: kPageBackgroundGray),
-                          ],
-                        ),
-                      ),
-                      Expanded(
                         child: AdeoTextButton(
-                          label: 'retake',
+                          label: 'review',
                           fontSize: 16,
                           color: kAdeoBlue2,
                           onPressed: () {},
                         ),
                       ),
+                      Container(width: 1.0, color: kPageBackgroundGray),
                     ],
                   ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AdeoTextButton(
+                          label: 'result',
+                          fontSize: 16,
+                          color: kAdeoBlue2,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (BuildContext) {
+                                return ResultsView(
+                                  widget.user,
+                                  widget.course,
+                                  test: selected,
+                                );
+                              }),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(width: 1.0, color: kPageBackgroundGray),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: AdeoTextButton(
+                    label: 'retake',
+                    fontSize: 16,
+                    color: kAdeoBlue2,
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
           )
       ],
     );

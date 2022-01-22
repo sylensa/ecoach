@@ -58,6 +58,18 @@ class CourseDB {
     return course;
   }
 
+  Future<Course?> getCourseByName(String name) async {
+    final db = await DBProvider.database;
+    var result =
+        await db!.query("courses", where: "name = ?", whereArgs: [name]);
+    Course? course;
+    if (result.isNotEmpty) {
+      course = Course.fromJson(result.first);
+      course.analytic = await AnalysisDB().getAnalysisById(course.id!);
+    }
+    return course;
+  }
+
   Future<void> insertAll(List<Course> courses) async {
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();

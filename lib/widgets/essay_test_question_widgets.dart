@@ -158,7 +158,7 @@ AccordionSection SubQuestionAccordionSection({
     contentBorderRadius: 0,
     contentHorizontalPadding: 0,
     header: !useTex!
-        ? Html(data: "${heading ?? ''}", style: {
+        ? Html(data: "${heading}", style: {
             "body": Style(
               backgroundColor: Color(0xFF444444),
               color: Colors.white,
@@ -168,7 +168,7 @@ AccordionSection SubQuestionAccordionSection({
         : TeXView(
             renderingEngine: TeXViewRenderingEngine.katex(),
             child: TeXViewDocument(
-              heading ?? "",
+              heading,
               style: TeXViewStyle(
                 backgroundColor: Color(0xFF444444),
                 contentColor: Colors.white,
@@ -234,7 +234,7 @@ Widget SubSectionNonAccordionView({
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         color: Color(0xFF444444),
         child: !useTex
-            ? Html(data: "${content ?? ''}", style: {
+            ? Html(data: "${content}", style: {
                 "body": Style(
                   backgroundColor: Color(0xFF444444),
                   color: Colors.white,
@@ -244,7 +244,7 @@ Widget SubSectionNonAccordionView({
             : TeXView(
                 renderingEngine: TeXViewRenderingEngine.katex(),
                 child: TeXViewDocument(
-                  content ?? "",
+                  content,
                   style: TeXViewStyle(
                     backgroundColor: Color(0xFF444444),
                     contentColor: Colors.white,

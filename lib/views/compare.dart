@@ -1,3 +1,5 @@
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
@@ -9,7 +11,13 @@ import 'package:flutter/material.dart';
 
 class CompareView extends StatefulWidget {
   static const String routeName = '/analysis';
-  const CompareView({Key? key}) : super(key: key);
+  final List<TestTaken> operands;
+  final User user;
+  const CompareView({
+    required this.user,
+    required this.operands,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _CompareViewState createState() => _CompareViewState();
