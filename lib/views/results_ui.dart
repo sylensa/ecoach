@@ -1,5 +1,4 @@
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -11,17 +10,20 @@ import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/tab_bar_views/results_page_questions_view.dart';
 import 'package:ecoach/widgets/tab_bar_views/results_page_topics_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ResultsView extends StatefulWidget {
   ResultsView(this.user, this.course,
-      {Key? key, required this.test, this.diagnostic = false})
+      {Key? key,
+      required this.test,
+      this.history = false,
+      this.diagnostic = false})
       : super(key: key);
   final User user;
   final Course course;
   TestTaken test;
   bool diagnostic;
+  bool history;
 
   @override
   State<ResultsView> createState() => _ResultsViewState();
@@ -166,15 +168,15 @@ class _ResultsViewState extends State<ResultsView> {
               tabs: ['topics', 'questions'],
               tabPages: [
                 TopicsTabPage(
-                  topics: topicsPlaceholder,
-                  diagnostic: widget.diagnostic,
-                  user: widget.user,
-                ),
+                    topics: topicsPlaceholder,
+                    diagnostic: widget.diagnostic,
+                    user: widget.user,
+                    history: widget.history),
                 QuestionsTabPage(
-                  questions: questionPlaceholder,
-                  diagnostic: widget.diagnostic,
-                  user: widget.user,
-                ),
+                    questions: questionPlaceholder,
+                    diagnostic: widget.diagnostic,
+                    user: widget.user,
+                    history: widget.history),
               ],
             ),
           ],

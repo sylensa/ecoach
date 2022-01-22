@@ -1,6 +1,5 @@
 import 'package:accordion/accordion.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_tex/flutter_tex.dart';

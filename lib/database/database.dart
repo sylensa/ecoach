@@ -21,7 +21,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.100.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.101.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -219,6 +219,7 @@ class DBProvider {
         'course_id' int NOT NULL,
         'test_name' varchar(255) DEFAULT NULL,
         'test_type' varchar(255) DEFAULT NULL,
+        'challenge_type' varchar(255) DEFAULT NULL,
         'test_id' int DEFAULT NULL,
         'test_time' int DEFAULT NULL,
         'used_time' int DEFAULT NULL,

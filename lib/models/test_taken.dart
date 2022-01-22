@@ -10,6 +10,7 @@ class TestTaken {
     this.courseId,
     this.testname,
     this.testType,
+    this.challengeType,
     this.testId,
     this.testTime,
     this.usedTime,
@@ -34,6 +35,7 @@ class TestTaken {
   String? courseName;
   String? testname;
   String? testType;
+  String? challengeType;
   int? testId;
   int? testTime;
   int? usedTime;
@@ -87,6 +89,7 @@ class TestTaken {
         courseId: json["course_id"],
         testname: json["test_name"],
         testType: json["test_type"],
+        challengeType: json['challenge_type'],
         testId: json["test_id"],
         testTime: json["test_time"],
         usedTime: json["used_time"],
@@ -115,6 +118,7 @@ class TestTaken {
         "course_id": courseId,
         "test_name": testname,
         "test_type": testType,
+        "challenge_type": challengeType,
         "test_id": testId,
         "test_time": testTime,
         "used_time": usedTime,
