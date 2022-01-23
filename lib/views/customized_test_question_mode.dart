@@ -5,13 +5,25 @@ import 'package:ecoach/views/customized_test_new_screen.dart';
 import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/customize_input_field.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
+import 'package:ecoach/widgets/pin_input.dart';
 import 'package:flutter/material.dart';
 
-class CustomizedTestQuestionMode extends StatelessWidget {
+class CustomizedTestQuestionMode extends StatefulWidget {
   const CustomizedTestQuestionMode(this.user, this.course, {Key? key})
       : super(key: key);
   final User user;
   final Course course;
+
+  @override
+  State<CustomizedTestQuestionMode> createState() =>
+      _CustomizedTestQuestionModeState();
+}
+
+class _CustomizedTestQuestionModeState
+    extends State<CustomizedTestQuestionMode> {
+  String durationLeft = '';
+  String durationRight = '';
+  String duration = '';
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +37,35 @@ class CustomizedTestQuestionMode extends StatelessWidget {
           middlePiece: Column(
             children: [
               SizedBox(height: 20),
-              CustomizeInputField(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120.0,
+                    child: PinInput(
+                      length: 2,
+                      onChanged: (v) {
+                        setState(() {
+                          durationLeft = v.split('').join('');
+                        });
+                      },
+                    ),
+                  ),
+                  Text(':', style: kPinInputTextStyle),
+                  Container(
+                    width: 120.0,
+                    child: PinInput(
+                      autoFocus: durationLeft.length == 2,
+                      length: 2,
+                      onChanged: (v) {
+                        setState(() {
+                          durationRight = v.split('').join('');
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
           footer: AdeoOutlinedButton(
@@ -38,16 +78,8 @@ class CustomizedTestQuestionMode extends StatelessWidget {
           subText: 'Enter your preferred number',
           middlePiece: Column(
             children: [
-              SizedBox(height: 40),
-              Text(
-                'Quaye, your custom number picker comes here',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: kDefaultBlack,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              SizedBox(height: 20),
+              CustomizeInputField(),
             ],
           ),
           footer: Row(
