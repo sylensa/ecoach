@@ -2,6 +2,7 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/compare.dart';
@@ -71,15 +72,20 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                   );
                 else if (snapshot.data != null) {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
+                  List<TestTaken> examTest = testData
+                      .where((element) =>
+                          element.challengeType == TestCategory.EXAM.toString())
+                      .toList();
+
                   return Expanded(
-                    child: testData.length == 0
+                    child: examTest.length == 0
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 32,
                               ),
                               child: Text(
-                                'You haven\'t taken any tests under this course yet',
+                                'You haven\'t taken any EXAMS-based tests under this course yet',
                                 style: inlinePromptStyle,
                                 textAlign: TextAlign.center,
                               ),
@@ -99,10 +105,10 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                               SizedBox(height: 15),
                               Expanded(
                                 child: ListView.builder(
-                                    itemCount: testData.length,
+                                    itemCount: examTest.length,
                                     shrinkWrap: true,
                                     itemBuilder: (context, index) {
-                                      TestTaken test = testData[index];
+                                      TestTaken test = examTest[index];
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 24,
@@ -121,7 +127,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                                             duration: test.usedTimeText,
                                           ),
                                           activity: test.testname!,
-                                          activityType: test.testType!,
+                                          activityType: 'Exam',
                                           correctlyAnswered: test.correct!,
                                           totalQuestions: test.totalQuestions,
                                           onTap: () {
@@ -166,6 +172,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                             builder: (context) {
                               return CompareView(
                                 user: widget.user,
+                                course: widget.course,
                                 operands: selected,
                               );
                             },

@@ -8,13 +8,30 @@ class AdeoSignalStrengthIndicator extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final int strength;
+  final double strength;
   final Sizes size;
 
-  bool getStrengthOfLevel(level) {
-    double countPercentage = 7 / 100;
-    double percentageOfCount = strength * countPercentage;
-    return percentageOfCount / level >= 1;
+  getStrengthCategory(int level) {
+    bool getCase(limit) {
+      return strength >= limit;
+    }
+
+    switch (level) {
+      case 1:
+        return getCase(0);
+      case 2:
+        return getCase(15);
+      case 3:
+        return getCase(30);
+      case 4:
+        return getCase(45);
+      case 5:
+        return getCase(60);
+      case 6:
+        return getCase(75);
+      default:
+        return getCase(90);
+    }
   }
 
   @override
@@ -26,43 +43,43 @@ class AdeoSignalStrengthIndicator extends StatelessWidget {
         SignalIndicator(
           size: size,
           step: StrengthStep.ONE,
-          isFilled: getStrengthOfLevel(1),
+          isFilled: getStrengthCategory(1),
         ),
         SizedBox(width: size == Sizes.large ? 4 : 2),
         SignalIndicator(
           size: size,
           step: StrengthStep.TWO,
-          isFilled: getStrengthOfLevel(2),
+          isFilled: getStrengthCategory(2),
         ),
         SizedBox(width: size == Sizes.large ? 4 : 2),
         SignalIndicator(
           size: size,
           step: StrengthStep.THREE,
-          isFilled: getStrengthOfLevel(3),
+          isFilled: getStrengthCategory(3),
         ),
         SizedBox(width: size == Sizes.large ? 4 : 2),
         SignalIndicator(
           size: size,
           step: StrengthStep.FOUR,
-          isFilled: getStrengthOfLevel(4),
+          isFilled: getStrengthCategory(4),
         ),
         SizedBox(width: size == Sizes.large ? 4 : 2),
         SignalIndicator(
           size: size,
           step: StrengthStep.FIVE,
-          isFilled: getStrengthOfLevel(5),
+          isFilled: getStrengthCategory(5),
         ),
         SizedBox(width: size == Sizes.large ? 4 : 2),
         SignalIndicator(
           size: size,
           step: StrengthStep.SIX,
-          isFilled: getStrengthOfLevel(6),
+          isFilled: getStrengthCategory(6),
         ),
         SizedBox(width: size == Sizes.large ? 4 : 2),
         SignalIndicator(
           size: size,
           step: StrengthStep.SEVEN,
-          isFilled: getStrengthOfLevel(7),
+          isFilled: getStrengthCategory(7),
         ),
       ],
     );

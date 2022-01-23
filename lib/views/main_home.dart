@@ -17,7 +17,7 @@ class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 3});
+  MainHomePage(this.user, {this.index = 0});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();

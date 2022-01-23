@@ -2,6 +2,7 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -113,7 +114,13 @@ class _AllTabPageState extends State<AllTabPage> {
                                             duration: test.usedTimeText,
                                           ),
                                           activity: test.testname!,
-                                          activityType: test.testType!,
+                                          activityType:
+                                              test.challengeType != null
+                                                  ? test.challengeType!
+                                                      .split('.')[1]
+                                                      .toLowerCase()
+                                                      .toCapitalized()
+                                                  : 'Null',
                                           correctlyAnswered: test.correct!,
                                           totalQuestions: test.totalQuestions,
                                           onTap: () {

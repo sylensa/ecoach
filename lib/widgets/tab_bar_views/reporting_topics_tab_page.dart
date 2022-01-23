@@ -2,9 +2,9 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/compare.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
@@ -25,15 +25,15 @@ class TopicsTabPage extends StatefulWidget {
 
 class _TopicsTabPageState extends State<TopicsTabPage> {
   late bool showInPercentage;
-  List<TestTaken> selected = [];
+  dynamic selected = null;
   Future<List<TestTaken>>? tests;
 
   handleSelection(test) {
     setState(() {
-      if (selected.contains(test))
-        selected = selected.where((item) => item != test).toList();
+      if (selected == test)
+        selected = null;
       else
-        selected = [...selected, test];
+        selected = test;
     });
   }
 
@@ -71,15 +71,20 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                   );
                 else if (snapshot.data != null) {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
+                  List<TestTaken> topicTest = testData
+                      .where((element) =>
+                          element.challengeType ==
+                          TestCategory.TOPIC.toString())
+                      .toList();
                   return Expanded(
-                    child: testData.length == 0
+                    child: topicTest.length == 0
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 32,
                               ),
                               child: Text(
-                                'You haven\'t taken any tests under this course yet',
+                                'You haven\'t taken any TOPICS-based tests under this course yet',
                                 style: inlinePromptStyle,
                                 textAlign: TextAlign.center,
                               ),
@@ -99,17 +104,17 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                               SizedBox(height: 15),
                               Expanded(
                                 child: ListView.builder(
-                                    itemCount: testData.length,
+                                    itemCount: topicTest.length,
                                     shrinkWrap: true,
                                     itemBuilder: (context, index) {
-                                      TestTaken test = testData[index];
+                                      TestTaken test = topicTest[index];
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 24,
                                         ),
                                         child: AnalysisCard(
                                           showInPercentage: showInPercentage,
-                                          isSelected: selected.contains(test),
+                                          isSelected: selected == test,
                                           metaData: ActivityMetaData(
                                             date: test.datetime
                                                 .toString()
@@ -121,7 +126,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                                             duration: test.usedTimeText,
                                           ),
                                           activity: test.testname!,
-                                          activityType: test.testType!,
+                                          activityType: 'Topic',
                                           correctlyAnswered: test.correct!,
                                           totalQuestions: test.totalQuestions,
                                           onTap: () {
@@ -146,93 +151,72 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
             }
           },
         ),
-        if (selected.length > 0)
+        if (selected != null)
           Container(
             height: 48.0,
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
             ),
-            child: selected.length > 1
-                ? Expanded(
-                    child: AdeoTextButton(
-                      label: 'analyse',
-                      fontSize: 16,
-                      color: kAdeoBlue2,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return CompareView(
-                                user: widget.user,
-                                operands: selected,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : Row(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Row(
                     children: [
                       Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: AdeoTextButton(
-                                label: 'review',
-                                fontSize: 16,
-                                color: kAdeoBlue2,
-                                onPressed: () {},
-                              ),
-                            ),
-                            Container(
-                              width: 1.0,
-                              color: kPageBackgroundGray,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: AdeoTextButton(
-                                label: 'result',
-                                fontSize: 16,
-                                color: kAdeoBlue2,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (BuildContext) {
-                                      return ResultsView(
-                                        widget.user,
-                                        widget.course,
-                                        test: selected[0],
-                                      );
-                                    }),
-                                  );
-                                },
-                              ),
-                            ),
-                            Container(
-                              width: 1.0,
-                              color: kPageBackgroundGray,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
                         child: AdeoTextButton(
-                          label: 'retake',
+                          label: 'review',
                           fontSize: 16,
                           color: kAdeoBlue2,
                           onPressed: () {},
                         ),
                       ),
+                      Container(
+                        width: 1.0,
+                        color: kPageBackgroundGray,
+                      ),
                     ],
                   ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AdeoTextButton(
+                          label: 'result',
+                          fontSize: 16,
+                          color: kAdeoBlue2,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (BuildContext) {
+                                return ResultsView(
+                                  widget.user,
+                                  widget.course,
+                                  test: selected[0],
+                                );
+                              }),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: 1.0,
+                        color: kPageBackgroundGray,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: AdeoTextButton(
+                    label: 'retake',
+                    fontSize: 16,
+                    color: kAdeoBlue2,
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
           )
       ],
     );

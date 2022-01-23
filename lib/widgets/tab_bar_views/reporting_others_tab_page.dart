@@ -2,6 +2,8 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -70,15 +72,21 @@ class _OthersTabPageState extends State<OthersTabPage> {
                   );
                 else if (snapshot.data != null) {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
+                  List<TestTaken> otherTests = testData
+                      .where((element) =>
+                          element.challengeType !=
+                              TestCategory.TOPIC.toString() &&
+                          element.challengeType != TestCategory.EXAM.toString())
+                      .toList();
                   return Expanded(
-                    child: testData.length == 0
+                    child: otherTests.length == 0
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 32,
                               ),
                               child: Text(
-                                'You haven\'t taken any tests under this course yet',
+                                'You haven\'t taken any non Exam-based and non Topics-based test under this course yet',
                                 style: inlinePromptStyle,
                                 textAlign: TextAlign.center,
                               ),
@@ -98,10 +106,10 @@ class _OthersTabPageState extends State<OthersTabPage> {
                               SizedBox(height: 15),
                               Expanded(
                                 child: ListView.builder(
-                                    itemCount: testData.length,
+                                    itemCount: otherTests.length,
                                     shrinkWrap: true,
                                     itemBuilder: (context, index) {
-                                      TestTaken test = testData[index];
+                                      TestTaken test = otherTests[index];
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 24,
@@ -120,7 +128,13 @@ class _OthersTabPageState extends State<OthersTabPage> {
                                             duration: test.usedTimeText,
                                           ),
                                           activity: test.testname!,
-                                          activityType: test.testType!,
+                                          activityType:
+                                              test.challengeType != null
+                                                  ? test.challengeType!
+                                                      .split('.')[1]
+                                                      .toLowerCase()
+                                                      .toCapitalized()
+                                                  : 'Null',
                                           correctlyAnswered: test.correct!,
                                           totalQuestions: test.totalQuestions,
                                           onTap: () {
