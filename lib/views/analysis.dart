@@ -45,18 +45,17 @@ class _AnalysisViewState extends State<AnalysisView> {
         .allSubscriptionItems()
         .then((List<SubscriptionItem> subscriptions) {
       if (subscriptions.length > 0) {
-        setState(() {
-          if (widget.course != null) {
-            Course c = widget.course!;
-            this.subscription =
-                subscriptions.firstWhere((e) => e.tag == c.id.toString());
-            this.course = getCourseByName(c.id!);
-          } else {
-            this.subscription = subscriptions[0];
-            this.course = getCourseByName(int.parse(subscriptions[0].tag!));
-          }
-          this.subscriptions = subscriptions;
-        });
+        if (widget.course != null) {
+          Course c = widget.course!;
+          this.subscription =
+              subscriptions.firstWhere((e) => e.tag == c.id.toString());
+          this.course = getCourseById(c.id!);
+        } else {
+          this.subscription = subscriptions[0];
+          this.course = getCourseById(int.parse(subscriptions[0].tag!));
+        }
+        this.subscriptions = subscriptions;
+        setState(() {});
       }
     });
     super.initState();
@@ -67,7 +66,7 @@ class _AnalysisViewState extends State<AnalysisView> {
     super.dispose();
   }
 
-  getCourseByName(int id) {
+  getCourseById(int id) {
     return CourseDB().getCourseById(id);
   }
 
@@ -109,7 +108,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                           onChanged: (item) {
                             setState(() {
                               subscription = item;
-                              course = getCourseByName(int.parse(item.tag!));
+                              course = getCourseById(int.parse(item.tag!));
                             });
                           },
                         ),
@@ -244,17 +243,22 @@ class _AnalysisViewState extends State<AnalysisView> {
 
 StatsSliderCard getStatsBlock(Report stats) {
   CourseStat courseStat1 = stats.courseStats![0];
-  CourseStat courseStat2 = stats.courseStats![1];
+  dynamic courseStat2 =
+      stats.courseStats!.length > 1 ? stats.courseStats![1] : null;
 
   return StatsSliderCard(
     items: [
       Stat(
         value: courseStat1.avgScore!,
         statLabel: 'average score',
-        hasDeprecated: double.parse(courseStat1.avgScore!) <
-            double.parse(courseStat2.avgScore!),
-        hasAppreciated: double.parse(courseStat1.avgScore!) >
-            double.parse(courseStat2.avgScore!),
+        hasDeprecated: courseStat2 != null
+            ? double.parse(courseStat1.avgScore!) <
+                double.parse(courseStat2.avgScore!)
+            : false,
+        hasAppreciated: courseStat2 != null
+            ? double.parse(courseStat1.avgScore!) >
+                double.parse(courseStat2.avgScore!)
+            : true,
       ),
       Stat(
         value: courseStat1.rankPoints,
