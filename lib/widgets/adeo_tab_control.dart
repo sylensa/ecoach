@@ -21,13 +21,11 @@ class AdeoTabControl extends StatefulWidget {
 }
 
 class _AdeoTabControlState extends State<AdeoTabControl> {
-  late int currentPageNumber;
-  late PageController pageController;
+  int currentPageNumber = 0;
+  PageController pageController = PageController(initialPage: 0);
 
   @override
   void initState() {
-    currentPageNumber = 0;
-    pageController = PageController();
     super.initState();
   }
 

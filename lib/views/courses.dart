@@ -249,7 +249,7 @@ class _CourseViewState extends State<CourseView> {
                             )
                             .replaceFirst(subName.toUpperCase(), ""),
                         subTitle: 'Take a random test across topics',
-                        progress: 51,
+                        progress: items[index].averageScore!,
                       ),
                     ),
                   );

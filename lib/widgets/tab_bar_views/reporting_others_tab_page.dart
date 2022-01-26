@@ -205,18 +205,18 @@ class _OthersTabPageState extends State<OthersTabPage> {
                           },
                         ),
                       ),
-                      Container(width: 1.0, color: kPageBackgroundGray),
+                      // Container(width: 1.0, color: kPageBackgroundGray),
                     ],
                   ),
                 ),
-                Expanded(
-                  child: AdeoTextButton(
-                    label: 'retake',
-                    fontSize: 16,
-                    color: kAdeoBlue2,
-                    onPressed: () {},
-                  ),
-                ),
+                // Expanded(
+                //   child: AdeoTextButton(
+                //     label: 'retake',
+                //     fontSize: 16,
+                //     color: kAdeoBlue2,
+                //     onPressed: () {},
+                //   ),
+                // ),
               ],
             ),
           )

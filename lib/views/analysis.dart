@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/grade.dart';
 import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
@@ -11,6 +12,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/cards/stats_slider_card.dart';
@@ -165,6 +167,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                                                   if (snapshot.data != null) {
                                                     Report stats = snapshot
                                                         .data! as Report;
+                                                    // inspect(snapshot);
                                                     if (stats.courseStats!
                                                             .length ==
                                                         0)
@@ -173,7 +176,11 @@ class _AnalysisViewState extends State<AnalysisView> {
                                                             'No statistics for this course yet.',
                                                       );
 
-                                                    return getStatsBlock(stats);
+                                                    return getStatsBlock(
+                                                      stats,
+                                                      widget
+                                                          .course!.packageCode,
+                                                    );
                                                   } else if (snapshot
                                                       .hasError) {
                                                     return StatsNonDataWidget(
@@ -241,10 +248,38 @@ class _AnalysisViewState extends State<AnalysisView> {
   }
 }
 
-StatsSliderCard getStatsBlock(Report stats) {
+StatsSliderCard getStatsBlock(Report stats, packageCode) {
   CourseStat courseStat1 = stats.courseStats![0];
   dynamic courseStat2 =
       stats.courseStats!.length > 1 ? stats.courseStats![1] : null;
+
+  String getPositionPostfix(int position) {
+    List<String> stringifiedPosition = position.toString().split('');
+    int len = stringifiedPosition.length;
+    dynamic penultimateChar = len >= 2 ? stringifiedPosition[len - 2] : null;
+    String lastChar = stringifiedPosition[len - 1];
+
+    if (lastChar == '1') {
+      if (len >= 2 && penultimateChar == '1')
+        return 'th';
+      else
+        return 'st';
+    } else if (lastChar == '2') {
+      if (len >= 2 && penultimateChar == '1')
+        return 'th';
+      else
+        return 'nd';
+    } else if (lastChar == '3') {
+      if (len >= 2 && penultimateChar == '1')
+        return 'th';
+      else
+        return 'rd';
+    }
+
+    return 'th';
+  }
+
+  ;
 
   return StatsSliderCard(
     items: [
@@ -261,7 +296,7 @@ StatsSliderCard getStatsBlock(Report stats) {
             : true,
       ),
       Stat(
-        value: courseStat1.rankPoints,
+        value: courseStat1.totalCorrectQuestions.toString(),
         statLabel: 'points',
       ),
       Stat(
@@ -271,6 +306,24 @@ StatsSliderCard getStatsBlock(Report stats) {
       Stat(
         value: '${courseStat1.speed}q/m',
         statLabel: 'speed',
+      ),
+      Stat(
+        value: AdeoSignalStrengthIndicator(
+          strength: double.parse(courseStat1.avgScore!),
+        ),
+        statLabel: 'strength',
+        hasStandaloneWidgetAsValue: true,
+      ),
+      Stat(
+        value: GradingSystem(
+          score: double.parse(courseStat1.avgScore!),
+          level: packageCode,
+        ).grade,
+        statLabel: 'grade',
+      ),
+      Stat(
+        value: '${courseStat1.rank}${getPositionPostfix(courseStat1.rank!)}',
+        statLabel: 'Rank',
       ),
     ],
   );

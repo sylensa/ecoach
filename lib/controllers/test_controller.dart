@@ -188,12 +188,18 @@ class TestController {
       int count =
           await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
       int totalCount = await QuestionDB().getTopicCount(id);
+      double average = await getTopicAnsweredAverageScore(course.id!, id);
 
       // print("$name c=$count totat count=$totalCount");
-      testNames.add(TestNameAndCount(name, count, totalCount,
-          id: id, category: TestCategory.TOPIC));
+      testNames.add(TestNameAndCount(
+        name,
+        count,
+        totalCount,
+        averageScore: average,
+        id: id,
+        category: TestCategory.TOPIC,
+      ));
     }
-    topics.forEach((id, name) async {});
 
     return testNames;
   }
@@ -268,6 +274,36 @@ class TestController {
     });
 
     return topicIds.length;
+  }
+
+  Future<double> getTopicAnsweredAverageScore(
+    int courseId,
+    int topicId,
+  ) async {
+    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
+    Map<String, dynamic> responses = Map();
+    tests.forEach((test) {
+      responses.addAll(jsonDecode(test.responses));
+    });
+
+    List<Map<String, dynamic>> testAnswers = [];
+    responses.forEach((key, value) {
+      testAnswers.add(value);
+    });
+
+    List<int> topicIds = [];
+    int noOfCorrect = 0;
+
+    testAnswers.forEach((answer) {
+      int tId = answer['topic_id'];
+      if (tId == topicId) {
+        if (answer['status'] == 'correct') noOfCorrect += 1;
+        topicIds.add(tId);
+      }
+    });
+
+    if (topicIds.length == 0) return 0;
+    return noOfCorrect / topicIds.length * 100;
   }
 
   Future<int> getQuestionsAnsweredCount(int courseId,

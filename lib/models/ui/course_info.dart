@@ -17,33 +17,3 @@ class CourseInfo extends CourseModule {
   final double progress;
   final Course course;
 }
-
-// class CourseInfo extends CourseModule {
-//   CourseInfo({
-//     title,
-//     background,
-//     icon,
-//     progress,
-//     progressColor,
-//     onTap,
-//     required this.rank,
-//     required this.tests,
-//     required this.totalPoints,
-//     required this.times,
-//     required this.totalTimes,
-//     required this.course,
-//   }) : super(
-//           title: title,
-//           background: background,
-//           icon: icon,
-//           progress: progress,
-//           progressColor: progressColor,
-//         );
-
-//   final Map rank;
-//   final Map tests;
-//   final num totalPoints;
-//   final num times;
-//   final num totalTimes;
-//   final Course course;
-// }

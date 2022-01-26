@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -54,6 +55,7 @@ class CourseDB {
     if (result.isNotEmpty) {
       course = Course.fromJson(result.first);
       course.analytic = await AnalysisDB().getAnalysisById(course.id!);
+      course.averageScore = await TestTakenDB().getAverageScore(course.id!);
     }
     return course;
   }

@@ -160,26 +160,30 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
               boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
             ),
             child: selected.length > 1
-                ? Expanded(
-                    child: AdeoTextButton(
-                      label: 'analyse',
-                      fontSize: 16,
-                      color: kAdeoBlue2,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return CompareView(
-                                user: widget.user,
-                                course: widget.course,
-                                operands: selected,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: AdeoTextButton(
+                          label: 'analyse',
+                          fontSize: 16,
+                          color: kAdeoBlue2,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return CompareView(
+                                    user: widget.user,
+                                    course: widget.course,
+                                    operands: selected,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   )
                 : Row(
                     children: [
@@ -220,18 +224,18 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                                 },
                               ),
                             ),
-                            Container(width: 1.0, color: kPageBackgroundGray),
+                            // Container(width: 1.0, color: kPageBackgroundGray),
                           ],
                         ),
                       ),
-                      Expanded(
-                        child: AdeoTextButton(
-                          label: 'retake',
-                          fontSize: 16,
-                          color: kAdeoBlue2,
-                          onPressed: () {},
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: AdeoTextButton(
+                      //     label: 'retake',
+                      //     fontSize: 16,
+                      //     color: kAdeoBlue2,
+                      //     onPressed: () {},
+                      //   ),
+                      // ),
                     ],
                   ),
           )

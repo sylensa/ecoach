@@ -1,12 +1,17 @@
+import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/bundle_download.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/widgets/adeo_outlined_button.dart';
+import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
+import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
@@ -57,6 +62,62 @@ class _MockListViewState extends State<TestTypeListView> {
 
   @override
   Widget build(BuildContext context) {
+    if (testsSelected.length == 0) {
+      return TestIntroitLayout(
+        background: Colors.white,
+        backgroundImageURL: 'assets/images/deep_pool_gray.png',
+        pages: [
+          TestIntroitLayoutPage(
+            foregroundColor: Colors.black,
+            middlePiece: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 100, width: double.infinity),
+                  Text(
+                    "There are no questions\nfor your selection",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 32),
+                  Text(
+                    "Ensure you have downloaded the course package",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            footer: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AdeoFilledButton(
+                  label: 'Download Package',
+                  fontSize: 16,
+                  size: Sizes.large,
+                  onPressed: () {},
+                ),
+                // AdeoOutlinedButton(
+                //   fontSize: 16,
+                //   color: kDefaultBlack,
+                //   label: 'Download package',
+                //   onPressed: () {},
+                // )
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
       body: Column(
@@ -82,8 +143,8 @@ class _MockListViewState extends State<TestTypeListView> {
                     title: test.name,
                     subTitle: '',
                     progress: test.category == TestCategory.TOPIC
-                        ? double.parse((test.progress * 100).toStringAsFixed(2))
-                        : double.parse(test.totalCount.toStringAsFixed(2)),
+                        ? double.parse(test.averageScore!.toStringAsFixed(2))
+                        : null,
                     isActive: isSelected(test),
                     hasSmallHeading: true,
                     onTap: () {
@@ -102,62 +163,61 @@ class _MockListViewState extends State<TestTypeListView> {
               ),
             ),
           ),
-          if (testsSelected.length > 0)
-            AdeoTextButton(
-              onPressed: () async {
-                List<Question> questions = [];
-                // print(testsSelected[0].category);
-                switch (testsSelected[0].category) {
-                  case TestCategory.BANK:
-                  case TestCategory.EXAM:
-                    // print("exam and bank");
-                    questions = await TestController().getQuizQuestions(
-                        testsSelected[0].id!,
-                        limit: widget.questionLimit);
-                    break;
-                  case TestCategory.TOPIC:
-                    // print("topic list");
-                    List<int> topicIds = [];
-                    testsSelected.forEach((element) {
-                      // print(element);
-                      topicIds.add(element.id!);
-                    });
-                    questions = await TestController()
-                        .getTopicQuestions(topicIds, limit: () {
-                      if (widget.type == TestType.CUSTOMIZED)
-                        return widget.questionLimit;
-                      return widget.type != TestType.SPEED ? 10 : 1000;
-                    }());
-                    break;
-                  default:
-                    questions = await TestController().getMockQuestions(0);
-                }
-                // print(questions.toString());
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return QuizCover(
-                        widget.user,
-                        questions,
-                        name: testsSelected[0].name,
-                        type: widget.type,
-                        theme: QuizTheme.BLUE,
-                        category: testsSelected[0].category!,
-                        time: widget.time != null
-                            ? widget.time!
-                            : widget.type == TestType.SPEED
-                                ? 30
-                                : questions.length * 60,
-                        course: widget.course,
-                      );
-                    },
-                  ),
-                );
-              },
-              label: "Take Test",
-              color: kAdeoBlue,
-            )
+          AdeoTextButton(
+            onPressed: () async {
+              List<Question> questions = [];
+              // print(testsSelected[0].category);
+              switch (testsSelected[0].category) {
+                case TestCategory.BANK:
+                case TestCategory.EXAM:
+                  // print("exam and bank");
+                  questions = await TestController().getQuizQuestions(
+                      testsSelected[0].id!,
+                      limit: widget.questionLimit);
+                  break;
+                case TestCategory.TOPIC:
+                  // print("topic list");
+                  List<int> topicIds = [];
+                  testsSelected.forEach((element) {
+                    // print(element);
+                    topicIds.add(element.id!);
+                  });
+                  questions = await TestController().getTopicQuestions(topicIds,
+                      limit: () {
+                    if (widget.type == TestType.CUSTOMIZED)
+                      return widget.questionLimit;
+                    return widget.type != TestType.SPEED ? 10 : 1000;
+                  }());
+                  break;
+                default:
+                  questions = await TestController().getMockQuestions(0);
+              }
+              // print(questions.toString());
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return QuizCover(
+                      widget.user,
+                      questions,
+                      name: testsSelected[0].name,
+                      type: widget.type,
+                      theme: QuizTheme.BLUE,
+                      category: testsSelected[0].category!,
+                      time: widget.time != null
+                          ? widget.time!
+                          : widget.type == TestType.SPEED
+                              ? 30
+                              : questions.length * 60,
+                      course: widget.course,
+                    );
+                  },
+                ),
+              );
+            },
+            label: "Take Test",
+            color: kAdeoBlue,
+          )
         ],
       ),
     );

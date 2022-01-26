@@ -106,14 +106,7 @@ class TestChallengeList extends StatelessWidget {
                     time: questions.length * 60 * 15,
                     name: "Essays",
                   );
-                  // widgetView = QuizEssayView(
-                  //   user,
-                  //   questions,
-                  //   name: 'Essays',
-                  //   course: course,
-                  //   timeInSec: 300,
-                  //   type: testType,
-                  // );
+
                   break;
                 case TestCategory.SAVED:
                   List<Question> questions = data as List<Question>;
@@ -129,8 +122,13 @@ class TestChallengeList extends StatelessWidget {
                   );
                   break;
                 case TestCategory.BANK:
-                  widgetView = TestTypeListView(user, course, data, testType,
-                      title: "Bank");
+                  widgetView = TestTypeListView(
+                    user,
+                    course,
+                    data,
+                    testType,
+                    title: "Bank",
+                  );
                   break;
                 default:
                   widgetView = null;

@@ -18,16 +18,13 @@ class StatsSliderCard extends StatefulWidget {
 }
 
 class _StatsSliderCardState extends State<StatsSliderCard> {
-  late PageController controller;
+  PageController controller = PageController(initialPage: 0);
   Duration animationDuration = Duration(milliseconds: 300);
   Curve animationCurve = Curves.fastLinearToSlowEaseIn;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      controller = PageController();
-    });
   }
 
   @override

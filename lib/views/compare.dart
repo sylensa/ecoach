@@ -148,7 +148,6 @@ class _CompareViewState extends State<CompareView> {
                 },
               ),
             SizedBox(height: 20),
-            SizedBox(height: 4),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -309,23 +308,19 @@ class _CompareViewState extends State<CompareView> {
                 boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
               ),
               child: selected == null
-                  ? Expanded(
-                      child: AdeoTextButton(
-                        label: 'Return',
-                        fontSize: 16,
-                        color: kAdeoBlue2,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                  ? AdeoTextButton(
+                      label: 'Return',
+                      fontSize: 16,
+                      color: kAdeoBlue2,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                     )
-                  : Expanded(
-                      child: AdeoTextButton(
-                        label: 'Revise',
-                        fontSize: 16,
-                        color: kAdeoBlue2,
-                        onPressed: () {},
-                      ),
+                  : AdeoTextButton(
+                      label: 'Revise',
+                      fontSize: 16,
+                      color: kAdeoBlue2,
+                      onPressed: () {},
                     ),
             ),
           ],

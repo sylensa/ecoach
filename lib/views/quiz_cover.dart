@@ -41,7 +41,9 @@ class QuizCover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (theme == QuizTheme.GREEN) {
+    if (questions.length == 0) {
+      backgroundColor = Colors.white;
+    } else if (theme == QuizTheme.GREEN) {
       backgroundColor = const Color(0xFF00C664);
     } else {
       backgroundColor = const Color(0xFFAAD4FA);
@@ -60,9 +62,11 @@ class QuizCover extends StatelessWidget {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: theme == QuizTheme.GREEN
-                      ? AssetImage('assets/images/deep_pool_green.png')
-                      : AssetImage('assets/images/deep_pool_blue.png'),
+                  image: questions.length == 0
+                      ? AssetImage('assets/images/deep_pool_gray_raw.png')
+                      : theme == QuizTheme.GREEN
+                          ? AssetImage('assets/images/deep_pool_green.png')
+                          : AssetImage('assets/images/deep_pool_blue.png'),
                 )),
               ),
             ),
@@ -72,26 +76,44 @@ class QuizCover extends StatelessWidget {
                     ? Column(
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 240, width: double.infinity),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24),
-                                  child: Text(
-                                    "There are no questions\n for your selection",
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 180, width: double.infinity),
+                                  Text(
+                                    "There are no questions\nfor your selection",
                                     style: TextStyle(
-                                      // color: Colors.black,
+                                      color: Colors.black,
                                       fontSize: 24,
                                       fontWeight: FontWeight.w700,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(height: 32),
+                                  Text(
+                                    "Ensure you have downloaded the course package",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          if (theme == QuizTheme.GREEN)
+                          if (questions.length == 0)
+                            AdeoFilledButton(
+                              label: 'Download Package',
+                              fontSize: 16,
+                              size: Sizes.large,
+                              onPressed: () {
+                                // Navigator.pop(context);
+                              },
+                            )
+                          else if (theme == QuizTheme.GREEN)
                             AdeoOutlinedButton(
                               label: 'Back',
                               onPressed: () {

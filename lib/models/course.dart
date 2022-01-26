@@ -5,24 +5,25 @@ import 'package:ecoach/utils/utf_fix.dart';
 import 'level.dart';
 
 class Course {
-  Course(
-      {this.id,
-      this.packageCode,
-      this.courseId,
-      this.name,
-      this.description,
-      this.category,
-      this.author,
-      this.time,
-      this.createdAt,
-      this.updatedAt,
-      this.confirmed,
-      this.public,
-      this.n,
-      this.p,
-      this.editors,
-      this.levels,
-      this.questions});
+  Course({
+    this.id,
+    this.packageCode,
+    this.courseId,
+    this.name,
+    this.description,
+    this.category,
+    this.author,
+    this.time,
+    this.createdAt,
+    this.updatedAt,
+    this.confirmed,
+    this.public,
+    this.n,
+    this.p,
+    this.editors,
+    this.levels,
+    this.questions,
+  });
 
   int? key;
   int? id;
@@ -43,6 +44,7 @@ class Course {
   List<Level>? levels;
   CourseAnalytic? analytic;
   List<Question>? questions;
+  double? averageScore;
 
   factory Course.fromJson(Map<String, dynamic> json) => Course(
         id: json["id"],

@@ -29,8 +29,8 @@ class _SpeedTestIntroitState extends State<SpeedTestIntroit> {
   @override
   Widget build(BuildContext context) {
     return TestIntroitLayout(
-      background: kAdeoOrange,
-      backgroundImageURL: 'assets/images/deep_pool_orange.png',
+      background: kAnalysisInfoSnippetBackground3,
+      backgroundImageURL: 'assets/images/deep_pool_teal.png',
       pages: [
         TestIntroitLayoutPage(
           foregroundColor: Colors.white,

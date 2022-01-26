@@ -3,6 +3,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/database.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TestTakenDB {
@@ -22,6 +23,49 @@ class TestTakenDB {
         await db!.query("tests_taken", where: "id = ?", whereArgs: [id]);
 
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
+  }
+
+  Future<double> getAverageScore(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'tests_taken',
+      orderBy: "created_at DESC",
+      where: "course_id = ?",
+      whereArgs: [courseId],
+    );
+
+    double totalScores = 0;
+
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      totalScores += test.score!;
+    }
+
+    if (maps.length == 0) return 0;
+    return totalScores / maps.length;
+  }
+
+  Future<double> getExamAverageScore(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'tests_taken',
+      orderBy: "created_at DESC",
+      where:
+          "course_id = ? AND challenge_type = ${TestCategory.EXAM.toString()}",
+      whereArgs: [courseId],
+    );
+
+    double totalScores = 0;
+
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      totalScores += test.score!;
+    }
+
+    if (maps.length == 0) return 0;
+    return totalScores / maps.length;
   }
 
   Future<void> insertAll(List<TestTaken> testsTaken) async {
