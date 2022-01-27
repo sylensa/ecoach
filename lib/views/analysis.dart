@@ -178,8 +178,7 @@ class _AnalysisViewState extends State<AnalysisView> {
 
                                                     return getStatsBlock(
                                                       stats,
-                                                      widget
-                                                          .course!.packageCode,
+                                                      c.packageCode,
                                                     );
                                                   } else if (snapshot
                                                       .hasError) {
