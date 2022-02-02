@@ -60,7 +60,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
       controller.currentQuestion++;
       pageController.nextPage(
           duration: Duration(milliseconds: 1), curve: Curves.ease);
-      controller.resetTimer();
+      if (!controller.reviewMode) {
+        controller.resetTimer();
+      }
     });
   }
 
@@ -80,6 +82,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
           controller.savedTest = true;
           controller.enabled = false;
         });
+
+        print('then>>');
+        viewResults();
       }
     });
   }
@@ -204,14 +209,11 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                                 fontSize: 21,
                               ),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Color(0xFFF6F6F6))),
                           ),
                         ),
-                      if (showComplete)
+                      if (showComplete && !controller.reviewMode)
                         VerticalDivider(width: 2, color: Colors.white),
-                      if (showComplete)
+                      if (showComplete && !controller.reviewMode)
                         Expanded(
                           flex: 2,
                           child: TextButton(
@@ -225,9 +227,6 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                                 fontSize: 21,
                               ),
                             ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Color(0xFFF6F6F6))),
                           ),
                         ),
                       if (controller.savedTest)
