@@ -126,14 +126,15 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Question(question: 'Which of the following is a rabbit?'),
-                    Instruction(
-                      instruction: 'Choose the right answer for the question',
-                    ),
-                    DetailedInstruction(
-                      details:
-                          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius',
-                    ),
+                    // QuestionWid(widget.user,
+                    //     question: 'Which of the following is a rabbit?'),
+                    // Instruction(
+                    //   instruction: 'Choose the right answer for the question',
+                    // ),
+                    // DetailedInstruction(
+                    //   details:
+                    //       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia, molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius',
+                    // ),
                     Container(
                       width: double.infinity,
                       height: 10,
@@ -146,34 +147,34 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                       ),
                       child: Column(
                         children: [
-                          Objective(
-                            themeColor: themeColor,
-                            id: 1,
-                            label: 'Sokoto',
-                            isSelected: selectedObjective == 1,
-                            onTap: handleObjectiveSelection,
-                          ),
-                          Objective(
-                            themeColor: themeColor,
-                            id: 2,
-                            label: 'Harlequin tryanoposoiom',
-                            isSelected: selectedObjective == 2,
-                            onTap: handleObjectiveSelection,
-                          ),
-                          Objective(
-                            themeColor: themeColor,
-                            id: 3,
-                            label: 'White leghorn',
-                            isSelected: selectedObjective == 3,
-                            onTap: handleObjectiveSelection,
-                          ),
-                          Objective(
-                            themeColor: themeColor,
-                            id: 4,
-                            label: 'Rhode Island red',
-                            isSelected: selectedObjective == 4,
-                            onTap: handleObjectiveSelection,
-                          ),
+                          // Objective(
+                          //   themeColor: themeColor,
+                          //   id: 1,
+                          //   label: 'Sokoto',
+                          //   isSelected: selectedObjective == 1,
+                          //   onTap: handleObjectiveSelection,
+                          // ),
+                          // Objective(
+                          //   themeColor: themeColor,
+                          //   id: 2,
+                          //   label: 'Harlequin tryanoposoiom',
+                          //   isSelected: selectedObjective == 2,
+                          //   onTap: handleObjectiveSelection,
+                          // ),
+                          // Objective(
+                          //   themeColor: themeColor,
+                          //   id: 3,
+                          //   label: 'White leghorn',
+                          //   isSelected: selectedObjective == 3,
+                          //   onTap: handleObjectiveSelection,
+                          // ),
+                          // Objective(
+                          //   themeColor: themeColor,
+                          //   id: 4,
+                          //   label: 'Rhode Island red',
+                          //   isSelected: selectedObjective == 4,
+                          //   onTap: handleObjectiveSelection,
+                          // ),
                         ],
                       ),
                     ),
@@ -233,34 +234,34 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Objective(
-                        id: 5,
-                        label: 'submit & save',
-                        themeColor: widget.themeColor,
-                        isSelected: selected == 5,
-                        onTap: handleSelection,
-                      ),
-                      Objective(
-                        id: 6,
-                        label: 'submit & end',
-                        themeColor: widget.themeColor,
-                        isSelected: selected == 6,
-                        onTap: handleSelection,
-                      ),
-                      Objective(
-                        id: 7,
-                        label: 'submit & pause',
-                        themeColor: widget.themeColor,
-                        isSelected: selected == 7,
-                        onTap: handleSelection,
-                      ),
-                      Objective(
-                        id: 8,
-                        label: 'resume',
-                        themeColor: widget.themeColor,
-                        isSelected: selected == 8,
-                        onTap: handleSelection,
-                      ),
+                      // Objective(
+                      //   id: 5,
+                      //   label: 'submit & save',
+                      //   themeColor: widget.themeColor,
+                      //   isSelected: selected == 5,
+                      //   onTap: handleSelection,
+                      // ),
+                      // Objective(
+                      //   id: 6,
+                      //   label: 'submit & end',
+                      //   themeColor: widget.themeColor,
+                      //   isSelected: selected == 6,
+                      //   onTap: handleSelection,
+                      // ),
+                      // Objective(
+                      //   id: 7,
+                      //   label: 'submit & pause',
+                      //   themeColor: widget.themeColor,
+                      //   isSelected: selected == 7,
+                      //   onTap: handleSelection,
+                      // ),
+                      // Objective(
+                      //   id: 8,
+                      //   label: 'resume',
+                      //   themeColor: widget.themeColor,
+                      //   isSelected: selected == 8,
+                      //   onTap: handleSelection,
+                      // ),
                     ],
                   ),
                 ),

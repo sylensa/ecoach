@@ -1,4 +1,7 @@
+import 'package:ecoach/controllers/customized_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test_new_screen.dart';
@@ -6,6 +9,7 @@ import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/customize_input_field.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/pin_input.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class CustomizedTestQuestionMode extends StatefulWidget {
@@ -21,9 +25,8 @@ class CustomizedTestQuestionMode extends StatefulWidget {
 
 class _CustomizedTestQuestionModeState
     extends State<CustomizedTestQuestionMode> {
-  String durationLeft = '';
-  String durationRight = '';
-  String duration = '';
+  int duration = 0;
+  int numberOfQuestion = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,40 +35,16 @@ class _CustomizedTestQuestionModeState
       backgroundImageURL: 'assets/images/deep_pool_taupe.png',
       pages: [
         TestIntroitLayoutPage(
-          title: 'Time',
-          subText: 'Allocation per question',
+          title: 'Questions',
+          subText: 'Enter your preferred number',
           middlePiece: Column(
             children: [
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 120.0,
-                    child: PinInput(
-                      length: 2,
-                      onChanged: (v) {
-                        setState(() {
-                          durationLeft = v.split('').join('');
-                        });
-                      },
-                    ),
-                  ),
-                  Text(':', style: kPinInputTextStyle),
-                  Container(
-                    width: 120.0,
-                    child: PinInput(
-                      autoFocus: durationLeft.length == 2,
-                      length: 2,
-                      onChanged: (v) {
-                        setState(() {
-                          durationRight = v.split('').join('');
-                        });
-                      },
-                    ),
-                  )
-                ],
-              ),
+              CustomizeInputField(
+                  number: numberOfQuestion,
+                  onChange: (number) {
+                    numberOfQuestion = number;
+                  }),
             ],
           ),
           footer: AdeoOutlinedButton(
@@ -74,12 +53,28 @@ class _CustomizedTestQuestionModeState
           ),
         ),
         TestIntroitLayoutPage(
-          title: 'Questions',
-          subText: 'Enter your preferred number',
+          title: 'Time',
+          subText: 'Allocation per question',
           middlePiece: Column(
             children: [
-              SizedBox(height: 20),
-              CustomizeInputField(),
+              SizedBox(height: 60),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120.0,
+                    child: PinInput(
+                      autoFocus: true,
+                      length: 2,
+                      onChanged: (v) {
+                        setState(() {
+                          duration = int.parse(v);
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
             ],
           ),
           footer: Row(
@@ -180,12 +175,25 @@ class _CustomizedTestQuestionModeState
           SizedBox(width: 8.0),
           AdeoOutlinedButton(
             label: 'Start',
-            onPressed: () {
+            onPressed: () async {
+              showLoaderDialog(context, message: "loading questions");
+
+              List<Question> questions = await TestController()
+                  .getCustomizedQuestions(widget.course, numberOfQuestion);
+              Navigator.pop(context);
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return CustomizedTestScreen();
+                    return CustomizedTestScreen(
+                        controller: CustomizedController(
+                      widget.user,
+                      widget.course,
+                      questions: questions,
+                      name: "Customized Test",
+                      time: duration,
+                    ));
                   },
                 ),
               );

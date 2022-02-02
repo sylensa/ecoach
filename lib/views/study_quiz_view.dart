@@ -1,29 +1,17 @@
 import 'package:custom_timer/custom_timer.dart';
-import 'package:ecoach/api/api_call.dart';
-import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
-import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/learn_image_screens.dart';
 import 'package:ecoach/views/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/views/learn_speed_enhancement_completion.dart';
-import 'package:ecoach/views/learning_widget.dart';
-import 'package:ecoach/views/main_home.dart';
-import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/views/study_cc_results.dart';
 import 'package:ecoach/views/study_mastery_results.dart';
 import 'package:ecoach/views/study_notes_view.dart';
@@ -31,8 +19,6 @@ import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class StudyQuizView extends StatefulWidget {
