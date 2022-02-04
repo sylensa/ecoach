@@ -1,3 +1,4 @@
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
@@ -6,25 +7,36 @@ import 'package:flutter/material.dart';
 class Objective extends StatelessWidget {
   const Objective(
     this.user, {
+    this.enabled = true,
     required this.id,
     required this.label,
     required this.themeColor,
     this.onTap,
     this.isSelected = false,
+    this.isCorrect = 0,
     Key? key,
   }) : super(key: key);
 
   final User user;
+  final bool enabled;
   final int id;
   final String label;
   final onTap;
   final bool isSelected;
+  final int isCorrect;
   final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
+    print(enabled);
+    print(isSelected);
+    print(isCorrect);
+    print("id $id");
+
     return InkWell(
-      onTap: Feedback.wrapForTap(() {
+      onTap: Feedback.wrapForTap(() async {
+        if (!enabled) return;
+
         onTap(id);
       }, context),
       child: AnimatedContainer(
@@ -48,12 +60,32 @@ class Objective extends StatelessWidget {
         child: AdeoHtmlTex(
           user,
           label,
-          fontSize: isSelected ? 25 : 20,
-          textColor: isSelected ? Colors.white : Color(0xB3FFFFFF),
+          fontSize: getTextSize(),
+          textColor: getTextColor(),
           removeTags: true,
         ),
       ),
     );
+  }
+
+  double getTextSize() {
+    if (enabled || (!isSelected && isCorrect > 0 && isCorrect < 0)) {
+      return 20;
+    }
+
+    return 25;
+  }
+
+  Color getTextColor() {
+    if (!enabled && isCorrect > 0) {
+      return Color(0xFF23B95B);
+    } else if (!enabled && isCorrect < 0) {
+      return Color(0xFFFF614E);
+    }
+    if (isSelected) {
+      return Colors.white;
+    }
+    return Color(0xB3FFFFFF);
   }
 }
 

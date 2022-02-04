@@ -56,8 +56,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
 
       return;
     }
-    setState(() {
+    setState(() async {
       controller.currentQuestion++;
+
       pageController.nextPage(
           duration: Duration(milliseconds: 1), curve: Curves.ease);
       if (!controller.reviewMode) {
@@ -160,8 +161,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                         controller.user,
                         controller.questions[i],
                         position: i,
-                        enabled: controller.questionEnabled(i),
+                        enabled: controller.enabled,
                         callback: (Answer answer, correct) async {
+                          await Future.delayed(Duration(seconds: 1));
                           nextButton();
                         },
                       )
@@ -298,7 +300,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                       return Text(
                           "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
                           style: TextStyle(
-                              color: Color(0xFF969696), fontSize: 14));
+                              color: Color(0xFF222E3B), fontSize: 14));
                     },
                     controller: controller.timerController,
                     from: controller.getDuration(),
@@ -489,6 +491,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
   void handleObjectiveSelection(id) {
     setState(() {
       selectedObjective = id;
+      selectedAnswer = widget.question.selectedAnswer = answers![id];
       widget.callback!(answers![id], answers![id] == correctAnswer);
     });
   }
@@ -541,19 +544,47 @@ class _QuestionWidgetState extends State<QuestionWidget> {
             child: Column(
               children: [
                 for (int i = 0; i < answers!.length; i++)
-                  Objective(
-                    widget.user,
-                    themeColor: themeColor,
-                    id: i,
-                    label: answers![i].text!,
-                    isSelected: selectedObjective == i,
-                    onTap: handleObjectiveSelection,
-                  ),
+                  Stack(children: [
+                    Objective(
+                      widget.user,
+                      themeColor: themeColor,
+                      enabled: widget.enabled,
+                      id: i,
+                      label: answers![i].text!,
+                      isSelected: selectedObjective == i,
+                      isCorrect: selectedObjective != i
+                          ? 0
+                          : answers![i] == correctAnswer
+                              ? 1
+                              : -1,
+                      onTap: handleObjectiveSelection,
+                    ),
+                    getAnswerMarker(answers![i]),
+                  ]),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Positioned getAnswerMarker(Answer answer) {
+    if (!widget.enabled && answer == correctAnswer) {
+      return Positioned(
+          left: 5,
+          bottom: 5,
+          child: Image(
+            image: AssetImage('assets/images/correct.png'),
+          ));
+    } else if (!widget.enabled && answer == selectedAnswer) {
+      return Positioned(
+          left: 5,
+          bottom: 5,
+          child: Image(
+            image: AssetImage('assets/images/wrong.png'),
+          ));
+    }
+    return Positioned(child: Container());
   }
 }
