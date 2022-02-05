@@ -48,7 +48,7 @@ class MarathonModeSelector extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
-                  fontSize: isSelected ? 60 : 35,
+                  fontSize: isSelected ? 56 : 35,
                 ),
               )
             : Text(

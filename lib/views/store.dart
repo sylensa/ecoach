@@ -64,7 +64,11 @@ class _StorePageState extends State<StorePage> {
                         return Container();
                       case ConnectionState.waiting:
                       case ConnectionState.active:
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.blue,
+                          ),
+                        );
 
                       case ConnectionState.done:
                         if (snapshot.data != null) {

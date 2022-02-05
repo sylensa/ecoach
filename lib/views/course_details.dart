@@ -187,7 +187,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                   name: CourseDetailsPage.routeName),
                               builder: (context) {
                                 return TestTypeView(
-                                    widget.user, widget.courseInfo.course);
+                                  widget.user,
+                                  widget.courseInfo.course,
+                                );
                               },
                             ),
                           );

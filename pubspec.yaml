@@ -23,6 +23,7 @@ environment:
 dependencies:
    flutter:
       sdk: flutter
+   flutter_native_splash: ^2.0.1+1
    provider: ^6.0.1
    http: ^0.13.3
    shared_preferences: ^2.0.7
@@ -82,6 +83,7 @@ flutter:
       - assets/icons/topics/
       - assets/icons/courses/
       - assets/icons/subscriptions/
+      - assets/onboard/
 
    fonts:
       - family: 'Poppins'
@@ -101,3 +103,4 @@ flutter:
       - family: 'Helvetica Rounded'
         fonts:
            - asset: assets/fonts/HelveticaRoundedLTStd-Bd.otf
+

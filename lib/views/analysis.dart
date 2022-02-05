@@ -123,7 +123,9 @@ class _AnalysisViewState extends State<AnalysisView> {
                                 case ConnectionState.waiting:
                                   return Expanded(
                                     child: Center(
-                                      child: CircularProgressIndicator(),
+                                      child: CircularProgressIndicator(
+                                        color: Colors.blue,
+                                      ),
                                     ),
                                   );
                                 default:
@@ -353,7 +355,9 @@ class StatsNonDataWidget extends StatelessWidget {
         ),
         child: Center(
           child: isLoading
-              ? CircularProgressIndicator()
+              ? CircularProgressIndicator(
+                  color: Colors.blue,
+                )
               : Text(
                   message!,
                   textAlign: TextAlign.center,

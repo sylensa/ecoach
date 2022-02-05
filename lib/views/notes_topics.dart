@@ -54,6 +54,7 @@ class _NotesTopicsState extends State<NotesTopics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kAdeoBlue,
       body: SafeArea(
         child: Container(
           width: double.infinity,

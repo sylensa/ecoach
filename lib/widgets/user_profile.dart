@@ -11,14 +11,18 @@ class UserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Container(
-        color: Colors.white,
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Row(
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+              top: 20.0,
+              left: 16,
+              right: 16,
+              bottom: 8,
+            ),
+            child: Row(
               children: [
                 Column(
                   children: [
@@ -86,25 +90,25 @@ class UserProfile extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 4.0),
-            Divider(),
-            SizedBox(height: 4.0),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: AdeoOutlinedButton(
-                size: Sizes.small,
-                label: 'Logout',
-                color: kAdeoBlue,
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (context) {
-                    return Logout();
-                  }), (route) => false);
-                },
-              ),
-            )
-          ],
-        ),
+          ),
+          Divider(height: 16),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: AdeoOutlinedButton(
+              size: Sizes.small,
+              fontSize: 14,
+              label: 'Logout',
+              color: kAdeoGray3,
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (context) {
+                  return Logout();
+                }), (route) => false);
+              },
+            ),
+          ),
+          SizedBox(height: 8.0),
+        ],
       ),
     );
   }
