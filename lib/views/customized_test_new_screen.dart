@@ -123,140 +123,153 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF2D3E50),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              color: themeColor,
-              height: 53,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CircularPercentIndicator(
-                    radius: 25,
-                    lineWidth: 3,
-                    progressColor: Color(0xFF222E3B),
-                    backgroundColor: Colors.transparent,
-                    percent: controller.percentageCompleted,
-                    center: Text(
-                      "${controller.currentQuestion + 1}",
-                      style: TextStyle(fontSize: 14, color: Color(0xFF222E3B)),
+    return WillPopScope(
+      onWillPop: () async {
+        if (!controller.enabled) {
+          return showExitDialog();
+        }
+        // timerController.pause();
+
+        return showPauseDialog();
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Color(0xFF2D3E50),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Container(
+                  color: themeColor,
+                  height: 53,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CircularPercentIndicator(
+                        radius: 25,
+                        lineWidth: 3,
+                        progressColor: Color(0xFF222E3B),
+                        backgroundColor: Colors.transparent,
+                        percent: controller.percentageCompleted,
+                        center: Text(
+                          "${controller.currentQuestion + 1}",
+                          style:
+                              TextStyle(fontSize: 14, color: Color(0xFF222E3B)),
+                        ),
+                      ),
+                      getTimerWidget()
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    child: PageView(
+                      controller: pageController,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        for (int i = 0; i < controller.questions.length; i++)
+                          QuestionWidget(
+                            controller.user,
+                            controller.questions[i],
+                            position: i,
+                            enabled: controller.enabled,
+                            callback: (Answer answer, correct) async {
+                              await Future.delayed(Duration(seconds: 1));
+                              nextButton();
+                            },
+                          )
+                      ],
                     ),
                   ),
-                  getTimerWidget()
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: PageView(
-                  controller: pageController,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    for (int i = 0; i < controller.questions.length; i++)
-                      QuestionWidget(
-                        controller.user,
-                        controller.questions[i],
-                        position: i,
-                        enabled: controller.enabled,
-                        callback: (Answer answer, correct) async {
-                          await Future.delayed(Duration(seconds: 1));
-                          nextButton();
-                        },
-                      )
-                  ],
                 ),
-              ),
-            ),
-            Container(
-              child: IntrinsicHeight(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      if (showPreviousButton())
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              pageController.previousPage(
-                                  duration: Duration(milliseconds: 1),
-                                  curve: Curves.ease);
-                              setState(() {
-                                controller.currentQuestion--;
-                              });
-                            },
-                            child: Text(
-                              "Previous",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (showNextButton())
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (showNextButton())
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: nextButton,
-                            child: Text(
-                              "Next",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (showComplete && !controller.reviewMode)
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (showComplete && !controller.reviewMode)
-                        Expanded(
-                          flex: 2,
-                          child: TextButton(
-                            onPressed: () {
-                              completeQuiz();
-                            },
-                            child: Text(
-                              "Complete",
-                              style: TextStyle(
-                                color: Color(0xFFA2A2A2),
-                                fontSize: 21,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (controller.savedTest)
-                        VerticalDivider(width: 2, color: Colors.white),
-                      if (controller.savedTest)
-                        Expanded(
-                          flex: 1,
-                          child: TextButton(
-                            onPressed: () {
-                              viewResults();
-                            },
-                            child: RichText(
-                              softWrap: false,
-                              overflow: TextOverflow.clip,
-                              text: TextSpan(
-                                text: "Results",
-                                style: TextStyle(
-                                  color: Color(0xFFA2A2A2),
-                                  fontSize: 21,
+                Container(
+                  child: IntrinsicHeight(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if (showPreviousButton())
+                            Expanded(
+                              flex: 2,
+                              child: TextButton(
+                                onPressed: () {
+                                  pageController.previousPage(
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.ease);
+                                  setState(() {
+                                    controller.currentQuestion--;
+                                  });
+                                },
+                                child: Text(
+                                  "Previous",
+                                  style: TextStyle(
+                                    color: Color(0xFFA2A2A2),
+                                    fontSize: 21,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                    ]),
-              ),
+                          if (showNextButton())
+                            VerticalDivider(width: 2, color: Colors.white),
+                          if (showNextButton())
+                            Expanded(
+                              flex: 2,
+                              child: TextButton(
+                                onPressed: nextButton,
+                                child: Text(
+                                  "Next",
+                                  style: TextStyle(
+                                    color: Color(0xFFA2A2A2),
+                                    fontSize: 21,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (showComplete && !controller.reviewMode)
+                            VerticalDivider(width: 2, color: Colors.white),
+                          if (showComplete && !controller.reviewMode)
+                            Expanded(
+                              flex: 2,
+                              child: TextButton(
+                                onPressed: () {
+                                  completeQuiz();
+                                },
+                                child: Text(
+                                  "Complete",
+                                  style: TextStyle(
+                                    color: Color(0xFFA2A2A2),
+                                    fontSize: 21,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (controller.savedTest)
+                            VerticalDivider(width: 2, color: Colors.white),
+                          if (controller.savedTest)
+                            Expanded(
+                              flex: 1,
+                              child: TextButton(
+                                onPressed: () {
+                                  viewResults();
+                                },
+                                child: RichText(
+                                  softWrap: false,
+                                  overflow: TextOverflow.clip,
+                                  text: TextSpan(
+                                    text: "Results",
+                                    style: TextStyle(
+                                      color: Color(0xFFA2A2A2),
+                                      fontSize: 21,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ]),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -325,6 +338,44 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
           : Text("Time Up",
               style: TextStyle(color: Color(0xFF969696), fontSize: 18)),
     );
+  }
+
+  Future<bool> showExitDialog() async {
+    bool canExit = true;
+    await showDialog<bool>(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Exit?",
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              'Are you sure you want to close this quiz?',
+              style: TextStyle(color: Colors.black),
+            ),
+            actions: [
+              Button(
+                label: "Yes",
+                onPressed: () {
+                  canExit = true;
+                  Navigator.popUntil(context,
+                      ModalRoute.withName(CourseDetailsPage.routeName));
+                },
+              ),
+              Button(
+                label: "No",
+                onPressed: () {
+                  canExit = false;
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
+    return Future.value(canExit);
   }
 
   Future<bool> showPauseDialog() async {
