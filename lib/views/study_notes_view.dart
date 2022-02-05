@@ -96,10 +96,11 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                     width: 200,
                                     height: 200,
                                     padding: EdgeInsets.all(10)),
-                              }, customImageRenders: {
-                                networkSourceMatcher():
-                                    (context, attributes, element) {
-                                  String? link = attributes['src'];
+                              }, customRenders: {
+                                networkSourceMatcher(): CustomRender.widget(
+                                    widget: (context, element) {
+                                  String? link =
+                                      context.tree.element!.attributes['src'];
                                   if (link != null) {
                                     String name = link
                                         .substring(link.lastIndexOf("/") + 1);
@@ -110,7 +111,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                     );
                                   }
                                   return Text("No link");
-                                },
+                                }),
                               })
                             : Padding(
                                 padding: const EdgeInsets.all(18.0),

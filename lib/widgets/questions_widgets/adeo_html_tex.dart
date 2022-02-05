@@ -4,6 +4,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:html/parser.dart' as htmlparser;
 
+CustomRenderMatcher texMatcher() =>
+    (context) => context.tree.element?.localName == 'tex';
+
 class AdeoHtmlTex extends StatefulWidget {
   const AdeoHtmlTex(
     this.user,
@@ -38,9 +41,9 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
       },
-      customImageRenders: {
-        networkSourceMatcher(): (context, attributes, element) {
-          String? link = attributes['src'];
+      customRenders: {
+        networkSourceMatcher(): CustomRender.widget(widget: (context, element) {
+          String? link = context.tree.element!.attributes['src'];
           if (link != null) {
             String name = link.substring(link.lastIndexOf("/") + 1);
             print("Image: $name");
@@ -50,10 +53,9 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             );
           }
           return Text("No link");
-        },
-      },
-      customRender: {
-        'tex': (RenderContext context, child) {
+        }),
+        texMatcher():
+            CustomRender.widget(widget: (RenderContext context, child) {
           return Math.tex(
             context.tree.element!.text,
             textStyle: TextStyle(
@@ -61,7 +63,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               fontStyle: widget.fontStyle,
             ),
           );
-        },
+        }),
       },
       tagsList: Html.tags..addAll(["tex"]),
     );
@@ -114,9 +116,9 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
                   : FontSize(widget.normalSize ?? 16),
         ),
       },
-      customImageRenders: {
-        networkSourceMatcher(): (context, attributes, element) {
-          String? link = attributes['src'];
+      customRenders: {
+        networkSourceMatcher(): CustomRender.widget(widget: (context, element) {
+          String? link = context.tree.element!.attributes['src'];
           if (link != null) {
             String name = link.substring(link.lastIndexOf("/") + 1);
             print("Image: $name");
@@ -126,10 +128,9 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
             );
           }
           return Text("No link");
-        },
-      },
-      customRender: {
-        'tex': (RenderContext context, child) {
+        }),
+        texMatcher():
+            CustomRender.widget(widget: (RenderContext context, child) {
           return Math.tex(
             context.tree.element!.text,
             textStyle: TextStyle(
@@ -145,7 +146,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
                       : widget.normalSize ?? 16,
             ),
           );
-        },
+        }),
       },
       tagsList: Html.tags..addAll(["tex"]),
     );

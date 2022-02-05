@@ -4,6 +4,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/quiz_cover.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/views/test_type.dart';
@@ -100,7 +101,10 @@ class _MockListViewState extends State<TestTypeListView> {
                   label: 'Download Package',
                   fontSize: 16,
                   size: Sizes.large,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.popUntil(context,
+                        ModalRoute.withName(CourseDetailsPage.routeName));
+                  },
                 ),
               ],
             ),

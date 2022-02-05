@@ -289,9 +289,6 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                     ),
                   ),
                   child: CustomTimer(
-                    onBuildAction: controller.enabled
-                        ? CustomTimerAction.auto_start
-                        : CustomTimerAction.go_to_end,
                     builder: (CustomTimerRemainingTime remaining) {
                       controller.duration = remaining.duration;
                       controller.countdownInSeconds =
@@ -302,21 +299,28 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                           style: TextStyle(
                               color: Color(0xFF222E3B), fontSize: 14));
                     },
-                    controller: controller.timerController,
-                    from: controller.getDuration(),
-                    to: Duration(seconds: 0),
-                    onStart: () {},
-                    onPaused: () {},
-                    onReset: () {
-                      print("onReset");
-                    },
-                    onFinish: () {
-                      print("finished");
+                    stateBuilder: (time, state) {
+                      if (state == CustomTimerState.paused)
+                        return Text("Paused", style: TextStyle(fontSize: 24.0));
 
-                      Future.delayed(Duration.zero, () async {
-                        nextButton();
-                      });
+                      if (state == CustomTimerState.finished)
+                        return Text("Time Up",
+                            style: TextStyle(fontSize: 24.0));
+
+                      return null;
                     },
+                    onChangeState: (state) {
+                      if (state == CustomTimerState.finished) {
+                        print("finished");
+                        Future.delayed(Duration.zero, () async {
+                          nextButton();
+                        });
+                      }
+                      print("Current state: $state");
+                    },
+                    controller: controller.timerController,
+                    begin: controller.getDuration(),
+                    end: Duration(seconds: 0),
                   ),
                 ),
               ],

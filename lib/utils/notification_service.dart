@@ -1,4 +1,3 @@
-import 'package:common_utils/common_utils.dart';
 import 'package:ecoach/main.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -48,7 +47,7 @@ class NotificationService {
   }
 
   showNotification(title, text, payload) async {
-    int nowDateStr = DateUtil.getNowDateMs();
+    int nowDateStr = DateTime.now().millisecondsSinceEpoch;
     String nowDate = nowDateStr.toString();
     nowDate = nowDate.substring(4);
     int id = int.parse(nowDate);

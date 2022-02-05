@@ -16,9 +16,7 @@ class CourseCompletionController extends StudyController {
     startingDuration = duration;
 
     timerController = CustomTimerController();
-    timerController!.onSetStart(() {});
-    timerController!.onSetPause(() {});
-    timerController!.onSetReset(() {});
+    
   }
   final User user;
   final Course course;

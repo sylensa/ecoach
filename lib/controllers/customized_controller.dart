@@ -24,9 +24,7 @@ class CustomizedController {
     startingDuration = duration;
 
     timerController = CustomTimerController();
-    timerController!.onSetStart(() {});
-    timerController!.onSetPause(() {});
-    timerController!.onSetReset(() {});
+    
   }
 
   final User user;

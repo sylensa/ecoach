@@ -92,9 +92,6 @@ class _QuizViewState extends State<QuizView> {
     startingDuration = duration;
 
     timerController = CustomTimerController();
-    timerController.onSetStart(() {});
-    timerController.onSetPause(() {});
-    timerController.onSetReset(() {});
 
     startTimer();
 
@@ -392,9 +389,6 @@ class _QuizViewState extends State<QuizView> {
                   },
                   child: enabled
                       ? CustomTimer(
-                          onBuildAction: enabled
-                              ? CustomTimerAction.auto_start
-                              : CustomTimerAction.go_to_end,
                           builder: (CustomTimerRemainingTime remaining) {
                             duration = remaining.duration;
                             countdownInSeconds = remaining.duration.inSeconds;
@@ -414,18 +408,27 @@ class _QuizViewState extends State<QuizView> {
                                 style: TextStyle(
                                     color: backgroundColor, fontSize: 28));
                           },
+                          stateBuilder: (time, state) {
+                            if (state == CustomTimerState.paused)
+                              return Text("Paused",
+                                  style: TextStyle(fontSize: 24.0));
+
+                            if (state == CustomTimerState.finished)
+                              return Text("Time Up",
+                                  style: TextStyle(fontSize: 24.0));
+
+                            return null;
+                          },
+                          onChangeState: (state) {
+                            if (state == CustomTimerState.finished) {
+                              print("finished");
+                              onEnd();
+                            }
+                            print("Current state: $state");
+                          },
                           controller: timerController,
-                          from: duration,
-                          to: Duration(seconds: 0),
-                          onStart: () {},
-                          onPaused: () {},
-                          onReset: () {
-                            print("onReset");
-                          },
-                          onFinish: () {
-                            print("finished");
-                            onEnd();
-                          },
+                          begin: duration,
+                          end: Duration(seconds: 0),
                         )
                       : Text("Time Up",
                           style:

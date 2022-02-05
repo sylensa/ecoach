@@ -518,9 +518,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         width: 1,
                       )),
                   child: CustomTimer(
-                    onBuildAction: controller.enabled
-                        ? CustomTimerAction.auto_start
-                        : CustomTimerAction.go_to_end,
                     builder: (CustomTimerRemainingTime remaining) {
                       controller.duration = remaining.duration;
                       controller.countdownInSeconds =
@@ -536,18 +533,28 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           style: TextStyle(
                               color: Color(0xFF969696), fontSize: 14));
                     },
+                    stateBuilder: (time, state) {
+                      if (state == CustomTimerState.paused)
+                        return Text("Paused", style: TextStyle(fontSize: 24.0));
+
+                      if (state == CustomTimerState.finished)
+                        return Text("Time Up",
+                            style: TextStyle(fontSize: 24.0));
+
+                      return null;
+                    },
+                    onChangeState: (state) {
+                      if (state == CustomTimerState.finished) {
+                        print("finished");
+                        Future.delayed(Duration.zero, () async {
+                          endSpeedSession();
+                        });
+                      }
+                      print("Current state: $state");
+                    },
                     controller: controller.timerController,
-                    from: controller.duration!,
-                    to: Duration(seconds: 0),
-                    onStart: () {},
-                    onPaused: () {},
-                    onReset: () {
-                      print("onReset");
-                    },
-                    onFinish: () {
-                      print("finished");
-                      endSpeedSession();
-                    },
+                    begin: controller.duration!,
+                    end: Duration(seconds: 0),
                   ),
                 ),
               ],

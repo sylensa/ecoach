@@ -186,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: InputDecoration(
                               labelText: 'Phone', border: OutlineInputBorder()),
                           onSaved: (value) {
-                            phone = value!.number!;
+                            phone = value!.number;
                           },
                           initialCountryCode: 'GH',
                         ),

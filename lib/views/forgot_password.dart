@@ -81,7 +81,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           decoration: InputDecoration(
                               labelText: 'Phone', border: OutlineInputBorder()),
                           onSaved: (value) {
-                            phone = value!.number!;
+                            phone = value!.number;
                           },
                           initialCountryCode: 'GH',
                         ),

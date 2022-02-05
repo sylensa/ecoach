@@ -86,8 +86,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                             ),
                           ),
                           child: CustomTimer(
-                            onBuildAction: CustomTimerAction.auto_start,
-
                             builder: (CustomTimerRemainingTime remaining) {
                               return Text(
                                 "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
@@ -98,16 +96,8 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                               );
                             },
                             // controller: controller.timerController,
-                            from: Duration(minutes: 40),
-                            to: Duration(seconds: 0),
-                            onStart: () {},
-                            onPaused: () {},
-                            onReset: () {
-                              print("onReset");
-                            },
-                            onFinish: () {
-                              print("finished");
-                            },
+                            begin: Duration(minutes: 40),
+                            end: Duration(seconds: 0),
                           ),
                         ),
                       ),

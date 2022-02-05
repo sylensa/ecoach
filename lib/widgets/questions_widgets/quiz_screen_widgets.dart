@@ -49,7 +49,7 @@ class Objective extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? Color(0xFF222E3B) : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
-          border: isSelected || isCorrect
+          border: isSelected
               ? Border.all(
                   color: themeColor,
                   width: 1,
