@@ -53,7 +53,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
         controller.stopTimer();
         showComplete = true;
       });
-
+      if (controller.enabled) completeQuiz();
       return;
     }
     setState(() {
@@ -300,9 +300,6 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                               color: Color(0xFF222E3B), fontSize: 14));
                     },
                     stateBuilder: (time, state) {
-                      if (state == CustomTimerState.paused)
-                        return Text("Paused", style: TextStyle(fontSize: 24.0));
-
                       if (state == CustomTimerState.finished)
                         return Text("Time Up",
                             style: TextStyle(fontSize: 24.0));

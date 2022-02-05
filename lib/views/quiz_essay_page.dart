@@ -4,16 +4,12 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/essay_test_question_widgets.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_tex/flutter_tex.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:accordion/accordion.dart';
 
 class QuizEssayView extends StatefulWidget {
   QuizEssayView(
