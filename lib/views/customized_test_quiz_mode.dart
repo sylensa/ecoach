@@ -1,12 +1,17 @@
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/test_challenge_list.dart';
+import 'package:ecoach/views/quiz_cover.dart';
+import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
+import 'package:ecoach/widgets/customize_input_field.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/pin_input.dart';
 import 'package:ecoach/widgets/toast.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class CustomizedTestQuizMode extends StatefulWidget {
@@ -20,7 +25,7 @@ class CustomizedTestQuizMode extends StatefulWidget {
 }
 
 class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
-  String numberOfQuestions = '';
+  int numberOfQuestions = 0;
   String durationLeft = '';
   String durationRight = '';
   String duration = '';
@@ -40,21 +45,18 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
               SizedBox(height: 40),
               Container(
                 width: 180.0,
-                child: PinInput(
-                  length: 3,
-                  onChanged: (v) {
-                    setState(() {
-                      numberOfQuestions = v.split('').join('');
-                    });
-                  },
-                ),
+                child: CustomizeInputField(
+                    number: numberOfQuestions,
+                    onChange: (number) {
+                      numberOfQuestions = number;
+                    }),
               ),
             ],
           ),
           footer: AdeoOutlinedButton(
             label: 'Next',
             onPressed: () {
-              if (numberOfQuestions.length > 0)
+              if (numberOfQuestions > 0)
                 TestIntroitLayout.goForward();
               else
                 showFeedback(
@@ -112,16 +114,31 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
               SizedBox(width: 8.0),
               AdeoOutlinedButton(
                 label: 'let\'s go',
-                onPressed: () {
+                onPressed: () async {
                   if (durationRight.length > 0) {
+                    showLoaderDialog(context, message: "loading questions");
+
+                    List<Question> questions = await TestController()
+                        .getCustomizedQuestions(
+                            widget.course, numberOfQuestions);
+                    int min = int.parse(durationLeft);
+                    int sec = int.parse(durationRight);
+                    int time = (min * 60) + sec;
+
+                    Navigator.pop(context);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return TestChallengeList(
-                            testType: TestType.CUSTOMIZED,
+                          return QuizCover(
+                            widget.user,
+                            questions,
                             course: widget.course,
-                            user: widget.user,
+                            type: TestType.CUSTOMIZED,
+                            theme: QuizTheme.BLUE,
+                            time: time,
+                            name: "Customized Quiz Test",
                           );
                         },
                       ),

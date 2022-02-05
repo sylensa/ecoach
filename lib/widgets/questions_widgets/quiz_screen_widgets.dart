@@ -1,26 +1,42 @@
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 
 class Objective extends StatelessWidget {
-  const Objective({
+  const Objective(
+    this.user, {
+    this.enabled = true,
     required this.id,
     required this.label,
     required this.themeColor,
     this.onTap,
     this.isSelected = false,
+    this.isCorrect = false,
     Key? key,
   }) : super(key: key);
 
+  final User user;
+  final bool enabled;
   final int id;
   final String label;
   final onTap;
   final bool isSelected;
+  final bool isCorrect;
   final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
+    print("enabled = $enabled");
+    print("is Selected = $isSelected");
+    print("isCorrect= $isCorrect");
+    print("id $id");
+
     return InkWell(
-      onTap: Feedback.wrapForTap(() {
+      onTap: Feedback.wrapForTap(() async {
+        if (!enabled) return;
+
         onTap(id);
       }, context),
       child: AnimatedContainer(
@@ -33,7 +49,7 @@ class Objective extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? Color(0xFF222E3B) : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
-          border: isSelected
+          border: isSelected || isCorrect
               ? Border.all(
                   color: themeColor,
                   width: 1,
@@ -41,54 +57,74 @@ class Objective extends StatelessWidget {
                 )
               : Border(),
         ),
-        child: Text(
+        child: AdeoHtmlTex(
+          user,
           label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: isSelected ? 25 : 20,
-            color: isSelected ? Colors.white : Color(0xB3FFFFFF),
-          ),
+          fontSize: getTextSize(),
+          textColor: getTextColor(),
+          removeTags: true,
         ),
       ),
     );
   }
+
+  double getTextSize() {
+    if (enabled || (!isSelected && !isCorrect)) {
+      return 20;
+    }
+
+    return 25;
+  }
+
+  Color getTextColor() {
+    if (!enabled && isCorrect) {
+      return Color(0xFF23B95B);
+    } else if (!enabled && !isCorrect && isSelected) {
+      return Color(0xFFFF614E);
+    }
+    if (isSelected) {
+      return Colors.white;
+    }
+    return Color(0xB3FFFFFF);
+  }
 }
 
 class DetailedInstruction extends StatelessWidget {
-  const DetailedInstruction({
+  const DetailedInstruction(
+    this.user, {
     required this.details,
     Key? key,
   }) : super(key: key);
 
+  final User user;
   final String details;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 11,
-      ),
-      child: Text(
-        details,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          fontStyle: FontStyle.italic,
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 11,
         ),
-      ),
-    );
+        child: AdeoHtmlTex(
+          user,
+          details,
+          fontSize: 15,
+          textColor: Colors.white,
+          fontStyle: FontStyle.italic,
+        ));
   }
 }
 
 class Instruction extends StatelessWidget {
-  const Instruction({
+  const Instruction(
+    this.user, {
     required this.instruction,
     Key? key,
   }) : super(key: key);
 
+  final User user;
   final String instruction;
 
   @override
@@ -100,25 +136,24 @@ class Instruction extends StatelessWidget {
         vertical: 14,
       ),
       color: Color(0xFF66717D),
-      child: Text(
+      child: AdeoHtmlTex(
+        user,
         instruction,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          fontFamily: 'Hamelin',
-        ),
+        fontSize: 15,
+        textColor: Colors.white,
       ),
     );
   }
 }
 
-class Question extends StatelessWidget {
-  const Question({
+class QuestionWid extends StatelessWidget {
+  const QuestionWid(
+    this.user, {
     required this.question,
     Key? key,
   }) : super(key: key);
 
+  final User user;
   final String question;
 
   @override
@@ -130,13 +165,11 @@ class Question extends StatelessWidget {
         vertical: 28,
       ),
       color: Color(0xFF222E3B),
-      child: Text(
+      child: AdeoHtmlTex(
+        user,
         question,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-        ),
+        fontSize: 18,
+        textColor: Colors.white,
       ),
     );
   }

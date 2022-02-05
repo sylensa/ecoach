@@ -11,6 +11,7 @@ class AdeoHtmlTex extends StatefulWidget {
     Key? key,
     this.textColor = Colors.white,
     this.fontSize = 23,
+    this.fontStyle = FontStyle.normal,
     this.removeTags = false,
   }) : super(key: key);
 
@@ -18,6 +19,7 @@ class AdeoHtmlTex extends StatefulWidget {
   final String text;
   final Color textColor;
   final double fontSize;
+  final FontStyle fontStyle;
   final bool removeTags;
 
   @override
@@ -33,6 +35,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
         "body": Style(
             color: widget.textColor,
             fontSize: FontSize(widget.fontSize),
+            fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
       },
       customImageRenders: {
@@ -55,6 +58,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             context.tree.element!.text,
             textStyle: TextStyle(
               fontSize: 16,
+              fontStyle: widget.fontStyle,
             ),
           );
         },
