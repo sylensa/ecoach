@@ -13,7 +13,7 @@ class Objective extends StatelessWidget {
     required this.themeColor,
     this.onTap,
     this.isSelected = false,
-    this.isCorrect = 0,
+    this.isCorrect = false,
     Key? key,
   }) : super(key: key);
 
@@ -23,14 +23,14 @@ class Objective extends StatelessWidget {
   final String label;
   final onTap;
   final bool isSelected;
-  final int isCorrect;
+  final bool isCorrect;
   final Color themeColor;
 
   @override
   Widget build(BuildContext context) {
-    print(enabled);
-    print(isSelected);
-    print(isCorrect);
+    print("enabled = $enabled");
+    print("is Selected = $isSelected");
+    print("isCorrect= $isCorrect");
     print("id $id");
 
     return InkWell(
@@ -49,7 +49,7 @@ class Objective extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? Color(0xFF222E3B) : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
-          border: isSelected
+          border: isSelected || isCorrect
               ? Border.all(
                   color: themeColor,
                   width: 1,
@@ -69,7 +69,7 @@ class Objective extends StatelessWidget {
   }
 
   double getTextSize() {
-    if (enabled || (!isSelected && isCorrect > 0 && isCorrect < 0)) {
+    if (enabled || (!isSelected && !isCorrect)) {
       return 20;
     }
 
@@ -77,9 +77,9 @@ class Objective extends StatelessWidget {
   }
 
   Color getTextColor() {
-    if (!enabled && isCorrect > 0) {
+    if (!enabled && isCorrect) {
       return Color(0xFF23B95B);
-    } else if (!enabled && isCorrect < 0) {
+    } else if (!enabled && !isCorrect && isSelected) {
       return Color(0xFFFF614E);
     }
     if (isSelected) {

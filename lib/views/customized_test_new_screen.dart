@@ -56,7 +56,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
 
       return;
     }
-    setState(() async {
+    setState(() {
       controller.currentQuestion++;
 
       pageController.nextPage(
@@ -477,7 +477,7 @@ class QuestionWidget extends StatefulWidget {
   final User user;
   final Question question;
   int? position;
-  bool enabled;
+  final bool enabled;
   Function(Answer selectedAnswer, bool correct)? callback;
 
   @override
@@ -490,6 +490,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
 
   void handleObjectiveSelection(id) {
     setState(() {
+      print("selected id= $id");
       selectedObjective = id;
       selectedAnswer = widget.question.selectedAnswer = answers![id];
       widget.callback!(answers![id], answers![id] == correctAnswer);
@@ -502,9 +503,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
 
   @override
   void initState() {
-    if (!widget.enabled) {
-      // widget.isAnswered = true;
-    }
+    print("enabled = ${widget.enabled}");
 
     answers = widget.question.answers;
     if (answers != null) {
@@ -516,7 +515,6 @@ class _QuestionWidgetState extends State<QuestionWidget> {
     }
 
     selectedAnswer = widget.question.selectedAnswer;
-    print(widget.question.text);
     super.initState();
   }
 
@@ -551,12 +549,8 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       enabled: widget.enabled,
                       id: i,
                       label: answers![i].text!,
-                      isSelected: selectedObjective == i,
-                      isCorrect: selectedObjective != i
-                          ? 0
-                          : answers![i] == correctAnswer
-                              ? 1
-                              : -1,
+                      isSelected: selectedAnswer == answers![i],
+                      isCorrect: answers![i] == correctAnswer,
                       onTap: handleObjectiveSelection,
                     ),
                     getAnswerMarker(answers![i]),
