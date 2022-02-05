@@ -125,6 +125,24 @@ class QuizDB {
     return questions;
   }
 
+  Future<List<Question>> getEssayQuestions(int quizId, int limit) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM quiz_items WHERE quiz_id = $quizId AND type = 'ESSAY' ORDER BY RANDOM() LIMIT $limit");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question? question =
+          await QuestionDB().getQuestionById(maps[i]['question_id']);
+      if (question != null) {
+        questions.add(question);
+      }
+    }
+
+    return questions;
+  }
+
   Future<int> quizCount(int courseId) async {
     final Database? db = await DBProvider.database;
 
