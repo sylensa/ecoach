@@ -20,7 +20,7 @@ class AdeoDropdownBorderless extends StatelessWidget {
       child: Container(
         width: double.infinity,
         color: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 18),
+        padding: EdgeInsets.only(left: 12, right: 4),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<SubscriptionItem>(
             value: value,

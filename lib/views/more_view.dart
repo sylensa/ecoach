@@ -7,7 +7,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/bundle_download.dart';
-import 'package:ecoach/widgets/tab_bars/analysis_info_snippet_card_tab_bar.dart';
+import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
@@ -89,33 +89,31 @@ class _MoreViewState extends State<MoreView> {
         child: Container(
           color: kAdeoGray,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               UserProfile(userInfo),
-              // Padding(
-              //   padding: const EdgeInsets.only(
-              //     left: 12.0,
-              //     right: 12.0,
-              //     top: 12.0,
-              //   ),
-              //   child: AnalysisInfoSnippetCardTabBar(
-              //     infoList: infoList,
-              //     subLabels: ['referrals', 'subscriptions', 'wallet'],
-              //     selectedIndex: selectedTabIndex,
-              //     onActiveTabChange: handleSelectChanged,
-              //     theme: 'light',
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //   ),
-              // ),
+              SizedBox(height: 32),
+              if (context.read<DownloadUpdate>().plans!.length > 0)
+                Padding(
+                  padding: const EdgeInsets.only(left: 24.0, bottom: 16),
+                  child: Text(
+                    'Subscribed bundles',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontFamily: 'Helvetica Rounded',
+                      fontSize: 24,
+                      color: kAdeoBlue2,
+                    ),
+                  ),
+                ),
               Expanded(
-                child: Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 20.0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: context.read<DownloadUpdate>().plans!.length,
-                    itemBuilder: (context, index) {
-                      return BundleListItem(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: context.read<DownloadUpdate>().plans!.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: BundleListItem(
                         bundle: widget.controller.provider.plans![index],
                         isFirstChild: index == 0,
                         onTap: () {
@@ -131,9 +129,9 @@ class _MoreViewState extends State<MoreView> {
                             ),
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -157,63 +155,76 @@ class BundleListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MultiPurposeCourseCard(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: 32.0,
-          right: 20.0,
-          top: 12.0,
-          bottom: 12.0,
-        ),
-        decoration: BoxDecoration(
-          border: Border(
-            top: isFirstChild
-                ? BorderSide(width: 1.0, color: kAdeoGray)
-                : BorderSide.none,
-            bottom: BorderSide(width: 1.0, color: kAdeoGray),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    bundle.name!,
-                    style: TextStyle(
-                      color: kDefaultBlack,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    '${bundle.timeLeft} left',
-                    style: TextStyle(
-                      color: kBlack38,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-                "${context.watch<DownloadUpdate>().getDownloadStatus(bundle.id!)}"),
-            Container(
-              width: 32.0,
-              height: 32.0,
-              child: Image.asset(
-                'assets/icons/arrows/arrow_right.png',
-                fit: BoxFit.contain,
-              ),
-            )
-          ],
+      title: bundle.name!,
+      subTitle: '${bundle.timeLeft} left',
+      rightWidget: Container(
+        width: 20.0,
+        height: 20.0,
+        child: Image.asset(
+          'assets/icons/arrows/arrow_right.png',
+          fit: BoxFit.contain,
         ),
       ),
     );
+    // return GestureDetector(
+    //   onTap: onTap,
+    //   child: Container(
+    //     padding: EdgeInsets.only(
+    //       left: 32.0,
+    //       right: 20.0,
+    //       top: 12.0,
+    //       bottom: 12.0,
+    //     ),
+    //     decoration: BoxDecoration(
+    //       border: Border(
+    //         top: isFirstChild
+    //             ? BorderSide(width: 1.0, color: kAdeoGray)
+    //             : BorderSide.none,
+    //         bottom: BorderSide(width: 1.0, color: kAdeoGray),
+    //       ),
+    //     ),
+    //     child: Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         Expanded(
+    //           child: Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               Text(
+    //                 bundle.name!,
+    //                 style: TextStyle(
+    //                   color: kDefaultBlack,
+    //                   fontSize: 18.0,
+    //                   fontWeight: FontWeight.w500,
+    //                 ),
+    //               ),
+    //               Text(
+    //                 '${bundle.timeLeft} left',
+    //                 style: TextStyle(
+    //                   color: kBlack38,
+    //                   fontSize: 12.0,
+    //                   fontWeight: FontWeight.w600,
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //         Text(
+    //             "${context.watch<DownloadUpdate>().getDownloadStatus(bundle.id!)}"),
+    //         Container(
+    //           width: 32.0,
+    //           height: 32.0,
+    //           child: Image.asset(
+    //             'assets/icons/arrows/arrow_right.png',
+    //             fit: BoxFit.contain,
+    //           ),
+    //         )
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

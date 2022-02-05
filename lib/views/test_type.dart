@@ -33,132 +33,134 @@ class _TestTypeViewState extends State<TestTypeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 24.0),
-          child: Column(
-            children: [
-              PageHeader(
-                pageHeading: "Choose your test type",
-              ),
-              MultiPurposeCourseCard(
-                title: 'Speed',
-                subTitle: 'Accuracy matters , don\'t let the clock run down',
-                iconURL: 'assets/icons/courses/speed.png',
-                onTap: () {
-                  // showTestCat(TestType.SPEED);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SpeedTestIntroit(
-                          user: widget.user,
-                          course: widget.course,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 24.0),
+            child: Column(
+              children: [
+                PageHeader(
+                  pageHeading: "Choose your test type",
+                ),
+                MultiPurposeCourseCard(
+                  title: 'Speed',
+                  subTitle: 'Accuracy matters , don\'t let the clock run down',
+                  iconURL: 'assets/icons/courses/speed.png',
+                  onTap: () {
+                    // showTestCat(TestType.SPEED);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SpeedTestIntroit(
+                            user: widget.user,
+                            course: widget.course,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                MultiPurposeCourseCard(
+                  title: 'Knowledge',
+                  subTitle: 'Standard test',
+                  iconURL: 'assets/icons/courses/knowledge.png',
+                  onTap: () {
+                    // showTestCat(TestType.KNOWLEDGE);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return TestChallengeList(
+                            testType: TestType.KNOWLEDGE,
+                            course: widget.course,
+                            user: widget.user,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                MultiPurposeCourseCard(
+                  title: 'Marathon',
+                  subTitle: 'Race to complete all questions ',
+                  iconURL: 'assets/icons/courses/marathon.png',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MarathonIntroit();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                MultiPurposeCourseCard(
+                  title: 'Autopilot',
+                  subTitle: 'Completing a course one topic at a time',
+                  iconURL: 'assets/icons/courses/autopilot.png',
+                  onTap: () {
+                    return showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AdeoDialog(
+                          title: 'Autopilot',
+                          content:
+                              'Autopilot allows you to complete a course one topic at a time. Coming soon.',
+                          actions: [
+                            AdeoDialogAction(
+                              label: 'Dismiss',
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
                         );
                       },
-                    ),
-                  );
-                },
-              ),
-              MultiPurposeCourseCard(
-                title: 'Knowledge',
-                subTitle: 'Standard test',
-                iconURL: 'assets/icons/courses/knowledge.png',
-                onTap: () {
-                  // showTestCat(TestType.KNOWLEDGE);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return TestChallengeList(
-                          testType: TestType.KNOWLEDGE,
-                          course: widget.course,
-                          user: widget.user,
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              MultiPurposeCourseCard(
-                title: 'Marathon',
-                subTitle: 'Race to complete all questions ',
-                iconURL: 'assets/icons/courses/marathon.png',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return MarathonIntroit();
-                      },
-                    ),
-                  );
-                },
-              ),
-              MultiPurposeCourseCard(
-                title: 'Autopilot',
-                subTitle: 'Completing a course one topic at a time',
-                iconURL: 'assets/icons/courses/autopilot.png',
-                onTap: () {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AdeoDialog(
-                        title: 'Autopilot',
-                        content:
-                            'Autopilot allows you to complete a course one topic at a time. Coming soon.',
-                        actions: [
-                          AdeoDialogAction(
-                            label: 'Dismiss',
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              MultiPurposeCourseCard(
-                title: 'Customised',
-                subTitle: 'Create your own kind of quiz',
-                iconURL: 'assets/icons/courses/customised.png',
-                onTap: () {
-                  // showTestCat(TestType.CUSTOMIZED);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return CustomizedTestIntroit(
-                          user: widget.user,
-                          course: widget.course,
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              MultiPurposeCourseCard(
-                title: 'Untimed',
-                subTitle: 'Practice mode , no pressure',
-                iconURL: 'assets/icons/courses/untimed.png',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return TestChallengeList(
-                          testType: TestType.UNTIMED,
-                          course: widget.course,
-                          user: widget.user,
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ],
+                    );
+                  },
+                ),
+                MultiPurposeCourseCard(
+                  title: 'Customised',
+                  subTitle: 'Create your own kind of quiz',
+                  iconURL: 'assets/icons/courses/customised.png',
+                  onTap: () {
+                    // showTestCat(TestType.CUSTOMIZED);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return CustomizedTestIntroit(
+                            user: widget.user,
+                            course: widget.course,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                MultiPurposeCourseCard(
+                  title: 'Untimed',
+                  subTitle: 'Practice mode , no pressure',
+                  iconURL: 'assets/icons/courses/untimed.png',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return TestChallengeList(
+                            testType: TestType.UNTIMED,
+                            course: widget.course,
+                            user: widget.user,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

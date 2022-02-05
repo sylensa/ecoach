@@ -73,18 +73,18 @@ class _HomeCardState extends State<HomeCard> {
                         ),
                       ],
                     ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          expanded = !expanded;
-                        });
-                      },
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
-                        size: 20.0,
-                      ),
-                    )
+                    // IconButton(
+                    //   onPressed: () {
+                    //     setState(() {
+                    //       expanded = !expanded;
+                    //     });
+                    //   },
+                    //   icon: Icon(
+                    //     Icons.more_vert,
+                    //     color: Colors.white,
+                    //     size: 20.0,
+                    //   ),
+                    // )
                   ],
                 ),
                 Padding(

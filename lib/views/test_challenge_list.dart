@@ -12,7 +12,6 @@ import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class TestChallengeList extends StatelessWidget {
   TestChallengeList({
     required this.testType,
@@ -24,9 +23,8 @@ class TestChallengeList extends StatelessWidget {
   final User user;
   final TestType testType;
   final Course course;
-  TestCategory testCategory = TestCategory.NONE;
 
-  getTest(BuildContext context) {
+  getTest(BuildContext context, TestCategory testCategory) {
     Future futureList;
 
     switch (testCategory) {
@@ -145,25 +143,24 @@ class TestChallengeList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPageBackgroundGray,
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            PageHeader(
-              pageHeading: "Choose Your Challenge",
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              PageHeader(
+                pageHeading: "Choose Your Challenge",
+              ),
+              Expanded(
+                child: ListView(
                   children: [
                     MultiPurposeCourseCard(
                       title: 'Mock',
                       subTitle: 'Take a random test across topics',
                       iconURL: 'assets/icons/courses/mock.png',
                       onTap: () {
-                        testCategory = TestCategory.MOCK;
-                        getTest(context);
+                        getTest(context, TestCategory.MOCK);
                       },
                     ),
                     MultiPurposeCourseCard(
@@ -171,8 +168,7 @@ class TestChallengeList extends StatelessWidget {
                       subTitle: 'Take a test on any topic',
                       iconURL: 'assets/icons/courses/topic.png',
                       onTap: () {
-                        testCategory = TestCategory.TOPIC;
-                        getTest(context);
+                        getTest(context, TestCategory.TOPIC);
                       },
                     ),
                     if (testType != TestType.CUSTOMIZED)
@@ -181,8 +177,7 @@ class TestChallengeList extends StatelessWidget {
                         subTitle: 'Try out sample exams ie. objectives',
                         iconURL: 'assets/icons/courses/exam.png',
                         onTap: () {
-                          testCategory = TestCategory.EXAM;
-                          getTest(context);
+                          getTest(context, TestCategory.EXAM);
                         },
                       ),
                     MultiPurposeCourseCard(
@@ -190,8 +185,7 @@ class TestChallengeList extends StatelessWidget {
                       subTitle: 'Essay type questions',
                       iconURL: 'assets/icons/courses/essay.png',
                       onTap: () {
-                        testCategory = TestCategory.ESSAY;
-                        getTest(context);
+                        getTest(context, TestCategory.ESSAY);
                       },
                     ),
                     MultiPurposeCourseCard(
@@ -199,8 +193,7 @@ class TestChallengeList extends StatelessWidget {
                       subTitle: 'Curated Test banks',
                       iconURL: 'assets/icons/courses/bank.png',
                       onTap: () {
-                        testCategory = TestCategory.BANK;
-                        getTest(context);
+                        getTest(context, TestCategory.BANK);
                       },
                     ),
                     if (testType != TestType.CUSTOMIZED)
@@ -209,15 +202,14 @@ class TestChallengeList extends StatelessWidget {
                         subTitle: 'The questions that matter to you',
                         iconURL: 'assets/icons/courses/saved.png',
                         onTap: () {
-                          testCategory = TestCategory.SAVED;
-                          getTest(context);
+                          getTest(context, TestCategory.SAVED);
                         },
                       ),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

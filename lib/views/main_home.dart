@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:wakelock/wakelock.dart';
@@ -130,6 +131,7 @@ class _MainHomePageState extends State<MainHomePage>
       },
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: kPageBackgroundGray,
           drawer: AppDrawer(user: widget.user),
           body: _children[currentIndex],
           bottomNavigationBar: AdeoBottomNavigationBar(

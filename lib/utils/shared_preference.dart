@@ -11,6 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
 class UserPreferences {
+  Future setSeenOnboard() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('seenOnboard', true);
+    return true;
+  }
+
   Future<bool> setUser(User? user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 

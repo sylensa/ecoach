@@ -13,8 +13,8 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/welcome_adeo.dart';
 import 'package:ecoach/widgets/cards/home_card.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
 // import 'package:ecoach/views/download_page.dart';
 // import 'package:ecoach/views/test_type.dart';
 // import 'package:ecoach/widgets/widgets.dart';
@@ -209,33 +209,36 @@ class _HomePageState extends State<HomePage> {
                                                   '${items[i].jsonResponses.length} Questions',
                                               footerRightText:
                                                   items[i].usedTimeText,
-                                              centralWidget: Column(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 210,
-                                                    child: Text(
-                                                      items[i].testname!,
-                                                      softWrap: true,
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 18.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                              centralWidget: Expanded(
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 210,
+                                                      child: Text(
+                                                        items[i].testname!,
+                                                        softWrap: true,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 18.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  Text(
-                                                    "${items[i].courseName!}",
-                                                    softWrap: true,
-                                                    style: TextStyle(
-                                                      color: Color(0x88FFFFFF),
+                                                    Text(
+                                                      "${items[i].courseName!}",
+                                                      softWrap: true,
+                                                      style: TextStyle(
+                                                        color:
+                                                            Color(0x88FFFFFF),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                               centerRightWidget:
                                                   CircularProgressIndicatorWrapper(

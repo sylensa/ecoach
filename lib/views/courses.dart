@@ -223,7 +223,11 @@ class _CourseViewState extends State<CourseView> {
           case ConnectionState.none:
             return Container();
           case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                color: Colors.blue,
+              ),
+            );
           default:
             if (snapshot.hasError)
               return Text('Error: ${snapshot.error}');
