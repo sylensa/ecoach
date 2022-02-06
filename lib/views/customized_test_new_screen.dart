@@ -315,7 +315,8 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                     stateBuilder: (time, state) {
                       if (state == CustomTimerState.finished)
                         return Text("Time Up",
-                            style: TextStyle(fontSize: 24.0));
+                            style: TextStyle(
+                                color: Color(0xFF222E3B), fontSize: 14.0));
 
                       return null;
                     },
