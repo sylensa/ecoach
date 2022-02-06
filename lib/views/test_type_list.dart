@@ -177,28 +177,28 @@ class _MockListViewState extends State<TestTypeListView> {
           ? AdeoTextButton(
               onPressed: () async {
                 List<Question> questions = [];
-                // print(testsSelected[0].category);
                 switch (testsSelected[0].category) {
                   case TestCategory.BANK:
                   case TestCategory.EXAM:
-                    // print("exam and bank");
+                  case TestCategory.ESSAY:
                     questions = await TestController().getQuizQuestions(
-                        testsSelected[0].id!,
-                        limit: widget.questionLimit);
+                      testsSelected[0].id!,
+                      limit: widget.questionLimit,
+                    );
                     break;
                   case TestCategory.TOPIC:
-                    // print("topic list");
                     List<int> topicIds = [];
                     testsSelected.forEach((element) {
-                      // print(element);
                       topicIds.add(element.id!);
                     });
-                    questions = await TestController()
-                        .getTopicQuestions(topicIds, limit: () {
-                      if (widget.type == TestType.CUSTOMIZED)
-                        return widget.questionLimit;
-                      return widget.type != TestType.SPEED ? 10 : 1000;
-                    }());
+                    questions = await TestController().getTopicQuestions(
+                      topicIds,
+                      limit: () {
+                        if (widget.type == TestType.CUSTOMIZED)
+                          return widget.questionLimit;
+                        return widget.type != TestType.SPEED ? 10 : 1000;
+                      }(),
+                    );
                     break;
                   default:
                     questions = await TestController().getMockQuestions(0);
