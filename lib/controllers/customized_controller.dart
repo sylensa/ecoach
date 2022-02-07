@@ -24,7 +24,6 @@ class CustomizedController {
     startingDuration = duration;
 
     timerController = CustomTimerController();
-    
   }
 
   final User user;
@@ -49,6 +48,7 @@ class CustomizedController {
   int countdownInSeconds = 0;
 
   startTest() {
+    timerController!.start();
     startTime = DateTime.now();
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * time;
   }

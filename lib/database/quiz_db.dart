@@ -129,7 +129,7 @@ class QuizDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM quiz_items WHERE quiz_id = $quizId AND type = 'ESSAY' ORDER BY RANDOM() LIMIT $limit");
+        "SELECT * FROM quiz_items WHERE quiz_id = $quizId ORDER BY RANDOM() LIMIT $limit");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
