@@ -38,7 +38,8 @@ class TestChallengeList extends StatelessWidget {
         futureList = TestController().getTopics(course);
         break;
       case TestCategory.ESSAY:
-        futureList = TestController().getEssays(course, 5);
+        // futureList = TestController().getEssays(course, 5);
+        futureList = TestController().getEssayTests(course);
         break;
       case TestCategory.SAVED:
         futureList = TestController().getSavedTests(course);
@@ -80,6 +81,7 @@ class TestChallengeList extends StatelessWidget {
                     data,
                     testType,
                     title: "Exams",
+                    testCategory: TestCategory.EXAM,
                   );
                   break;
                 case TestCategory.TOPIC:
@@ -93,18 +95,14 @@ class TestChallengeList extends StatelessWidget {
                   );
                   break;
                 case TestCategory.ESSAY:
-                  List<Question> questions = data as List<Question>;
-                  widgetView = QuizCover(
+                  widgetView = TestTypeListView(
                     user,
-                    questions,
-                    category: testCategory,
-                    course: course,
-                    type: testType,
-                    theme: QuizTheme.BLUE,
-                    time: questions.length * 60 * 15,
-                    name: "Essays",
+                    course,
+                    data,
+                    testType,
+                    title: "Essays",
+                    testCategory: TestCategory.ESSAY,
                   );
-
                   break;
                 case TestCategory.SAVED:
                   List<Question> questions = data as List<Question>;
@@ -126,6 +124,7 @@ class TestChallengeList extends StatelessWidget {
                     data,
                     testType,
                     title: "Bank",
+                    testCategory: TestCategory.BANK,
                   );
                   break;
                 default:

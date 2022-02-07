@@ -106,8 +106,10 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return CustomizedTestQuestionMode(widget.user,
-                              widget.course,);
+                            return CustomizedTestQuestionMode(
+                              widget.user,
+                              widget.course,
+                            );
                           },
                         ),
                       );
@@ -143,6 +145,7 @@ class CustomizeModeSelector extends StatelessWidget {
       }, context),
       child: AnimatedContainer(
         width: double.infinity,
+        height: isSelected ? 80 : 45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: isSelected
@@ -154,12 +157,14 @@ class CustomizeModeSelector extends StatelessWidget {
               : Border(),
         ),
         duration: Duration(milliseconds: 100),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: kDefaultBlack,
-            fontSize: isSelected ? 60 : 35,
+        child: FittedBox(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: kDefaultBlack,
+              fontSize: isSelected ? 60 : 35,
+            ),
           ),
         ),
       ),

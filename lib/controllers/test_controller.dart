@@ -173,6 +173,27 @@ class TestController {
     return testNames;
   }
 
+  getEssayTests(Course course) async {
+    List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "ESSAY");
+
+    List<TestNameAndCount> testNames = [];
+    for (int i = 0; i < quizzes.length; i++) {
+      Quiz quiz = quizzes[i];
+      int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
+      testNames.add(
+        TestNameAndCount(
+          quiz.name!,
+          0,
+          totalCount,
+          id: quiz.id,
+          category: TestCategory.ESSAY,
+        ),
+      );
+    }
+
+    return testNames;
+  }
+
   getLevelTopic(Course course, int? level) {
     return TopicDB().getLevelTopic(course.id!, level!);
   }

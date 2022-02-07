@@ -4,6 +4,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/quiz_essay_page.dart';
 import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -110,7 +111,16 @@ class QuizCover extends StatelessWidget {
                               fontSize: 16,
                               size: Sizes.large,
                               onPressed: () {
-                                // Navigator.pop(context);
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MainHomePage(
+                                      user,
+                                      index: 4,
+                                    ),
+                                  ),
+                                  (Route<dynamic> route) => true,
+                                );
                               },
                             )
                           else if (theme == QuizTheme.GREEN)
@@ -220,11 +230,14 @@ class QuizCover extends StatelessWidget {
                           SizedBox(
                             height: 100,
                           ),
-                          Text("answer all questions",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontStyle: FontStyle.italic)),
+                          Text(
+                            "answer all questions",
+                            style: TextStyle(
+                              fontSize: 22,
+                              color: Colors.white,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                           SizedBox(
                             height: 220,
                           ),
@@ -276,14 +289,18 @@ class QuizCover extends StatelessWidget {
                                   style: ButtonStyle(
                                     padding: MaterialStateProperty.all(
                                         EdgeInsets.fromLTRB(35, 10, 35, 10)),
-                                    side: MaterialStateProperty.all(BorderSide(
+                                    side: MaterialStateProperty.all(
+                                      BorderSide(
                                         color: Colors.white,
                                         width: 1,
-                                        style: BorderStyle.solid)),
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30.0),
+                                        borderRadius: BorderRadius.circular(
+                                          30.0,
+                                        ),
                                       ),
                                     ),
                                   ),
