@@ -32,10 +32,7 @@ class MainController {
   BuildContext context;
   DownloadUpdate provider;
 
-  MainController(this.context, this.provider, this.user) {
-    print(context);
-    print("----------------------------");
-  }
+  MainController(this.context, this.provider, this.user);
 
   void setSubscriptions(List<Subscription> subscriptions) {
     provider.setSubscriptions(subscriptions);

@@ -74,6 +74,7 @@ class QuizDB {
             {'quiz_id': element.id, 'question_id': question.id},
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
+          QuestionDB().batchInsert(batch, question);
         }
       }
     }

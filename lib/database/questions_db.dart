@@ -33,6 +33,23 @@ class QuestionDB {
     });
   }
 
+  Future<void> batchInsert(Batch batch, Question question) async {
+    if (question == null) {
+      return;
+    }
+    batch.insert(
+      'questions',
+      question.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    List<Answer> answers = question.answers!;
+    if (answers.length > 0) {
+      for (int i = 0; i < answers.length; i++) {
+        await AnswerDB().batchInsert(batch, answers[i]);
+      }
+    }
+  }
+
   Future<Question?> getQuestionById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("questions", where: "id = ?", whereArgs: [id]);

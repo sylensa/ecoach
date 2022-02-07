@@ -19,6 +19,17 @@ class AnswerDB {
     });
   }
 
+  Future<void> batchInsert(Batch batch, Answer answer) async {
+    if (answer == null) {
+      return;
+    }
+    batch.insert(
+      'answers',
+      answer.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   Future<Answer?> getAnswerById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("answers", where: "id = ?", whereArgs: [id]);
