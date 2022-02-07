@@ -27,9 +27,7 @@ class MarathonModeSelector extends StatelessWidget {
         onTap(mode);
       }, context),
       child: AnimatedContainer(
-        padding: size == Sizes.large
-            ? EdgeInsets.zero
-            : EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        height: isSelected ? 80 : 45,
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -42,23 +40,25 @@ class MarathonModeSelector extends StatelessWidget {
               : Border(),
         ),
         duration: Duration(milliseconds: 100),
-        child: size == Sizes.large
-            ? Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
-                  fontSize: isSelected ? 56 : 35,
+        child: FittedBox(
+          child: size == Sizes.large
+              ? Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
+                    fontSize: isSelected ? 60 : 35,
+                  ),
+                )
+              : Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
+                    fontSize: isSelected ? 35 : 25,
+                  ),
                 ),
-              )
-            : Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
-                  fontSize: isSelected ? 34 : 25,
-                ),
-              ),
+        ),
       ),
     );
   }
@@ -90,7 +90,7 @@ class MarathonTopicSelector extends StatelessWidget {
       }, context),
       child: AnimatedContainer(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        height: 80,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: isSelected
@@ -105,19 +105,32 @@ class MarathonTopicSelector extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
-                fontSize: isSelected ? 34 : 25,
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(left: 16),
+                alignment: Alignment.centerLeft,
+                height: 80,
+                child: FittedBox(
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: isUnselected ? Color(0x80FFFFFF) : Colors.white,
+                      fontSize: isSelected ? 34 : 25,
+                    ),
+                  ),
+                ),
               ),
             ),
+            SizedBox(width: 48),
             if (isSelected)
-              Text(
-                numberOfQuestions.toString() + 'Q',
-                style: TextStyle(
-                  fontSize: 18,
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Text(
+                  numberOfQuestions.toString() + 'Q',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
               )
           ],

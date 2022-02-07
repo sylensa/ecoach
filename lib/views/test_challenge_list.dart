@@ -103,17 +103,6 @@ class TestChallengeList extends StatelessWidget {
                     title: "Essays",
                     testCategory: TestCategory.ESSAY,
                   );
-                  // List<Question> questions = data as List<Question>;
-                  // widgetView = QuizCover(
-                  //   user,
-                  //   questions,
-                  //   category: testCategory,
-                  //   course: course,
-                  //   type: testType,
-                  //   theme: QuizTheme.BLUE,
-                  //   time: questions.length * 60 * 15,
-                  //   name: "Essays",
-                  // );
                   break;
                 case TestCategory.SAVED:
                   List<Question> questions = data as List<Question>;

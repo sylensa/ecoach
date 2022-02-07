@@ -52,13 +52,25 @@ class _TestTypeViewState extends State<TestTypeView> {
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return SpeedTestIntroit(
-                            user: widget.user,
+                          return TestChallengeList(
+                            testType: TestType.SPEED,
                             course: widget.course,
+                            user: widget.user,
                           );
                         },
                       ),
                     );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) {
+                    //       return SpeedTestIntroit(
+                    //         user: widget.user,
+                    //         course: widget.course,
+                    //       );
+                    //     },
+                    //   ),
+                    // );
                   },
                 ),
                 MultiPurposeCourseCard(

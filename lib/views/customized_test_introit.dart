@@ -145,6 +145,7 @@ class CustomizeModeSelector extends StatelessWidget {
       }, context),
       child: AnimatedContainer(
         width: double.infinity,
+        height: isSelected ? 80 : 45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: isSelected
@@ -155,13 +156,15 @@ class CustomizeModeSelector extends StatelessWidget {
                 )
               : Border(),
         ),
-        duration: Duration(milliseconds: 50),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: kDefaultBlack,
-            fontSize: isSelected ? 60 : 35,
+        duration: Duration(milliseconds: 100),
+        child: FittedBox(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: kDefaultBlack,
+              fontSize: isSelected ? 60 : 35,
+            ),
           ),
         ),
       ),

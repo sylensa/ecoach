@@ -104,13 +104,15 @@ class _MockListViewState extends State<TestTypeListView> {
                   size: Sizes.large,
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MainHomePage(
-                                  widget.user,
-                                  index: 4,
-                                )),
-                        (Route<dynamic> route) => false);
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MainHomePage(
+                          widget.user,
+                          index: 4,
+                        ),
+                      ),
+                      (Route<dynamic> route) => true,
+                    );
                   },
                 ),
               ],
@@ -203,7 +205,8 @@ class _MockListViewState extends State<TestTypeListView> {
                   default:
                     questions = await TestController().getMockQuestions(0);
                 }
-                // print(questions.toString());
+                print(questions.toString());
+                print(questions.length);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
