@@ -5,6 +5,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test_new_screen.dart';
+import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/customize_input_field.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
@@ -181,7 +182,20 @@ class _CustomizedTestQuestionModeState
               List<Question> questions = await TestController()
                   .getCustomizedQuestions(widget.course, numberOfQuestion);
               Navigator.pop(context);
-
+              if (questions.length == 0) {
+                AdeoDialog(
+                  title: "No Questions",
+                  content: "There are no questions for this course",
+                  actions: [
+                    AdeoDialogAction(
+                        label: "Ok",
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                );
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(
