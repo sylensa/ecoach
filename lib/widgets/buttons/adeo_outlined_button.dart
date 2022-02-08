@@ -23,16 +23,17 @@ class AdeoOutlinedButton extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
           side: BorderSide(color: Colors.white),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(44)),
-          ),
+          shape: StadiumBorder(),
           padding: EdgeInsets.symmetric(
             horizontal: 44.0,
             vertical: 16.0,
           ),
         ),
         child: Text(label),
-        onPressed: Feedback.wrapForTap(onPressed, context),
+        onPressed: Feedback.wrapForTap(() async {
+          await Future.delayed(Duration(milliseconds: 600));
+          onPressed();
+        }, context),
       ),
     );
   }

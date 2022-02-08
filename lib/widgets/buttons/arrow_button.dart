@@ -13,7 +13,10 @@ class ArrowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: onPressed,
+      onPressed: Feedback.wrapForTap(() async {
+        await Future.delayed(Duration(milliseconds: 600));
+        onPressed();
+      }, context),
       style: ButtonStyle(
         overlayColor: MaterialStateProperty.resolveWith(
           (states) => Color(0x402A9CEA),
@@ -22,6 +25,7 @@ class ArrowButton extends StatelessWidget {
       child: Container(
         width: 32,
         height: 32,
+        decoration: BoxDecoration(shape: BoxShape.circle),
         child: Image.asset(
           arrow,
           fit: BoxFit.contain,

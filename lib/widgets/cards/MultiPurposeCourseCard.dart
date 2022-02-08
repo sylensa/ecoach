@@ -3,7 +3,7 @@ import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
-class MultiPurposeCourseCard extends StatelessWidget {
+class MultiPurposeCourseCard extends StatefulWidget {
   const MultiPurposeCourseCard({
     required this.title,
     required this.subTitle,
@@ -29,15 +29,37 @@ class MultiPurposeCourseCard extends StatelessWidget {
   final onTap;
 
   @override
+  State<MultiPurposeCourseCard> createState() => _MultiPurposeCourseCardState();
+}
+
+class _MultiPurposeCourseCardState extends State<MultiPurposeCourseCard> {
+  bool isPressedDown = false;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         InkWell(
-          onTap: Feedback.wrapForTap(onTap, context),
+          onTap: Feedback.wrapForTap(() async {
+            setState(() {
+              isPressedDown = true;
+            });
+            await Future.delayed(Duration(milliseconds: 300));
+            widget.onTap();
+            setState(() {
+              isPressedDown = false;
+            });
+          }, context),
           child: Container(
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              color: isActive ? Color(0xFF2A9CEA) : Colors.white,
+              color: isPressedDown
+                  ? widget.isActive
+                      ? Color(0xFF0573BA)
+                      : Color(0x1A000000)
+                  : widget.isActive
+                      ? Color(0xFF2A9CEA)
+                      : Colors.white,
               borderRadius: BorderRadius.circular(4.0),
             ),
             child: Row(
@@ -48,23 +70,25 @@ class MultiPurposeCourseCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title.trim().toLowerCase().toTitleCase(),
+                        widget.title.trim().toLowerCase().toTitleCase(),
                         style: TextStyle(
-                          color: isActive ? Colors.white : Colors.black87,
-                          fontSize: hasSmallHeading! ? 11.0 : 16.0,
+                          color:
+                              widget.isActive ? Colors.white : Colors.black87,
+                          fontSize: widget.hasSmallHeading! ? 11.0 : 16.0,
                           fontWeight: FontWeight.w500,
                           height: 1.2,
                         ),
                       ),
-                      if (subTitle.length > 0)
+                      if (widget.subTitle.length > 0)
                         Column(
                           children: [
                             SizedBox(height: 4),
                             Text(
-                              subTitle,
+                              widget.subTitle,
                               style: TextStyle(
-                                color:
-                                    isActive ? Colors.white : Color(0xAA000000),
+                                color: widget.isActive
+                                    ? Colors.white
+                                    : Color(0xAA000000),
                                 fontSize: 9.0,
                                 fontStyle: FontStyle.italic,
                                 height: 1.2,
@@ -76,22 +100,22 @@ class MultiPurposeCourseCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 24.0),
-                if (iconURL != null)
+                if (widget.iconURL != null)
                   Container(
                     width: 35.0,
                     height: 35.0,
-                    child: Image.asset(iconURL!, fit: BoxFit.fill),
+                    child: Image.asset(widget.iconURL!, fit: BoxFit.fill),
                   )
-                else if (subscription != null)
+                else if (widget.subscription != null)
                   Text(
-                    subscription!,
+                    widget.subscription!,
                     style: TextStyle(
                       color: Color(0xFF2A9CEA),
                       fontSize: 11.0,
                       fontWeight: FontWeight.w600,
                     ),
                   )
-                else if (progress != null)
+                else if (widget.progress != null)
                   Row(
                     children: [
                       // Container(
@@ -106,17 +130,19 @@ class MultiPurposeCourseCard extends StatelessWidget {
                       // ),
                       // SizedBox(width: 4),
                       Text(
-                        progress!.toString() + '%',
+                        widget.progress!.toString() + '%',
                         style: TextStyle(
-                          color: isActive ? Colors.white : Color(0xFF2A9CEA),
+                          color: widget.isActive
+                              ? Colors.white
+                              : Color(0xFF2A9CEA),
                           fontSize: 11.0,
                           fontWeight: FontWeight.w600,
                         ),
                       )
                     ],
                   )
-                else if (rightWidget != null)
-                  rightWidget!
+                else if (widget.rightWidget != null)
+                  widget.rightWidget!
               ],
             ),
           ),

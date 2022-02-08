@@ -132,37 +132,32 @@ class _MainHomePageState extends State<MainHomePage>
 
         return Future.value(canExit);
       },
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: kPageBackgroundGray,
-          drawer: AppDrawer(user: widget.user),
-          body: _children[currentIndex],
-          bottomNavigationBar: AdeoBottomNavigationBar(
-            selectedIndex: currentIndex,
-            onItemSelected: tapping,
-            items: [
-              {
-                'active': Icons.home_filled,
-                'inactive': Icons.home_outlined,
-              },
-              {
-                'active': Icons.shop_rounded,
-                'inactive': Icons.shop_outlined,
-              },
-              {
-                'active': Icons.school_rounded,
-                'inactive': Icons.school_outlined
-              },
-              {
-                'active': Icons.bar_chart,
-                'inactive': Icons.bar_chart_outlined,
-              },
-              {
-                'active': Icons.account_circle_rounded,
-                'inactive': Icons.account_circle_outlined,
-              },
-            ],
-          ),
+      child: Scaffold(
+        backgroundColor: kPageBackgroundGray,
+        drawer: AppDrawer(user: widget.user),
+        body: _children[currentIndex],
+        bottomNavigationBar: AdeoBottomNavigationBar(
+          selectedIndex: currentIndex,
+          onItemSelected: tapping,
+          items: [
+            {
+              'active': Icons.home_filled,
+              'inactive': Icons.home_outlined,
+            },
+            {
+              'active': Icons.shop_rounded,
+              'inactive': Icons.shop_outlined,
+            },
+            {'active': Icons.school_rounded, 'inactive': Icons.school_outlined},
+            {
+              'active': Icons.bar_chart,
+              'inactive': Icons.bar_chart_outlined,
+            },
+            {
+              'active': Icons.account_circle_rounded,
+              'inactive': Icons.account_circle_outlined,
+            },
+          ],
         ),
       ),
     );

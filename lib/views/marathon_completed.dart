@@ -126,23 +126,6 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                               activity: 'Using The Internet To Communicate',
                               activityType: 'Exam',
                               showInPercentage: showInPercentage,
-                              isSelected: selected.contains(2),
-                              metaData: ActivityMetaData(
-                                date: '07.09.21',
-                                time: '16:04',
-                                duration: '05min:20sec',
-                              ),
-                              onTap: () {
-                                handleSelection(2);
-                              },
-                            ),
-                            AnalysisCard(
-                              variant: CardVariant.LIGHT,
-                              correctlyAnswered: 5,
-                              totalQuestions: 10,
-                              activity: 'Using The Internet To Communicate',
-                              activityType: 'Exam',
-                              showInPercentage: showInPercentage,
                               isSelected: selected.contains(3),
                               metaData: ActivityMetaData(
                                 date: '07.09.21',
@@ -170,43 +153,62 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                                 handleSelection(4);
                               },
                             ),
+                            AnalysisCard(
+                              variant: CardVariant.LIGHT,
+                              correctlyAnswered: 5,
+                              totalQuestions: 10,
+                              activity: 'Using The Internet To Communicate',
+                              activityType: 'Exam',
+                              showInPercentage: showInPercentage,
+                              isSelected: selected.contains(5),
+                              metaData: ActivityMetaData(
+                                date: '07.09.21',
+                                time: '16:04',
+                                duration: '05min:20sec',
+                              ),
+                              onTap: () {
+                                handleSelection(5);
+                              },
+                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  if (selected.length > 0)
-                    Container(
-                      height: 48.0,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(blurRadius: 4, color: Color(0x26000000))
-                        ],
-                      ),
-                      child: AdeoTextButton(
-                        label: 'Next',
-                        fontSize: 20,
-                        background: kAdeoBlue,
-                        color: Colors.white,
-                        onPressed: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) {
-                          //       return CompareView(user: widget.user, operands: [],);
-                          //     },
-                          //   ),
-                          // );
-                        },
-                      ),
-                    )
                 ],
               ),
             ),
           ],
         ),
       ),
+      bottomSheet: selected.length > 0
+          ? Container(
+              height: 60.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
+              ),
+              child: AdeoTextButton(
+                label: 'Next',
+                fontSize: 20,
+                background: kAdeoBlue,
+                color: Colors.white,
+                onPressed: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return CompareView(user: widget.user, operands: [],);
+                  //     },
+                  //   ),
+                  // );
+                },
+              ),
+            )
+          : Container(
+              height: .1,
+              color: Colors.transparent,
+            ),
     );
   }
 }

@@ -22,47 +22,49 @@ class AdeoFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: Feedback.wrapForTap(onPressed, context),
-      child: Container(
-        decoration: BoxDecoration(
-          color: background ?? Colors.black,
-          borderRadius: BorderRadius.all(
-            Radius.circular(borderRadius ?? 44),
+    return Material(
+      color: background ?? Colors.black,
+      shape: StadiumBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: Feedback.wrapForTap(() async {
+          await Future.delayed(Duration(milliseconds: 600));
+          onPressed();
+        }, context),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: () {
+              switch (size) {
+                case Sizes.small:
+                  return 32.0;
+                case Sizes.medium:
+                  return 44.0;
+                case Sizes.large:
+                  return 56.0;
+                default:
+                  return 44.0;
+              }
+            }(),
+            vertical: () {
+              switch (size) {
+                case Sizes.small:
+                  return 8.0;
+                case Sizes.medium:
+                  return 12.0;
+                case Sizes.large:
+                  return 16.0;
+                default:
+                  return 12.0;
+              }
+            }(),
           ),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: () {
-            switch (size) {
-              case Sizes.small:
-                return 32.0;
-              case Sizes.medium:
-                return 44.0;
-              case Sizes.large:
-                return 56.0;
-              default:
-                return 44.0;
-            }
-          }(),
-          vertical: () {
-            switch (size) {
-              case Sizes.small:
-                return 8.0;
-              case Sizes.medium:
-                return 12.0;
-              case Sizes.large:
-                return 16.0;
-              default:
-                return 12.0;
-            }
-          }(),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: fontSize ?? 22.0,
-            color: color ?? Colors.white,
-            fontWeight: FontWeight.w500,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: fontSize ?? 22.0,
+              color: color ?? Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),

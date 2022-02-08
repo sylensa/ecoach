@@ -86,14 +86,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: widget.user.subscriptions.length > 0
-            ? Color(0xFFF6F6F6)
-            : Color(0xFFFFFFFF),
-        body: Container(
+    return Scaffold(
+      backgroundColor: kPageBackgroundGray,
+      body: SafeArea(
+        child: Container(
           child: new Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 30, 24, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Center(
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.start,
