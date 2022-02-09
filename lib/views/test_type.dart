@@ -102,7 +102,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                       context,
                       MaterialPageRoute(
                         builder: (context) {
-                          return MarathonIntroit();
+                          return MarathonIntroit(widget.user, widget.course);
                         },
                       ),
                     );

@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -10,6 +11,11 @@ import 'package:ecoach/widgets/marathon_mode_selector.dart';
 import 'package:flutter/material.dart';
 
 class MarathonIntroit extends StatefulWidget {
+  MarathonIntroit(this.user, this.course);
+
+  final User user;
+  final Course course;
+
   @override
   State<MarathonIntroit> createState() => _MarathonIntroitState();
 }
@@ -40,7 +46,9 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
         screenToNavigateTo = MarathonLive();
         break;
       case MarathonModes.PRACTISE:
-        screenToNavigateTo = MarathonPractiseMenu();
+        screenToNavigateTo = MarathonPractiseMenu(
+          controller: MarathonController(widget.user, widget.course, name: widget.course.name!),
+        );
         break;
       case MarathonModes.COMPLETED:
         screenToNavigateTo = MarathonCompleted();

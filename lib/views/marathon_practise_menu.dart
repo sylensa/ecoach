@@ -1,7 +1,11 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon_practise_topic_menu.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/marathon_mode_selector.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +13,25 @@ import 'package:flutter/material.dart';
 enum Modes { TOPIC, MOCK }
 
 class MarathonPractiseMenu extends StatefulWidget {
+  MarathonPractiseMenu({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final MarathonController controller;
+
   @override
   State<MarathonPractiseMenu> createState() => _MarathonPractiseMenuState();
 }
 
 class _MarathonPractiseMenuState extends State<MarathonPractiseMenu> {
   late dynamic mode;
+  late MarathonController controller;
 
   @override
   void initState() {
     mode = '';
+    controller = widget.controller;
     super.initState();
   }
 
@@ -31,15 +44,21 @@ class _MarathonPractiseMenuState extends State<MarathonPractiseMenu> {
     });
   }
 
-  handleNext() {
+  handleNext() async {
     dynamic screenToNavigateTo;
 
     switch (mode) {
       case Modes.TOPIC:
-        screenToNavigateTo = MarathonPractiseTopicMenu();
+        List<TestNameAndCount> topics =
+            await TestController().getTopics(controller.course);
+        screenToNavigateTo =
+            MarathonPractiseTopicMenu(topics: topics, controller: controller);
         break;
       case Modes.MOCK:
-        screenToNavigateTo = MarathonPractiseMock();
+        int count =
+            await QuestionDB().getTotalQuestionCount(controller.course.id!);
+        screenToNavigateTo =
+            MarathonPractiseMock(count: count, controller: controller);
         break;
     }
 

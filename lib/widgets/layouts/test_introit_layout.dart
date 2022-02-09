@@ -56,8 +56,8 @@ class TestIntroitLayout extends StatelessWidget {
   final PadTop? padTop;
   static PageController _controller = PageController();
 
-  static Function goForward = () async {
-    await Future.delayed(Duration(seconds: 1));
+  static Function goForward = ()  {
+   
     _controller.nextPage(
       duration: Duration(milliseconds: 300),
       curve: Curves.fastLinearToSlowEaseIn,

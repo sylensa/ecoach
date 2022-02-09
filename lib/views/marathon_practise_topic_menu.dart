@@ -1,7 +1,9 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon_quiz_view.dart';
+import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/marathon_mode_selector.dart';
@@ -10,6 +12,10 @@ import 'package:flutter/material.dart';
 enum topics { TOPIC, MOCK }
 
 class MarathonPractiseTopicMenu extends StatefulWidget {
+  MarathonPractiseTopicMenu({this.topics = const [],required this.controller});
+  MarathonController controller;
+  List<TestNameAndCount> topics;
+
   @override
   State<MarathonPractiseTopicMenu> createState() =>
       _MarathonPractiseTopicMenuState();
@@ -17,10 +23,12 @@ class MarathonPractiseTopicMenu extends StatefulWidget {
 
 class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
   late dynamic topicId;
+  late MarathonController controller;
 
   @override
   void initState() {
     topicId = '';
+    controller=widget.controller;
     super.initState();
   }
 
@@ -57,32 +65,16 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
                 child: Center(
                   child: Column(
                     children: [
-                      MarathonTopicSelector(
-                        topicId: 1,
-                        numberOfQuestions: 2500,
-                        label: 'Acids',
-                        isSelected: topicId == 1,
-                        isUnselected: topicId != '' && topicId != 1,
-                        onTap: handletopicSelection,
-                      ),
-                      // SizedBox(height: 20),
-                      MarathonTopicSelector(
-                        topicId: 2,
-                        numberOfQuestions: 2500,
-                        label: 'Bases',
-                        isSelected: topicId == 2,
-                        isUnselected: topicId != '' && topicId != 2,
-                        onTap: handletopicSelection,
-                      ),
-                      // SizedBox(height: 20),
-                      MarathonTopicSelector(
-                        topicId: 3,
-                        numberOfQuestions: 2500,
-                        label: 'Capillarity',
-                        isSelected: topicId == 3,
-                        isUnselected: topicId != '' && topicId != 3,
-                        onTap: handletopicSelection,
-                      ),
+                      for (int i = 0; i < widget.topics.length; i++)
+                        MarathonTopicSelector(
+                          topicId: widget.topics[i].id!,
+                          numberOfQuestions: widget.topics[i].totalCount,
+                          label: widget.topics[i].name,
+                          isSelected: topicId == widget.topics[i].id!,
+                          isUnselected:
+                              topicId != '' && topicId != widget.topics[i].id!,
+                          onTap: handletopicSelection,
+                        ),
                     ],
                   ),
                 ),
@@ -98,7 +90,9 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return Instructions();
+                            return Instructions(
+                              controller: controller,
+                            );
                           },
                         ),
                       );
@@ -117,6 +111,9 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
 }
 
 class Instructions extends StatelessWidget {
+  Instructions({required this.controller});
+  MarathonController controller;
+
   @override
   Widget build(BuildContext context) {
     return TestIntroitLayout(
@@ -128,7 +125,7 @@ class Instructions extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return MarathonQuizView();
+                return MarathonQuizView(controller: controller);
               },
             ),
           );

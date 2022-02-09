@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_quiz_view.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -5,6 +6,11 @@ import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:flutter/material.dart';
 
 class MarathonPractiseMock extends StatefulWidget {
+  MarathonPractiseMock({this.count = 0, required this.controller});
+  MarathonController controller;
+
+  int count;
+
   @override
   State<MarathonPractiseMock> createState() => _MarathonPractiseMockState();
 }
@@ -13,6 +19,13 @@ class _MarathonPractiseMockState extends State<MarathonPractiseMock> {
   String durationLeft = '';
   String durationRight = '';
   String duration = '';
+  late MarathonController controller;
+
+  @override
+  void initState() {
+    controller=widget.controller;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +39,7 @@ class _MarathonPractiseMockState extends State<MarathonPractiseMock> {
             children: [
               SizedBox(height: 40),
               Text(
-                '1300',
+                widget.count.toString(),
                 style: TextStyle(
                   fontSize: 109,
                   fontWeight: FontWeight.w600,
@@ -60,7 +73,7 @@ class _MarathonPractiseMockState extends State<MarathonPractiseMock> {
             context,
             MaterialPageRoute(
               builder: (context) {
-                return MarathonQuizView();
+                return MarathonQuizView(controller: controller);
               },
             ),
           );

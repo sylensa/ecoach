@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_completed.dart';
@@ -9,6 +10,9 @@ import 'package:ecoach/widgets/marathon_mode_selector.dart';
 import 'package:flutter/material.dart';
 
 class MarathonSaveResumptionMenu extends StatefulWidget {
+  MarathonSaveResumptionMenu({required this.controller});
+  MarathonController controller;
+
   @override
   State<MarathonSaveResumptionMenu> createState() =>
       _MarathonSaveResumptionMenuState();
@@ -40,7 +44,9 @@ class _MarathonSaveResumptionMenuState
           context,
           MaterialPageRoute(
             builder: (context) {
-              return Caution();
+              return Caution(
+                controller: widget.controller,
+              );
             },
           ),
         );
@@ -139,6 +145,9 @@ class _MarathonSaveResumptionMenuState
 }
 
 class Caution extends StatelessWidget {
+  Caution({required this.controller});
+  MarathonController controller;
+
   @override
   Widget build(BuildContext context) {
     return TestIntroitLayout(
@@ -184,7 +193,7 @@ class Caution extends StatelessWidget {
                 label: 'Continue',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonCountdown();
+                    return MarathonCountdown(controller:controller);
                   }));
                 },
               )

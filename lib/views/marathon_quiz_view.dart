@@ -1,4 +1,5 @@
 import 'package:custom_timer/custom_timer.dart';
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_complete_congratulation.dart';
@@ -10,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class MarathonQuizView extends StatefulWidget {
-  MarathonQuizView({Key? key}) : super(key: key);
+  MarathonQuizView({Key? key, required this.controller}) : super(key: key);
+  MarathonController controller;
 
   @override
   State<MarathonQuizView> createState() => _MarathonQuizViewState();
@@ -19,6 +21,13 @@ class MarathonQuizView extends StatefulWidget {
 class _MarathonQuizViewState extends State<MarathonQuizView> {
   int selectedObjective = 0;
   Color themeColor = kAdeoBlue;
+  late MarathonController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.controller;
+  }
 
   void handleObjectiveSelection(id) {
     setState(() {
@@ -73,7 +82,10 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                         onTap: Feedback.wrapForTap(() {
                           showPopup(
                             context,
-                            PauseMenuDialog(themeColor: themeColor),
+                            PauseMenuDialog(
+                              themeColor: themeColor,
+                              controller: controller,
+                            ),
                           );
                         }, context),
                         child: Container(
@@ -137,34 +149,14 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                       ),
                       child: Column(
                         children: [
-                          // Objective(
-                          //   themeColor: themeColor,
-                          //   id: 1,
-                          //   label: 'Sokoto',
-                          //   isSelected: selectedObjective == 1,
-                          //   onTap: handleObjectiveSelection,
-                          // ),
-                          // Objective(
-                          //   themeColor: themeColor,
-                          //   id: 2,
-                          //   label: 'Harlequin tryanoposoiom',
-                          //   isSelected: selectedObjective == 2,
-                          //   onTap: handleObjectiveSelection,
-                          // ),
-                          // Objective(
-                          //   themeColor: themeColor,
-                          //   id: 3,
-                          //   label: 'White leghorn',
-                          //   isSelected: selectedObjective == 3,
-                          //   onTap: handleObjectiveSelection,
-                          // ),
-                          // Objective(
-                          //   themeColor: themeColor,
-                          //   id: 4,
-                          //   label: 'Rhode Island red',
-                          //   isSelected: selectedObjective == 4,
-                          //   onTap: handleObjectiveSelection,
-                          // ),
+                          Objective(
+                            controller.user,
+                            themeColor: themeColor,
+                            id: 1,
+                            label: 'Sokoto',
+                            isSelected: selectedObjective == 1,
+                            onTap: handleObjectiveSelection,
+                          ),
                         ],
                       ),
                     ),
@@ -191,9 +183,12 @@ Future<bool> showPopup(BuildContext context, Widget dialog) async {
 }
 
 class PauseMenuDialog extends StatefulWidget {
-  const PauseMenuDialog({Key? key, required this.themeColor}) : super(key: key);
+  const PauseMenuDialog(
+      {Key? key, required this.themeColor, required this.controller})
+      : super(key: key);
 
   final Color themeColor;
+  final MarathonController controller;
 
   @override
   _PauseMenuDialogState createState() => _PauseMenuDialogState();
@@ -201,6 +196,14 @@ class PauseMenuDialog extends StatefulWidget {
 
 class _PauseMenuDialogState extends State<PauseMenuDialog> {
   int selected = -1;
+
+  late MarathonController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.controller;
+  }
 
   handleSelection(id) {
     setState(() {
@@ -224,34 +227,38 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Objective(
-                      //   id: 5,
-                      //   label: 'submit & save',
-                      //   themeColor: widget.themeColor,
-                      //   isSelected: selected == 5,
-                      //   onTap: handleSelection,
-                      // ),
-                      // Objective(
-                      //   id: 6,
-                      //   label: 'submit & end',
-                      //   themeColor: widget.themeColor,
-                      //   isSelected: selected == 6,
-                      //   onTap: handleSelection,
-                      // ),
-                      // Objective(
-                      //   id: 7,
-                      //   label: 'submit & pause',
-                      //   themeColor: widget.themeColor,
-                      //   isSelected: selected == 7,
-                      //   onTap: handleSelection,
-                      // ),
-                      // Objective(
-                      //   id: 8,
-                      //   label: 'resume',
-                      //   themeColor: widget.themeColor,
-                      //   isSelected: selected == 8,
-                      //   onTap: handleSelection,
-                      // ),
+                      Objective(
+                        controller.user,
+                        id: 5,
+                        label: 'submit & save',
+                        themeColor: widget.themeColor,
+                        isSelected: selected == 5,
+                        onTap: handleSelection,
+                      ),
+                      Objective(
+                        controller.user,
+                        id: 6,
+                        label: 'submit & end',
+                        themeColor: widget.themeColor,
+                        isSelected: selected == 6,
+                        onTap: handleSelection,
+                      ),
+                      Objective(
+                        controller.user,
+                        id: 7,
+                        label: 'submit & pause',
+                        themeColor: widget.themeColor,
+                        isSelected: selected == 7,
+                        onTap: handleSelection,
+                      ),
+                      Objective(
+                        controller.user,
+                        id: 8,
+                        label: 'resume',
+                        themeColor: widget.themeColor,
+                        isSelected: selected == 8,
+                        onTap: handleSelection,
+                      ),
                     ],
                   ),
                 ),
@@ -264,11 +271,12 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                   onPressed: () {
                     switch (selected) {
                       case 5:
-                        showPopup(context, SessionSavedPrompt());
+                        showPopup(context,
+                            SessionSavedPrompt(controller: controller));
                         break;
                       case 6:
                         Navigator.push(context, MaterialPageRoute(builder: (c) {
-                          return MarathonEnded();
+                          return MarathonEnded(controller: controller);
                         }));
                         break;
                       case 7:
@@ -291,7 +299,9 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
 }
 
 class SessionSavedPrompt extends StatelessWidget {
-  const SessionSavedPrompt({Key? key}) : super(key: key);
+  const SessionSavedPrompt({Key? key, required this.controller})
+      : super(key: key);
+  final MarathonController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +336,8 @@ class SessionSavedPrompt extends StatelessWidget {
                 label: 'Exit',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonCompleteCongratulations();
+                    return MarathonCompleteCongratulations(
+                        controller: controller);
                   }));
                 },
                 size: Sizes.large,
@@ -376,9 +387,7 @@ class TestPausedPrompt extends StatelessWidget {
               AdeoOutlinedButton(
                 label: 'Resume',
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonQuizView();
-                  }));
+                  Navigator.pop(context);
                 },
                 size: Sizes.large,
                 color: kAdeoBlue,

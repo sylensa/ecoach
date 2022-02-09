@@ -1,14 +1,18 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_quiz_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 class MarathonCountdown extends StatefulWidget {
+  MarathonCountdown({required this.controller});
+  MarathonController controller;
+
   @override
-  State<MarathonCountdown> createState() => _MarathonSaveResumptionMenuState();
+  State<MarathonCountdown> createState() => _MarathonCountdownState();
 }
 
-class _MarathonSaveResumptionMenuState extends State<MarathonCountdown> {
+class _MarathonCountdownState extends State<MarathonCountdown> {
   late Timer _timer;
   int duration = 5;
   var future = new Future.delayed(const Duration(milliseconds: 500));
@@ -24,7 +28,7 @@ class _MarathonSaveResumptionMenuState extends State<MarathonCountdown> {
               timer.cancel();
               future.asStream().listen((event) {
                 Navigator.push(context, MaterialPageRoute(builder: (c) {
-                  return MarathonQuizView();
+                  return MarathonQuizView(controller: widget.controller);
                 }));
               });
             });

@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_introit.dart';
@@ -7,6 +8,9 @@ import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:flutter/material.dart';
 
 class MarathonEnded extends StatelessWidget {
+  MarathonEnded({required this.controller});
+  MarathonController controller;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +131,8 @@ class MarathonEnded extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (c) {
-                              return MarathonIntroit();
+                              return MarathonIntroit(
+                                  controller.user, controller.course);
                             }));
                           },
                         ),
@@ -147,7 +152,8 @@ class MarathonEnded extends StatelessWidget {
                     background: kAdeoBlue,
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return MarathonIntroit();
+                        return MarathonIntroit(
+                            controller.user, controller.course);
                       }));
                     },
                   ),

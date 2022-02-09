@@ -50,7 +50,10 @@ class _CustomizedTestQuestionModeState
           ),
           footer: AdeoOutlinedButton(
             label: 'Next',
-            onPressed: TestIntroitLayout.goForward,
+            onPressed: () async {
+              await Future.delayed(Duration(seconds: 1));
+              TestIntroitLayout.goForward();
+            },
           ),
         ),
         TestIntroitLayoutPage(
