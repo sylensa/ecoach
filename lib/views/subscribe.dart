@@ -1,21 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:ecoach/models/plan.dart';
-import 'package:ecoach/models/store_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/user_setup.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
-import 'package:ecoach/widgets/appbar.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
-import 'package:ecoach/widgets/select_tile.dart';
 import 'package:ecoach/widgets/widgets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -146,29 +139,13 @@ class _SubscribePageState extends State<SubscribePage>
     upperHeight = height / 2;
     lowerHeight = height / 2;
 
-    return SafeArea(
-      child: Scaffold(
-        // appBar: AppBar(
-        //   backgroundColor: kAdeoGray,
-        //   shadowColor: Colors.transparent,
-        //   leading: IconButton(
-        //     icon: Icon(Icons.arrow_back_sharp),
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        //   title: Center(
-        //     child: Text("${widget.plan.name}"),
-        //   ),
-        //   // actions: [
-        //   //   Icon(Icons.more_vert),
-        //   // ],
-        // ),
-        backgroundColor: kPageBackgroundGray,
-        body: Column(
-          children: [
-            Container(
-              height: 56.0,
+    return Scaffold(
+      backgroundColor: kPageBackgroundGray,
+      body: Column(
+        children: [
+          SafeArea(
+            child: Container(
+              // height: 56.0,
               child: Center(
                 child: Text(
                   "${widget.plan.name}",
@@ -179,301 +156,99 @@ class _SubscribePageState extends State<SubscribePage>
                 ),
               ),
             ),
-            Divider(
-              thickness: 3.0,
-              color: Colors.white,
+          ),
+          Divider(
+            thickness: 3.0,
+            color: Colors.white,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: 40.0,
+              horizontal: 24.0,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: 40.0,
-                horizontal: 24.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
-                    children: [
-                      Container(height: 24.0),
-                      Text(
-                        'GHS',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Helvetica Rounded',
-                          fontSize: 20.0,
-                        ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Container(height: 24.0),
+                    Text(
+                      'GHS',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Helvetica Rounded',
+                        fontSize: 20.0,
                       ),
-                    ],
-                  ),
-                  Text(
-                    totalAmount
-                        .toString()
-                        .substring(0, totalAmount.toString().indexOf('.')),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: 'Helvetica Rounded',
-                      fontSize: 80.0,
                     ),
+                  ],
+                ),
+                Text(
+                  totalAmount
+                      .toString()
+                      .substring(0, totalAmount.toString().indexOf('.')),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Helvetica Rounded',
+                    fontSize: 80.0,
                   ),
-                  Column(
-                    children: [
-                      Text(
-                        '.00',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Helvetica Rounded',
-                          fontSize: 24.0,
-                        ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '.00',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Helvetica Rounded',
+                        fontSize: 24.0,
                       ),
-                      Container(height: 48.0),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Divider(
-              thickness: 3.0,
-              color: Colors.white,
-            ),
-            SizedBox(height: 20),
-            Text(
-              "Payment Options",
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 12.0),
-            AdeoTabControl(
-              variant: 'black',
-              tabs: ['Visa/MoMo', 'wallet', 'link'],
-              tabPages: [
-                ThirdPartyPay(
-                  onPressed: () {
-                    authorisePayment(context);
-                  },
-                ),
-                WalletPay(
-                  amount: widget.user.wallet.amount,
-                  onPressed: () {},
-                ),
-                LinkPay(
-                  link: generatedLink,
-                  onPressed: () async {
-                    String? link = await getUrlFrmInitialization(
-                      amount: totalAmount,
-                    );
-                    setState(() {
-                      generatedLink = link!;
-                    });
-                  },
+                    ),
+                    Container(height: 48.0),
+                  ],
                 ),
               ],
             ),
-            // Container(
-            //   child: Column(
-            //     children: [
-            //       Padding(
-            //         padding: const EdgeInsets.fromLTRB(10, 30, 10, 0),
-            //         child: RichText(
-            //             text: TextSpan(children: [
-            //           TextSpan(
-            //             text: "$totalAmount",
-            //             style: TextStyle(
-            //                 fontSize: 80,
-            //                 fontWeight: FontWeight.bold,
-            //                 color: Colors.black),
-            //           ),
-            //           TextSpan(
-            //             text: "GHC",
-            //             style: TextStyle(fontSize: 25, color: Colors.black),
-            //           ),
-            //         ])),
-            //       ),
-            //       Text(
-            //         "Payment Options",
-            //         style: TextStyle(
-            //             fontSize: 20,
-            //             color: Colors.black,
-            //             fontWeight: FontWeight.bold),
-            //       ),
-            //       SizedBox(
-            //         height: 10,
-            //       ),
-            //       Column(
-            //         children: [
-            //           TabBar(
-            //             controller: tabController,
-            //             tabs: [
-            //               Tab(
-            //                 text: "Visa/Momo",
-            //               ),
-            //               Tab(
-            //                 text: "Wallet",
-            //               ),
-            //               Tab(
-            //                 text: "Link",
-            //               ),
-            //             ],
-            //           ),
-            //           SizedBox(
-            //             height: lowerHeight,
-            //             child: TabBarView(
-            //               controller: tabController,
-            //               children: [
-            //                 Container(
-            //                   child: Column(
-            //                     children: [
-            //                       Padding(
-            //                         padding: const EdgeInsets.fromLTRB(
-            //                             8, 40, 8, 40),
-            //                         child: Text(
-            //                           "Pay via visa or mobile money",
-            //                           style: TextStyle(
-            //                               fontWeight: FontWeight.normal,
-            //                               fontSize: 18),
-            //                         ),
-            //                       ),
-            //                       Padding(
-            //                         padding: const EdgeInsets.all(8.0),
-            //                         child: Padding(
-            //                           padding: const EdgeInsets.all(8.0),
-            //                           child: SizedBox(
-            //                             width: double.infinity / 2,
-            //                             child: ElevatedButton(
-            //                               onPressed: () {
-            //                                 authorisePayment(context);
-            //                               },
-            //                               child: Text("Click to Pay"),
-            //                               style: ButtonStyle(
-            //                                 backgroundColor:
-            //                                     MaterialStateProperty.all(
-            //                                         Colors.green),
-            //                               ),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       )
-            //                     ],
-            //                   ),
-            //                 ),
-            //                 Container(
-            //                   child: Column(
-            //                     children: [
-            //                       Padding(
-            //                         padding: const EdgeInsets.fromLTRB(
-            //                             8, 18, 8, 20),
-            //                         child: Text(
-            //                           "The amount of money in your wallet is ",
-            //                           style: TextStyle(
-            //                               fontWeight: FontWeight.normal,
-            //                               fontSize: 18),
-            //                         ),
-            //                       ),
-            //                       Padding(
-            //                         padding: const EdgeInsets.fromLTRB(
-            //                             8, 10, 8, 12),
-            //                         child: Text(
-            //                           money(widget.user.wallet.amount),
-            //                           style: TextStyle(
-            //                               fontWeight: FontWeight.normal,
-            //                               fontSize: 30),
-            //                         ),
-            //                       ),
-            //                       Padding(
-            //                         padding: const EdgeInsets.all(8.0),
-            //                         child: Padding(
-            //                           padding: const EdgeInsets.all(8.0),
-            //                           child: SizedBox(
-            //                             width: double.infinity / 2,
-            //                             child: ElevatedButton(
-            //                               onPressed: () {},
-            //                               child: Text("Click to Pay"),
-            //                               style: ButtonStyle(
-            //                                 backgroundColor:
-            //                                     MaterialStateProperty.all(
-            //                                         Colors.green),
-            //                               ),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       )
-            //                     ],
-            //                   ),
-            //                 ),
-            //                 Container(
-            //                   child: Column(
-            //                     mainAxisSize: MainAxisSize.min,
-            //                     children: [
-            //                       Padding(
-            //                         padding: const EdgeInsets.all(42.0),
-            //                         child: SizedBox(
-            //                           width: 250,
-            //                           child: ElevatedButton(
-            //                             onPressed: () async {
-            //                               String? link =
-            //                                   await getUrlFrmInitialization(
-            //                                       amount: totalAmount);
-            //                               linkTextController.text = link!;
-            //                             },
-            //                             child: Text("Generate Link"),
-            //                             style: ButtonStyle(
-            //                               backgroundColor:
-            //                                   MaterialStateProperty.all(
-            //                                       Colors.green),
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ),
-            //                       Padding(
-            //                         padding: EdgeInsets.all(18),
-            //                         child: SizedBox(
-            //                           width: double.infinity,
-            //                           height: 70,
-            //                           child: Row(
-            //                             children: [
-            //                               Spacer(),
-            //                               SizedBox(
-            //                                 width: 300,
-            //                                 child: TextField(
-            //                                   controller: linkTextController,
-            //                                   enabled: false,
-            //                                   decoration: InputDecoration(
-            //                                       hintText: "generated link",
-            //                                       border:
-            //                                           OutlineInputBorder()),
-            //                                 ),
-            //                               ),
-            //                               SizedBox(
-            //                                 height: 50,
-            //                                 child: ElevatedButton(
-            //                                     onPressed: () {
-            //                                       Clipboard.setData(
-            //                                           ClipboardData(
-            //                                               text:
-            //                                                   linkTextController
-            //                                                       .text));
-            //                                     },
-            //                                     child: Text("Copy")),
-            //                               ),
-            //                               // Spacer()
-            //                             ],
-            //                           ),
-            //                         ),
-            //                       ),
-            //                     ],
-            //                   ),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ],
-            //   ),
-            // ),
-          ],
-        ),
+          ),
+          Divider(
+            thickness: 3.0,
+            color: Colors.white,
+          ),
+          SizedBox(height: 20),
+          Text(
+            "Payment Options",
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 12.0),
+          AdeoTabControl(
+            variant: 'black',
+            tabs: ['Visa/MoMo', 'wallet', 'link'],
+            tabPages: [
+              ThirdPartyPay(
+                onPressed: () {
+                  authorisePayment(context);
+                },
+              ),
+              WalletPay(
+                amount: widget.user.wallet.amount,
+                onPressed: () {},
+              ),
+              LinkPay(
+                link: generatedLink,
+                onPressed: () async {
+                  String? link = await getUrlFrmInitialization(
+                    amount: totalAmount,
+                  );
+                  setState(() {
+                    generatedLink = link!;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

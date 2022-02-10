@@ -407,50 +407,48 @@ class AnalysisCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  metaData.date,
-                  style: metaDataStyle(variant: variant),
-                ),
-                Text(
-                  metaData.time,
-                  style: metaDataStyle(variant: variant),
-                ),
-                Text(
-                  metaData.duration,
-                  style: metaDataStyle(variant: variant),
-                ),
-              ],
-            ),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                metaData.date,
+                style: metaDataStyle(variant: variant),
+              ),
+              Text(
+                metaData.time,
+                style: metaDataStyle(variant: variant),
+              ),
+              Text(
+                metaData.duration,
+                style: metaDataStyle(variant: variant),
+              ),
+            ],
           ),
-          SizedBox(height: 2),
-          MultiPurposeCourseCard(
-            title: activity,
-            subTitle: activityType,
-            hasSmallHeading: true,
-            isActive: isSelected,
-            rightWidget: showInPercentage
-                ? PercentageSnippet(
-                    correctlyAnswered: correctlyAnswered,
-                    totalQuestions: totalQuestions,
-                    isSelected: isSelected,
-                  )
-                : FractionSnippet(
-                    correctlyAnswered: correctlyAnswered,
-                    totalQuestions: totalQuestions,
-                    isSelected: isSelected,
-                  ),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(height: 2),
+        MultiPurposeCourseCard(
+          onTap: onTap,
+          title: activity,
+          subTitle: activityType,
+          hasSmallHeading: true,
+          isActive: isSelected,
+          rightWidget: showInPercentage
+              ? PercentageSnippet(
+                  correctlyAnswered: correctlyAnswered,
+                  totalQuestions: totalQuestions,
+                  isSelected: isSelected,
+                )
+              : FractionSnippet(
+                  correctlyAnswered: correctlyAnswered,
+                  totalQuestions: totalQuestions,
+                  isSelected: isSelected,
+                ),
+        ),
+      ],
     );
   }
 }

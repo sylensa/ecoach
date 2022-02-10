@@ -34,9 +34,7 @@ class AdeoOutlinedButton extends StatelessWidget {
             color: color,
           ),
           side: BorderSide(color: color ?? Colors.white),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(borderRadius ?? 44)),
-          ),
+          shape: StadiumBorder(),
           padding: EdgeInsets.symmetric(
             horizontal: () {
               switch (size) {
@@ -65,7 +63,10 @@ class AdeoOutlinedButton extends StatelessWidget {
           ),
         ),
         child: Text(label),
-        onPressed: onPressed,
+        onPressed: Feedback.wrapForTap(() async {
+          await Future.delayed(Duration(milliseconds: 600));
+          onPressed();
+        }, context),
       ),
     );
   }
