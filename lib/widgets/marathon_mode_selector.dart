@@ -106,11 +106,11 @@ class MarathonTopicSelector extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Container(
-                padding: EdgeInsets.only(left: 16),
-                alignment: Alignment.centerLeft,
-                height: 80,
-                child: FittedBox(
+              child: FittedBox(
+                child: Container(
+                  padding: EdgeInsets.only(left: 16),
+                  alignment: Alignment.centerLeft,
+                  height: 80,
                   child: Text(
                     label,
                     textAlign: TextAlign.left,

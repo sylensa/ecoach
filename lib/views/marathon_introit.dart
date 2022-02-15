@@ -1,11 +1,14 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_completed.dart';
 import 'package:ecoach/views/marathon_live.dart';
 import 'package:ecoach/views/marathon_practise_menu.dart';
+import 'package:ecoach/views/marathon_save_resumption_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/marathon_mode_selector.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +41,7 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
     });
   }
 
-  handleNext() {
+  handleNext() async {
     dynamic screenToNavigateTo;
 
     switch (mode) {
@@ -46,12 +49,24 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
         screenToNavigateTo = MarathonLive();
         break;
       case MarathonModes.PRACTISE:
-        screenToNavigateTo = MarathonPractiseMenu(
-          controller: MarathonController(widget.user, widget.course, name: widget.course.name!),
-        );
+        Marathon? marathon =
+            await TestController().getCurrentMarathon(widget.course);
+        if (marathon == null) {
+          screenToNavigateTo = MarathonPractiseMenu(
+            controller: MarathonController(widget.user, widget.course,
+                name: widget.course.name!),
+          );
+        } else {
+          print(marathon.toJson());
+          screenToNavigateTo = MarathonSaveResumptionMenu(
+            controller: MarathonController(widget.user, widget.course,
+                name: widget.course.name!),
+          );
+        }
+
         break;
       case MarathonModes.COMPLETED:
-        screenToNavigateTo = MarathonCompleted();
+        screenToNavigateTo = MarathonCompleted(widget.user, widget.course);
         break;
     }
 

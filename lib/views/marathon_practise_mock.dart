@@ -3,6 +3,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_quiz_view.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class MarathonPractiseMock extends StatefulWidget {
@@ -16,14 +17,11 @@ class MarathonPractiseMock extends StatefulWidget {
 }
 
 class _MarathonPractiseMockState extends State<MarathonPractiseMock> {
-  String durationLeft = '';
-  String durationRight = '';
-  String duration = '';
   late MarathonController controller;
 
   @override
   void initState() {
-    controller=widget.controller;
+    controller = widget.controller;
     super.initState();
   }
 
@@ -68,7 +66,11 @@ class _MarathonPractiseMockState extends State<MarathonPractiseMock> {
             ],
           ),
         ),
-        getMarathonInstructionsLayout(() {
+        getMarathonInstructionsLayout(() async {
+          showLoaderDialog(context, message: "Creating marathon");
+          await controller.createMarathon();
+          Navigator.pop(context);
+
           Navigator.push(
             context,
             MaterialPageRoute(

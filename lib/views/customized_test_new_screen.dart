@@ -276,8 +276,6 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
   }
 
   Widget getTimerWidget() {
-    print(
-        "getTimerWidget called-----------------------------------------------------------------------------------");
     return GestureDetector(
       onTap: () {
         if (!controller.enabled) {

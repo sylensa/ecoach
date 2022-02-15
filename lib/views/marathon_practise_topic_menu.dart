@@ -1,4 +1,6 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_practise_mock.dart';
@@ -7,12 +9,13 @@ import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/marathon_mode_selector.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 enum topics { TOPIC, MOCK }
 
 class MarathonPractiseTopicMenu extends StatefulWidget {
-  MarathonPractiseTopicMenu({this.topics = const [],required this.controller});
+  MarathonPractiseTopicMenu({this.topics = const [], required this.controller});
   MarathonController controller;
   List<TestNameAndCount> topics;
 
@@ -28,7 +31,7 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
   @override
   void initState() {
     topicId = '';
-    controller=widget.controller;
+    controller = widget.controller;
     super.initState();
   }
 
@@ -85,12 +88,13 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
                 children: [
                   AdeoFilledButton(
                     label: 'Next',
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
                             return Instructions(
+                              topicId: topicId,
                               controller: controller,
                             );
                           },
@@ -111,8 +115,9 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
 }
 
 class Instructions extends StatelessWidget {
-  Instructions({required this.controller});
+  Instructions({required this.controller, required this.topicId});
   MarathonController controller;
+  int topicId;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +125,12 @@ class Instructions extends StatelessWidget {
       background: kAdeoRoyalBlue,
       backgroundImageURL: 'assets/images/deep_pool_blue_2.png',
       pages: [
-        getMarathonInstructionsLayout(() {
+        getMarathonInstructionsLayout(() async {
+          showLoaderDialog(context, message: "Creating marathon");
+          await controller.createTopicMarathon(topicId);
+          Topic? topic = await TopicDB().getTopicById(topicId);
+          controller.name = topic!.name!;
+          Navigator.pop(context);
           Navigator.push(
             context,
             MaterialPageRoute(

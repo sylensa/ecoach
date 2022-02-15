@@ -1,12 +1,16 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_completed.dart';
 import 'package:ecoach/views/marathon_countdown.dart';
+import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/marathon_mode_selector.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class MarathonSaveResumptionMenu extends StatefulWidget {
@@ -37,8 +41,36 @@ class _MarathonSaveResumptionMenuState
     });
   }
 
-  handleNext() {
+  continueMarathon() {}
+
+  openCompletedMarathon() {}
+
+  handleNext() async {
     switch (mode) {
+      case MarathonModes.CONTINUE:
+        showLoaderDialog(context, message: "loading marathon");
+        bool success = await widget.controller.loadMarathon();
+        Navigator.pop(context);
+
+        if (success) {
+          Navigator.push(context, MaterialPageRoute(builder: (c) {
+            return MarathonCountdown(controller: widget.controller);
+          }));
+        } else {
+          AdeoDialog(
+            title: "No marathon",
+            content: "No marathon was found for this course. Kindly start over",
+            actions: [
+              AdeoDialogAction(
+                  label: "Ok",
+                  onPressed: () {
+                    Navigator.pop(context);
+                  })
+            ],
+          );
+        }
+
+        break;
       case MarathonModes.NEW_MARATHON:
         Navigator.push(
           context,
@@ -56,7 +88,8 @@ class _MarathonSaveResumptionMenuState
           context,
           MaterialPageRoute(
             builder: (context) {
-              return MarathonCompleted();
+              return MarathonCompleted(
+                  widget.controller.user, widget.controller.course);
             },
           ),
         );
@@ -191,9 +224,13 @@ class Caution extends StatelessWidget {
               AdeoOutlinedButton(
                 color: kAdeoBlue,
                 label: 'Continue',
-                onPressed: () {
+                onPressed: () async {
+                  showLoaderDialog(context, message: "Restarting marathon");
+                  await controller.restartMarathon();
+                  Navigator.pop(context);
+
                   Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonCountdown(controller:controller);
+                    return MarathonCountdown(controller: controller);
                   }));
                 },
               )

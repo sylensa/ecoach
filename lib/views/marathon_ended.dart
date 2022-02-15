@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -27,7 +28,10 @@ class MarathonEnded extends StatelessWidget {
                 color: kAdeoOrange,
                 borderRadius: 5,
                 fontSize: 14,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.popUntil(context,
+                      ModalRoute.withName(CourseDetailsPage.routeName));
+                },
               ),
               SizedBox(width: 10),
             ],
@@ -58,7 +62,7 @@ class MarathonEnded extends StatelessWidget {
                   ),
                   SizedBox(height: 32),
                   Text(
-                    'Net Score: 250',
+                    'Net Score: ${controller.marathon!.totalCorrect! - controller.marathon!.totalWrong!}',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -74,7 +78,7 @@ class MarathonEnded extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    '1500 Questions',
+                    '${controller.questions.length} Questions',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -82,10 +86,12 @@ class MarathonEnded extends StatelessWidget {
                   ),
                   SizedBox(height: 48),
                   QuizStats(
-                    averageScore: '65.2%',
-                    speed: '240s',
-                    correctScore: '286',
-                    wrongScrore: '4',
+                    changeUp: true,
+                    averageScore:
+                        '${controller.getAvgScore().toStringAsFixed(2)}%',
+                    speed: '${controller.getAvgTime().toStringAsFixed(2)}s',
+                    correctScore: '${controller.getTotalCorrect()}',
+                    wrongScrore: '${controller.getTotalWrong()}',
                   ),
                   SizedBox(height: 96),
                 ],

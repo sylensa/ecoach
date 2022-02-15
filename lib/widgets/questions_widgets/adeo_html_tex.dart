@@ -162,11 +162,10 @@ setTexTags(String? text, {bool removeTags = false}) {
 
   RegExp reg = RegExp(r'\\\((.+?)\\\)');
   Iterable<RegExpMatch> matches = reg.allMatches(text);
-  print("matches count=${matches.length}");
   List<String> subTexts = [];
   matches.forEach((m) {
     String mathEquation = text!.substring(m.start, m.end);
-    print("Match: ${mathEquation}");
+
     subTexts.add(mathEquation);
   });
   subTexts.forEach((equation) {
@@ -179,7 +178,6 @@ setTexTags(String? text, {bool removeTags = false}) {
       .replaceAll('\\(', "")
       .replaceAll('\\)', "");
 
-  print(text);
   return text;
 }
 

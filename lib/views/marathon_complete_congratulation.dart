@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/marathon_ranking.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/marathon_introit.dart';
 import 'package:ecoach/views/marathon_save_resumption_menu.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -30,9 +31,8 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                 borderRadius: 5,
                 fontSize: 14,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonSaveResumptionMenu(controller: controller);
-                  }));
+                  Navigator.popUntil(context,
+                      ModalRoute.withName(CourseDetailsPage.routeName));
                 },
               ),
               SizedBox(width: 10),
@@ -63,7 +63,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Net Score: 250',
+                    'Net Score: ${controller.marathon!.totalCorrect! - controller.marathon!.totalWrong!}',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -79,7 +79,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    '1500 Questions',
+                    '${controller.questions.length} Questions',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -87,23 +87,25 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   ),
                   SizedBox(height: 48),
                   QuizStats(
-                    averageScore: '65.2%',
-                    speed: '240s',
-                    correctScore: '286',
-                    wrongScrore: '4',
+                    changeUp: true,
+                    averageScore:
+                        '${controller.getAvgScore().toStringAsFixed(2)}%',
+                    speed: '${controller.getAvgTime().toStringAsFixed(2)}s',
+                    correctScore: '${controller.getTotalCorrect()}',
+                    wrongScrore: '${controller.getTotalWrong()}',
                   ),
                   SizedBox(height: 20),
-                  AdeoTextButton(
-                    label: 'View Ranking',
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return MarathonRanking();
-                      }));
-                    },
-                    fontSize: 20,
-                    color: kAdeoBlue,
-                    background: Colors.transparent,
-                  ),
+                  // AdeoTextButton(
+                  //   label: 'View Ranking',
+                  //   onPressed: () {
+                  //     Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  //       return MarathonRanking();
+                  //     }));
+                  //   },
+                  //   fontSize: 20,
+                  //   color: kAdeoBlue,
+                  //   background: Colors.transparent,
+                  // ),
                   SizedBox(height: 96),
                 ],
               ),

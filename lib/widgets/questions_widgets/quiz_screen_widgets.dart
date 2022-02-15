@@ -28,11 +28,6 @@ class Objective extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("enabled = $enabled");
-    print("is Selected = $isSelected");
-    print("isCorrect= $isCorrect");
-    print("id $id");
-
     return InkWell(
       onTap: Feedback.wrapForTap(() async {
         if (!enabled) return;
@@ -177,6 +172,7 @@ class QuestionWid extends StatelessWidget {
 
 class QuizStats extends StatelessWidget {
   const QuizStats({
+    required this.changeUp,
     required this.averageScore,
     required this.correctScore,
     required this.speed,
@@ -184,6 +180,7 @@ class QuizStats extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  final bool changeUp;
   final String averageScore;
   final String speed;
   final String correctScore;
@@ -203,7 +200,9 @@ class QuizStats extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/icons/progress_down.png',
+                changeUp
+                    ? 'assets/icons/progress_up.png'
+                    : 'assets/icons/progress_down.png',
                 width: 24,
                 height: 19,
               ),

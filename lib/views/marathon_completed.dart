@@ -1,3 +1,7 @@
+import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
@@ -9,15 +13,21 @@ import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:flutter/material.dart';
 
 class MarathonCompleted extends StatefulWidget {
-  const MarathonCompleted({
+  const MarathonCompleted(
+    this.user,
+    this.course, {
     Key? key,
   }) : super(key: key);
+
+  final User user;
+  final Course course;
 
   @override
   State<MarathonCompleted> createState() => _MarathonCompletedState();
 }
 
 class _MarathonCompletedState extends State<MarathonCompleted> {
+  List<Marathon> marathons = [];
   late bool showInPercentage;
   List selected = [];
 
@@ -33,6 +43,13 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
   @override
   void initState() {
     showInPercentage = false;
+
+    MarathonDB().completedMarathons(widget.course).then((mList) {
+      setState(() {
+        marathons = mList;
+      });
+    });
+
     super.initState();
   }
 
@@ -85,91 +102,24 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            AnalysisCard(
-                              variant: CardVariant.LIGHT,
-                              correctlyAnswered: 5,
-                              totalQuestions: 10,
-                              activity: 'Using The Internet To Communicate',
-                              activityType: 'Exam',
-                              showInPercentage: showInPercentage,
-                              isSelected: selected.contains(1),
-                              metaData: ActivityMetaData(
-                                date: '07.09.21',
-                                time: '16:04',
-                                duration: '05min:20sec',
+                            for (int i = 0; i < marathons.length; i++)
+                              AnalysisCard(
+                                variant: CardVariant.LIGHT,
+                                correctlyAnswered: marathons[i].totalCorrect!,
+                                totalQuestions: marathons[i].totalQuestions!,
+                                activity: marathons[i].title!,
+                                activityType: marathons[i].type!,
+                                showInPercentage: showInPercentage,
+                                isSelected: selected.contains(i + 1),
+                                metaData: ActivityMetaData(
+                                  date: marathons[i].date,
+                                  time: marathons[i].time,
+                                  duration: '05min:20sec',
+                                ),
+                                onTap: () {
+                                  handleSelection(1);
+                                },
                               ),
-                              onTap: () {
-                                handleSelection(1);
-                              },
-                            ),
-                            AnalysisCard(
-                              variant: CardVariant.LIGHT,
-                              correctlyAnswered: 5,
-                              totalQuestions: 10,
-                              activity: 'Using The Internet To Communicate',
-                              activityType: 'Exam',
-                              showInPercentage: showInPercentage,
-                              isSelected: selected.contains(2),
-                              metaData: ActivityMetaData(
-                                date: '07.09.21',
-                                time: '16:04',
-                                duration: '05min:20sec',
-                              ),
-                              onTap: () {
-                                handleSelection(2);
-                              },
-                            ),
-                            AnalysisCard(
-                              variant: CardVariant.LIGHT,
-                              correctlyAnswered: 5,
-                              totalQuestions: 10,
-                              activity: 'Using The Internet To Communicate',
-                              activityType: 'Exam',
-                              showInPercentage: showInPercentage,
-                              isSelected: selected.contains(3),
-                              metaData: ActivityMetaData(
-                                date: '07.09.21',
-                                time: '16:04',
-                                duration: '05min:20sec',
-                              ),
-                              onTap: () {
-                                handleSelection(3);
-                              },
-                            ),
-                            AnalysisCard(
-                              variant: CardVariant.LIGHT,
-                              correctlyAnswered: 5,
-                              totalQuestions: 10,
-                              activity: 'Using The Internet To Communicate',
-                              activityType: 'Exam',
-                              showInPercentage: showInPercentage,
-                              isSelected: selected.contains(4),
-                              metaData: ActivityMetaData(
-                                date: '07.09.21',
-                                time: '16:04',
-                                duration: '05min:20sec',
-                              ),
-                              onTap: () {
-                                handleSelection(4);
-                              },
-                            ),
-                            AnalysisCard(
-                              variant: CardVariant.LIGHT,
-                              correctlyAnswered: 5,
-                              totalQuestions: 10,
-                              activity: 'Using The Internet To Communicate',
-                              activityType: 'Exam',
-                              showInPercentage: showInPercentage,
-                              isSelected: selected.contains(5),
-                              metaData: ActivityMetaData(
-                                date: '07.09.21',
-                                time: '16:04',
-                                duration: '05min:20sec',
-                              ),
-                              onTap: () {
-                                handleSelection(5);
-                              },
-                            ),
                           ],
                         ),
                       ),
@@ -194,14 +144,18 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                 background: kAdeoBlue,
                 color: Colors.white,
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) {
-                  //       return CompareView(user: widget.user, operands: [],);
-                  //     },
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return CompareView(
+                          user: widget.user,
+                          course: widget.course,
+                          operands: [],
+                        );
+                      },
+                    ),
+                  );
                 },
               ),
             )

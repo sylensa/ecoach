@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 Marathon marathonFromJson(String str) => Marathon.fromJson(json.decode(str));
 
 String marathonToJson(Marathon data) => json.encode(data.toJson());
 
-enum MarathonStatus { STARTED, IN_PROGRESS, PAUSED, COMPLETED }
+enum MarathonStatus { NEW, IN_PROGRESS, PAUSED, COMPLETED }
+enum MarathonType { FULL, TOPIC }
 
 class Marathon {
   Marathon({
@@ -14,8 +16,10 @@ class Marathon {
     this.courseId,
     this.userId,
     this.title,
-    this.avgScore,
-    this.avgTime,
+    this.type,
+    this.topicId,
+    this.avgScore = 0,
+    this.avgTime = 0,
     this.totalCorrect,
     this.totalWrong,
     this.totalQuestions,
@@ -29,8 +33,10 @@ class Marathon {
   int? courseId;
   int? userId;
   String? title;
-  int? avgScore;
-  int? avgTime;
+  String? type;
+  int? topicId;
+  double? avgScore;
+  double? avgTime;
   int? totalCorrect;
   int? totalWrong;
   int? totalQuestions;
@@ -39,11 +45,31 @@ class Marathon {
   DateTime? endTime;
   String? status;
 
+  String get date {
+    if (endTime == null) return "";
+
+    return '${endTime!.day} ${endTime!.month} ${endTime!.year}';
+  }
+
+  String get time {
+    if (endTime == null) return "";
+
+    return '${endTime!.hour}:${endTime!.minute}:${endTime!.second}';
+  }
+
+  Duration get duration {
+    if (startTime == null || endTime == null) return Duration();
+
+    return startTime!.difference(endTime!);
+  }
+
   factory Marathon.fromJson(Map<String, dynamic> json) => Marathon(
         id: json["id"],
         courseId: json["course_id"],
         userId: json["user_id"],
         title: json["title"],
+        type: json["type"],
+        topicId: json["type_id"],
         avgScore: json["avg_score"],
         avgTime: json["avg_time"],
         totalCorrect: json["total_correct"],
@@ -51,7 +77,8 @@ class Marathon {
         totalQuestions: json["total_questions"],
         totalTime: json["total_time"],
         startTime: DateTime.parse(json['start_time']),
-        endTime: DateTime.parse(json["end_time"]),
+        endTime:
+            json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
         status: json["status"],
       );
 
@@ -60,6 +87,8 @@ class Marathon {
         "course_id": courseId,
         "user_id": userId,
         "title": title,
+        "type": type,
+        "topic_id": topicId,
         "avg_score": avgScore,
         "avg_time": avgTime,
         "total_correct": totalCorrect,
@@ -67,7 +96,7 @@ class Marathon {
         "total_questions": totalQuestions,
         "total_time": totalTime,
         "start_time": startTime!.toIso8601String(),
-        "end_time": endTime!.toIso8601String(),
+        "end_time": endTime == null ? null : endTime!.toIso8601String(),
         "status": status,
       };
 }
@@ -88,6 +117,7 @@ class MarathonProgress {
     this.selectedAnswerId,
     this.topicId,
     this.topicName,
+    this.time = 0,
     this.status,
   });
 
@@ -99,6 +129,7 @@ class MarathonProgress {
   int? selectedAnswerId;
   int? topicId;
   String? topicName;
+  int? time;
   String? status;
   Question? question;
 
@@ -136,6 +167,7 @@ class MarathonProgress {
         selectedAnswerId: json["selected_answer_id"],
         topicId: json["topic_id"],
         topicName: json["topic_name"],
+        time: json["time"],
         status: json["status"],
       );
 
@@ -148,6 +180,11 @@ class MarathonProgress {
         "selected_answer_id": selectedAnswerId,
         "topic_id": topicId,
         "topic_name": topicName,
+        "time": time,
         "status": status,
       };
+
+  MarathonProgress clone() {
+    return MarathonProgress.fromJson(toJson());
+  }
 }

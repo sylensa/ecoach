@@ -1,6 +1,8 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/database/answers.dart';
+import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/models/level.dart';
+import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
@@ -204,16 +206,16 @@ class TestController {
     List<TestNameAndCount> testNames = [];
     for (int i = 0; i < topics.length; i++) {
       int id = topics.keys.toList()[i];
-      String name = topics.values.toList()[i];
+      String? name = topics[id];
 
       int count =
           await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
       int totalCount = await QuestionDB().getTopicCount(id);
       double average = await getTopicAnsweredAverageScore(course.id!, id);
 
-      // print("$name c=$count totat count=$totalCount");
+      print("$name c=$count totat count=$totalCount");
       testNames.add(TestNameAndCount(
-        name,
+        name ?? "non",
         count,
         totalCount,
         averageScore: average,
@@ -375,5 +377,11 @@ class TestController {
         await QuestionDB().getRandomQuestions(course.id!, numberOfQuestions);
 
     return questions;
+  }
+
+  Future<Marathon?> getCurrentMarathon(Course course) async {
+    Marathon? marathon = await MarathonDB().getCurrentMarathon(course);
+
+    return marathon;
   }
 }
