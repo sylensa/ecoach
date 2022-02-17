@@ -37,6 +37,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   bool showSubmit = false;
   TestTaken? testTaken;
   bool changeUp = false;
+  bool showNext = false;
   double avgScore = 0;
   double avgTime = 0;
   int correct = 0;
@@ -53,24 +54,8 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
     controller = widget.controller;
     pageController = PageController(initialPage: controller.currentQuestion);
 
-    updateQuestionSheet();
-
     print("No of Questions = ${controller.questions.length}");
     controller.startTest();
-  }
-
-  updateQuestionSheet() {
-    questionWidgets = [];
-    for (int i = 0; i < controller.questions.length; i++)
-      questionWidgets.add(MarathonQuestionWidget(
-        controller.user,
-        controller.questions[i].question!,
-        position: i,
-        enabled: controller.enabled,
-        callback: (Answer answer, correct) async {
-          next();
-        },
-      ));
   }
 
   void handleObjectiveSelection(id) {
@@ -93,6 +78,16 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
     }
   }
 
+  nextButton() {
+    setState(() {
+      showNext = false;
+      controller.reviewMode = false;
+      controller.nextQuestion();
+      pageController.nextPage(
+          duration: Duration(milliseconds: 1), curve: Curves.ease);
+    });
+  }
+
   void timerValueChangeListener(Duration timeElapsed) {
     print("timer change ${timeElapsed.inSeconds}");
   }
@@ -106,7 +101,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   sumbitAnswer() async {
-    await controller.scoreCurrentQuestion();
+    bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.marathon!.avgScore!;
 
     setState(() {
@@ -120,17 +115,24 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
     print("last q=${controller.lastQuestion}");
     print("q length=${controller.questions.length}");
     print("curent = ${controller.currentQuestion}");
-    updateQuestionSheet();
+
     if (controller.lastQuestion) {
       testTaken = controller.getTest();
       controller.endMarathon();
       viewResults();
     } else {
-      setState(() {
-        controller.nextQuestion();
-        pageController.nextPage(
-            duration: Duration(milliseconds: 1), curve: Curves.ease);
-      });
+      if (success) {
+        setState(() {
+          controller.nextQuestion();
+          pageController.nextPage(
+              duration: Duration(milliseconds: 1), curve: Curves.ease);
+        });
+      } else {
+        setState(() {
+          showNext = true;
+          controller.reviewMode = true;
+        });
+      }
     }
   }
 
@@ -160,7 +162,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   bool showNextButton() {
-    return controller.reviewMode && !controller.lastQuestion;
+    return controller.reviewMode;
   }
 
   @override
@@ -227,7 +229,18 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                   child: PageView(
                     controller: pageController,
                     physics: NeverScrollableScrollPhysics(),
-                    children: questionWidgets,
+                    children: [
+                      for (int i = 0; i < controller.questions.length; i++)
+                        MarathonQuestionWidget(
+                          controller.user,
+                          controller.questions[i].question!,
+                          position: i,
+                          enabled: !showNext,
+                          callback: (Answer answer, correct) async {
+                            next();
+                          },
+                        )
+                    ],
                   ),
                 ),
               ),
@@ -236,25 +249,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        if (showPreviousButton())
-                          Expanded(
-                            flex: 2,
-                            child: AdeoTextButton(
-                              label: "Previous",
-                              background: kAdeoBlue,
-                              color: Colors.white,
-                              onPressed: () {
-                                pageController.previousPage(
-                                    duration: Duration(milliseconds: 1),
-                                    curve: Curves.ease);
-                                setState(() {
-                                  controller.currentQuestion--;
-                                });
-                              },
-                            ),
-                          ),
-                        if (showNextButton())
-                          VerticalDivider(width: 2, color: Colors.white),
                         if (showNextButton())
                           Expanded(
                             flex: 2,
@@ -262,7 +256,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                               label: "Next",
                               background: kAdeoBlue,
                               color: Colors.white,
-                              onPressed: next,
+                              onPressed: nextButton,
                             ),
                           ),
                         if (showSubmit && !controller.reviewMode)
@@ -404,6 +398,8 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   Future<bool> showPauseDialog() async {
+    if (!showSubmit) return false;
+    controller.pauseTimer();
     return (await showDialog<bool>(
             barrierDismissible: false,
             context: context,
@@ -529,6 +525,7 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                         }));
                         break;
                       case 7:
+                        controller.scoreCurrentQuestion();
                         showPopup(context, TestPausedPrompt());
                         break;
                       case 8:
@@ -555,45 +552,53 @@ class SessionSavedPrompt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kAdeoRoyalBlue,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Session Saved',
-                style: TextStyle(
-                  fontSize: 52,
-                  fontFamily: 'Hamelin',
-                  color: kAdeoBlue,
+    return WillPopScope(
+      onWillPop: () async {
+        await controller.scoreCurrentQuestion();
+        Navigator.popUntil(
+            context, ModalRoute.withName(CourseDetailsPage.routeName));
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: kAdeoRoyalBlue,
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Session Saved',
+                  style: TextStyle(
+                    fontSize: 52,
+                    fontFamily: 'Hamelin',
+                    color: kAdeoBlue,
+                  ),
                 ),
-              ),
-              SizedBox(height: 9),
-              Text(
-                'Continue whenever\nyou are ready',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: kAdeoBlueAccent,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  fontStyle: FontStyle.italic,
+                SizedBox(height: 9),
+                Text(
+                  'Continue whenever\nyou are ready',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: kAdeoBlueAccent,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-              ),
-              SizedBox(height: 64),
-              AdeoOutlinedButton(
-                label: 'Exit',
-                onPressed: () {
-                  controller.scoreCurrentQuestion();
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
-                },
-                size: Sizes.large,
-                color: Color(0xFFFF4949),
-                borderRadius: 5,
-              ),
-            ],
+                SizedBox(height: 64),
+                AdeoOutlinedButton(
+                  label: 'Exit',
+                  onPressed: () {
+                    controller.scoreCurrentQuestion();
+                    Navigator.popUntil(context,
+                        ModalRoute.withName(CourseDetailsPage.routeName));
+                  },
+                  size: Sizes.large,
+                  color: Color(0xFFFF4949),
+                  borderRadius: 5,
+                ),
+              ],
+            ),
           ),
         ),
       ),
