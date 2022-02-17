@@ -71,7 +71,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    '02 hrs : 25 min : 18 sec',
+                    '${Duration(seconds: controller.marathon!.totalTime!).inHours} hrs : ${Duration(seconds: controller.marathon!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.marathon!.totalTime!).inSeconds % 60} sec',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,

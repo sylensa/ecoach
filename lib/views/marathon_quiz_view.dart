@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/models/question.dart';
@@ -40,6 +42,8 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   int correct = 0;
   int wrong = 0;
 
+  int questionTimer = 0;
+
   late TimerController _timerController;
   TimerStyle _timerStyle = TimerStyle.expanding_segment;
 
@@ -47,8 +51,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   void initState() {
     super.initState();
     controller = widget.controller;
-    // _timerController = TimerController(this);
-    // _timerController.start(startFrom: Duration(seconds: 0));
     pageController = PageController(initialPage: controller.currentQuestion);
 
     updateQuestionSheet();
@@ -125,7 +127,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
       viewResults();
     } else {
       setState(() {
-        controller.currentQuestion++;
+        controller.nextQuestion();
         pageController.nextPage(
             duration: Duration(milliseconds: 1), curve: Curves.ease);
       });
@@ -216,7 +218,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
               QuizStats(
                 changeUp: changeUp,
                 averageScore: controller.getAvgScore().toStringAsFixed(2) + '%',
-                speed: controller.getAvgTime().toString() + 's',
+                speed: controller.getAvgTime().toStringAsFixed(2) + 's',
                 correctScore: controller.getTotalCorrect().toString(),
                 wrongScrore: controller.getTotalWrong().toString(),
               ),
@@ -340,6 +342,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                     child: CustomTimer(
                       builder: (CustomTimerRemainingTime remaining) {
                         controller.duration = remaining.duration;
+
                         return Text(
                           "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
                           style: TextStyle(

@@ -48,6 +48,7 @@ class MarathonController {
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
   CustomTimerController? timerController;
   int countdownInSeconds = 0;
+  DateTime questionTimer = DateTime.now();
 
   startTest() {
     startTime = DateTime.now();
@@ -60,6 +61,11 @@ class MarathonController {
 
   resumeTimer() {
     timerController!.start();
+  }
+
+  nextQuestion() {
+    currentQuestion++;
+    questionTimer = DateTime.now();
   }
 
   int get nextLevel {
@@ -126,7 +132,9 @@ class MarathonController {
         time += question.time!;
       }
     });
-    return time;
+    int length = questions.length;
+    if (length == 0) length = 1;
+    return time / length;
   }
 
   double getAvgScore() {
@@ -226,15 +234,16 @@ class MarathonController {
     }).post(context);
   }
 
-  scoreCurrentQuestion() async {
+  Future<bool> scoreCurrentQuestion() async {
     print("scoring...");
     MarathonProgress mp = questions[currentQuestion];
     Question question = mp.question!;
     if (question.unattempted) {
-      return;
+      return true;
     }
 
     mp.selectedAnswerId = question.selectedAnswer!.id;
+    mp.time = DateTime.now().difference(questionTimer).inSeconds;
     print(mp.toJson());
     if (question.isCorrect) {
       mp.status = "correct";
@@ -267,7 +276,9 @@ class MarathonController {
       print("++++++++++++++++++");
       questions.add(newMp);
       print(newMp.toJson());
+      return false;
     }
+    return true;
   }
 
   enableQuestion(bool state) {
