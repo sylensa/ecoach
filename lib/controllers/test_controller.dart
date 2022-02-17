@@ -206,16 +206,18 @@ class TestController {
     List<TestNameAndCount> testNames = [];
     for (int i = 0; i < topics.length; i++) {
       int id = topics.keys.toList()[i];
-      String? name = topics[id];
+      Topic? topic = await TopicDB().getTopicById(id);
+      if (topic == null) continue;
+      String? name = topic.name!;
 
       int count =
           await getTopicAnsweredCount(course.id!, id, onlyAttempted: true);
       int totalCount = await QuestionDB().getTopicCount(id);
       double average = await getTopicAnsweredAverageScore(course.id!, id);
 
-      print("$name c=$count totat count=$totalCount");
+      print("$id $name c=$count totat count=$totalCount");
       testNames.add(TestNameAndCount(
-        name ?? "non",
+        name,
         count,
         totalCount,
         averageScore: average,

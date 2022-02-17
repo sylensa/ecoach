@@ -24,15 +24,17 @@ class MarathonDB {
 
   Future<int?> insertProgress(MarathonProgress progress) async {
     // print(marathon.toJson());
+    int id = 0;
     final Database? db = await DBProvider.database;
-    db!.transaction((txn) async {
-      print(progress.toJson());
-      return txn.insert(
+    await db!.transaction((txn) async {
+      id = await txn.insert(
         'marathon_progress',
         progress.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     });
+
+    return id;
   }
 
   Future<Marathon?> getMarathonById(int id) async {

@@ -120,50 +120,6 @@ class MarathonCompleteCongratulations extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: AdeoTextButton(
-                          label: 'review',
-                          fontSize: 20,
-                          color: Colors.white,
-                          background: kAdeoBlue,
-                          onPressed: () {},
-                        ),
-                      ),
-                      Container(
-                        width: 1.0,
-                        color: kAdeoBlueAccent,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: AdeoTextButton(
-                          label: 'result',
-                          fontSize: 20,
-                          color: Colors.white,
-                          background: kAdeoBlue,
-                          onPressed: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (c) {
-                              return MarathonIntroit(
-                                  controller.user, controller.course);
-                            }));
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: 1.0,
-                        color: kAdeoBlueAccent,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
                   child: AdeoTextButton(
                     label: 'new test',
                     fontSize: 20,

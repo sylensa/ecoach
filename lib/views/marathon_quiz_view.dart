@@ -15,6 +15,7 @@ import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:simple_timer/simple_timer.dart';
 
 class MarathonQuizView extends StatefulWidget {
   MarathonQuizView({Key? key, required this.controller}) : super(key: key);
@@ -24,7 +25,8 @@ class MarathonQuizView extends StatefulWidget {
   State<MarathonQuizView> createState() => _MarathonQuizViewState();
 }
 
-class _MarathonQuizViewState extends State<MarathonQuizView> {
+class _MarathonQuizViewState extends State<MarathonQuizView>
+    with SingleTickerProviderStateMixin {
   int selectedObjective = 0;
   Color themeColor = kAdeoBlue;
   late MarathonController controller;
@@ -38,10 +40,15 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
   int correct = 0;
   int wrong = 0;
 
+  late TimerController _timerController;
+  TimerStyle _timerStyle = TimerStyle.expanding_segment;
+
   @override
   void initState() {
     super.initState();
     controller = widget.controller;
+    // _timerController = TimerController(this);
+    // _timerController.start(startFrom: Duration(seconds: 0));
     pageController = PageController(initialPage: controller.currentQuestion);
 
     updateQuestionSheet();
@@ -51,6 +58,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
   }
 
   updateQuestionSheet() {
+    questionWidgets = [];
     for (int i = 0; i < controller.questions.length; i++)
       questionWidgets.add(MarathonQuestionWidget(
         controller.user,
@@ -58,7 +66,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
         position: i,
         enabled: controller.enabled,
         callback: (Answer answer, correct) async {
-          await Future.delayed(Duration(seconds: 1));
           next();
         },
       ));
@@ -82,6 +89,18 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
       });
       return;
     }
+  }
+
+  void timerValueChangeListener(Duration timeElapsed) {
+    print("timer change ${timeElapsed.inSeconds}");
+  }
+
+  void handleTimerOnStart() {
+    print("timer has just started");
+  }
+
+  void handleTimerOnEnd() {
+    print("timer has ended");
   }
 
   sumbitAnswer() async {
@@ -149,8 +168,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
         if (controller.reviewMode) {
           return showExitDialog();
         }
-        // timerController.pause();
-
+        controller.pauseTimer();
         return showPauseDialog();
       },
       child: SafeArea(
@@ -321,6 +339,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                     ),
                     child: CustomTimer(
                       builder: (CustomTimerRemainingTime remaining) {
+                        controller.duration = remaining.duration;
                         return Text(
                           "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
                           style: TextStyle(
@@ -329,9 +348,10 @@ class _MarathonQuizViewState extends State<MarathonQuizView> {
                           ),
                         );
                       },
-                      // controller: controller.timerController,
-                      begin: Duration(minutes: 40),
-                      end: Duration(seconds: 0),
+                      controller: controller.timerController,
+                      begin: Duration(
+                          seconds: controller.marathon!.totalTime ?? 0),
+                      end: Duration(hours: 2000),
                     ),
                   ),
                 ),
@@ -509,6 +529,7 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                         showPopup(context, TestPausedPrompt());
                         break;
                       case 8:
+                        controller.resumeTimer();
                         Navigator.pop(context);
                         break;
                     }

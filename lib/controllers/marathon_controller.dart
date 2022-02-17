@@ -4,9 +4,11 @@ import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 
 import 'package:ecoach/api/api_call.dart';
@@ -22,7 +24,9 @@ class MarathonController {
     this.course, {
     this.name,
     this.marathon,
-  }) {}
+  }) {
+    timerController = CustomTimerController();
+  }
 
   final User user;
   final Course course;
@@ -47,6 +51,15 @@ class MarathonController {
 
   startTest() {
     startTime = DateTime.now();
+    timerController!.start();
+  }
+
+  pauseTimer() {
+    timerController!.pause();
+  }
+
+  resumeTimer() {
+    timerController!.start();
   }
 
   int get nextLevel {
@@ -82,7 +95,7 @@ class MarathonController {
   int get wrong {
     int wrong = 0;
     questions.forEach((question) {
-      if (question.isWrong) wrong++;
+      if (question.isWrong && question.status != null) wrong++;
     });
     return wrong;
   }
@@ -214,6 +227,7 @@ class MarathonController {
   }
 
   scoreCurrentQuestion() async {
+    print("scoring...");
     MarathonProgress mp = questions[currentQuestion];
     Question question = mp.question!;
     if (question.unattempted) {
@@ -229,27 +243,30 @@ class MarathonController {
     }
     marathon!.avgScore = avgScore;
     marathon!.avgTime = avgTime;
-    marathon!.totalTime = 0;
+    marathon!.totalTime = duration!.inSeconds;
     marathon!.totalCorrect = correct;
     marathon!.totalWrong = wrong;
     marathon!.totalQuestions = marathon!.totalCorrect! + marathon!.totalWrong!;
     marathon!.status = MarathonStatus.IN_PROGRESS.toString();
 
-    print(mp.toJson());
-    print(marathon!.toJson());
     await MarathonDB().update(marathon!);
     await MarathonDB().updateProgress(mp);
 
     if (mp.status == "wrong") {
-      MarathonProgress newMp = mp.clone();
-      newMp.id = null;
-      newMp.status = null;
+      MarathonProgress newMp = MarathonProgress();
+      newMp.userId = mp.userId;
+      newMp.courseId = mp.courseId;
+      newMp.marathonId = mp.marathonId;
+      newMp.topicId = mp.topicId;
+      newMp.topicName = mp.topicName;
       newMp.questionId = mp.questionId;
       newMp.question = await QuestionDB().getQuestionById(mp.questionId!);
-      newMp.selectedAnswerId = null;
-      questions.add(newMp);
+
       int? progressId = await MarathonDB().insertProgress(newMp);
       if (progressId != null) newMp.id = progressId;
+      print("++++++++++++++++++");
+      questions.add(newMp);
+      print(newMp.toJson());
     }
   }
 
@@ -261,8 +278,6 @@ class MarathonController {
     if (i > saveQuestion.length - 1) return enabled;
     return saveQuestion[i];
   }
-
-  pauseTimer() {}
 
   stopTimer() {}
 
@@ -344,6 +359,11 @@ class MarathonController {
 
     if (marathon != null) {
       print(marathon!.toJson());
+      int? topicId = marathon!.topicId;
+      if (topicId != null) {
+        Topic? topic = await TopicDB().getTopicById(topicId);
+        if (topic != null) name = topic.name;
+      }
       questions = await MarathonDB().getProgresses(marathon!.id!);
       int index = 0;
       for (int i = 0; i < questions.length; i++) {
