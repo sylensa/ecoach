@@ -114,7 +114,8 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                                 metaData: ActivityMetaData(
                                   date: marathons[i].date,
                                   time: marathons[i].time,
-                                  duration: '05min:20sec',
+                                  duration:
+                                      '${Duration(seconds: marathons[i].totalTime!).inMinutes}min:${Duration(seconds: marathons[i].totalTime!).inSeconds % 60}sec',
                                 ),
                                 onTap: () {
                                   handleSelection(1);
@@ -144,18 +145,18 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                 background: kAdeoBlue,
                 color: Colors.white,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return CompareView(
-                          user: widget.user,
-                          course: widget.course,
-                          operands: [],
-                        );
-                      },
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return CompareView(
+                  //         user: widget.user,
+                  //         course: widget.course,
+                  //         operands: [],
+                  //       );
+                  //     },
+                  //   ),
+                  // );
                 },
               ),
             )

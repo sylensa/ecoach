@@ -10,11 +10,13 @@ class PinInput extends StatefulWidget {
     required this.onChanged,
     required this.length,
     this.autoFocus = false,
+    this.focusNode,
   });
 
   final onChanged;
   final int length;
   final bool autoFocus;
+  FocusNode? focusNode;
 
   @override
   State<PinInput> createState() => _PinInputState();
@@ -29,6 +31,7 @@ class _PinInputState extends State<PinInput> {
   Widget build(BuildContext context) {
     return PinCodeTextField(
       autoFocus: widget.autoFocus,
+      focusNode: widget.focusNode,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       enablePinAutofill: true,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

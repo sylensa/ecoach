@@ -83,6 +83,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
       showNext = false;
       controller.reviewMode = false;
       controller.nextQuestion();
+      controller.resumeTimer();
       pageController.nextPage(
           duration: Duration(milliseconds: 1), curve: Curves.ease);
     });
@@ -131,6 +132,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
         setState(() {
           showNext = true;
           controller.reviewMode = true;
+          controller.pauseTimer();
         });
       }
     }

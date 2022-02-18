@@ -10,6 +10,7 @@ import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/customize_input_field.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/pin_input.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,22 @@ class _CustomizedTestQuestionModeState
     extends State<CustomizedTestQuestionMode> {
   int duration = 0;
   int numberOfQuestion = 0;
+  late FocusNode focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    // focusNode.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +61,7 @@ class _CustomizedTestQuestionModeState
               CustomizeInputField(
                   number: numberOfQuestion,
                   onChange: (number) {
+                    print("number of question = $number");
                     numberOfQuestion = number;
                   }),
             ],
@@ -51,8 +69,14 @@ class _CustomizedTestQuestionModeState
           footer: AdeoOutlinedButton(
             label: 'Next',
             onPressed: () async {
-              await Future.delayed(Duration(seconds: 1));
-              TestIntroitLayout.goForward();
+              if (numberOfQuestion > 0) {
+                focusNode.requestFocus();
+                TestIntroitLayout.goForward();
+              } else
+                showFeedback(
+                  context,
+                  'Enter the number of questions you want to answer',
+                );
             },
           ),
         ),
@@ -69,6 +93,7 @@ class _CustomizedTestQuestionModeState
                     width: 120.0,
                     child: PinInput(
                       autoFocus: true,
+                      focusNode: focusNode,
                       length: 2,
                       onChanged: (v) {
                         setState(() {

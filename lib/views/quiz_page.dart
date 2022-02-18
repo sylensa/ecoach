@@ -203,9 +203,9 @@ class _QuizViewState extends State<QuizView> {
   }
 
   completeQuiz() async {
-    if (!widget.disableTime) {
-      timerController.dispose();
-    }
+    // if (!widget.disableTime) {
+    //   timerController.dispose();
+    // }
     if (widget.speedTest) {
       finalQuestion = currentQuestion;
     }

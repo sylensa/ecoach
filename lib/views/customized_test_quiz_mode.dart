@@ -29,6 +29,23 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
   String durationLeft = '';
   String durationRight = '';
   String duration = '';
+  late FocusNode focusNode, focusNode2;
+
+  @override
+  void initState() {
+    super.initState();
+
+    focusNode = FocusNode();
+    focusNode2 = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    // focusNode.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +65,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
                 child: CustomizeInputField(
                     number: numberOfQuestions,
                     onChange: (number) {
+                      print("number of question = $number");
                       numberOfQuestions = number;
                     }),
               ),
@@ -56,9 +74,10 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
           footer: AdeoOutlinedButton(
             label: 'Next',
             onPressed: () {
-              if (numberOfQuestions > 0)
+              if (numberOfQuestions > 0) {
+                focusNode.requestFocus();
                 TestIntroitLayout.goForward();
-              else
+              } else
                 showFeedback(
                   context,
                   'Enter the number of questions you want to answer',
@@ -80,9 +99,13 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
                     width: 120.0,
                     child: PinInput(
                       length: 2,
+                      focusNode: focusNode,
                       onChanged: (v) {
                         setState(() {
                           durationLeft = v.split('').join('');
+                          if (durationLeft.length > 1) {
+                            focusNode2.requestFocus();
+                          }
                         });
                       },
                     ),
@@ -92,6 +115,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
                     width: 120.0,
                     child: PinInput(
                       autoFocus: durationLeft.length == 2,
+                      focusNode: focusNode2,
                       length: 2,
                       onChanged: (v) {
                         setState(() {
