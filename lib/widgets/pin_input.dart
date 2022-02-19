@@ -30,7 +30,6 @@ class _PinInputState extends State<PinInput> {
   @override
   Widget build(BuildContext context) {
     return PinCodeTextField(
-      autoFocus: widget.autoFocus,
       focusNode: widget.focusNode,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       enablePinAutofill: true,

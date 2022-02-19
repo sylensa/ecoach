@@ -29,7 +29,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
   String durationLeft = '';
   String durationRight = '';
   String duration = '';
-  late FocusNode focusNode, focusNode2;
+  late FocusNode focusNode, focusNode2, numberFocus;
 
   @override
   void initState() {
@@ -37,14 +37,8 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
 
     focusNode = FocusNode();
     focusNode2 = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    // Clean up the focus node when the Form is disposed.
-    // focusNode.dispose();
-
-    super.dispose();
+    numberFocus = FocusNode();
+    numberFocus.requestFocus();
   }
 
   @override
@@ -64,6 +58,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
                 width: 180.0,
                 child: CustomizeInputField(
                     number: numberOfQuestions,
+                    numberFocus: numberFocus,
                     onChange: (number) {
                       print("number of question = $number");
                       numberOfQuestions = number;
@@ -133,7 +128,14 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
             children: [
               AdeoOutlinedButton(
                 label: 'Previous',
-                onPressed: TestIntroitLayout.goBack,
+                onPressed: () {
+                  setState(() {
+                    focusNode = FocusNode();
+                    focusNode2 = FocusNode();
+                  });
+                  numberFocus.requestFocus();
+                  TestIntroitLayout.goBack();
+                },
               ),
               SizedBox(width: 8.0),
               AdeoOutlinedButton(

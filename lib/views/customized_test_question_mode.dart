@@ -29,21 +29,15 @@ class _CustomizedTestQuestionModeState
     extends State<CustomizedTestQuestionMode> {
   int duration = 0;
   int numberOfQuestion = 0;
-  late FocusNode focusNode;
+  late FocusNode focusNode, numberFocus;
 
   @override
   void initState() {
     super.initState();
 
     focusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    // Clean up the focus node when the Form is disposed.
-    // focusNode.dispose();
-
-    super.dispose();
+    numberFocus = FocusNode();
+    numberFocus.requestFocus();
   }
 
   @override
@@ -60,6 +54,7 @@ class _CustomizedTestQuestionModeState
               SizedBox(height: 20),
               CustomizeInputField(
                   number: numberOfQuestion,
+                  numberFocus: numberFocus,
                   onChange: (number) {
                     print("number of question = $number");
                     numberOfQuestion = number;
@@ -92,7 +87,6 @@ class _CustomizedTestQuestionModeState
                   Container(
                     width: 120.0,
                     child: PinInput(
-                      autoFocus: true,
                       focusNode: focusNode,
                       length: 2,
                       onChanged: (v) {
@@ -111,12 +105,23 @@ class _CustomizedTestQuestionModeState
             children: [
               AdeoOutlinedButton(
                 label: 'Previous',
-                onPressed: TestIntroitLayout.goBack,
+                onPressed: () {
+                  setState(() {
+                    focusNode = FocusNode();
+                  });
+                  numberFocus.requestFocus();
+                  TestIntroitLayout.goBack();
+                },
               ),
               SizedBox(width: 8.0),
               AdeoOutlinedButton(
                 label: 'Next',
-                onPressed: TestIntroitLayout.goForward,
+                onPressed: () {
+                  setState(() {
+                    focusNode = FocusNode();
+                    TestIntroitLayout.goForward();
+                  });
+                },
               )
             ],
           ),
@@ -198,9 +203,11 @@ class _CustomizedTestQuestionModeState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AdeoOutlinedButton(
-            label: 'Previous',
-            onPressed: TestIntroitLayout.goBack,
-          ),
+              label: 'Previous',
+              onPressed: () async {
+                focusNode.requestFocus();
+                TestIntroitLayout.goBack();
+              }),
           SizedBox(width: 8.0),
           AdeoOutlinedButton(
             label: 'Start',

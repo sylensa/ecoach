@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomizeInputField extends StatefulWidget {
-  const CustomizeInputField(
-      {Key? key, this.number = 0, this.digitNumber = 3, this.onChange})
+  CustomizeInputField(
+      {Key? key,
+      this.number = 0,
+      this.digitNumber = 3,
+      this.numberFocus,
+      this.onChange})
       : super(key: key);
 
   final int? digitNumber;
   final int? number;
+  FocusNode? numberFocus;
   final Function(int number)? onChange;
 
   @override
@@ -85,7 +90,7 @@ class _CustomizeInputFieldState extends State<CustomizeInputField> {
                 height: 30,
                 child: ClipRect(
                   child: TextField(
-                      autofocus: true,
+                      focusNode: widget.numberFocus,
                       maxLength: widget.digitNumber,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
