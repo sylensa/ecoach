@@ -7,6 +7,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -299,37 +300,30 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                       width: 1,
                     ),
                   ),
-                  child: CustomTimer(
-                    builder: (CustomTimerRemainingTime remaining) {
-                      controller.duration = remaining.duration;
-                      controller.countdownInSeconds =
-                          remaining.duration.inSeconds;
-                      if (remaining.duration.inSeconds == 0) {}
+                  child: AdeoTimer(
+                    callbackWidget: (time){
+                      Duration remaining=Duration(seconds: time.toInt());
+                            controller.duration = remaining;
+                            controller.countdownInSeconds = remaining.inSeconds;
+
+                      if (remaining.inSeconds == 0) {
+                        return Text("Time Up",
+                            style: TextStyle(
+                                color: Color(0xFF222E3B), fontSize: 14));
+                      }
+
                       return Text(
-                          "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
+                          "${remaining.inHours.remainder(24)}:${remaining.inMinutes.remainder(60)}:${remaining.inSeconds.remainder(60)}",
                           style: TextStyle(
                               color: Color(0xFF222E3B), fontSize: 14));
                     },
-                    stateBuilder: (time, state) {
-                      if (state == CustomTimerState.finished)
-                        return Text("Time Up",
-                            style: TextStyle(
-                                color: Color(0xFF222E3B), fontSize: 14.0));
 
-                      return null;
-                    },
-                    onChangeState: (state) {
-                      if (state == CustomTimerState.finished) {
-                        print("finished");
-                        Future.delayed(Duration.zero, () async {
+                    onFinish:(){Future.delayed(Duration.zero, () async {
                           nextButton();
-                        });
-                      }
-                      print("Current state: $state");
-                    },
-                    controller: controller.timerController,
-                    begin: controller.getDuration(),
-                    end: Duration(seconds: 0),
+                        });},
+                    
+                    controller: controller.timerController!,
+                    startDuration: controller.getDuration(),
                   ),
                 ),
               ],

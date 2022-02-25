@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
@@ -9,6 +7,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
 
 class CustomizedController {
@@ -23,7 +22,7 @@ class CustomizedController {
     resetDuration = Duration(seconds: time);
     startingDuration = duration;
 
-    timerController = CustomTimerController();
+    timerController = TimerController();
   }
 
   final User user;
@@ -44,7 +43,7 @@ class CustomizedController {
   DateTime? startTime;
   Duration? duration, resetDuration, startingDuration;
   int endTime = 0;
-  CustomTimerController? timerController;
+  TimerController? timerController;
   int countdownInSeconds = 0;
 
   startTest() {
@@ -166,7 +165,7 @@ class CustomizedController {
   }
 
   stopTimer() {
-    timerController!.dispose();
+    timerController!.pause();
   }
 
   resetTimer() {
