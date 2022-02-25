@@ -170,11 +170,12 @@ class CustomizedController {
 
   resetTimer() {
     print("resetTimer");
-    duration = resetDuration;
+    timerController!.reset();
+     Future.delayed(Duration(seconds: 1), (){timerController!.start();});
     print(duration!.inSeconds);
   }
 
   Duration getDuration() {
-    return duration!;
+    return startingDuration!;
   }
 }
