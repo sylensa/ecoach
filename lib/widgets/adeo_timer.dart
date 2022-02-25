@@ -3,11 +3,12 @@ import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
 class AdeoTimer extends StatefulWidget {
-  const AdeoTimer({ Key? key, required this.controller, required this.startDuration, required this.callbackWidget }) : super(key: key);
+  const AdeoTimer({ Key? key, required this.controller, required this.startDuration, required this.callbackWidget, required this.onFinish }) : super(key: key);
 
   final TimerController controller;
   final Duration startDuration;
   final Function(double time) callbackWidget;
+  final Function() onFinish;
 
   @override
   _AdeoTimerState createState() => _AdeoTimerState();
@@ -31,6 +32,7 @@ class _AdeoTimerState extends State<AdeoTimer> {
       build: (BuildContext context, double time) {return widget.callbackWidget(time);},
       onFinished: () {
         print('Timer is done!');
+        widget.onFinish();
       },
     );
   }
@@ -38,7 +40,7 @@ class _AdeoTimerState extends State<AdeoTimer> {
 
 class TimerController{
   final CountdownController _controller =
-      new CountdownController();
+      new CountdownController(autoStart: true);
 
       TimerController(){}
 

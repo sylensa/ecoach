@@ -12,6 +12,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:ecoach/widgets/questions_widgets/select_answer_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
@@ -57,7 +58,7 @@ class _QuizViewState extends State<QuizView> {
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
 
-  late CustomTimerController timerController;
+  late TimerController timerController;
   int countdownInSeconds = 0;
   DateTime startTime = DateTime.now();
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
@@ -90,10 +91,10 @@ class _QuizViewState extends State<QuizView> {
     resetDuration = Duration(seconds: widget.timeInSec);
     startingDuration = duration;
 
-    timerController = CustomTimerController();
+    timerController = TimerController();
 
-    startTimer();
-
+    Future.delayed(Duration(seconds: 1), (){startTimer();});
+  
     super.initState();
   }
 
@@ -105,8 +106,9 @@ class _QuizViewState extends State<QuizView> {
   }
 
   resetTimer() {
-    // print("reset timer");
+    print("reset timer");
     timerController.reset();
+    Future.delayed(Duration(seconds: 1), (){timerController.start();});
     setState(() {
       duration = resetDuration;
     });
@@ -116,7 +118,6 @@ class _QuizViewState extends State<QuizView> {
     print("timer ended");
 
     completeQuiz();
-    // timerController.dispose();
   }
 
   nextButton() {
@@ -197,7 +198,7 @@ class _QuizViewState extends State<QuizView> {
 
   completeQuiz() async {
     if (!widget.disableTime) {
-      timerController.dispose();
+      timerController.pause();
     }
     if (widget.speedTest) {
       finalQuestion = currentQuestion;
@@ -381,48 +382,7 @@ class _QuizViewState extends State<QuizView> {
                     showPauseDialog();
                   },
                   child: enabled
-                      ? CustomTimer(
-                          builder: (CustomTimerRemainingTime remaining) {
-                            // duration = remaining.duration;
-                            // countdownInSeconds = remaining.duration.inSeconds;
-                            if (widget.disableTime) {
-                              return Image(
-                                  image:
-                                      AssetImage("assets/images/infinite.png"));
-                            }
-                            if (remaining.duration.inSeconds == 0) {
-                              return Text("Time Up",
-                                  style: TextStyle(
-                                      color: backgroundColor, fontSize: 18));
-                            }
-
-                            return Text(
-                                "${remaining.minutes}:${remaining.seconds}",
-                                style: TextStyle(
-                                    color: backgroundColor, fontSize: 28));
-                          },
-                          // stateBuilder: (time, state) {
-                          //   if (state == CustomTimerState.paused)
-                          //     return Text("Paused",
-                          //         style: TextStyle(fontSize: 24.0));
-                          //
-                          //   if (state == CustomTimerState.finished)
-                          //     return Text("Time Up",
-                          //         style: TextStyle(fontSize: 24.0));
-                          //
-                          //   return null;
-                          // },
-                          // onChangeState: (state) {
-                          //   if (state == CustomTimerState.finished) {
-                          //     print("finished");
-                          //     // onEnd();
-                          //   }
-                          //   print("Current state: $state");
-                          // },
-                          // controller: timerController,
-                          begin: duration,
-                          end: Duration(seconds: 0),
-                        )
+                      ?getTimerWidget()
                       : Text("Time Up",
                           style:
                               TextStyle(color: backgroundColor, fontSize: 18)),
@@ -538,6 +498,73 @@ class _QuizViewState extends State<QuizView> {
         ),
       ),
     );
+    
+  }
+
+  getTimerWidget(){
+    return AdeoTimer(controller: timerController, startDuration: duration, callbackWidget: (time){if (widget.disableTime) {
+                              return Image(
+                                  image:
+                                      AssetImage("assets/images/infinite.png"));
+                            }
+
+                            Duration remaining=Duration(seconds: time.toInt());
+                            duration = remaining;
+                            countdownInSeconds = remaining.inSeconds;
+                            if (remaining.inSeconds == 0) {
+                              return Text("Time Up",
+                                  style: TextStyle(
+                                      color: backgroundColor, fontSize: 18));
+                            }
+
+                            return Text(
+                                "${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                                style: TextStyle(
+                                    color: backgroundColor, fontSize: 28));}, onFinish: (){onEnd();});
+  }
+  getOldTimerWidget(){
+    return  CustomTimer(
+                          builder: (CustomTimerRemainingTime remaining) {
+                            // duration = remaining.duration;
+                            // countdownInSeconds = remaining.duration.inSeconds;
+                            if (widget.disableTime) {
+                              return Image(
+                                  image:
+                                      AssetImage("assets/images/infinite.png"));
+                            }
+                            if (remaining.duration.inSeconds == 0) {
+                              return Text("Time Up",
+                                  style: TextStyle(
+                                      color: backgroundColor, fontSize: 18));
+                            }
+
+                            return Text(
+                                "${remaining.minutes}:${remaining.seconds}",
+                                style: TextStyle(
+                                    color: backgroundColor, fontSize: 28));
+                          },
+                          // stateBuilder: (time, state) {
+                          //   if (state == CustomTimerState.paused)
+                          //     return Text("Paused",
+                          //         style: TextStyle(fontSize: 24.0));
+                          //
+                          //   if (state == CustomTimerState.finished)
+                          //     return Text("Time Up",
+                          //         style: TextStyle(fontSize: 24.0));
+                          //
+                          //   return null;
+                          // },
+                          // onChangeState: (state) {
+                          //   if (state == CustomTimerState.finished) {
+                          //     print("finished");
+                          //     // onEnd();
+                          //   }
+                          //   print("Current state: $state");
+                          // },
+                          // controller: timerController,
+                          begin: duration,
+                          end: Duration(seconds: 0),
+                        );
   }
 
   Future<bool> showExitDialog() async {

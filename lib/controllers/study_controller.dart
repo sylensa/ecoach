@@ -14,6 +14,7 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class StudyController {
@@ -45,7 +46,7 @@ abstract class StudyController {
   DateTime? startTime;
   Duration? duration, resetDuration, startingDuration;
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
-  CustomTimerController? timerController;
+  TimerController? timerController;
   int countdownInSeconds = 0;
 
   startTest() {

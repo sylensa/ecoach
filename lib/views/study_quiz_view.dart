@@ -15,6 +15,7 @@ import 'package:ecoach/views/learn_speed_enhancement_completion.dart';
 import 'package:ecoach/views/study_cc_results.dart';
 import 'package:ecoach/views/study_mastery_results.dart';
 import 'package:ecoach/views/study_notes_view.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -492,7 +493,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     return "Any Action";
   }
 
-  Widget getTimerWidget() {
+  Widget getTimerWidget(){
     return GestureDetector(
       onTap: () {
         if (!controller.enabled) {
@@ -517,44 +518,30 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         color: Color(0xFF969696),
                         width: 1,
                       )),
-                  child: CustomTimer(
-                    builder: (CustomTimerRemainingTime remaining) {
-                      controller.duration = remaining.duration;
-                      controller.countdownInSeconds =
-                          remaining.duration.inSeconds;
-                      if (remaining.duration.inSeconds == 0) {
+                  child: AdeoTimer(
+                    callbackWidget: (time) {
+                      Duration remaining=Duration(seconds: time.toInt());
+                            controller.duration = remaining;
+                            controller.countdownInSeconds = remaining.inSeconds;
+
+                            if (remaining.inSeconds == 0) {
                         return Text("Time Up",
                             style: TextStyle(
                                 color: Color(0xFF969696), fontSize: 14));
                       }
 
                       return Text(
-                          "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
+                          "${remaining.inHours.remainder(24)}:${remaining.inMinutes.remainder(60)}:${remaining.inSeconds.remainder(60)}",
                           style: TextStyle(
                               color: Color(0xFF969696), fontSize: 14));
-                    },
-                    stateBuilder: (time, state) {
-                      if (state == CustomTimerState.paused)
-                        return Text("Paused", style: TextStyle(fontSize: 24.0));
 
-                      if (state == CustomTimerState.finished)
-                        return Text("Time Up",
-                            style: TextStyle(fontSize: 24.0));
-
-                      return null;
                     },
-                    onChangeState: (state) {
-                      if (state == CustomTimerState.finished) {
-                        print("finished");
-                        Future.delayed(Duration.zero, () async {
+                    onFinish: (){Future.delayed(Duration.zero, () async {
                           endSpeedSession();
-                        });
-                      }
-                      print("Current state: $state");
-                    },
-                    controller: controller.timerController,
-                    begin: controller.duration!,
-                    end: Duration(seconds: 0),
+                        });},
+                   
+                    controller: controller.timerController!,
+                    startDuration: controller.duration!,
                   ),
                 ),
               ],
@@ -564,6 +551,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     );
   }
 
+  
   bool showPreviousButton() {
     switch (controller.type) {
       case StudyType.REVISION:
