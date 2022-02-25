@@ -71,7 +71,6 @@ class _QuizViewState extends State<QuizView> {
 
   late ItemScrollController numberingController;
 
-  bool useTex = false;
   int finalQuestion = 0;
   late Color backgroundColor, backgroundColor2;
 
@@ -95,15 +94,9 @@ class _QuizViewState extends State<QuizView> {
 
     startTimer();
 
-    if (widget.course!.name!.toUpperCase().contains("Math".toUpperCase())) {
-      useTex = true;
-    }
     super.initState();
   }
 
-  Future<bool> _onWillPop() async {
-    return (await showPauseDialog());
-  }
 
   startTimer() {
     if (!widget.disableTime) {
@@ -113,7 +106,7 @@ class _QuizViewState extends State<QuizView> {
 
   resetTimer() {
     // print("reset timer");
-    // timerController.reset();
+    timerController.reset();
     setState(() {
       duration = resetDuration;
     });
@@ -203,9 +196,9 @@ class _QuizViewState extends State<QuizView> {
   }
 
   completeQuiz() async {
-    // if (!widget.disableTime) {
-    //   timerController.dispose();
-    // }
+    if (!widget.disableTime) {
+      timerController.dispose();
+    }
     if (widget.speedTest) {
       finalQuestion = currentQuestion;
     }
@@ -318,7 +311,7 @@ class _QuizViewState extends State<QuizView> {
                           widget.questions[i],
                           position: i,
                           enabled: enabled,
-                          useTex: useTex,
+                         
                           theme: widget.theme,
                           callback: (Answer answer) async {
                             await Future.delayed(Duration(milliseconds: 200));
@@ -390,8 +383,8 @@ class _QuizViewState extends State<QuizView> {
                   child: enabled
                       ? CustomTimer(
                           builder: (CustomTimerRemainingTime remaining) {
-                            duration = remaining.duration;
-                            countdownInSeconds = remaining.duration.inSeconds;
+                            // duration = remaining.duration;
+                            // countdownInSeconds = remaining.duration.inSeconds;
                             if (widget.disableTime) {
                               return Image(
                                   image:
@@ -408,25 +401,25 @@ class _QuizViewState extends State<QuizView> {
                                 style: TextStyle(
                                     color: backgroundColor, fontSize: 28));
                           },
-                          stateBuilder: (time, state) {
-                            if (state == CustomTimerState.paused)
-                              return Text("Paused",
-                                  style: TextStyle(fontSize: 24.0));
-
-                            if (state == CustomTimerState.finished)
-                              return Text("Time Up",
-                                  style: TextStyle(fontSize: 24.0));
-
-                            return null;
-                          },
-                          onChangeState: (state) {
-                            if (state == CustomTimerState.finished) {
-                              print("finished");
-                              onEnd();
-                            }
-                            print("Current state: $state");
-                          },
-                          controller: timerController,
+                          // stateBuilder: (time, state) {
+                          //   if (state == CustomTimerState.paused)
+                          //     return Text("Paused",
+                          //         style: TextStyle(fontSize: 24.0));
+                          //
+                          //   if (state == CustomTimerState.finished)
+                          //     return Text("Time Up",
+                          //         style: TextStyle(fontSize: 24.0));
+                          //
+                          //   return null;
+                          // },
+                          // onChangeState: (state) {
+                          //   if (state == CustomTimerState.finished) {
+                          //     print("finished");
+                          //     // onEnd();
+                          //   }
+                          //   print("Current state: $state");
+                          // },
+                          // controller: timerController,
                           begin: duration,
                           end: Duration(seconds: 0),
                         )
@@ -735,7 +728,7 @@ class QuestionWidget extends StatefulWidget {
   QuestionWidget(this.user, this.question,
       {Key? key,
       this.position,
-      this.useTex = false,
+    
       this.enabled = true,
       this.theme = QuizTheme.GREEN,
       this.callback})
@@ -744,7 +737,6 @@ class QuestionWidget extends StatefulWidget {
   Question question;
   int? position;
   bool enabled;
-  bool useTex;
   Function(Answer selectedAnswer)? callback;
   QuizTheme theme;
 
@@ -894,7 +886,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                   for (int i = 0; i < answers!.length; i++)
                     SelectAnswerWidget(widget.user, answers![i].text!,
                         widget.question.selectedAnswer == answers![i],
-                        useTex: widget.useTex,
+                     
                         normalSize: 15,
                         selectedSize: widget.enabled ? 48 : 24,
                         imposedSize: widget.enabled ||

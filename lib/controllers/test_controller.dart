@@ -87,7 +87,7 @@ class TestController {
     Map<String, List<TestAnswer>> topicsMap = Map();
 
     String responses = test.responses;
-    // print("respones:");
+    print("respones:");
 
     responses = responses.replaceAll("(", "").replaceAll(")", "");
     // responses = jsonEncode(responses);

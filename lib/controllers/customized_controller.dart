@@ -173,8 +173,6 @@ class CustomizedController {
     print("resetTimer");
     duration = resetDuration;
     print(duration!.inSeconds);
-    timerController!.reset();
-    timerController!.start();
   }
 
   Duration getDuration() {

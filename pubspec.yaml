@@ -65,6 +65,7 @@ dependencies:
    permission_handler: ^8.3.0
    flutter_styled_toast: ^2.0.0
    accordion: ^2.1.2
+   timer_count_down: ^2.2.1
 
 dev_dependencies:
    flutter_test:
