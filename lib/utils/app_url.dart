@@ -1,5 +1,5 @@
 class AppUrl {
-  static const String liveBaseURL = "http://3.10.254.94/api/";
+  static const String liveBaseURL = "https://adeo.app/api/";
   static const String localBaseURL = "http://127.0.0.1:8000/api/";
 
   static const String baseURL = liveBaseURL;
