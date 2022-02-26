@@ -1,3 +1,4 @@
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
@@ -162,6 +163,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                   },
                   children: [
                     QuestionTabView(
+                      user: widget.user,
                       questions: questions,
                       savedQuestions: savedQuestions,
                       selectedQuestions: selected,
@@ -193,6 +195,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                       },
                     ),
                     QuestionTabView(
+                      user: widget.user,
                       questions: questions
                           .where(
                             (question) =>
@@ -230,6 +233,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                       },
                     ),
                     QuestionTabView(
+                      user: widget.user,
                       questions: questions
                           .where(
                             (question) =>
@@ -266,6 +270,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                       },
                     ),
                     QuestionTabView(
+                      user: widget.user,
                       questions: questions
                           .where(
                             (question) =>
@@ -386,6 +391,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
 
 class QuestionTabView extends StatelessWidget {
   const QuestionTabView({
+    required this.user,
     required this.questions,
     required this.savedQuestions,
     required this.selectedQuestions,
@@ -394,6 +400,7 @@ class QuestionTabView extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  final User user;
   final List questions;
   final List savedQuestions;
   final List selectedQuestions;
@@ -409,6 +416,7 @@ class QuestionTabView extends StatelessWidget {
         var question = questions[i];
 
         return QuestionCard(
+          user: user,
           question: question,
           questionNumber: question['position'].toString(),
           isSaved: savedQuestions.contains(question['id']),

@@ -1,3 +1,4 @@
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/widgets/adeo_switch.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 
 class QuestionCard extends StatelessWidget {
   const QuestionCard({
+    required this.user,
     required this.question,
     required this.questionNumber,
     required this.isSaved,
@@ -14,6 +16,7 @@ class QuestionCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  final User user;
   final Map question;
   final String questionNumber;
   final bool isSaved;
@@ -65,10 +68,8 @@ class QuestionCard extends StatelessWidget {
                     ),
                     SizedBox(width: 13),
                     Expanded(
-                      child: Text(
-                        parseHtmlString(question['question']),
-                        style: questionStyle(isSelected),
-                      ),
+                      child: AdeoHtmlTex(user, question['question'], textColor: isSelected ? Colors.white : Color(0xFF323232), fontSize: 12,),
+                        
                     ),
                     SizedBox(width: 13),
                     AdeoSwitch(
