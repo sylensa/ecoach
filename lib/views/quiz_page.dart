@@ -259,9 +259,9 @@ class _QuizViewState extends State<QuizView> {
   viewResults() {
     print("viewing results");
     print(testTakenSaved!.toJson().toString());
-    Navigator.push<void>(
+    Navigator.push<int>(
       context,
-      MaterialPageRoute<void>(
+      MaterialPageRoute<int>(
         builder: (BuildContext context) => ResultsView(
           widget.user,
           widget.course!,
@@ -272,6 +272,9 @@ class _QuizViewState extends State<QuizView> {
     ).then((value) {
       setState(() {
         currentQuestion = 0;
+        if(value !=null){
+          currentQuestion=value;
+        }
         controller.jumpToPage(currentQuestion);
       });
     });

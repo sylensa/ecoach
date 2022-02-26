@@ -94,9 +94,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
   viewResults() {
     print("viewing results");
     print(testTakenSaved!.toJson().toString());
-    Navigator.push<void>(
+    Navigator.push<int>(
       context,
-      MaterialPageRoute<void>(
+      MaterialPageRoute<int>(
         builder: (BuildContext context) {
           return ResultsView(
             controller.user,
@@ -109,6 +109,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
       setState(() {
         controller.currentQuestion = 0;
         controller.reviewMode = true;
+        if(value!=null){
+          controller.currentQuestion=value;
+        }
         pageController.jumpToPage(controller.currentQuestion);
       });
     });

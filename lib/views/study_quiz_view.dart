@@ -185,9 +185,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   viewResults() {
     print("viewing results");
     print(testTakenSaved!.toJson().toString());
-    Navigator.push<void>(
+    Navigator.push<int>(
       context,
-      MaterialPageRoute<void>(
+      MaterialPageRoute<int>(
         builder: (BuildContext context) {
           if (controller.type == StudyType.MASTERY_IMPROVEMENT) {
             if (controller.progress.level == 1)
@@ -209,6 +209,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       setState(() {
         controller.currentQuestion = 0;
         controller.reviewMode = true;
+        if(value !=null){
+          controller.currentQuestion=value;
+        }
         pageController.jumpToPage(controller.currentQuestion);
       });
     });

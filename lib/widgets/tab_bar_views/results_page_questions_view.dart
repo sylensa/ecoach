@@ -26,6 +26,7 @@ class QuestionsTabPage extends StatefulWidget {
 
 class _QuestionsTabPageState extends State<QuestionsTabPage> {
   List selected = [];
+  int selectedQuestion=0;
   late int page;
   late PageController controller;
   List tabs = [
@@ -169,6 +170,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           setState(
                             () {
                               selected = [...selected, question];
+                              selectedQuestion=question['position'];
                             },
                           );
                         else
@@ -205,6 +207,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           setState(
                             () {
                               selected = [...selected, question];
+                              selectedQuestion=question['position'];
                             },
                           );
                         else
@@ -240,6 +243,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           setState(
                             () {
                               selected = [...selected, question];
+                              selectedQuestion=question['position'];
                             },
                           );
                         else
@@ -275,6 +279,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           setState(
                             () {
                               selected = [...selected, question];
+                              selectedQuestion=question['position'];
                             },
                           );
                         else
@@ -321,7 +326,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           onPressed: () {
                             if (widget.history) {
                             } else {
-                              Navigator.pop(context);
+                              Navigator.pop(context, selectedQuestion-1);
                             }
                           },
                         ),
