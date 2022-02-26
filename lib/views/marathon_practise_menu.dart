@@ -1,11 +1,11 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon_practise_topic_menu.dart';
-import 'package:ecoach/views/test_type.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/marathon_mode_selector.dart';
 import 'package:flutter/material.dart';

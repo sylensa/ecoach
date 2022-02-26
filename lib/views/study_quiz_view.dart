@@ -4,6 +4,7 @@ import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';

@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';

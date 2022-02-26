@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/views/study_quiz_view.dart';
 import 'package:flutter/cupertino.dart';

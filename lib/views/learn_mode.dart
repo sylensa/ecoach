@@ -16,13 +16,6 @@ import 'package:ecoach/views/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
-enum StudyType {
-  REVISION,
-  COURSE_COMPLETION,
-  SPEED_ENHANCEMENT,
-  MASTERY_IMPROVEMENT,
-  NONE
-}
 
 class LearnMode extends StatefulWidget {
   static const String routeName = '/learning/mode';

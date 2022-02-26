@@ -3,6 +3,7 @@ import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/views/learn_course_completion.dart';
 import 'package:ecoach/views/learn_mastery_improvement.dart';

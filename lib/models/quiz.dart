@@ -1,4 +1,5 @@
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/utf_fix.dart';
 
 class Quiz {
@@ -81,4 +82,27 @@ class Quiz {
         "updated_at": updatedAt!.toIso8601String(),
         "confirmed": confirmed,
       };
+}
+
+
+class TestNameAndCount {
+  String name;
+  int? id;
+  int count;
+  int totalCount;
+  TestCategory? category;
+  double? averageScore;
+
+  TestNameAndCount(
+    this.name,
+    this.count,
+    this.totalCount, {
+    this.averageScore,
+    this.id,
+    this.category,
+  });
+
+  double get progress {
+    return count / totalCount;
+  }
 }

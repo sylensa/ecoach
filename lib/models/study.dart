@@ -120,3 +120,11 @@ class StudyProgress {
     };
   }
 }
+
+enum StudyType {
+  REVISION,
+  COURSE_COMPLETION,
+  SPEED_ENHANCEMENT,
+  MASTERY_IMPROVEMENT,
+  NONE
+}

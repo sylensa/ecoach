@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/learn_mode.dart';

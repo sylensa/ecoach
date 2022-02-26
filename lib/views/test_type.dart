@@ -179,25 +179,3 @@ class _TestTypeViewState extends State<TestTypeView> {
     );
   }
 }
-
-class TestNameAndCount {
-  String name;
-  int? id;
-  int count;
-  int totalCount;
-  TestCategory? category;
-  double? averageScore;
-
-  TestNameAndCount(
-    this.name,
-    this.count,
-    this.totalCount, {
-    this.averageScore,
-    this.id,
-    this.category,
-  });
-
-  double get progress {
-    return count / totalCount;
-  }
-}
