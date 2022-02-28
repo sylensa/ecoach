@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -260,21 +261,16 @@ class QuizCover extends StatelessWidget {
                                           level: level,
                                         );
                                       return QuizView(
-                                        user,
-                                        questions,
+                                        controller: QuizController(user,course!,
+                                        questions: questions,
                                         level: level,
                                         name: name,
-                                        course: course,
-                                        timeInSec: time,
+                                        time: time,
                                         type: type,
-                                        challengeType: category,
+                                        challengeType: category,),
+                                       
                                         theme: theme,
-                                        speedTest: type == TestType.SPEED
-                                            ? true
-                                            : false,
-                                        disableTime: type == TestType.UNTIMED
-                                            ? true
-                                            : false,
+                                        
                                         diagnostic: diagnostic,
                                       );
                                     }));

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -23,30 +24,15 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 enum QuizTheme { GREEN, BLUE }
 
 class QuizView extends StatefulWidget {
-  QuizView(this.user, this.questions,
+  QuizView(
       {Key? key,
-      this.level,
-      this.course,
-      required this.name,
-      this.type = TestType.NONE,
-      this.challengeType = TestCategory.NONE,
+      required this.controller,
       this.theme = QuizTheme.GREEN,
-      this.timeInSec = 60,
-      this.speedTest = false,
-      this.disableTime = false,
       this.diagnostic = false})
       : super(key: key);
-  User user;
-  Level? level;
-  Course? course;
-  List<Question> questions;
-  int timeInSec;
+
+  QuizController controller;
   bool diagnostic;
-  String name;
-  bool disableTime;
-  bool speedTest;
-  final TestType type;
-  final TestCategory challengeType;
   QuizTheme theme;
 
   @override
@@ -54,7 +40,7 @@ class QuizView extends StatefulWidget {
 }
 
 class _QuizViewState extends State<QuizView> {
-  late final PageController controller;
+  late final PageController pageController;
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
 
@@ -74,6 +60,7 @@ class _QuizViewState extends State<QuizView> {
 
   int finalQuestion = 0;
   late Color backgroundColor, backgroundColor2;
+  late QuizController controller;
 
   @override
   void initState() {
@@ -84,13 +71,10 @@ class _QuizViewState extends State<QuizView> {
       backgroundColor = const Color(0xFF5DA5EA);
       backgroundColor2 = const Color(0xFF5DA5CA);
     }
-
-    controller = PageController(initialPage: currentQuestion);
+    controller=widget.controller;
+    pageController = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
-    duration = Duration(seconds: widget.timeInSec);
-    resetDuration = Duration(seconds: widget.timeInSec);
-    startingDuration = duration;
-
+    
     timerController = TimerController();
 
     Future.delayed(Duration(seconds: 1), (){startTimer();});
@@ -100,7 +84,7 @@ class _QuizViewState extends State<QuizView> {
 
 
   startTimer() {
-    if (!widget.disableTime) {
+    if (!controller.disableTime) {
       timerController.start();
     }
   }
@@ -121,13 +105,13 @@ class _QuizViewState extends State<QuizView> {
   }
 
   nextButton() {
-    if (currentQuestion == widget.questions.length - 1) {
+    if (currentQuestion == controller.questions.length - 1) {
       return;
     }
     setState(() {
       currentQuestion++;
 
-      controller.nextPage(
+      pageController.nextPage(
           duration: Duration(milliseconds: 1), curve: Curves.ease);
 
       numberingController.scrollTo(
@@ -135,21 +119,21 @@ class _QuizViewState extends State<QuizView> {
           duration: Duration(seconds: 1),
           curve: Curves.easeInOutCubic);
 
-      if (widget.speedTest && enabled) {
+      if (controller.speedTest && enabled) {
         resetTimer();
       }
     });
   }
 
   double get score {
-    int totalQuestions = widget.questions.length;
+    int totalQuestions = controller.questions.length;
     int correctAnswers = correct;
     return correctAnswers / totalQuestions * 100;
   }
 
   int get correct {
     int score = 0;
-    widget.questions.forEach((question) {
+    controller.questions.forEach((question) {
       if (question.isCorrect) score++;
     });
     return score;
@@ -157,7 +141,7 @@ class _QuizViewState extends State<QuizView> {
 
   int get wrong {
     int wrong = 0;
-    widget.questions.forEach((question) {
+    controller.questions.forEach((question) {
       if (question.isWrong) wrong++;
     });
     return wrong;
@@ -165,7 +149,7 @@ class _QuizViewState extends State<QuizView> {
 
   int get unattempted {
     int unattempted = 0;
-    widget.questions.forEach((question) {
+    controller.questions.forEach((question) {
       if (question.unattempted) unattempted++;
     });
     return unattempted;
@@ -174,7 +158,7 @@ class _QuizViewState extends State<QuizView> {
   String get responses {
     Map<String, dynamic> responses = Map();
     int i = 1;
-    widget.questions.forEach((question) {
+    controller.questions.forEach((question) {
       print(question.topicName);
       Map<String, dynamic> answer = {
         "question_id": question.id,
@@ -197,28 +181,28 @@ class _QuizViewState extends State<QuizView> {
   }
 
   completeQuiz() async {
-    if (!widget.disableTime) {
+    if (!controller.disableTime) {
       timerController.pause();
     }
-    if (widget.speedTest) {
+    if (controller.speedTest) {
       finalQuestion = currentQuestion;
     }
     setState(() {
       enabled = false;
     });
     showLoaderDialog(context, message: "Test Completed\nSaving results");
-    if (widget.speedTest) {
+    if (controller.speedTest) {
       await Future.delayed(Duration(seconds: 1));
     }
     testTaken = TestTaken(
-        userId: widget.user.id,
+        userId: controller.user.id,
         datetime: startTime,
-        totalQuestions: widget.questions.length,
-        courseId: widget.course!.id,
-        testname: widget.name,
-        testType: widget.type.toString(),
-        challengeType: widget.challengeType.toString(),
-        testTime: widget.disableTime ? -1 : duration.inSeconds,
+        totalQuestions: controller.questions.length,
+        courseId: controller.course!.id,
+        testname: controller.name,
+        testType: controller.type.toString(),
+        challengeType: controller.challengeType.toString(),
+        testTime: controller.disableTime ? -1 : duration.inSeconds,
         usedTime: DateTime.now().difference(startTime).inSeconds,
         responses: responses,
         score: score,
@@ -229,7 +213,7 @@ class _QuizViewState extends State<QuizView> {
         updatedAt: DateTime.now());
 
     ApiCall<TestTaken>(AppUrl.testTaken,
-        user: widget.user,
+        user: controller.user,
         isList: false,
         params: testTaken!.toJson(), create: (json) {
       return TestTaken.fromJson(json);
@@ -263,8 +247,8 @@ class _QuizViewState extends State<QuizView> {
       context,
       MaterialPageRoute<int>(
         builder: (BuildContext context) => ResultsView(
-          widget.user,
-          widget.course!,
+          controller.user,
+          controller.course,
           test: testTakenSaved!,
           diagnostic: widget.diagnostic,
         ),
@@ -275,7 +259,7 @@ class _QuizViewState extends State<QuizView> {
         if(value !=null){
           currentQuestion=value;
         }
-        controller.jumpToPage(currentQuestion);
+        pageController.jumpToPage(currentQuestion);
       });
     });
   }
@@ -306,20 +290,20 @@ class _QuizViewState extends State<QuizView> {
                     color: Color(0xFF595959),
                   ),
                   child: PageView(
-                    controller: controller,
+                    controller: pageController,
                     physics: NeverScrollableScrollPhysics(),
                     children: [
-                      for (int i = 0; i < widget.questions.length; i++)
+                      for (int i = 0; i < controller.questions.length; i++)
                         QuestionWidget(
-                          widget.user,
-                          widget.questions[i],
+                          controller.user,
+                          controller.questions[i],
                           position: i,
                           enabled: enabled,
                          
                           theme: widget.theme,
                           callback: (Answer answer) async {
                             await Future.delayed(Duration(milliseconds: 200));
-                            if (widget.speedTest && answer.value == 0) {
+                            if (controller.speedTest && answer.value == 0) {
                               completeQuiz();
                             } else {
                               nextButton();
@@ -339,10 +323,10 @@ class _QuizViewState extends State<QuizView> {
                     height: 100,
                     child: ScrollablePositionedList.builder(
                       itemScrollController: numberingController,
-                      itemCount: widget.questions.length,
+                      itemCount: controller.questions.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, i) {
-                        if (widget.speedTest) return Container();
+                        if (controller.speedTest) return Container();
                         return Container(
                             child: SelectText(
                                 "${(i + 1)}", i == currentQuestion,
@@ -351,14 +335,14 @@ class _QuizViewState extends State<QuizView> {
                                 underlineSelected: true,
                                 selectedColor: Color(0xFFFD6363),
                                 color: Colors.white70, select: () {
-                          if (widget.speedTest) {
+                          if (controller.speedTest) {
                             return;
                           }
                           setState(() {
                             currentQuestion = i;
                           });
 
-                          controller.jumpToPage(i);
+                          pageController.jumpToPage(i);
                         }));
                       },
                     ),
@@ -401,13 +385,13 @@ class _QuizViewState extends State<QuizView> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           if (currentQuestion > 0 &&
-                              (!widget.speedTest ||
-                                  widget.speedTest && !enabled))
+                              (!controller.speedTest ||
+                                  controller.speedTest && !enabled))
                             Expanded(
                               flex: 2,
                               child: TextButton(
                                 onPressed: () {
-                                  controller.previousPage(
+                                  pageController.previousPage(
                                       duration: Duration(milliseconds: 1),
                                       curve: Curves.ease);
                                   setState(() {
@@ -427,11 +411,11 @@ class _QuizViewState extends State<QuizView> {
                                 ),
                               ),
                             ),
-                          if (currentQuestion < widget.questions.length - 1)
+                          if (currentQuestion < controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
-                          if (currentQuestion < widget.questions.length - 1 &&
+                          if (currentQuestion < controller.questions.length - 1 &&
                               !(!enabled &&
-                                  widget.speedTest &&
+                                  controller.speedTest &&
                                   currentQuestion == finalQuestion))
                             Expanded(
                               flex: 2,
@@ -447,13 +431,13 @@ class _QuizViewState extends State<QuizView> {
                               ),
                             ),
                           if (!savedTest &&
-                              currentQuestion == widget.questions.length - 1)
+                              currentQuestion == controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
                           if (!savedTest &&
                                   currentQuestion ==
-                                      widget.questions.length - 1 ||
+                                      controller.questions.length - 1 ||
                               (enabled &&
-                                  widget.speedTest &&
+                                  controller.speedTest &&
                                   currentQuestion == finalQuestion))
                             Expanded(
                               flex: 2,
@@ -505,7 +489,7 @@ class _QuizViewState extends State<QuizView> {
   }
 
   getTimerWidget(){
-    return AdeoTimer(controller: timerController, startDuration: duration, callbackWidget: (time){if (widget.disableTime) {
+    return AdeoTimer(controller: timerController, startDuration: duration, callbackWidget: (time){if (controller.disableTime) {
                               return Image(
                                   image:
                                       AssetImage("assets/images/infinite.png"));
@@ -525,51 +509,7 @@ class _QuizViewState extends State<QuizView> {
                                 style: TextStyle(
                                     color: backgroundColor, fontSize: 28));}, onFinish: (){onEnd();});
   }
-  getOldTimerWidget(){
-    return  CustomTimer(
-                          builder: (CustomTimerRemainingTime remaining) {
-                            // duration = remaining.duration;
-                            // countdownInSeconds = remaining.duration.inSeconds;
-                            if (widget.disableTime) {
-                              return Image(
-                                  image:
-                                      AssetImage("assets/images/infinite.png"));
-                            }
-                            if (remaining.duration.inSeconds == 0) {
-                              return Text("Time Up",
-                                  style: TextStyle(
-                                      color: backgroundColor, fontSize: 18));
-                            }
-
-                            return Text(
-                                "${remaining.minutes}:${remaining.seconds}",
-                                style: TextStyle(
-                                    color: backgroundColor, fontSize: 28));
-                          },
-                          // stateBuilder: (time, state) {
-                          //   if (state == CustomTimerState.paused)
-                          //     return Text("Paused",
-                          //         style: TextStyle(fontSize: 24.0));
-                          //
-                          //   if (state == CustomTimerState.finished)
-                          //     return Text("Time Up",
-                          //         style: TextStyle(fontSize: 24.0));
-                          //
-                          //   return null;
-                          // },
-                          // onChangeState: (state) {
-                          //   if (state == CustomTimerState.finished) {
-                          //     print("finished");
-                          //     // onEnd();
-                          //   }
-                          //   print("Current state: $state");
-                          // },
-                          // controller: timerController,
-                          begin: duration,
-                          end: Duration(seconds: 0),
-                        );
-  }
-
+ 
   Future<bool> showExitDialog() async {
     bool canExit = true;
     await showDialog<bool>(
@@ -623,7 +563,7 @@ class _QuizViewState extends State<QuizView> {
                   } else if (action == "quit") {
                     Navigator.pushAndRemoveUntil(context,
                         MaterialPageRoute(builder: (context) {
-                      return MainHomePage(widget.user, index: 1);
+                      return MainHomePage(controller.user, index: 1);
                     }), (route) => false);
                   } else if (action == "end") {
                     completeQuiz();
@@ -758,7 +698,6 @@ class QuestionWidget extends StatefulWidget {
   QuestionWidget(this.user, this.question,
       {Key? key,
       this.position,
-    
       this.enabled = true,
       this.theme = QuizTheme.GREEN,
       this.callback})
