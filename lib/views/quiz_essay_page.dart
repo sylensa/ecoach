@@ -5,6 +5,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/essay_test_question_widgets.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -42,7 +43,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
   List<QuestionWidget> questionWidgets = [];
   String currentStage = 'QUESTION';
 
-  late CustomTimerController timerController;
+  late TimerController timerController;
   int countdownInSeconds = 0;
   DateTime startTime = DateTime.now();
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
@@ -67,7 +68,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
     resetDuration = Duration(seconds: widget.timeInSec);
     startingDuration = duration;
 
-    timerController = CustomTimerController();
+    timerController = TimerController();
 
     startTimer();
 
@@ -116,7 +117,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
   completeQuiz() async {
     if (currentStage.toUpperCase() == 'QUESTION') {
       if (!widget.disableTime) {
-        timerController.dispose();
+        timerController.pause();
       }
 
       showLoaderDialog(context, message: "Fetching answers...");
@@ -163,10 +164,10 @@ class _QuizEssayViewState extends State<QuizEssayView> {
                     children: [
                       for (int i = 0; i < widget.questions.length; i++)
                         QuestionWidget(
+                          widget.user,
                           widget.questions[i],
                           position: i,
                           enabled: enabled,
-                          useTex: useTex,
                           currentStage: currentStage,
                         )
                     ],
@@ -224,50 +225,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
                     showPauseDialog();
                   },
                   child: enabled
-                      ? CustomTimer(
-                          builder: (CustomTimerRemainingTime remaining) {
-                            duration = remaining.duration;
-                            countdownInSeconds = remaining.duration.inSeconds;
-                            if (widget.disableTime) {
-                              return Image(
-                                  image:
-                                      AssetImage("assets/images/infinite.png"));
-                            }
-                            if (remaining.duration.inSeconds == 0) {
-                              return Text("Time Up",
-                                  style: TextStyle(
-                                      color: backgroundColor, fontSize: 18));
-                            }
-
-                            return Text(
-                                "${remaining.minutes}:${remaining.seconds}",
-                                style: TextStyle(
-                                    color: backgroundColor, fontSize: 28));
-                          },
-                          stateBuilder: (time, state) {
-                            if (state == CustomTimerState.paused)
-                              return Text("Paused",
-                                  style: TextStyle(fontSize: 24.0));
-
-                            if (state == CustomTimerState.finished)
-                              return Text("Time Up",
-                                  style: TextStyle(fontSize: 24.0));
-
-                            return null;
-                          },
-                          onChangeState: (state) {
-                            if (state == CustomTimerState.finished) {
-                              print("finished");
-                              Future.delayed(Duration.zero, () async {
-                                onEnd();
-                              });
-                            }
-                            print("Current state: $state");
-                          },
-                          controller: timerController,
-                          begin: duration,
-                          end: Duration(seconds: 0),
-                        )
+                      ? getTimerWidget()
                       : Text("Time Up",
                           style:
                               TextStyle(color: backgroundColor, fontSize: 18)),
@@ -370,6 +328,31 @@ class _QuizEssayViewState extends State<QuizEssayView> {
         ),
       ),
     );
+  }
+
+  getTimerWidget() {
+    return AdeoTimer(
+        controller: timerController,
+        startDuration: duration,
+        callbackWidget: (time) {
+          if (widget.disableTime) {
+            return Image(image: AssetImage("assets/images/infinite.png"));
+          }
+
+          Duration remaining = Duration(seconds: time.toInt());
+          duration = remaining;
+          countdownInSeconds = remaining.inSeconds;
+          if (remaining.inSeconds == 0) {
+            return Text("Time Up",
+                style: TextStyle(color: backgroundColor, fontSize: 18));
+          }
+
+          return Text("${remaining.inMinutes}:${remaining.inSeconds % 60}",
+              style: TextStyle(color: backgroundColor, fontSize: 28));
+        },
+        onFinish: () {
+          onEnd();
+        });
   }
 
   Future<bool> showExitDialog() async {

@@ -1,23 +1,26 @@
 import 'package:accordion/accordion.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 
 class QuestionWidget extends StatefulWidget {
   QuestionWidget(
+    this.user,
     this.question, {
     Key? key,
     this.position,
-    this.useTex = false,
     this.enabled = true,
     this.currentStage = 'QUESTION',
   }) : super(key: key);
 
+  User user;
   Question question;
   int? position;
   bool enabled;
-  bool useTex;
+
   String currentStage;
 
   @override
@@ -53,19 +56,19 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       widget.question.text != '' &&
                       widget.question.text!.isNotEmpty)
                     SubSectionNonAccordionView(
+                      user: widget.user,
                       content: widget.question.text!,
-                      useTex: widget.useTex,
                     ),
                   if (widget.question.instructions != null &&
                       widget.question.instructions!.isNotEmpty)
                     SubSectionNonAccordionView(
+                      user: widget.user,
                       content: widget.question.instructions!,
-                      useTex: widget.useTex,
                     ),
                   for (int i = 0; i < answers!.length; i++)
                     SubSectionNonAccordionView(
+                      user: widget.user,
                       content: answers![i].text!,
-                      useTex: widget.useTex,
                     )
                 ],
               ),
@@ -88,18 +91,18 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                           widget.question.text != '' &&
                           widget.question.text!.isNotEmpty)
                         SubQuestionAccordionSection(
+                          user: widget.user,
                           heading: 'Preamble',
                           content: widget.question.text!,
                           isSolution: false,
-                          useTex: widget.useTex,
                         ),
                       if (widget.question.instructions != null &&
                           widget.question.instructions!.isNotEmpty)
                         SubQuestionAccordionSection(
+                          user: widget.user,
                           heading: 'Instructions',
                           content: widget.question.instructions!,
                           isSolution: true,
-                          useTex: widget.useTex,
                         ),
                     ],
                   ),
@@ -127,10 +130,10 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                     children: [
                       for (int i = 0; i < answers!.length; i++)
                         SubQuestionAccordionSection(
+                          user: widget.user,
                           heading: answers![i].text!,
                           content: answers![i].solution!,
                           isSolution: true,
-                          useTex: widget.useTex,
                         ),
                     ],
                   ),
@@ -144,6 +147,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
 }
 
 AccordionSection SubQuestionAccordionSection({
+  required User user,
   required String heading,
   required String content,
   bool? isSolution,
@@ -156,27 +160,11 @@ AccordionSection SubQuestionAccordionSection({
     contentBorderColor: Color(0xFF595959),
     contentBorderRadius: 0,
     contentHorizontalPadding: 0,
-    header: !useTex!
-        ? Html(data: "${heading}", style: {
-            "body": Style(
-              backgroundColor: Color(0xFF444444),
-              color: Colors.white,
-              fontSize: FontSize(18),
-            ),
-          })
-        : TeXView(
-            renderingEngine: TeXViewRenderingEngine.katex(),
-            child: TeXViewDocument(
-              heading,
-              style: TeXViewStyle(
-                backgroundColor: Color(0xFF444444),
-                contentColor: Colors.white,
-                fontStyle: TeXViewFontStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
+    header: AdeoHtmlTex(
+      user,
+      heading,
+      fontSize: 18,
+    ),
     content: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,23 +195,19 @@ AccordionSection SubQuestionAccordionSection({
               SizedBox(height: 13),
             ],
           ),
-        Html(data: content, style: {
-          "body": Style(
-            color: Colors.white,
-            backgroundColor: Color(0xFF595959),
-            fontSize: FontSize(12),
-            fontStyle: FontStyle.italic,
-            textAlign: TextAlign.justify,
-            lineHeight: LineHeight(1.6),
-            padding: EdgeInsets.symmetric(horizontal: 16),
-          ),
-        }),
+        AdeoHtmlTex(
+          user,
+          content,
+          fontSize: 12,
+          fontStyle: FontStyle.italic,
+        ),
       ],
     ),
   );
 }
 
 Widget SubSectionNonAccordionView({
+  required User user,
   required String content,
   bool useTex = false,
 }) {
@@ -232,27 +216,11 @@ Widget SubSectionNonAccordionView({
       Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         color: Color(0xFF444444),
-        child: !useTex
-            ? Html(data: "${content}", style: {
-                "body": Style(
-                  backgroundColor: Color(0xFF444444),
-                  color: Colors.white,
-                  fontSize: FontSize(18),
-                ),
-              })
-            : TeXView(
-                renderingEngine: TeXViewRenderingEngine.katex(),
-                child: TeXViewDocument(
-                  content,
-                  style: TeXViewStyle(
-                    backgroundColor: Color(0xFF444444),
-                    contentColor: Colors.white,
-                    fontStyle: TeXViewFontStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-              ),
+        child: AdeoHtmlTex(
+          user,
+          content,
+          fontSize: 18,
+        ),
       ),
       SizedBox(height: 12),
     ],
