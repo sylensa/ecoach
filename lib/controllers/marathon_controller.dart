@@ -53,6 +53,7 @@ class MarathonController {
   startTest() {
     startTime = DateTime.now();
     timerController!.start();
+    questionTimer = DateTime.now();
   }
 
   pauseTimer() {
@@ -127,12 +128,14 @@ class MarathonController {
 
   double get avgTime {
     double time = 0;
+    int length = 0;
     questions.forEach((question) {
-      if (question.time != null) {
+      if (question.time != null && question.time! > 0) {
         time += question.time!;
+        length++;
       }
     });
-    int length = questions.length;
+    print("Length=$length, time=$time");
     if (length == 0) length = 1;
     return time / length;
   }
@@ -244,6 +247,7 @@ class MarathonController {
 
     mp.selectedAnswerId = question.selectedAnswer!.id;
     mp.time = DateTime.now().difference(questionTimer).inSeconds;
+    print("time=${mp.time}");
     print(mp.toJson());
     if (question.isCorrect) {
       mp.status = "correct";

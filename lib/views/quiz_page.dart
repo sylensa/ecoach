@@ -71,17 +71,18 @@ class _QuizViewState extends State<QuizView> {
       backgroundColor = const Color(0xFF5DA5EA);
       backgroundColor2 = const Color(0xFF5DA5CA);
     }
-    controller=widget.controller;
+    controller = widget.controller;
     pageController = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
-    
+
     timerController = TimerController();
 
-    Future.delayed(Duration(seconds: 1), (){startTimer();});
-  
+    Future.delayed(Duration(seconds: 1), () {
+      startTimer();
+    });
+
     super.initState();
   }
-
 
   startTimer() {
     if (!controller.disableTime) {
@@ -92,7 +93,9 @@ class _QuizViewState extends State<QuizView> {
   resetTimer() {
     print("reset timer");
     timerController.reset();
-    Future.delayed(Duration(seconds: 1), (){timerController.start();});
+    Future.delayed(Duration(seconds: 1), () {
+      timerController.start();
+    });
     setState(() {
       duration = resetDuration;
     });
@@ -198,7 +201,7 @@ class _QuizViewState extends State<QuizView> {
         userId: controller.user.id,
         datetime: startTime,
         totalQuestions: controller.questions.length,
-        courseId: controller.course!.id,
+        courseId: controller.course.id,
         testname: controller.name,
         testType: controller.type.toString(),
         challengeType: controller.challengeType.toString(),
@@ -256,8 +259,8 @@ class _QuizViewState extends State<QuizView> {
     ).then((value) {
       setState(() {
         currentQuestion = 0;
-        if(value !=null){
-          currentQuestion=value;
+        if (value != null) {
+          currentQuestion = value;
         }
         pageController.jumpToPage(currentQuestion);
       });
@@ -299,7 +302,6 @@ class _QuizViewState extends State<QuizView> {
                           controller.questions[i],
                           position: i,
                           enabled: enabled,
-                         
                           theme: widget.theme,
                           callback: (Answer answer) async {
                             await Future.delayed(Duration(milliseconds: 200));
@@ -369,7 +371,7 @@ class _QuizViewState extends State<QuizView> {
                     showPauseDialog();
                   },
                   child: enabled
-                      ?getTimerWidget()
+                      ? getTimerWidget()
                       : Text("Time Up",
                           style:
                               TextStyle(color: backgroundColor, fontSize: 18)),
@@ -413,7 +415,8 @@ class _QuizViewState extends State<QuizView> {
                             ),
                           if (currentQuestion < controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
-                          if (currentQuestion < controller.questions.length - 1 &&
+                          if (currentQuestion <
+                                  controller.questions.length - 1 &&
                               !(!enabled &&
                                   controller.speedTest &&
                                   currentQuestion == finalQuestion))
@@ -431,7 +434,8 @@ class _QuizViewState extends State<QuizView> {
                               ),
                             ),
                           if (!savedTest &&
-                              currentQuestion == controller.questions.length - 1)
+                              currentQuestion ==
+                                  controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
                           if (!savedTest &&
                                   currentQuestion ==
@@ -485,31 +489,33 @@ class _QuizViewState extends State<QuizView> {
         ),
       ),
     );
-    
   }
 
-  getTimerWidget(){
-    return AdeoTimer(controller: timerController, startDuration: duration, callbackWidget: (time){if (controller.disableTime) {
-                              return Image(
-                                  image:
-                                      AssetImage("assets/images/infinite.png"));
-                            }
+  getTimerWidget() {
+    return AdeoTimer(
+        controller: timerController,
+        startDuration: duration,
+        callbackWidget: (time) {
+          if (controller.disableTime) {
+            return Image(image: AssetImage("assets/images/infinite.png"));
+          }
 
-                            Duration remaining=Duration(seconds: time.toInt());
-                            duration = remaining;
-                            countdownInSeconds = remaining.inSeconds;
-                            if (remaining.inSeconds == 0) {
-                              return Text("Time Up",
-                                  style: TextStyle(
-                                      color: backgroundColor, fontSize: 18));
-                            }
+          Duration remaining = Duration(seconds: time.toInt());
+          duration = remaining;
+          countdownInSeconds = remaining.inSeconds;
+          if (remaining.inSeconds == 0) {
+            return Text("Time Up",
+                style: TextStyle(color: backgroundColor, fontSize: 18));
+          }
 
-                            return Text(
-                                "${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                                style: TextStyle(
-                                    color: backgroundColor, fontSize: 28));}, onFinish: (){onEnd();});
+          return Text("${remaining.inMinutes}:${remaining.inSeconds % 60}",
+              style: TextStyle(color: backgroundColor, fontSize: 28));
+        },
+        onFinish: () {
+          onEnd();
+        });
   }
- 
+
   Future<bool> showExitDialog() async {
     bool canExit = true;
     await showDialog<bool>(
@@ -855,7 +861,6 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                   for (int i = 0; i < answers!.length; i++)
                     SelectAnswerWidget(widget.user, answers![i].text!,
                         widget.question.selectedAnswer == answers![i],
-                     
                         normalSize: 15,
                         selectedSize: widget.enabled ? 48 : 24,
                         imposedSize: widget.enabled ||
