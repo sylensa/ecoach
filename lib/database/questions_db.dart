@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -183,14 +185,14 @@ class QuestionDB {
   Future<List<Question>> getMasteryQuestions(int courseId, int limit) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
-
+    Course? course = await CourseDB().getCourseById(courseId);
+    if (course == null) {
+      return [];
+    }
+    List<Topic>? topics = await TopicDB().courseTopics(course);
     List<Question> questions = [];
-    for (int i = 0; i < maps.length; i++) {
-      Question question = Question.fromJson(maps[i]);
-      question.answers = await AnswerDB().questoinAnswers(question.id!);
-      questions.add(question);
+    for (int i = 0; i < topics.length; i++) {
+      questions.addAll(await getMasteryTopicQuestions(topics[i].id!, 4));
     }
 
     return questions;

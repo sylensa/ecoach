@@ -32,11 +32,24 @@ class AdeoHtmlTex extends StatefulWidget {
 class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   @override
   Widget build(BuildContext context) {
+    print(widget.text);
     return Html(
       data: setTexTags(widget.text, removeTags: widget.removeTags),
       style: {
         "body": Style(
             color: widget.textColor,
+            fontSize: FontSize(widget.fontSize),
+            fontStyle: widget.fontStyle,
+            textAlign: TextAlign.center),
+        "tr": Style(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            width: 2,
+            fontSize: FontSize(widget.fontSize),
+            fontStyle: widget.fontStyle,
+            textAlign: TextAlign.center),
+        "td": Style(
+            color: Colors.black,
             fontSize: FontSize(widget.fontSize),
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),

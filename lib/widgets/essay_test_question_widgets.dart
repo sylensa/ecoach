@@ -106,17 +106,6 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         ),
                     ],
                   ),
-                  // if ((widget.question.text != null &&
-                  //         widget.question.text != '' &&
-                  //         widget.question.text!.isNotEmpty) ||
-                  //     (widget.question.instructions != null &&
-                  //         widget.question.instructions!.isNotEmpty))
-                  //   Column(
-                  //     children: [
-                  //       Container(height: 3, color: kAdeoGreen),
-                  //       SizedBox(height: 12),
-                  //     ],
-                  //   ),
                   Accordion(
                     disableScrolling: true,
                     headerPadding:
