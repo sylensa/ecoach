@@ -190,6 +190,7 @@ class QuestionDB {
       return [];
     }
     List<Topic>? topics = await TopicDB().courseTopics(course);
+    print("topic length=${topics.length}");
     List<Question> questions = [];
     for (int i = 0; i < topics.length; i++) {
       questions.addAll(await getMasteryTopicQuestions(topics[i].id!, 4));
