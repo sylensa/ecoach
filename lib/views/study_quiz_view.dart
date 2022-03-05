@@ -210,8 +210,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       setState(() {
         controller.currentQuestion = 0;
         controller.reviewMode = true;
-        if(value !=null){
-          controller.currentQuestion=value;
+        if (value != null) {
+          controller.currentQuestion = value;
         }
         pageController.jumpToPage(controller.currentQuestion);
       });
@@ -497,7 +497,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     return "Any Action";
   }
 
-  Widget getTimerWidget(){
+  Widget getTimerWidget() {
     return GestureDetector(
       onTap: () {
         if (!controller.enabled) {
@@ -524,11 +524,11 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                       )),
                   child: AdeoTimer(
                     callbackWidget: (time) {
-                      Duration remaining=Duration(seconds: time.toInt());
-                            controller.duration = remaining;
-                            controller.countdownInSeconds = remaining.inSeconds;
+                      Duration remaining = Duration(seconds: time.toInt());
+                      controller.duration = remaining;
+                      controller.countdownInSeconds = remaining.inSeconds;
 
-                            if (remaining.inSeconds == 0) {
+                      if (remaining.inSeconds == 0) {
                         return Text("Time Up",
                             style: TextStyle(
                                 color: Color(0xFF969696), fontSize: 14));
@@ -538,12 +538,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           "${remaining.inHours.remainder(24)}:${remaining.inMinutes.remainder(60)}:${remaining.inSeconds.remainder(60)}",
                           style: TextStyle(
                               color: Color(0xFF969696), fontSize: 14));
-
                     },
-                    onFinish: (){Future.delayed(Duration.zero, () async {
-                          endSpeedSession();
-                        });},
-                   
+                    onFinish: () {
+                      Future.delayed(Duration.zero, () async {
+                        endSpeedSession();
+                      });
+                    },
                     controller: controller.timerController!,
                     startDuration: controller.duration!,
                   ),
@@ -555,7 +555,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     );
   }
 
-  
   bool showPreviousButton() {
     switch (controller.type) {
       case StudyType.REVISION:

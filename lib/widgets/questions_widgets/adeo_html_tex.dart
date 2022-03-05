@@ -69,9 +69,11 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
         }),
         texMatcher():
             CustomRender.widget(widget: (RenderContext context, child) {
+          print(context.tree.element!.text);
           return Math.tex(
             context.tree.element!.text,
             textStyle: TextStyle(
+              color: widget.textColor,
               fontSize: 16,
               fontStyle: widget.fontStyle,
             ),
