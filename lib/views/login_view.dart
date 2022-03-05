@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                               labelText: 'Email or Phone',
                               border: OutlineInputBorder()),
                           onSaved: (value) {
-                            email = value!;
+                            email = value!.trim();
                           },
                           validator: (text) {
                             String? _msg;

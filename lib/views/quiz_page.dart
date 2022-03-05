@@ -46,8 +46,6 @@ class _QuizViewState extends State<QuizView> {
 
   late TimerController timerController;
   int countdownInSeconds = 0;
-  DateTime startTime = DateTime.now();
-  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
 
   bool enabled = true;
   bool savedTest = false;
@@ -197,47 +195,17 @@ class _QuizViewState extends State<QuizView> {
     if (controller.speedTest) {
       await Future.delayed(Duration(seconds: 1));
     }
-    testTaken = TestTaken(
-        userId: controller.user.id,
-        datetime: startTime,
-        totalQuestions: controller.questions.length,
-        courseId: controller.course.id,
-        testname: controller.name,
-        testType: controller.type.toString(),
-        challengeType: controller.challengeType.toString(),
-        testTime: controller.disableTime ? -1 : duration.inSeconds,
-        usedTime: DateTime.now().difference(startTime).inSeconds,
-        responses: responses,
-        score: score,
-        correct: correct,
-        wrong: wrong,
-        unattempted: unattempted,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now());
 
-    ApiCall<TestTaken>(AppUrl.testTaken,
-        user: controller.user,
-        isList: false,
-        params: testTaken!.toJson(), create: (json) {
-      return TestTaken.fromJson(json);
-    }, onError: (err) {
+    controller.saveTest(context, (test, success) {
       Navigator.pop(context);
-    }, onCallback: (data) {
-      print('onCallback');
-      print(data);
-      Navigator.pop(context);
-      testTakenSaved = data;
-      TestController().saveTestTaken(testTakenSaved!);
-
+      testTakenSaved = test;
       setState(() {
         print('setState');
         testTaken = testTakenSaved;
         savedTest = true;
         enabled = false;
       });
-    }).post(context).then((value) {
-      print('then>>');
-      if (savedTest) {
+      if (success) {
         viewResults();
       }
     });
@@ -494,14 +462,14 @@ class _QuizViewState extends State<QuizView> {
   getTimerWidget() {
     return AdeoTimer(
         controller: timerController,
-        startDuration: duration,
+        startDuration: controller.duration!,
         callbackWidget: (time) {
           if (controller.disableTime) {
             return Image(image: AssetImage("assets/images/infinite.png"));
           }
 
           Duration remaining = Duration(seconds: time.toInt());
-          duration = remaining;
+          controller.duration = remaining;
           countdownInSeconds = remaining.inSeconds;
           if (remaining.inSeconds == 0) {
             return Text("Time Up",

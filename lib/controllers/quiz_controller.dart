@@ -16,7 +16,7 @@ class QuizController {
     this.user,
     this.course, {
     this.level,
-    this.type=TestType.NONE,
+    this.type = TestType.NONE,
     this.challengeType = TestCategory.NONE,
     this.questions = const [],
     required this.name,
@@ -27,12 +27,8 @@ class QuizController {
     startingDuration = duration;
 
     timerController = TimerController();
-    speedTest= type == TestType.SPEED
-                                            ? true
-                                            : false;
-                                        disableTime= type == TestType.UNTIMED
-                                            ? true
-                                            : false;
+    speedTest = type == TestType.SPEED ? true : false;
+    disableTime = type == TestType.UNTIMED ? true : false;
   }
 
   final User user;
@@ -44,8 +40,8 @@ class QuizController {
   TestCategory challengeType;
   int time;
 
-  bool disableTime=false;
-  bool speedTest=false;
+  bool disableTime = false;
+  bool speedTest = false;
 
   bool enabled = true;
   bool reviewMode = false;
@@ -186,7 +182,9 @@ class QuizController {
   resetTimer() {
     print("resetTimer");
     timerController!.reset();
-     Future.delayed(Duration(seconds: 1), (){timerController!.start();});
+    Future.delayed(Duration(seconds: 1), () {
+      timerController!.start();
+    });
     print(duration!.inSeconds);
   }
 

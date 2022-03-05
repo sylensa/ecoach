@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               labelText: 'First Name and Last Name',
                               border: OutlineInputBorder()),
                           onSaved: (value) {
-                            name = value!;
+                            name = value!.trim();
                           },
                           validator: (text) {
                             String? _msg;
@@ -163,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               labelText: 'Email Address',
                               border: OutlineInputBorder()),
                           onSaved: (value) {
-                            email = value!;
+                            email = value!.trim();
                           },
                           validator: (text) {
                             String? _msg;
@@ -186,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: InputDecoration(
                               labelText: 'Phone', border: OutlineInputBorder()),
                           onSaved: (value) {
-                            phone = value!.number;
+                            phone = value!.completeNumber.trim();
                           },
                           initialCountryCode: 'GH',
                         ),
