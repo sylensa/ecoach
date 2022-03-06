@@ -1,11 +1,11 @@
 import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 
-class LocalSavedController {
+class OfflineSaveController {
   User user;
   BuildContext context;
 
-  LocalSavedController(this.context, this.user);
+  OfflineSaveController(this.context, this.user);
 
   checkOfflineData() async {}
   syncData() async {}
