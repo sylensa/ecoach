@@ -21,7 +21,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.110.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.111.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -43,6 +43,14 @@ class DBProvider {
         'name' varchar(50) NOT NULL,
         'code' varchar(10) NOT NULL,
         'category' varchar(50) NOT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'offline_data' (
+        'id' INTEGER PRIMARY KEY,
+        'data_id' INTEGER NOT NULL,
+        'data_type' varchar(10) NOT NULL,
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
