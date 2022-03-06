@@ -127,8 +127,8 @@ class QuizController {
     return jsonEncode(responses);
   }
 
-  saveTest(
-      BuildContext context, Function(TestTaken? test, bool success) callback) {
+  saveTest(BuildContext context,
+      Function(TestTaken? test, bool success) callback) async {
     TestTaken testTaken = TestTaken(
         userId: user.id,
         datetime: startTime,

@@ -75,6 +75,7 @@ class _QuizViewState extends State<QuizView> {
 
     timerController = TimerController();
 
+    controller.startTest();
     Future.delayed(Duration(seconds: 1), () {
       startTimer();
     });
