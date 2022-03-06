@@ -57,8 +57,8 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
         scaffoldBackgroundColor: Colors.white,
         textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.white,
-              displayColor: Colors.white,
+              // bodyColor: Colors.white,
+              // displayColor: Colors.white,
               fontFamily: 'Poppins',
             ),
       ),

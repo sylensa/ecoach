@@ -11,8 +11,8 @@ import 'package:ecoach/views/otp_view.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -27,6 +27,10 @@ class _RegisterPageState extends State<RegisterPage> {
   String phone = "";
   String password = "";
   bool isLoading = false;
+
+  TextEditingController passwordController = new TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
 
   doRegister(BuildContext context) async {
     if (_formKey.currentState!.validate() == false) {
@@ -102,9 +106,10 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
   }
 
-  TextEditingController passwordController = new TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,14 +186,63 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(
                           height: 20,
                         ),
-                        IntlPhoneField(
+                        // IntlPhoneField(
+                        //   style: TextStyle(color: Colors.black),
+                        //   decoration: InputDecoration(
+                        //       labelText: 'Phone', border: OutlineInputBorder()),
+                        //   onSaved: (value) {
+                        //     phone = value!.completeNumber.trim();
+                        //   },
+                        //   initialCountryCode: 'GH',
+                        // ),
+                        // PhoneNumberFormField(
+                        //   autovalidateMode: AutovalidateMode.always,
+                        //   style: TextStyle(color: Colors.black),
+                        //   controller: phoneNumberEditingController,
+                        //   decoration: InputDecoration(
+                        //       border: UnderlineInputBorder(),
+                        //       labelStyle: TextStyle(
+                        //           color: Colors.black,
+                        //           backgroundColor: Colors.black),
+                        //       fillColor: Colors.black,
+                        //       helperStyle: TextStyle(color: Colors.black),
+                        //       floatingLabelStyle:
+                        //           TextStyle(color: Colors.black)),
+                        // ),
+                        PhoneFormField(
+                          key: Key('phone-field'),
                           style: TextStyle(color: Colors.black),
+                          controller: null, // controller & initialValue value
+                          initialValue:
+                              null, // can't be supplied simultaneously
+                          shouldFormat: true, // default
+                          defaultCountry: 'GH', // default
                           decoration: InputDecoration(
-                              labelText: 'Phone', border: OutlineInputBorder()),
-                          onSaved: (value) {
-                            phone = value!.completeNumber.trim();
-                          },
-                          initialCountryCode: 'GH',
+                              labelText: 'Phone',
+                              labelStyle: TextStyle(
+                                  color: Colors.black), // default to null
+                              border:
+                                  OutlineInputBorder() // default to UnderlineInputBorder(),
+                              // ...
+                              ),
+                          validator: PhoneValidator
+                              .validMobile(), // default PhoneValidator.valid()
+                          selectorNavigator:
+                              const BottomSheetNavigator(), // default to bottom sheet but you can customize how the selector is shown by extending CountrySelectorNavigator
+                          showFlagInInput: true, // default
+                          flagSize: 16, // default
+                          autofillHints: [
+                            AutofillHints.telephoneNumber
+                          ], // default to null
+                          enabled: true, // default
+                          autofocus: false, // default
+                          autovalidateMode:
+                              AutovalidateMode.onUserInteraction, // default
+                          onSaved: (PhoneNumber? p) {}, // default null
+                          onChanged: (PhoneNumber? p) {
+                            phone = p!.international;
+                          }, // default null
+                          // ... + other textfield params
                         ),
                         SizedBox(
                           height: 20,
