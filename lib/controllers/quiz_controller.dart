@@ -148,8 +148,10 @@ class QuizController {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
 
+    print("testing connection");
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (!isConnected) {
+      print("not connectied");
       await OfflineSaveController(context, user).saveTestTaken(testTaken);
       callback(testTaken, true);
     } else {

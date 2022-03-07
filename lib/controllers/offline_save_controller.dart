@@ -37,7 +37,9 @@ class OfflineSaveController {
   }
 
   syncData({String? type}) async {
+    print("trying to sync data");
     if (await isOfflineDataAvailable(type)) {
+      print("sync data available");
       List<OfflineData> data;
       if (type == null)
         data = await OfflineDataDB().offlineData();
@@ -47,6 +49,7 @@ class OfflineSaveController {
       for (int i = 0; i < data.length; i++) {
         OfflineData od = data[i];
         if (od.dataType == "test_taken") {
+          print("test to saved id=${od.dataId}");
           TestTaken? testTaken =
               await TestTakenDB().getTestTakenById(od.dataId!);
 
