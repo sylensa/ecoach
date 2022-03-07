@@ -1,5 +1,6 @@
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/customized_controller.dart';
+import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -12,6 +13,7 @@ import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:ecoach/models/question.dart';
 
@@ -85,14 +87,12 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
           controller.enabled = false;
         });
 
-        print('then>>');
         viewResults();
       }
     });
   }
 
   viewResults() {
-    print("viewing results");
     print(testTakenSaved!.toJson().toString());
     Navigator.push<int>(
       context,
@@ -109,8 +109,8 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
       setState(() {
         controller.currentQuestion = 0;
         controller.reviewMode = true;
-        if(value!=null){
-          controller.currentQuestion=value;
+        if (value != null) {
+          controller.currentQuestion = value;
         }
         pageController.jumpToPage(controller.currentQuestion);
       });
@@ -304,10 +304,10 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                     ),
                   ),
                   child: AdeoTimer(
-                    callbackWidget: (time){
-                      Duration remaining=Duration(seconds: time.toInt());
-                            controller.duration = remaining;
-                            controller.countdownInSeconds = remaining.inSeconds;
+                    callbackWidget: (time) {
+                      Duration remaining = Duration(seconds: time.toInt());
+                      controller.duration = remaining;
+                      controller.countdownInSeconds = remaining.inSeconds;
 
                       if (remaining.inSeconds == 0) {
                         return Text("Time Up",
@@ -320,11 +320,11 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                           style: TextStyle(
                               color: Color(0xFF222E3B), fontSize: 14));
                     },
-
-                    onFinish:(){Future.delayed(Duration.zero, () async {
-                          nextButton();
-                        });},
-                    
+                    onFinish: () {
+                      Future.delayed(Duration.zero, () async {
+                        nextButton();
+                      });
+                    },
                     controller: controller.timerController!,
                     startDuration: controller.getDuration(),
                   ),
