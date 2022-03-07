@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
@@ -139,6 +140,7 @@ class CustomizedController {
         user: user, isList: false, params: testTaken.toJson(), create: (json) {
       return TestTaken.fromJson(json);
     }, onError: (err) {
+      OfflineSaveController(context, user).saveTestTaken(testTaken);
       callback(null, false);
     }, onCallback: (data) {
       print('onCallback');
@@ -171,7 +173,9 @@ class CustomizedController {
   resetTimer() {
     print("resetTimer");
     timerController!.reset();
-     Future.delayed(Duration(seconds: 1), (){timerController!.start();});
+    Future.delayed(Duration(seconds: 1), () {
+      timerController!.start();
+    });
     print(duration!.inSeconds);
   }
 

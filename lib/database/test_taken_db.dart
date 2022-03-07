@@ -7,14 +7,16 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TestTakenDB {
-  Future<void> insert(TestTaken testTaken) async {
+  Future<int> insert(TestTaken testTaken) async {
     final Database? db = await DBProvider.database;
 
-    await db!.insert(
+    int id = await db!.insert(
       'tests_taken',
       testTaken.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    return id;
   }
 
   Future<TestTaken?> getTestTakenById(int id) async {

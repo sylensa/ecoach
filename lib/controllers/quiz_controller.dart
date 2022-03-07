@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
@@ -150,6 +151,7 @@ class QuizController {
         user: user, isList: false, params: testTaken.toJson(), create: (json) {
       return TestTaken.fromJson(json);
     }, onError: (err) {
+      OfflineSaveController(context, user).saveTestTaken(testTaken);
       callback(null, false);
     }, onCallback: (data) {
       print('onCallback');

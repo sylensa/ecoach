@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/logout.dart';
 import 'package:ecoach/widgets/toast.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:http/http.dart' as http;
 
 class ApiCall<T> {
@@ -40,6 +39,7 @@ class ApiCall<T> {
       token = (await UserPreferences().getUserToken());
     } else {
       token = user!.token!;
+      await OfflineSaveController(context, user!).syncData();
     }
     try {
       String urlString = url + '?' + Uri(queryParameters: params ?? {}).query;
@@ -88,6 +88,7 @@ class ApiCall<T> {
       token = (await UserPreferences().getUserToken());
     } else {
       token = user!.token!;
+      await OfflineSaveController(context, user!).syncData();
     }
 
     try {

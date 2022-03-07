@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:custom_timer/custom_timer.dart';
+import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/questions_db.dart';
@@ -227,6 +228,7 @@ class MarathonController {
         user: user, isList: false, params: testTaken.toJson(), create: (json) {
       return TestTaken.fromJson(json);
     }, onError: (err) {
+      OfflineSaveController(context, user).saveTestTaken(testTaken);
       callback(null, false);
     }, onCallback: (data) {
       print('onCallback');

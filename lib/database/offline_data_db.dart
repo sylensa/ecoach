@@ -51,11 +51,11 @@ class OfflineDataDB {
     });
   }
 
-  Future<List<OfflineData>> levelByGroup(String category) async {
+  Future<List<OfflineData>> dataByType(String type) async {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!
-        .query('offline_data', where: 'category = ?', whereArgs: [category]);
+        .query('offline_data', where: 'data_type = ?', whereArgs: [type]);
 
     return List.generate(maps.length, (i) {
       return OfflineData(
@@ -68,22 +68,7 @@ class OfflineDataDB {
     });
   }
 
-  Future<List<String>> levelGroups() async {
-    final Database? db = await DBProvider.database;
-
-    final List<Map<String, dynamic>> maps = await db!.query(
-      'offline_data',
-      columns: ['category'],
-      distinct: true,
-    );
-
-    return List.generate(maps.length, (i) {
-      return maps[i]["category"];
-    });
-  }
-
   Future<void> update(OfflineData offlineData) async {
-    // ignore: unused_local_variable
     final db = await DBProvider.database;
 
     await db!.update(
