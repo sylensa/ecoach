@@ -18,6 +18,7 @@ import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class MarathonController {
   MarathonController(
@@ -205,8 +206,8 @@ class MarathonController {
     return testTaken;
   }
 
-  saveTest(
-      BuildContext context, Function(TestTaken? test, bool success) callback) {
+  saveTest(BuildContext context,
+      Function(TestTaken? test, bool success) callback) async {
     TestTaken testTaken = TestTaken(
         userId: user.id,
         datetime: startTime,
@@ -224,19 +225,27 @@ class MarathonController {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
 
-    ApiCall<TestTaken>(AppUrl.testTaken,
-        user: user, isList: false, params: testTaken.toJson(), create: (json) {
-      return TestTaken.fromJson(json);
-    }, onError: (err) {
-      OfflineSaveController(context, user).saveTestTaken(testTaken);
-      callback(null, false);
-    }, onCallback: (data) {
-      print('onCallback');
-      print(data);
-      TestController().saveTestTaken(data!);
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (!isConnected) {
+      await OfflineSaveController(context, user).saveTestTaken(testTaken);
+      callback(testTaken, true);
+    } else {
+      ApiCall<TestTaken>(AppUrl.testTaken,
+          user: user,
+          isList: false,
+          params: testTaken.toJson(), create: (json) {
+        return TestTaken.fromJson(json);
+      }, onError: (err) {
+        OfflineSaveController(context, user).saveTestTaken(testTaken);
+        callback(null, false);
+      }, onCallback: (data) {
+        print('onCallback');
+        print(data);
+        TestController().saveTestTaken(data!);
 
-      callback(data, true);
-    }).post(context);
+        callback(data, true);
+      }).post(context);
+    }
   }
 
   Future<bool> scoreCurrentQuestion() async {

@@ -17,6 +17,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/views/learn_mode.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 abstract class StudyController {
   StudyController(this.user, this.course,
@@ -122,8 +123,8 @@ abstract class StudyController {
     return jsonEncode(responses);
   }
 
-  saveTest(
-      BuildContext context, Function(TestTaken? test, bool success) callback) {
+  saveTest(BuildContext context,
+      Function(TestTaken? test, bool success) callback) async {
     TestTaken testTaken = TestTaken(
         userId: user.id,
         datetime: startTime,
@@ -141,19 +142,27 @@ abstract class StudyController {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
 
-    ApiCall<TestTaken>(AppUrl.testTaken,
-        user: user, isList: false, params: testTaken.toJson(), create: (json) {
-      return TestTaken.fromJson(json);
-    }, onError: (err) {
-      OfflineSaveController(context, user).saveTestTaken(testTaken);
-      callback(null, false);
-    }, onCallback: (data) {
-      print('onCallback');
-      print(data);
-      TestController().saveTestTaken(data!);
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (!isConnected) {
+      await OfflineSaveController(context, user).saveTestTaken(testTaken);
+      callback(testTaken, true);
+    } else {
+      ApiCall<TestTaken>(AppUrl.testTaken,
+          user: user,
+          isList: false,
+          params: testTaken.toJson(), create: (json) {
+        return TestTaken.fromJson(json);
+      }, onError: (err) {
+        OfflineSaveController(context, user).saveTestTaken(testTaken);
+        callback(null, false);
+      }, onCallback: (data) {
+        print('onCallback');
+        print(data);
+        TestController().saveTestTaken(data!);
 
-      callback(data, true);
-    }).post(context);
+        callback(data, true);
+      }).post(context);
+    }
   }
 
   updateProgress(TestTaken test) async {
