@@ -158,7 +158,7 @@ saveBase64(String base64, String name) async {
   print('saving base 64');
   print(base64);
 
-  final _byteImage = Base64Decoder().convert(base64);
+  final _byteImage =await Base64Decoder().convert(base64);
   File f = await saveImageToDir(_byteImage, name);
   print(f.path);
   if (await f.exists()) {

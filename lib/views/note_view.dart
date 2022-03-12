@@ -60,6 +60,8 @@ class _NoteViewState extends State<NoteView> {
 
                         return Image.file(
                           widget.user.getImageFile(name),
+                          width: 500,
+                          height: 500,
                         );
                       }
                       return Text("No link");

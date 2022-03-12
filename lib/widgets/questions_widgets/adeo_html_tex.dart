@@ -15,6 +15,7 @@ class AdeoHtmlTex extends StatefulWidget {
     this.textColor = Colors.white,
     this.fontSize = 23,
     this.fontStyle = FontStyle.normal,
+    this.imageSize,
     this.removeTags = false,
   }) : super(key: key);
 
@@ -23,6 +24,7 @@ class AdeoHtmlTex extends StatefulWidget {
   final Color textColor;
   final double fontSize;
   final FontStyle fontStyle;
+  final Size? imageSize;
   final bool removeTags;
 
   @override
@@ -63,6 +65,9 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
 
             return Image.file(
               widget.user.getImageFile(name),
+              width: widget.imageSize != null ? widget.imageSize!.width : null,
+              height:
+                  widget.imageSize != null ? widget.imageSize!.height : null,
             );
           }
           return Text("No link");
