@@ -33,6 +33,12 @@ class AdeoHtmlTex extends StatefulWidget {
 
 class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   @override
+  void initState() {
+    print(widget.text);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     print(widget.text);
     return Html(
@@ -62,6 +68,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
           if (link != null) {
             String name = link.substring(link.lastIndexOf("/") + 1);
             print("Image: $name");
+            print("link: $link");
 
             return Image.file(
               widget.user.getImageFile(name),

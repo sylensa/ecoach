@@ -57,7 +57,7 @@ class Objective extends StatelessWidget {
           label,
           fontSize: getTextSize(),
           textColor: getTextColor(),
-          removeTags: true,
+          removeTags: false,
         ),
       ),
     );
