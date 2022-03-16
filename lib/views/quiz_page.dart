@@ -873,15 +873,15 @@ class _QuestionWidgetState extends State<QuestionWidget> {
   Positioned getAnswerMarker(Answer answer) {
     if (!widget.enabled && answer == correctAnswer) {
       return Positioned(
-          left: 100,
-          bottom: 25,
+          left: 115,
+          bottom: 8,
           child: Image(
             image: AssetImage('assets/images/correct.png'),
           ));
     } else if (!widget.enabled && answer == selectedAnswer) {
       return Positioned(
-          left: 100,
-          bottom: 25,
+          left: 115,
+          bottom: 8,
           child: Image(
             image: AssetImage('assets/images/wrong.png'),
           ));

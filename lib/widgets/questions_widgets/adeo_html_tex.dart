@@ -128,7 +128,8 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
   @override
   Widget build(BuildContext context) {
     return Html(
-      data: setTexTags(widget.text, removeTags: widget.removeTags),
+      data: setTexTags(widget.text,
+          removeTags: widget.removeTags, removeBr: true),
       style: {
         "body": Style(
           color: widget.imposedColor != null
@@ -141,6 +142,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
               : widget.selected
                   ? FontSize(widget.selectedSize ?? 40)
                   : FontSize(widget.normalSize ?? 16),
+          textAlign: TextAlign.center,
         ),
       },
       customRenders: {
@@ -191,7 +193,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
   }
 }
 
-setTexTags(String? text, {bool removeTags = false}) {
+setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
   if (text == null) return "";
 
   if (removeTags) {
@@ -216,6 +218,13 @@ setTexTags(String? text, {bool removeTags = false}) {
       .replaceAll('\\(', "")
       .replaceAll('\\)', "");
 
+  if (removeBr) {
+    text = text!
+        .replaceAll("<br>", "")
+        .replaceAll("<br/>", "")
+        .replaceAll("<p>", "")
+        .replaceAll("<p/>", "");
+  }
   return text;
 }
 
