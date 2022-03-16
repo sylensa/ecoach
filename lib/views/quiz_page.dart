@@ -828,36 +828,39 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    SelectAnswerWidget(widget.user, answers![i].text!,
-                        widget.question.selectedAnswer == answers![i],
-                        normalSize: 15,
-                        selectedSize: widget.enabled ? 48 : 24,
-                        imposedSize: widget.enabled ||
-                                (widget.enabled && selectedAnswer == null) ||
-                                selectedAnswer != answers![i] &&
-                                    answers![i].value == 0
-                            ? null
-                            : selectedAnswer == answers![i] &&
-                                    selectedAnswer!.value == 0
-                                ? 24
-                                : 48,
-                        imposedColor: widget.enabled ||
-                                (widget.enabled && selectedAnswer == null) ||
-                                selectedAnswer != answers![i] &&
-                                    answers![i].value == 0
-                            ? null
-                            : selectedAnswer == answers![i] &&
-                                    selectedAnswer!.value == 0
-                                ? Colors.red.shade400
-                                : Colors.green.shade600, select: () {
-                      if (!widget.enabled) {
-                        return;
-                      }
-                      setState(() {
-                        widget.question.selectedAnswer = answers![i];
-                      });
-                      widget.callback!(answers![i]);
-                    })
+                    Stack(children: [
+                      SelectAnswerWidget(widget.user, answers![i].text!,
+                          widget.question.selectedAnswer == answers![i],
+                          normalSize: 15,
+                          selectedSize: widget.enabled ? 48 : 24,
+                          imposedSize: widget.enabled ||
+                                  (widget.enabled && selectedAnswer == null) ||
+                                  selectedAnswer != answers![i] &&
+                                      answers![i].value == 0
+                              ? null
+                              : selectedAnswer == answers![i] &&
+                                      selectedAnswer!.value == 0
+                                  ? 24
+                                  : 48,
+                          imposedColor: widget.enabled ||
+                                  (widget.enabled && selectedAnswer == null) ||
+                                  selectedAnswer != answers![i] &&
+                                      answers![i].value == 0
+                              ? null
+                              : selectedAnswer == answers![i] &&
+                                      selectedAnswer!.value == 0
+                                  ? Colors.red.shade400
+                                  : Colors.green.shade600, select: () {
+                        if (!widget.enabled) {
+                          return;
+                        }
+                        setState(() {
+                          widget.question.selectedAnswer = answers![i];
+                        });
+                        widget.callback!(answers![i]);
+                      }),
+                      getAnswerMarker(answers![i])
+                    ]),
                 ],
               ),
             )
@@ -865,5 +868,24 @@ class _QuestionWidgetState extends State<QuestionWidget> {
         ),
       ),
     );
+  }
+
+  Positioned getAnswerMarker(Answer answer) {
+    if (!widget.enabled && answer == correctAnswer) {
+      return Positioned(
+          left: 100,
+          bottom: 25,
+          child: Image(
+            image: AssetImage('assets/images/correct.png'),
+          ));
+    } else if (!widget.enabled && answer == selectedAnswer) {
+      return Positioned(
+          left: 100,
+          bottom: 25,
+          child: Image(
+            image: AssetImage('assets/images/wrong.png'),
+          ));
+    }
+    return Positioned(child: Container());
   }
 }

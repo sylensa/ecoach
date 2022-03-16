@@ -150,9 +150,20 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
             String name = link.substring(link.lastIndexOf("/") + 1);
             print("Image: $name");
 
-            return Image.file(
-              widget.user.getImageFile(name),
-            );
+            return Container(
+                decoration: widget.selected
+                    ? BoxDecoration(
+                        border: Border.all(
+                        color: Colors.blue,
+                        width: 2,
+                      ))
+                    : null,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.file(
+                    widget.user.getImageFile(name),
+                  ),
+                ));
           }
           return Text("No link");
         }),
