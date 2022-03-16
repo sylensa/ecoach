@@ -62,7 +62,6 @@ class _SelectAnswerWidgetState extends State<SelectAnswerWidget> {
             normalSize: widget.normalSize,
             selectedColor: widget.selectedColor,
             selectedSize: widget.selectedSize,
-            removeTags: false,
           ))),
         ));
   }
