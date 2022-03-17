@@ -1,6 +1,7 @@
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/autopilot_introit.dart';
 import 'package:ecoach/views/customized_test_introit.dart';
 import 'package:ecoach/views/marathon_introit.dart';
 import 'package:ecoach/views/speed_test_introit.dart';
@@ -113,24 +114,15 @@ class _TestTypeViewState extends State<TestTypeView> {
                   subTitle: 'Completing a course one topic at a time',
                   iconURL: 'assets/icons/courses/autopilot.png',
                   onTap: () {
-                    return showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AdeoDialog(
-                          title: 'Autopilot',
-                          content:
-                              'Autopilot allows you to complete a course one topic at a time. Coming soon.',
-                          actions: [
-                            AdeoDialogAction(
-                              label: 'Dismiss',
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return AutopilotIntroit(widget.user, widget.course);
+                        },
+                      ),
                     );
+                  
                   },
                 ),
                 MultiPurposeCourseCard(
