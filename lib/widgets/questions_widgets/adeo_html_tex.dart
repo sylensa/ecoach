@@ -128,7 +128,8 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
   @override
   Widget build(BuildContext context) {
     return Html(
-      data: setTexTags(widget.text, removeTags: widget.removeTags),
+      data: setTexTags(widget.text,
+          removeTags: widget.removeTags, removeBr: true),
       style: {
         "body": Style(
           color: widget.imposedColor != null
@@ -141,6 +142,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
               : widget.selected
                   ? FontSize(widget.selectedSize ?? 40)
                   : FontSize(widget.normalSize ?? 16),
+          textAlign: TextAlign.center,
         ),
       },
       customRenders: {
@@ -150,9 +152,20 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
             String name = link.substring(link.lastIndexOf("/") + 1);
             print("Image: $name");
 
-            return Image.file(
-              widget.user.getImageFile(name),
-            );
+            return Container(
+                decoration: widget.selected
+                    ? BoxDecoration(
+                        border: Border.all(
+                        color: Colors.blue,
+                        width: 2,
+                      ))
+                    : null,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.file(
+                    widget.user.getImageFile(name),
+                  ),
+                ));
           }
           return Text("No link");
         }),
@@ -180,7 +193,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
   }
 }
 
-setTexTags(String? text, {bool removeTags = false}) {
+setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
   if (text == null) return "";
 
   if (removeTags) {
@@ -205,6 +218,13 @@ setTexTags(String? text, {bool removeTags = false}) {
       .replaceAll('\\(', "")
       .replaceAll('\\)', "");
 
+  if (removeBr) {
+    text = text!
+        .replaceAll("<br>", "")
+        .replaceAll("<br/>", "")
+        .replaceAll("<p>", "")
+        .replaceAll("<p/>", "");
+  }
   return text;
 }
 
