@@ -55,7 +55,7 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
                         ),
                       ),
                       Image.asset(
-                        'images/autopilot_intro.png',
+                        'assets/images/autopilot_intro.png',
                         width: 200,
                         height: 400,
                         fit: BoxFit.contain,
