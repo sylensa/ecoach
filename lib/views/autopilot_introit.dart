@@ -17,15 +17,14 @@ class AutopilotIntroit extends StatefulWidget {
 }
 
 class _AutopilotIntroitState extends State<AutopilotIntroit> {
-
-  handleNext(){
+  handleNext() {
     print("next screen");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kAdeoGray2,
+      backgroundColor: kAdeoRoyalBlue,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -54,12 +53,12 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
                       fit: BoxFit.contain,
                     ),
                     SizedBox(height: 53),
-                     AdeoFilledButton(
-                    label: 'Next',
-                    onPressed: handleNext,
-                    background: kAdeoBlue,
-                    size: Sizes.large,
-                  ),
+                    AdeoFilledButton(
+                      label: 'Next',
+                      onPressed: handleNext,
+                      background: kAdeoBlue,
+                      size: Sizes.large,
+                    ),
                   ],
                 )),
               ),
