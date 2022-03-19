@@ -119,6 +119,14 @@ TextStyle kIntroitScreenHeadingStyle({Color color = kDefaultBlack}) {
   );
 }
 
+TextStyle kIntroitScreenHeadingStyle2({Color color = kDefaultBlack}) {
+  return TextStyle(
+    color: color,
+    fontSize: 26,
+    fontFamily: 'Hamelin',
+  );
+}
+
 TextStyle kIntroitScreenSubHeadingStyle({Color color = kDefaultBlack}) {
   return TextStyle(
     color: color,
