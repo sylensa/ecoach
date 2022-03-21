@@ -16,6 +16,7 @@ class AdeoHtmlTex extends StatefulWidget {
     this.fontSize = 23,
     this.fontStyle = FontStyle.normal,
     this.imageSize,
+    this.useLocalImage = true,
     this.removeTags = false,
   }) : super(key: key);
 
@@ -25,6 +26,7 @@ class AdeoHtmlTex extends StatefulWidget {
   final double fontSize;
   final FontStyle fontStyle;
   final Size? imageSize;
+  final bool useLocalImage;
   final bool removeTags;
 
   @override
@@ -63,22 +65,25 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             textAlign: TextAlign.center),
       },
       customRenders: {
-        networkSourceMatcher(): CustomRender.widget(widget: (context, element) {
-          String? link = context.tree.element!.attributes['src'];
-          if (link != null) {
-            String name = link.substring(link.lastIndexOf("/") + 1);
-            print("Image: $name");
-            print("link: $link");
+        if (widget.useLocalImage)
+          networkSourceMatcher():
+              CustomRender.widget(widget: (context, element) {
+            String? link = context.tree.element!.attributes['src'];
+            if (link != null) {
+              String name = link.substring(link.lastIndexOf("/") + 1);
+              print("Image: $name");
+              print("link: $link");
 
-            return Image.file(
-              widget.user.getImageFile(name),
-              width: widget.imageSize != null ? widget.imageSize!.width : null,
-              height:
-                  widget.imageSize != null ? widget.imageSize!.height : null,
-            );
-          }
-          return Text("No link");
-        }),
+              return Image.file(
+                widget.user.getImageFile(name),
+                width:
+                    widget.imageSize != null ? widget.imageSize!.width : null,
+                height:
+                    widget.imageSize != null ? widget.imageSize!.height : null,
+              );
+            }
+            return Text("No link");
+          }),
         texMatcher():
             CustomRender.widget(widget: (RenderContext context, child) {
           print(context.tree.element!.text);

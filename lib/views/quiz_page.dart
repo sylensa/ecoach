@@ -214,7 +214,9 @@ class _QuizViewState extends State<QuizView> {
 
   viewResults() {
     print("viewing results");
-    print(testTakenSaved!.toJson().toString());
+    print(testTakenSaved != null
+        ? testTakenSaved!.toJson().toString()
+        : "null test");
     Navigator.push<int>(
       context,
       MaterialPageRoute<int>(
@@ -272,6 +274,7 @@ class _QuizViewState extends State<QuizView> {
                           position: i,
                           enabled: enabled,
                           theme: widget.theme,
+                          diagnostic: widget.diagnostic,
                           callback: (Answer answer) async {
                             await Future.delayed(Duration(milliseconds: 200));
                             if (controller.speedTest && answer.value == 0) {
@@ -674,6 +677,7 @@ class QuestionWidget extends StatefulWidget {
       {Key? key,
       this.position,
       this.enabled = true,
+      this.diagnostic = false,
       this.theme = QuizTheme.GREEN,
       this.callback})
       : super(key: key);
@@ -681,6 +685,7 @@ class QuestionWidget extends StatefulWidget {
   Question question;
   int? position;
   bool enabled;
+  bool diagnostic;
   Function(Answer selectedAnswer)? callback;
   QuizTheme theme;
 
@@ -734,7 +739,11 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       SizedBox(
                         height: 12,
                       ),
-                      AdeoHtmlTex(widget.user, widget.question.text!),
+                      AdeoHtmlTex(
+                        widget.user,
+                        widget.question.text!.replaceAll("https", "http"),
+                        useLocalImage: !widget.diagnostic,
+                      ),
                     ],
                   ),
                 ),
@@ -774,7 +783,12 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                             SizedBox(
                               height: 12,
                             ),
-                            AdeoHtmlTex(widget.user, widget.question.resource!),
+                            AdeoHtmlTex(
+                              widget.user,
+                              widget.question.resource!
+                                  .replaceAll("https", "http"),
+                              useLocalImage: !widget.diagnostic,
+                            ),
                           ],
                         ),
                       ),
@@ -816,7 +830,9 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                                 widget.user,
                                 correctAnswer != null
                                     ? correctAnswer!.solution!
-                                    : "----"),
+                                        .replaceAll("https", "http")
+                                    : "----",
+                                useLocalImage: !widget.diagnostic),
                           ),
                         ),
                       )

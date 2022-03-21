@@ -49,8 +49,14 @@ class TestController {
         // print(response.body);
 
         return ApiResponse<Question>.fromJson(response.body, (dataItem) {
-          // print("it's fine here");
-          return Question.fromJson(dataItem);
+          Question question = Question.fromJson(dataItem);
+          Map<String, dynamic> json = question.toJson();
+          List<Map<String, dynamic>> jsonAnswer = [];
+          question.answers!.forEach((answer) {
+            jsonAnswer.add(answer.toJson());
+          });
+          json.addAll({'answers': jsonAnswer});
+          return Question.fromJson(json);
         });
       } else {
         // print("not successful event");

@@ -162,7 +162,7 @@ class QuizController {
         return TestTaken.fromJson(json);
       }, onError: (err) {
         OfflineSaveController(context, user).saveTestTaken(testTaken);
-        callback(null, false);
+        callback(testTaken, false);
       }, onCallback: (data) {
         print('onCallback');
         print(data);
