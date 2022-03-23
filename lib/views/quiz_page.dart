@@ -541,7 +541,7 @@ class _QuizViewState extends State<QuizView> {
                   } else if (action == "quit") {
                     Navigator.pushAndRemoveUntil(context,
                         MaterialPageRoute(builder: (context) {
-                      return MainHomePage(controller.user, index: 1);
+                      return MainHomePage(controller.user, index: 2);
                     }), (route) => false);
                   } else if (action == "end") {
                     completeQuiz();

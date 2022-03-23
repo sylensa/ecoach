@@ -177,7 +177,7 @@ class _ResultViewState extends State<ResultView> {
                                       builder: (BuildContext context) =>
                                           MainHomePage(
                                         widget.user,
-                                        index: 1,
+                                        index: 2,
                                       ),
                                     ), (route) {
                                   return false;
