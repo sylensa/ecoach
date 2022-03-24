@@ -83,6 +83,10 @@ class TestController {
     return QuestionDB().getTopicQuestions(topicIds, limit!);
   }
 
+  Future<int> getQuestionsCount(int courseId) async {
+    return await  QuestionDB().getTotalQuestionCount(courseId);
+  }
+
   Future<Map<String, List<TestAnswer>>> topicsAnalysis(TestTaken test) async {
     Map<String, List<TestAnswer>> topicsMap = Map();
 

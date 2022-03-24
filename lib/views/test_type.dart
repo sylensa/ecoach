@@ -122,7 +122,6 @@ class _TestTypeViewState extends State<TestTypeView> {
                         },
                       ),
                     );
-                  
                   },
                 ),
                 MultiPurposeCourseCard(

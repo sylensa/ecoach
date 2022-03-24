@@ -1,0 +1,56 @@
+Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: kAdeoRoyalBlue,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          children: [
+            SizedBox(height: 70),
+            Text(
+              'Select Your Topic',
+              textAlign: TextAlign.center,
+              style: kIntroitScreenHeadingStyle(
+                color: kAdeoBlueAccent,
+              ).copyWith(
+                fontSize: 25,
+              ),
+            ),
+            SizedBox(height: 33),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    children: [
+                      for (int i = 0; i < widget.topics.length; i++)
+                        AutopilotTopicSelector(
+                          topicId: widget.topics[i].id!,
+                          numberOfQuestions: widget.topics[i].totalCount,
+                          label: widget.topics[i].name,
+                          isSelected: topicId == widget.topics[i].id!,
+                          isUnselected:
+                              topicId != '' && topicId != widget.topics[i].id!,
+                          onTap: handletopicSelection,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            if (topicId != '')
+              Column(
+                children: [
+                  AdeoFilledButton(
+                    label: 'Next',
+                    onPressed: (null),
+                    /*pass in the QuizView here*/
+                    background: kAdeoBlue,
+                    size: Sizes.large,
+                  ),
+                  SizedBox(height: 53),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }

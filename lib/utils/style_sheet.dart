@@ -52,6 +52,7 @@ const kAdeoGray2 = Color(0xFF707070);
 const kAdeoGray3 = Color(0xFFA2A2A2);
 const kAdeoCoral = Color(0xFFFB7B76);
 const kAdeoOrange = Color(0xFFFF4F18);
+const kAdeoOrange2 = Color(0xFFFF6344);
 const kAdeoRoyalBlue = Color(0xFF2D3E50);
 const kPageBackgroundGray = Color(0xFFF0F0F0);
 const kDividerColor = Color(0xFF707070);

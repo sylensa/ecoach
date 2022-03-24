@@ -248,6 +248,22 @@ class QuestionDB {
     return questions;
   }
 
+  Future<List<Question>> getAutopilotTopicQuestions(int topicId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND topic_id = $topicId ORDER BY RANDOM()");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
   Future<List<Question>> getQuestionsByType(
     int courseId,
     String type,

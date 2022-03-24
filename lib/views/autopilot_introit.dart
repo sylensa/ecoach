@@ -1,6 +1,12 @@
+import 'package:ecoach/controllers/autopilot_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot_introit_topics.dart';
+import 'package:ecoach/views/autopilot_topic_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:flutter/material.dart';
 
@@ -18,10 +24,6 @@ class AutopilotIntroit extends StatefulWidget {
 }
 
 class _AutopilotIntroitState extends State<AutopilotIntroit> {
-  handleNext() {
-    print("next screen");
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,32 +37,40 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
                 child: Center(
                   child: Column(
                     children: [
-                      SizedBox(height: 150),
-                      Text(
-                        'Welcome to Autopilot',
-                        textAlign: TextAlign.center,
-                        style: kIntroitScreenHeadingStyle2(color: Colors.white),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 70.0),
+                        child: Text(
+                          'Welcome to Autopilot',
+                          textAlign: TextAlign.center,
+                          style:
+                              kIntroitScreenHeadingStyle2(color: Colors.white),
+                        ),
                       ),
-                      SizedBox(height: 70),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 30),
-                        child: Text(
-                          'AI assistance  to help you complete this course, one topic at a time ',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'poppins',
-                            fontSize: 11,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 50.0),
+                          child: Text(
+                            'AI assistance  to help you complete this course, one topic at a time ',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'poppins-mediumItalic',
+                              fontStyle: FontStyle.italic,
+                              fontSize: 11,
+                            ),
                           ),
                         ),
                       ),
-                      Image.asset(
-                        'assets/images/autopilot_intro.png',
-                        width: 200,
-                        height: 400,
-                        fit: BoxFit.contain,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 50.0),
+                        child: Image.asset(
+                          'assets/images/autopilot_intro.png',
+                          width: 170,
+                          height: 170,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                      SizedBox(height: 53),
                     ],
                   ),
                 ),
@@ -68,13 +78,32 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
             ),
             Column(
               children: [
-                AdeoOutlinedButton(
-                  label: 'Get Started',
-                  onPressed: () {
-                    print('goto topic screen');
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 138.0),
+                  child: AdeoOutlinedButton(
+                    label: 'Get Started',
+                    onPressed: () async {
+                      List<TestNameAndCount> topics =
+                          await TestController().getTopics(widget.course);
+
+                      int count = await TestController()
+                          .getQuestionsCount(widget.course.id!);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AutopilotIntroitTopics(
+                                  count: count,
+                                  controller: AutopilotController(
+                                    widget.user,
+                                    widget.course,
+                                    topics: topics,
+                                  ),
+                                )),
+                      );
+                    },
+                  ),
                 ),
-                SizedBox(height: 53),
               ],
             ),
           ],
