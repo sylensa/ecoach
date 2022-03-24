@@ -99,7 +99,7 @@ class _StudyMasteryResultsState extends State<StudyMasteryResults> {
                           MaterialPageRoute<void>(
                             builder: (BuildContext context) => MainHomePage(
                               controller.user,
-                              index: 1,
+                              index: 2,
                             ),
                           ), (route) {
                         return false;

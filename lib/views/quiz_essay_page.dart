@@ -408,7 +408,7 @@ class _QuizEssayViewState extends State<QuizEssayView> {
                 } else if (action == "quit") {
                   Navigator.pushAndRemoveUntil(context,
                       MaterialPageRoute(builder: (context) {
-                    return MainHomePage(widget.user, index: 1);
+                    return MainHomePage(widget.user, index: 2);
                   }), (route) => false);
                 } else if (action == "end") {
                   completeQuiz();
