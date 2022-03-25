@@ -43,7 +43,8 @@ class AutopilotDB {
   Future<Autopilot?> getAutopilotById(int id) async {
     final db = await DBProvider.database;
 
-    var result = await db!.query("autopilots", where: "id = ?", whereArgs: [id]);
+    var result =
+        await db!.query("autopilots", where: "id = ?", whereArgs: [id]);
     Autopilot? autopilot =
         result.isNotEmpty ? Autopilot.fromJson(result.first) : null;
 
@@ -65,7 +66,8 @@ class AutopilotDB {
       int courseId, int questionId) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps = await db!.query('autopilot_progress',
+    final List<Map<String, dynamic>> maps = await db!.query(
+        'autopilot_progress',
         orderBy: "name ASC",
         where: "course_id = ? AND question_id= ?",
         whereArgs: [courseId, questionId]);
@@ -76,8 +78,10 @@ class AutopilotDB {
   Future<List<AutopilotProgress>> getProgresses(int autopilotId) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps = await db!.query('autopilot_progress',
-        where: "autopilot_id = ?", whereArgs: [autopilotId]);
+    final List<Map<String, dynamic>> maps = await db!.query(
+        'autopilot_progress',
+        where: "autopilot_id = ?",
+        whereArgs: [autopilotId]);
 
     List<AutopilotProgress> autopilots = [];
     for (int i = 0; i < maps.length; i++) {

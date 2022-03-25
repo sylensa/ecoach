@@ -1,7 +1,9 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/AutopilotTopicSelector.dart';
@@ -29,21 +31,25 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   late AutopilotController controller;
 
   String? name;
+  int isSelected = 0;
 
   @override
   void initState() {
     super.initState();
-    topicId = widget.topics[1].id;
+    topicId = widget.topics[isSelected].id;
     controller = widget.controller;
-    controller.name = widget.topics[1].name;
-    controller.autopilot = topicId;
+    controller.name = widget.topics[isSelected].name;
+    //controller.autopilot = topicId;
     print("name from topic_menu ${controller.name}");
     //controller.loadAutopilot();
     //print("name from topic_menu ${controller.name}");
   }
 
   handleNext() async {
-    controller.createTopicAutopilot(topicId);
+    print('topic id is ${topicId}');
+    await controller.createTopicAutopilot(topicId);
+    Topic? topic = await TopicDB().getTopicById(topicId);
+    controller.name = topic!.name!;
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return AutopilotQuizView(controller: controller);
@@ -75,7 +81,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                 ),
                 child: Center(
                   child: Text(
-                    '23',
+                    '${widget.controller.topics.length}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -119,15 +125,16 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                             elevation: 0,
                             child: Row(
                               children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: IconButton(
-                                    icon: Image.asset(
-                                        'assets/icons/courses/auto.png'),
-                                    iconSize: 36,
-                                    onPressed: null,
+                                if (isSelected == i)
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
+                                      icon: Image.asset(
+                                          'assets/icons/courses/auto.png'),
+                                      iconSize: 36,
+                                      onPressed: null,
+                                    ),
                                   ),
-                                ),
                                 Expanded(
                                   flex: 2,
                                   child: ListTile(

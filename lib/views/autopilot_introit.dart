@@ -25,6 +25,12 @@ class AutopilotIntroit extends StatefulWidget {
 
 class _AutopilotIntroitState extends State<AutopilotIntroit> {
   @override
+  void initState() {
+    print('AutopilotIntroit course ${widget.course.id}');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kAdeoRoyalBlue,

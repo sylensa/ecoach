@@ -20,11 +20,14 @@ class AutopilotIntroitTopics extends StatefulWidget {
 
 class _AutopilotIntroitTopicsState extends State<AutopilotIntroitTopics> {
   late AutopilotController controller;
+  late int count;
 
   handleNext() async {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return AutopilotIntroitQuestions(
-          count: widget.count, controller: controller);
+        count: widget.count,
+        controller: controller,
+      );
     }));
   }
 
@@ -71,10 +74,11 @@ class _AutopilotIntroitTopicsState extends State<AutopilotIntroitTopics> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AdeoFilledButton(
-                  color: Colors.white,
-                  background: kAdeoOrange,
-                  label: 'Next',
-                  onPressed: handleNext)
+                color: Colors.white,
+                background: kAdeoOrange,
+                label: 'Next',
+                onPressed: handleNext,
+              ),
             ],
           ),
         ),
