@@ -513,7 +513,7 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                             selection = Selection.DIAGNOSTIC;
                           });
                         },
-                        child: Text('Diagnostic'))),
+                        child: Text('Sample Test'))),
               ],
             ),
           ),

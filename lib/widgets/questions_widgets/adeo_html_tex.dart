@@ -48,13 +48,17 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   Widget build(BuildContext context) {
     print(widget.text);
     return Html(
-      data: setTexTags(widget.text, removeTags: widget.removeTags),
+      data: setTexTags(widget.text,
+          removeTags: widget.removeTags, removeBr: true),
       style: {
         "body": Style(
             color: widget.textColor,
             fontSize: FontSize(widget.fontSize),
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
+        "p": Style(
+          padding: EdgeInsets.all(0),
+        ),
         "table": Style(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -262,7 +266,10 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
         .replaceAll("<br>", "")
         .replaceAll("<br/>", "")
         .replaceAll("<p>", "")
-        .replaceAll("<p/>", "");
+        .replaceAll("<p/>", "")
+        .replaceAll("</p>", "");
+
+    print(text);
   }
   return text;
 }
