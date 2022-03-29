@@ -63,6 +63,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
     //controller.loadAutopilot();
     //print("name from topic_menu ${controller.name}");
     print('isSelected = ${isSelected}');
+    print('the total correct is: ${controller.getTotalCorrect()}');
   }
 
   handleNext() async {
@@ -201,6 +202,12 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                                         ),
                                       ),
                                     ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      "Score: ${controller.getTotalCorrect()}/${controller.questions.length}",
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

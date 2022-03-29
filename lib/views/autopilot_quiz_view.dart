@@ -694,7 +694,7 @@ class _AutopilotQuestionWidgetState extends State<AutopilotQuestionWidget> {
   void initState() {
     print("enabled = ${widget.enabled}");
     print('instruction is: ${widget.question.instructions}');
-
+    print('instruction is a resource: ${widget.question.resource}');
     answers = widget.question.answers;
     if (answers != null) {
       answers!.forEach((answer) {
