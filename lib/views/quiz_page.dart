@@ -827,12 +827,13 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(20.0, 8, 20, 8),
                             child: AdeoHtmlTex(
-                                widget.user,
-                                correctAnswer != null
-                                    ? correctAnswer!.solution!
-                                        .replaceAll("https", "http")
-                                    : "----",
-                                useLocalImage: !widget.diagnostic),
+                              widget.user,
+                              correctAnswer != null
+                                  ? correctAnswer!.solution!
+                                      .replaceAll("https", "http")
+                                  : "----",
+                              useLocalImage: !widget.diagnostic,
+                            ),
                           ),
                         ),
                       )

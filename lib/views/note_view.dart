@@ -10,6 +10,7 @@ import 'package:ecoach/views/quiz_page.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 
 class NoteView extends StatefulWidget {
@@ -34,6 +35,7 @@ class _NoteViewState extends State<NoteView> {
             child: Column(
               children: [
                 Html(
+                  shrinkWrap: true,
                   data: setTexTags(widget.topic.notes),
                   style: {
                     // tables will have the below background color
@@ -43,14 +45,26 @@ class _NoteViewState extends State<NoteView> {
                       backgroundColor: Color(0xFF009BCB),
                       padding: const EdgeInsets.fromLTRB(8.0, 10, 8, 25),
                     ),
-
                     'td': Style(
+                        textAlign: TextAlign.center,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(4),
                         border: Border.all(color: Colors.white, width: 1)),
                     'th': Style(backgroundColor: Colors.blue),
                     'img': Style(
-                        width: 200, height: 200, padding: EdgeInsets.all(10)),
+                        width: imageWidth,
+                        height: imageHeight,
+                        padding: EdgeInsets.all(0)),
                   },
                   customRenders: {
+                    tableMatcher():
+                        CustomRender.widget(widget: (context, child) {
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        // this calls the table CustomRender to render a table as normal (it uses a widget so we know widget is not null)
+                        child: tableRender().widget!.call(context, child),
+                      );
+                    }),
                     networkSourceMatcher():
                         CustomRender.widget(widget: (context, element) {
                       String? link = context.tree.element!.attributes['src'];
@@ -58,11 +72,10 @@ class _NoteViewState extends State<NoteView> {
                         String name = link.substring(link.lastIndexOf("/") + 1);
                         print("Image: $name");
 
-                        return Image.file(
+                        var fileImage = FileImage(
                           widget.user.getImageFile(name),
-                          width: 500,
-                          height: 500,
                         );
+                        return Image(image: fileImage);
                       }
                       return Text("No link");
                     }),

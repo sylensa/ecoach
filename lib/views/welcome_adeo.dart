@@ -61,6 +61,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
             SingleChildScrollView(
               child: Container(
                 height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -109,7 +110,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                         textAlign: TextAlign.center,
                         text: TextSpan(children: [
                           TextSpan(
-                            text: "First take a",
+                            text: "Take a",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -117,7 +118,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                             ),
                           ),
                           TextSpan(
-                              text: " DIAGNOSTIC TEST\n",
+                              text: " SAMPLE TEST\n",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -125,7 +126,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                                 fontFamily: 'Poppins',
                               )),
                           TextSpan(
-                            text: "  to determine the right course for you.",
+                            text: "  by clicking below.",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -140,7 +141,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return SelectLevel(widget.user);
+                          return MainHomePage(widget.user);
                         }));
                       },
                       child: Text(
@@ -174,7 +175,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
             ),
             Positioned(
               top: 50,
-              right: 20,
+              right: 10,
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -182,7 +183,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
                   }));
                 },
                 child: Text(
-                  "Skip",
+                  "Home",
                   style: TextStyle(color: Color(0xFF00C664), fontSize: 24),
                 ),
               ),

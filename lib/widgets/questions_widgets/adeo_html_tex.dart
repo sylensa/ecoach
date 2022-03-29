@@ -1,11 +1,15 @@
 import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:html/parser.dart' as htmlparser;
 
 CustomRenderMatcher texMatcher() =>
     (context) => context.tree.element?.localName == 'tex';
+
+double imageWidth = 400;
+double imageHeight = 400;
 
 class AdeoHtmlTex extends StatefulWidget {
   const AdeoHtmlTex(
@@ -44,25 +48,40 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   Widget build(BuildContext context) {
     print(widget.text);
     return Html(
-      data: setTexTags(widget.text, removeTags: widget.removeTags),
+      data: setTexTags(widget.text,
+          removeTags: widget.removeTags, removeBr: true),
       style: {
         "body": Style(
             color: widget.textColor,
             fontSize: FontSize(widget.fontSize),
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
+        "p": Style(
+          padding: EdgeInsets.all(0),
+        ),
+        "table": Style(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            width: 1,
+            fontSize: FontSize(widget.fontSize),
+            fontStyle: widget.fontStyle,
+            textAlign: TextAlign.center),
         "tr": Style(
             color: Colors.black,
             fontWeight: FontWeight.bold,
-            width: 2,
+            width: 1,
             fontSize: FontSize(widget.fontSize),
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
         "td": Style(
             color: Colors.black,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(2),
             fontSize: FontSize(widget.fontSize),
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
+        'img': Style(
+            width: imageWidth, height: imageHeight, padding: EdgeInsets.all(0)),
       },
       customRenders: {
         if (widget.useLocalImage)
@@ -76,10 +95,6 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
 
               return Image.file(
                 widget.user.getImageFile(name),
-                width:
-                    widget.imageSize != null ? widget.imageSize!.width : null,
-                height:
-                    widget.imageSize != null ? widget.imageSize!.height : null,
               );
             }
             return Text("No link");
@@ -94,6 +109,12 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               fontSize: 16,
               fontStyle: widget.fontStyle,
             ),
+          );
+        }),
+        tableMatcher(): CustomRender.widget(widget: (context, child) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: tableRender().widget!.call(context, child),
           );
         }),
       },
@@ -149,6 +170,17 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
                   : FontSize(widget.normalSize ?? 16),
           textAlign: TextAlign.center,
         ),
+        'table': Style(
+            color: Colors.white,
+            border: Border.all(color: Colors.white, width: 1)),
+        'td': Style(
+            textAlign: TextAlign.center,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(2),
+            border: Border.all(color: Colors.white, width: 1)),
+        'th': Style(backgroundColor: Colors.blue),
+        'img': Style(
+            width: imageWidth, height: imageHeight, padding: EdgeInsets.all(0)),
       },
       customRenders: {
         networkSourceMatcher(): CustomRender.widget(widget: (context, element) {
@@ -192,6 +224,12 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
             ),
           );
         }),
+        tableMatcher(): CustomRender.widget(widget: (context, child) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: tableRender().widget!.call(context, child),
+          );
+        }),
       },
       tagsList: Html.tags..addAll(["tex"]),
     );
@@ -228,7 +266,10 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
         .replaceAll("<br>", "")
         .replaceAll("<br/>", "")
         .replaceAll("<p>", "")
-        .replaceAll("<p/>", "");
+        .replaceAll("<p/>", "")
+        .replaceAll("</p>", "");
+
+    print(text);
   }
   return text;
 }
