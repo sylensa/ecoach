@@ -1,12 +1,11 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
-import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/models/quiz.dart';
+
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot_introit_questions.dart';
-import 'package:ecoach/widgets/adeo_outlined_button.dart';
+
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
-import 'package:ecoach/widgets/widgets.dart';
+
 import 'package:flutter/material.dart';
 
 class AutopilotIntroitTopics extends StatefulWidget {

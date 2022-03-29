@@ -1,6 +1,5 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
-import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/models/quiz.dart';
+
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot_instructions_layout.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';

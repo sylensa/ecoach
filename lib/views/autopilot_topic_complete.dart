@@ -1,20 +1,18 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
-import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/utils/marathon_ranking.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot_introit.dart';
 import 'package:ecoach/views/autopilot_topic_menu.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/marathon_introit.dart';
-import 'package:ecoach/views/marathon_save_resumption_menu.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:flutter/material.dart';
 
-class AutopilotCompleteCongratulations extends StatelessWidget {
-  AutopilotCompleteCongratulations({required this.controller});
+import 'package:ecoach/utils/string_extension.dart';
+
+class AutopilotTopicComplete extends StatelessWidget {
+  AutopilotTopicComplete({required this.controller});
   AutopilotController controller;
 
   @override
@@ -41,24 +39,26 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
               SizedBox(width: 10),
             ],
           ),
-          SizedBox(height: 33),
+          SizedBox(height: 72),
           Text(
-            'Congratulations',
+            '${controller.name!.capitalize()}',
             style: TextStyle(
               fontSize: 41,
               fontFamily: 'Hamelin',
-              color: kAdeoBlue,
+              color: Colors.white,
             ),
+            textAlign: TextAlign.center,
           ),
           Text(
-            'Autopilot Completed',
+            'completed',
             style: TextStyle(
               fontSize: 18,
-              color: Color(0x809EE4FF),
+              color: kAdeoBlueAccent.withOpacity(0.58),
               fontStyle: FontStyle.italic,
+              fontFamily: 'Poppins',
             ),
           ),
-          SizedBox(height: 48),
+          SizedBox(height: 43),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -69,26 +69,29 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
                     'Net Score: ${controller.autopilot!.totalCorrect! - controller.autopilot!.totalWrong!}',
                     style: TextStyle(
                       fontSize: 15,
-                      color: kAdeoBlueAccent,
+                      color: Colors.white,
+                      fontFamily: 'Poppins',
                     ),
                   ),
-                  SizedBox(height: 12),
+                  SizedBox(height: 40),
                   Text(
                     '${Duration(seconds: controller.autopilot!.totalTime!).inHours} hrs : ${Duration(seconds: controller.autopilot!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.autopilot!.totalTime!).inSeconds % 60} sec',
                     style: TextStyle(
                       fontSize: 15,
-                      color: kAdeoBlueAccent,
+                      color: Colors.white,
+                      fontFamily: 'Poppins',
                     ),
                   ),
-                  SizedBox(height: 12),
+                  SizedBox(height: 40),
                   Text(
                     '${controller.questions.length} Questions',
                     style: TextStyle(
+                      fontFamily: 'Poppins',
                       fontSize: 15,
-                      color: kAdeoBlueAccent,
+                      color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 48),
+                  SizedBox(height: 66),
                   QuizStats(
                     changeUp: true,
                     averageScore:
@@ -124,10 +127,10 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
               children: [
                 Expanded(
                   child: AdeoTextButton(
-                    label: 'new test',
+                    label: 'Next Topic',
                     fontSize: 20,
                     color: Colors.white,
-                    background: kAdeoBlue,
+                    background: kAdeoOrange2,
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (c) {
                         return AutopilotTopicMenu(
@@ -145,4 +148,6 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
       ),
     );
   }
+
+  substring(int i) {}
 }

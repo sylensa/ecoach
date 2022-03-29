@@ -1,19 +1,16 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
-import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/autopilot_selector_service.dart';
+
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/AutopilotTopicSelector.dart';
 import 'package:ecoach/views/autopilot_quiz_view.dart';
-import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
+
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
-import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
-import 'package:ecoach/widgets/page_header.dart';
+import 'package:ecoach/widgets/percentage_switch.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 enum topics { TOPIC, MOCK }
 
@@ -29,27 +26,52 @@ class AutopilotTopicMenu extends StatefulWidget {
 class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   late dynamic topicId;
   late AutopilotController controller;
+  AutopilotSelectorService _selectorService = AutopilotSelectorService();
 
   String? name;
-  int isSelected = 0;
+  late int isSelected;
+  late bool showInPercentage;
+
+  void _incrementCounter() {
+    setState(() {
+      _selectorService.incrementSelectedTopic();
+    });
+  }
+
+  /* handletopicSelection(newTopic) {
+    setState(() {
+      if (topicId == newTopic)
+        topicId = '';
+      else
+        topicId = newTopic;
+    });
+  } */
 
   @override
   void initState() {
     super.initState();
-    topicId = widget.topics[isSelected].id;
+    showInPercentage = false;
+    isSelected = _selectorService.selectedTopic;
+    print('this value is from selectorService ${isSelected}');
+    print('controller topics list is: ${widget.controller.topics}');
     controller = widget.controller;
-    controller.name = widget.topics[isSelected].name;
+    topicId = controller.topics[isSelected].id;
+    print('topicId is : ${topicId}');
+    controller.name = controller.topics[isSelected].name;
     //controller.autopilot = topicId;
     print("name from topic_menu ${controller.name}");
     //controller.loadAutopilot();
     //print("name from topic_menu ${controller.name}");
+    print('isSelected = ${isSelected}');
   }
 
   handleNext() async {
+    _incrementCounter();
+    print('new value o f isSlected is ${isSelected}');
     print('topic id is ${topicId}');
     await controller.createTopicAutopilot(topicId);
     Topic? topic = await TopicDB().getTopicById(topicId);
-    controller.name = topic!.name!;
+    //controller.name = topic!.name!;
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return AutopilotQuizView(controller: controller);
@@ -57,37 +79,30 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   }
 
 //no need to handle on top since Autopilot
-  handletopicSelection(newTopic) {
-    setState(() {
-      if (topicId == newTopic)
-        topicId = '';
-      else
-        topicId = newTopic;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFF6F6F6),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      body: Center(
         child: Column(
           children: [
             Container(
+              width: double.infinity,
               child: Padding(
                 padding: EdgeInsets.only(
-                  top: 30,
+                  top: 35,
                 ),
                 child: Center(
                   child: Text(
-                    '${widget.controller.topics.length}',
+                    // TODO:
+                    '${widget.controller.topics.length - isSelected}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 60,
                       color: kAdeoBlue2,
-                      fontFamily: 'HelveticaRoundedLTStd-Bd',
+                      fontFamily: 'Helvetica Rounded',
                     ),
                   ),
                 ),
@@ -97,8 +112,9 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
               "topics remaining",
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: Colors.black.withOpacity(0.5),
+                fontFamily: 'Poppins',
               ),
             ),
             Divider(
@@ -107,50 +123,96 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
               endIndent: 0,
               color: Colors.white,
             ),
-            SizedBox(height: 33),
+            SizedBox(height: 17),
             Expanded(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < widget.topics.length; i++)
-                        /*  MultiPurposeCourseCard(
-                          title: widget.controller.topics[i].name,
-                          subTitle: "here is a subtitle",
-                        ), */
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        PercentageSwitch(
+                          showInPercentage: showInPercentage,
+                          onChanged: (val) {
+                            setState(() {
+                              showInPercentage = val;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 15),
+                        for (int i = 0; i < controller.topics.length; i++)
+                          /*  MultiPurposeCourseCard(
+                            title: widget.controller.topics[i].name,
+                            subTitle: "here is a subtitle",
+                          ), */
 
-                        Container(
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: Card(
-                            elevation: 0,
-                            child: Row(
-                              children: [
-                                if (isSelected == i)
+                          Container(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                  side: (isSelected == i)
+                                      ? BorderSide(
+                                          color: Colors.red,
+                                          width: 1,
+                                        )
+                                      : BorderSide(
+                                          color: Colors.white,
+                                          width: 0,
+                                        )),
+                              elevation: 0,
+                              child: Row(
+                                children: [
+                                  if (isSelected == i)
+                                    Expanded(
+                                      flex: 0,
+                                      child: IconButton(
+                                        icon: Image.asset(
+                                            'assets/icons/courses/auto.png'),
+                                        iconSize: 36,
+                                        onPressed: () {},
+                                      ),
+                                    ),
                                   Expanded(
-                                    flex: 1,
-                                    child: IconButton(
-                                      icon: Image.asset(
-                                          'assets/icons/courses/auto.png'),
-                                      iconSize: 36,
-                                      onPressed: null,
+                                    flex: 5,
+                                    child: ListTile(
+                                      title: Text(
+                                        "${controller.topics[i].name}",
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      subtitle: Text("here is a subtitle"),
                                     ),
                                   ),
-                                Expanded(
-                                  flex: 2,
-                                  child: ListTile(
-                                    title: Text(
-                                        "${widget.controller.topics[i].name}"),
-                                    subtitle: Text("here is a subtitle"),
-                                  ),
-                                )
-                              ],
+                                  if (isSelected == i)
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        "${controller.topics[i].totalCount}Q",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Helvetica Rounded',
+                                          color: Colors.black.withOpacity(0.6),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                    ],
+                          )
+                      ],
+                    ),
                   ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: 60,
             ),
           ],
         ),

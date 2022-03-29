@@ -8,6 +8,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot_topic_complete.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/autopilot_complete_congratulation.dart';
 import 'package:ecoach/views/autopilot_ended.dart';
@@ -17,6 +18,7 @@ import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:simple_timer/simple_timer.dart';
 
@@ -31,7 +33,7 @@ class AutopilotQuizView extends StatefulWidget {
 class _AutopilotQuizViewState extends State<AutopilotQuizView>
     with SingleTickerProviderStateMixin {
   int selectedObjective = 0;
-  Color themeColor = kAdeoBlue;
+  Color themeColor = kAdeoOrange;
   late AutopilotController controller;
   late final PageController pageController;
   List<AutopilotQuestionWidget> questionWidgets = [];
@@ -151,7 +153,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
       context,
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
-          return AutopilotCompleteCongratulations(
+          return AutopilotTopicComplete(
             controller: controller,
           );
         },
@@ -198,27 +200,19 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                     CircularPercentIndicator(
                       radius: 25,
                       lineWidth: 3,
-                      progressColor: Color(0xFF222E3B),
+                      progressColor: Color.fromARGB(255, 255, 255, 255),
                       backgroundColor: Colors.transparent,
                       percent: controller.percentageCompleted,
                       center: Text(
                         "${controller.currentQuestion + 1}",
-                        style:
-                            TextStyle(fontSize: 14, color: Color(0xFF222E3B)),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Color.fromARGB(255, 255, 255, 255)),
                       ),
                     ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 31, right: 4.0),
-                        child: Text(
-                          controller.name!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: kAdeoBlueAccent,
-                            fontSize: 14,
-                            fontFamily: 'Hamelin',
-                          ),
-                        ),
                       ),
                     ),
                     getTimerWidget(),
@@ -262,7 +256,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                             flex: 2,
                             child: AdeoTextButton(
                               label: "Next",
-                              background: kAdeoBlue,
+                              background: kAdeoOrange2,
                               color: Colors.white,
                               onPressed: nextButton,
                             ),
@@ -274,7 +268,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                             flex: 2,
                             child: AdeoTextButton(
                               label: "Submit",
-                              background: kAdeoBlue,
+                              background: kAdeoOrange2,
                               color: Colors.white,
                               onPressed: () {
                                 sumbitAnswer();
@@ -337,7 +331,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                        color: Color(0xFF222E3B),
+                        color: Color.fromARGB(255, 255, 255, 255),
                         width: 1,
                       ),
                     ),
@@ -348,7 +342,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                         return Text(
                           "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
                           style: TextStyle(
-                            color: Color(0xFF222E3B),
+                            color: Color.fromARGB(255, 255, 255, 255),
                             fontSize: 14,
                           ),
                         );
@@ -699,6 +693,7 @@ class _AutopilotQuestionWidgetState extends State<AutopilotQuestionWidget> {
   @override
   void initState() {
     print("enabled = ${widget.enabled}");
+    print('instruction is: ${widget.question.instructions}');
 
     answers = widget.question.answers;
     if (answers != null) {
@@ -721,15 +716,34 @@ class _AutopilotQuestionWidgetState extends State<AutopilotQuestionWidget> {
       child: Column(
         children: [
           QuestionWid(widget.user, question: widget.question.text!),
-          Instruction(
+          /* Instruction(
             widget.user,
             instruction: widget.question.instructions!,
+          ), */
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            color: Color(0xFF66717D),
+            child: Text(
+              "${widget.question.instructions!}",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+                fontFamily: 'Hamelin',
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-          DetailedInstruction(widget.user, details: widget.question.resource!),
+          if (widget.question.resource!.isNotEmpty)
+            DetailedInstruction(widget.user,
+                details: widget.question.resource!),
           Container(
             width: double.infinity,
             height: 10,
-            color: themeColor,
+            color: kAdeoOrange,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(

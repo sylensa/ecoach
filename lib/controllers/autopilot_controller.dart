@@ -28,6 +28,7 @@ class AutopilotController {
     this.name,
     this.autopilot,
     this.topics = const [],
+    this.topicId,
   }) {
     timerController = CustomTimerController();
   }
@@ -38,6 +39,7 @@ class AutopilotController {
   Autopilot? autopilot;
   List<TestNameAndCount> topics;
   List<AutopilotProgress> questions = [];
+  int? topicId;
 
   bool enabled = true;
   bool reviewMode = false;
@@ -280,20 +282,20 @@ class AutopilotController {
     await AutopilotDB().updateProgress(ap);
 
     if (ap.status == "wrong") {
-      AutopilotProgress newMp = AutopilotProgress();
-      newMp.userId = ap.userId;
-      newMp.courseId = ap.courseId;
-      newMp.autopilotId = ap.autopilotId;
-      newMp.topicId = ap.topicId;
-      newMp.topicName = ap.topicName;
-      newMp.questionId = ap.questionId;
-      newMp.question = await QuestionDB().getQuestionById(ap.questionId!);
+      AutopilotProgress newAp = AutopilotProgress();
+      newAp.userId = ap.userId;
+      newAp.courseId = ap.courseId;
+      newAp.autopilotId = ap.autopilotId;
+      newAp.topicId = ap.topicId;
+      newAp.topicName = ap.topicName;
+      newAp.questionId = ap.questionId;
+      newAp.question = await QuestionDB().getQuestionById(ap.questionId!);
 
-      int? progressId = await AutopilotDB().insertProgress(newMp);
-      if (progressId != null) newMp.id = progressId;
+      int? progressId = await AutopilotDB().insertProgress(newAp);
+      if (progressId != null) newAp.id = progressId;
       print("++++++++++++++++++");
-      questions.add(newMp);
-      print(newMp.toJson());
+      questions.add(newAp);
+      print(newAp.toJson());
       return false;
     }
     return true;
