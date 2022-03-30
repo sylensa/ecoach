@@ -1,5 +1,7 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
+import 'package:ecoach/database/autopilot_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/autopilot_selector_service.dart';
@@ -26,6 +28,7 @@ class AutopilotTopicMenu extends StatefulWidget {
 class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   late dynamic topicId;
   late AutopilotController controller;
+  List<dynamic> topicIds = [];
   AutopilotSelectorService _selectorService = AutopilotSelectorService();
 
   String? name;
@@ -52,10 +55,24 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
     super.initState();
     showInPercentage = false;
     isSelected = _selectorService.selectedTopic;
-    print('this value is from selectorService ${isSelected}');
-    print('controller topics list is: ${widget.controller.topics}');
     controller = widget.controller;
     topicId = controller.topics[isSelected].id;
+    setState(() {
+      topicIds.add(topicId);
+    });
+    print("index of ${topicIds.indexOf(topicId)}");
+    //assuming autopilot is already written to db
+    /*  AutopilotDB().(topicId).then((aList) {
+      setState(() {
+        autopilots.add(aList);
+      });
+    }); */
+
+    print('these are the topicIds: ${topicIds}');
+
+    print('this value is from selectorService ${isSelected}');
+    print('controller topics list is: ${widget.controller.topics}');
+
     print('topicId is : ${topicId}');
     controller.name = controller.topics[isSelected].name;
     //controller.autopilot = topicId;
@@ -150,6 +167,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                           Container(
                             padding: EdgeInsets.only(bottom: 20),
                             child: Card(
+                              margin: EdgeInsets.only(top: 25),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.zero,
                                   side: (isSelected == i)
@@ -175,7 +193,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                                       ),
                                     ),
                                   Expanded(
-                                    flex: 5,
+                                    flex: 4,
                                     child: ListTile(
                                       title: Text(
                                         "${controller.topics[i].name}",
@@ -202,12 +220,19 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                                         ),
                                       ),
                                     ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      "Score: ${controller.getTotalCorrect()}/${controller.questions.length}",
+                                  if (topicIds
+                                          .indexOf(controller.topics[i].id) ==
+                                      i)
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                              "${controller.getTotalCorrect()}"),
+                                          Text(
+                                              "/${controller.questions.length}"),
+                                        ],
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
