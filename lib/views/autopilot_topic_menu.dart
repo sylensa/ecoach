@@ -8,6 +8,7 @@ import 'package:ecoach/utils/autopilot_selector_service.dart';
 
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot_quiz_view.dart';
+import 'package:ecoach/widgets/autopilot_topic_selector.dart';
 
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
@@ -164,79 +165,16 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                             subTitle: "here is a subtitle",
                           ), */
 
-                          Container(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: Card(
-                              margin: EdgeInsets.only(top: 25),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                  side: (isSelected == i)
-                                      ? BorderSide(
-                                          color: Colors.red,
-                                          width: 1,
-                                        )
-                                      : BorderSide(
-                                          color: Colors.white,
-                                          width: 0,
-                                        )),
-                              elevation: 0,
-                              child: Row(
-                                children: [
-                                  if (isSelected == i)
-                                    Expanded(
-                                      flex: 0,
-                                      child: IconButton(
-                                        icon: Image.asset(
-                                            'assets/icons/courses/auto.png'),
-                                        iconSize: 36,
-                                        onPressed: () {},
-                                      ),
-                                    ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: ListTile(
-                                      title: Text(
-                                        "${controller.topics[i].name}",
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      subtitle: Text("here is a subtitle"),
-                                    ),
-                                  ),
-                                  if (isSelected == i)
-                                    Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        "${controller.topics[i].totalCount}Q",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Helvetica Rounded',
-                                          color: Colors.black.withOpacity(0.6),
-                                        ),
-                                      ),
-                                    ),
-                                  if (topicIds
-                                          .indexOf(controller.topics[i].id) ==
-                                      i)
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                              "${controller.getTotalCorrect()}"),
-                                          Text(
-                                              "/${controller.questions.length}"),
-                                        ],
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          )
+                          AutopilotTopicSelector(
+                            showInPercentage: showInPercentage,
+                            topicId: controller.topics[i].id!,
+                            label: controller.topics[i].name,
+                            isSelected: topicId == controller.topics[i].id!,
+                            isUnselected: topicId != '' &&
+                                topicId != controller.topics[i].id!,
+                            numberOfQuestions: controller.questions.length,
+                            correctlyAnswered: controller.getTotalCorrect(),
+                          ),
                       ],
                     ),
                   ),
