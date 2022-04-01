@@ -131,12 +131,14 @@ class AutopilotTopicComplete extends StatelessWidget {
                     fontSize: 20,
                     color: Colors.white,
                     background: kAdeoOrange2,
-                    onPressed: () {
+                    onPressed: () async {
                       print(
                           'This is from quiz ${controller.getTotalCorrect()}');
+                      await controller.nextTopic();
 
                       Navigator.push(context, MaterialPageRoute(builder: (c) {
                         return AutopilotTopicMenu(
+                            topics: controller.topics,
                             /* controller.user,
                           controller.course, */
                             controller: controller);

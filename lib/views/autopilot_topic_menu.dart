@@ -27,15 +27,14 @@ class AutopilotTopicMenu extends StatefulWidget {
 }
 
 class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
-  late dynamic topicId;
+  late int topicId;
   late AutopilotController controller;
-  List<dynamic> topicIds = [];
+  List<int> topicIds = [];
   AutopilotSelectorService _selectorService = AutopilotSelectorService();
 
   String? name;
   late int isSelected;
   late bool showInPercentage;
-  List<AutopilotController> controllers = [];
 
   List<Autopilot> autopilots = [];
   List completedAutopilots = [];
@@ -51,17 +50,20 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
     showInPercentage = false;
     isSelected = _selectorService.selectedTopic;
     controller = widget.controller;
-    topicId = controller.topics[isSelected].id;
+
+    topicId = (controller.autopilot != null
+        ? controller.autopilot!.topicId ?? widget.topics[0].id!
+        : widget.topics[0].id)!;
 
     /* TODO: Remember to remove this */
     setState(() {
       topicIds.add(topicId);
-      controllers.add(controller);
+      // controllers.add(controller);
 
       super.initState();
     });
 
-    AutopilotDB().completedAutopilots(controller.course).then((aList) {
+    /* AutopilotDB().completedAutopilots(controller.course).then((aList) {
       setState(() {
         autopilots = aList;
         if (autopilots.isNotEmpty) {
@@ -72,9 +74,9 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
         }
         //topicId = controller.topics[isSelected].id;
       });
-    });
+    }); */
 
-    print("here are the controllers ${controllers.toString()}");
+    //print("here are the controllers ${controllers.toString()}");
     print("index of ${topicIds.indexOf(topicId)}");
 
     print('these are the topicIds: ${topicIds}');
@@ -167,22 +169,21 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                           },
                         ),
                         SizedBox(height: 15),
-                        for (int i = 0; i < controller.topics.length; i++)
+                        for (int i = 0; i < widget.topics.length; i++)
                           /*  MultiPurposeCourseCard(
                             title: widget.controller.topics[i].name,
                             subTitle: "here is a subtitle",
                           ), */
 
                           AutopilotTopicSelector(
-                            showInPercentage: showInPercentage,
-                            topicId: controller.topics[i].id!,
-                            label: controller.topics[i].name,
-                            isSelected: topicId == controller.topics[i].id!,
-                            isUnselected: topicId != '' &&
-                                topicId != controller.topics[i].id!,
-                            numberOfQuestions: controller.topics[i].totalCount,
-                            correctlyAnswered: controller.getTotalCorrect(),
-                          ),
+                              showInPercentage: showInPercentage,
+                              topicId: widget.topics[i].id!,
+                              label: widget.topics[i].name,
+                              isSelected: topicId == widget.topics[i].id!,
+                              isUnselected: topicId != '' &&
+                                  topicId != widget.topics[i].id!,
+                              numberOfQuestions: widget.topics[i].totalCount,
+                              correctlyAnswered: widget.topics[i].count),
                       ],
                     ),
                   ),

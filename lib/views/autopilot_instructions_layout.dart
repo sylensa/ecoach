@@ -23,10 +23,21 @@ class AutopilotInstructionsLayoutState
 
   //what about i use async await to get them and pass them
 
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.controller;
+  }
+
   handleNext() async {
     print('name from topic_menu ${widget.controller.name}');
     List<TestNameAndCount> topics =
         await TestController().getTopics(widget.controller.course);
+
+    for (int i = 0; i < topics.length; i++) {
+      topics[i].count = await controller.getTopicTotalCorrect(topics[i].id);
+    }
+
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return AutopilotTopicMenu(topics: topics, controller: widget.controller);
     }));

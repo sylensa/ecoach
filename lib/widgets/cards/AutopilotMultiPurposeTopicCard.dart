@@ -59,16 +59,7 @@ class _AutopilotMultiPurposeTopicCardState
     return Column(
       children: [
         InkWell(
-          onTap: Feedback.wrapForTap(() async {
-            setState(() {
-              /* isPressedDown = true; */
-            });
-            await Future.delayed(Duration(milliseconds: 300));
-            widget.onTap();
-            setState(() {
-              /*  isPressedDown = false; */
-            });
-          }, context),
+          onTap: () {},
           child: Container(
             padding:
                 EdgeInsets.only(left: 7, top: 20.0, right: 20.0, bottom: 20.0),
@@ -181,7 +172,7 @@ class _AutopilotMultiPurposeTopicCardState
                       )
                     ],
                   )
-                else if (widget.rightWidget != null)
+                else if (widget.rightWidget != null && isSelected)
                   widget.rightWidget!
               ],
             ),

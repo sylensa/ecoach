@@ -73,6 +73,23 @@ class AutopilotController {
     questionTimer = DateTime.now();
   }
 
+  nextTopic() async {
+    var nextTopic;
+    bool currentFound = false;
+    topics.forEach((element) {
+      if (currentFound == true) {
+        nextTopic = element;
+        currentFound = false;
+      }
+      ;
+      if (element.id == autopilot!.topicId) {
+        currentFound = true;
+      }
+    });
+    autopilot!.topicId = nextTopic.id;
+    await AutopilotDB().update(autopilot!);
+  }
+
   int get nextLevel {
     return 0; // progress.level! + 1;
   }
@@ -157,6 +174,18 @@ class AutopilotController {
   int getTotalCorrect() {
     if (autopilot == null) return 0;
     return autopilot!.totalCorrect ?? 0;
+  }
+
+  Future<int> getTopicTotalCorrect(topicId) async {
+    List<AutopilotProgress> list =
+        await AutopilotDB().getTopicProgresses(topicId);
+    int count = 0;
+    list.forEach((element) {
+      if (element.status == 'correct') {
+        count = count + 1;
+      }
+    });
+    return count;
   }
 
   int getTotalWrong() {
@@ -278,6 +307,10 @@ class AutopilotController {
 
     await AutopilotDB().update(autopilot!);
     await AutopilotDB().updateProgress(ap);
+
+    if (ap.status == 'wrong') {
+      return false;
+    }
 
     return true;
   }

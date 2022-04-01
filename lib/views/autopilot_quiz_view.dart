@@ -63,7 +63,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     print("print current question ${controller.currentQuestion}");
     print("No of Questions of Topic ${controller.topics.length}");
     print("No of Questions = ${controller.questions.length}");
-    controller.startTest();
+    Future.delayed(Duration.zero).then((value) => controller.startTest());
   }
 
   void handleObjectiveSelection(id) {

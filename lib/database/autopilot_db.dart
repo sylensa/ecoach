@@ -100,6 +100,31 @@ class AutopilotDB {
     return autopilots;
   }
 
+  Future<List<AutopilotProgress>> getTopicProgresses(int topicId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+        'autopilot_progress',
+        where: "topic_id = ?",
+        whereArgs: [topicId]);
+
+    List<AutopilotProgress> autopilots = [];
+    for (int i = 0; i < maps.length; i++) {
+      AutopilotProgress progress = AutopilotProgress.fromJson(maps[i]);
+      progress.question =
+          await QuestionDB().getQuestionById(progress.questionId!);
+      if (progress.question != null) {
+        if (progress.selectedAnswerId != null) {
+          progress.question!.selectedAnswer =
+              await AnswerDB().getAnswerById(progress.selectedAnswerId!);
+        }
+
+        autopilots.add(progress);
+      }
+    }
+    return autopilots;
+  }
+
   Future<void> insertAll(List<Autopilot> autopilots) async {
     final Database? db = await DBProvider.database;
     Batch batch = db!.batch();
