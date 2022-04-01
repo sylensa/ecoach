@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
-import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/autopilot_db.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -15,7 +14,6 @@ import 'package:ecoach/models/user.dart';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:flutter/cupertino.dart';
@@ -281,23 +279,6 @@ class AutopilotController {
     await AutopilotDB().update(autopilot!);
     await AutopilotDB().updateProgress(ap);
 
-    if (ap.status == "wrong") {
-      AutopilotProgress newAp = AutopilotProgress();
-      newAp.userId = ap.userId;
-      newAp.courseId = ap.courseId;
-      newAp.autopilotId = ap.autopilotId;
-      newAp.topicId = ap.topicId;
-      newAp.topicName = ap.topicName;
-      newAp.questionId = ap.questionId;
-      newAp.question = await QuestionDB().getQuestionById(ap.questionId!);
-
-      int? progressId = await AutopilotDB().insertProgress(newAp);
-      if (progressId != null) newAp.id = progressId;
-      print("++++++++++++++++++");
-      questions.add(newAp);
-      print(newAp.toJson());
-      return false;
-    }
     return true;
   }
 

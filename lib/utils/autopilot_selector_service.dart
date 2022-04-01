@@ -9,16 +9,20 @@ class AutopilotSelectorService {
   AutopilotSelectorService._internal() {
     _selectedTopic = 0;
     _topicId = '';
+    _controllers = [];
   }
 
   late int _selectedTopic;
   late dynamic _topicId;
+  late List<AutopilotController> _controllers;
 
   //short getter for my variable
   int get selectedTopic => _selectedTopic;
+  //List<AutopilotController> get controllers => _controllers;
 
   //short setter for my variable
   set selectedTopic(int value) => selectedTopic = value;
+  // set controllers(AutopilotController controller) => controller.add(controller);
 
   void incrementSelectedTopic() => _selectedTopic++;
 

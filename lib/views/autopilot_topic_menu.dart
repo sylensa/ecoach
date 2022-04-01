@@ -35,6 +35,10 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   String? name;
   late int isSelected;
   late bool showInPercentage;
+  List<AutopilotController> controllers = [];
+
+  List<Autopilot> autopilots = [];
+  List completedAutopilots = [];
 
   void _incrementCounter() {
     setState(() {
@@ -42,32 +46,36 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
     });
   }
 
-  /* handletopicSelection(newTopic) {
-    setState(() {
-      if (topicId == newTopic)
-        topicId = '';
-      else
-        topicId = newTopic;
-    });
-  } */
-
   @override
   void initState() {
-    super.initState();
     showInPercentage = false;
     isSelected = _selectorService.selectedTopic;
     controller = widget.controller;
     topicId = controller.topics[isSelected].id;
+
+    /* TODO: Remember to remove this */
     setState(() {
       topicIds.add(topicId);
+      controllers.add(controller);
+
+      super.initState();
     });
-    print("index of ${topicIds.indexOf(topicId)}");
-    //assuming autopilot is already written to db
-    /*  AutopilotDB().(topicId).then((aList) {
+
+    AutopilotDB().completedAutopilots(controller.course).then((aList) {
       setState(() {
-        autopilots.add(aList);
+        autopilots = aList;
+        if (autopilots.isNotEmpty) {
+          print("its not empty, length is ${autopilots.length}");
+          //autopilots.forEach((item) => print(item));
+        } else {
+          print("from inside DB topicId = ${topicId}");
+        }
+        //topicId = controller.topics[isSelected].id;
       });
-    }); */
+    });
+
+    print("here are the controllers ${controllers.toString()}");
+    print("index of ${topicIds.indexOf(topicId)}");
 
     print('these are the topicIds: ${topicIds}');
 
@@ -172,7 +180,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                             isSelected: topicId == controller.topics[i].id!,
                             isUnselected: topicId != '' &&
                                 topicId != controller.topics[i].id!,
-                            numberOfQuestions: controller.questions.length,
+                            numberOfQuestions: controller.topics[i].totalCount,
                             correctlyAnswered: controller.getTotalCorrect(),
                           ),
                       ],
