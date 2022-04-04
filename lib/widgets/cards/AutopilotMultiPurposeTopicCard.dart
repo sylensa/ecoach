@@ -172,7 +172,7 @@ class _AutopilotMultiPurposeTopicCardState
                       )
                     ],
                   )
-                else if (widget.rightWidget != null && isSelected)
+                else if (widget.rightWidget != null)
                   widget.rightWidget!
               ],
             ),
