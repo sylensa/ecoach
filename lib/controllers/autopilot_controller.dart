@@ -36,7 +36,8 @@ class AutopilotController {
   String? name;
   Autopilot? autopilot;
   List<TestNameAndCount> topics;
-  List<AutopilotProgress> questions = [];
+  List<AutopilotTopic> autoTopics = [];
+  List<AutopilotQuestion> questions = [];
   int? topicId;
 
   bool enabled = true;
@@ -73,16 +74,20 @@ class AutopilotController {
     questionTimer = DateTime.now();
   }
 
+  int get numberOfTopics {
+    return topics.length;
+  }
+
   nextTopic() async {
     var nextTopic;
     bool currentFound = false;
-    topics.forEach((element) {
+    autoTopics.forEach((element) {
       if (currentFound == true) {
         nextTopic = element;
         currentFound = false;
       }
       ;
-      if (element.id == autopilot!.topicId) {
+      if (element.topicId == autopilot!.topicId) {
         currentFound = true;
       }
     });
@@ -90,8 +95,14 @@ class AutopilotController {
     await AutopilotDB().update(autopilot!);
   }
 
-  int get nextLevel {
-    return 0; // progress.level! + 1;
+  AutopilotTopic? get currentTopic {
+    for (int i = 0; i < autoTopics.length; i++) {
+      if (autoTopics[i].status == AutopilotStatus.IN_PROGRESS.toString()) {
+        return autoTopics[i];
+      }
+    }
+
+    return autoTopics.length > 0 ? autoTopics[0] : null;
   }
 
   bool get lastQuestion {
@@ -177,7 +188,7 @@ class AutopilotController {
   }
 
   Future<int> getTopicTotalCorrect(topicId) async {
-    List<AutopilotProgress> list =
+    List<AutopilotQuestion> list =
         await AutopilotDB().getTopicProgresses(topicId);
     int count = 0;
     list.forEach((element) {
@@ -186,6 +197,18 @@ class AutopilotController {
       }
     });
     return count;
+  }
+
+  Future<bool> isTopicDone(topicId) async {
+    List<AutopilotQuestion> list =
+        await AutopilotDB().getTopicProgresses(topicId);
+    int count = 0;
+    list.forEach((element) {
+      if (element.status != null) {
+        count = count + 1;
+      }
+    });
+    return count > 0;
   }
 
   int getTotalWrong() {
@@ -281,7 +304,7 @@ class AutopilotController {
 
   Future<bool> scoreCurrentQuestion() async {
     print("scoring...");
-    AutopilotProgress ap = questions[currentQuestion];
+    AutopilotQuestion ap = questions[currentQuestion];
     Question question = ap.question!;
     if (question.unattempted) {
       return true;
@@ -328,7 +351,7 @@ class AutopilotController {
 
   createAutopilot() async {
     autopilot = Autopilot(
-      title: name,
+      title: name ?? course.name,
       type: AutopilotType.FULL.toString(),
       courseId: course.id,
       status: AutopilotStatus.NEW.toString(),
@@ -342,48 +365,33 @@ class AutopilotController {
 
     int autopilotId = await AutopilotDB().insert(autopilot!);
     autopilot!.id = autopilotId;
-    List<Question> quesList =
-        await QuestionDB().getAutopilotTopicQuestions(course.id!);
-    print("question=${quesList.length}");
-    for (int i = 0; i < quesList.length; i++) {
-      AutopilotProgress ap = AutopilotProgress(
-        courseId: course.id,
-        autopilotId: autopilotId,
-        questionId: quesList[i].id,
-        topicId: quesList[i].topicId,
-        topicName: quesList[i].topicName,
-        userId: user.id,
-      );
-      ap.question = quesList[i];
-      if (ap.question != null) {
-        questions.add(ap);
+    List<TestNameAndCount> topics = await TestController().getTopics(course);
+    print("topics =${topics.length}");
+    for (int i = 0; i < topics.length; i++) {
+      AutopilotTopic ap = AutopilotTopic(
+          autopilotId: autopilotId,
+          topicId: topics[i].id,
+          topicName: topics[i].name,
+          correct: 0,
+          totalQuestion: topics[i].totalCount);
+
+      ap.topic = await TopicDB().getTopicById(topics[i].id!);
+      if (ap.topic != null) {
+        int? id = await AutopilotDB().insertAutopilotTopic(ap);
+        ap.id = id;
+        autoTopics.add(ap);
       }
     }
-
-    await AutopilotDB().insertAllProgress(questions);
-    questions = await AutopilotDB().getProgresses(autopilotId);
   }
 
-  createTopicAutopilot(int topicId) async {
-    autopilot = Autopilot(
-      title: name,
-      type: AutopilotType.TOPIC.toString(),
-      topicId: topicId,
-      courseId: course.id,
-      status: AutopilotStatus.NEW.toString(),
-      userId: user.id,
-      startTime: DateTime.now(),
-    );
-
-    int autopilotId = await AutopilotDB().insert(autopilot!);
-    autopilot!.id = autopilotId;
+  createTopicQuestions(AutopilotTopic topic) async {
     List<Question> quesList =
-        await QuestionDB().getAutopilotTopicQuestions(topicId);
+        await QuestionDB().getAutopilotTopicQuestions(topic.topicId!);
     print("question=${quesList.length}");
     for (int i = 0; i < quesList.length; i++) {
-      AutopilotProgress ap = AutopilotProgress(
+      AutopilotQuestion ap = AutopilotQuestion(
         courseId: course.id,
-        autopilotId: autopilotId,
+        autopilotId: topic.autopilotId,
         questionId: quesList[i].id,
         topicId: quesList[i].topicId,
         topicName: quesList[i].topicName,
@@ -396,7 +404,7 @@ class AutopilotController {
     }
 
     await AutopilotDB().insertAllProgress(questions);
-    questions = await AutopilotDB().getProgresses(autopilotId);
+    questions = await AutopilotDB().getProgresses(topic.topicId!);
   }
 
   Future<bool> loadAutopilot() async {
@@ -454,7 +462,7 @@ class AutopilotController {
       if (topicId == null) {
         await createAutopilot();
       } else {
-        await createTopicAutopilot(topicId);
+        await loadAutopilot();
       }
     }
   }

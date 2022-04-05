@@ -137,11 +137,7 @@ class AutopilotTopicComplete extends StatelessWidget {
                       await controller.nextTopic();
 
                       Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return AutopilotTopicMenu(
-                            topics: controller.topics,
-                            /* controller.user,
-                          controller.course, */
-                            controller: controller);
+                        return AutopilotTopicMenu(controller: controller);
                       }));
                     },
                   ),

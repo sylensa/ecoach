@@ -33,10 +33,7 @@ class _AutopilotIntroitTopicsState extends State<AutopilotIntroitTopics> {
   @override
   void initState() {
     controller = widget.controller;
-    print('welcome to autopilot introit topics');
-    print('topics from are ' + controller.topics.toString());
-    //print('topic name from introit topics = ${controller.topics[0].name}');
-    print('from introit to topics no of questions is: ${widget.count}');
+
     super.initState();
   }
 
@@ -52,7 +49,7 @@ class _AutopilotIntroitTopicsState extends State<AutopilotIntroitTopics> {
             children: [
               SizedBox(height: 40),
               Text(
-                "${widget.controller.topics.length}",
+                "${controller.numberOfTopics}",
                 style: TextStyle(
                   fontSize: 109,
                   fontWeight: FontWeight.w600,
@@ -81,93 +78,7 @@ class _AutopilotIntroitTopicsState extends State<AutopilotIntroitTopics> {
             ],
           ),
         ),
-        /* getAutopilotInstructionsLayout(() async {
-          showLoaderDialog(context, message: "Creating marathon");
-          await controller.createAutopilot();
-          Navigator.pop(context);
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return AutopilotQuizView(controller: controller);
-              },
-            ),
-          );
-        } ),*/
       ],
     );
   }
 }
-
-/* TestIntroitLayoutPage getAutopilotInstructionsLayout(Function onPressed) {
-  return TestIntroitLayoutPage(
-    foregroundColor: Colors.white,
-    fontWeight: FontWeight.w700,
-    title: 'Instructions',
-    middlePiece: Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        children: [
-          SizedBox(height: 7),
-          Text(
-            '1. This is a marathon.',
-            style: kCustomizedTestSubtextStyle.copyWith(
-              color: kAdeoBlueAccent,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 7),
-          Text(
-            '2. There is no test duration',
-            style: kCustomizedTestSubtextStyle.copyWith(
-              color: kAdeoBlueAccent,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 7),
-          Text(
-            '3. Finish faster for a higher ranking',
-            style: kCustomizedTestSubtextStyle.copyWith(
-              color: kAdeoBlueAccent,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 7),
-          Text(
-            '4. Answer questions correctly to make progress',
-            style: kCustomizedTestSubtextStyle.copyWith(
-              color: kAdeoBlueAccent,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 7),
-          Text(
-            '5. You can only complete the marathon by answering every question correctly',
-            style: kCustomizedTestSubtextStyle.copyWith(
-              color: kAdeoBlueAccent,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ),
-    footer: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AdeoOutlinedButton(
-          color: kAdeoBlue,
-          label: 'Start',
-          onPressed: onPressed,
-        )
-      ],
-    ),
-  );
-}
- */

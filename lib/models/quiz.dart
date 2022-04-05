@@ -84,7 +84,6 @@ class Quiz {
       };
 }
 
-
 class TestNameAndCount {
   String name;
   int? id;
@@ -92,15 +91,10 @@ class TestNameAndCount {
   int totalCount;
   TestCategory? category;
   double? averageScore;
+  bool status;
 
-  TestNameAndCount(
-    this.name,
-    this.count,
-    this.totalCount, {
-    this.averageScore,
-    this.id,
-    this.category,
-  });
+  TestNameAndCount(this.name, this.count, this.totalCount,
+      {this.averageScore, this.id, this.category, this.status = false});
 
   double get progress {
     return count / totalCount;

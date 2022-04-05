@@ -12,15 +12,15 @@ import 'package:ecoach/widgets/autopilot_topic_selector.dart';
 
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
+import 'package:ecoach/widgets/widgets.dart';
 
 import 'package:flutter/material.dart';
 
 enum topics { TOPIC, MOCK }
 
 class AutopilotTopicMenu extends StatefulWidget {
-  AutopilotTopicMenu({this.topics = const [], required this.controller});
+  AutopilotTopicMenu({required this.controller});
   AutopilotController controller;
-  List<TestNameAndCount> topics;
 
   @override
   State<AutopilotTopicMenu> createState() => _AutopilotTopicMenuState();
@@ -36,8 +36,9 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   late int isSelected;
   late bool showInPercentage;
 
-  List<Autopilot> autopilots = [];
+  List<AutopilotTopic> autopilots = [];
   List completedAutopilots = [];
+  late AutopilotTopic currentAutoTopic;
 
   void _incrementCounter() {
     setState(() {
@@ -47,34 +48,20 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
 
   @override
   void initState() {
+    super.initState();
+
     showInPercentage = false;
     isSelected = _selectorService.selectedTopic;
     controller = widget.controller;
 
-    topicId = (controller.autopilot != null
-        ? controller.autopilot!.topicId ?? widget.topics[0].id!
-        : widget.topics[0].id)!;
+    currentAutoTopic = controller.currentTopic!;
+    topicId = currentAutoTopic.topicId!;
 
     /* TODO: Remember to remove this */
     setState(() {
       topicIds.add(topicId);
       // controllers.add(controller);
-
-      super.initState();
     });
-
-    /* AutopilotDB().completedAutopilots(controller.course).then((aList) {
-      setState(() {
-        autopilots = aList;
-        if (autopilots.isNotEmpty) {
-          print("its not empty, length is ${autopilots.length}");
-          //autopilots.forEach((item) => print(item));
-        } else {
-          print("from inside DB topicId = ${topicId}");
-        }
-        //topicId = controller.topics[isSelected].id;
-      });
-    }); */
 
     //print("here are the controllers ${controllers.toString()}");
     print("index of ${topicIds.indexOf(topicId)}");
@@ -97,10 +84,9 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   handleNext() async {
     _incrementCounter();
     print('new value o f isSlected is ${isSelected}');
-    print('topic id is ${topicId}');
-    await controller.createTopicAutopilot(topicId);
-    Topic? topic = await TopicDB().getTopicById(topicId);
-    //controller.name = topic!.name!;
+    showLoaderDialog(context, message: "Creating Autopilot questions");
+    await controller.createTopicQuestions(currentAutoTopic);
+    Navigator.pop(context);
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return AutopilotQuizView(controller: controller);
@@ -169,21 +155,19 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                           },
                         ),
                         SizedBox(height: 15),
-                        for (int i = 0; i < widget.topics.length; i++)
-                          /*  MultiPurposeCourseCard(
-                            title: widget.controller.topics[i].name,
-                            subTitle: "here is a subtitle",
-                          ), */
-
+                        for (int i = 0; i < controller.topics.length; i++)
                           AutopilotTopicSelector(
                               showInPercentage: showInPercentage,
-                              topicId: widget.topics[i].id!,
-                              label: widget.topics[i].name,
-                              isSelected: topicId == widget.topics[i].id!,
+                              topicId: controller.autoTopics[i].topicId!,
+                              label: controller.autoTopics[i].topicName!,
+                              isSelected:
+                                  topicId == controller.autoTopics[i].topicId!,
                               isUnselected: topicId != '' &&
-                                  topicId != widget.topics[i].id!,
-                              numberOfQuestions: widget.topics[i].totalCount,
-                              correctlyAnswered: widget.topics[i].count),
+                                  topicId != controller.autoTopics[i].topicId!,
+                              numberOfQuestions:
+                                  controller.autoTopics[i].totalQuestion!,
+                              correctlyAnswered:
+                                  controller.autoTopics[i].correct!),
                       ],
                     ),
                   ),

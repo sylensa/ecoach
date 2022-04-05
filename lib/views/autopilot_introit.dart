@@ -1,5 +1,7 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/autopilot_db.dart';
+import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
 
@@ -87,6 +89,9 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
                   child: AdeoOutlinedButton(
                     label: 'Get Started',
                     onPressed: () async {
+                      Autopilot? autopilot = await AutopilotDB()
+                          .getCurrentAutopilot(widget.course);
+
                       List<TestNameAndCount> topics =
                           await TestController().getTopics(widget.course);
 
@@ -99,10 +104,8 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
                             builder: (context) => AutopilotIntroitTopics(
                                   count: count,
                                   controller: AutopilotController(
-                                    widget.user,
-                                    widget.course,
-                                    topics: topics,
-                                  ),
+                                      widget.user, widget.course,
+                                      topics: topics, autopilot: autopilot),
                                 )),
                       );
                     },

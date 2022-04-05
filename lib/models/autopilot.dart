@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:ecoach/models/topic.dart';
 
 Autopilot autopilotFromJson(String str) => Autopilot.fromJson(json.decode(str));
 
@@ -10,11 +9,6 @@ String autopilotToJson(Autopilot data) => json.encode(data.toJson());
 
 enum AutopilotStatus { NEW, IN_PROGRESS, PAUSED, COMPLETED }
 enum AutopilotType { FULL, TOPIC }
-
-
-
-
-
 
 class Autopilot {
   Autopilot({
@@ -51,7 +45,7 @@ class Autopilot {
   DateTime? endTime;
   String? status;
 
-    String get date {
+  String get date {
     if (endTime == null) return "";
 
     return '${endTime!.day} ${endTime!.month} ${endTime!.year}';
@@ -107,14 +101,59 @@ class Autopilot {
       };
 }
 
-AutopilotProgress autopilotProgressFromJson(String str) =>
-    AutopilotProgress.fromJson(json.decode(str));
+class AutopilotTopic {
+  int? id;
+  int? autopilotId;
+  int? topicId;
+  String? topicName;
+  double? avgScore;
+  int? correct;
+  int? totalQuestion;
+  String? status;
+  Topic? topic;
 
-String autopilotProgressToJson(AutopilotProgress data) =>
+  AutopilotTopic({
+    this.id,
+    this.autopilotId,
+    this.topicId,
+    this.topicName,
+    this.avgScore,
+    this.correct,
+    this.totalQuestion,
+    this.status,
+  });
+
+  factory AutopilotTopic.fromJson(Map<String, dynamic> json) => AutopilotTopic(
+        id: json["id"],
+        autopilotId: json["autopilot_id"],
+        topicId: json["topic_id"],
+        topicName: json["topic_name"],
+        avgScore: json["avg_score"],
+        correct: json["correct"],
+        totalQuestion: json["total_questions"],
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "autopilot_id": autopilotId,
+        "topic_id": topicId,
+        "topic_name": topicName,
+        "avg_score": avgScore,
+        "correct": correct,
+        "total_questions": totalQuestion,
+        "status": status,
+      };
+}
+
+AutopilotQuestion autopilotProgressFromJson(String str) =>
+    AutopilotQuestion.fromJson(json.decode(str));
+
+String autopilotProgressToJson(AutopilotQuestion data) =>
     json.encode(data.toJson());
 
-class AutopilotProgress {
-  AutopilotProgress({
+class AutopilotQuestion {
+  AutopilotQuestion({
     this.id,
     this.courseId,
     this.userId,
@@ -139,7 +178,7 @@ class AutopilotProgress {
   String? status;
   Question? question;
 
-   get isCorrect {
+  get isCorrect {
     if (question == null) return false;
 
     return question!.isCorrect;
@@ -163,8 +202,8 @@ class AutopilotProgress {
     return question!.selectedAnswer;
   }
 
-  factory AutopilotProgress.fromJson(Map<String, dynamic> json) =>
-    AutopilotProgress(
+  factory AutopilotQuestion.fromJson(Map<String, dynamic> json) =>
+      AutopilotQuestion(
         id: json["id"],
         courseId: json["course_id"],
         userId: json["user_id"],
@@ -175,10 +214,10 @@ class AutopilotProgress {
         topicName: json["topic_name"],
         time: json["time"],
         status: json["status"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
-       "id": id,
+  Map<String, dynamic> toJson() => {
+        "id": id,
         "course_id": courseId,
         "user_id": userId,
         "autopilot_id": autopilotId,
@@ -188,10 +227,9 @@ class AutopilotProgress {
         "topic_name": topicName,
         "time": time,
         "status": status,
-    };
+      };
 
-    AutopilotProgress clone() {
-      return AutopilotProgress.fromJson(toJson());
-    }
-
+  AutopilotQuestion clone() {
+    return AutopilotQuestion.fromJson(toJson());
+  }
 }

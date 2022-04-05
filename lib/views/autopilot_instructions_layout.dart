@@ -1,5 +1,7 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/autopilot_db.dart';
+import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot_topic_menu.dart';
@@ -30,16 +32,20 @@ class AutopilotInstructionsLayoutState
   }
 
   handleNext() async {
-    print('name from topic_menu ${widget.controller.name}');
-    List<TestNameAndCount> topics =
-        await TestController().getTopics(widget.controller.course);
+    print('name from topic_menu ${controller.name}');
 
-    for (int i = 0; i < topics.length; i++) {
-      topics[i].count = await controller.getTopicTotalCorrect(topics[i].id);
+    Autopilot? autopilot = controller.autopilot;
+    if (autopilot == null) {
+      await controller.createAutopilot();
+    } else {
+      List<AutopilotTopic> topics =
+          await AutopilotDB().getAutoPilotTopics(autopilot.id!);
+
+      controller.autoTopics = topics;
     }
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return AutopilotTopicMenu(topics: topics, controller: widget.controller);
+      return AutopilotTopicMenu(controller: widget.controller);
     }));
   }
 
