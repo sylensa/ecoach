@@ -69,13 +69,13 @@ class Autopilot {
         userId: json["user_id"],
         title: json["title"],
         type: json["type"],
-        topicId: json["type_id"],
-        avgScore: json["avg_score"],
-        avgTime: json["avg_time"],
-        totalCorrect: json["total_correct"],
-        totalWrong: json["total_wrong"],
-        totalQuestions: json["total_questions"],
-        totalTime: json["total_time"],
+        topicId: json["topic_id"],
+        // avgScore: json["avg_score"],
+        // avgTime: json["avg_time"],
+        // totalCorrect: json["total_correct"],
+        // totalWrong: json["total_wrong"],
+        // totalQuestions: json["total_questions"],
+        // totalTime: json["total_time"],
         startTime: DateTime.parse(json['start_time']),
         endTime:
             json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
@@ -89,12 +89,12 @@ class Autopilot {
         "title": title,
         "type": type,
         "topic_id": topicId,
-        "avg_score": avgScore,
-        "avg_time": avgTime,
-        "total_correct": totalCorrect,
-        "total_wrong": totalWrong,
-        "total_questions": totalQuestions,
-        "total_time": totalTime,
+        // "avg_score": avgScore,
+        // "avg_time": avgTime,
+        // "total_correct": totalCorrect,
+        // "total_wrong": totalWrong,
+        // "total_questions": totalQuestions,
+        // "total_time": totalTime,
         "start_time": startTime!.toIso8601String(),
         "end_time": endTime == null ? null : endTime!.toIso8601String(),
         "status": status,
@@ -107,8 +107,13 @@ class AutopilotTopic {
   int? topicId;
   String? topicName;
   double? avgScore;
+  double? avgTime;
   int? correct;
-  int? totalQuestion;
+  int? wrong;
+  int? totalQuestions;
+  int? time;
+  DateTime? startTime;
+  DateTime? endTime;
   String? status;
   Topic? topic;
 
@@ -118,8 +123,13 @@ class AutopilotTopic {
     this.topicId,
     this.topicName,
     this.avgScore,
+    this.avgTime = 0,
     this.correct,
-    this.totalQuestion,
+    this.wrong,
+    this.totalQuestions,
+    this.time,
+    this.startTime,
+    this.endTime,
     this.status,
   });
 
@@ -130,7 +140,13 @@ class AutopilotTopic {
         topicName: json["topic_name"],
         avgScore: json["avg_score"],
         correct: json["correct"],
-        totalQuestion: json["total_questions"],
+        avgTime: json["avg_time"],
+        wrong: json["wrong"],
+        totalQuestions: json["total_questions"],
+        time: json["time"],
+        startTime: DateTime.parse(json['start_time']),
+        endTime:
+            json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
         status: json["status"],
       );
 
@@ -140,8 +156,13 @@ class AutopilotTopic {
         "topic_id": topicId,
         "topic_name": topicName,
         "avg_score": avgScore,
+        "avg_time": avgTime,
         "correct": correct,
-        "total_questions": totalQuestion,
+        "wrong": wrong,
+        "total_questions": totalQuestions,
+        "time": time,
+        "start_time": startTime!.toIso8601String(),
+        "end_time": endTime == null ? null : endTime!.toIso8601String(),
         "status": status,
       };
 }

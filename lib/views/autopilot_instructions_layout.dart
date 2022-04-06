@@ -36,12 +36,11 @@ class AutopilotInstructionsLayoutState
 
     Autopilot? autopilot = controller.autopilot;
     if (autopilot == null) {
+      print('creating new autopilot');
       await controller.createAutopilot();
     } else {
-      List<AutopilotTopic> topics =
-          await AutopilotDB().getAutoPilotTopics(autopilot.id!);
-
-      controller.autoTopics = topics;
+      print('loading old autopilot');
+      await controller.loadAutopilot();
     }
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {

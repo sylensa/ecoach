@@ -66,7 +66,7 @@ class AutopilotTopicComplete extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Net Score: ${controller.autopilot!.totalCorrect! - controller.autopilot!.totalWrong!}',
+                    'Net Score: ${controller.currentTopic!.correct! - controller.currentTopic!.wrong!}',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.white,
@@ -75,7 +75,7 @@ class AutopilotTopicComplete extends StatelessWidget {
                   ),
                   SizedBox(height: 40),
                   Text(
-                    '${Duration(seconds: controller.autopilot!.totalTime!).inHours} hrs : ${Duration(seconds: controller.autopilot!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.autopilot!.totalTime!).inSeconds % 60} sec',
+                    '${Duration(seconds: controller.currentTopic!.time!).inHours} hrs : ${Duration(seconds: controller.currentTopic!.time!).inMinutes % 60} min : ${Duration(seconds: controller.currentTopic!.time!).inSeconds % 60} sec',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.white,

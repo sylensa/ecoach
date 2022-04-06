@@ -521,7 +521,7 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                             SessionSavedPrompt(controller: controller));
                         break;
                       case 6:
-                        controller.endAutopilot();
+                        controller.endCurrentTopic();
                         Navigator.push(context, MaterialPageRoute(builder: (c) {
                           return AutopilotEnded(controller: controller);
                         }));

@@ -40,12 +40,6 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   List completedAutopilots = [];
   late AutopilotTopic currentAutoTopic;
 
-  void _incrementCounter() {
-    setState(() {
-      _selectorService.incrementSelectedTopic();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -56,23 +50,12 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
 
     currentAutoTopic = controller.currentTopic!;
     topicId = currentAutoTopic.topicId!;
-
-    /* TODO: Remember to remove this */
-    setState(() {
-      topicIds.add(topicId);
-      // controllers.add(controller);
-    });
-
-    //print("here are the controllers ${controllers.toString()}");
-    print("index of ${topicIds.indexOf(topicId)}");
-
-    print('these are the topicIds: ${topicIds}');
+    isSelected = controller.currentTopicNumber;
 
     print('this value is from selectorService ${isSelected}');
     print('controller topics list is: ${widget.controller.topics}');
 
     print('topicId is : ${topicId}');
-    controller.name = controller.topics[isSelected].name;
     //controller.autopilot = topicId;
     print("name from topic_menu ${controller.name}");
     //controller.loadAutopilot();
@@ -82,7 +65,6 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   }
 
   handleNext() async {
-    _incrementCounter();
     print('new value o f isSlected is ${isSelected}');
     showLoaderDialog(context, message: "Creating Autopilot questions");
     await controller.createTopicQuestions(currentAutoTopic);
@@ -165,7 +147,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                               isUnselected: topicId != '' &&
                                   topicId != controller.autoTopics[i].topicId!,
                               numberOfQuestions:
-                                  controller.autoTopics[i].totalQuestion!,
+                                  controller.autoTopics[i].totalQuestions!,
                               correctlyAnswered:
                                   controller.autoTopics[i].correct!),
                       ],
