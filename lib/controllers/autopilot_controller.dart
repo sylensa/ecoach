@@ -103,6 +103,10 @@ class AutopilotController {
     }
   }
 
+  updateCurrentTopic() {
+    currentTopic = _currentTopic;
+  }
+
   AutopilotTopic? get _currentTopic {
     for (int i = 0; i < autoTopics.length; i++) {
       if (autoTopics[i].topicId == autopilot!.topicId!) {
@@ -144,7 +148,9 @@ class AutopilotController {
   int get correct {
     int score = 0;
     questions.forEach((question) {
-      if (question.isCorrect) score++;
+      if (question.status == "correct") {
+        score++;
+      }
     });
     return score;
   }
@@ -152,7 +158,9 @@ class AutopilotController {
   int get wrong {
     int wrong = 0;
     questions.forEach((question) {
-      if (question.isWrong && question.status != null) wrong++;
+      if (question.status == "wrong") {
+        wrong++;
+      }
     });
     return wrong;
   }
@@ -342,8 +350,6 @@ class AutopilotController {
     currentTopic!.time = duration!.inSeconds;
     currentTopic!.correct = correct;
     currentTopic!.wrong = wrong;
-    currentTopic!.totalQuestions =
-        currentTopic!.correct! + currentTopic!.wrong!;
     currentTopic!.status = AutopilotStatus.IN_PROGRESS.toString();
 
     await AutopilotDB().updateTopic(currentTopic!);

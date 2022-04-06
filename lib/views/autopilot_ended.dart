@@ -157,10 +157,11 @@ class AutopilotEnded extends StatelessWidget {
                     color: Colors.white,
                     background: kAdeoBlue,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c) {
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (c) {
                         return AutopilotIntroit(
                             controller.user, controller.course);
-                      }));
+                      }), ModalRoute.withName(CourseDetailsPage.routeName));
                     },
                   ),
                 ),

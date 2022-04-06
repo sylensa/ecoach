@@ -50,18 +50,12 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
 
     currentAutoTopic = controller.currentTopic!;
     topicId = currentAutoTopic.topicId!;
-    isSelected = controller.currentTopicNumber;
+    isSelected = controller.currentTopicNumber - 1;
 
     print('this value is from selectorService ${isSelected}');
-    print('controller topics list is: ${widget.controller.topics}');
-
     print('topicId is : ${topicId}');
-    //controller.autopilot = topicId;
     print("name from topic_menu ${controller.name}");
-    //controller.loadAutopilot();
-    //print("name from topic_menu ${controller.name}");
     print('isSelected = ${isSelected}');
-    print('the total correct is: ${controller.getTotalCorrect()}');
   }
 
   handleNext() async {

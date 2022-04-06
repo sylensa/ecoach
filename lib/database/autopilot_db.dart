@@ -251,6 +251,7 @@ class AutopilotDB {
   Future<void> update(Autopilot autopilot) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;
+    print("ending topic and updating...");
     print(autopilot.toJson());
     await db!.update(
       'autopilots',
