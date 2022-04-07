@@ -95,7 +95,7 @@ class AutopilotController {
     if (nextTopic != null) {
       autopilot!.topicId = nextTopic!.topicId;
       await AutopilotDB().update(autopilot!);
-
+      currentQuestion = 0;
       print("next topic found. topic Id=${autopilot!.topicId}");
       return true;
     } else {
@@ -416,26 +416,33 @@ class AutopilotController {
   }
 
   createTopicQuestions(AutopilotTopic topic) async {
-    List<Question> quesList =
-        await QuestionDB().getAutopilotTopicQuestions(topic.topicId!);
-    print("question=${quesList.length}");
-    for (int i = 0; i < quesList.length; i++) {
-      AutopilotQuestion ap = AutopilotQuestion(
-        courseId: course.id,
-        autopilotId: topic.autopilotId,
-        questionId: quesList[i].id,
-        topicId: quesList[i].topicId,
-        topicName: quesList[i].topicName,
-        userId: user.id,
-      );
-      ap.question = quesList[i];
-      if (ap.question != null) {
-        questions.add(ap);
-      }
-    }
+    List<AutopilotQuestion> autoQuestions =
+        await AutopilotDB().getProgresses(topic.topicId!);
 
-    await AutopilotDB().insertAllProgress(questions);
-    questions = await AutopilotDB().getProgresses(topic.topicId!);
+    if (autoQuestions.length > 0) {
+      questions = autoQuestions;
+    } else {
+      List<Question> quesList =
+          await QuestionDB().getAutopilotTopicQuestions(topic.topicId!);
+      print("question=${quesList.length}");
+      for (int i = 0; i < quesList.length; i++) {
+        AutopilotQuestion ap = AutopilotQuestion(
+          courseId: course.id,
+          autopilotId: topic.autopilotId,
+          questionId: quesList[i].id,
+          topicId: quesList[i].topicId,
+          topicName: quesList[i].topicName,
+          userId: user.id,
+        );
+        ap.question = quesList[i];
+        if (ap.question != null) {
+          questions.add(ap);
+        }
+      }
+
+      await AutopilotDB().insertAllProgress(questions);
+      questions = await AutopilotDB().getProgresses(topic.topicId!);
+    }
   }
 
   Future<bool> loadAutopilot() async {

@@ -157,7 +157,9 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
         ),
       ),
       bottomSheet: AdeoTextButton(
-        label: "Start",
+        label: isSelected > 1 || controller.currentQuestion > 1
+            ? "Continue"
+            : "Start",
         onPressed: handleNext,
         color: Colors.white,
         background: kAdeoOrange2,
