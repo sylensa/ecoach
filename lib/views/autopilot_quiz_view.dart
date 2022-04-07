@@ -348,8 +348,8 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                         );
                       },
                       controller: controller.timerController,
-                      begin: Duration(
-                          seconds: controller.autopilot!.totalTime ?? 0),
+                      begin:
+                          Duration(seconds: controller.currentTopic!.time ?? 0),
                       end: Duration(hours: 2000),
                     ),
                   ),
