@@ -111,7 +111,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
 
   sumbitAnswer() async {
     bool success = await controller.scoreCurrentQuestion();
-    double newScore = controller.autopilot!.avgScore!;
+    double newScore = controller.currentTopic!.avgScore!;
 
     setState(() {
       showSubmit = false;
