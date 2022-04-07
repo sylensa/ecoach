@@ -143,7 +143,9 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                               numberOfQuestions:
                                   controller.autoTopics[i].totalQuestions!,
                               correctlyAnswered:
-                                  controller.autoTopics[i].correct!),
+                                  controller.autoTopics[i].correct!,
+                              showProgress: controller.autoTopics[i].status ==
+                                  AutopilotStatus.COMPLETED.toString()),
                       ],
                     ),
                   ),

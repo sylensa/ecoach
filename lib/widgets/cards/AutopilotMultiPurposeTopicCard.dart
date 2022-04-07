@@ -52,6 +52,7 @@ class _AutopilotMultiPurposeTopicCardState
     isSelected = widget.isSelected;
     showInPercentage = widget.showInPercentage;
     numberOfQuestions = widget.numberOfQuestions;
+    print(widget.rightWidget);
   }
 
   @override
@@ -172,7 +173,7 @@ class _AutopilotMultiPurposeTopicCardState
                       )
                     ],
                   )
-                else if (widget.rightWidget != null && isSelected)
+                else if (widget.rightWidget != null && !isSelected)
                   widget.rightWidget!
               ],
             ),
