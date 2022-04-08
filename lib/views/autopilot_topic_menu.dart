@@ -27,7 +27,7 @@ class AutopilotTopicMenu extends StatefulWidget {
 }
 
 class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
-  late int topicId;
+  // late int topicId;
   late AutopilotController controller;
   List<int> topicIds = [];
   AutopilotSelectorService _selectorService = AutopilotSelectorService();
@@ -38,22 +38,21 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
 
   List<AutopilotTopic> autopilots = [];
   List completedAutopilots = [];
-  late AutopilotTopic currentAutoTopic;
+  AutopilotTopic? currentAutoTopic;
 
   @override
   void initState() {
     super.initState();
 
     showInPercentage = false;
-    isSelected = _selectorService.selectedTopic;
+
     controller = widget.controller;
 
-    currentAutoTopic = controller.currentTopic!;
-    topicId = currentAutoTopic.topicId!;
-    isSelected = controller.currentTopicNumber - 1;
+    currentAutoTopic = controller.currentTopic;
+    isSelected = controller.currentTopicNumber;
 
+    if (isSelected < 0) isSelected = 0;
     print('this value is from selectorService ${isSelected}');
-    print('topicId is : ${topicId}');
     print("name from topic_menu ${controller.name}");
     print('isSelected = ${isSelected}');
   }
@@ -61,7 +60,22 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   handleNext() async {
     print('new value o f isSlected is ${isSelected}');
     showLoaderDialog(context, message: "Creating Autopilot questions");
-    await controller.createTopicQuestions(currentAutoTopic);
+    await controller.createTopicQuestions(currentAutoTopic!);
+    Navigator.pop(context);
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return AutopilotQuizView(controller: controller);
+    }));
+  }
+
+  handleReplay() async {
+    print('new value o f isSlected is ${isSelected}');
+    showLoaderDialog(context, message: "Restarting Autopilot questions");
+    // await controller.endAutopilot();
+    await controller.restartAutopilot();
+    // isSelected = widget.controller.currentTopicNumber;
+    currentAutoTopic = controller.currentTopic!;
+    await controller.createTopicQuestions(currentAutoTopic!);
     Navigator.pop(context);
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -86,8 +100,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                 ),
                 child: Center(
                   child: Text(
-                    // TODO:
-                    '${widget.controller.topics.length - isSelected}',
+                    '${controller.topicsRemaining}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -136,10 +149,11 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                               showInPercentage: showInPercentage,
                               topicId: controller.autoTopics[i].topicId!,
                               label: controller.autoTopics[i].topicName!,
-                              isSelected:
-                                  topicId == controller.autoTopics[i].topicId!,
-                              isUnselected: topicId != '' &&
-                                  topicId != controller.autoTopics[i].topicId!,
+                              isSelected: isSelected > 0 &&
+                                  controller
+                                      .isCurrentTopic(controller.autoTopics[i]),
+                              isUnselected: !controller
+                                  .isCurrentTopic(controller.autoTopics[i]),
                               numberOfQuestions:
                                   controller.autoTopics[i].totalQuestions!,
                               correctlyAnswered:
@@ -158,14 +172,21 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
           ],
         ),
       ),
-      bottomSheet: AdeoTextButton(
-        label: isSelected > 1 || controller.currentQuestion > 1
-            ? "Continue"
-            : "Start",
-        onPressed: handleNext,
-        color: Colors.white,
-        background: kAdeoOrange2,
-      ),
+      bottomSheet: controller.isLastTopic
+          ? AdeoTextButton(
+              label: "Replay",
+              onPressed: handleReplay,
+              color: Colors.white,
+              background: kAdeoOrange2,
+            )
+          : AdeoTextButton(
+              label: isSelected >= 1 || controller.currentQuestion > 1
+                  ? "Continue"
+                  : "Start",
+              onPressed: handleNext,
+              color: Colors.white,
+              background: kAdeoOrange2,
+            ),
     );
   }
 }

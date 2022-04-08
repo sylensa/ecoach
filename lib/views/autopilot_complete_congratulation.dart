@@ -65,49 +65,37 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Net Score: ${controller.autopilot!.totalCorrect! - controller.autopilot!.totalWrong!}',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: kAdeoBlueAccent,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    '${Duration(seconds: controller.autopilot!.totalTime!).inHours} hrs : ${Duration(seconds: controller.autopilot!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.autopilot!.totalTime!).inSeconds % 60} sec',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: kAdeoBlueAccent,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    '${controller.questions.length} Questions',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: kAdeoBlueAccent,
-                    ),
-                  ),
-                  SizedBox(height: 48),
-                  QuizStats(
-                    changeUp: true,
-                    averageScore:
-                        '${controller.getAvgScore().toStringAsFixed(2)}%',
-                    speed: '${controller.getAvgTime().toStringAsFixed(2)}s',
-                    correctScore: '${controller.getTotalCorrect()}',
-                    wrongScrore: '${controller.getTotalWrong()}',
-                  ),
-                  SizedBox(height: 20),
-                  // AdeoTextButton(
-                  //   label: 'View Ranking',
-                  //   onPressed: () {
-                  //     Navigator.push(context, MaterialPageRoute(builder: (c) {
-                  //       return AutopilotRanking();
-                  //     }));
-                  //   },
-                  //   fontSize: 20,
-                  //   color: kAdeoBlue,
-                  //   background: Colors.transparent,
+                  // Text(
+                  //   'Net Score: ${controller.autopilot!.totalCorrect! - controller.autopilot!.totalWrong!}',
+                  //   style: TextStyle(
+                  //     fontSize: 15,
+                  //     color: kAdeoBlueAccent,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 12),
+                  // Text(
+                  //   '${Duration(seconds: controller.autopilot!.totalTime!).inHours} hrs : ${Duration(seconds: controller.autopilot!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.autopilot!.totalTime!).inSeconds % 60} sec',
+                  //   style: TextStyle(
+                  //     fontSize: 15,
+                  //     color: kAdeoBlueAccent,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 12),
+                  // Text(
+                  //   '${controller.questions.length} Questions',
+                  //   style: TextStyle(
+                  //     fontSize: 15,
+                  //     color: kAdeoBlueAccent,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 48),
+                  // QuizStats(
+                  //   changeUp: true,
+                  //   averageScore:
+                  //       '${controller.getAvgScore().toStringAsFixed(2)}%',
+                  //   speed: '${controller.getAvgTime().toStringAsFixed(2)}s',
+                  //   correctScore: '${controller.getTotalCorrect()}',
+                  //   wrongScrore: '${controller.getTotalWrong()}',
                   // ),
                   SizedBox(height: 96),
                 ],
@@ -129,12 +117,10 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
                     color: Colors.white,
                     background: kAdeoBlue,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return AutopilotTopicMenu(
-                            /* controller.user,
-                          controller.course, */
-                            controller: controller);
-                      }));
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (c) {
+                        return AutopilotTopicMenu(controller: controller);
+                      }), ModalRoute.withName(CourseDetailsPage.routeName));
                     },
                   ),
                 ),

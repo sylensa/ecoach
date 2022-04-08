@@ -1,7 +1,7 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/autopilot_introit.dart';
+import 'package:ecoach/views/autopilot_complete_congratulation.dart';
 import 'package:ecoach/views/autopilot_topic_menu.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -127,16 +127,24 @@ class AutopilotTopicComplete extends StatelessWidget {
               children: [
                 Expanded(
                   child: AdeoTextButton(
-                    label: 'Next Topic',
+                    label: controller.isLastTopic ? 'Done' : 'Next Topic',
                     fontSize: 20,
                     color: Colors.white,
                     background: kAdeoOrange2,
                     onPressed: () async {
-                      controller.updateCurrentTopic();
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (c) {
-                        return AutopilotTopicMenu(controller: controller);
-                      }), ModalRoute.withName(CourseDetailsPage.routeName));
+                      await controller.updateCurrentTopic();
+
+                      if (controller.isLastTopic) {
+                        Navigator.push(context, MaterialPageRoute(builder: (c) {
+                          return AutopilotCompleteCongratulations(
+                              controller: controller);
+                        }));
+                      } else {
+                        Navigator.pushAndRemoveUntil(context,
+                            MaterialPageRoute(builder: (c) {
+                          return AutopilotTopicMenu(controller: controller);
+                        }), ModalRoute.withName(CourseDetailsPage.routeName));
+                      }
                     },
                   ),
                 ),

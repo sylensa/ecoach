@@ -46,7 +46,6 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.text);
     return Html(
       data: setTexTags(widget.text,
           removeTags: widget.removeTags, removeBr: true),
@@ -269,7 +268,7 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
         .replaceAll("<p/>", "")
         .replaceAll("</p>", "");
 
-    print(text);
+    //print(text);
   }
   return text;
 }

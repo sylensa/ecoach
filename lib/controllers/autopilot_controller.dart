@@ -62,6 +62,10 @@ class AutopilotController {
     questionTimer = DateTime.now();
   }
 
+  reset() {
+    timerController = CustomTimerController();
+  }
+
   pauseTimer() {
     timerController!.pause();
   }
@@ -96,9 +100,13 @@ class AutopilotController {
       autopilot!.topicId = nextTopic!.topicId;
       await AutopilotDB().update(autopilot!);
       currentQuestion = 0;
+      reset();
       print("next topic found. topic Id=${autopilot!.topicId}");
       return true;
     } else {
+      print("setting autopilot topic id to null");
+      autopilot!.topicId = null;
+      await AutopilotDB().update(autopilot!);
       return false;
     }
   }
@@ -107,24 +115,59 @@ class AutopilotController {
     currentTopic = _currentTopic;
   }
 
+  bool isCurrentTopic(AutopilotTopic topic) {
+    if (currentTopic == null) return false;
+    return currentTopic!.topicId == topic.topicId;
+  }
+
   AutopilotTopic? get _currentTopic {
     for (int i = 0; i < autoTopics.length; i++) {
-      if (autoTopics[i].topicId == autopilot!.topicId!) {
+      if (autopilot!.topicId != null &&
+          autoTopics[i].topicId == autopilot!.topicId!) {
         return autoTopics[i];
       }
     }
 
-    return autoTopics.length > 0 ? autoTopics[0] : null;
+    return null;
   }
 
   int get currentTopicNumber {
     for (int i = 0; i < autoTopics.length; i++) {
-      if (autoTopics[i].topicId == autopilot!.topicId!) {
+      if (autopilot!.topicId != null &&
+          autoTopics[i].topicId == autopilot!.topicId!) {
         return i + 1;
       }
     }
 
-    return 1;
+    return 0;
+  }
+
+  int get topicsRemaining {
+    int count = 0;
+    for (int i = 0; i < autoTopics.length; i++) {
+      if (autoTopics[i].status != AutopilotStatus.COMPLETED.toString()) {
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  int get currentTopicTime {
+    if (currentTopic != null && currentTopic!.time != null)
+      return currentTopic!.time!;
+
+    return 0;
+  }
+
+  bool get isLastTopic {
+    for (int i = 0; i < autoTopics.length; i++) {
+      if (autoTopics[i].status != AutopilotStatus.COMPLETED.toString()) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   bool get lastQuestion {
@@ -456,9 +499,6 @@ class AutopilotController {
       if (topicId != null) {
         Topic? topic = await TopicDB().getTopicById(topicId);
         if (topic != null) name = topic.name;
-      } else {
-        autopilot!.topicId = autoTopics[0].topicId;
-        name = autoTopics[0].topicName;
       }
       currentTopic = _currentTopic;
 
@@ -482,8 +522,6 @@ class AutopilotController {
     autopilot!.status = AutopilotStatus.COMPLETED.toString();
     autopilot!.endTime = DateTime.now();
     AutopilotDB().update(autopilot!);
-
-    endCurrentTopic();
   }
 
   endCurrentTopic() async {
@@ -492,18 +530,24 @@ class AutopilotController {
     AutopilotDB().updateTopic(currentTopic!);
     bool next = await nextTopic();
     if (!next) {
-      endAutopilot();
+      print("next not selected");
+      // endAutopilot();
     }
   }
 
   deleteAutopilot() async {
     autopilot = await AutopilotDB().getCurrentAutopilot(course);
     if (autopilot != null) {
-      questions = await AutopilotDB().getProgresses(autopilot!.topicId!);
-      await AutopilotDB().delete(autopilot!.id!);
-      for (int i = 0; i < questions.length; i++) {
-        await AutopilotDB().deleteProgress(questions[i].id!);
+      autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
+      for (int i = 0; i < autoTopics.length; i++) {
+        await AutopilotDB().deleteTopic(autoTopics[i].topicId!);
+        questions = await AutopilotDB().getProgresses(autoTopics[i].topicId!);
+        await AutopilotDB().delete(autopilot!.id!);
+        for (int i = 0; i < questions.length; i++) {
+          await AutopilotDB().deleteProgress(questions[i].id!);
+        }
       }
+
       return true;
     }
 
@@ -514,13 +558,9 @@ class AutopilotController {
     autopilot = await AutopilotDB().getCurrentAutopilot(course);
 
     if (autopilot != null) {
-      int? topicId = autopilot!.topicId;
       await deleteAutopilot();
-      if (topicId == null) {
-        await createAutopilot();
-      } else {
-        await loadAutopilot();
-      }
+      await createAutopilot();
     }
+    reset();
   }
 }

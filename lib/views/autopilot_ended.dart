@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot_topic_menu.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/autopilot_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -157,10 +158,11 @@ class AutopilotEnded extends StatelessWidget {
                     color: Colors.white,
                     background: kAdeoBlue,
                     onPressed: () {
+                      controller.updateCurrentTopic();
+
                       Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (c) {
-                        return AutopilotIntroit(
-                            controller.user, controller.course);
+                        return AutopilotTopicMenu(controller: controller);
                       }), ModalRoute.withName(CourseDetailsPage.routeName));
                     },
                   ),

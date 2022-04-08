@@ -294,6 +294,15 @@ class AutopilotDB {
     );
   }
 
+  deleteTopic(int id) async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'autopilot_topics',
+      where: "topic_id = ?",
+      whereArgs: [id],
+    );
+  }
+
   deleteProgress(int id) async {
     final db = await DBProvider.database;
     db!.delete(
