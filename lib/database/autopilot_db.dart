@@ -287,7 +287,7 @@ class AutopilotDB {
 
   delete(int id) async {
     final db = await DBProvider.database;
-    db!.delete(
+    await db!.delete(
       'autopilots',
       where: "id = ?",
       whereArgs: [id],
@@ -296,16 +296,18 @@ class AutopilotDB {
 
   deleteTopic(int id) async {
     final db = await DBProvider.database;
-    db!.delete(
+    int num = await db!.delete(
       'autopilot_topics',
       where: "topic_id = ?",
       whereArgs: [id],
     );
+    print("$num topics deleted");
+    return num;
   }
 
   deleteProgress(int id) async {
     final db = await DBProvider.database;
-    db!.delete(
+    await db!.delete(
       'autopilot_progress',
       where: "id = ?",
       whereArgs: [id],

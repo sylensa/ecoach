@@ -145,6 +145,8 @@ class AutopilotController {
   int get topicsRemaining {
     int count = 0;
     for (int i = 0; i < autoTopics.length; i++) {
+      print(
+          "remaining topic ${autoTopics[i].topicId} status ${autoTopics[i].status}");
       if (autoTopics[i].status != AutopilotStatus.COMPLETED.toString()) {
         count++;
       }
@@ -430,7 +432,7 @@ class AutopilotController {
       totalWrong: 0,
     );
 
-    List<TestNameAndCount> topics = await TestController().getTopics(course);
+    topics = await TestController().getTopics(course);
     print("topics =${topics.length}");
 
     autopilot!.topicId = topics[0].id;
@@ -499,19 +501,20 @@ class AutopilotController {
       if (topicId != null) {
         Topic? topic = await TopicDB().getTopicById(topicId);
         if (topic != null) name = topic.name;
+
+        questions = await AutopilotDB().getProgresses(topicId);
+        int index = 0;
+        for (int i = 0; i < questions.length; i++) {
+          if (questions[i].status == null) {
+            print(questions[i].toJson());
+            currentQuestion = index;
+            break;
+          }
+          index++;
+        }
       }
       currentTopic = _currentTopic;
 
-      questions = await AutopilotDB().getProgresses(autopilot!.topicId!);
-      int index = 0;
-      for (int i = 0; i < questions.length; i++) {
-        if (questions[i].status == null) {
-          print(questions[i].toJson());
-          currentQuestion = index;
-          break;
-        }
-        index++;
-      }
       return true;
     }
 
@@ -535,18 +538,26 @@ class AutopilotController {
     }
   }
 
-  deleteAutopilot() async {
-    autopilot = await AutopilotDB().getCurrentAutopilot(course);
+  deleteAutopilots() async {
+    List<Autopilot> autopilots = await AutopilotDB().courseAutopilots(course);
+    for (int i = 0; i < autopilots.length; i++) {
+      await deleteAutopilot(autopilots[i]);
+    }
+  }
+
+  deleteAutopilot(Autopilot? autopilot) async {
     if (autopilot != null) {
-      autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
+      autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot.id!);
       for (int i = 0; i < autoTopics.length; i++) {
         await AutopilotDB().deleteTopic(autoTopics[i].topicId!);
         questions = await AutopilotDB().getProgresses(autoTopics[i].topicId!);
-        await AutopilotDB().delete(autopilot!.id!);
         for (int i = 0; i < questions.length; i++) {
           await AutopilotDB().deleteProgress(questions[i].id!);
         }
+        questions = [];
+        await AutopilotDB().delete(autopilot.id!);
       }
+      autoTopics = [];
 
       return true;
     }
@@ -555,12 +566,8 @@ class AutopilotController {
   }
 
   restartAutopilot() async {
-    autopilot = await AutopilotDB().getCurrentAutopilot(course);
-
-    if (autopilot != null) {
-      await deleteAutopilot();
-      await createAutopilot();
-    }
+    await deleteAutopilots();
+    await createAutopilot();
     reset();
   }
 }
