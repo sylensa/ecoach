@@ -2,7 +2,7 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/note_view.dart';
+import 'package:ecoach/views/notes/note_view.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';

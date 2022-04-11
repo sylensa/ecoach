@@ -3,8 +3,8 @@ import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/onboard/onboarding.dart';
-import 'package:ecoach/views/otp_view.dart';
-import 'package:ecoach/views/welcome_adeo.dart';
+import 'package:ecoach/views/quiz/otp_view.dart';
+import 'package:ecoach/views/onboard/welcome_adeo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/user.dart';
 import 'utils/notification_service.dart';
-import 'views/login_view.dart';
+import 'views/auth/login_view.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 bool? seenOnboard;

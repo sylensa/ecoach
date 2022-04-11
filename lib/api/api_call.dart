@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
-import 'package:ecoach/views/logout.dart';
+import 'package:ecoach/views/auth/logout.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
