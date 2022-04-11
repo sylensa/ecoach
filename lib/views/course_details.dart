@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:ecoach/utils/manip.dart';
 
 class CourseDetailsPage extends StatefulWidget {
-  CourseDetailsPage(this.user, {this.courseInfo});
+  CourseDetailsPage(this.user, {this.courseInfo, course});
 
   static const String routeName = '/courses/details';
   final courseInfo;

@@ -2,6 +2,7 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/notes/note_view.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
@@ -165,9 +166,12 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                   child: Button(
                     label: 'new test',
                     onPressed: () {
-                      Navigator.popUntil(
+                      Navigator.pushReplacement(
                         context,
-                        ModalRoute.withName(CourseDetailsPage.routeName),
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              CoursesPage(widget.user),
+                        ),
                       );
                     },
                   ),
