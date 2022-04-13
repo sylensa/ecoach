@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String email = "";
   String phone = "";
   String password = "";
+  TextEditingController mail = TextEditingController();
   bool isLoading = false;
 
   TextEditingController passwordController = new TextEditingController();
@@ -50,7 +51,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: jsonEncode(<String, dynamic>{
         'name': name,
         'gender': "----",
-        'email': email,
+        'email': mail.text.trim(),
         'phone': phone,
         "password": password,
         "password_confirmed": password
@@ -168,21 +169,32 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: InputDecoration(
                               labelText: 'Email Address',
                               border: OutlineInputBorder()),
-                          onSaved: (value) {
-                            email = value!.trim();
-                          },
-                          validator: (text) {
-                            String? _msg;
-                            text = text!.trim();
-                            RegExp regex = new RegExp(
-                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-                            if (text.isEmpty) {
-                              _msg = "Your email is required";
-                            } else if (!regex.hasMatch(text)) {
-                              _msg = "Please provide a valid email address";
+                          controller: mail,
+
+                          validator: (value) {
+                            bool emailValid = RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(mail.text.trim());
+
+                            if (value!.isEmpty) {
+                              return 'Please enter your email or phone';
+                            } else if (!emailValid) {
+                              return 'Please enter a valid email or phone';
                             }
-                            return _msg;
+                            return null;
                           },
+                          // validator: (text) {
+                          //   String? _msg;
+                          //   text = text!.trim();
+                          //   RegExp regex = new RegExp(
+                          //       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+                          //   if (text.isEmpty) {
+                          //     _msg = "Your email is required";
+                          //   } else if (!regex.hasMatch(text)) {
+                          //     _msg = "Please provide a valid email address";
+                          //   }
+                          //   return null;
+                          // },
                         ),
                         SizedBox(
                           height: 20,
