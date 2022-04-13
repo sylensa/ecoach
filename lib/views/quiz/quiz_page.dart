@@ -539,10 +539,11 @@ class _QuizViewState extends State<QuizView> {
                   if (action == "resume") {
                     startTimer();
                   } else if (action == "quit") {
-                    Navigator.pushAndRemoveUntil(context,
-                        MaterialPageRoute(builder: (context) {
-                      return MainHomePage(controller.user, index: 2);
-                    }), (route) => false);
+                    // Navigator.pushAndRemoveUntil(context,
+                    //     MaterialPageRoute(builder: (context) {
+                    //   return MainHomePage(controller.user, index: 2);
+                    // }), (route) => false);
+                    Navigator.pop(context);
                   } else if (action == "end") {
                     completeQuiz();
                   }

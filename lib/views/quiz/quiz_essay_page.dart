@@ -475,7 +475,7 @@ class _PauseDialogState extends State<PauseDialog> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Time Remaining ",
+                        "Time Remaining  ",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,

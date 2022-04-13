@@ -1,6 +1,9 @@
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/general_utils.dart';
+import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/store.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/src/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -534,7 +537,13 @@ class _NoSubWidgetState extends State<NoSubWidget> {
                           style: BorderStyle.solid)),
                     ),
                     onPressed: () {
-                      widget.callback!(2);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MainHomePage(
+                          widget.user,
+                          index: 1,
+                        );
+                      }));
                     },
                     child: Text('Buy'))),
           if (selection == Selection.DIAGNOSTIC)

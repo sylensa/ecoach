@@ -6,10 +6,13 @@ import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/auth/forgot_password.dart';
-import 'package:ecoach/views/main_home.dart';
-import 'package:ecoach/views/quiz/otp_view.dart';
 import 'package:ecoach/views/auth/register_view.dart';
+
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/onboard/welcome_adeo.dart';
+
+import 'package:ecoach/views/quiz/otp_view.dart';
+
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
