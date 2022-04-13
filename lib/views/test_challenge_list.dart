@@ -13,6 +13,9 @@ import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
 class TestChallengeList extends StatelessWidget {
+
+  static const String routeName = '/courses/challenge';
+
   TestChallengeList({
     required this.testType,
     required this.course,
