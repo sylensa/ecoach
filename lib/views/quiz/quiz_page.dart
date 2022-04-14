@@ -288,6 +288,7 @@ class _QuizViewState extends State<QuizView> {
                   ),
                 ),
               ),
+              //
               Positioned(
                 top: 0,
                 right: 40,
@@ -323,12 +324,16 @@ class _QuizViewState extends State<QuizView> {
                   ),
                 ),
               ),
+
+              //
               Positioned(
                   top: -120,
                   right: -80,
                   child: Image(
                     image: AssetImage('assets/images/white_leave.png'),
                   )),
+              //
+
               Positioned(
                 key: UniqueKey(),
                 top: 50,
@@ -349,6 +354,8 @@ class _QuizViewState extends State<QuizView> {
                               TextStyle(color: backgroundColor, fontSize: 18)),
                 ),
               ),
+
+              // button
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -731,8 +738,9 @@ class _QuestionWidgetState extends State<QuestionWidget> {
           children: [
             Container(
               color: Color(0xFF444444),
+              // color: Colors.red,
               child: Padding(
-                padding: const EdgeInsets.all(18.0),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: FittedBox(
                   fit: BoxFit.cover,
                   child: Column(
@@ -740,10 +748,13 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                       SizedBox(
                         height: 12,
                       ),
-                      AdeoHtmlTex(
-                        widget.user,
-                        widget.question.text!.replaceAll("https", "http"),
-                        useLocalImage: !widget.diagnostic,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: AdeoHtmlTex(
+                          widget.user,
+                          widget.question.text!.replaceAll("https", "http"),
+                          useLocalImage: !widget.diagnostic,
+                        ),
                       ),
                     ],
                   ),
@@ -773,6 +784,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
             ),
             Container(
               color: Color(0xFF595959),
+              //   color: Colors.red,
               child: widget.question.resource == ""
                   ? null
                   : Padding(
@@ -843,14 +855,16 @@ class _QuestionWidgetState extends State<QuestionWidget> {
               ),
             Container(
               color: Color(0xFF595959),
+              //   color: Colors.red,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   for (int i = 0; i < answers!.length; i++)
                     Stack(children: [
                       SelectAnswerWidget(widget.user, answers![i].text!,
                           widget.question.selectedAnswer == answers![i],
                           normalSize: 15,
-                          selectedSize: widget.enabled ? 48 : 24,
+                          selectedSize: widget.enabled ? 38 : 24,
                           imposedSize: widget.enabled ||
                                   (widget.enabled && selectedAnswer == null) ||
                                   selectedAnswer != answers![i] &&
@@ -859,7 +873,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                               : selectedAnswer == answers![i] &&
                                       selectedAnswer!.value == 0
                                   ? 24
-                                  : 48,
+                                  : 38,
                           imposedColor: widget.enabled ||
                                   (widget.enabled && selectedAnswer == null) ||
                                   selectedAnswer != answers![i] &&

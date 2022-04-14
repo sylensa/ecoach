@@ -3,7 +3,7 @@ import 'package:ecoach/routes/Routes.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/onboard/onboarding.dart';
-import 'package:ecoach/views/quiz/otp_view.dart';
+import 'package:ecoach/views/auth/otp_view.dart';
 import 'package:ecoach/views/onboard/welcome_adeo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
