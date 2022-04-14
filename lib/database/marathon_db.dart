@@ -3,7 +3,7 @@ import 'package:ecoach/database/database.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
-import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MarathonDB {

@@ -2,7 +2,9 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/note_view.dart';
+import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/notes/note_view.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
@@ -165,10 +167,13 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                   child: Button(
                     label: 'new test',
                     onPressed: () {
-                      Navigator.popUntil(
-                        context,
-                        ModalRoute.withName(CourseDetailsPage.routeName),
-                      );
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MainHomePage(
+                          widget.user,
+                          index: 2,
+                        );
+                      }));
                     },
                   ),
                 ),
@@ -177,13 +182,13 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                   child: Button(
                     label: 'Purchase',
                     onPressed: () {
-                      Navigator.push<void>(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              StorePage(widget.user),
-                        ),
-                      );
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MainHomePage(
+                          widget.user,
+                          index: 1,
+                        );
+                      }));
                     },
                   ),
                 ),

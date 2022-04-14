@@ -1,7 +1,7 @@
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/study.dart';
-import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StudyDB {

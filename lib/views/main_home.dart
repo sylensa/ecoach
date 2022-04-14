@@ -6,7 +6,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:ecoach/views/home.dart';
+import 'package:ecoach/views/auth/home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/more_view.dart';
 import 'package:ecoach/widgets/adeo_bottom_navigation_bar.dart';

@@ -120,7 +120,7 @@ class _AllTabPageState extends State<AllTabPage> {
                                                       .split('.')[1]
                                                       .toLowerCase()
                                                       .toCapitalized()
-                                                  : 'Null',
+                                                  : ' ',
                                           correctlyAnswered: test.correct!,
                                           totalQuestions: test.totalQuestions,
                                           onTap: () {
