@@ -1,6 +1,6 @@
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/logout.dart';
+import 'package:ecoach/views/auth/logout.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:flutter/material.dart';
 

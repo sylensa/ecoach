@@ -7,7 +7,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
 
 class MasteryController extends StudyController {
   MasteryController(this.user, this.course,

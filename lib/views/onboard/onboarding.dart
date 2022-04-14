@@ -1,6 +1,6 @@
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/login_view.dart';
+import 'package:ecoach/views/auth/login_view.dart';
 import 'package:ecoach/views/onboard/onboard_data.dart';
 import 'package:flutter/material.dart';
 
