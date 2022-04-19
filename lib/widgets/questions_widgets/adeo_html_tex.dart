@@ -46,78 +46,85 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
 
   @override
   Widget build(BuildContext context) {
-    return Html(
-      data: setTexTags(widget.text,
-          removeTags: widget.removeTags, removeBr: true),
-      style: {
-        "body": Style(
-            color: widget.textColor,
-            fontSize: FontSize(widget.fontSize),
-            fontStyle: widget.fontStyle,
-            textAlign: TextAlign.center),
-        "p": Style(
-          padding: EdgeInsets.all(0),
-        ),
-        "table": Style(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            width: 1,
-            fontSize: FontSize(widget.fontSize),
-            fontStyle: widget.fontStyle,
-            textAlign: TextAlign.center),
-        "tr": Style(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            width: 1,
-            fontSize: FontSize(widget.fontSize),
-            fontStyle: widget.fontStyle,
-            textAlign: TextAlign.center),
-        "td": Style(
-            color: Colors.black,
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(2),
-            fontSize: FontSize(widget.fontSize),
-            fontStyle: widget.fontStyle,
-            textAlign: TextAlign.center),
-        'img': Style(
-            width: imageWidth, height: imageHeight, padding: EdgeInsets.all(0)),
-      },
-      customRenders: {
-        if (widget.useLocalImage)
-          networkSourceMatcher():
-              CustomRender.widget(widget: (context, element) {
-            String? link = context.tree.element!.attributes['src'];
-            if (link != null) {
-              String name = link.substring(link.lastIndexOf("/") + 1);
-              print("Image: $name");
-              print("link: $link");
-
-              return Image.file(
-                widget.user.getImageFile(name),
-              );
-            }
-            return Text("No link");
-          }),
-        texMatcher():
-            CustomRender.widget(widget: (RenderContext context, child) {
-          print(context.tree.element!.text);
-          return Math.tex(
-            context.tree.element!.text,
-            textStyle: TextStyle(
+    return Padding(
+      padding: const EdgeInsets.only(right: 20, left: 10),
+      child: Html(
+        data: setTexTags(widget.text,
+            removeTags: widget.removeTags, removeBr: true),
+        style: {
+          "body": Style(
               color: widget.textColor,
-              fontSize: 16,
+              maxLines: 7,
+              fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
-            ),
-          );
-        }),
-        tableMatcher(): CustomRender.widget(widget: (context, child) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: tableRender().widget!.call(context, child),
-          );
-        }),
-      },
-      tagsList: Html.tags..addAll(["tex"]),
+              padding: const EdgeInsets.only(right: 21, left: 10),
+              textAlign: TextAlign.center),
+          "p": Style(
+            padding: EdgeInsets.all(0),
+          ),
+          "table": Style(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              width: 1,
+              fontSize: FontSize(widget.fontSize),
+              fontStyle: widget.fontStyle,
+              textAlign: TextAlign.center),
+          "tr": Style(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              width: 1,
+              fontSize: FontSize(widget.fontSize),
+              fontStyle: widget.fontStyle,
+              textAlign: TextAlign.center),
+          "td": Style(
+              color: Colors.black,
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(2),
+              fontSize: FontSize(widget.fontSize),
+              fontStyle: widget.fontStyle,
+              textAlign: TextAlign.center),
+          'img': Style(
+              width: imageWidth,
+              height: imageHeight,
+              padding: EdgeInsets.all(0)),
+        },
+        customRenders: {
+          if (widget.useLocalImage)
+            networkSourceMatcher():
+                CustomRender.widget(widget: (context, element) {
+              String? link = context.tree.element!.attributes['src'];
+              if (link != null) {
+                String name = link.substring(link.lastIndexOf("/") + 1);
+                print("Image: $name");
+                print("link: $link");
+
+                return Image.file(
+                  widget.user.getImageFile(name),
+                );
+              }
+              return Text("No link");
+            }),
+          texMatcher():
+              CustomRender.widget(widget: (RenderContext context, child) {
+            print(context.tree.element!.text);
+            return Math.tex(
+              context.tree.element!.text,
+              textStyle: TextStyle(
+                color: widget.textColor,
+                fontSize: 16,
+                fontStyle: widget.fontStyle,
+              ),
+            );
+          }),
+          tableMatcher(): CustomRender.widget(widget: (context, child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: tableRender().widget!.call(context, child),
+            );
+          }),
+        },
+        tagsList: Html.tags..addAll(["tex"]),
+      ),
     );
   }
 }
@@ -157,6 +164,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
           removeTags: widget.removeTags, removeBr: true),
       style: {
         "body": Style(
+          padding: const EdgeInsets.only(right: 21, left: 10),
           color: widget.imposedColor != null
               ? widget.imposedColor
               : widget.selected

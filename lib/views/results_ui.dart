@@ -171,6 +171,8 @@ class _ResultsViewState extends State<ResultsView> {
                     topics: topicsPlaceholder,
                     diagnostic: widget.diagnostic,
                     user: widget.user,
+                    // TODO - add course to topics page - find a better way like using getx or provider
+                    course: widget.course,
                     history: widget.history),
                 QuestionsTabPage(
                     questions: questionPlaceholder,

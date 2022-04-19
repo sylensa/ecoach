@@ -11,7 +11,7 @@ import 'package:ecoach/views/auth/register_view.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/onboard/welcome_adeo.dart';
 
-import 'package:ecoach/views/quiz/otp_view.dart';
+import 'package:ecoach/views/auth/otp_view.dart';
 
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
