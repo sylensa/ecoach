@@ -6,6 +6,7 @@ import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/notes/note_view.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -18,6 +19,7 @@ class TopicsTabPage extends StatefulWidget {
     required this.topics,
     required this.diagnostic,
     required this.user,
+    required this.course,
     this.history = false,
     Key? key,
   }) : super(key: key);
@@ -25,6 +27,7 @@ class TopicsTabPage extends StatefulWidget {
   final List topics;
   final diagnostic;
   final user;
+  final course;
   final bool history;
 
   @override
@@ -167,11 +170,11 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                   child: Button(
                     label: 'new test',
                     onPressed: () {
-                      Navigator.pushReplacement(context,
+                      Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return MainHomePage(
+                        return TestTypeView(
                           widget.user,
-                          index: 2,
+                          widget.course,
                         );
                       }));
                     },

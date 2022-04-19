@@ -761,15 +761,17 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                 ),
               ),
             ),
+            // TODO : add  a better way to handle this
             Container(
               color: backgroundColor,
               child: Center(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(80, 4, 80, 4),
+                  padding: EdgeInsets.fromLTRB(80, 4, 90, 4),
                   child: widget.question.instructions != null &&
                           widget.question.instructions!.isNotEmpty
                       ? Padding(
-                          padding: const EdgeInsets.fromLTRB(40, 8.0, 40, 8),
+                          padding: EdgeInsets.only(
+                              top: 5, bottom: 5, left: 50, right: 50),
                           child: Text(
                             widget.question.instructions!,
                             style: TextStyle(
