@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Container(
           child: new Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
             child: Center(
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             "Hello,",
                             style:
-                                TextStyle(color: Colors.black26, fontSize: 12),
+                                TextStyle(color: Colors.black54, fontSize: 14),
                           ),
                           Text(
                             widget.user.name!,
