@@ -6,6 +6,7 @@ class AdeoOutlinedButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.color,
+    this.backcolor,
     this.ignoring = false,
     this.size,
     this.borderRadius,
@@ -14,6 +15,7 @@ class AdeoOutlinedButton extends StatelessWidget {
 
   final String label;
   final Color? color;
+  final Color? backcolor;
   final onPressed;
   final bool ignoring;
   final Sizes? size;

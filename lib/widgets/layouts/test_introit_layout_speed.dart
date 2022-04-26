@@ -24,11 +24,8 @@ class TestIntroitBaseScaffold extends StatelessWidget {
       body: Stack(
         children: [
           Positioned(
-            left: -36.0,
-            right: -36.0,
-            top: 85,
             child: Container(
-              height: backgroundIllustrationHeight,
+              height: 400.h,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
@@ -39,9 +36,7 @@ class TestIntroitBaseScaffold extends StatelessWidget {
               ),
             ),
           ),
-
           // Positioned(
-          // sitioned(
           //   left: -36.0,
           //   right: -36.0,
           //   top: 85,
@@ -68,9 +63,10 @@ class TestIntroitBaseScaffold extends StatelessWidget {
   }
 }
 
-class TestIntroitLayout extends StatelessWidget {
-  final List<TestIntroitLayoutPage> pages;
+class TestIntroitLayoutSpeed extends StatelessWidget {
+  final List<TestIntroitLayoutPageSpeed> pages;
   final Color background;
+  final Color headerColor;
   final String backgroundImageURL;
   final PadTop? padTop;
   static PageController _controller = PageController();
@@ -88,9 +84,10 @@ class TestIntroitLayout extends StatelessWidget {
     );
   };
 
-  TestIntroitLayout({
+  TestIntroitLayoutSpeed({
     required this.pages,
     required this.background,
+    this.headerColor = kDefaultBlack,
     required this.backgroundImageURL,
     this.padTop,
     Key? key,
@@ -118,8 +115,8 @@ class TestIntroitLayout extends StatelessWidget {
                           Text(
                             page.title!,
                             style: TextStyle(
-                              color: kDefaultBlack,
-                              fontSize: 44.0,
+                              color: headerColor,
+                              fontSize: 44.0.sp,
                             ).copyWith(
                               color: page.foregroundColor,
                               fontWeight: page.fontWeight,
@@ -156,7 +153,7 @@ class TestIntroitLayout extends StatelessWidget {
   }
 }
 
-class TestIntroitLayoutPage {
+class TestIntroitLayoutPageSpeed {
   final String? title;
   final String? subText;
   final Widget middlePiece;
@@ -164,7 +161,7 @@ class TestIntroitLayoutPage {
   final Color? foregroundColor;
   final FontWeight? fontWeight;
 
-  TestIntroitLayoutPage({
+  TestIntroitLayoutPageSpeed({
     required this.middlePiece,
     required this.footer,
     this.title,

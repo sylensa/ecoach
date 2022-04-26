@@ -6,6 +6,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/customized_test/speed_quiz_cover.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
@@ -177,62 +178,119 @@ class _MockListViewState extends State<TestTypeListView> {
         ),
       ),
       bottomSheet: testsSelected.length > 0
-          ? AdeoTextButton(
-              onPressed: () async {
-                List<Question> questions = [];
-                switch (testsSelected[0].category) {
-                  case TestCategory.BANK:
-                  case TestCategory.EXAM:
-                  case TestCategory.ESSAY:
-                    questions = await TestController().getQuizQuestions(
-                      testsSelected[0].id!,
-                      limit: widget.questionLimit,
+          ? widget.type != TestType.SPEED
+              ? AdeoTextButton(
+                  onPressed: () async {
+                    List<Question> questions = [];
+                    switch (testsSelected[0].category) {
+                      case TestCategory.BANK:
+                      case TestCategory.EXAM:
+                      case TestCategory.ESSAY:
+                        questions = await TestController().getQuizQuestions(
+                          testsSelected[0].id!,
+                          limit: widget.questionLimit,
+                        );
+                        break;
+                      case TestCategory.TOPIC:
+                        List<int> topicIds = [];
+                        testsSelected.forEach((element) {
+                          topicIds.add(element.id!);
+                        });
+                        questions = await TestController().getTopicQuestions(
+                          topicIds,
+                          limit: () {
+                            if (widget.type == TestType.CUSTOMIZED)
+                              return widget.questionLimit;
+                            return widget.type != TestType.SPEED ? 10 : 1000;
+                          }(),
+                        );
+                        break;
+                      default:
+                        questions = await TestController().getMockQuestions(0);
+                    }
+                    print(questions.toString());
+                    print(questions.length);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return QuizCover(
+                            widget.user,
+                            questions,
+                            name: testsSelected[0].name,
+                            type: widget.type,
+                            theme: QuizTheme.BLUE,
+                            category: testsSelected[0].category!,
+                            time: widget.time != null
+                                ? widget.time!
+                                : widget.type == TestType.SPEED
+                                    ? 30
+                                    : questions.length * 60,
+                            course: widget.course,
+                          );
+                        },
+                      ),
                     );
-                    break;
-                  case TestCategory.TOPIC:
-                    List<int> topicIds = [];
-                    testsSelected.forEach((element) {
-                      topicIds.add(element.id!);
-                    });
-                    questions = await TestController().getTopicQuestions(
-                      topicIds,
-                      limit: () {
-                        if (widget.type == TestType.CUSTOMIZED)
-                          return widget.questionLimit;
-                        return widget.type != TestType.SPEED ? 10 : 1000;
-                      }(),
+                  },
+                  label: "Take Test",
+                  color: kAdeoBlue,
+                )
+              : AdeoTextButton(
+                  onPressed: () async {
+                    List<Question> questions = [];
+                    switch (testsSelected[0].category) {
+                      case TestCategory.BANK:
+                      case TestCategory.EXAM:
+                      case TestCategory.ESSAY:
+                        questions = await TestController().getQuizQuestions(
+                          testsSelected[0].id!,
+                          limit: widget.questionLimit,
+                        );
+                        break;
+                      case TestCategory.TOPIC:
+                        List<int> topicIds = [];
+                        testsSelected.forEach((element) {
+                          topicIds.add(element.id!);
+                        });
+                        questions = await TestController().getTopicQuestions(
+                          topicIds,
+                          limit: () {
+                            if (widget.type == TestType.CUSTOMIZED)
+                              return widget.questionLimit;
+                            return widget.type != TestType.SPEED ? 10 : 1000;
+                          }(),
+                        );
+                        break;
+                      default:
+                        questions = await TestController().getMockQuestions(0);
+                    }
+                    print(questions.toString());
+                    print(questions.length);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SpeedQuizCover(
+                            widget.user,
+                            questions,
+                            name: testsSelected[0].name,
+                            type: widget.type,
+                            theme: QuizTheme.ORANGE,
+                            category: testsSelected[0].category!,
+                            time: widget.time != null
+                                ? widget.time!
+                                : widget.type == TestType.SPEED
+                                    ? widget.time!
+                                    : questions.length * 60,
+                            course: widget.course,
+                          );
+                        },
+                      ),
                     );
-                    break;
-                  default:
-                    questions = await TestController().getMockQuestions(0);
-                }
-                print(questions.toString());
-                print(questions.length);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return QuizCover(
-                        widget.user,
-                        questions,
-                        name: testsSelected[0].name,
-                        type: widget.type,
-                        theme: QuizTheme.BLUE,
-                        category: testsSelected[0].category!,
-                        time: widget.time != null
-                            ? widget.time!
-                            : widget.type == TestType.SPEED
-                                ? 30
-                                : questions.length * 60,
-                        course: widget.course,
-                      );
-                    },
-                  ),
-                );
-              },
-              label: "Take Test",
-              color: kAdeoBlue,
-            )
+                  },
+                  label: "Take Test",
+                  color: kAdeoBlue,
+                )
           : SizedBox(),
     );
   }

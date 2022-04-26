@@ -11,6 +11,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
@@ -21,7 +22,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-enum QuizTheme { GREEN, BLUE }
+enum QuizTheme { GREEN, BLUE, ORANGE }
 
 class QuizView extends StatefulWidget {
   QuizView(
@@ -65,6 +66,9 @@ class _QuizViewState extends State<QuizView> {
     if (widget.theme == QuizTheme.GREEN) {
       backgroundColor = const Color(0xFF00C664);
       backgroundColor2 = const Color(0xFF05A958);
+    } else if (widget.theme == QuizTheme.ORANGE) {
+      backgroundColor = kAdeoOrangeH;
+      backgroundColor2 = kAdeoOrangeH;
     } else {
       backgroundColor = const Color(0xFF5DA5EA);
       backgroundColor2 = const Color(0xFF5DA5CA);

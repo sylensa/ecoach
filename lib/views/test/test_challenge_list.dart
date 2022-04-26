@@ -4,6 +4,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/customized_test/speed_quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_essay_page.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
@@ -17,12 +18,14 @@ class TestChallengeList extends StatelessWidget {
     required this.testType,
     required this.course,
     required this.user,
+    this.time,
     Key? key,
   }) : super(key: key);
 
   final User user;
   final TestType testType;
   final Course course;
+  int? time;
 
   getTest(BuildContext context, TestCategory testCategory) {
     Future futureList;
@@ -62,17 +65,32 @@ class TestChallengeList extends StatelessWidget {
               switch (testCategory) {
                 case TestCategory.MOCK:
                   List<Question> questions = data as List<Question>;
-                  widgetView = QuizCover(
-                    user,
-                    questions,
-                    course: course,
-                    type: testType,
-                    theme: QuizTheme.BLUE,
-                    category: testCategory,
-                    time:
-                        testType == TestType.SPEED ? 30 : questions.length * 60,
-                    name: "Mock Test",
-                  );
+                  widgetView = testType == TestType.SPEED
+                      ? SpeedQuizCover(
+                          user,
+                          questions,
+                          course: course,
+                          type: testType,
+                          theme: QuizTheme.ORANGE,
+                          category: testCategory,
+                          time: testType == TestType.SPEED
+                              ? time!
+                              : questions.length * 60,
+                          name: "Mock Test",
+                        )
+                      : QuizCover(
+                          user,
+                          questions,
+                          course: course,
+                          type: testType,
+                          theme: QuizTheme.BLUE,
+                          category: testCategory,
+                          time: testType == TestType.SPEED
+                              ? 30
+                              : questions.length * 60,
+                          name: "Mock Test",
+                        );
+
                   break;
                 case TestCategory.EXAM:
                   widgetView = TestTypeListView(
@@ -92,6 +110,7 @@ class TestChallengeList extends StatelessWidget {
                     testType,
                     title: "Topic",
                     multiSelect: true,
+                    time: time,
                   );
                   break;
                 case TestCategory.ESSAY:
