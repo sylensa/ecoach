@@ -49,7 +49,7 @@ class _SelectAnswerWidgetState extends State<SelectAnswerWidget> {
           widget.select();
         },
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(22.0),
           child: Container(
               child: Center(
                   child: AdeoAnswerTex(

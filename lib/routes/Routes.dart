@@ -1,11 +1,11 @@
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/home.dart';
-import 'package:ecoach/views/login_view.dart';
-import 'package:ecoach/views/logout.dart';
+import 'package:ecoach/views/auth/home.dart';
+import 'package:ecoach/views/auth/login_view.dart';
+import 'package:ecoach/views/auth/logout.dart';
 import 'package:ecoach/views/main_home.dart';
-import 'package:ecoach/views/register_view.dart';
+import 'package:ecoach/views/auth/register_view.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

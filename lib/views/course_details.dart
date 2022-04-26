@@ -10,9 +10,9 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/learn_mode.dart';
-import 'package:ecoach/views/notes_topics.dart';
-import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
+import 'package:ecoach/views/notes/notes_topics.dart';
+import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:ecoach/utils/manip.dart';
 
 class CourseDetailsPage extends StatefulWidget {
-  CourseDetailsPage(this.user, {this.courseInfo});
+  CourseDetailsPage(this.user, {this.courseInfo, course});
 
   static const String routeName = '/courses/details';
   final courseInfo;
