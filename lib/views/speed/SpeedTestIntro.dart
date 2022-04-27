@@ -1,14 +1,16 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/customized_test/customized_test_question_mode.dart';
-import 'package:ecoach/views/customized_test/customized_test_quiz_mode.dart';
-import 'package:ecoach/views/customized_test/customized_test_quiz_mode.dart';
+import 'package:ecoach/views/customized_test/customized_test_introit.dart';
+import 'package:ecoach/views/speed/speed_quiz_menu.dart';
+import 'package:ecoach/views/speed/speed_quiz_menu.dart';
+import 'package:ecoach/views/speed/speed_test_question_mode.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:flutter/material.dart';
 
-class CustomizedTestIntroit extends StatefulWidget {
-  const CustomizedTestIntroit({
+class SpeedTestIntro extends StatefulWidget {
+  const SpeedTestIntro({
     required this.user,
     required this.course,
     Key? key,
@@ -18,10 +20,10 @@ class CustomizedTestIntroit extends StatefulWidget {
   final Course course;
 
   @override
-  State<CustomizedTestIntroit> createState() => _CustomizedTestIntroitState();
+  State<SpeedTestIntro> createState() => _SpeedTestIntroState();
 }
 
-class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
+class _SpeedTestIntroState extends State<SpeedTestIntro> {
   late String mode;
 
   @override
@@ -39,7 +41,7 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kAdeoTaupe,
+      backgroundColor: kAdeoOrangeH,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -54,7 +56,7 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: kDefaultBlack,
-                        fontSize: 40,
+                        fontSize: 41,
                         fontFamily: 'Hamelin',
                       ),
                     ),
@@ -74,12 +76,14 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
                       label: 'Quiz',
                       isSelected: mode.toUpperCase() == 'QUIZ',
                       onTap: handleModeSelection,
+                      textcolor: Colors.white,
                     ),
                     SizedBox(height: 35),
                     CustomizeModeSelector(
                       label: 'Question',
                       isSelected: mode.toUpperCase() == 'QUESTION',
                       onTap: handleModeSelection,
+                      textcolor: Colors.white,
                     ),
                   ],
                 ),
@@ -89,15 +93,17 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
               children: [
                 AdeoOutlinedButton(
                   label: 'Next',
+                  backcolor: Colors.red,
                   onPressed: () {
                     if (mode.toUpperCase() == 'QUIZ')
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return CustomizedTestQuizMode(
-                              widget.user,
-                              widget.course,
+                            return SpeedQuizMenu(
+                              controller: MarathonController(
+                                  widget.user, widget.course,
+                                  name: widget.course.name!),
                             );
                           },
                         ),
@@ -107,7 +113,7 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return CustomizedTestQuestionMode(
+                            return SpeedTestQuestionMode(
                               widget.user,
                               widget.course,
                             );
@@ -120,58 +126,6 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomizeModeSelector extends StatelessWidget {
-  CustomizeModeSelector({
-    required this.label,
-    required this.isSelected,
-    this.onTap,
-    this.textcolor,
-    Key? key,
-  }) : super(key: key);
-
-  final String label;
-  final bool isSelected;
-  final onTap;
-
-  Color? textcolor = kDefaultBlack;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: Feedback.wrapForTap(() {
-        onTap(label);
-      }, context),
-      child: AnimatedContainer(
-        width: double.infinity,
-        height: isSelected ? 80 : 45,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: isSelected ? Colors.black12 : Colors.transparent,
-          border: isSelected
-              ? Border.all(
-                  color: Colors.white,
-                  width: 1,
-                  style: BorderStyle.solid,
-                )
-              : Border(),
-        ),
-        duration: Duration(milliseconds: 100),
-        child: FittedBox(
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isSelected ? textcolor : kDefaultBlack,
-              fontSize: isSelected ? 60 : 35,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
         ),
       ),
     );

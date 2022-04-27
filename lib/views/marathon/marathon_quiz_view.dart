@@ -182,6 +182,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
           backgroundColor: Color(0xFF2D3E50),
           body: Column(
             children: [
+              // TODO : COPY HEADER  THAT DISPLAY  QUESTION AND TIME
               Container(
                 color: themeColor,
                 height: 53,
@@ -219,6 +220,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                   ],
                 ),
               ),
+              // TODO : COPY HEADER  THAT DISPLAYS  COLLOR FULL FEATURES
               QuizStats(
                 changeUp: changeUp,
                 averageScore: controller.getAvgScore().toStringAsFixed(2) + '%',
@@ -226,6 +228,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                 correctScore: controller.getTotalCorrect().toString(),
                 wrongScrore: controller.getTotalWrong().toString(),
               ),
+
               Expanded(
                 child: Container(
                   child: PageView(

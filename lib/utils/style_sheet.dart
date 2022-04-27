@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 ButtonStyle greenButtonStyle = ButtonStyle(
   backgroundColor: MaterialStateProperty.all(Color(0xFF00C664)),
@@ -41,6 +42,7 @@ const kAnalysisInfoSnippetBackground3 = Color(0xFF13BFA3);
 
 const kNavigationTopBorderColor = Color(0xFFC0C0C0);
 const kAdeoTaupe = Color(0xFFFFB444);
+Color kAdeoOrangeH = HexColor("#FF8444");
 const kAdeoBlue = Color(0xFF00ABE0);
 const kAdeoBlue2 = Color(0xFF2A9CEA);
 const kAdeoBlueAccent = Color(0xFF9EE4FF);
@@ -98,6 +100,13 @@ const kPageHeaderStyle = TextStyle(
 const kCustomizedTestSubtextStyle = TextStyle(
   color: kDefaultBlack,
   fontSize: 16.0,
+  fontFamily: 'Poppins',
+);
+
+const kCustomizedTestSubtextStyleWhite = TextStyle(
+  color: Colors.white,
+  fontSize: 16.0,
+  fontFamily: 'Poppins',
 );
 
 const kSpeedTestSubtextStyle = TextStyle(
