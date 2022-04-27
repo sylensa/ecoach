@@ -4,7 +4,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/customized_test/speed_quiz_cover.dart';
+import 'package:ecoach/views/speed/speed_quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_essay_page.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';

@@ -3,7 +3,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/customized_test/SpeedTestIntro.dart';
+import 'package:ecoach/views/speed/SpeedTestIntro.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/speed_test_introit.dart';

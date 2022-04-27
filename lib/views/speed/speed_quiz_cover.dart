@@ -6,6 +6,8 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
+
+import 'package:ecoach/views/speed/speed_quiz_view.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout_speed.dart';
@@ -130,7 +132,7 @@ class SpeedQuizCover extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return QuizView(
+                        return SpeedQuizView(
                           controller: QuizController(
                             user,
                             course!,

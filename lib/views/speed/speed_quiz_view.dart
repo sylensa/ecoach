@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
@@ -13,22 +11,25 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
+import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:ecoach/widgets/questions_widgets/select_answer_widget.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'dart:convert';
 
-enum QuizTheme { GREEN, BLUE, ORANGE }
-
-class QuizView extends StatefulWidget {
-  QuizView(
+class SpeedQuizView extends StatefulWidget {
+  SpeedQuizView(
       {Key? key,
       required this.controller,
-      this.theme = QuizTheme.GREEN,
+      this.theme = QuizTheme.ORANGE,
       this.diagnostic = false})
       : super(key: key);
 
@@ -37,10 +38,10 @@ class QuizView extends StatefulWidget {
   QuizTheme theme;
 
   @override
-  _QuizViewState createState() => _QuizViewState();
+  _SpeedQuizViewState createState() => _SpeedQuizViewState();
 }
 
-class _QuizViewState extends State<QuizView> {
+class _SpeedQuizViewState extends State<SpeedQuizView> {
   late final PageController pageController;
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
@@ -134,6 +135,17 @@ class _QuizViewState extends State<QuizView> {
   double get score {
     int totalQuestions = controller.questions.length;
     int correctAnswers = correct;
+    return correctAnswers / totalQuestions * 100;
+  }
+
+  double get avgScore {
+    print("avg scoring current question= $currentQuestion");
+    int totalQuestions = currentQuestion + 1;
+
+    int correctAnswers = correct;
+    if (totalQuestions == 0) {
+      return 0;
+    }
     return correctAnswers / totalQuestions * 100;
   }
 
@@ -255,232 +267,214 @@ class _QuizViewState extends State<QuizView> {
       },
       child: SafeArea(
         child: Scaffold(
-          body: Container(
-            decoration: BoxDecoration(color: backgroundColor),
-            child: Stack(children: [
-              Align(
-                  alignment: Alignment.topCenter,
-                  child: controller.speedTest
-                      ? Container(
-                          color: backgroundColor,
-                          height: 53,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Row(
-                            children: [],
-                          ),
-                        )
-                      : Container()),
-              Positioned(
-                top: 95,
-                right: -120,
-                left: -100,
-                bottom: 51,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFF595959),
-                  ),
-                  child: PageView(
-                    controller: pageController,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      for (int i = 0; i < controller.questions.length; i++)
-                        QuestionWidget(
-                          controller.user,
-                          controller.questions[i],
-                          position: i,
-                          enabled: enabled,
-                          theme: widget.theme,
-                          diagnostic: widget.diagnostic,
-                          callback: (Answer answer) async {
-                            await Future.delayed(Duration(milliseconds: 200));
-                            if (controller.speedTest && answer.value == 0) {
-                              completeQuiz();
-                            } else {
-                              nextButton();
-                            }
-                          },
-                        )
-                    ],
-                  ),
-                ),
-              ),
-              //
-              Positioned(
-                top: 0,
-                right: 40,
-                left: 0,
-                child: Container(
-                  child: SizedBox(
-                    height: 100,
-                    child: ScrollablePositionedList.builder(
-                      itemScrollController: numberingController,
-                      itemCount: controller.questions.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, i) {
-                        if (controller.speedTest) return Container();
-                        return Container(
-                            child: SelectText(
-                                "${(i + 1)}", i == currentQuestion,
-                                normalSize: 28,
-                                selectedSize: 45,
-                                underlineSelected: true,
-                                selectedColor: Color(0xFFFD6363),
-                                color: Colors.white70, select: () {
-                          if (controller.speedTest) {
-                            return;
-                          }
-                          setState(() {
-                            currentQuestion = i;
-                          });
-
-                          pageController.jumpToPage(i);
-                        }));
-                      },
+          backgroundColor: Color(0xFF595959),
+          body: Column(children: [
+            Container(
+              color: backgroundColor,
+              height: 53,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircularPercentIndicator(
+                    radius: 20,
+                    lineWidth: 3,
+                    progressColor: Colors.white,
+                    backgroundColor: Colors.transparent,
+                    percent: controller.percentageCompleted,
+                    center: Text(
+                      "${controller.currentQuestion + 1}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.sp,
+                        fontFamily: 'Cocon',
+                      ),
                     ),
                   ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 31, right: 4.0),
+                      child: Text(
+                        controller.name,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.sp,
+                          fontFamily: 'Cocon',
+                        ),
+                      ),
+                    ),
+                  ),
+                  getTimerWidget(),
+                ],
+              ),
+            ),
+
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFF595959),
+                ),
+                child: PageView(
+                  controller: pageController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    for (int i = 0; i < controller.questions.length; i++)
+                      QuestionWidget(
+                        controller.user,
+                        controller.questions[i],
+                        position: i,
+                        enabled: enabled,
+                        theme: widget.theme,
+                        diagnostic: widget.diagnostic,
+                        callback: (Answer answer) async {
+                          await Future.delayed(Duration(milliseconds: 200));
+                          if (controller.speedTest && answer.value == 0) {
+                            completeQuiz();
+                          } else {
+                            nextButton();
+                          }
+                        },
+                      )
+                  ],
                 ),
               ),
-
-              //
-              Positioned(
-                  top: -120,
-                  right: -80,
-                  child: Image(
-                    image: AssetImage('assets/images/white_leave.png'),
-                  )),
-              //
-
-              Positioned(
-                key: UniqueKey(),
-                top: 50,
-                right: 15,
-                child: GestureDetector(
-                  onTap: () {
-                    if (!enabled) {
+            ),
+            // //
+            Container(
+              height: 100,
+              child: ScrollablePositionedList.builder(
+                itemScrollController: numberingController,
+                itemCount: controller.questions.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, i) {
+                  if (controller.speedTest) return Container();
+                  return Container(
+                      child: SelectText("${(i + 1)}", i == currentQuestion,
+                          normalSize: 28,
+                          selectedSize: 45,
+                          underlineSelected: true,
+                          selectedColor: Color(0xFFFD6363),
+                          color: Colors.white70, select: () {
+                    if (controller.speedTest) {
                       return;
                     }
-                    timerController.pause();
+                    setState(() {
+                      currentQuestion = i;
+                    });
 
-                    showPauseDialog();
-                  },
-                  child: enabled
-                      ? getTimerWidget()
-                      : Text("Time Up",
-                          style:
-                              TextStyle(color: backgroundColor, fontSize: 18)),
-                ),
+                    pageController.jumpToPage(i);
+                  }));
+                },
               ),
+            ),
 
-              // button
-              Positioned(
-                bottom: 0,
-                right: 0,
-                left: 0,
-                child: Container(
-                  child: IntrinsicHeight(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          if (currentQuestion > 0 &&
-                              (!controller.speedTest ||
-                                  controller.speedTest && !enabled))
-                            Expanded(
-                              flex: 2,
-                              child: TextButton(
-                                onPressed: () {
-                                  pageController.previousPage(
-                                      duration: Duration(milliseconds: 1),
-                                      curve: Curves.ease);
-                                  setState(() {
-                                    currentQuestion--;
-                                    numberingController.scrollTo(
-                                        index: currentQuestion,
-                                        duration: Duration(seconds: 1),
-                                        curve: Curves.easeInOutCubic);
-                                  });
-                                },
-                                child: Text(
-                                  "Previous",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                  ),
-                                ),
+            // //
+
+            // //
+
+            // // button
+            Container(
+              height: 60,
+              color: backgroundColor,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    if (currentQuestion > 0 &&
+                        (!controller.speedTest ||
+                            controller.speedTest && !enabled))
+                      Expanded(
+                        flex: 2,
+                        child: TextButton(
+                          onPressed: () {
+                            pageController.previousPage(
+                                duration: Duration(milliseconds: 1),
+                                curve: Curves.ease);
+                            setState(() {
+                              currentQuestion--;
+                              numberingController.scrollTo(
+                                  index: currentQuestion,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.easeInOutCubic);
+                            });
+                          },
+                          child: Text(
+                            "Previous",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (currentQuestion < controller.questions.length - 1)
+                      VerticalDivider(width: 2, color: Colors.white),
+                    if (currentQuestion < controller.questions.length - 1 &&
+                        !(!enabled &&
+                            controller.speedTest &&
+                            currentQuestion == finalQuestion))
+                      Expanded(
+                        flex: 2,
+                        child: TextButton(
+                          onPressed: nextButton,
+                          child: Text(
+                            "Next",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 21,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (!savedTest &&
+                        currentQuestion == controller.questions.length - 1)
+                      VerticalDivider(width: 2, color: Colors.white),
+                    if (!savedTest &&
+                            currentQuestion ==
+                                controller.questions.length - 1 ||
+                        (enabled &&
+                            controller.speedTest &&
+                            currentQuestion == finalQuestion))
+                      Expanded(
+                        flex: 2,
+                        child: TextButton(
+                          onPressed: () {
+                            completeQuiz();
+                          },
+                          child: Text(
+                            "Complete",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 21,
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (savedTest)
+                      VerticalDivider(width: 2, color: Colors.white),
+                    if (savedTest)
+                      Expanded(
+                        flex: 1,
+                        child: TextButton(
+                          onPressed: () {
+                            viewResults();
+                          },
+                          child: RichText(
+                            softWrap: false,
+                            overflow: TextOverflow.clip,
+                            text: TextSpan(
+                              text: "Results",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 21,
                               ),
                             ),
-                          if (currentQuestion < controller.questions.length - 1)
-                            VerticalDivider(width: 2, color: Colors.white),
-                          if (currentQuestion <
-                                  controller.questions.length - 1 &&
-                              !(!enabled &&
-                                  controller.speedTest &&
-                                  currentQuestion == finalQuestion))
-                            Expanded(
-                              flex: 2,
-                              child: TextButton(
-                                onPressed: nextButton,
-                                child: Text(
-                                  "Next",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 21,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          if (!savedTest &&
-                              currentQuestion ==
-                                  controller.questions.length - 1)
-                            VerticalDivider(width: 2, color: Colors.white),
-                          if (!savedTest &&
-                                  currentQuestion ==
-                                      controller.questions.length - 1 ||
-                              (enabled &&
-                                  controller.speedTest &&
-                                  currentQuestion == finalQuestion))
-                            Expanded(
-                              flex: 2,
-                              child: TextButton(
-                                onPressed: () {
-                                  completeQuiz();
-                                },
-                                child: Text(
-                                  "Complete",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 21,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          if (savedTest)
-                            VerticalDivider(width: 2, color: Colors.white),
-                          if (savedTest)
-                            Expanded(
-                              flex: 1,
-                              child: TextButton(
-                                onPressed: () {
-                                  viewResults();
-                                },
-                                child: RichText(
-                                  softWrap: false,
-                                  overflow: TextOverflow.clip,
-                                  text: TextSpan(
-                                    text: "Results",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 21,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ]),
-                  ),
-                ),
-              )
-            ]),
-          ),
+                          ),
+                        ),
+                      ),
+                  ]),
+            )
+          ]),
         ),
       ),
     );
@@ -501,7 +495,7 @@ class _QuizViewState extends State<QuizView> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
-                        color: Color(0xFF222E3B),
+                        color: Colors.white,
                         width: 1,
                       ),
                     ),
@@ -521,13 +515,17 @@ class _QuizViewState extends State<QuizView> {
                           if (remaining.inSeconds == 0) {
                             return Text("Time Up",
                                 style: TextStyle(
-                                    color: backgroundColor, fontSize: 18));
+                                    color: Colors.white,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.bold));
                           }
 
                           return Text(
                               "${remaining.inMinutes}:${remaining.inSeconds % 60}",
                               style: TextStyle(
-                                  color: backgroundColor, fontSize: 28));
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold));
                         },
                         onFinish: () {
                           onEnd();
@@ -750,7 +748,7 @@ class QuestionWidget extends StatefulWidget {
       this.position,
       this.enabled = true,
       this.diagnostic = false,
-      this.theme = QuizTheme.GREEN,
+      this.theme = QuizTheme.ORANGE,
       this.callback})
       : super(key: key);
   User user;
@@ -775,6 +773,8 @@ class _QuestionWidgetState extends State<QuestionWidget> {
   void initState() {
     if (widget.theme == QuizTheme.GREEN) {
       backgroundColor = const Color(0xFF00C664);
+    } else if (widget.theme == QuizTheme.ORANGE) {
+      backgroundColor = kAdeoOrangeH;
     } else {
       backgroundColor = const Color(0xFF5DA5EA);
     }

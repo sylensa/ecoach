@@ -5,7 +5,7 @@ import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
-import 'package:ecoach/views/customized_test/speed_topic_menu.dart';
+import 'package:ecoach/views/speed/speed_topic_menu.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';

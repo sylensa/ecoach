@@ -3,8 +3,9 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
-import 'package:ecoach/views/customized_test/speed_quiz_menu.dart';
-import 'package:ecoach/views/customized_test/speed_test_question_mode.dart';
+import 'package:ecoach/views/speed/speed_quiz_menu.dart';
+import 'package:ecoach/views/speed/speed_quiz_menu.dart';
+import 'package:ecoach/views/speed/speed_test_question_mode.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:flutter/material.dart';
 
