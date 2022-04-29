@@ -361,6 +361,7 @@ class _SpeedQuizViewState extends State<SpeedQuizView> {
                     }
                     setState(() {
                       currentQuestion = i;
+                      controller.currentQuestion += 1;
                     });
 
                     pageController.jumpToPage(i);
@@ -957,7 +958,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                         });
                         widget.callback!(answers![i]);
                       }),
-                      getAnswerMarker(answers![i])
+                      getAnswerMarker2(answers![i])
                     ]),
                 ],
               ),
@@ -968,11 +969,36 @@ class _QuestionWidgetState extends State<QuestionWidget> {
     );
   }
 
-  Positioned getAnswerMarker(Answer answer) {
+  Widget getAnswerMarker(Answer answer) {
     if (!widget.enabled && answer == correctAnswer) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 22),
+        child: Center(
+          child: Container(
+            height: 87,
+            decoration: BoxDecoration(
+              border: Border.all(color: kAdeoOrangeH, width: 1.5),
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        ),
+      );
+    } else if (!widget.enabled && answer == selectedAnswer) {
       return Positioned(
           left: 115,
           bottom: 8,
+          child: Image(
+            image: AssetImage('assets/images/wrong.png'),
+          ));
+    }
+    return Positioned(child: Container());
+  }
+
+  Positioned getAnswerMarker2(Answer answer) {
+    if (!widget.enabled && answer == correctAnswer) {
+      return Positioned(
+          left: 115,
+          bottom: 35,
           child: Image(
             image: AssetImage('assets/images/correct.png'),
           ));

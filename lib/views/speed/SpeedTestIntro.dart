@@ -100,11 +100,8 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return SpeedQuizMenu(
-                              controller: MarathonController(
-                                  widget.user, widget.course,
-                                  name: widget.course.name!),
-                            );
+                            return SpeedTestQuestionMode(
+                                widget.user, widget.course, "quiz");
                           },
                         ),
                       );
@@ -114,9 +111,7 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                         MaterialPageRoute(
                           builder: (context) {
                             return SpeedTestQuestionMode(
-                              widget.user,
-                              widget.course,
-                            );
+                                widget.user, widget.course, "question");
                           },
                         ),
                       );

@@ -1,7 +1,9 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
@@ -20,9 +22,11 @@ class SpeedQuizMenu extends StatefulWidget {
   SpeedQuizMenu({
     Key? key,
     required this.controller,
+    this.time,
   }) : super(key: key);
 
   final MarathonController controller;
+  int? time;
 
   @override
   State<SpeedQuizMenu> createState() => _SpeedQuizMenuState();

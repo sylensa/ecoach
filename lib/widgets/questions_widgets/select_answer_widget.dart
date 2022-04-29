@@ -51,18 +51,20 @@ class _SelectAnswerWidgetState extends State<SelectAnswerWidget> {
         child: Padding(
           padding: const EdgeInsets.all(22.0),
           child: Container(
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(12)),
               child: Center(
                   child: AdeoAnswerTex(
-            widget.user,
-            widget.text,
-            widget.selected,
-            color: widget.color,
-            imposedColor: widget.imposedColor,
-            imposedSize: widget.imposedSize,
-            normalSize: widget.normalSize,
-            selectedColor: widget.selectedColor,
-            selectedSize: widget.selectedSize,
-          ))),
+                widget.user,
+                widget.text,
+                widget.selected,
+                color: widget.color,
+                imposedColor: widget.imposedColor,
+                imposedSize: widget.imposedSize,
+                normalSize: widget.normalSize,
+                selectedColor: widget.selectedColor,
+                selectedSize: widget.selectedSize,
+              ))),
         ));
   }
 }

@@ -1,7 +1,9 @@
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/speed/speed_quiz_menu.dart';
 import 'package:ecoach/views/test/test_challenge_list.dart';
 import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 
@@ -12,10 +14,11 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class SpeedTestQuestionMode extends StatefulWidget {
-  const SpeedTestQuestionMode(this.user, this.course, {Key? key})
+  const SpeedTestQuestionMode(this.user, this.course, this.mode, {Key? key})
       : super(key: key);
   final User user;
   final Course course;
+  final String mode;
 
   @override
   State<SpeedTestQuestionMode> createState() => _SpeedTestQuestionModeState();
@@ -44,7 +47,9 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
       pages: [
         TestIntroitLayoutPageSpeed(
           title: 'Time',
-          subText: 'Allocation per question',
+          subText: widget.mode == "question"
+              ? 'Allocation per question'
+              : "Enter time allocation for the quiz",
           middlePiece: Column(
             children: [
               SizedBox(height: 60),
@@ -100,20 +105,34 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
                     int time = (min * 60) + sec;
 
                     Navigator.pop(context);
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return TestChallengeList(
-                            testType: TestType.SPEED,
-                            course: widget.course,
-                            user: widget.user,
-                            time: time,
-                          );
-                        },
-                      ),
-                    );
+                    if (widget.mode == "question") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return TestChallengeList(
+                              testType: TestType.SPEED,
+                              course: widget.course,
+                              user: widget.user,
+                              time: time,
+                            );
+                          },
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SpeedQuizMenu(
+                              controller: MarathonController(
+                                  widget.user, widget.course,
+                                  name: widget.course.name!),
+                            );
+                          },
+                        ),
+                      );
+                    }
                   } else
                     showFeedback(
                       context,
