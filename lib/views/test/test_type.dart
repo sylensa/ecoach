@@ -3,6 +3,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/speed/SpeedTestIntro.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/speed_test_introit.dart';
@@ -63,14 +64,25 @@ class _TestTypeViewState extends State<TestTypeView> {
                     iconURL: 'assets/icons/courses/speed.png',
                     onTap: () {
                       // showTestCat(TestType.SPEED);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return TestChallengeList(
+                      //         testType: TestType.SPEED,
+                      //         course: widget.course,
+                      //         user: widget.user,
+                      //       );
+                      //     },
+                      //   ),
+                      // );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return TestChallengeList(
-                              testType: TestType.SPEED,
-                              course: widget.course,
+                            return SpeedTestIntro(
                               user: widget.user,
+                              course: widget.course,
                             );
                           },
                         ),
