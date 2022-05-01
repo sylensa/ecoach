@@ -11,17 +11,23 @@ import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_ended.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/speed/speed_quiz_ended.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:simple_timer/simple_timer.dart';
 
 class MarathonQuizView extends StatefulWidget {
-  MarathonQuizView({Key? key, required this.controller}) : super(key: key);
+  MarathonQuizView(
+      {Key? key, required this.controller, this.themeColor = kAdeoBlue})
+      : super(key: key);
   MarathonController controller;
+  Color themeColor;
 
   @override
   State<MarathonQuizView> createState() => _MarathonQuizViewState();
@@ -30,7 +36,7 @@ class MarathonQuizView extends StatefulWidget {
 class _MarathonQuizViewState extends State<MarathonQuizView>
     with SingleTickerProviderStateMixin {
   int selectedObjective = 0;
-  Color themeColor = kAdeoBlue;
+
   late MarathonController controller;
   late final PageController pageController;
   List<MarathonQuestionWidget> questionWidgets = [];
@@ -42,10 +48,9 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   double avgTime = 0;
   int correct = 0;
   int wrong = 0;
-
+  int countdownInSeconds = 0;
   int questionTimer = 0;
 
-  late TimerController _timerController;
   TimerStyle _timerStyle = TimerStyle.expanding_segment;
 
   @override
@@ -100,6 +105,23 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
 
   void handleTimerOnEnd() {
     print("timer has ended");
+  }
+
+  onEnd() {
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+    print("timer ended");
+
+    controller.endMarathon();
+    Navigator.push(context, MaterialPageRoute(builder: (c) {
+      return SpeedQuizEnded(controller: controller);
+    }));
   }
 
   sumbitAnswer() async {
@@ -185,38 +207,71 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
             children: [
               // TODO : COPY HEADER  THAT DISPLAY  QUESTION AND TIME
               Container(
-                color: themeColor,
+                color: widget.themeColor,
                 height: 53,
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CircularPercentIndicator(
-                      radius: 25,
-                      lineWidth: 3,
-                      progressColor: Color(0xFF222E3B),
-                      backgroundColor: Colors.transparent,
-                      percent: controller.percentageCompleted,
-                      center: Text(
-                        "${controller.currentQuestion + 1}",
-                        style:
-                            TextStyle(fontSize: 14, color: Color(0xFF222E3B)),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 31, right: 4.0),
-                        child: Text(
-                          controller.name!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: kAdeoBlueAccent,
-                            fontSize: 14,
-                            fontFamily: 'Hamelin',
+                    !controller.speedTest
+                        ? CircularPercentIndicator(
+                            radius: 25,
+                            lineWidth: 3,
+                            progressColor: Color(0xFF222E3B),
+                            backgroundColor: Colors.transparent,
+                            percent: controller.percentageCompleted,
+                            center: Text(
+                              "${controller.currentQuestion + 1}",
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xFF222E3B)),
+                            ),
+                          )
+                        : CircularPercentIndicator(
+                            radius: 20,
+                            lineWidth: 3,
+                            progressColor: Colors.white,
+                            backgroundColor: Colors.transparent,
+                            percent: controller.percentageCompleted,
+                            center: Text(
+                              "${controller.currentQuestion + 1}",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontFamily: 'Cocon',
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
+                    !controller.speedTest
+                        ? Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 31, right: 4.0),
+                              child: Text(
+                                controller.name!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: kAdeoBlueAccent,
+                                  fontSize: 14,
+                                  fontFamily: 'Hamelin',
+                                ),
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 31, right: 4.0),
+                              child: Text(
+                                controller.name!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13.sp,
+                                  fontFamily: 'Cocon',
+                                ),
+                              ),
+                            ),
+                          ),
                     getTimerWidget(),
                   ],
                 ),
@@ -245,6 +300,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                           callback: (Answer answer, correct) async {
                             next();
                           },
+                          themeColor: widget.themeColor,
                         )
                     ],
                   ),
@@ -322,44 +378,87 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
         // showPauseDialog();
       },
       child: controller.enabled
-          ? Row(
-              children: [
-                Image(image: AssetImage('assets/images/watch.png')),
-                SizedBox(width: 4),
-                GestureDetector(
-                  onTap: Feedback.wrapForTap(() {
-                    showPauseDialog();
-                  }, context),
-                  child: Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(
-                        color: Color(0xFF222E3B),
-                        width: 1,
+          ? !controller.speedTest
+              ? Row(
+                  children: [
+                    Image(image: AssetImage('assets/images/watch.png')),
+                    SizedBox(width: 4),
+                    GestureDetector(
+                      onTap: Feedback.wrapForTap(() {
+                        showPauseDialog();
+                      }, context),
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Color(0xFF222E3B),
+                            width: 1,
+                          ),
+                        ),
+                        child: CustomTimer(
+                          builder: (CustomTimerRemainingTime remaining) {
+                            controller.duration = remaining.duration;
+
+                            return Text(
+                              "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
+                              style: TextStyle(
+                                color: Color(0xFF222E3B),
+                                fontSize: 14,
+                              ),
+                            );
+                          },
+                          controller: controller.timerController,
+                          begin: Duration(
+                              seconds: controller.marathon!.totalTime ?? 0),
+                          end: Duration(minutes: 2),
+                        ),
                       ),
                     ),
-                    child: CustomTimer(
-                      builder: (CustomTimerRemainingTime remaining) {
-                        controller.duration = remaining.duration;
+                  ],
+                )
+              : Row(
+                  children: [
+                    Image(image: AssetImage('assets/images/watch.png')),
+                    SizedBox(width: 4),
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 1,
+                        ),
+                      ),
+                      child: AdeoTimer(
+                          controller: controller.speedtimerController!,
+                          startDuration: controller.speedDuration!,
+                          callbackWidget: (time) {
+                            Duration remaining =
+                                Duration(seconds: time.toInt());
+                            controller.duration = remaining;
+                            countdownInSeconds = remaining.inSeconds;
+                            if (remaining.inSeconds == 0) {
+                              return Text("Time Up",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.bold));
+                            }
 
-                        return Text(
-                          "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
-                          style: TextStyle(
-                            color: Color(0xFF222E3B),
-                            fontSize: 14,
-                          ),
-                        );
-                      },
-                      controller: controller.timerController,
-                      begin: Duration(
-                          seconds: controller.marathon!.totalTime ?? 0),
-                      end: Duration(minutes: 2),
-                    ),
-                  ),
-                ),
-              ],
-            )
+                            return Text(
+                                "${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.bold));
+                          },
+                          onFinish: () {
+                            onEnd();
+                          }),
+                    )
+                  ],
+                )
           : Text("Time Up",
               style: TextStyle(color: Color(0xFF969696), fontSize: 18)),
     );
@@ -411,7 +510,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
             context: context,
             builder: (context) {
               return PauseMenuDialog(
-                themeColor: themeColor,
+                themeColor: widget.themeColor,
                 controller: controller,
               );
             })) ??
@@ -662,14 +761,19 @@ class TestPausedPrompt extends StatelessWidget {
 }
 
 class MarathonQuestionWidget extends StatefulWidget {
-  const MarathonQuestionWidget(this.user, this.question,
-      {Key? key, this.position, this.enabled = true, this.callback})
+  MarathonQuestionWidget(this.user, this.question,
+      {Key? key,
+      this.position,
+      this.enabled = true,
+      this.callback,
+      this.themeColor = kAdeoTaupe})
       : super(key: key);
 
   final User user;
   final Question question;
   final int? position;
   final bool enabled;
+  Color themeColor;
   final Function(Answer selectedAnswer, bool correct)? callback;
 
   @override
@@ -678,7 +782,6 @@ class MarathonQuestionWidget extends StatefulWidget {
 
 class _MarathonQuestionWidgetState extends State<MarathonQuestionWidget> {
   int selectedObjective = -1;
-  Color themeColor = kAdeoTaupe;
 
   void handleObjectiveSelection(id) {
     setState(() {
@@ -726,7 +829,7 @@ class _MarathonQuestionWidgetState extends State<MarathonQuestionWidget> {
           Container(
             width: double.infinity,
             height: 10,
-            color: themeColor,
+            color: widget.themeColor,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -739,7 +842,7 @@ class _MarathonQuestionWidgetState extends State<MarathonQuestionWidget> {
                   Stack(children: [
                     Objective(
                       widget.user,
-                      themeColor: themeColor,
+                      themeColor: widget.themeColor,
                       enabled: widget.enabled,
                       id: i,
                       label: answers![i].text!,

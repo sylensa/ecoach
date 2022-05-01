@@ -101,6 +101,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
           return ResultsView(
             controller.user,
             controller.course,
+            TestType.NONE,
             test: testTakenSaved!,
           );
         },

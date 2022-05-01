@@ -17,11 +17,11 @@ import 'package:flutter/material.dart';
 class SpeedQuizCover extends StatelessWidget {
   SpeedQuizCover(
     this.user,
+    this.type,
     this.questions, {
     Key? key,
     this.level,
     required this.name,
-    this.type = TestType.NONE,
     this.category = TestCategory.NONE,
     this.theme = QuizTheme.ORANGE,
     this.course,
@@ -133,6 +133,7 @@ class SpeedQuizCover extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) {
                         return SpeedQuizView(
+                          type,
                           controller: QuizController(
                             user,
                             course!,

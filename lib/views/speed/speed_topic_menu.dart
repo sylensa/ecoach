@@ -20,9 +20,10 @@ import '../../widgets/adeo_outlined_button.dart';
 enum topics { TOPIC, MOCK }
 
 class SpeedTopicMenu extends StatefulWidget {
-  SpeedTopicMenu({this.topics = const [], required this.controller});
+  SpeedTopicMenu({this.topics = const [], required this.controller, this.time});
   MarathonController controller;
   List<TestNameAndCount> topics;
+  int? time;
 
   @override
   State<SpeedTopicMenu> createState() => _SpeedTopicMenuState();
@@ -31,6 +32,7 @@ class SpeedTopicMenu extends StatefulWidget {
 class _SpeedTopicMenuState extends State<SpeedTopicMenu> {
   late dynamic topicId;
   late MarathonController controller;
+  int? next;
 
   @override
   void initState() {
@@ -39,9 +41,7 @@ class _SpeedTopicMenuState extends State<SpeedTopicMenu> {
     super.initState();
   }
 
-  handletopicSelection(
-    newTopic,
-  ) {
+  handletopicSelection(newTopic) {
     setState(() {
       if (topicId == newTopic)
         topicId = '';
@@ -82,7 +82,17 @@ class _SpeedTopicMenuState extends State<SpeedTopicMenu> {
                           isSelected: topicId == widget.topics[i].id!,
                           isUnselected:
                               topicId != '' && topicId != widget.topics[i].id!,
-                          onTap: handletopicSelection,
+                          onTap: (newTopic) {
+                            setState(() {
+                              if (topicId == newTopic)
+                                topicId = '';
+                              else
+                                topicId = newTopic;
+                              setState(() {
+                                next = widget.topics[i].totalCount;
+                              });
+                            });
+                          },
                           textcolor: Colors.white,
                         ),
                     ],
@@ -103,7 +113,8 @@ class _SpeedTopicMenuState extends State<SpeedTopicMenu> {
                             return Instructions1(
                               topicId: topicId,
                               controller: controller,
-                              noOfQuestion: widget.topics.length,
+                              noOfQuestion: next!,
+                              time: widget.time,
                             );
                           },
                         ),
@@ -126,10 +137,12 @@ class Instructions1 extends StatelessWidget {
   Instructions1(
       {required this.controller,
       required this.topicId,
-      required this.noOfQuestion});
+      required this.noOfQuestion,
+      this.time});
   MarathonController controller;
   int topicId;
   int noOfQuestion;
+  int? time;
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +162,7 @@ class Instructions1 extends StatelessWidget {
                 return Instructions2(
                   topicId: topicId,
                   controller: controller,
+                  time: time,
                 );
               },
             ),
@@ -160,9 +174,11 @@ class Instructions1 extends StatelessWidget {
 }
 
 class Instructions2 extends StatelessWidget {
-  Instructions2({required this.controller, required this.topicId});
+  Instructions2({required this.controller, required this.topicId, this.time});
   MarathonController controller;
   int topicId;
+
+  int? time;
 
   @override
   Widget build(BuildContext context) {
@@ -174,12 +190,16 @@ class Instructions2 extends StatelessWidget {
           await controller.createTopicMarathon(topicId);
           Topic? topic = await TopicDB().getTopicById(topicId);
           controller.name = topic!.name!;
+
           Navigator.pop(context);
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) {
-                return MarathonQuizView(controller: controller);
+                return MarathonQuizView(
+                  controller: controller,
+                  themeColor: kAdeoOrangeH,
+                );
               },
             ),
           );

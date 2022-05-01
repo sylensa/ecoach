@@ -7,6 +7,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
+import 'package:ecoach/views/speed/speed_quiz_mock.dart';
 import 'package:ecoach/views/speed/speed_topic_menu.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
@@ -59,14 +60,17 @@ class _SpeedQuizMenuState extends State<SpeedQuizMenu> {
       case Modes.TOPIC:
         List<TestNameAndCount> topics =
             await TestController().getTopics(controller.course);
-        screenToNavigateTo =
-            SpeedTopicMenu(topics: topics, controller: controller);
+        screenToNavigateTo = SpeedTopicMenu(
+          topics: topics,
+          controller: controller,
+          time: widget.time,
+        );
         break;
       case Modes.MOCK:
         int count =
             await QuestionDB().getTotalQuestionCount(controller.course.id!);
         screenToNavigateTo =
-            MarathonPractiseMock(count: count, controller: controller);
+            SpeedQuizMock(count: count, controller: controller);
         break;
     }
 
