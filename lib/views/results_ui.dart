@@ -13,7 +13,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class ResultsView extends StatefulWidget {
-  ResultsView(this.user, this.course,
+  ResultsView(this.user, this.course, this.testType,
       {Key? key,
       required this.test,
       this.history = false,
@@ -24,6 +24,7 @@ class ResultsView extends StatefulWidget {
   TestTaken test;
   bool diagnostic;
   bool history;
+  TestType testType;
 
   @override
   State<ResultsView> createState() => _ResultsViewState();
@@ -167,10 +168,11 @@ class _ResultsViewState extends State<ResultsView> {
               variant: 'default',
               tabs: ['topics', 'questions'],
               tabPages: [
-                TopicsTabPage(
+                TopicsTabPage(widget.testType,
                     topics: topicsPlaceholder,
                     diagnostic: widget.diagnostic,
                     user: widget.user,
+
                     // TODO - add course to topics page - find a better way like using getx or provider
                     course: widget.course,
                     history: widget.history),

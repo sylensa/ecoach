@@ -193,6 +193,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                                 return ResultsView(
                                   widget.user,
                                   widget.course,
+                                  TestType.NONE,
                                   test: selected[0],
                                 );
                               }),
@@ -202,7 +203,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                       ),
                       // Container(
                       //   width: 1.0,
-                      //   color: kPageBackgroundGray,
+                      //   color: kPageBackgroundGr
                       // ),
                     ],
                   ),

@@ -127,7 +127,10 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
                             return SpeedQuizMenu(
                               controller: MarathonController(
                                   widget.user, widget.course,
+                                  type: TestType.SPEED,
+                                  time: time,
                                   name: widget.course.name!),
+                              time: time,
                             );
                           },
                         ),

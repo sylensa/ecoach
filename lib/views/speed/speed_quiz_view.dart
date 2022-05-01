@@ -26,7 +26,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'dart:convert';
 
 class SpeedQuizView extends StatefulWidget {
-  SpeedQuizView(
+  SpeedQuizView(this.testType,
       {Key? key,
       required this.controller,
       this.theme = QuizTheme.ORANGE,
@@ -36,6 +36,7 @@ class SpeedQuizView extends StatefulWidget {
   QuizController controller;
   bool diagnostic;
   QuizTheme theme;
+  final TestType testType;
 
   @override
   _SpeedQuizViewState createState() => _SpeedQuizViewState();
@@ -239,6 +240,7 @@ class _SpeedQuizViewState extends State<SpeedQuizView> {
         builder: (BuildContext context) => ResultsView(
           controller.user,
           controller.course,
+          widget.testType,
           test: testTakenSaved!,
           diagnostic: widget.diagnostic,
         ),

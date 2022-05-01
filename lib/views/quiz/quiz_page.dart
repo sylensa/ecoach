@@ -227,6 +227,7 @@ class _QuizViewState extends State<QuizView> {
         builder: (BuildContext context) => ResultsView(
           controller.user,
           controller.course,
+          controller.type,
           test: testTakenSaved!,
           diagnostic: widget.diagnostic,
         ),

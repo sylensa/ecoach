@@ -14,7 +14,6 @@ import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
 class TestChallengeList extends StatelessWidget {
-
   static const String routeName = '/courses/challenge';
 
   TestChallengeList({
@@ -71,9 +70,9 @@ class TestChallengeList extends StatelessWidget {
                   widgetView = testType == TestType.SPEED
                       ? SpeedQuizCover(
                           user,
+                          testType,
                           questions,
                           course: course,
-                          type: testType,
                           theme: QuizTheme.ORANGE,
                           category: testCategory,
                           time: testType == TestType.SPEED

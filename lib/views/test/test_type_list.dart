@@ -272,9 +272,9 @@ class _MockListViewState extends State<TestTypeListView> {
                         builder: (context) {
                           return SpeedQuizCover(
                             widget.user,
+                            widget.type,
                             questions,
                             name: testsSelected[0].name,
-                            type: widget.type,
                             theme: QuizTheme.ORANGE,
                             category: testsSelected[0].category!,
                             time: widget.time != null

@@ -198,6 +198,7 @@ class _OthersTabPageState extends State<OthersTabPage> {
                                 return ResultsView(
                                   widget.user,
                                   widget.course,
+                                  TestType.NONE,
                                   test: selected,
                                 );
                               }),
