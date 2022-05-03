@@ -63,8 +63,6 @@ class _AutopilotIntroitQuestionsState extends State<AutopilotIntroitQuestions> {
                 background: kAdeoOrange2,
                 label: 'Next',
                 onPressed: () {
-                  /* TestIntroitLayout.goForward(); */
-                  // TODO: just go to next page
                   Navigator.push(
                     context,
                     MaterialPageRoute(

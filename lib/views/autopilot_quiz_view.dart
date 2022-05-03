@@ -111,7 +111,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
 
   sumbitAnswer() async {
     bool success = await controller.scoreCurrentQuestion();
-    double newScore = controller.autopilot!.avgScore!;
+    double newScore = controller.currentTopic!.avgScore!;
 
     setState(() {
       showSubmit = false;
@@ -127,7 +127,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
 
     if (controller.lastQuestion) {
       testTaken = controller.getTest();
-      controller.endAutopilot();
+      controller.endCurrentTopic();
       viewResults();
     } else {
       if (success) {
@@ -348,8 +348,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                         );
                       },
                       controller: controller.timerController,
-                      begin: Duration(
-                          seconds: controller.autopilot!.totalTime ?? 0),
+                      begin: Duration(seconds: controller.currentTopicTime),
                       end: Duration(hours: 2000),
                     ),
                   ),
@@ -514,20 +513,21 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
               Container(
                 child: AdeoTextButton(
                   label: 'Submit',
-                  onPressed: () {
+                  onPressed: () async {
                     switch (selected) {
                       case 5:
+                        await controller.scoreCurrentQuestion();
                         showPopup(context,
                             SessionSavedPrompt(controller: controller));
                         break;
                       case 6:
-                        controller.endAutopilot();
+                        await controller.endCurrentTopic();
                         Navigator.push(context, MaterialPageRoute(builder: (c) {
                           return AutopilotEnded(controller: controller);
                         }));
                         break;
                       case 7:
-                        controller.scoreCurrentQuestion();
+                        await controller.scoreCurrentQuestion();
                         showPopup(context, TestPausedPrompt());
                         break;
                       case 8:

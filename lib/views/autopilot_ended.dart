@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot_topic_menu.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/autopilot_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -62,7 +63,7 @@ class AutopilotEnded extends StatelessWidget {
                   ),
                   SizedBox(height: 32),
                   Text(
-                    'Net Score: ${controller.autopilot!.totalCorrect! - controller.autopilot!.totalWrong!}',
+                    'Net Score: ${controller.currentTopic!.correct! - controller.currentTopic!.wrong!}',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -70,7 +71,7 @@ class AutopilotEnded extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    '${Duration(seconds: controller.autopilot!.totalTime!).inHours} hrs : ${Duration(seconds: controller.autopilot!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.autopilot!.totalTime!).inSeconds % 60} sec',
+                    '${Duration(seconds: controller.currentTopic!.time!).inHours} hrs : ${Duration(seconds: controller.currentTopic!.time!).inMinutes % 60} min : ${Duration(seconds: controller.currentTopic!.time!).inSeconds % 60} sec',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -106,25 +107,25 @@ class AutopilotEnded extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: AdeoTextButton(
-                          label: 'review',
-                          fontSize: 20,
-                          color: Colors.white,
-                          background: kAdeoBlue,
-                          onPressed: () {},
-                        ),
-                      ),
-                      Container(
-                        width: 1.0,
-                        color: kAdeoBlueAccent,
-                      ),
-                    ],
-                  ),
-                ),
+                // Expanded(
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //         child: AdeoTextButton(
+                //           label: 'review',
+                //           fontSize: 20,
+                //           color: Colors.white,
+                //           background: kAdeoBlue,
+                //           onPressed: () {},
+                //         ),
+                //       ),
+                //       Container(
+                //         width: 1.0,
+                //         color: kAdeoBlueAccent,
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Expanded(
                   child: Row(
                     children: [
@@ -157,10 +158,12 @@ class AutopilotEnded extends StatelessWidget {
                     color: Colors.white,
                     background: kAdeoBlue,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return AutopilotIntroit(
-                            controller.user, controller.course);
-                      }));
+                      controller.updateCurrentTopic();
+
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (c) {
+                        return AutopilotTopicMenu(controller: controller);
+                      }), ModalRoute.withName(CourseDetailsPage.routeName));
                     },
                   ),
                 ),
