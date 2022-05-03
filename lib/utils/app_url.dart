@@ -2,6 +2,11 @@ class AppUrl {
   static const String liveBaseURL = "https://adeo.app/api/";
   static const String localBaseURL = "http://127.0.0.1:8000/api/";
 
+  static const String websocketWS = "ws://127.0.0.1:6001/app/adeo_key";
+  static const String websocketWSS = "wss://adeo.app:6001/app/adeo_key";
+
+  static const String websocket = websocketWS;
+
   static const String baseURL = liveBaseURL;
   static const String login = baseURL + "signin";
   static const String register = baseURL + "signup";

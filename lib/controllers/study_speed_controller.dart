@@ -4,7 +4,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 
 class SpeedController extends StudyController {
@@ -38,7 +38,6 @@ class SpeedController extends StudyController {
     startingDuration = duration;
 
     timerController = TimerController();
-    
   }
   final User user;
   final Course course;

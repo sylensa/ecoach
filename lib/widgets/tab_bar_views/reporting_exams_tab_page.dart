@@ -217,6 +217,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                                       return ResultsView(
                                         widget.user,
                                         widget.course,
+                                        TestType.NONE,
                                         test: selected[0],
                                       );
                                     }),

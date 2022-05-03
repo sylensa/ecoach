@@ -11,12 +11,14 @@ class PinInput extends StatefulWidget {
     required this.length,
     this.autoFocus = false,
     this.focusNode,
+    this.textColor = kDefaultBlack,
   });
 
   final onChanged;
   final int length;
   final bool autoFocus;
   FocusNode? focusNode;
+  Color textColor;
 
   @override
   State<PinInput> createState() => _PinInputState();
@@ -54,7 +56,7 @@ class _PinInputState extends State<PinInput> {
       ),
       enableActiveFill: false,
       hintCharacter: '0',
-      hintStyle: TextStyle(color: kDefaultBlack),
+      hintStyle: TextStyle(color: widget.textColor),
       cursorColor: Colors.black,
       animationDuration: Duration(milliseconds: 300),
       textStyle: kPinInputTextStyle,

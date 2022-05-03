@@ -16,7 +16,7 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
-import 'package:ecoach/views/test_type.dart';
+import 'package:ecoach/views/test/test_type.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -90,7 +90,7 @@ class TestController {
   }
 
   Future<int> getQuestionsCount(int courseId) async {
-    return await  QuestionDB().getTotalQuestionCount(courseId);
+    return await QuestionDB().getTotalQuestionCount(courseId);
   }
 
   Future<Map<String, List<TestAnswer>>> topicsAnalysis(TestTaken test) async {

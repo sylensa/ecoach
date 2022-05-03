@@ -17,6 +17,8 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
@@ -25,15 +27,25 @@ class MarathonController {
     this.user,
     this.course, {
     this.name,
+    this.type = TestType.NONE,
     this.marathon,
+    this.time = 30,
   }) {
+    speedDuration = Duration(seconds: time);
+    speedResetDuration = Duration(seconds: time);
+    startingDuration = duration;
     timerController = CustomTimerController();
+    speedtimerController = TimerController();
+    speedTest = type == TestType.SPEED ? true : false;
   }
 
   final User user;
   final Course course;
   String? name;
   Marathon? marathon;
+  TestType type;
+  bool speedTest = false;
+  int time;
 
   List<MarathonProgress> questions = [];
 
@@ -48,12 +60,17 @@ class MarathonController {
   DateTime? startTime;
   Duration? duration, resetDuration, startingDuration;
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
+  Duration? speedDuration, speedResetDuration, speedStartingDuration;
+  int speedEndTime = 0;
   CustomTimerController? timerController;
+  TimerController? speedtimerController;
   int countdownInSeconds = 0;
   DateTime questionTimer = DateTime.now();
 
   startTest() {
+    speedtimerController!.start();
     startTime = DateTime.now();
+    speedEndTime = DateTime.now().millisecondsSinceEpoch + 1000 * time;
     timerController!.start();
     questionTimer = DateTime.now();
   }
@@ -214,8 +231,14 @@ class MarathonController {
         totalQuestions: questions.length,
         courseId: course.id,
         testname: name,
-        // testType: type.toString(),
-        testTime: duration == null ? -1 : duration!.inSeconds,
+        testType: type.toString(),
+        testTime: !speedTest
+            ? duration == null
+                ? -1
+                : duration!.inSeconds
+            : speedDuration == null
+                ? -1
+                : speedDuration!.inSeconds,
         usedTime: DateTime.now().difference(startTime!).inSeconds,
         responses: responses,
         score: score,

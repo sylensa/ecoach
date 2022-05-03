@@ -2,6 +2,7 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
@@ -120,7 +121,7 @@ class _AllTabPageState extends State<AllTabPage> {
                                                       .split('.')[1]
                                                       .toLowerCase()
                                                       .toCapitalized()
-                                                  : 'Null',
+                                                  : ' ',
                                           correctlyAnswered: test.correct!,
                                           totalQuestions: test.totalQuestions,
                                           onTap: () {
@@ -196,6 +197,7 @@ class _AllTabPageState extends State<AllTabPage> {
                                 return ResultsView(
                                   widget.user,
                                   widget.course,
+                                  TestType.NONE,
                                   test: selected,
                                 );
                               }),

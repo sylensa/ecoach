@@ -1,6 +1,7 @@
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum PadTop { FULL, MILD }
 
@@ -38,6 +39,24 @@ class TestIntroitBaseScaffold extends StatelessWidget {
               ),
             ),
           ),
+
+          // Positioned(
+          // sitioned(
+          //   left: -36.0,
+          //   right: -36.0,
+          //   top: 85,
+          //   child: Container(
+          //     height: backgroundIllustrationHeight,
+          //     decoration: BoxDecoration(
+          //       image: DecorationImage(
+          //         fit: BoxFit.cover,
+          //         image: AssetImage(
+          //           backgroundImageURL,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
