@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/question.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:ecoach/models/topic.dart';
 
 Autopilot autopilotFromJson(String str) => Autopilot.fromJson(json.decode(str));
 
@@ -10,11 +9,6 @@ String autopilotToJson(Autopilot data) => json.encode(data.toJson());
 
 enum AutopilotStatus { NEW, IN_PROGRESS, PAUSED, COMPLETED }
 enum AutopilotType { FULL, TOPIC }
-
-
-
-
-
 
 class Autopilot {
   Autopilot({
@@ -51,7 +45,7 @@ class Autopilot {
   DateTime? endTime;
   String? status;
 
-    String get date {
+  String get date {
     if (endTime == null) return "";
 
     return '${endTime!.day} ${endTime!.month} ${endTime!.year}';
@@ -75,13 +69,13 @@ class Autopilot {
         userId: json["user_id"],
         title: json["title"],
         type: json["type"],
-        topicId: json["type_id"],
-        avgScore: json["avg_score"],
-        avgTime: json["avg_time"],
-        totalCorrect: json["total_correct"],
-        totalWrong: json["total_wrong"],
-        totalQuestions: json["total_questions"],
-        totalTime: json["total_time"],
+        topicId: json["topic_id"],
+        // avgScore: json["avg_score"],
+        // avgTime: json["avg_time"],
+        // totalCorrect: json["total_correct"],
+        // totalWrong: json["total_wrong"],
+        // totalQuestions: json["total_questions"],
+        // totalTime: json["total_time"],
         startTime: DateTime.parse(json['start_time']),
         endTime:
             json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
@@ -95,26 +89,92 @@ class Autopilot {
         "title": title,
         "type": type,
         "topic_id": topicId,
-        "avg_score": avgScore,
-        "avg_time": avgTime,
-        "total_correct": totalCorrect,
-        "total_wrong": totalWrong,
-        "total_questions": totalQuestions,
-        "total_time": totalTime,
+        // "avg_score": avgScore,
+        // "avg_time": avgTime,
+        // "total_correct": totalCorrect,
+        // "total_wrong": totalWrong,
+        // "total_questions": totalQuestions,
+        // "total_time": totalTime,
         "start_time": startTime!.toIso8601String(),
         "end_time": endTime == null ? null : endTime!.toIso8601String(),
         "status": status,
       };
 }
 
-AutopilotProgress autopilotProgressFromJson(String str) =>
-    AutopilotProgress.fromJson(json.decode(str));
+class AutopilotTopic {
+  int? id;
+  int? autopilotId;
+  int? topicId;
+  String? topicName;
+  double? avgScore;
+  double? avgTime;
+  int? correct;
+  int? wrong;
+  int? totalQuestions;
+  int? time;
+  DateTime? startTime;
+  DateTime? endTime;
+  String? status;
+  Topic? topic;
 
-String autopilotProgressToJson(AutopilotProgress data) =>
+  AutopilotTopic({
+    this.id,
+    this.autopilotId,
+    this.topicId,
+    this.topicName,
+    this.avgScore,
+    this.avgTime = 0,
+    this.correct,
+    this.wrong,
+    this.totalQuestions,
+    this.time,
+    this.startTime,
+    this.endTime,
+    this.status,
+  });
+
+  factory AutopilotTopic.fromJson(Map<String, dynamic> json) => AutopilotTopic(
+        id: json["id"],
+        autopilotId: json["autopilot_id"],
+        topicId: json["topic_id"],
+        topicName: json["topic_name"],
+        avgScore: json["avg_score"],
+        correct: json["correct"],
+        avgTime: json["avg_time"],
+        wrong: json["wrong"],
+        totalQuestions: json["total_questions"],
+        time: json["time"],
+        startTime: DateTime.parse(json['start_time']),
+        endTime:
+            json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "autopilot_id": autopilotId,
+        "topic_id": topicId,
+        "topic_name": topicName,
+        "avg_score": avgScore,
+        "avg_time": avgTime,
+        "correct": correct,
+        "wrong": wrong,
+        "total_questions": totalQuestions,
+        "time": time,
+        "start_time": startTime!.toIso8601String(),
+        "end_time": endTime == null ? null : endTime!.toIso8601String(),
+        "status": status,
+      };
+}
+
+AutopilotQuestion autopilotProgressFromJson(String str) =>
+    AutopilotQuestion.fromJson(json.decode(str));
+
+String autopilotProgressToJson(AutopilotQuestion data) =>
     json.encode(data.toJson());
 
-class AutopilotProgress {
-  AutopilotProgress({
+class AutopilotQuestion {
+  AutopilotQuestion({
     this.id,
     this.courseId,
     this.userId,
@@ -139,7 +199,7 @@ class AutopilotProgress {
   String? status;
   Question? question;
 
-   get isCorrect {
+  get isCorrect {
     if (question == null) return false;
 
     return question!.isCorrect;
@@ -163,8 +223,8 @@ class AutopilotProgress {
     return question!.selectedAnswer;
   }
 
-  factory AutopilotProgress.fromJson(Map<String, dynamic> json) =>
-    AutopilotProgress(
+  factory AutopilotQuestion.fromJson(Map<String, dynamic> json) =>
+      AutopilotQuestion(
         id: json["id"],
         courseId: json["course_id"],
         userId: json["user_id"],
@@ -175,10 +235,10 @@ class AutopilotProgress {
         topicName: json["topic_name"],
         time: json["time"],
         status: json["status"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
-       "id": id,
+  Map<String, dynamic> toJson() => {
+        "id": id,
         "course_id": courseId,
         "user_id": userId,
         "autopilot_id": autopilotId,
@@ -188,10 +248,9 @@ class AutopilotProgress {
         "topic_name": topicName,
         "time": time,
         "status": status,
-    };
+      };
 
-    AutopilotProgress clone() {
-      return AutopilotProgress.fromJson(toJson());
-    }
-
+  AutopilotQuestion clone() {
+    return AutopilotQuestion.fromJson(toJson());
+  }
 }

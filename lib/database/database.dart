@@ -21,7 +21,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.111.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.120.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -345,12 +345,6 @@ class DBProvider {
         'title' varchar(255)  NOT NULL,
         'type' varchar(255)  NOT NULL,
         'topic_id' int NULL,
-        'avg_score' double NOT NULL DEFAULT 0,
-        'avg_time' double NOT NULL DEFAULT 0,
-        'total_questions' int NOT NULL DEFAULT 0,
-        'total_correct' int NOT NULL DEFAULT 0,
-        'total_wrong' int NOT NULL DEFAULT 0,
-        'total_time' int NOT NULL DEFAULT 0,
         'status' varchar(255)  NOT NULL,
         'start_time' timestamp NULL DEFAULT NULL,
         'end_time' timestamp NULL DEFAULT NULL
@@ -366,6 +360,22 @@ class DBProvider {
         'topic_name' varchar(255)  NULL,
         'selected_answer_id' int NULL,
          'time' int NULL DEFAULT 0,
+        'status' varchar(255)  NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'autopilot_topics' (
+        id INTEGER PRIMARY KEY, 
+        'autopilot_id' int NOT NULL,
+        'topic_id' int NULL,
+        'topic_name' varchar(255)  NULL,
+        'avg_score' double NOT NULL DEFAULT 0,
+        'avg_time' double NOT NULL DEFAULT 0,
+        'total_questions' int NOT NULL DEFAULT 0,
+        'correct' int NOT NULL DEFAULT 0,
+        'wrong' int NOT NULL DEFAULT 0,
+        'time' int NOT NULL DEFAULT 0,
+        'start_time' timestamp NULL DEFAULT NULL,
+        'end_time' timestamp NULL DEFAULT NULL,
         'status' varchar(255)  NULL
       ) """);
 

@@ -14,6 +14,7 @@ class AutopilotTopicSelector extends StatelessWidget {
     required this.correctlyAnswered,
     this.iconURL: null,
     this.isUnselected = false,
+    this.showProgress = false,
     this.rightWidget,
     this.onTap,
     Key? key,
@@ -26,6 +27,7 @@ class AutopilotTopicSelector extends StatelessWidget {
   final String subTitle;
   final bool isSelected;
   final bool isUnselected;
+  final bool showProgress;
   final int correctlyAnswered;
   final String? iconURL;
   final Widget? rightWidget;
@@ -40,43 +42,18 @@ class AutopilotTopicSelector extends StatelessWidget {
       isSelected: isSelected,
       showInPercentage: showInPercentage,
       numberOfQuestions: numberOfQuestions,
-      rightWidget: showInPercentage
-          ? PercentageSnippet(
-              correctlyAnswered: correctlyAnswered,
-              totalQuestions: numberOfQuestions,
-              isSelected: isSelected,
-            )
-          : FractionSnippet(
-              correctlyAnswered: correctlyAnswered,
-              totalQuestions: numberOfQuestions,
-              isSelected: isSelected),
+      rightWidget: showProgress
+          ? (showInPercentage
+              ? PercentageSnippet(
+                  correctlyAnswered: correctlyAnswered,
+                  totalQuestions: numberOfQuestions,
+                  isSelected: isSelected,
+                )
+              : FractionSnippet(
+                  correctlyAnswered: correctlyAnswered,
+                  totalQuestions: numberOfQuestions,
+                  isSelected: isSelected))
+          : null,
     );
-
-    /* Container(
-      padding: EdgeInsets.only(bottom: 20),
-      child: Card(
-        elevation: 0,
-        child: Row(
-          children: [
-            if (isSelected)
-              Expanded(
-                flex: 0,
-                child: IconButton(
-                  icon: Image.asset('assets/icons/courses/auto.png'),
-                  iconSize: 36,
-                  onPressed: () {},
-                ),
-              ),
-            Expanded(
-              flex: 2,
-              child: ListTile(
-                title: Text("${label}"),
-                subtitle: Text("here is a subtitle"),
-              ),
-            )
-          ],
-        ),
-      ),
-    ); */
   }
 }

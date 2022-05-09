@@ -14,7 +14,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/views/learn_mode.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';

@@ -1,9 +1,14 @@
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/note_view.dart';
+import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/notes/note_view.dart';
+import 'package:ecoach/views/speed/SpeedTestIntro.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -12,10 +17,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TopicsTabPage extends StatefulWidget {
-  const TopicsTabPage({
+  const TopicsTabPage(
+    this.testType, {
     required this.topics,
     required this.diagnostic,
     required this.user,
+    required this.course,
     this.history = false,
     Key? key,
   }) : super(key: key);
@@ -23,6 +30,8 @@ class TopicsTabPage extends StatefulWidget {
   final List topics;
   final diagnostic;
   final user;
+  final course;
+  final TestType testType;
   final bool history;
 
   @override
@@ -161,29 +170,47 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                   ),
                 ),
               if (!widget.diagnostic)
-                Expanded(
-                  child: Button(
-                    label: 'new test',
-                    onPressed: () {
-                      Navigator.popUntil(
-                        context,
-                        ModalRoute.withName(CourseDetailsPage.routeName),
-                      );
-                    },
-                  ),
-                ),
+                widget.testType == TestType.SPEED
+                    ? Expanded(
+                        child: Button(
+                          label: 'new test',
+                          onPressed: () {
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) {
+                              return SpeedTestIntro(
+                                user: widget.user,
+                                course: widget.course,
+                              );
+                            }));
+                          },
+                        ),
+                      )
+                    : Expanded(
+                        child: Button(
+                          label: 'new test',
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return TestTypeView(
+                                widget.user,
+                                widget.course,
+                              );
+                            }));
+                          },
+                        ),
+                      ),
               if (widget.diagnostic)
                 Expanded(
                   child: Button(
                     label: 'Purchase',
                     onPressed: () {
-                      Navigator.push<void>(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              StorePage(widget.user),
-                        ),
-                      );
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                        return MainHomePage(
+                          widget.user,
+                          index: 1,
+                        );
+                      }));
                     },
                   ),
                 ),

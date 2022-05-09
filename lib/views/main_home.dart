@@ -5,14 +5,17 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/websocket/event_data.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:ecoach/views/home.dart';
+import 'package:ecoach/views/auth/home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/more_view.dart';
 import 'package:ecoach/widgets/adeo_bottom_navigation_bar.dart';
 import 'package:ecoach/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
+
+import '../websocket/websocket_call.dart';
 
 class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
@@ -25,7 +28,8 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainHomePageState extends State<MainHomePage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver
+    implements WebsocketListener {
   late List<Widget> _children;
   int currentIndex = 0;
   late MainController mainController;
@@ -54,6 +58,16 @@ class _MainHomePageState extends State<MainHomePage>
       ),
     ];
     currentIndex = widget.index;
+    checkSubscription();
+
+    WebsocketCall().addListener(this);
+    WebsocketCall()
+        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
+
+    super.initState();
+  }
+
+  checkSubscription() {
     mainController.checkSubscription((success) {
       UserPreferences().getUser().then((user) {
         setState(() {
@@ -61,7 +75,6 @@ class _MainHomePageState extends State<MainHomePage>
         });
       });
     });
-    super.initState();
   }
 
   @override
@@ -161,5 +174,10 @@ class _MainHomePageState extends State<MainHomePage>
         ),
       ),
     );
+  }
+
+  @override
+  eventHandler(EventData event) {
+    checkSubscription();
   }
 }
