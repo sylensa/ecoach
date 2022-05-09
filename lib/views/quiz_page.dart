@@ -331,7 +331,7 @@ class _QuizViewState extends State<QuizView> {
                   )),
               Positioned(
                 key: UniqueKey(),
-                top: 50,
+                top: 30,
                 right: 15,
                 child: GestureDetector(
                   onTap: () {
@@ -344,9 +344,13 @@ class _QuizViewState extends State<QuizView> {
                   },
                   child: enabled
                       ? getTimerWidget()
-                      : Text("Time Up",
-                          style:
-                              TextStyle(color: backgroundColor, fontSize: 18)),
+                      : Text(
+                          "Time Up",
+                          style: TextStyle(
+                            color: backgroundColor,
+                            fontSize: 18,
+                          ),
+                        ),
                 ),
               ),
               Positioned(

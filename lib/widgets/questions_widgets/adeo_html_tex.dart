@@ -48,16 +48,21 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   Widget build(BuildContext context) {
     print(widget.text);
     return Html(
-      data: setTexTags(widget.text,
-          removeTags: widget.removeTags, removeBr: true),
+      data: setTexTags(
+        widget.text,
+        removeTags: widget.removeTags,
+        removeBr: true,
+      ),
       style: {
         "body": Style(
-            color: widget.textColor,
-            fontSize: FontSize(widget.fontSize),
-            fontStyle: widget.fontStyle,
-            textAlign: TextAlign.center),
+          color: widget.textColor,
+          fontSize: FontSize(widget.fontSize),
+          fontStyle: widget.fontStyle,
+          textAlign: TextAlign.center,
+        ),
         "p": Style(
           padding: EdgeInsets.all(0),
+          textAlign: TextAlign.center,
         ),
         "table": Style(
             color: Colors.white,
@@ -81,7 +86,10 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             fontStyle: widget.fontStyle,
             textAlign: TextAlign.center),
         'img': Style(
-            width: imageWidth, height: imageHeight, padding: EdgeInsets.all(0)),
+          width: imageWidth,
+          height: imageHeight,
+          padding: EdgeInsets.all(0),
+        ),
       },
       customRenders: {
         if (widget.useLocalImage)
