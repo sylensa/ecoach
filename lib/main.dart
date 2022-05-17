@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         designSize: Size(360, 640),
         minTextAdapt: true,
         splitScreenMode: true,
-        builder: (_) {
+        builder: (context, widget) {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Adeo',
