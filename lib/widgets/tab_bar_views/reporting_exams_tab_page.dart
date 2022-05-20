@@ -74,7 +74,9 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
                   List<TestTaken> examTest = testData
                       .where((element) =>
-                          element.challengeType == TestCategory.EXAM.toString())
+                          element.challengeType ==
+                              TestCategory.EXAM.toString() ||
+                          element.challengeType == TestCategory.MOCK.toString())
                       .toList();
 
                   return Expanded(

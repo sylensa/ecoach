@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/database/answers.dart';
@@ -220,7 +222,8 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
-        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND course_id = $courseId ORDER BY RANDOM()");
+      "SELECT * FROM questions WHERE qtype = 'SINGLE' AND course_id = $courseId ORDER BY RANDOM()",
+    );
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
@@ -237,6 +240,55 @@ class QuestionDB {
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
         "SELECT * FROM questions WHERE qtype = 'SINGLE' AND topic_id = $topicId ORDER BY RANDOM()");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
+  Future<List<Question>> getTreadmillQuestions(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+      "SELECT * FROM questions WHERE qtype = 'SINGLE' AND course_id = $courseId ORDER BY RANDOM()",
+    );
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
+  Future<List<Question>> getTreadmillTopicQuestions(int topicId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND topic_id = $topicId ORDER BY RANDOM()");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
+  Future<List<Question>> getTreadmillBankQuestions(int bankId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND bank_id = $bankId ORDER BY RANDOM()");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {

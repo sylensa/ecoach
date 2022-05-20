@@ -1,30 +1,29 @@
-import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/marathon/marathon_completed.dart';
-import 'package:ecoach/views/marathon/marathon_live.dart';
-
-import 'package:ecoach/views/marathon/marathon_practise_menu.dart';
-import 'package:ecoach/views/marathon/marathon_save_resumption_menu.dart';
+import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
+import 'package:ecoach/views/treadmill/treadmill_completed.dart';
+import 'package:ecoach/views/treadmill/treadmill_live.dart';
+import 'package:ecoach/views/treadmill/treadmill_save_resumption_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:flutter/material.dart';
 
-class MarathonIntroit extends StatefulWidget {
-  MarathonIntroit(this.user, this.course);
+class TreadmillIntroit extends StatefulWidget {
+  TreadmillIntroit(this.user, this.course);
 
   final User user;
   final Course course;
 
   @override
-  State<MarathonIntroit> createState() => _MarathonIntroitState();
+  State<TreadmillIntroit> createState() => _TreadmillIntroitState();
 }
 
-class _MarathonIntroitState extends State<MarathonIntroit> {
+class _TreadmillIntroitState extends State<TreadmillIntroit> {
   late dynamic mode;
 
   @override
@@ -47,27 +46,32 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
 
     switch (mode) {
       case TestMode.LIVE:
-        screenToNavigateTo = MarathonLive();
+        screenToNavigateTo = TreadmillLive();
         break;
       case TestMode.PRACTISE:
-        Marathon? marathon =
-            await TestController().getCurrentMarathon(widget.course);
-        if (marathon == null) {
-          screenToNavigateTo = MarathonPractiseMenu(
-            controller: MarathonController(widget.user, widget.course,
-                name: widget.course.name!),
+        Treadmill? treadmill =
+            await TestController().getCurrentTreadmill(widget.course);
+        if (treadmill == null) {
+          screenToNavigateTo = TreadmillPractiseMenu(
+            controller: TreadmillController(
+              widget.user,
+              widget.course,
+              name: widget.course.name!,
+            ),
           );
         } else {
-          print(marathon.toJson());
-          screenToNavigateTo = MarathonSaveResumptionMenu(
-            controller: MarathonController(widget.user, widget.course,
-                name: widget.course.name!),
+          print(treadmill.toJson());
+          screenToNavigateTo = TreadmillSaveResumptionMenu(
+            controller: TreadmillController(
+              widget.user,
+              widget.course,
+              name: widget.course.name!,
+            ),
           );
         }
-
         break;
       case TestMode.COMPLETED:
-        screenToNavigateTo = MarathonCompleted(widget.user, widget.course);
+        screenToNavigateTo = TreadmillCompleted(widget.user, widget.course);
         break;
     }
 
@@ -102,7 +106,7 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
                       ),
                       SizedBox(height: 16),
                       Text(
-                        'Choose your preferred marathon',
+                        'Choose your preferred timing',
                         textAlign: TextAlign.center,
                         style:
                             kIntroitScreenSubHeadingStyle(color: Colors.white),
@@ -114,6 +118,7 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
                         isSelected: mode == TestMode.LIVE,
                         isUnselected: mode != '' && mode != TestMode.LIVE,
                         onTap: handleModeSelection,
+                        activeBorderColor: kAdeoLightTeal,
                       ),
                       SizedBox(height: 35),
                       ModeSelector(
@@ -122,6 +127,7 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
                         isSelected: mode == TestMode.PRACTISE,
                         isUnselected: mode != '' && mode != TestMode.PRACTISE,
                         onTap: handleModeSelection,
+                        activeBorderColor: kAdeoLightTeal,
                       ),
                       SizedBox(height: 35),
                       ModeSelector(
@@ -130,6 +136,7 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
                         isSelected: mode == TestMode.COMPLETED,
                         isUnselected: mode != '' && mode != TestMode.COMPLETED,
                         onTap: handleModeSelection,
+                        activeBorderColor: kAdeoLightTeal,
                       ),
                     ],
                   ),
@@ -142,7 +149,7 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
                   AdeoFilledButton(
                     label: 'Next',
                     onPressed: handleNext,
-                    background: kAdeoBlue,
+                    background: kAdeoLightTeal,
                     size: Sizes.large,
                   ),
                   SizedBox(height: 53),

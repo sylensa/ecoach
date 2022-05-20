@@ -1,6 +1,7 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/database/treadmill_db.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/question.dart';
@@ -8,6 +9,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/quiz_db.dart';
@@ -275,8 +277,13 @@ class TestController {
     for (int i = 0; i < quizzes.length; i++) {
       Quiz quiz = quizzes[i];
       int totalCount = await QuizDB().getQuestionsCount(quiz.id!);
-      testNames.add(TestNameAndCount(quiz.name!, 0, totalCount,
-          id: quiz.id, category: TestCategory.BANK));
+      testNames.add(TestNameAndCount(
+        quiz.name!,
+        0,
+        totalCount,
+        id: quiz.id,
+        category: TestCategory.BANK,
+      ));
     }
 
     return testNames;
@@ -393,7 +400,11 @@ class TestController {
 
   Future<Marathon?> getCurrentMarathon(Course course) async {
     Marathon? marathon = await MarathonDB().getCurrentMarathon(course);
-
     return marathon;
+  }
+
+  Future<Treadmill?> getCurrentTreadmill(Course course) async {
+    Treadmill? treadmill = await TreadmillDB().getCurrentTreadmill(course);
+    return treadmill;
   }
 }

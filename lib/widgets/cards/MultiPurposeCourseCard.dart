@@ -14,6 +14,8 @@ class MultiPurposeCourseCard extends StatefulWidget {
     this.hasProgressed: false,
     this.hasSmallHeading: false,
     this.rightWidget,
+    this.activeBackground: kAdeoBlue2,
+    this.darkenActiveBackgroundOnPress: false,
     this.onTap,
   });
 
@@ -26,6 +28,8 @@ class MultiPurposeCourseCard extends StatefulWidget {
   final String? subscription;
   final bool? hasSmallHeading;
   final Widget? rightWidget;
+  final Color activeBackground;
+  final bool darkenActiveBackgroundOnPress;
   final onTap;
 
   @override
@@ -55,10 +59,12 @@ class _MultiPurposeCourseCardState extends State<MultiPurposeCourseCard> {
             decoration: BoxDecoration(
               color: isPressedDown
                   ? widget.isActive
-                      ? Color(0xFF0573BA)
+                      ? widget.darkenActiveBackgroundOnPress
+                          ? darken(widget.activeBackground)
+                          : Color(0xFF0573BA)
                       : Color(0x1A000000)
                   : widget.isActive
-                      ? Color(0xFF2A9CEA)
+                      ? widget.activeBackground
                       : Colors.white,
               borderRadius: BorderRadius.circular(4.0),
             ),

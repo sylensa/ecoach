@@ -382,7 +382,8 @@ class AnalysisCard extends StatelessWidget {
     required this.correctlyAnswered,
     required this.totalQuestions,
     this.onTap,
-    this.variant = CardVariant.DARK,
+    this.variant: CardVariant.DARK,
+    this.selectedBackground: kAdeoBlue2,
     Key? key,
   }) : super(key: key);
 
@@ -395,6 +396,7 @@ class AnalysisCard extends StatelessWidget {
   final int totalQuestions;
   final onTap;
   final CardVariant variant;
+  final Color selectedBackground;
 
   TextStyle metaDataStyle({CardVariant variant = CardVariant.DARK}) {
     return TextStyle(
@@ -436,6 +438,7 @@ class AnalysisCard extends StatelessWidget {
           subTitle: activityType,
           hasSmallHeading: true,
           isActive: isSelected,
+          activeBackground: selectedBackground,
           rightWidget: showInPercentage
               ? PercentageSnippet(
                   correctlyAnswered: correctlyAnswered,

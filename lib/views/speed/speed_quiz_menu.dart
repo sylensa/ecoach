@@ -12,7 +12,7 @@ import 'package:ecoach/views/speed/speed_topic_menu.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
-import 'package:ecoach/widgets/marathon_mode_selector.dart';
+import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:ecoach/widgets/speed_mode_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

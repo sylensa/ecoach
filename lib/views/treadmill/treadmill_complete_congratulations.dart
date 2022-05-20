@@ -1,16 +1,17 @@
-import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/marathon/marathon_introit.dart';
+import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:flutter/material.dart';
 
-class MarathonCompleteCongratulations extends StatelessWidget {
-  MarathonCompleteCongratulations({required this.controller});
-  MarathonController controller;
+class TreadmillCompleteCongratulations extends StatelessWidget {
+  TreadmillCompleteCongratulations({required this.controller});
+
+  final TreadmillController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
             ),
           ),
           Text(
-            'Marathon Completed',
+            'Run Completed',
             style: TextStyle(
               fontSize: 18,
               color: Color(0x809EE4FF),
@@ -61,7 +62,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Net Score: ${controller.marathon!.totalCorrect! - controller.marathon!.totalWrong!}',
+                    'Net Score: ${controller.treadmill!.totalCorrect! - controller.treadmill!.totalWrong!}',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -69,7 +70,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    '${Duration(seconds: controller.marathon!.totalTime!).inHours} hrs : ${Duration(seconds: controller.marathon!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.marathon!.totalTime!).inSeconds % 60} sec',
+                    '${Duration(seconds: controller.treadmill!.totalTime!).inHours} hrs : ${Duration(seconds: controller.treadmill!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.treadmill!.totalTime!).inSeconds % 60} sec',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -124,10 +125,15 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                     color: Colors.white,
                     background: kAdeoBlue,
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return MarathonIntroit(
-                            controller.user, controller.course);
-                      }));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (c) {
+                          return TreadmillIntroit(
+                            controller.user,
+                            controller.course,
+                          );
+                        }),
+                      );
                     },
                   ),
                 ),

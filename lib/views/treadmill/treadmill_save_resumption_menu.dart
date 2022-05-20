@@ -1,8 +1,8 @@
-import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/marathon/marathon_completed.dart';
-import 'package:ecoach/views/marathon/marathon_countdown.dart';
+import 'package:ecoach/views/treadmill/treadmill_completed.dart';
+import 'package:ecoach/views/treadmill/treadmill_countdown.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -11,17 +11,17 @@ import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-class MarathonSaveResumptionMenu extends StatefulWidget {
-  MarathonSaveResumptionMenu({required this.controller});
-  MarathonController controller;
+class TreadmillSaveResumptionMenu extends StatefulWidget {
+  TreadmillSaveResumptionMenu({required this.controller});
+  final TreadmillController controller;
 
   @override
-  State<MarathonSaveResumptionMenu> createState() =>
-      _MarathonSaveResumptionMenuState();
+  State<TreadmillSaveResumptionMenu> createState() =>
+      _TreadmillSaveResumptionMenuState();
 }
 
-class _MarathonSaveResumptionMenuState
-    extends State<MarathonSaveResumptionMenu> {
+class _TreadmillSaveResumptionMenuState
+    extends State<TreadmillSaveResumptionMenu> {
   late dynamic mode;
 
   @override
@@ -39,35 +39,35 @@ class _MarathonSaveResumptionMenuState
     });
   }
 
-  continueMarathon() {}
-
-  openCompletedMarathon() {}
-
   handleNext() async {
     switch (mode) {
       case TestMode.CONTINUE:
-        showLoaderDialog(context, message: "loading marathon");
-        bool success = await widget.controller.loadMarathon();
+        showLoaderDialog(context, message: "loading runs");
+        bool success = await widget.controller.loadTreadmill();
         Navigator.pop(context);
 
         if (success) {
-          Navigator.push(context, MaterialPageRoute(builder: (c) {
-            return MarathonCountdown(controller: widget.controller);
-          }));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (c) {
+              return TreadmillCountdown(controller: widget.controller);
+            }),
+          );
         } else {
           AdeoDialog(
-            title: "No marathon",
-            content: "No marathon was found for this course. Kindly start over",
+            title: "No Treadmill",
+            content:
+                "No treadmill was found for this course. Kindly start over",
             actions: [
               AdeoDialogAction(
-                  label: "Ok",
-                  onPressed: () {
-                    Navigator.pop(context);
-                  })
+                label: "Ok",
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
             ],
           );
         }
-
         break;
       case TestMode.NEW:
         Navigator.push(
@@ -86,8 +86,10 @@ class _MarathonSaveResumptionMenuState
           context,
           MaterialPageRoute(
             builder: (context) {
-              return MarathonCompleted(
-                  widget.controller.user, widget.controller.course);
+              return TreadmillCompleted(
+                widget.controller.user,
+                widget.controller.course,
+              );
             },
           ),
         );
@@ -133,7 +135,7 @@ class _MarathonSaveResumptionMenuState
                       SizedBox(height: 35),
                       ModeSelector(
                         size: Sizes.small,
-                        label: 'New Marathon',
+                        label: 'New Run',
                         mode: TestMode.NEW,
                         isSelected: mode == TestMode.NEW,
                         isUnselected: mode != '' && mode != TestMode.NEW,
@@ -174,14 +176,14 @@ class _MarathonSaveResumptionMenuState
 
 class Caution extends StatelessWidget {
   Caution({required this.controller});
-  MarathonController controller;
+  TreadmillController controller;
 
   @override
   Widget build(BuildContext context) {
     return TestIntroitLayout(
       padTop: PadTop.MILD,
       background: kAdeoRoyalBlue,
-      backgroundImageURL: 'assets/images/deep_pool_blue_2.png',
+      backgroundImageURL: 'assets/images/deep_pool_light_teal.png',
       pages: [
         TestIntroitLayoutPage(
           foregroundColor: Colors.white,
@@ -194,7 +196,7 @@ class Caution extends StatelessWidget {
               children: [
                 SizedBox(height: 7),
                 Text(
-                  'You will lose your saved marathon session\nonce you begin a new marathon.',
+                  'You will lose your saved treadmill session\nonce you begin a new one.',
                   style: kCustomizedTestSubtextStyle.copyWith(
                     color: kAdeoBlueAccent,
                     fontWeight: FontWeight.w500,
@@ -203,7 +205,7 @@ class Caution extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Click on CONTINUE if you wish to do so. \nIf not kindly go back to your old marathon',
+                  'Click on CONTINUE if you wish to do so. \nIf not kindly go back to your old Treadmill',
                   style: kCustomizedTestSubtextStyle.copyWith(
                     color: kAdeoBlueAccent,
                     fontWeight: FontWeight.w500,
@@ -220,13 +222,15 @@ class Caution extends StatelessWidget {
                 color: kAdeoBlue,
                 label: 'Continue',
                 onPressed: () async {
-                  showLoaderDialog(context, message: "Restarting marathon");
-                  await controller.restartMarathon();
+                  showLoaderDialog(context, message: "Restarting Treadmill");
+                  await controller.restartTreadmill();
                   Navigator.pop(context);
-
-                  Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonCountdown(controller: controller);
-                  }));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (c) {
+                      return TreadmillCountdown(controller: controller);
+                    }),
+                  );
                 },
               )
             ],

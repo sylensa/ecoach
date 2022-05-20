@@ -48,6 +48,7 @@ const kAdeoBlue2 = Color(0xFF2A9CEA);
 const kAdeoBlueAccent = Color(0xFF9EE4FF);
 const kAdeoGreen = Color(0xFF00C664);
 const kAdeoWhiteAlpha40 = Color(0x66FFFFFF);
+const kAdeoWhiteAlpha50 = Color(0x80FFFFFF);
 const kAdeoWhiteAlpha81 = Color(0xCFFFFFFF);
 const kAdeoGray = Color(0xFFF1F1F1);
 const kAdeoGray2 = Color(0xFF707070);
@@ -58,6 +59,7 @@ const kAdeoOrange2 = Color(0xFFFF6344);
 const kAdeoRoyalBlue = Color(0xFF2D3E50);
 const kPageBackgroundGray = Color(0xFFF0F0F0);
 const kDividerColor = Color(0xFF707070);
+const kAdeoLightTeal = Color(0xFF00C9B9);
 
 const kSixteenPointWhiteText = TextStyle(
   fontSize: 16,
