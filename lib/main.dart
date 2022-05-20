@@ -1,3 +1,4 @@
+import 'package:ecoach/provider/google_sign_in_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,68 +51,75 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-        designSize: Size(360, 640),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, widget) {
-          return GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Adeo',
-            theme: ThemeData(
-              primarySwatch: Colors.green,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              fontFamily: 'Poppins',
-              scaffoldBackgroundColor: Colors.white,
-              textTheme: Theme.of(context).textTheme.apply(
-                    // bodyColor: Colors.white,
-                    // displayColor: Colors.white,
-                    fontFamily: 'Poppins',
-                  ),
-            ),
-            home: seenOnboard == true
-                ? FutureBuilder(
-                    future: UserPreferences().getUser(),
-                    builder: (context, AsyncSnapshot<User?> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.none:
-                        case ConnectionState.waiting:
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.blue,
-                            ),
-                          );
-                        default:
-                          if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
-                          } else if (snapshot.data != null) {
-                            User user = snapshot.data as User;
-
-                            if (!user.activated && user.token != null) {
-                              return OTPView(user);
-                            } else if (!user.activated) {
-                              return LoginPage();
-                            }
-
-                            if (user.subscriptions.length == 0 &&
-                                !user.hasTakenTest) {
-                              return WelcomeAdeo(user);
-                            }
-
-                            return MainHomePage(user);
-                          } else if (snapshot.data == null) {
-                            return LoginPage();
-                          } else {
-                            return CircularProgressIndicator(
-                              color: Colors.blue,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => GoogleSignInProvider(),
+        ),
+      ],
+      child: ScreenUtilInit(
+          designSize: Size(360, 640),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (context, widget) {
+            return GetMaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Adeo',
+              theme: ThemeData(
+                primarySwatch: Colors.green,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                fontFamily: 'Poppins',
+                scaffoldBackgroundColor: Colors.white,
+                textTheme: Theme.of(context).textTheme.apply(
+                      // bodyColor: Colors.white,
+                      // displayColor: Colors.white,
+                      fontFamily: 'Poppins',
+                    ),
+              ),
+              home: seenOnboard == true
+                  ? FutureBuilder(
+                      future: UserPreferences().getUser(),
+                      builder: (context, AsyncSnapshot<User?> snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.none:
+                          case ConnectionState.waiting:
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                              ),
                             );
-                          }
-                      }
-                    },
-                  )
-                : Onboarding(),
-            routes: routes,
-          );
-        });
+                          default:
+                            if (snapshot.hasError) {
+                              return Text("${snapshot.error}");
+                            } else if (snapshot.data != null) {
+                              User user = snapshot.data as User;
+
+                              if (!user.activated && user.token != null) {
+                                return OTPView(user);
+                              } else if (!user.activated) {
+                                return LoginPage();
+                              }
+
+                              if (user.subscriptions.length == 0 &&
+                                  !user.hasTakenTest) {
+                                return WelcomeAdeo(user);
+                              }
+
+                              return MainHomePage(user);
+                            } else if (snapshot.data == null) {
+                              return LoginPage();
+                            } else {
+                              return CircularProgressIndicator(
+                                color: Colors.blue,
+                              );
+                            }
+                        }
+                      },
+                    )
+                  : Onboarding(),
+              routes: routes,
+            );
+          }),
+    );
   }
 }

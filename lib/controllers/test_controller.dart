@@ -225,7 +225,7 @@ class TestController {
       int totalCount = await QuestionDB().getTopicCount(id);
       double average = await getTopicAnsweredAverageScore(course.id!, id);
 
-      print("$id $name c=$count totat count=$totalCount");
+      // print("$id $name c=$count average=$average");
       testNames.add(TestNameAndCount(
         name,
         count,
@@ -317,8 +317,16 @@ class TestController {
   ) async {
     List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
     Map<String, dynamic> responses = Map();
+    int index = 0;
     tests.forEach((test) {
-      responses.addAll(jsonDecode(test.responses));
+      Map<String, dynamic> maps = jsonDecode(test.responses);
+      maps.forEach((key, value) {
+        if (responses.containsKey(key)) {
+          key += "$index";
+        }
+        responses[key] = value;
+      });
+      index++;
     });
 
     List<Map<String, dynamic>> testAnswers = [];
@@ -336,6 +344,8 @@ class TestController {
         topicIds.add(tId);
       }
     });
+
+    print("no of correct = $noOfCorrect, topicIds= ${topicIds.length}");
 
     if (topicIds.length == 0) return 0;
     return noOfCorrect / topicIds.length * 100;

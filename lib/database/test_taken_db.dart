@@ -122,7 +122,7 @@ class TestTakenDB {
     List<TestTaken> tests = [];
     for (int i = 0; i < maps.length; i++) {
       TestTaken test = TestTaken.fromJson(maps[i]);
-      print(test.toJson().toString().substring(0, 100));
+      // print(test.toJson().toString().substring(0, 100));
       tests.add(test);
     }
     return tests;

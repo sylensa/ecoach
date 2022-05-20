@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 
 import 'package:ecoach/utils/style_sheet.dart';

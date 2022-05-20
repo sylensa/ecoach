@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/provider/google_sign_in_provider.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -12,6 +13,7 @@ import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/onboard/welcome_adeo.dart';
 
 import 'package:ecoach/views/auth/otp_view.dart';
+import 'package:ecoach/widgets/buttons/google_signin_button.dart';
 
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
   }
+  //Google Sign in
 
   final _formKey = GlobalKey<FormState>();
   @override
@@ -210,6 +213,24 @@ class _LoginPageState extends State<LoginPage> {
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )),
                         ),
+                        SizedBox(height: 20),
+                        GoogleSigninButton(),
+                        // FutureBuilder(
+                        //     future: GoogleSignInProvider.initializeFirebase(
+                        //         context: context),
+                        //     builder: (context, snapshot) {
+                        //       if (snapshot.hasError) {
+                        //         return Text('Error initializing Firebase ');
+                        //       } else if (snapshot.connectionState ==
+                        //           ConnectionState.done) {
+                        //         return GoogleSigninButton();
+                        //       }
+                        //       return CircularProgressIndicator(
+                        //         valueColor: AlwaysStoppedAnimation<Color>(
+                        //           Colors.black12,
+                        //         ),
+                        //       );
+                        //     }),
                         SizedBox(
                           height: 50,
                         ),
