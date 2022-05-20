@@ -2,7 +2,6 @@ import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/speed/SpeedTestIntro.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -31,8 +30,10 @@ class SpeedQuizEnded extends StatelessWidget {
                 borderRadius: 1,
                 fontSize: 14,
                 onPressed: () {
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName(CourseDetailsPage.routeName),
+                  );
                 },
               ),
               SizedBox(width: 10),

@@ -1,33 +1,31 @@
-import 'package:ecoach/controllers/marathon_controller.dart';
-import 'package:ecoach/database/topics_db.dart';
+import 'dart:developer';
+
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/models/quiz.dart';
-import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
-import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
-
+import 'package:ecoach/views/treadmill/treadmill_question_count.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
-import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/mode_selector.dart';
-import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-enum topics { TOPIC, MOCK }
+class TreadmillTopicsMenu extends StatefulWidget {
+  TreadmillTopicsMenu({
+    this.topics = const [],
+    required this.controller,
+  });
 
-class MarathonPractiseTopicMenu extends StatefulWidget {
-  MarathonPractiseTopicMenu({this.topics = const [], required this.controller});
-  MarathonController controller;
-  List<TestNameAndCount> topics;
+  final TreadmillController controller;
+  final List<TestNameAndCount> topics;
 
   @override
-  State<MarathonPractiseTopicMenu> createState() =>
-      _MarathonPractiseTopicMenuState();
+  State<TreadmillTopicsMenu> createState() => _TreadmillTopicsMenuState();
 }
 
-class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
+class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
   late dynamic topicId;
-  late MarathonController controller;
+  late TreadmillController controller;
+  int count = 0;
 
   @override
   void initState() {
@@ -36,12 +34,14 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
     super.initState();
   }
 
-  handletopicSelection(newTopic) {
+  handleTopicSelection(newTopic) {
     setState(() {
-      if (topicId == newTopic)
+      if (topicId == newTopic.id)
         topicId = '';
-      else
-        topicId = newTopic;
+      else {
+        topicId = newTopic.id;
+        count = newTopic.totalCount;
+      }
     });
   }
 
@@ -58,7 +58,7 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
               'Select Your Topic',
               textAlign: TextAlign.center,
               style: kIntroitScreenHeadingStyle(
-                color: kAdeoBlueAccent,
+                color: kAdeoLightTeal,
               ).copyWith(
                 fontSize: 25,
               ),
@@ -74,10 +74,13 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
                           id: widget.topics[i].id!,
                           numberOfQuestions: widget.topics[i].totalCount,
                           label: widget.topics[i].name,
-                          isSelected: topicId == widget.topics[i].id!,
+                          isSelected:
+                              topicId != '' && topicId == widget.topics[i].id!,
                           isUnselected:
                               topicId != '' && topicId != widget.topics[i].id!,
-                          onTap: handletopicSelection,
+                          selectedBorderColor: kAdeoLightTeal,
+                          onTap: (id) =>
+                              {handleTopicSelection(widget.topics[i])},
                         ),
                     ],
                   ),
@@ -89,21 +92,23 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
                 children: [
                   AdeoFilledButton(
                     label: 'Next',
+                    background: kAdeoLightTeal,
+                    size: Sizes.large,
                     onPressed: () async {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return Instructions(
+                            return TreadmillQuestionCount(
                               topicId: topicId,
+                              count: count,
                               controller: controller,
+                              mode: TreadmillMode.TOPIC,
                             );
                           },
                         ),
                       );
                     },
-                    background: kAdeoBlue,
-                    size: Sizes.large,
                   ),
                   SizedBox(height: 53),
                 ],
@@ -111,37 +116,6 @@ class _MarathonPractiseTopicMenuState extends State<MarathonPractiseTopicMenu> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class Instructions extends StatelessWidget {
-  Instructions({required this.controller, required this.topicId});
-  MarathonController controller;
-  int topicId;
-
-  @override
-  Widget build(BuildContext context) {
-    return TestIntroitLayout(
-      background: kAdeoRoyalBlue,
-      backgroundImageURL: 'assets/images/deep_pool_blue_2.png',
-      pages: [
-        getMarathonInstructionsLayout(() async {
-          showLoaderDialog(context, message: "Creating marathon");
-          await controller.createTopicMarathon(topicId);
-          Topic? topic = await TopicDB().getTopicById(topicId);
-          controller.name = topic!.name!;
-          Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return MarathonQuizView(controller: controller);
-              },
-            ),
-          );
-        }),
-      ],
     );
   }
 }

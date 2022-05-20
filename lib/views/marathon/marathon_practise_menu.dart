@@ -7,7 +7,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
-import 'package:ecoach/widgets/marathon_mode_selector.dart';
+import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:flutter/material.dart';
 
 enum Modes { TOPIC, MOCK }
@@ -99,7 +99,7 @@ class _MarathonPractiseMenuState extends State<MarathonPractiseMenu> {
                             kIntroitScreenSubHeadingStyle(color: Colors.white),
                       ),
                       SizedBox(height: 65),
-                      MarathonModeSelector(
+                      ModeSelector(
                         label: 'Topic',
                         mode: Modes.TOPIC,
                         isSelected: mode == Modes.TOPIC,
@@ -107,7 +107,7 @@ class _MarathonPractiseMenuState extends State<MarathonPractiseMenu> {
                         onTap: handleModeSelection,
                       ),
                       SizedBox(height: 35),
-                      MarathonModeSelector(
+                      ModeSelector(
                         label: 'Mock',
                         mode: Modes.MOCK,
                         isSelected: mode == Modes.MOCK,

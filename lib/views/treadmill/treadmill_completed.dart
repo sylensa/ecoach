@@ -1,6 +1,6 @@
-import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/database/treadmill_db.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -10,8 +10,8 @@ import 'package:ecoach/widgets/buttons/arrow_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:flutter/material.dart';
 
-class MarathonCompleted extends StatefulWidget {
-  const MarathonCompleted(
+class TreadmillCompleted extends StatefulWidget {
+  const TreadmillCompleted(
     this.user,
     this.course, {
     Key? key,
@@ -21,11 +21,11 @@ class MarathonCompleted extends StatefulWidget {
   final Course course;
 
   @override
-  State<MarathonCompleted> createState() => _MarathonCompletedState();
+  State<TreadmillCompleted> createState() => _TreadmillCompletedState();
 }
 
-class _MarathonCompletedState extends State<MarathonCompleted> {
-  List<Marathon> marathons = [];
+class _TreadmillCompletedState extends State<TreadmillCompleted> {
+  List<Treadmill> treadmills = [];
   late bool showInPercentage;
   List selected = [];
 
@@ -42,9 +42,9 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
   void initState() {
     showInPercentage = false;
 
-    MarathonDB().completedMarathons(widget.course).then((mList) {
+    TreadmillDB().completedTreadmills(widget.course).then((mList) {
       setState(() {
-        marathons = mList;
+        treadmills = mList;
       });
     });
 
@@ -70,9 +70,9 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                 ),
                 Expanded(
                   child: Text(
-                    'Completed Marathons',
+                    'Completed Runs',
                     style: TextStyle(
-                      color: kAdeoBlue,
+                      color: kAdeoLightTeal,
                       fontSize: 28,
                       fontFamily: 'Hamelin',
                     ),
@@ -100,20 +100,21 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            for (int i = 0; i < marathons.length; i++)
+                            for (int i = 0; i < treadmills.length; i++)
                               AnalysisCard(
                                 variant: CardVariant.LIGHT,
-                                correctlyAnswered: marathons[i].totalCorrect!,
-                                totalQuestions: marathons[i].totalQuestions!,
-                                activity: marathons[i].title!,
-                                activityType: marathons[i].type!,
+                                correctlyAnswered: treadmills[i].totalCorrect!,
+                                totalQuestions: treadmills[i].totalQuestions!,
+                                activity: treadmills[i].title!,
+                                activityType: treadmills[i].type!,
                                 showInPercentage: showInPercentage,
                                 isSelected: selected.contains(i + 1),
+                                selectedBackground: kAdeoLightTeal,
                                 metaData: ActivityMetaData(
-                                  date: marathons[i].date,
-                                  time: marathons[i].time,
+                                  date: treadmills[i].date,
+                                  time: treadmills[i].time,
                                   duration:
-                                      '${Duration(seconds: marathons[i].totalTime!).inMinutes}min:${Duration(seconds: marathons[i].totalTime!).inSeconds % 60}sec',
+                                      '${Duration(seconds: treadmills[i].totalTime!).inMinutes}min:${Duration(seconds: treadmills[i].totalTime!).inSeconds % 60}sec',
                                 ),
                                 onTap: () {
                                   handleSelection(1);
@@ -140,7 +141,7 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
               child: AdeoTextButton(
                 label: 'Next',
                 fontSize: 20,
-                background: kAdeoBlue,
+                background: kAdeoLightTeal,
                 color: Colors.white,
                 onPressed: () {
                   // Navigator.push(

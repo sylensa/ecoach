@@ -9,7 +9,7 @@ import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
 
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
-import 'package:ecoach/widgets/marathon_mode_selector.dart';
+import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:ecoach/widgets/speed_mode_selector.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';

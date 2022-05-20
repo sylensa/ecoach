@@ -1,16 +1,16 @@
-import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/marathon/marathon_introit.dart';
+import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:flutter/material.dart';
 
-class MarathonCompleteCongratulations extends StatelessWidget {
-  MarathonCompleteCongratulations({required this.controller});
-  MarathonController controller;
+class TreadmillEnded extends StatelessWidget {
+  TreadmillEnded({required this.controller});
+  final TreadmillController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +29,10 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                 borderRadius: 5,
                 fontSize: 14,
                 onPressed: () {
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName(CourseDetailsPage.routeName),
+                  );
                 },
               ),
               SizedBox(width: 10),
@@ -38,22 +40,14 @@ class MarathonCompleteCongratulations extends StatelessWidget {
           ),
           SizedBox(height: 33),
           Text(
-            'Congratulations',
+            'Run Ended',
             style: TextStyle(
               fontSize: 41,
               fontFamily: 'Hamelin',
               color: kAdeoBlue,
             ),
           ),
-          Text(
-            'Marathon Completed',
-            style: TextStyle(
-              fontSize: 18,
-              color: Color(0x809EE4FF),
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          SizedBox(height: 48),
+          SizedBox(height: 65),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -61,7 +55,16 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Net Score: ${controller.marathon!.totalCorrect! - controller.marathon!.totalWrong!}',
+                    'Your Score',
+                    style: TextStyle(
+                      fontSize: 46,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 32),
+                  Text(
+                    'Net Score: ${controller.treadmill!.totalCorrect! - controller.treadmill!.totalWrong!}',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -69,7 +72,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    '${Duration(seconds: controller.marathon!.totalTime!).inHours} hrs : ${Duration(seconds: controller.marathon!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.marathon!.totalTime!).inSeconds % 60} sec',
+                    '${Duration(seconds: controller.treadmill!.totalTime!).inHours} hrs : ${Duration(seconds: controller.treadmill!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.treadmill!.totalTime!).inSeconds % 60} sec',
                     style: TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -92,18 +95,6 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                     correctScore: '${controller.getTotalCorrect()}',
                     wrongScrore: '${controller.getTotalWrong()}',
                   ),
-                  SizedBox(height: 20),
-                  // AdeoTextButton(
-                  //   label: 'View Ranking',
-                  //   onPressed: () {
-                  //     Navigator.push(context, MaterialPageRoute(builder: (c) {
-                  //       return MarathonRanking();
-                  //     }));
-                  //   },
-                  //   fontSize: 20,
-                  //   color: kAdeoBlue,
-                  //   background: Colors.transparent,
-                  // ),
                   SizedBox(height: 96),
                 ],
               ),
@@ -118,6 +109,54 @@ class MarathonCompleteCongratulations extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AdeoTextButton(
+                          label: 'review',
+                          fontSize: 20,
+                          color: Colors.white,
+                          background: kAdeoBlue,
+                          onPressed: () {},
+                        ),
+                      ),
+                      Container(
+                        width: 1.0,
+                        color: kAdeoBlueAccent,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AdeoTextButton(
+                          label: 'result',
+                          fontSize: 20,
+                          color: Colors.white,
+                          background: kAdeoBlue,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (c) {
+                                return TreadmillIntroit(
+                                  controller.user,
+                                  controller.course,
+                                );
+                              }),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: 1.0,
+                        color: kAdeoBlueAccent,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
                   child: AdeoTextButton(
                     label: 'new test',
                     fontSize: 20,
@@ -125,8 +164,10 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                     background: kAdeoBlue,
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        return MarathonIntroit(
-                            controller.user, controller.course);
+                        return TreadmillIntroit(
+                          controller.user,
+                          controller.course,
+                        );
                       }));
                     },
                   ),
