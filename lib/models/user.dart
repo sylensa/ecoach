@@ -44,6 +44,12 @@ class User {
       this.activated = false,
       this.signupDate});
 
+  User.fromGoogle({this.name, this.email, this.avatar, this.activated = false});
+  static void UserFromGoogle(
+      {String? displayName, String? email, String? photoURL}) {
+    User(name: displayName, email: email, avatar: photoURL);
+  }
+
   String get initials {
     String fname = name!.split(" ")[0];
     String lname = name!.split(" ")[1];
