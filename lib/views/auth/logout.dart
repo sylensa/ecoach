@@ -14,7 +14,7 @@ class _LogoutState extends State<Logout> {
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       Navigator.of(context).pushReplacementNamed("/login");
     });
     // it will navigate to login page as soon as this state is built

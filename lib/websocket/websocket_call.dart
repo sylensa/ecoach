@@ -48,7 +48,7 @@ class WebsocketCall {
           listeners.forEach((listener) {
             listener.eventHandler(pushObject);
           });
-        } else if (pushObject.event == "SubscriptionPurchasedNotification") {
+        } else if (pushObject.event == ".new_subscriber") {
           listeners.forEach((listener) {
             listener.eventHandler(pushObject);
           });

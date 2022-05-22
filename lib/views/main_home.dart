@@ -36,7 +36,7 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     mainController = MainController(
       context,
       context.read<DownloadUpdate>(),
@@ -84,7 +84,7 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

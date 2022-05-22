@@ -228,7 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           initialValue:
                               null, // can't be supplied simultaneously
                           shouldFormat: true, // default
-                          defaultCountry: 'GH', // default
+                          defaultCountry: IsoCode.GH, // default
                           decoration: InputDecoration(
                               labelText: 'Phone',
                               labelStyle: TextStyle(
@@ -239,8 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                           validator: PhoneValidator
                               .validMobile(), // default PhoneValidator.valid()
-                          selectorNavigator:
-                              const BottomSheetNavigator(), // default to bottom sheet but you can customize how the selector is shown by extending CountrySelectorNavigator
+
                           showFlagInInput: true, // default
                           flagSize: 16, // default
                           autofillHints: [

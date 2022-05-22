@@ -34,7 +34,7 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       showLoaderDialog(context, message: "Loading Diagnostic data ...");
       ApiCall<Data>(AppUrl.new_user_data, isList: false,
           create: (Map<String, dynamic> json) {
