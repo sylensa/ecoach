@@ -94,7 +94,6 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
   }
-  //Google Sign in
 
   final _formKey = GlobalKey<FormState>();
   @override
@@ -214,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                               )),
                         ),
                         SizedBox(height: 20),
-                        GoogleSigninButton(),
+                        GoogleSigninButton(loginViewContext: context),
                         // FutureBuilder(
                         //     future: GoogleSignInProvider.initializeFirebase(
                         //         context: context),
