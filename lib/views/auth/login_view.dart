@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:io' show Platform;
 
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/api/google_signin_call.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/provider/google_sign_in_provider.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -13,7 +15,6 @@ import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/onboard/welcome_adeo.dart';
 
 import 'package:ecoach/views/auth/otp_view.dart';
-import 'package:ecoach/widgets/buttons/google_signin_button.dart';
 
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,56 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _handleSignIn(context) async {
+    await GoogleSignInApi().signIn((idToken) async {
+      await loginGoogleSign(context, idToken);
+    });
+  }
+
+  loginGoogleSign(context, String? idToken) async {
+    if (mounted) {
+      print(context);
+      showLoaderDialog(context, message: "logging in...");
+    }
+
+    await ApiCall<User>(AppUrl.googleLogin,
+        params: {'id_token': idToken}, isList: false, create: (json) {
+      return User.fromJson(json);
+    }, onMessage: (message) {
+      print(message);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(message),
+        ));
+      }
+    }, onCallback: (user) async {
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      user.applicationDirPath = documentDirectory.path;
+      UserPreferences().setUser(user);
+
+      if (user.subscriptions.length == 0) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => WelcomeAdeo(user)),
+            (Route<dynamic> route) => false);
+      } else {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MainHomePage(user)),
+            (Route<dynamic> route) => false);
+      }
+    }, onError: (err) {
+      print(err);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }).post(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -212,24 +263,11 @@ class _LoginPageState extends State<LoginPage> {
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               )),
                         ),
-                        SizedBox(height: 20),
-                        GoogleSigninButton(loginViewContext: context),
-                        // FutureBuilder(
-                        //     future: GoogleSignInProvider.initializeFirebase(
-                        //         context: context),
-                        //     builder: (context, snapshot) {
-                        //       if (snapshot.hasError) {
-                        //         return Text('Error initializing Firebase ');
-                        //       } else if (snapshot.connectionState ==
-                        //           ConnectionState.done) {
-                        //         return GoogleSigninButton();
-                        //       }
-                        //       return CircularProgressIndicator(
-                        //         valueColor: AlwaysStoppedAnimation<Color>(
-                        //           Colors.black12,
-                        //         ),
-                        //       );
-                        //     }),
+                        if (Platform.isAndroid) SizedBox(height: 20),
+                        if (Platform.isAndroid)
+                          signInButton(() async {
+                            await _handleSignIn(context);
+                          }),
                         SizedBox(
                           height: 50,
                         ),
@@ -274,6 +312,26 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget signInButton(Function() signIn) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: FloatingActionButton.extended(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        elevation: 2,
+        onPressed: signIn,
+        icon: Image.asset(
+          'assets/icons/google_logo.png',
+          height: 32,
+          width: 32,
+        ),
+        label: Text("Sign in/up with Google"),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
     );
   }

@@ -1,41 +1,57 @@
 {
   "project_info": {
-    "project_number": "2433174970",
-    "project_id": "adeo-ecoach",
-    "storage_bucket": "adeo-ecoach.appspot.com"
+    "project_number": "789662611185",
+    "project_id": "adeo-e1e69",
+    "storage_bucket": "adeo-e1e69.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:2433174970:android:2195ffdb431d92f7f4e183",
+        "mobilesdk_app_id": "1:789662611185:android:42784e64dc4d2d1db15b50",
         "android_client_info": {
           "package_name": "com.ecoach.adeo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "2433174970-p0vp39aflcn3qqd18ugj3u4o5q49g1mu.apps.googleusercontent.com",
+          "client_id": "789662611185-grd5tscfjk9dq46j50hpcp5mtr63b2qe.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.ecoach.adeo",
-            "certificate_hash": "25eb19b967fa3d15ddd50a2ebe77ea5096a226e2"
+            "certificate_hash": "535142faf278b324ad3be55f5bc968d5788dcd6c"
           }
         },
         {
-          "client_id": "2433174970-7icsv4g899q8lacta8fhmt8injlnoibi.apps.googleusercontent.com",
+          "client_id": "789662611185-gvctgvpgq86hs1nh2j8enn2ddrqijscu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoach.adeo",
+            "certificate_hash": "fa4ce9da598f1c9ed41f99c1cc64c0a982fef7e7"
+          }
+        },
+        {
+          "client_id": "789662611185-kphadl23uh8pjrbc29897f4rm917500t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoach.adeo",
+            "certificate_hash": "620a420a92c8c0b2737e8954350088ea0e78ba8c"
+          }
+        },
+        {
+          "client_id": "789662611185-dsmm8140ldddbnhh47k540vi8g2h9ff6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBz3C9FHUxTgl53Z8FdLsLVVbWeGkL7klI"
+          "current_key": "AIzaSyB4c75PDnKOiImw6N4Cm5QhYygi_6oNDnc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "2433174970-7icsv4g899q8lacta8fhmt8injlnoibi.apps.googleusercontent.com",
+              "client_id": "789662611185-dsmm8140ldddbnhh47k540vi8g2h9ff6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

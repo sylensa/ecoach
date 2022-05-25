@@ -42,4 +42,6 @@ class AppUrl {
 
   static const String websocketIpURL =
       "ws://18.185.228.99:6001/app/programmers@shammah/websocket";
+
+  static const String googleLogin = baseURL + "google/signin";
 }
