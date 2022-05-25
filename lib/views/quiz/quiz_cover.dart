@@ -162,11 +162,13 @@ class QuizCover extends StatelessWidget {
                               SizedBox(
                                 width: 160,
                                 child: Text(
-                                    ":${category.toString().split(".")[1]}",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                  ":${category.toString().split(".")[1]}",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -178,22 +180,27 @@ class QuizCover extends StatelessWidget {
                             children: [
                               SizedBox(
                                 width: 130,
-                                child: Text("Questions",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  "Questions",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 width: 160,
                                 child: Text(
-                                    type != TestType.SPEED
-                                        ? ":${questions.length}"
-                                        : "---",
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                  type != TestType.SPEED
+                                      ? ":${questions.length}"
+                                      : "---",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

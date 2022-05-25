@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -77,6 +79,7 @@ class _AllTabPageState extends State<AllTabPage> {
                   );
                 else if (snapshot.data != null) {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
+                  inspect(testData);
                   return Expanded(
                     child: testData.length > 0
                         ? Column(

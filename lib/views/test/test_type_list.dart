@@ -152,7 +152,8 @@ class _MockListViewState extends State<TestTypeListView> {
                         subTitle: '',
                         progress: test.category == TestCategory.TOPIC
                             ? double.parse(
-                                test.averageScore!.toStringAsFixed(2))
+                                test.averageScore!.toStringAsFixed(2),
+                              )
                             : null,
                         isActive: isSelected(test),
                         hasSmallHeading: true,
@@ -182,7 +183,7 @@ class _MockListViewState extends State<TestTypeListView> {
               ? AdeoTextButton(
                   onPressed: () async {
                     List<Question> questions = [];
-                    switch (testsSelected[0].category) {
+                    switch (widget.testCategory) {
                       case TestCategory.BANK:
                       case TestCategory.EXAM:
                       case TestCategory.ESSAY:
@@ -220,7 +221,7 @@ class _MockListViewState extends State<TestTypeListView> {
                             name: testsSelected[0].name,
                             type: widget.type,
                             theme: QuizTheme.BLUE,
-                            category: testsSelected[0].category!,
+                            category: widget.testCategory,
                             time: widget.time != null
                                 ? widget.time!
                                 : widget.type == TestType.SPEED
@@ -238,7 +239,7 @@ class _MockListViewState extends State<TestTypeListView> {
               : AdeoTextButton(
                   onPressed: () async {
                     List<Question> questions = [];
-                    switch (testsSelected[0].category) {
+                    switch (widget.testCategory) {
                       case TestCategory.BANK:
                       case TestCategory.EXAM:
                       case TestCategory.ESSAY:

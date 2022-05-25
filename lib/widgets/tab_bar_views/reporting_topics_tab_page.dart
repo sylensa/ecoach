@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -76,6 +78,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                           element.challengeType ==
                           TestCategory.TOPIC.toString())
                       .toList();
+                  inspect(TestCategory.TOPIC.toString());
                   return Expanded(
                     child: topicTest.length == 0
                         ? Center(

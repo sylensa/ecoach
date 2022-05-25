@@ -138,6 +138,7 @@ class QuizController {
         courseId: course.id,
         testname: name,
         testType: type.toString(),
+        challengeType: challengeType.toString(),
         testTime: duration == null ? -1 : duration!.inSeconds,
         usedTime: DateTime.now().difference(startTime!).inSeconds,
         responses: responses,
