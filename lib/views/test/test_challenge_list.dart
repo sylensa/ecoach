@@ -113,6 +113,7 @@ class TestChallengeList extends StatelessWidget {
                     title: "Topic",
                     multiSelect: true,
                     time: time,
+                    testCategory: TestCategory.TOPIC,
                   );
                   break;
                 case TestCategory.ESSAY:
