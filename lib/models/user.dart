@@ -77,8 +77,11 @@ class User {
       gender: json['gender'],
       token: json['api_token'],
       avatar: json['avatar'],
-      activated:
-          json['activated'] is int && json['activated'] == 1 ? true : false,
+      // activated:
+      //     json['activated'] is int && json['activated'] == 1 ? true : false,
+      activated: json['activated'] is int && json['activated'] == 1
+          ? true
+          : json['activated'] as bool,
       signupDate: DateTime.parse(json['signup_date']));
 
   fromMap(Map<String, dynamic> json) {

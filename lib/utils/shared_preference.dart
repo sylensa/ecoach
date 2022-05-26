@@ -28,7 +28,7 @@ class UserPreferences {
     prefs.setString("api_token", user.token!);
     prefs.setString("signup_date", user.signupDate!.toIso8601String());
 
-    // print("${prefs.getString("api_token")}");
+    print("pref activated: ${prefs.getBool("activated")}");
     return true;
   }
 
@@ -44,7 +44,7 @@ class UserPreferences {
     String? signupDate = prefs.getString("signup_date");
 
     // print("shared pref: token=$token");
-    // print("id= $id");
+    print("activated= $activated");
     if (id == null) return null;
 
     User user = User(
