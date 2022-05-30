@@ -57,9 +57,10 @@ class _LoginPageState extends State<LoginPage> {
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
         print("login: token=${user.token}");
+        print("login: activated=${user.activated}");
         Directory documentDirectory = await getApplicationDocumentsDirectory();
         user.applicationDirPath = documentDirectory.path;
-        UserPreferences().setUser(user);
+        await UserPreferences().setUser(user);
         Navigator.pop(context);
         if (!user.activated) {
           Navigator.push(
