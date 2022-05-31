@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "789662611185-2av8tst8lvni0bh4sgfrj1alk15ahhfp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoach.adeo",
+            "certificate_hash": "3a8d4709573c818a69453df40083f245fb19dfa6"
+          }
+        },
+        {
           "client_id": "789662611185-grd5tscfjk9dq46j50hpcp5mtr63b2qe.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
