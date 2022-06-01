@@ -125,6 +125,8 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         Navigator.pop(context);
       }
+      print("login: token=${user.token}");
+      print("login: activated=${user.activated}");
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       user.applicationDirPath = documentDirectory.path;
       UserPreferences().setUser(user);

@@ -1,5 +1,6 @@
 class AppUrl {
   static const String liveBaseURL = "https://adeo.app/api/";
+  static const String qaBaseURL = "https://qa.adeo.app/api/";
   static const String localBaseURL = "http://127.0.0.1:8000/api/";
 
   static const String websocketWS = "ws://127.0.0.1:6001/app/adeo_key";
@@ -7,7 +8,7 @@ class AppUrl {
 
   static const String websocket = websocketWS;
 
-  static const String baseURL = liveBaseURL;
+  static const String baseURL = qaBaseURL;
   static const String login = baseURL + "signin";
   static const String register = baseURL + "signup";
   static const String resend_pin = baseURL + "pin/resend";
