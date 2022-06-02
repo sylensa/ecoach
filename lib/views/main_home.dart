@@ -94,6 +94,9 @@ class _MainHomePageState extends State<MainHomePage>
       if (context.read<DownloadUpdate>().isDownloading) {
         Wakelock.enable();
       }
+      WebsocketCall().addListener(this);
+      WebsocketCall().connect(
+          user: widget.user, channel: "${widget.user.id}-subscription");
     }
     if (state == AppLifecycleState.paused) {
       Wakelock.disable();
@@ -178,6 +181,7 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   eventHandler(EventData event) {
+    print("Websocket event triggered");
     checkSubscription();
   }
 }
