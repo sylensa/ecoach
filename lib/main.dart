@@ -1,8 +1,12 @@
+import 'package:ecoach/flavor_settings.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:flavor/flavor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,6 +39,15 @@ void main() async {
   NotificationService().init();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   seenOnboard = prefs.getBool("seenOnboard") ?? false;
+
+  await FlavorSettings.init();
+  if (FlavorSettings.isDev) {
+    Flavor.create(
+      Environment.dev,
+      color: Colors.green,
+      name: 'QA',
+    );
+  }
 
   runApp(
     ChangeNotifierProvider<DownloadUpdate>(

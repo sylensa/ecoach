@@ -37,6 +37,7 @@ class _MainHomePageState extends State<MainHomePage>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+
     mainController = MainController(
       context,
       context.read<DownloadUpdate>(),

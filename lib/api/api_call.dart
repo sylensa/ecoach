@@ -7,6 +7,7 @@ import 'package:ecoach/views/auth/logout.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ApiCall<T> {
   Map<String, dynamic>? params;

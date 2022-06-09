@@ -65,6 +65,51 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789662611185:android:ca3c6649fc4cd766b15b50",
+        "android_client_info": {
+          "package_name": "com.ecoach.adeo.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789662611185-e7i0o2t5in2e09lpmvilepmq42v5slvp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoach.adeo.dev",
+            "certificate_hash": "620a420a92c8c0b2737e8954350088ea0e78ba8c"
+          }
+        },
+        {
+          "client_id": "789662611185-hi9mkk4sukk6t5r6pv53h1i51d27f2de.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoach.adeo.dev",
+            "certificate_hash": "535142faf278b324ad3be55f5bc968d5788dcd6c"
+          }
+        },
+        {
+          "client_id": "789662611185-dsmm8140ldddbnhh47k540vi8g2h9ff6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4c75PDnKOiImw6N4Cm5QhYygi_6oNDnc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789662611185-dsmm8140ldddbnhh47k540vi8g2h9ff6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
