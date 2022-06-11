@@ -1,10 +1,11 @@
 import 'package:ecoach/utils/app_url.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 enum FlavorType { PROD, DEV }
 
 class FlavorSettings {
-  static late String apiBaseUrl;
   static FlavorType flavor = FlavorType.DEV;
 
   FlavorSettings() {}
@@ -13,16 +14,24 @@ class FlavorSettings {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     switch (packageInfo.packageName) {
       case "com.ecoach.adeo":
-        apiBaseUrl = AppUrl.liveBaseURL;
         flavor = FlavorType.PROD;
+        FlavorConfig(variables: {"baseUrl": AppUrl.liveBaseURL});
         break;
       default:
-        apiBaseUrl = AppUrl.qaBaseURL;
         flavor = FlavorType.DEV;
+        FlavorConfig(
+            name: "TEST",
+            color: Colors.red,
+            location: BannerLocation.topStart,
+            variables: {"baseUrl": AppUrl.qaBaseURL});
     }
 
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    print(apiBaseUrl);
+    print(FlavorConfig.instance.variables['baseUrl']);
+  }
+
+  static String get apiBaseUrl {
+    return FlavorConfig.instance.variables['baseUrl'];
   }
 
   static bool get isDev {

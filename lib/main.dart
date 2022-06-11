@@ -1,12 +1,10 @@
 import 'package:ecoach/flavor_settings.dart';
-import 'package:ecoach/utils/app_url.dart';
-import 'package:flavor/flavor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,14 +38,8 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   seenOnboard = prefs.getBool("seenOnboard") ?? false;
 
+  print("initializing flavor");
   await FlavorSettings.init();
-  if (FlavorSettings.isDev) {
-    Flavor.create(
-      Environment.dev,
-      color: Colors.green,
-      name: 'QA',
-    );
-  }
 
   runApp(
     ChangeNotifierProvider<DownloadUpdate>(
@@ -68,62 +60,63 @@ class MyApp extends StatelessWidget {
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, widget) {
-          return GetMaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Adeo',
-            theme: ThemeData(
-              primarySwatch: Colors.green,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              fontFamily: 'Poppins',
-              scaffoldBackgroundColor: Colors.white,
-              textTheme: Theme.of(context).textTheme.apply(
-                    // bodyColor: Colors.white,
-                    // displayColor: Colors.white,
-                    fontFamily: 'Poppins',
-                  ),
-            ),
-            home: seenOnboard == true
-                ? FutureBuilder(
-                    future: UserPreferences().getUser(),
-                    builder: (context, AsyncSnapshot<User?> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.none:
-                        case ConnectionState.waiting:
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.blue,
-                            ),
-                          );
-                        default:
-                          if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
-                          } else if (snapshot.data != null) {
-                            User user = snapshot.data as User;
-
-                            if (!user.activated && user.token != null) {
-                              return OTPView(user);
-                            } else if (!user.activated) {
-                              return LoginPage();
-                            }
-
-                            if (user.subscriptions.length == 0 &&
-                                !user.hasTakenTest) {
-                              return WelcomeAdeo(user);
-                            }
-
-                            return MainHomePage(user);
-                          } else if (snapshot.data == null) {
-                            return LoginPage();
-                          } else {
-                            return CircularProgressIndicator(
-                              color: Colors.blue,
+          return FlavorBanner(
+            child: GetMaterialApp(
+              title: 'Adeo',
+              theme: ThemeData(
+                primarySwatch: Colors.green,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                fontFamily: 'Poppins',
+                scaffoldBackgroundColor: Colors.white,
+                textTheme: Theme.of(context).textTheme.apply(
+                      // bodyColor: Colors.white,
+                      // displayColor: Colors.white,
+                      fontFamily: 'Poppins',
+                    ),
+              ),
+              home: seenOnboard == true
+                  ? FutureBuilder(
+                      future: UserPreferences().getUser(),
+                      builder: (context, AsyncSnapshot<User?> snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.none:
+                          case ConnectionState.waiting:
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                              ),
                             );
-                          }
-                      }
-                    },
-                  )
-                : Onboarding(),
-            routes: routes,
+                          default:
+                            if (snapshot.hasError) {
+                              return Text("${snapshot.error}");
+                            } else if (snapshot.data != null) {
+                              User user = snapshot.data as User;
+
+                              if (!user.activated && user.token != null) {
+                                return OTPView(user);
+                              } else if (!user.activated) {
+                                return LoginPage();
+                              }
+
+                              if (user.subscriptions.length == 0 &&
+                                  !user.hasTakenTest) {
+                                return WelcomeAdeo(user);
+                              }
+
+                              return MainHomePage(user);
+                            } else if (snapshot.data == null) {
+                              return LoginPage();
+                            } else {
+                              return CircularProgressIndicator(
+                                color: Colors.blue,
+                              );
+                            }
+                        }
+                      },
+                    )
+                  : Onboarding(),
+              routes: routes,
+            ),
           );
         });
   }
