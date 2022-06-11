@@ -141,6 +141,7 @@ class MainController {
           );
           Topic? topic = question.topic;
           if (topic != null) {
+            print(topic.toJson());
             batch.insert(
               'topics',
               topic.toJson(),

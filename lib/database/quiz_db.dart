@@ -58,8 +58,10 @@ class QuizDB {
   }
 
   Future<void> insertAll(Batch batch, List<Quiz> quizzes) async {
+    print('inserting quizzes');
     for (int i = 0; i < quizzes.length; i++) {
       Quiz element = quizzes[i];
+      print(element.toJson());
       batch.insert(
         'quizzes',
         element.toJson(),
@@ -96,8 +98,6 @@ class QuizDB {
         instructions: maps[i]["instructions"],
         type: maps[i]["type"],
         time: maps[i]["time"],
-        startTime: maps[i]["start_time"],
-        endTime: maps[i]["end_time"],
         author: maps[i]["author"],
         testId: maps[i]["test_id"],
         confirmed: maps[i]["confirmed"],

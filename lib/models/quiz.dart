@@ -15,8 +15,6 @@ class Quiz {
       this.description,
       this.category,
       this.instructions,
-      this.startTime,
-      this.endTime,
       this.createdAt,
       this.updatedAt,
       this.confirmed,
@@ -34,8 +32,6 @@ class Quiz {
   String? description;
   String? category;
   String? instructions;
-  String? startTime;
-  String? endTime;
   DateTime? createdAt;
   DateTime? updatedAt;
   int? confirmed;
@@ -53,8 +49,6 @@ class Quiz {
         description: json["description"],
         category: json["category"],
         instructions: json["instructions"],
-        startTime: json["start_time"],
-        endTime: json["end_time"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         confirmed: json["confirmed"],
@@ -76,8 +70,6 @@ class Quiz {
         "description": getUtfFixed(description),
         "category": category,
         "instructions": instructions,
-        "start_time": startTime,
-        "end_time": endTime,
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
         "confirmed": confirmed,
