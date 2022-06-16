@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 8, onOpen: (db) {},
+    return await openDatabase(path, version: 19, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -56,6 +56,26 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+      ) """);
+
+      await db.execute("""CREATE TABLE 'test_saved_questions' (
         'id' INTEGER PRIMARY KEY,
         'course_id' int NOT NULL,
         'topic_id' int NOT NULL,
@@ -419,14 +439,87 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       )""");
 
+      await db.execute("""CREATE TABLE 'review_test_taken' (
+        id INTEGER PRIMARY KEY, 
+        'user_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'count' int NOT NULL,
+        'completed' int NOT NULL,
+        'topic_id' varchar(255) NOT NULL,
+        'category' varchar(255) NOT NULL,
+        'test_type' varchar(255) NOT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
+
       await db.execute("""CREATE TABLE 'images' (
         id INTEGER PRIMARY KEY, 
         'name' varchar(255) NOT NULL,
         'base64' text NOT NULL
       )""");
-    }, onUpgrade: (db, oldVersion, newVersion) {
+      await db.execute("""CREATE TABLE 'flag' (
+        id INTEGER PRIMARY KEY, 
+        'reason' varchar(255) NOT NULL,
+        'type' varchar(255) NOT NULL,
+        'question_id' int NOT NULL
+      )""");
+
+    }, onUpgrade: (db, oldVersion, newVersion)async {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
+        try{
+          await db.execute("""CREATE TABLE 'test_saved_questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+        ) """);
+        }catch(e){
+          print("$e");
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'review_test_taken'""");
+          await db.execute("""CREATE TABLE 'review_test_taken' (
+        id INTEGER PRIMARY KEY, 
+        'user_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'count' int NOT NULL,
+        'completed' int NOT NULL,
+        'topic_id' varchar(255) NOT NULL,
+        'category' varchar(255) NOT NULL,
+        'test_type' varchar(255) NOT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
+        }catch(e){
+          print("$e");
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'flag'""");
+          await db.execute("""CREATE TABLE 'flag' (
+            id INTEGER PRIMARY KEY, 
+            'reason' varchar(255) NOT NULL,
+            'type' varchar(255) NOT NULL,
+            'question_id' int NOT NULL
+          )""");
+        }catch(e){
+          print("$e");
+        }
       }
     });
   }

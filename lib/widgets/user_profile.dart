@@ -20,7 +20,7 @@ class UserProfile extends StatelessWidget {
               top: 20.0,
               left: 16,
               right: 16,
-              bottom: 8,
+              bottom:5,
             ),
             child: Row(
               children: [

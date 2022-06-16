@@ -154,7 +154,6 @@ class CustomizedController {
         print('onCallback');
         print(data);
         TestController().saveTestTaken(data!);
-
         callback(data, true);
       }).post(context);
     }

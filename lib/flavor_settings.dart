@@ -12,6 +12,7 @@ class FlavorSettings {
 
   static Future<void> init() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    print("packageInfo.packageName:${packageInfo.packageName}");
     switch (packageInfo.packageName) {
       case "com.ecoach.adeo":
         flavor = FlavorType.PROD;
@@ -25,7 +26,6 @@ class FlavorSettings {
             location: BannerLocation.topStart,
             variables: {"baseUrl": AppUrl.qaBaseURL});
     }
-
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     print(FlavorConfig.instance.variables['baseUrl']);
   }

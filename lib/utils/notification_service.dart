@@ -22,10 +22,13 @@ class NotificationService {
   Future<void> init() async {
     final AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('ic_launcher');
+    final IOSInitializationSettings initializationSettingsIos =
+    IOSInitializationSettings();
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
+          iOS: initializationSettingsIos
     );
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,

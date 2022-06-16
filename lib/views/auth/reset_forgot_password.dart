@@ -1,4 +1,5 @@
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/lib/features/account/view/screen/log_in.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -35,7 +36,7 @@ class _ResetForgotPasswordState extends State<ResetForgotPassword> {
     }, onCallback: (data) {
       Navigator.pop(context);
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return LoginPage();
+        return LogInPage();
       }));
     }, onError: (err) {
       print(err);

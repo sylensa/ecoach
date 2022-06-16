@@ -79,9 +79,7 @@ class User {
       avatar: json['avatar'],
       // activated:
       //     json['activated'] is int && json['activated'] == 1 ? true : false,
-      activated: json['activated'] is int && json['activated'] == 1
-          ? true
-          : json['activated'] ?? false,
+      activated: json['activated'] ,
       signupDate: DateTime.parse(json['signup_date']));
 
   fromMap(Map<String, dynamic> json) {

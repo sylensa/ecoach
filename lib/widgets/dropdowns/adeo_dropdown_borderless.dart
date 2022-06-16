@@ -16,7 +16,7 @@ class AdeoDropdownBorderless extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 14.0),
       child: Container(
         width: double.infinity,
         color: Colors.white,
@@ -30,8 +30,7 @@ class AdeoDropdownBorderless extends StatelessWidget {
               color: kDefaultBlack,
             ),
             onChanged: onChanged,
-            items: items
-                .map(
+            items: items.map(
                   (item) => DropdownMenuItem<SubscriptionItem>(
                     value: item,
                     child: Text(

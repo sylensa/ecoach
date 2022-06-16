@@ -14,6 +14,7 @@ class PageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 280,
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: size == Sizes.large ? 40 : 24,
@@ -22,6 +23,7 @@ class PageHeader extends StatelessWidget {
         child: Center(
           child: Text(
             pageHeading,
+            // overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: size == Sizes.large
                 ? kPageHeaderStyle

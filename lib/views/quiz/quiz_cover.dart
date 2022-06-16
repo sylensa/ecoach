@@ -50,7 +50,15 @@ class QuizCover extends StatelessWidget {
     } else {
       backgroundColor = const Color(0xFFAAD4FA);
     }
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios,color: Colors.white,)),
+        elevation: 0,
+      ),
       body: Container(
         color: backgroundColor,
         child: Stack(

@@ -1,10 +1,15 @@
 import 'dart:convert';
 
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'answers.dart';
@@ -23,11 +28,60 @@ class QuizDB {
     );
   }
 
+
+  Future<int> insertFlag(FlagData flagData) async {
+    final Database? db = await DBProvider.database;
+    int id = await db!.insert(
+      'flag',
+      flagData.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return id;
+  }
+
   Future<Quiz?> getQuizById(int id) async {
     final db = await DBProvider.database;
     var result = await db!.query("quizzes", where: "id = ?", whereArgs: [id]);
     return result.isNotEmpty ? Quiz.fromJson(result.first) : null;
   }
+
+  Future<FlagData?> getFlagQuestionById(int id) async {
+    final db = await DBProvider.database;
+    var result = await db!.query("flag", where: "id = ?", whereArgs: [id]);
+    return result.isNotEmpty ? FlagData.fromJson(result.first) : null;
+  }
+   deleteFlagQuestionById(int id) async {
+    final db = await DBProvider.database;
+    var result = await db!.delete("flag", where: "question_id = ?", whereArgs: [id]);
+    return result;
+  }
+
+  Future<List<FlagData>> getAllFlagQuestions() async {
+    List<FlagData> listFlagData = [];
+    final db = await DBProvider.database;
+    var result = await db!.rawQuery("Select * from flag");
+    print("$result");
+    for(int i = 0; i < result.length; i++){
+      listFlagData.add(FlagData.fromJson(result[i]));
+    }
+    return listFlagData;
+  }
+
+  saveOfflineFlagQuestion(FlagData flagData,int questionId) async {
+    var token = (await UserPreferences().getUserToken());
+    print("token:$token");
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (isConnected) {
+      var res = await doPost("${AppUrl.questionFlag}${questionId}/flag",flagData.toJson() ,token!,);
+      print("res:$res");
+      if(res["status"]){
+        await QuizDB().deleteFlagQuestionById(flagData.questionId!);
+      }
+    }
+
+  }
+
 
   Future<List<Quiz>> getQuizzesByType(int courseId, String type) async {
     final Database? db = await DBProvider.database;

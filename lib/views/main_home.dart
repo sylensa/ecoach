@@ -1,5 +1,9 @@
 import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -34,10 +38,11 @@ class _MainHomePageState extends State<MainHomePage>
   int currentIndex = 0;
   late MainController mainController;
 
+
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-
     mainController = MainController(
       context,
       context.read<DownloadUpdate>(),
@@ -62,8 +67,8 @@ class _MainHomePageState extends State<MainHomePage>
     checkSubscription();
 
     WebsocketCall().addListener(this);
-    WebsocketCall()
-        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
+    WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
+
 
     super.initState();
   }

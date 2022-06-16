@@ -15,8 +15,7 @@ class AdeoTimer extends StatefulWidget {
 }
 
 class _AdeoTimerState extends State<AdeoTimer> {
-  final CountdownController controller =
-      new CountdownController(autoStart: true);
+  final CountdownController controller = new CountdownController(autoStart: true);
 
       @override
   void initState() {
@@ -29,7 +28,9 @@ class _AdeoTimerState extends State<AdeoTimer> {
     return Countdown(
       controller: widget.controller.getController(),
       seconds: widget.startDuration.inSeconds,
-      build: (BuildContext context, double time) {return widget.callbackWidget(time);},
+      build: (BuildContext context, double time) {
+        return widget.callbackWidget(time);
+        },
       onFinished: () {
         print('Timer is done!');
         widget.onFinish();
@@ -39,8 +40,7 @@ class _AdeoTimerState extends State<AdeoTimer> {
 }
 
 class TimerController{
-  final CountdownController _controller =
-      new CountdownController(autoStart: true);
+  final CountdownController _controller = new CountdownController(autoStart: true);
 
       TimerController(){}
 

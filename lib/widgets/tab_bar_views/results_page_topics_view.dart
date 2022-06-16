@@ -1,4 +1,9 @@
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -6,6 +11,7 @@ import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/notes/note_view.dart';
+import 'package:ecoach/views/quiz/review_page.dart';
 import 'package:ecoach/views/speed/SpeedTestIntro.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/views/test/test_type.dart';
@@ -23,6 +29,7 @@ class TopicsTabPage extends StatefulWidget {
     required this.diagnostic,
     required this.user,
     required this.course,
+        this.testTaken,
     this.history = false,
     Key? key,
   }) : super(key: key);
@@ -33,6 +40,7 @@ class TopicsTabPage extends StatefulWidget {
   final course;
   final TestType testType;
   final bool history;
+  final TestTaken? testTaken;
 
   @override
   _TopicsTabPageState createState() => _TopicsTabPageState();
@@ -51,6 +59,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
 
   handleSelection(topic) {
     setState(() {
+      selectAnsweredQuestions.clear();
       if (selected == topic)
         selected = null;
       else
@@ -58,8 +67,26 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     });
   }
 
+
+  getAll()async{
+    reviewQuestionsBack.clear();
+    List<Question> questions = await TestController().getAllQuestions(widget.testTaken!);
+    for(int i = 0; i < questions.length; i++){
+      print("hmm:${questions[i].selectedAnswer}");
+      // await  QuestionDB().insertTestQuestion(questions[i]);
+      reviewQuestionsBack.add(questions[i]);
+    }
+
+    setState(() {
+      print("again savedQuestions:${reviewQuestionsBack.length}");
+    });
+
+  }
+
   @override
   void initState() {
+
+    getAll();
     showInPercentage = false;
     selected = null;
     super.initState();
@@ -126,10 +153,15 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                       Expanded(
                         child: Button(
                           label: 'review',
-                          onPressed: () {
+                          onPressed: ()async {
                             if (widget.history) {
                             } else {
-                              Navigator.pop(context);
+                              // Navigator.pop(context,[0,0]);
+                                await goTo(context, ReviewTest(testTaken: widget.testTaken,user: widget.user,));
+                              setState(() {
+
+                              });
+
                             }
                           },
                         ),

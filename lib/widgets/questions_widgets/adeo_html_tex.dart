@@ -49,8 +49,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
     return Padding(
       padding: const EdgeInsets.only(right: 20, left: 10),
       child: Html(
-        data: setTexTags(widget.text,
-            removeTags: widget.removeTags, removeBr: true),
+        data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: true),
         style: {
           "body": Style(
               color: widget.textColor,
@@ -90,8 +89,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
         },
         customRenders: {
           if (widget.useLocalImage)
-            networkSourceMatcher():
-                CustomRender.widget(widget: (context, element) {
+            networkSourceMatcher(): CustomRender.widget(widget: (context, element) {
               String? link = context.tree.element!.attributes['src'];
               if (link != null) {
                 String name = link.substring(link.lastIndexOf("/") + 1);

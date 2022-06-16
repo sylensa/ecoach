@@ -11,6 +11,9 @@ const kCourseCardOverlayColor = Colors.black12;
 const kTenPointWhiteText = TextStyle(fontSize: 10, color: Colors.white);
 const kBlack38 = Colors.black38;
 const kDefaultBlack = Color(0xFF2A2121);
+const reviewBackgroundColors =   Color(0xFF464FA0);
+const reviewSelectedColor =   Color(0xFF2E346F);
+const reviewDividerColor =   Color(0xFFA8B1FF);
 
 // progress colors
 const kProgressColors = [
@@ -60,7 +63,8 @@ const kAdeoRoyalBlue = Color(0xFF2D3E50);
 const kPageBackgroundGray = Color(0xFFF0F0F0);
 const kDividerColor = Color(0xFF707070);
 const kAdeoLightTeal = Color(0xFF00C9B9);
-
+const kInputBorderColor = Color(0xFFB7B7B7);
+const kInactiveOnDarkMode = Color(0xFF263443);
 const kSixteenPointWhiteText = TextStyle(
   fontSize: 16,
   color: Colors.white,

@@ -40,14 +40,24 @@ class LearnPeripheralWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 0),
+                        child: Icon(Icons.arrow_back_ios)
+                    ),
+                  ),
                   AdeoGrayOutlinedButton(
                     label: topActionLabel,
                     onPressed: topActionOnPressed,
                     size: Sizes.small,
                     color: topActionColor,
                   ),
+
                 ],
               ),
             ),

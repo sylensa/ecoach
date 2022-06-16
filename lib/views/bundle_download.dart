@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -35,10 +36,8 @@ class _BundleDownloadState extends State<BundleDownload> {
     super.initState();
 
     subName = widget.bundle.name!;
-    subName =
-        subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
+    subName = subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
 
-    print(widget.bundle.subscriptionItems);
     getSubscriptionItems();
   }
 
@@ -51,8 +50,11 @@ class _BundleDownloadState extends State<BundleDownload> {
     SubscriptionItemDB().subscriptionItems(widget.bundle.planId!).then((items) {
       setState(() {
         this.items = items;
+        print("object:$items");
+        // toast("object:$items");
       });
     });
+
   }
 
   clearList() {

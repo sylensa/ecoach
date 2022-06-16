@@ -64,7 +64,7 @@ Future<String> readSubscriptionPlan(String name) async {
     return contents;
   } catch (e) {
     // If encountering an error, return 0
-    print(e);
+    print("error:$e");
     return "error";
   }
 }
