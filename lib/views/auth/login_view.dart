@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
       print("login: activated=${user.activated}");
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       user.applicationDirPath = documentDirectory.path;
-      UserPreferences().setUser(user);
+      await UserPreferences().setUser(user);
 
       if (user.subscriptions.length == 0) {
         Navigator.pushAndRemoveUntil(
