@@ -23,7 +23,7 @@ class UserPreferences {
     prefs.setInt("id", user!.id!);
     prefs.setString("name", user.name!);
     prefs.setString("email", user.email!);
-    prefs.setString("phone", user.phone!);
+    prefs.setString("phone", user.phone ?? "");
     prefs.setBool("activated", user.activated);
     prefs.setString("api_token", user.token!);
     prefs.setString("signup_date", user.signupDate!.toIso8601String());
