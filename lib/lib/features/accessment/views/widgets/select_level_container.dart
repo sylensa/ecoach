@@ -1,25 +1,34 @@
 import 'package:ecoach/lib/features/accessment/views/screens/selected_subject.dart';
+import 'package:ecoach/models/level.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SelectLevelContainer extends StatelessWidget {
+class SelectLevelContainer extends StatefulWidget {
   final String image, title;
   final bool isSelected;
+  final User? user;
   final Function onTap;
-  const SelectLevelContainer(
+   SelectLevelContainer(
       {required this.image,
       required this.title,
       required this.onTap,
       this.isSelected = false,
+        this.user,
       Key? key})
       : super(key: key);
 
   @override
+  State<SelectLevelContainer> createState() => _SelectLevelContainerState();
+}
+
+class _SelectLevelContainerState extends State<SelectLevelContainer> {
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        onTap();
-        Get.bottomSheet(const SelectSubjectWidget());
+        widget.onTap();
+        Get.bottomSheet( SelectSubjectWidget(title: widget.title,user: widget.user,));
       },
       child: Container(
         height: 223,
@@ -28,7 +37,7 @@ class SelectLevelContainer extends StatelessWidget {
           children: [
             const SizedBox(height: 49),
             Image.asset(
-              image,
+              widget.image,
               height: 126,
               width: 126,
             ),
@@ -36,7 +45,7 @@ class SelectLevelContainer extends StatelessWidget {
               height: 9,
             ),
             Text(
-              title,
+              widget.title,
               style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -45,7 +54,7 @@ class SelectLevelContainer extends StatelessWidget {
           ],
         ),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF075591) : null,
+          color: widget.isSelected ? const Color(0xFF075591) : null,
           border: Border.all(color: Colors.white, width: 1.0),
           borderRadius: BorderRadius.circular(22.0),
         ),

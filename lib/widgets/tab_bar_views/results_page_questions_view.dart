@@ -5,6 +5,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/lib/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -199,7 +200,7 @@ List<Question>reviewQuestions = [];
           reviewQuestionsBack.add(question!);
       }
     }
-    await  goTo(context, ReviewTest(testTaken: widget.testTaken,user: widget.user,));
+    await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
     setState(() {
 
     });
@@ -532,7 +533,7 @@ List<Question>reviewQuestions = [];
                             if (widget.history) {
                             } else {
                               if(reviewQuestionsBack.isNotEmpty){
-                                await  goTo(context, ReviewTest(testTaken: widget.testTaken,user: widget.user,));
+                                await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
                                 setState(() {
 
                                 });

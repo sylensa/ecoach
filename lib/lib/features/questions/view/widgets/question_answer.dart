@@ -44,7 +44,7 @@ class QuestionAnswer extends StatelessWidget {
           ),
           Visibility(
               visible: hasImage,
-              child: Image.asset("images/green_backgroud.png")),
+              child: Image.asset("assets/images/green_backgroud.png")),
           const SizedBox(
             height: 5,
           ),

@@ -1,12 +1,14 @@
 
 import 'package:ecoach/lib/core/utils/app_colors.dart';
 import 'package:ecoach/lib/features/accessment/views/screens/choose_level.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class FreeAccessmentWidget extends StatefulWidget {
-  const FreeAccessmentWidget({Key? key}) : super(key: key);
+  final User user;
+   FreeAccessmentWidget(this.user) ;
 
   @override
   State<FreeAccessmentWidget> createState() => _FreeAccessmentWidgetState();
@@ -48,7 +50,7 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
                 SizedBox(height: 2.h),
                 InkWell(
                   onTap: () {
-                    Get.to(() => const ChooseAccessmentLevel());
+                    Get.to(() =>  ChooseAccessmentLevel(widget.user));
                   },
                   child: SizedBox(
                     height: 41,
@@ -75,7 +77,7 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
             width: 1.h,
           ),
           Image.asset(
-            'images/exam.png',
+            'assets/images/exam.png',
             height: 92,
             width: 92,
           ),

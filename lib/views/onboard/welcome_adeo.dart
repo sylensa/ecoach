@@ -586,8 +586,7 @@ class _SelectCourseState extends State<SelectCourse> {
                       return;
                     }
                     showLoaderDialog(context);
-                    Future futureList = TestController()
-                        .loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
+                    Future futureList = TestController().loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
 
                     futureList.then((apiResponse) {
                       Navigator.pop(context);

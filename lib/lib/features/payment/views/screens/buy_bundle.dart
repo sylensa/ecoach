@@ -1,25 +1,663 @@
+import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/lib/features/payment/views/widgets/payment_options_widget.dart';
+import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/get_bundle_plan.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/subscription_item.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/manip.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import '../../../../core/utils/app_colors.dart';
-import '../../../../core/utils/text_styles.dart';
+import 'dart:convert';
 
-class BuyBundlePage extends StatelessWidget {
-  const BuyBundlePage({Key? key}) : super(key: key);
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/lib/core/utils/text_styles.dart';
+import 'package:ecoach/lib/features/payment/views/widgets/generated_link_widget.dart';
+import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/subscribe.dart';
+import 'package:ecoach/views/user_setup.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
+class BuyBundlePage extends StatefulWidget {
+  BuyBundlePage(this.user, {Key? key, required this.bundle, required this.controller}) : super(key: key);
+  final Plan bundle;
+  User user;
+  MainController controller;
+
+  @override
+  State<BuyBundlePage> createState() => _BuyBundlePageState();
+}
+
+class _BuyBundlePageState extends State<BuyBundlePage> {
+  List<SubscriptionItem> selectedTableRows = [];
+  List<SubscriptionItem> items = [];
+  List<SubscriptionItem> listSubscriptionItem = [];
+  bool isPressedDown = false;
+  List que = [];
+  List<Subscription> subscriptions = [];
+  late String subName;
+  BundleByPlanData? bundleByPlanData;
+  double totalAmount = 0.0;
+
+  late String generatedLink = '';
+
+  Future<String?> getUrlFrmInitialization({String? email, required double amount, List<String>? metadata}) async {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Initializing payment information ..."),
+    ));
+    String? url;
+    String? email = widget.user.email;
+    if (email == null || email.isEmpty) {
+      email = "${widget.user.phone}@ecoach.com";
+    }
+    try {
+      final Map<String, dynamic> paymentData = {
+        'email': email,
+        'phone': widget.user.phone,
+        'amount': amount,
+        "plan_id": widget.bundle.id,
+        'metadata':
+        json.encode("{purpose: buying book, description: I want to learn}"),
+      };
+      print("making call..........");
+      print(amount);
+      http.Response response = await http.post(
+        Uri.parse(AppUrl.payment_initialize),
+        body: json.encode(paymentData),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'api-token': widget.user.token!
+        },
+      );
+
+      print(response.body);
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      print("url = $responseData['data']");
+      if (responseData['status'] == true) {
+        url = responseData['data']['authorization_url'];
+      } else {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message']),
+        ));
+      }
+    } catch (e, m) {
+      print(e);
+      print(m);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "There was a problem initializing payment. Please try again later"),
+      ));
+    }
+
+    return url;
+  }
+
+  authorisePayment(BuildContext context) async {
+    String? authorizationUrl = await getUrlFrmInitialization(email: widget.user.email, amount: totalAmount);
+    if (authorizationUrl == null) {
+      Navigator.pop(context);
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return WebView(
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: authorizationUrl,
+          navigationDelegate: (navigation) async {
+            //Listen for callback URL
+            if (navigation.url.contains('https://standard.paystack.co/close')) {
+              Navigator.of(context).pop(); //close webview
+            }
+            if (navigation.url.contains(AppUrl.payment_callback)) {
+              Navigator.of(context).pop(); //close webview
+
+              setState(() {});
+
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UserSetup(widget.user)),
+                      (Route<dynamic> route) => false);
+            }
+            return NavigationDecision.navigate;
+          },
+        );
+      },
+    );
+  }
+
+  paymentOptionModalBottomSheet(context){
+    bool generateLink = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: 400,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      border: Border.all(color: Color(0xFFBBCFD6,),width: 2),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        child: sText("Which Option do you prefer",weight: FontWeight.bold,size: 20),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                authorisePayment(context,);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: sText("Direct Pay",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: ()async{
+                                stateSetter(() {
+                                  generateLink = false;
+                                });
+                                String? link = await getUrlFrmInitialization(
+                                  amount: totalAmount,
+                                );
+                                stateSetter(() {
+                                  generatedLink = link != null ? link : "";
+                                  print("generatedLink:$generatedLink");
+                                });
+                                Navigator.pop(context);
+                                paymentLinkModalBottomSheet(context,link: generatedLink);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("Generate Payment Link",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                    SizedBox(width: 10,),
+                                    generateLink ? Container() : progress()
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                                productKeyModalBottomSheet(context);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: sText("Enter Product Key",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+
+  paymentLinkModalBottomSheet(context,{String link = ""}){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      border: Border.all(color:  Color(0xFFBBCFD6,),width: 2),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        child: sText("Payment Link",weight: FontWeight.bold,size: 20),
+                      ),
+                      SizedBox(height: 10,),
+                      Container(
+                        child: sText("Payment link successfully generated below",weight: FontWeight.bold,color: Colors.grey),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(height: 20,),
+                            Container(
+                              padding: EdgeInsets.all(20),
+                              margin: EdgeInsets.symmetric(horizontal: 30),
+                              child: sText("$link",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color:  Color(0xFFBBCFD6,))
+                              ),
+                            ),
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                Clipboard.setData(ClipboardData(text: "$link"));
+                                toastMessage("Link copied to clipboard");
+                                goTo(context, MainHomePage(widget.user,index: 1,),replace: true);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: sText("Copy Link",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+
+  productKeyModalBottomSheet(context,){
+    TextEditingController productKeyController = TextEditingController();
+    bool isActivated = true;
+    double sheetHeight = 300;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        child: sText("Enter Product Key",weight: FontWeight.bold,size: 20),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(height: 40,),
+                            Container(
+                              padding: EdgeInsets.only(left: 20,right: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      // autofocus: true,
+                                      controller: productKeyController,
+                                      // autofocus: true,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please check that you\'ve entered product key';
+                                        }
+                                        return null;
+                                      },
+                                      onSaved: (value) {
+                                        setState(() {
+                                          productKeyController.text = value!;
+                                        });
+                                      },
+                                      inputFormatters: [
+                                        MaskedTextInputFormatter(mask: 'XXX-XXX-XXX-XXX-XXX'),
+                                        FilteringTextInputFormatter.deny(
+                                          RegExp(r'[ ]'),
+                                        ),
+                                        FilteringTextInputFormatter.deny(
+                                          RegExp('\n'),
+                                        ),
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp('[A-Z0-9-]'),
+                                        ),
+                                      ],
+                                      textCapitalization: TextCapitalization.characters,
+                                      onFieldSubmitted: (value){
+                                        stateSetter((){
+                                          sheetHeight = 300;
+                                        });
+                                      },
+                                      onTap: (){
+                                        stateSetter((){
+                                          sheetHeight = 650;
+                                        });
+                                      },
+                                      textAlign: TextAlign.center,
+                                      style: appStyle(weight: FontWeight.bold,size: 20),
+                                      decoration: textDecorNoBorder(
+                                        hintWeight: FontWeight.bold,
+
+                                        hint: 'XXX-XXX-XXX-XXX-XXX',
+                                        radius: 10,
+                                        labelText: "XXX-XXX-XXX-XXX-XXX",
+                                        hintColor: Colors.black,
+                                        borderColor: Colors.grey[400]!,
+                                        fill: Colors.white,
+                                        padding: EdgeInsets.symmetric(horizontal: 30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 40,),
+                            GestureDetector(
+                              onTap: ()async{
+                                stateSetter((){
+                                  isActivated = false;
+                                });
+                                try{
+                                  var token = (await UserPreferences().getUserToken());
+                                  print("token:$token");
+                                  var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"1234"},token!);
+                                  print("res:$res");
+                                  if(res["code"].toString() == "200"){
+                                    Navigator.pop(context);
+                                    goTo(context, MainHomePage(widget.user),replace: true);
+                                    toastMessage(res["message"]);
+                                  }else{
+                                    stateSetter((){
+                                      isActivated = true;
+                                    });
+                                    showDialogOk(message: "${res["message"]}, try again",context: context,dismiss: false);
+                                  }
+                                }catch(e){
+                                  stateSetter((){
+                                    isActivated = false;
+                                  });
+                                  print("error:$e");
+                                  showDialogOk(message: "$e, try again",context: context,dismiss: false);
+
+                                }
+
+
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("Activate",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
+                                    SizedBox(width: 10,),
+                                    isActivated ? Container() : progress()
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isActivated ? Colors.green : Colors.grey,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+
+
+                          ],
+                        ),
+                      ),
+
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    subName = widget.bundle.name!;
+    subName = subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
+    totalAmount = double.parse(widget.bundle.price.toString());
+    UserPreferences().getUser().then((user) {
+      setState(() {
+        subscriptions = user!.subscriptions;
+        context.read<DownloadUpdate>().setSubscriptions(subscriptions);
+      });
+    });
+
+    getSubscriptionItems();
+    // getSubscriptionItems();
+  }
+  getSubscriptionPlan()async{
+    String token = (await UserPreferences().getUserToken())!;
+    print("token:$token");
+    var js = await doGet('${AppUrl.plans}/${widget.bundle.id}',token);
+    print("res plans: $js");
+    if(js["status"] && js["data"].isNotEmpty){
+      bundleByPlanData = BundleByPlanData.fromJson(js["data"]);
+      for(int i = 0; i < bundleByPlanData!.features.length; i++){
+        items.add(bundleByPlanData!.features[i]);
+      }
+    }
+
+    setState(() { });
+
+  }
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
+  }
+  getSubscriptionItems() {
+    SubscriptionItemDB().subscriptionItems(widget.bundle.id!).then((items) {
+      setState(() {
+        this.items = items;
+        if(this.items.isEmpty){
+           getSubscriptionPlan();
+        }
+        print("object:$items");
+        // toast("object:$items");
+      });
+    });
+
+  }
+
+  clearList() {
+    items.clear();
+    selectedTableRows.clear();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: InkWell(
+      bottomNavigationBar:
+      context.watch<DownloadUpdate>().isDownloading ?
+      Container(
+        height: MediaQuery.of(context).size.height * .25,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(blurRadius: 24, color: Color(0x4D000000))
+          ],
+        ),
+        child: Column(
+          children: [
+            context.read<DownloadUpdate>().percentage > 0 &&
+                context.read<DownloadUpdate>().percentage < 100
+                ? LinearPercentIndicator(
+              percent:
+              context.read<DownloadUpdate>().percentage /
+                  100,
+              linearStrokeCap: LinearStrokeCap.butt,
+              progressColor: Colors.green,
+              padding: EdgeInsets.symmetric(horizontal: 0),
+              lineHeight: 4,
+            )
+                : LinearProgressIndicator(),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 16,
+              ),
+              child: Text(
+                context
+                    .read<DownloadUpdate>()
+                    .message!
+                    .toTitleCase(),
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  bottom: 24,
+                ),
+                shrinkWrap: true,
+                itemCount: context
+                    .read<DownloadUpdate>()
+                    .doneDownloads
+                    .length,
+                itemBuilder: (context, index) {
+                  return Text(
+                    context
+                        .read<DownloadUpdate>()
+                        .doneDownloads[index],
+                    style: TextStyle(color: kAdeoGray2),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      )
+          :
+      bundleByPlanData != null && bundleByPlanData!.userSubscribed ?
+      InkWell(
         onTap: () {
-          Get.bottomSheet(const PaymentOptionsWidget());
+          // Get.bottomSheet( PaymentOptionsWidget());
+          paymentOptionModalBottomSheet(context);
         },
         child: Container(
           color: const Color(0xFF00C9B9),
           height: 56,
-          child: const Center(
+          child:  Center(
+            child: Text(
+              'Already Subscribed to this Bundle',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
+        ),
+      ) :
+      InkWell(
+        onTap: () {
+          // Get.bottomSheet( PaymentOptionsWidget());
+          paymentOptionModalBottomSheet(context);
+        },
+        child: Container(
+          color: const Color(0xFF00C9B9),
+          height: 56,
+          child:  Center(
             child: Text(
               'Buy Bundle',
               textAlign: TextAlign.center,
@@ -28,7 +666,7 @@ class BuyBundlePage extends StatelessWidget {
           ),
         ),
       ),
-      body: SafeArea(
+        body: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -37,10 +675,12 @@ class BuyBundlePage extends StatelessWidget {
               child: Row(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.arrow_back),
-                  const Expanded(
+                  IconButton(onPressed: (){
+                    Navigator.pop(context);
+                  }, icon:  Icon(Icons.arrow_back)),
+                   Expanded(
                     child: Text(
-                      "JHS 1 Bundle",
+                      "${widget.bundle.name}",
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
@@ -83,27 +723,28 @@ class BuyBundlePage extends StatelessWidget {
                 ],
               ),
             ),
-            const Text(
+             Text(
               "Rev Shaddy Consult",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
             const SizedBox(
               height: 10,
             ),
-            const Text(
-              "GHS 200",
+             Text(
+              "${widget.bundle.currency}${widget.bundle.price}",
               style: TextStyle(
                   color: Color(0xFF2A9CEA),
                   fontWeight: FontWeight.bold,
                   fontSize: 27),
             ),
-            const Text(
-              "validity: 365 days",
+             Text(
+              "${widget.bundle.tag} days left",
               style: TextStyle(fontSize: 11, color: Color(0xFF8E8E8E)),
             ),
             SizedBox(
               height: 2.h,
             ),
+            items.isNotEmpty ?
             Expanded(
                 child: Container(
               height: 651,
@@ -114,7 +755,7 @@ class BuyBundlePage extends StatelessWidget {
                         EdgeInsets.symmetric(horizontal: 32, vertical: 1.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children:  [
                         Text(
                           "Description",
                           style: TextStyle(
@@ -123,7 +764,7 @@ class BuyBundlePage extends StatelessWidget {
                               fontSize: 18),
                         ),
                         Text(
-                          "A comprehensive collection from Rev Shaddy Consult for students in JHS 1",
+                          "${properCase(widget.bundle.description!)}",
                           style: TextStyle(
                             fontSize: 12,
                             color: Color(0xFF8E8E8E),
@@ -136,46 +777,108 @@ class BuyBundlePage extends StatelessWidget {
                     color: Color(0xFFB8B8B8),
                     thickness: 2,
                   ),
+
                   ListView.builder(
                       padding: const EdgeInsets.only(
                           left: 32, top: 27, right: 32, bottom: 20),
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
-                      itemCount: 5,
+                      itemCount: items.length,
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 1.h),
-                          child: Card(
-                              elevation: 0,
-                              child: ListTile(
-                                title: const Text(
-                                  "JHS 1 Bundle",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12),
-                                ),
-                                subtitle: const Text(
-                                  "Topic: 20 | Quizes: 20 | Questions: 2000",
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 9),
-                                ),
-                                leading: Text(
-                                  "0${index + 1}",
-                                  style: TextStyle(
-                                    color: Colors.black.withOpacity(0.25),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 29,
+                        return GestureDetector(
+                          onTap: (){
+                            // final SubscriptionItem course = items[index];
+                            setState(() {
+                              selectedTableRows.add(items[index]);
+                            });
+                            if (context.read<DownloadUpdate>().isDownloading) {
+                              print("hey: ${context.watch<DownloadUpdate>().isDownloading}");
+
+                              return;
+                            }
+                            setState(
+                                  () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        "Download package",
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      content: Text(
+                                        "Are you sure you want to redownload this package?",
+                                        style: TextStyle(color: Colors.black),
+                                        softWrap: true,
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            widget.controller.downloadSubscription(
+                                              selectedTableRows,
+                                                  (success) {
+                                                UserPreferences().getUser().then(
+                                                      (user) {
+                                                    setState(() {
+                                                      widget.user = user!;
+                                                    });
+                                                  },
+                                                );
+                                                clearList();
+                                                getSubscriptionItems();
+                                              },
+                                            );
+                                          },
+                                          child: Text("Yes"),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("No"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 1.h),
+                            child: Card(
+                                elevation: 0,
+                                child: ListTile(
+                                  title:  Text(
+                                    "${items[index].name}",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12),
                                   ),
-                                ),
-                                trailing: Image.asset(
-                                  "images/download.png",
-                                  color:
-                                      index == 0 ? Colors.green : Colors.grey,
-                                  height: 27,
-                                  width: 27,
-                                ),
-                              )),
+                                  subtitle:  Text(
+                                    "Topic: ${items[index].topicCount != null  ? items[index].topicCount! : "0"} | Quizes: ${items[index].quizCount!} | Questions: ${items[index].questionCount!}",
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 9),
+                                  ),
+                                  leading: Text(
+                                    "0${index + 1}",
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.25),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 29,
+                                    ),
+                                  ),
+                                  trailing: Image.asset(
+                                    "assets/images/download.png",
+                                    color:
+                                    items[index].downloadStatus == "downloaded" ? Colors.green : Colors.grey,
+                                    height: 27,
+                                    width: 27,
+                                  ),
+                                )),
+                          ),
                         );
                       })
                 ],
@@ -188,6 +891,7 @@ class BuyBundlePage extends StatelessWidget {
                 color: const Color(0xFFF5F5F5),
               ),
             ))
+                : progress()
           ],
         ),
       ),

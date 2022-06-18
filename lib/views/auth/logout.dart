@@ -1,3 +1,4 @@
+import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -13,7 +14,7 @@ class _LogoutState extends State<Logout> {
   @override
   void initState() {
     super.initState();
-
+    SubscriptionDB().deleteAll();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       Navigator.of(context).pushReplacementNamed("/login");
     });

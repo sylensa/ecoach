@@ -70,6 +70,52 @@ class TestController {
       // print(response.body);
     }
   }
+  loadDiagnoticQuestionAnnex( Course course) async {
+    User? user = await UserPreferences().getUser();
+    // print(user!.token!);
+    Map<String, dynamic> queryParams = {
+      // 'level_id': jsonEncode(level.id),
+      'course_id': jsonEncode(course.id),
+      'limit': jsonEncode(20)
+    };
+    // print(queryParams);
+    // print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    http.Response response = await http.get(
+      Uri.parse(
+          AppUrl.questions + '?' + Uri(queryParameters: queryParams).query),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': user!.token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      // print(responseData);
+      if (responseData["status"] == true) {
+        // print("messages returned");
+        // print(response.body);
+
+        return ApiResponse<Question>.fromJson(response.body, (dataItem) {
+          Question question = Question.fromJson(dataItem);
+          Map<String, dynamic> json = question.toJson();
+          List<Map<String, dynamic>> jsonAnswer = [];
+          question.answers!.forEach((answer) {
+            jsonAnswer.add(answer.toJson());
+          });
+          json.addAll({'answers': jsonAnswer});
+          return Question.fromJson(json);
+        });
+      } else {
+        // print("not successful event");
+      }
+    } else {
+      // print("Failed ....");
+      // print(response.statusCode);
+      // print(response.body);
+    }
+  }
 
 //  saveQuestionsLocally (List<Question> questions) {
 //     QuestionDB().insertAll(questions);

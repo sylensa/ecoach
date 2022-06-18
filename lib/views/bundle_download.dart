@@ -13,10 +13,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/src/provider.dart';
 
 class BundleDownload extends StatefulWidget {
-  BundleDownload(this.user,
-      {Key? key, required this.bundle, required this.controller})
-      : super(key: key);
-
+  BundleDownload(this.user, {Key? key, required this.bundle, required this.controller}) : super(key: key);
   final Subscription bundle;
   User user;
   MainController controller;

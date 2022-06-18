@@ -42,7 +42,7 @@ class _QuestionsHeaderState extends State<QuestionsHeader> {
             width: 5,
           ),
           SvgPicture.asset(
-            "images/fav.svg",
+            "assets/images/fav.svg",
           ),
           const SizedBox(
             width: 5,
@@ -58,7 +58,7 @@ class _QuestionsHeaderState extends State<QuestionsHeader> {
             width: 18.2,
           ),
           SvgPicture.asset(
-            "images/speed.svg",
+            "assets/images/speed.svg",
           ),
           const SizedBox(
             width: 6.4,
@@ -74,7 +74,7 @@ class _QuestionsHeaderState extends State<QuestionsHeader> {
             width: 17.6,
           ),
           SvgPicture.asset(
-            "images/add.svg",
+            "assets/images/add.svg",
             height: 13.8,
             width: 13.8,
           ),
@@ -125,7 +125,7 @@ class _QuestionsHeaderState extends State<QuestionsHeader> {
               });
             },
             child: SvgPicture.asset(
-              swichValue ? "images/off_switch.svg" : "images/on_switch.svg",
+              swichValue ? "assets/images/off_switch.svg" : "assets/images/on_switch.svg",
             ),
           ),
         ],

@@ -1,21 +1,41 @@
+import 'package:ecoach/database/level_db.dart';
 import 'package:ecoach/lib/features/accessment/views/widgets/select_level_container.dart';
+import 'package:ecoach/models/level.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 
 class ChooseAccessmentLevel extends StatefulWidget {
-  const ChooseAccessmentLevel({Key? key}) : super(key: key);
+  final User user;
+  ChooseAccessmentLevel(this.user);
 
   @override
   State<ChooseAccessmentLevel> createState() => _ChooseAccessmentLevelState();
 }
 
 class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
-  String selectedLevel = '';
   List<String> levels = [
     'Lower Primary',
     'Upper Primary',
     'Junior High',
     'Senior High'
   ];
+
+  List<Level> futureLevels = [];
+  var futureCourses;
+  String  selectedLevel = '';
+
+  getLevelByGroup(String levelGroup)async{
+    futureLevels = await LevelDB().levelByGroup(levelGroup);
+    for(int i =0; i< futureLevels.length; i++){
+      print("value[0].category:${futureLevels[i].id}");
+    }
+  }
+
+  @override
+  void initState() {
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,22 +69,25 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
             children: [
               // SizedBox(width: 11),
               SelectLevelContainer(
-                image: "images/primary.png",
+                image: "assets/images/primary.png",
                 title: "Lower Primary",
+                user: widget.user,
                 isSelected: selectedLevel == levels[0],
-                onTap: () {
+                onTap: () async{
                   setState(() {
                     selectedLevel = levels[0];
-                    
+
                   });
                 },
               ),
               const SizedBox(width: 21),
               SelectLevelContainer(
                 isSelected: selectedLevel == levels[1],
-                image: "images/upper_primary.png",
+                user: widget.user,
+                image: "assets/images/upper_primary.png",
                 title: "Upper Primary",
-                onTap: () {
+                onTap: () async{
+                  await getLevelByGroup("Primary");
                   setState(() {
                     selectedLevel = levels[1];
                   });
@@ -82,10 +105,12 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
               children: [
                 // SizedBox(width: 11),
                 SelectLevelContainer(
-                    image: "images/junior_hight.png",
+                    image: "assets/images/junior_hight.png",
                     title: "Junior High",
+                    user: widget.user,
                     isSelected: selectedLevel == levels[2],
-                    onTap: () {
+                    onTap: () async{
+                      await getLevelByGroup(levels[2]);
                       setState(() {
                         selectedLevel = levels[2];
                       });
@@ -93,9 +118,11 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                 const SizedBox(width: 21),
                 SelectLevelContainer(
                   isSelected: selectedLevel == levels[3],
-                  image: "images/sernior_high.png",
-                  title: "Sernior High",
-                  onTap: () {
+                  user: widget.user,
+                  image: "assets/images/sernior_high.png",
+                  title: "Senior High",
+                  onTap: () async{
+                    await getLevelByGroup(levels[3]);
                     setState(() {
                       selectedLevel = levels[3];
                     });

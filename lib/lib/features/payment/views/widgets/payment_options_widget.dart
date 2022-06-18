@@ -1,12 +1,31 @@
 
+import 'dart:convert';
+
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/lib/core/utils/text_styles.dart';
 import 'package:ecoach/lib/features/payment/views/widgets/generated_link_widget.dart';
+import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/subscribe.dart';
+import 'package:ecoach/views/user_setup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class PaymentOptionsWidget extends StatelessWidget {
-  const PaymentOptionsWidget({Key? key}) : super(key: key);
+class PaymentOptionsWidget extends StatefulWidget {
+   PaymentOptionsWidget();
+  @override
+  State<PaymentOptionsWidget> createState() => _PaymentOptionsWidgetState();
+}
+
+class _PaymentOptionsWidgetState extends State<PaymentOptionsWidget> {
+
 
   @override
   Widget build(BuildContext context) {

@@ -401,16 +401,12 @@ class _QuizViewState extends State<QuizView> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (currentQuestion > 0 &&
-                              (!controller.speedTest ||
-                                  controller.speedTest && !enabled))
+                          if (currentQuestion > 0 && (!controller.speedTest || controller.speedTest && !enabled))
                             Expanded(
                               flex: 2,
                               child: TextButton(
                                 onPressed: () {
-                                  pageController.previousPage(
-                                      duration: Duration(milliseconds: 1),
-                                      curve: Curves.ease);
+                                  pageController.previousPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
                                   setState(() {
                                     currentQuestion--;
                                     numberingController.scrollTo(
@@ -430,11 +426,7 @@ class _QuizViewState extends State<QuizView> {
                             ),
                           if (currentQuestion < controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
-                          if (currentQuestion <
-                                  controller.questions.length - 1 &&
-                              !(!enabled &&
-                                  controller.speedTest &&
-                                  currentQuestion == finalQuestion))
+                          if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
                             Expanded(
                               flex: 2,
                               child: TextButton(
@@ -448,16 +440,9 @@ class _QuizViewState extends State<QuizView> {
                                 ),
                               ),
                             ),
-                          if (!savedTest &&
-                              currentQuestion ==
-                                  controller.questions.length - 1)
+                          if (!savedTest && currentQuestion == controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
-                          if (!savedTest &&
-                                  currentQuestion ==
-                                      controller.questions.length - 1 ||
-                              (enabled &&
-                                  controller.speedTest &&
-                                  currentQuestion == finalQuestion))
+                          if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
                             Expanded(
                               flex: 2,
                               child: TextButton(
@@ -1300,28 +1285,7 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                 children: [
                   for (int i = 0; i < answers!.length; i++)
                     Stack(children: [
-                      SelectAnswerWidget(widget.user, answers![i].text!,
-                          widget.question.selectedAnswer == answers![i],
-                          normalSize: 15,
-                          selectedSize: widget.enabled ? 38 : 24,
-                          imposedSize: widget.enabled ||
-                                  (widget.enabled && selectedAnswer == null) ||
-                                  selectedAnswer != answers![i] &&
-                                      answers![i].value == 0
-                              ? null
-                              : selectedAnswer == answers![i] &&
-                                      selectedAnswer!.value == 0
-                                  ? 24
-                                  : 38,
-                          imposedColor: widget.enabled ||
-                                  (widget.enabled && selectedAnswer == null) ||
-                                  selectedAnswer != answers![i] &&
-                                      answers![i].value == 0
-                              ? null
-                              : selectedAnswer == answers![i] &&
-                                      selectedAnswer!.value == 0
-                                  ? Colors.red.shade400
-                                  : Colors.green.shade600, select: () {
+                      SelectAnswerWidget(widget.user, answers![i].text!, widget.question.selectedAnswer == answers![i], normalSize: 15, selectedSize: widget.enabled ? 38 : 24, imposedSize: widget.enabled || (widget.enabled && selectedAnswer == null) || selectedAnswer != answers![i] && answers![i].value == 0 ? null : selectedAnswer == answers![i] && selectedAnswer!.value == 0 ? 24 : 38, imposedColor: widget.enabled || (widget.enabled && selectedAnswer == null) || selectedAnswer != answers![i] && answers![i].value == 0 ? null : selectedAnswer == answers![i] && selectedAnswer!.value == 0 ? Colors.red.shade400 : Colors.green.shade600, select: () {
                         if (!widget.enabled) {
                           return;
                         }

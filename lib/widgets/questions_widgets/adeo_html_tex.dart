@@ -19,6 +19,7 @@ class AdeoHtmlTex extends StatefulWidget {
     this.textColor = Colors.white,
     this.fontSize = 23,
     this.fontStyle = FontStyle.normal,
+    this.fontWeight = FontWeight.normal,
     this.imageSize,
     this.useLocalImage = true,
     this.removeTags = false,
@@ -29,6 +30,7 @@ class AdeoHtmlTex extends StatefulWidget {
   final Color textColor;
   final double fontSize;
   final FontStyle fontStyle;
+  final FontWeight fontWeight;
   final Size? imageSize;
   final bool useLocalImage;
   final bool removeTags;
@@ -56,15 +58,18 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               maxLines: 7,
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
+              fontWeight: widget.fontWeight,
               padding: const EdgeInsets.only(right: 21, left: 10),
               textAlign: TextAlign.center),
           "p": Style(
             padding: EdgeInsets.all(0),
+            fontWeight: widget.fontWeight,
           ),
           "table": Style(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               width: 1,
+
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
               textAlign: TextAlign.center),

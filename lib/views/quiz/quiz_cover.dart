@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/lib/features/questions/view/screens/quiz_questions.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -275,7 +276,7 @@ class QuizCover extends StatelessWidget {
                                           type: type,
                                           level: level,
                                         );
-                                      return QuizView(
+                                      return QuizQuestion(
                                         controller: QuizController(
                                           user,
                                           course!,

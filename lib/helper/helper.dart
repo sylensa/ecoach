@@ -667,16 +667,15 @@ doPost(String urlAfterBase, Map body,String token) async {
   return decoded;
 }
 
-doGet(String urlAfterBase) async {
+doGet(String urlAfterBase,String token) async {
   var url = Uri.parse('$base$urlAfterBase');
   print("url: $url");
-  print("userToken: $userToken");
+  print("userToken: $token");
   var js;
-  if(userToken.isNotEmpty){
-    js =await http.get(url, headers: headers );
-  }else{
-     js = await http.get(url );
-  }
+    js = await http.get(url, headers:  {
+    'api-token': token
+    } );
+
   var decoded;
   print("decoded: ${js.body}");
   try {

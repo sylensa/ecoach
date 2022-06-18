@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/lib/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
@@ -146,7 +147,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
           height: 48.0,
           child: Row(
             children: [
-              if (selected != null)
+              if (selected != null &&  !widget.diagnostic)
                 Expanded(
                   child: Row(
                     children: [
@@ -157,7 +158,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                             if (widget.history) {
                             } else {
                               // Navigator.pop(context,[0,0]);
-                                await goTo(context, ReviewTest(testTaken: widget.testTaken,user: widget.user,));
+                                await goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
                               setState(() {
 
                               });

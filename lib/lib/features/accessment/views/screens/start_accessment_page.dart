@@ -1,13 +1,50 @@
 
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/lib/core/utils/app_colors.dart';
 import 'package:ecoach/lib/features/questions/view/screens/quiz_questions.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/level.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class StartAccessmentPage extends StatelessWidget {
-  const StartAccessmentPage({Key? key}) : super(key: key);
+class StartAccessmentPage extends StatefulWidget {
+  StartAccessmentPage(
+      this.user,
+      this.questions, {
+        Key? key,
+        this.level,
+        required this.name,
+        this.type = TestType.NONE,
+        this.category = TestCategory.NONE,
+        this.theme = QuizTheme.GREEN,
+        this.course,
+        this.time = 300,
+        this.diagnostic = false,
+      }) : super(key: key);
+
+  User user;
+  Level? level;
+  Course? course;
+  List<Question> questions;
+  bool diagnostic;
+  String name;
+  final TestCategory category;
+  final TestType type;
+  int time;
+  QuizTheme theme;
+
+  @override
+  State<StartAccessmentPage> createState() => _StartAccessmentPageState();
+}
+
+class _StartAccessmentPageState extends State<StartAccessmentPage> {
+  Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +54,20 @@ class StartAccessmentPage extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() => const QuizQuestion());
+          Get.to(() => QuizQuestion(
+            controller: QuizController(
+              widget.user,
+              widget.course!,
+              questions: widget.questions,
+              name: widget.name,
+              time: widget.time,
+              type: widget.type,
+              challengeType: widget.category,
+            ),
+            theme: widget.theme,
+            diagnostic: widget.diagnostic,
+          )
+          );
         },
         child: Container(
           color: kAccessmentButtonColor,
@@ -36,7 +86,7 @@ class StartAccessmentPage extends StatelessWidget {
       body: Stack(
         children: [
           SvgPicture.asset(
-            "images/accessment_start_background.svg",
+            "assets/images/accessment_start_background.svg",
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.cover,
           ),
@@ -55,7 +105,7 @@ class StartAccessmentPage extends StatelessWidget {
                 ),
                 SizedBox(height: 3.h),
                 Image.asset(
-                  'images/analysis.png',
+                  'assets/images/analysis.png',
                   height: 239,
                   width: 239,
                 ),

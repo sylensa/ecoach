@@ -42,7 +42,7 @@ void main() async {
   );
   NotificationService().init();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.clear();
+  // await prefs.clear();
   seenOnboard = await prefs.getBool("seenOnboard") ?? false;
 
 
@@ -50,7 +50,6 @@ void main() async {
   await FlavorSettings.init();
 
   runApp(
-
     ChangeNotifierProvider<DownloadUpdate>(
       create: (context) {
         return DownloadUpdate();

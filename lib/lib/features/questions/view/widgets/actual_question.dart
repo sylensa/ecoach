@@ -1,9 +1,11 @@
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 
 class ActualQuestion extends StatelessWidget {
   final String question, direction;
-  const ActualQuestion({required this.question, this.direction = "", Key? key})
-      : super(key: key);
+  User user;
+   ActualQuestion({required this.question, this.direction = "",required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +21,11 @@ class ActualQuestion extends StatelessWidget {
               color: const Color(0xFFC8C8C8),
             ),
           ),
-          child: Text(
-            question,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18),
+          child:   AdeoHtmlTex(
+            user,
+            question.replaceAll("https", "http"),
+            useLocalImage: false,
+            textColor: Colors.black,
           ),
         ),
         Visibility(

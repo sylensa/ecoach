@@ -21,10 +21,10 @@ class QuestionOne extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: const [
             QuestionsHeader(),
-            ActualQuestion(
-              question: "What is the best the dry season ?",
-              direction: "Choose the right answer to the question above",
-            ),
+            // ActualQuestion(
+            //   question: "What is the best the dry season ?",
+            //   direction: "Choose the right answer to the question above",
+            // ),
             
             QuestionAnswer(
               details: "What is the best the dry season ?",

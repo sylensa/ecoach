@@ -39,21 +39,106 @@ class _EndQuestionWidgetState extends State<EndQuestionWidget> {
             ),
           ),
           const SizedBox(height: 33),
-          testButton(
-              text: "Yes",
-              color: const Color(0xFFFF6060),
-              onPressed: () {
-                Get.back();
-                Get.back();
-              }),
+          OutlinedButton(
+            onPressed: (){
+
+            },
+            style: ButtonStyle(
+              animationDuration: const Duration(milliseconds: 200),
+              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
+                vertical: 17,
+              )),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9),
+                ),
+              ),
+
+              side: MaterialStateProperty.resolveWith(
+                    (Set<MaterialState> states) {
+                  return states.contains(MaterialState.pressed)
+                      ? BorderSide.none
+                      : const BorderSide(
+                    color: Color(0xFF707070),
+                    width: 1,
+                  );
+                },
+              ),
+              // backgroundColor: MaterialStateProperty.resolveWith(
+              //   (states) => states.contains(MaterialState.pressed)
+              //       ? Colors.red
+              //       : Colors.white,
+              // ),
+              foregroundColor: MaterialStateProperty.resolveWith(
+                    (states) => states.contains(MaterialState.pressed)
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              overlayColor: MaterialStateProperty.resolveWith(
+                    (states) =>
+                states.contains(MaterialState.pressed) ?  Color(0xFFFF6060) : Colors.white,
+              ),
+            ),
+            child: Text(
+              "Yes",
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 18,
+              ),
+            ),
+          ),
+
           SizedBox(height: 4.h),
-          testButton(
-              text: "No",
-              color: const Color(0xFF00C664),
-              onPressed: () {
-                Get.back();
-              }),
-          const SizedBox(height: 82),
+          OutlinedButton(
+            onPressed: (){
+
+            },
+            style: ButtonStyle(
+              animationDuration: const Duration(milliseconds: 200),
+              padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
+                vertical: 17,
+              )),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9),
+                ),
+              ),
+
+              side: MaterialStateProperty.resolveWith(
+                    (Set<MaterialState> states) {
+                  return states.contains(MaterialState.pressed)
+                      ? BorderSide.none
+                      : const BorderSide(
+                    color: Color(0xFF707070),
+                    width: 1,
+                  );
+                },
+              ),
+              // backgroundColor: MaterialStateProperty.resolveWith(
+              //   (states) => states.contains(MaterialState.pressed)
+              //       ? Colors.red
+              //       : Colors.white,
+              // ),
+              foregroundColor: MaterialStateProperty.resolveWith(
+                    (states) => states.contains(MaterialState.pressed)
+                    ? Colors.white
+                    : Colors.black,
+              ),
+              overlayColor: MaterialStateProperty.resolveWith(
+                    (states) =>
+                states.contains(MaterialState.pressed) ?  Color(0xFF00C664) : Colors.white,
+              ),
+            ),
+            child: Text(
+              "No",
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 18,
+              ),
+            ),
+          ),
+
+           SizedBox(height: 82),
         ],
       ),
       decoration: BoxDecoration(
@@ -91,10 +176,7 @@ class _EndQuestionWidgetState extends State<EndQuestionWidget> {
     );
   }
 
-  OutlinedButton testButton(
-      {required String text,
-      required Color color,
-      required VoidCallback onPressed}) {
+  OutlinedButton testButton({required String text, required Color color, required VoidCallback onPressed}) {
     return OutlinedButton(
       onPressed: onPressed,
       style: ButtonStyle(

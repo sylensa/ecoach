@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/lib/features/home/view/screen/main_home_page.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/flag_model.dart';
@@ -49,11 +50,18 @@ class _MainHomePageState extends State<MainHomePage>
       widget.user,
     );
     _children = [
-      HomePage(
+      // HomePage(
+      //   widget.user,
+      //   callback: (tabNumber) {
+      //     tapping(tabNumber);
+      //   },
+      // ),
+      HomePageAnnex(
         widget.user,
         callback: (tabNumber) {
           tapping(tabNumber);
         },
+        controller: mainController,
       ),
       StorePage(widget.user),
       CoursesPage(widget.user),

@@ -140,6 +140,24 @@ class CourseDB {
 
     return courses;
   }
+  Future<List<Course>> coursesByCourseID(List<String> courseId) async {
+    final Database? db = await DBProvider.database;
+    List<Course> courses = [];
+    for(int i = 0 ; i < courseId.length; i++){
+      final List<Map<String, dynamic>> maps = await db!.rawQuery('SELECT * FROM courses WHERE  courseID like "${courseId[i]}%"');
+      print("maps:$maps");
+      if(maps.isNotEmpty){
+        Course course = Course.fromJson(maps[0]);
+        print(course.toJson());
+        if (course != null) {
+          print(course.toJson());
+          courses.add(course);
+        }
+      }
+
+    }
+    return courses;
+  }
 
   Future<void> update(Course course) async {
     // ignore: unused_local_variable

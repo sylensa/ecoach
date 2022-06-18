@@ -159,9 +159,7 @@ class _ReviewTestState extends State<ReviewTest> {
                 controller: pageController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  for (int index = 0;
-                      index < reviewQuestionsBack.length;
-                      index++)
+                  for (int index = 0; index < reviewQuestionsBack.length; index++)
                     ListView(
                       children: [
                         // question
@@ -276,7 +274,8 @@ class _ReviewTestState extends State<ReviewTest> {
               child: Row(
                 children: [
                   questionIndex != 0
-                      ? Expanded(
+                      ?
+                  Expanded(
                           child: GestureDetector(
                             onTap: () async {
                               if (questionIndex == 0) {

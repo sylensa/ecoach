@@ -22,12 +22,14 @@ class Question {
     this.deleted,
     this.answers,
     this.topic,
+    this.time,
   });
 
   int? key;
   int? id;
   int? courseId;
   int? topicId;
+  int? time;
   String? topicName;
   String? qid;
   String? text;
@@ -88,6 +90,7 @@ class Question {
       public: json["public"],
       flagged: json["flagged"],
       deleted: json["deleted"],
+      time: json["time"] ?? 0,
       answers: json["answers"] == null
           ? []
           : List<Answer>.from(json["answers"].map((x) => Answer.fromJson(x))),
