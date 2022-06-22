@@ -1,5 +1,6 @@
 
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_questions.dart';
 import 'package:ecoach/models/course.dart';
@@ -54,7 +55,9 @@ class _StartAccessmentPageState extends State<StartAccessmentPage> {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() => QuizQuestion(
+          print("object:${widget.questions.length}");
+
+          goTo(context, QuizQuestion(
             controller: QuizController(
               widget.user,
               widget.course!,
@@ -66,8 +69,7 @@ class _StartAccessmentPageState extends State<StartAccessmentPage> {
             ),
             theme: widget.theme,
             diagnostic: widget.diagnostic,
-          )
-          );
+          ),replace: true);
         },
         child: Container(
           color: kAccessmentButtonColor,
