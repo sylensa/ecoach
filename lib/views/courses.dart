@@ -168,14 +168,7 @@ class _CoursesPageState extends State<CoursesPage> {
                 child: PageView(
                   physics: NeverScrollableScrollPhysics(),
                   controller: controller,
-                  children: subscriptions
-                      .map(
-                        (subscription) => CourseView(
-                          widget.user,
-                          subscription,
-                        ),
-                      )
-                      .toList(),
+                  children: subscriptions.map((subscription) => CourseView(widget.user, subscription,),).toList(),
                 ),
               ),
             ),
@@ -210,8 +203,7 @@ class _CourseViewState extends State<CourseView> {
     subName = widget.subscription.name!;
     subName =
         subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
-    futureItems =
-        SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
+    futureItems = SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
   }
 
   @override
