@@ -8,8 +8,8 @@ import 'package:html/parser.dart' as htmlparser;
 CustomRenderMatcher texMatcher() =>
     (context) => context.tree.element?.localName == 'tex';
 
-double imageWidth = 400;
-double imageHeight = 400;
+double imageWidth = 100;
+double imageHeight = 100;
 
 class AdeoHtmlTex extends StatefulWidget {
   const AdeoHtmlTex(
@@ -88,8 +88,8 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               fontStyle: widget.fontStyle,
               textAlign: TextAlign.center),
           'img': Style(
-              width: imageWidth,
-              height: imageHeight,
+              width: 200,
+              height: 200,
               padding: EdgeInsets.all(0)),
         },
         customRenders: {
