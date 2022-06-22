@@ -164,7 +164,7 @@ Widget progress({double size = 30}) {
   return SizedBox(
       width: size,
       height: size,
-      child: CircularProgressIndicator(backgroundColor: solonGray200, valueColor: const AlwaysStoppedAnimation<Color>(dPurple)));
+      child: CircularProgressIndicator(backgroundColor: solonGray200, valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00C9B9),)));
 }
 
 
