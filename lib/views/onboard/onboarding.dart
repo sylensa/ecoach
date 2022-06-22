@@ -1,15 +1,22 @@
+import 'package:ecoach/controllers/plan_controllers.dart';
+import 'package:ecoach/database/plan.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/subscription_item.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/auth/login_view.dart';
 import 'package:ecoach/views/auth/register_view.dart';
 import 'package:ecoach/views/onboard/onboard_data.dart';
 import 'package:flutter/material.dart';
-import 'package:ecoach/lib/core/utils/app_colors.dart';
-import 'package:ecoach/lib/features/account/view/screen/log_in.dart';
+import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../lib/features/account/view/screen/create_account.dart';
+import '../../revamp/features/account/view/screen/create_account.dart';
 
 
 class Onboarding extends StatefulWidget {
@@ -23,9 +30,11 @@ class _OnboardingState extends State<Onboarding> {
   int page = 0;
   late PageController controller;
 
+
   @override
   void initState() {
     super.initState();
+    PlanController().getPlan();
     controller = PageController(initialPage: page);
     UserPreferences().setSeenOnboard();
   }
@@ -98,28 +107,7 @@ class _OnboardingState extends State<Onboarding> {
             ),
             child: Column(
               children: [
-                      Container(
-                        height: 62,
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(
-                          top: 8,
-                          bottom: 20,
-                          right: 24,
-                        ),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: onBoardData.length,
-                          scrollDirection: Axis.horizontal,
-                          separatorBuilder: (BuildContext context, int index) =>
-                          const SizedBox(width: 4),
-                          itemBuilder: (context, index) {
-                            return OnboardPageIndicator(
-                              color: getColors(page)['shade']!,
-                              isActive: page == index,
-                            );
-                          },
-                        ),
-                      ),
+
                       Expanded(
                         child: PageView.builder(
                           controller: controller,
@@ -308,6 +296,32 @@ class _OnboardingState extends State<Onboarding> {
                       SizedBox(height: 20),
 
               ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              height: 62,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(
+                top: 8,
+                bottom: 20,
+                right: 24,
+              ),
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: onBoardData.length,
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (BuildContext context, int index) =>
+                const SizedBox(width: 4),
+                itemBuilder: (context, index) {
+                  return OnboardPageIndicator(
+                    color: getColors(page)['shade']!,
+                    isActive: page == index,
+                  );
+                },
+              ),
             ),
           ),
         ],
