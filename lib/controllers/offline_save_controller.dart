@@ -1,4 +1,6 @@
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/models/flag_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:ecoach/database/offline_data_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
@@ -32,9 +34,20 @@ class OfflineSaveController {
 
   saveTestTaken(TestTaken test) async {
     int id = await TestTakenDB().insert(test);
-    await OfflineDataDB()
-        .insert(OfflineData(dataId: id, dataType: "test_taken"));
+    var res = await TestTakenDB().getTestTakenById(test.userId!);
+    print("res:$res");
+    await OfflineDataDB().insert(OfflineData(dataId: id, dataType: "test_taken"));
   }
+
+  saveFlagQuestion(FlagData flagData) async {
+    int id = 0;
+     id = await QuizDB().insertFlag(flagData);
+    var res = await QuizDB().getFlagQuestionById(id);
+    print("res:$res");
+    return id;
+  }
+
+
 
   syncData({String? type}) async {
     print("trying to sync data");

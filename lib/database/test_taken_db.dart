@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/review_taken.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/database.dart';
@@ -159,4 +160,42 @@ class TestTakenDB {
       whereArgs: [id],
     );
   }
+
+  Future<int> insertReviewTest(ReviewTestTaken reviewTestTaken) async {
+    final Database? db = await DBProvider.database;
+
+    int id = await db!.insert(
+      'review_test_taken',
+      reviewTestTaken.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return id;
+  }
+  Future<void> updateReviewTest(ReviewTestTaken reviewTestTaken) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'review_test_taken',
+      reviewTestTaken.toJson(),
+      where: "id = ?",
+      whereArgs: [reviewTestTaken.id],
+    );
+  }
+
+  Future<ReviewTestTaken?> getReviewTestTakenByTopicIdCourseId({String topicId = "0",int? courseId,String category = ''}) async {
+    final db = await DBProvider.database;
+    var result =
+    await db!.rawQuery("Select * from review_test_taken where topic_id = '"+ topicId +"' and category = '"+ category +"' and course_id = $courseId");
+    return result.isNotEmpty ? ReviewTestTaken.fromJson(result.last) : null;
+  }
+
+  Future<ReviewTestTaken?> getReviewTestTaken() async {
+    final db = await DBProvider.database;
+    var result =
+    await db!.rawQuery("Select * from review_test_taken");
+    return result.isNotEmpty ? ReviewTestTaken.fromJson(result.last) : null;
+  }
+
 }

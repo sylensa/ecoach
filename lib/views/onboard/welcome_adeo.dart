@@ -34,22 +34,25 @@ class _WelcomeAdeoState extends State<WelcomeAdeo> {
   void initState() {
     super.initState();
 
+
     SchedulerBinding.instance.addPostFrameCallback((_) {
       showLoaderDialog(context, message: "Loading Diagnostic data ...");
       ApiCall<Data>(AppUrl.new_user_data, isList: false,
           create: (Map<String, dynamic> json) {
         return Data.fromJson(json);
-      }, onCallback: (data) {
+      }, onCallback: (data) async{
         if (data != null) {
-          LevelDB().insertAll(data!.levels!);
-          CourseDB().insertAll(data!.courses!);
+          await LevelDB().insertAll(data!.levels!);
+          await CourseDB().insertAll(data!.courses!);
         }
         Navigator.pop(context);
+        // Navigator.pop(context);
       }, onError: (e) {
         Navigator.pop(context);
       }).get(context);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -583,8 +586,7 @@ class _SelectCourseState extends State<SelectCourse> {
                       return;
                     }
                     showLoaderDialog(context);
-                    Future futureList = TestController()
-                        .loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
+                    Future futureList = TestController().loadDiagnoticQuestion(selectedLevel!, selectedCourse!);
 
                     futureList.then((apiResponse) {
                       Navigator.pop(context);

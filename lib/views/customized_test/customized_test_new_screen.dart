@@ -100,8 +100,10 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
         builder: (BuildContext context) {
           return ResultsView(
             controller.user,
+
             controller.course,
             TestType.NONE,
+
             test: testTakenSaved!,
           );
         },

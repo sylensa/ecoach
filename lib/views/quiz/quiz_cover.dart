@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_questions.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -50,7 +51,15 @@ class QuizCover extends StatelessWidget {
     } else {
       backgroundColor = const Color(0xFFAAD4FA);
     }
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios,color: Colors.white,)),
+        elevation: 0,
+      ),
       body: Container(
         color: backgroundColor,
         child: Stack(
@@ -267,7 +276,7 @@ class QuizCover extends StatelessWidget {
                                           type: type,
                                           level: level,
                                         );
-                                      return QuizView(
+                                      return QuizQuestion(
                                         controller: QuizController(
                                           user,
                                           course!,

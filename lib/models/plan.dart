@@ -38,7 +38,7 @@ class Plan {
         tag: json["tag"],
         name: json["name"],
         description: json["description"],
-        isActive: json["is_active"],
+        isActive: json["is_active"] == 1 ? true : json["is_active"] == 0 ? false :  json["is_active"],
         price: double.parse("${json["price"]}"),
         signupFee: double.parse("${json["signup_fee"]}"),
         currency: json["currency"],

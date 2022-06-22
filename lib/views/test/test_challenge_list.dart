@@ -31,9 +31,9 @@ class TestChallengeList extends StatelessWidget {
 
   getTest(BuildContext context, TestCategory testCategory) {
     Future futureList;
-
     switch (testCategory) {
       case TestCategory.MOCK:
+        Question? q;
         futureList = TestController().getMockTests(course);
         break;
       case TestCategory.EXAM:
@@ -47,7 +47,7 @@ class TestChallengeList extends StatelessWidget {
         futureList = TestController().getEssayTests(course);
         break;
       case TestCategory.SAVED:
-        futureList = TestController().getSavedTests(course);
+        futureList = TestController().getSavedTests(course,limit: 10);
         break;
       case TestCategory.BANK:
         futureList = TestController().getBankTest(course);
@@ -92,7 +92,6 @@ class TestChallengeList extends StatelessWidget {
                               : questions.length * 60,
                           name: "Mock Test",
                         );
-
                   break;
                 case TestCategory.EXAM:
                   widgetView = TestTypeListView(
@@ -166,12 +165,27 @@ class TestChallengeList extends StatelessWidget {
       backgroundColor: kPageBackgroundGray,
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
+          padding: EdgeInsets.fromLTRB(24, 0, 20, 24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              PageHeader(
-                pageHeading: "Choose Your Challenge",
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      child:  Icon(Icons.arrow_back_ios,color: Colors.black,),
+                    ),
+                  ),
+
+                  PageHeader(
+                    pageHeading: "Choose Your Challenge",
+                  ),
+                  Container()
+                ],
               ),
               Expanded(
                 child: ListView(

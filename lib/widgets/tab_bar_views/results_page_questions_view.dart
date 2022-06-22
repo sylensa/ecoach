@@ -1,8 +1,26 @@
+import 'dart:convert';
+
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/answers.dart';
+import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/level.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/quiz/quiz_essay_page.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
+import 'package:ecoach/views/quiz/review_page.dart';
+import 'package:ecoach/views/speed/SpeedTestIntro.dart';
 import 'package:ecoach/views/store.dart';
+import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/QuestionCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +30,12 @@ class QuestionsTabPage extends StatefulWidget {
     required this.questions,
     required this.diagnostic,
     required this.user,
+    required this.testTaken,
+    this.course,
+    this.testType,
+    this.challengeType,
+    this.level,
+    this.controller,
     this.history = false,
     Key? key,
   }) : super(key: key);
@@ -20,6 +44,12 @@ class QuestionsTabPage extends StatefulWidget {
   final diagnostic;
   final user;
   final bool history;
+  final TestTaken? testTaken;
+  final Course? course;
+  final TestType? testType;
+  final TestCategory? challengeType;
+  final Level? level;
+  final QuizController? controller;
 
   @override
   _QuestionsTabPageState createState() => _QuestionsTabPageState();
@@ -29,6 +59,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
   List selected = [];
   int selectedQuestion = 0;
   late int page;
+  String answerType = "";
   late PageController controller;
   List tabs = [
     {
@@ -50,8 +81,6 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
   ];
   late List questions;
 
-  List savedQuestions = [2, 4, 3, 5];
-
   TextStyle tabStyle(bool isActive) {
     return TextStyle(
       fontSize: 10,
@@ -61,8 +90,128 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
     );
   }
 
+
+List<Question>reviewQuestions = [];
+
+  getAll()async{
+    reviewQuestionsBack.clear();
+    List<Question> questions = await TestController().getAllQuestions(widget.testTaken!);
+    for(int i = 0; i < questions.length; i++){
+      print("hmm:${questions[i].selectedAnswer}");
+        // await  QuestionDB().insertTestQuestion(questions[i]);
+      reviewQuestions.add(questions[i]);
+      // reviewQuestionsBack.add(questions[i]);
+    }
+
+    setState(() {
+      print("again savedQuestions:${reviewQuestions.length}");
+    });
+
+  }
+  insertSaveTestQuestion(int qid)async{
+    await TestController().insertSaveTestQuestion(qid);
+    setState(() {
+      print("savedQuestions2:$savedQuestions");
+    });
+  }
+  getAllSaveTestQuestions()async{
+    await TestController().getAllSaveTestQuestions();
+    setState(() {
+      print("again savedQuestions:${savedQuestions}");
+    });
+
+  }
+  selectedAnsweredQuestions(){
+    reviewQuestionsBack.clear();
+    unSelectAnsweredQuestions.clear();
+
+    for(int i = 0; i < reviewQuestions.length; i++){
+      for(int t =0; t < selectAnsweredQuestions.length; t++){
+        if(reviewQuestions[i].id == selectAnsweredQuestions[t]['id']){
+          reviewQuestionsBack.add(reviewQuestions[i]);
+        }
+      }
+    }
+    setState((){
+
+    });
+  }
+  unSelectedAnsweredQuestions(var question){
+    for(int i = 0; i < reviewQuestions.length; i++){
+        if(reviewQuestions[i].id == question['id']){
+          reviewQuestionsBack.remove(reviewQuestions[i]);
+          selectAnsweredQuestions.remove(question);
+          setState(() {
+            print("again reviewQuestionsBack:${reviewQuestionsBack}");
+            print("again reviewQuestions:${reviewQuestions}");
+          });
+        }
+
+
+    }
+
+
+  }
+
+  fromMap(Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
+    List<TestAnswer> data = [];
+    json.forEach((k, v) {
+      // print(k);
+      data.add(create(v));
+    });
+
+    // print(data);
+    return data;
+  }
+  getAllAnsweredQuestions(String examScore) async {
+    unSelectAnsweredQuestions.clear();
+    selectAnsweredQuestions.clear();
+    reviewQuestionsBack.clear();
+
+    if(examScore.toString() == ExamScore.CORRECTLY_ANSWERED.toString()){
+      for(int i = 0; i < widget.questions.length; i++){
+        if(examScore.toString() == widget.questions[i]["score"].toString()){
+          Question? question = await QuestionDB().getQuestionById(widget.questions[i]["id"]);
+          unSelectAnsweredQuestions.add(widget.questions[i]);
+          reviewQuestionsBack.add(question!);
+        }
+      }
+
+    }else if(examScore.toString() == ExamScore.WRONGLY_ANSWERED.toString()){
+      for(int i = 0; i < widget.questions.length; i++){
+        if(examScore.toString() == widget.questions[i]["score"].toString()){
+          Question? question = await QuestionDB().getQuestionById(widget.questions[i]["id"]);
+          unSelectAnsweredQuestions.add(widget.questions[i]);
+          reviewQuestionsBack.add(question!);
+        }
+      }
+    }else if(examScore.toString() == ExamScore.NOT_ATTEMPTED.toString()){
+      for(int i = 0; i < widget.questions.length; i++){
+        if(examScore.toString() == widget.questions[i]["score"].toString()){
+          Question? question = await QuestionDB().getQuestionById(widget.questions[i]["id"]);
+          unSelectAnsweredQuestions.add(widget.questions[i]);
+          reviewQuestionsBack.add(question!);
+        }
+      }
+    }else{
+      for(int i = 0; i < widget.questions.length; i++){
+          Question? question = await QuestionDB().getQuestionById(widget.questions[i]["id"]);
+          unSelectAnsweredQuestions.add(widget.questions[i]);
+          reviewQuestionsBack.add(question!);
+      }
+    }
+    await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
+    setState(() {
+
+    });
+  }
   @override
   void initState() {
+    if(savedQuestions.isEmpty){
+      getAllSaveTestQuestions();
+    }
+    selectAnsweredQuestions.clear();
+    getAll();
     page = 0;
     controller = PageController();
     questions = widget.questions;
@@ -115,9 +264,10 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                               onTap: () {
                                 setState(() {
                                   page = tabs.indexOf(tab);
+                                  print("page tabs:$page");
                                   controller.animateToPage(
                                     tabs.indexOf(tab),
-                                    duration: Duration(milliseconds: 500),
+                                    duration: Duration(milliseconds: 5),
                                     curve: Curves.fastLinearToSlowEaseIn,
                                   );
                                 });
@@ -153,6 +303,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                       .toList(),
                 ),
               ),
+
               Expanded(
                 child: PageView(
                   controller: controller,
@@ -162,40 +313,72 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                     });
                   },
                   children: [
+                    !widget.diagnostic ?
                     QuestionTabView(
+                      score: "",
                       user: widget.user,
                       questions: questions,
+                      testTaken: widget.testTaken,
                       savedQuestions: savedQuestions,
-                      selectedQuestions: selected,
+                      selectedQuestions: selectAnsweredQuestions,
                       onSelected: (question) {
-                        if (!selected.contains(question))
+                        answerType  = "";
+                        if (!selectAnsweredQuestions.contains(question))
                           setState(
                             () {
-                              selected = [...selected, question];
+                              selectAnsweredQuestions = [...selectAnsweredQuestions, question];
                               selectedQuestion = question['position'];
+                              print("selectAnsweredQuestions: ${selectAnsweredQuestions}");
+                              selectedAnsweredQuestions();
+
                             },
                           );
                         else
                           setState(() {
-                            selected =
-                                selected.where((q) => q != question).toList();
+                            selectAnsweredQuestions = selectAnsweredQuestions.where((q) => q != question).toList();
+                               unSelectedAnsweredQuestions(question);
+
                           });
                       },
-                      onQuestionToggled: (int id, bool isOn) {
+                      onQuestionToggled: (int id, bool isOn) async{
+                        print("$isOn , $id");
+
                         if (isOn)
                           setState(() {
-                            savedQuestions = [...savedQuestions, id];
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = [...savedQuestions, id];
+                            // print("savedQuestions:$savedQuestions");
                           });
                         else
                           setState(() {
-                            savedQuestions = savedQuestions
-                                .where((qid) => qid != id)
-                                .toList();
-                          });
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = savedQuestions
+                            //     .where((qid) => qid != id)
+                            //     .toList();
+                        print("savedQuestions3:$savedQuestions");
+
+                        });
                       },
-                    ),
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
+                    ) ,
+                    !widget.diagnostic ?
                     QuestionTabView(
+                      score: ExamScore.CORRECTLY_ANSWERED.toString(),
                       user: widget.user,
+                      testTaken: widget.testTaken,
                       questions: questions
                           .where(
                             (question) =>
@@ -204,35 +387,63 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           )
                           .toList(),
                       savedQuestions: savedQuestions,
-                      selectedQuestions: selected,
+                      selectedQuestions: selectAnsweredQuestions,
                       onSelected: (question) {
-                        if (!selected.contains(question))
+
+                        answerType  = ExamScore.CORRECTLY_ANSWERED.toString();
+                        if (!selectAnsweredQuestions.contains(question))
                           setState(
                             () {
-                              selected = [...selected, question];
+                              selectAnsweredQuestions = [...selectAnsweredQuestions, question];
                               selectedQuestion = question['position'];
+                              selectedAnsweredQuestions();
                             },
                           );
                         else
                           setState(() {
-                            selected =
-                                selected.where((q) => q != question).toList();
+                            selectAnsweredQuestions =
+                                selectAnsweredQuestions.where((q) => q != question).toList();
+                            unSelectedAnsweredQuestions(question);
                           });
                       },
                       onQuestionToggled: (int id, bool isOn) {
+                        print("$isOn , $id");
+
                         if (isOn)
                           setState(() {
-                            savedQuestions = [...savedQuestions, id];
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = [...savedQuestions, id];
+                            // print("savedQuestions:$savedQuestions");
                           });
                         else
                           setState(() {
-                            savedQuestions = savedQuestions
-                                .where((qid) => qid != id)
-                                .toList();
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = savedQuestions
+                            //     .where((qid) => qid != id)
+                            //     .toList();
+                            print("savedQuestions:$savedQuestions");
+
                           });
                       },
-                    ),
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
+                    ) ,
+                    !widget.diagnostic ?
                     QuestionTabView(
+                      score: ExamScore.WRONGLY_ANSWERED.toString(),
+                      testTaken: widget.testTaken,
                       user: widget.user,
                       questions: questions
                           .where(
@@ -241,35 +452,62 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           )
                           .toList(),
                       savedQuestions: savedQuestions,
-                      selectedQuestions: selected,
+                      selectedQuestions: selectAnsweredQuestions,
                       onSelected: (question) {
-                        if (!selected.contains(question))
+                        answerType  = ExamScore.WRONGLY_ANSWERED.toString();;
+                        if (!selectAnsweredQuestions.contains(question))
                           setState(
                             () {
-                              selected = [...selected, question];
+                              selectAnsweredQuestions = [...selectAnsweredQuestions, question];
                               selectedQuestion = question['position'];
+                              selectedAnsweredQuestions();
                             },
                           );
                         else
                           setState(() {
-                            selected =
-                                selected.where((q) => q != question).toList();
+                            selectAnsweredQuestions =
+                                selectAnsweredQuestions.where((q) => q != question).toList();
+                            unSelectedAnsweredQuestions(question);
                           });
                       },
                       onQuestionToggled: (int id, bool isOn) {
+                        print("$isOn , $id");
+
                         if (isOn)
                           setState(() {
-                            savedQuestions = [...savedQuestions, id];
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = [...savedQuestions, id];
+                            // print("savedQuestions:$savedQuestions");
                           });
                         else
                           setState(() {
-                            savedQuestions = savedQuestions
-                                .where((qid) => qid != id)
-                                .toList();
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = savedQuestions
+                            //     .where((qid) => qid != id)
+                            //     .toList();
+                            print("savedQuestions:$savedQuestions");
+
                           });
                       },
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
                     ),
+                    !widget.diagnostic ?
                     QuestionTabView(
+                      score: ExamScore.NOT_ATTEMPTED.toString(),
+                      testTaken: widget.testTaken,
                       user: widget.user,
                       questions: questions
                           .where(
@@ -278,37 +516,61 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                           )
                           .toList(),
                       savedQuestions: savedQuestions,
-                      selectedQuestions: selected,
+                      selectedQuestions: selectAnsweredQuestions,
                       onSelected: (question) {
-                        if (!selected.contains(question))
+                        answerType  = ExamScore.NOT_ATTEMPTED.toString();;
+                        if (!selectAnsweredQuestions.contains(question))
                           setState(
                             () {
-                              selected = [...selected, question];
+                              selectAnsweredQuestions = [...selectAnsweredQuestions, question];
                               selectedQuestion = question['position'];
+                              selectedAnsweredQuestions();
                             },
                           );
                         else
                           setState(() {
-                            selected =
-                                selected.where((q) => q != question).toList();
+                            selectAnsweredQuestions =
+                                selectAnsweredQuestions.where((q) => q != question).toList();
+                            unSelectedAnsweredQuestions(question);
                           });
                       },
                       onQuestionToggled: (int id, bool isOn) {
+                        print("$isOn , $id");
+
                         if (isOn)
                           setState(() {
-                            savedQuestions = [...savedQuestions, id];
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = [...savedQuestions, id];
+                            // print("savedQuestions:$savedQuestions");
                           });
                         else
                           setState(() {
-                            savedQuestions = savedQuestions
-                                .where((qid) => qid != id)
-                                .toList();
+                            insertSaveTestQuestion(id);
+                            // savedQuestions = savedQuestions
+                            //     .where((qid) => qid != id)
+                            //     .toList();
+                            print("savedQuestions:$savedQuestions");
+
                           });
                       },
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -318,20 +580,30 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
         ),
         Container(
           color: Colors.white,
-          height: 48.0,
+          padding: EdgeInsets.symmetric(vertical: 15),
           child: Row(
             children: [
-              if (selected.length > 0)
+              if (!widget.diagnostic)
                 Expanded(
                   child: Row(
                     children: [
                       Expanded(
                         child: Button(
                           label: 'review',
-                          onPressed: () {
+                          onPressed: () async{
                             if (widget.history) {
                             } else {
-                              Navigator.pop(context, selectedQuestion - 1);
+                              if(reviewQuestionsBack.isNotEmpty){
+                                await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
+                                setState(() {
+
+                                });
+                              }else{
+                                getAllAnsweredQuestions(answerType);
+                                // toastMessage("No review for diagnostic test");
+                              }
+
+
                             }
                           },
                         ),
@@ -340,7 +612,7 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                     ],
                   ),
                 ),
-              // if (!widget.diagnostic && selected.length > 0)
+              // if (!widget.diagnostic && selectAnsweredQuestions.length > 0)
               //   Expanded(
               //     child: Row(
               //       children: [
@@ -355,14 +627,32 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
               //     ),
               //   ),
               if (!widget.diagnostic)
-                Expanded(
+                widget.testType == TestType.SPEED
+                    ? Expanded(
                   child: Button(
                     label: 'new test',
                     onPressed: () {
-                      Navigator.popUntil(
-                        context,
-                        ModalRoute.withName(CourseDetailsPage.routeName),
-                      );
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                            return SpeedTestIntro(
+                              user: widget.user,
+                              course: widget.course!,
+                            );
+                          }));
+                    },
+                  ),
+                )
+                    : Expanded(
+                  child: Button(
+                    label: 'new test',
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                            return TestTypeView(
+                              widget.user,
+                              widget.course!,
+                            );
+                          }));
                     },
                   ),
                 ),
@@ -371,13 +661,13 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
                   child: Button(
                     label: 'Purchase',
                     onPressed: () {
-                      Navigator.push<void>(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              StorePage(widget.user),
-                        ),
-                      );
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                            return MainHomePage(
+                              widget.user,
+                              index: 0,
+                            );
+                          }));
                     },
                   ),
                 ),
@@ -389,14 +679,16 @@ class _QuestionsTabPageState extends State<QuestionsTabPage> {
   }
 }
 
-class QuestionTabView extends StatelessWidget {
-  const QuestionTabView({
+class QuestionTabView extends StatefulWidget {
+   QuestionTabView({
     required this.user,
     required this.questions,
     required this.savedQuestions,
     required this.selectedQuestions,
     required this.onQuestionToggled,
     required this.onSelected,
+    required this.testTaken,
+     this.score = "",
     Key? key,
   }) : super(key: key);
 
@@ -405,25 +697,88 @@ class QuestionTabView extends StatelessWidget {
   final List savedQuestions;
   final List selectedQuestions;
   final Function onQuestionToggled;
+   final TestTaken? testTaken;
   final Function onSelected;
+  final String score ;
 
+  @override
+  State<QuestionTabView> createState() => _QuestionTabViewState();
+}
+
+class _QuestionTabViewState extends State<QuestionTabView> {
+  fromMap(Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
+    List<TestAnswer> data = [];
+    json.forEach((k, v) {
+      // print(k);
+      data.add(create(v));
+    });
+
+    // print(data);
+    return data;
+  }
+  getAllAnsweredQuestions() async {
+    unSelectAnsweredQuestions.clear();
+    selectAnsweredQuestions.clear();
+    reviewQuestionsBack.clear();
+    String responses = widget.testTaken!.responses;
+    responses = responses.replaceAll("(", "").replaceAll(")", "");
+    Map<String, dynamic> res = json.decode(responses);
+    List<TestAnswer>? answers = fromMap(res, (answer) {
+      return TestAnswer.fromJson(answer);
+    });
+    for (int i = 0; i < answers!.length; i++) {
+      TestAnswer answer = answers[i];
+      for(int i = 0; i < widget.questions.length; i++){
+        if(answer.questionId! == widget.questions[i]["id"] ){
+          Question? question = await QuestionDB().getQuestionById(widget.questions[i]["id"]);
+          if (question != null) {
+            if (answer.selectedAnswerId != null) {
+              question.selectedAnswer = await AnswerDB().getAnswerById(answer.selectedAnswerId!);
+            }
+             if(widget.score == widget.questions[i]["score"].toString()){
+              unSelectAnsweredQuestions.add(widget.questions[i]);
+              reviewQuestionsBack.add(question);
+            }else if(widget.score == widget.questions[i]["score"].toString()){
+              unSelectAnsweredQuestions.add(widget.questions[i]);
+              reviewQuestionsBack.add(question);
+            }else if(widget.score == widget.questions[i]["score"].toString()){
+              unSelectAnsweredQuestions.add(widget.questions[i]);
+              reviewQuestionsBack.add(question);
+            }else{
+               unSelectAnsweredQuestions.add(widget.questions[i]);
+               reviewQuestionsBack.add(question);
+             }
+
+          }
+        }
+
+      }
+
+    }
+  }
+  @override
+ void initState(){
+    getAllAnsweredQuestions();
+    print("object: ${widget.score}");
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: questions.length,
+      itemCount: widget.questions.length,
       itemBuilder: (context, i) {
-        var question = questions[i];
+        var question = widget.questions[i];
 
         return QuestionCard(
-          user: user,
+          user: widget.user,
           question: question,
           questionNumber: question['position'].toString(),
-          isSaved: savedQuestions.contains(question['id']),
-          isSelected: selectedQuestions.contains(question),
-          onSaveToggled: onQuestionToggled,
+          isSaved: widget.savedQuestions.contains(question['id']),
+          isSelected: widget.selectedQuestions.contains(question),
+          onSaveToggled: widget.onQuestionToggled,
           onSelected: () {
-            onSelected(question);
+            widget.onSelected(question);
           },
         );
       },

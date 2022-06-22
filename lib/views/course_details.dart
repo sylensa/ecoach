@@ -129,9 +129,26 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       body: SafeArea(
         child: Column(
           children: [
-            PageHeader(
-              pageHeading: widget.courseInfo.title,
-            ),
+           Container(
+             margin: EdgeInsets.only(left: 20,right: 20),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.spaceAround,
+               children: [
+                 GestureDetector(
+                   onTap: (){
+                     Navigator.pop(context);
+                   },
+                   child: Container(
+                     child: Icon(Icons.arrow_back_ios)
+                   ),
+                 ),
+                 PageHeader(
+                   pageHeading: widget.courseInfo.title,
+                 ),
+                 Container()
+               ],
+             ),
+           ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -147,8 +164,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                               settings:
                                   RouteSettings(name: LearnMode.routeName),
                               builder: (context) {
-                                return LearnMode(
-                                    widget.user, widget.courseInfo.course);
+                                return LearnMode(widget.user, widget.courseInfo.course);
                               },
                             ),
                           );
@@ -189,6 +205,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                 return TestTypeView(
                                   widget.user,
                                   widget.courseInfo.course,
+
                                 );
                               },
                             ),

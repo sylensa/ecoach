@@ -100,8 +100,7 @@ class _StorePageState extends State<StorePage> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return SubscribePage(widget.user,
-                                                annuallyPlan[index]);
+                                            return SubscribePage(widget.user, annuallyPlan[index]);
                                           },
                                         ),
                                       );

@@ -1,3 +1,4 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
@@ -61,14 +62,31 @@ class _NotesTopicsState extends State<NotesTopics> {
           color: kAdeoBlue,
           child: Column(
             children: [
-              NotesSearchBar(
-                searchHint: 'Search topics',
-                onChanged: (str) {
-                  setState(() {
-                    searchString = str;
-                    _runFilter(searchString);
-                  });
-                },
+
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        margin: EdgeInsets.only(left: 20),
+                        child: Icon(Icons.arrow_back_ios,color: Colors.white,)
+                    ),
+                  ),
+                  Expanded(
+                    child: NotesSearchBar(
+                      searchHint: 'Search topics',
+                      onChanged: (str) {
+                        setState(() {
+                          searchString = str;
+                          _runFilter(searchString);
+                        });
+                      },
+                    ),
+                  ),
+                 SizedBox(width: 20,)
+                ],
               ),
               Expanded(
                 child: Padding(

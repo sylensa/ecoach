@@ -2,6 +2,7 @@ import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/treadmill_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/question.dart';
@@ -28,6 +29,52 @@ class TestController {
     // print(user!.token!);
     Map<String, dynamic> queryParams = {
       'level_id': jsonEncode(level.id),
+      'course_id': jsonEncode(course.id),
+      'limit': jsonEncode(20)
+    };
+    // print(queryParams);
+    // print(AppUrl.questions + '?' + Uri(queryParameters: queryParams).query);
+    http.Response response = await http.get(
+      Uri.parse(
+          AppUrl.questions + '?' + Uri(queryParameters: queryParams).query),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-token': user!.token!
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      // print(responseData);
+      if (responseData["status"] == true) {
+        // print("messages returned");
+        // print(response.body);
+
+        return ApiResponse<Question>.fromJson(response.body, (dataItem) {
+          Question question = Question.fromJson(dataItem);
+          Map<String, dynamic> json = question.toJson();
+          List<Map<String, dynamic>> jsonAnswer = [];
+          question.answers!.forEach((answer) {
+            jsonAnswer.add(answer.toJson());
+          });
+          json.addAll({'answers': jsonAnswer});
+          return Question.fromJson(json);
+        });
+      } else {
+        // print("not successful event");
+      }
+    } else {
+      // print("Failed ....");
+      // print(response.statusCode);
+      // print(response.body);
+    }
+  }
+  loadDiagnoticQuestionAnnex( Course course) async {
+    User? user = await UserPreferences().getUser();
+    // print(user!.token!);
+    Map<String, dynamic> queryParams = {
+      // 'level_id': jsonEncode(level.id),
       'course_id': jsonEncode(course.id),
       'limit': jsonEncode(20)
     };
@@ -99,7 +146,7 @@ class TestController {
     Map<String, List<TestAnswer>> topicsMap = Map();
 
     String responses = test.responses;
-    print("respones:");
+    print("respones:${test.responses}");
 
     responses = responses.replaceAll("(", "").replaceAll(")", "");
     // responses = jsonEncode(responses);
@@ -112,6 +159,7 @@ class TestController {
     });
 
     answers!.forEach((answer) {
+      print("answer.topicName:${answer.topicName}");
       topicsMap.update("${answer.topicName}", (list) {
         list.add(answer);
         return list;
@@ -140,16 +188,17 @@ class TestController {
     List<Question> questions = [];
     for (int i = 0; i < answers!.length; i++) {
       TestAnswer answer = answers[i];
-      Question? question =
-          await QuestionDB().getQuestionById(answer.questionId!);
+      print("answer questionId:${answer.questionId}");
+      Question? question = await QuestionDB().getQuestionById(answer.questionId!);
       if (question != null) {
         if (answer.selectedAnswerId != null) {
-          question.selectedAnswer =
-              await AnswerDB().getAnswerById(answer.selectedAnswerId!);
+          question.selectedAnswer = await AnswerDB().getAnswerById(answer.selectedAnswerId!);
         }
 
         questions.add(question);
       }
+
+
     }
 
     return questions;
@@ -258,16 +307,9 @@ class TestController {
     return questions;
   }
 
-  Future<List<Question>> getSavedTests(Course course) async {
-    // List<Quiz> quizzes = await QuizDB().getQuizzesByType(course.id!, "SAVED");
-
-    // List<TestNameAndCount> testNames = [];
-    // quizzes.forEach((quiz) {
-    //   testNames.add(TestNameAndCount(quiz.name!, 3, 12,
-    //       id: quiz.id, category: TestCategory.SAVED));
-    // });
-
-    return [];
+   getSavedTests(Course course, {limit = 10}) async {
+    List<Question> questions = await QuestionDB().getSavedTestQuestionsByType(course.id!,limit: limit);
+    return questions;
   }
 
   getBankTest(Course course) async {
@@ -416,5 +458,41 @@ class TestController {
   Future<Treadmill?> getCurrentTreadmill(Course course) async {
     Treadmill? treadmill = await TreadmillDB().getCurrentTreadmill(course);
     return treadmill;
+  }
+
+  insertSaveTestQuestion(int qid)async{
+    // Question? response = await  QuestionDB().getSavedTestQuestionById(qid);
+    print(savedQuestions);
+    if(savedQuestions.contains(qid)){
+      await  QuestionDB().deleteSavedTest(qid);
+      savedQuestions.remove(qid);
+      Question? response = await  QuestionDB().getSavedTestQuestionById(qid);
+      print("response::$response");
+      toastMessage("Saved question removed successfully");
+    }else{
+      Question? questions = await QuestionDB().getQuestionById(qid);
+      await  QuestionDB().insertTestQuestion(questions!);
+      Question? response = await  QuestionDB().getSavedTestQuestionById(questions.id!);
+      if(response != null){
+        print("response: ${response.id}");
+        savedQuestions.add(qid);
+        toastMessage("Question saved successfully");
+      }else{
+        print("response:$response");
+      }
+
+    }
+
+  }
+  getAllSaveTestQuestions()async{
+    savedQuestions.clear();
+    List<Question> questions = await QuestionDB().getSavedTestQuestion();
+    for(int i = 0; i < questions.length; i++){
+      Question? response = await  QuestionDB().getSavedTestQuestionById(questions[i].id!);
+      print("object:$response");
+      if(response != null){
+        savedQuestions.add(response.id);
+      }
+    }
   }
 }

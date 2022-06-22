@@ -1,4 +1,8 @@
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/views/courses.dart';
@@ -38,10 +42,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var futureSubs;
+  uploadOfflineFlagQuestions()async{
+    List<FlagData> results = await QuizDB().getAllFlagQuestions();
+    if(results.isNotEmpty){
+      for(int i =0; i < results.length; i++){
+        FlagData flagData = await FlagData(reason: results[i].reason,type:results[i].type,questionId: results[i].questionId );
+        await  QuizDB().saveOfflineFlagQuestion(flagData,flagData.questionId!);
+      }
+      List<FlagData> res = await QuizDB().getAllFlagQuestions();
+      print("res len:${res.length}");
+    }else{
+      print("res len:${results.length}");
 
+    }
+  }
   @override
   void initState() {
     super.initState();
+    uploadOfflineFlagQuestions();
     List<Subscription> subscriptions = widget.user.subscriptions;
 
     if (subscriptions.length > 0) {
@@ -96,188 +114,191 @@ class _HomePageState extends State<HomePage> {
           child: new Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
             child: Center(
-              child: new Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Hello,",
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 14),
-                          ),
-                          Text(
-                            widget.user.name!,
-                            style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                      Spacer(),
-                      Stack(
-                        children: [Icon(Icons.notifications)],
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  if (!context.watch<DownloadUpdate>().isDownloading &&
-                      !context.watch<DownloadUpdate>().notificationUp)
-                    Container(
-                      height: 48.0,
-                      width: double.infinity,
-                      padding: EdgeInsets.only(left: 8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: TextField(
-                        style: TextStyle(
-                          color: kDefaultBlack,
-                          fontSize: 16.0,
-                          letterSpacing: 0.5,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Image.asset(
-                            'assets/icons/search_thin.png',
-                            width: 32.0,
-                            height: 32.0,
-                            color: Colors.black,
-                          ),
-                          hintText: 'Search',
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Color(0xFFBAC4D9),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        onChanged: (searchString) {
-                          _runFilter(searchString);
-                        },
-                      ),
-                    ),
-                  SizedBox(height: 12),
-                  if (context.watch<DownloadUpdate>().isDownloading ||
-                      context.watch<DownloadUpdate>().notificationUp)
-                    SubscriptionNotificationWidget(
-                      callback: widget.callback!,
-                    ),
-                  Container(
-                    child: FutureBuilder(
-                        future: futureSubs,
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.none:
-                              return NoSubWidget(
-                                widget.user,
-                                widget.callback,
-                              );
-                            case ConnectionState.waiting:
-                              return Center(child: CircularProgressIndicator());
-                            default:
-                              if (snapshot.hasError)
-                                return Text('Error: ${snapshot.error}');
-                              else if (snapshot.data != null) {
-                                List<TestTaken> items =
-                                    snapshot.data as List<TestTaken>;
+                   Expanded(
+                     child: ListView(
 
-                                return Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 32),
-                                        for (int i = 0; i < items.length; i++)
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 0, 0, 16),
-                                            child: HomeCard(
-                                              timeAgo: timeago
-                                                  .format(items[i].datetime!),
-                                              activityTypeIconURL:
-                                                  'assets/icons/edit.png',
-                                              vendoLogoURL:
-                                                  'assets/icons/edeo_logo.png',
-                                              footerCenterText:
-                                                  '${items[i].jsonResponses.length} Questions',
-                                              footerRightText:
-                                                  items[i].usedTimeText,
-                                              centralWidget: Expanded(
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 210,
-                                                      child: Text(
-                                                        items[i].testname!,
-                                                        softWrap: true,
-                                                        maxLines: 2,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 18.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Hello,",
+                                  style:
+                                      TextStyle(color: Colors.black54, fontSize: 14),
+                                ),
+                                Text(
+                                  widget.user.name!,
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            Spacer(),
+                            Stack(
+                              children: [Icon(Icons.notifications)],
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        if (!context.watch<DownloadUpdate>().isDownloading &&
+                            !context.watch<DownloadUpdate>().notificationUp)
+                          Container(
+                            height: 48.0,
+                            width: double.infinity,
+                            padding: EdgeInsets.only(left: 8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: TextField(
+                              style: TextStyle(
+                                color: kDefaultBlack,
+                                fontSize: 16.0,
+                                letterSpacing: 0.5,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                icon: Image.asset(
+                                  'assets/icons/search_thin.png',
+                                  width: 32.0,
+                                  height: 32.0,
+                                  color: Colors.black,
+                                ),
+                                hintText: 'Search',
+                                hintStyle: TextStyle(
+                                  fontSize: 15.0,
+                                  color: Color(0xFFBAC4D9),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              onChanged: (searchString) {
+                                _runFilter(searchString);
+                              },
+                            ),
+                          ),
+                        SizedBox(height: 12),
+                        if (context.watch<DownloadUpdate>().isDownloading ||
+                            context.watch<DownloadUpdate>().notificationUp)
+                          SubscriptionNotificationWidget(
+                            callback: widget.callback!,
+                          ),
+                        Container(
+                          child: FutureBuilder(
+                              future: futureSubs,
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.none:
+                                    return NoSubWidget(
+                                      widget.user,
+                                      widget.callback,
+                                    );
+                                  case ConnectionState.waiting:
+                                    return Center(child: CircularProgressIndicator());
+                                  default:
+                                    if (snapshot.hasError)
+                                      return Text('Error: ${snapshot.error}');
+                                    else if (snapshot.data != null) {
+                                      List<TestTaken> items =
+                                          snapshot.data as List<TestTaken>;
+
+                                      return Column(
+                                        children: [
+                                          SizedBox(height: 32),
+                                          for (int i = 0; i < items.length; i++)
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 16),
+                                              child: HomeCard(
+                                                timeAgo: timeago
+                                                    .format(items[i].datetime!),
+                                                activityTypeIconURL:
+                                                    'assets/icons/edit.png',
+                                                vendoLogoURL:
+                                                    'assets/icons/edeo_logo.png',
+                                                footerCenterText:
+                                                    '${items[i].jsonResponses.length} Questions',
+                                                footerRightText:
+                                                    items[i].usedTimeText,
+                                                centralWidget: Expanded(
+                                                  child: Column(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 210,
+                                                        child: Text(
+                                                          items[i].testname!,
+                                                          softWrap: true,
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 18.0,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Text(
-                                                      "${items[i].courseName!}",
-                                                      softWrap: true,
-                                                      style: TextStyle(
-                                                        color:
-                                                            Color(0x88FFFFFF),
+                                                      Text(
+                                                        "${items[i].courseName!}",
+                                                        softWrap: true,
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0x88FFFFFF),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
+                                                centerRightWidget:
+                                                    CircularProgressIndicatorWrapper(
+                                                  progress: items[i].correct! /
+                                                      items[i].totalQuestions *
+                                                      100,
+                                                ),
+                                                colors: getColorGradient(
+                                                    enumFromString(
+                                                            TestType.values,
+                                                            items[i].testType) ??
+                                                        TestType.NONE),
                                               ),
-                                              centerRightWidget:
-                                                  CircularProgressIndicatorWrapper(
-                                                progress: items[i].correct! /
-                                                    items[i].totalQuestions *
-                                                    100,
-                                              ),
-                                              colors: getColorGradient(
-                                                  enumFromString(
-                                                          TestType.values,
-                                                          items[i].testType) ??
-                                                      TestType.NONE),
                                             ),
+                                        ],
+                                      );
+                                    } else if (snapshot.data == null)
+                                      return NoSubWidget(
+                                        widget.user,
+                                        widget.callback,
+                                      );
+                                    else
+                                      return Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 100,
                                           ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              } else if (snapshot.data == null)
-                                return NoSubWidget(
-                                  widget.user,
-                                  widget.callback,
-                                );
-                              else
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 100,
-                                    ),
-                                    Center(
-                                        child: Text(widget.user.email ??
-                                            "Something isn't right")),
-                                    SizedBox(height: 100),
-                                  ],
-                                );
-                          }
-                        }),
+                                          Center(
+                                              child: Text(widget.user.email ??
+                                                  "Something isn't right")),
+                                          SizedBox(height: 100),
+                                        ],
+                                      );
+                                }
+                              }),
+                        ),
+                      ],
                   ),
+                   ),
                 ],
               ),
             ),

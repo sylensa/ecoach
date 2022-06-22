@@ -159,6 +159,8 @@ class MarathonController {
     return time / length;
   }
 
+
+
   double getAvgScore() {
     if (marathon == null) return 0;
     return marathon!.avgScore ?? 0;

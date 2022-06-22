@@ -161,7 +161,6 @@ abstract class StudyController {
         print('onCallback');
         print(data);
         TestController().saveTestTaken(data!);
-
         callback(data, true);
       }).post(context);
     }

@@ -37,6 +37,17 @@ class QuestionDB {
     });
   }
 
+  Future<void> insertTestQuestion(Question question) async {
+    final Database? db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert(
+        'test_saved_questions',
+        question.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    });
+  }
+
   Future<void> batchInsert(Batch batch, Question question) async {
     if (question == null) {
       return;
@@ -64,6 +75,59 @@ class QuestionDB {
     }
 
     return question;
+  }
+
+
+  Future<List<Question>> getSavedTestQuestion() async {
+    final db = await DBProvider.database;
+    List<Question> listQuestion = [];
+    // await db!.rawQuery("Delete from test_saved_questions");
+    List<Map<String, dynamic>> timelineResponse = await db!.rawQuery("Select * from test_saved_questions");
+    print("timelineResponse:$timelineResponse");
+    if(timelineResponse.isNotEmpty){
+      for(int i = 0; i< timelineResponse.length; i++){
+        Question? question =  Question.fromJson(timelineResponse[i]) ;
+        if (question != null) {
+          question.answers = await AnswerDB().questoinAnswers(question.id!);
+        }
+        listQuestion.add(question);
+      }
+
+    }
+
+    return listQuestion;
+  }
+
+  Future<Question?> getSavedTestQuestionById(int id) async {
+    final db = await DBProvider.database;
+    var result = await db!.query("test_saved_questions", where: "id = ?", whereArgs: [id]);
+    Question? question = result.isNotEmpty ? Question.fromJson(result.first) : null;
+    if (question != null) {
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+    }
+
+    return question;
+  }
+
+  Future<List<Question>> getSavedTestQuestionsByType(int courseId, {int limit = 10}) async {
+    final Database? db = await DBProvider.database;
+
+    // final List<Map<String, dynamic>> maps = await db!.query('test_saved_questions',
+    //     orderBy: "created_at DESC",
+    //     where: "course_id = ?",
+    //     whereArgs: [courseId],);
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM test_saved_questions WHERE course_id = $courseId ORDER BY RANDOM() LIMIT $limit");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
   }
 
   Future<void> insertAll(List<Question> questions) async {
@@ -370,5 +434,18 @@ class QuestionDB {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  deleteSavedTest(int id) async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'test_saved_questions',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+  deleteSavedTestByCourseId(int id) async {
+    final db = await DBProvider.database;
+    db!.rawQuery("Delete from test_saved_questions where course_id = $id");
   }
 }

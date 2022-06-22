@@ -21,6 +21,7 @@ class SubscriptionItem {
       this.topics,
       this.images,
       this.quizCount,
+      this.topicCount,
       this.questionCount});
 
   int? id;
@@ -40,6 +41,7 @@ class SubscriptionItem {
   List<ImageFile>? images;
   int? quizCount;
   int? questionCount;
+  int? topicCount;
 
   bool isDownloading = false;
 
@@ -61,6 +63,9 @@ class SubscriptionItem {
         tag: json["tag"],
         planId: json["plan_id"],
         name: json["name"],
+        quizCount: json["quiz_count"] ?? 0,
+        topicCount: json["topic_count"] ,
+        questionCount: json["question_count"] ?? 0,
         description: json["description"],
         value: json["value"],
         resettablePeriod: json["resettable_period"],
@@ -84,6 +89,9 @@ class SubscriptionItem {
         "id": id,
         "tag": tag,
         "plan_id": planId,
+        "question_count": questionCount,
+        "quiz_count": quizCount,
+        "topic_count": topicCount ?? 0,
         "name": name,
         "description": description,
         "value": value,

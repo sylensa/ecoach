@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
@@ -13,11 +16,12 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class ResultsView extends StatefulWidget {
-  ResultsView(this.user, this.course, this.testType,
+   ResultsView(this.user, this.course, this.testType,
       {Key? key,
       required this.test,
-      this.history = false,
-      this.diagnostic = false})
+        this.testCategory,
+         this.controller,
+      this.history = false, this.diagnostic = false})
       : super(key: key);
   final User user;
   final Course course;
@@ -25,7 +29,8 @@ class ResultsView extends StatefulWidget {
   bool diagnostic;
   bool history;
   TestType testType;
-
+  TestCategory? testCategory;
+   QuizController? controller;
   @override
   State<ResultsView> createState() => _ResultsViewState();
 }
@@ -55,23 +60,21 @@ class _ResultsViewState extends State<ResultsView> {
       mapList.keys.forEach((key) {
         answers = mapList[key]!;
         TopicAnalysis analysis = TopicAnalysis(key, answers!);
-
+          print("topic name:${analysis.name}");
         topicsPlaceholder.add({
           'topicId': analysis.answers[0].topicId,
-          'name': widget.diagnostic ? "Sample Test" : analysis.name,
+          'name': widget.diagnostic ? "Sample Test" : widget.test.testname,
           'rating': analysis.performanceNote,
           'total_questions': analysis.total,
           'correctly_answered': analysis.correct,
         });
       });
 
-      List<Question> questions =
-          await TestController().getAllQuestions(widget.test);
+      List<Question> questions = await TestController().getAllQuestions(widget.test);
 
       print("questions=${questions.length}");
       for (int i = 0; i < questions.length; i++) {
         Question? question = questions[i];
-
         questionPlaceholder.add({
           'id': question.id,
           'question': question.text,
@@ -79,7 +82,9 @@ class _ResultsViewState extends State<ResultsView> {
           'position': i + 1,
         });
       }
-      setState(() {});
+      setState(() {
+        print("questionPlaceholder:${questionPlaceholder}");
+      });
     });
   }
 
@@ -101,6 +106,7 @@ class _ResultsViewState extends State<ResultsView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      bottom: false,
       child: Scaffold(
         backgroundColor: kPageBackgroundGray,
         body: Column(
@@ -172,6 +178,7 @@ class _ResultsViewState extends State<ResultsView> {
                     topics: topicsPlaceholder,
                     diagnostic: widget.diagnostic,
                     user: widget.user,
+                    testTaken:widget.test,
 
                     // TODO - add course to topics page - find a better way like using getx or provider
                     course: widget.course,
@@ -180,7 +187,14 @@ class _ResultsViewState extends State<ResultsView> {
                     questions: questionPlaceholder,
                     diagnostic: widget.diagnostic,
                     user: widget.user,
-                    history: widget.history),
+                    history: widget.history,
+                    testTaken:widget.test,
+                    course:widget.course,
+                    testType:widget.testType,
+                    challengeType:widget.testCategory,
+                    controller:widget.controller,
+
+                ),
               ],
             ),
           ],

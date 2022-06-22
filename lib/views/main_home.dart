@@ -1,10 +1,16 @@
 import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/revamp/features/home/view/screen/main_home_page.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/views/group.dart';
 import 'package:ecoach/websocket/event_data.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/views/auth/home.dart';
@@ -34,23 +40,31 @@ class _MainHomePageState extends State<MainHomePage>
   int currentIndex = 0;
   late MainController mainController;
 
+
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-
     mainController = MainController(
       context,
       context.read<DownloadUpdate>(),
       widget.user,
     );
     _children = [
-      HomePage(
+      // HomePage(
+      //   widget.user,
+      //   callback: (tabNumber) {
+      //     tapping(tabNumber);
+      //   },
+      // ),
+      HomePageAnnex(
         widget.user,
         callback: (tabNumber) {
           tapping(tabNumber);
         },
+        controller: mainController,
       ),
-      StorePage(widget.user),
+      GroupPage(widget.user),
       CoursesPage(widget.user),
       AnalysisView(user: widget.user),
       MoreView(
@@ -62,8 +76,8 @@ class _MainHomePageState extends State<MainHomePage>
     checkSubscription();
 
     WebsocketCall().addListener(this);
-    WebsocketCall()
-        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
+    WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
+
 
     super.initState();
   }
@@ -162,8 +176,8 @@ class _MainHomePageState extends State<MainHomePage>
               'inactive': Icons.home_outlined,
             },
             {
-              'active': Icons.shop_rounded,
-              'inactive': Icons.shop_outlined,
+              'active': Icons.group_add_rounded,
+              'inactive': Icons.group_add_outlined,
             },
             {'active': Icons.school_rounded, 'inactive': Icons.school_outlined},
             {
