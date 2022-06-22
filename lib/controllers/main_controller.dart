@@ -68,6 +68,7 @@ class MainController {
 
   checkSubscription(Function(bool success) finallyCallback) {
     makeSubscriptionsCall().then((freshSubscriptions) async {
+      print("freshSubscriptions:${freshSubscriptions.length}");
       if (freshSubscriptions == null) return;
       List<Subscription> subscriptions = user.subscriptions;
       if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
@@ -201,15 +202,14 @@ class MainController {
         String subItem = await readSubscriptionPlan(filename);
         Map<String, dynamic> response = jsonDecode(subItem);
 
-        SubscriptionItem? subscriptionItem =
-            SubscriptionItem.fromJson(response);
+        SubscriptionItem? subscriptionItem = SubscriptionItem.fromJson(response);
 
         print("saving ${subscriptionItem.name}\n data");
 
         final Database? db = await DBProvider.database;
         await db!.transaction((txn) async {
           Batch batch = txn.batch();
-
+          print("subscriptionItem.course!:${subscriptionItem.course != null ? subscriptionItem.course!.toJson() : "null"}");
           await CourseDB().insert(batch, subscriptionItem.course!);
           provider.updateMessage("saving $filename quizzes");
           await QuizDB().insertAll(batch, subscriptionItem.quizzes!);
