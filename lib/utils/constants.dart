@@ -1,4 +1,5 @@
 // enum DropdownSize { small, medium, large }
+import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
 
 enum ProgressIndicatorSize { small, large }
@@ -18,3 +19,4 @@ Question? question;
 List<Question> reviewQuestionsBack = [];
 List selectAnsweredQuestions = [];
 List unSelectAnsweredQuestions = [];
+List<Plan> futurePlanItem = [];
