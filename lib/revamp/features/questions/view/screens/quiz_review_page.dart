@@ -280,8 +280,8 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                     width: 5,
                   ),
                   isCorrect ?
-                  SvgPicture.asset(
-                    "assets/images/fav.svg",
+                  Image.asset(
+                    "assets/images/un_fav.png",
                     color: Colors.green,
                   ) :   SvgPicture.asset(
                     "assets/images/fav.svg",
@@ -382,15 +382,16 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                   for (int i = 0; i < reviewQuestionsBack.length; i++)
                     Column(
                       children: [
+                        ActualQuestion(
+                          user: widget.user!,
+                          question: "${reviewQuestionsBack[questionIndex].text}",
+                          direction: "Choose the right answer to the question above",
+                        ),
                         Expanded(
                           child: ListView(
                             padding: EdgeInsets.zero,
                             children: [
-                              ActualQuestion(
-                                user: widget.user!,
-                                question: "${reviewQuestionsBack[questionIndex].text}",
-                                direction: "Choose the right answer to the question above",
-                              ),
+
                               Container(
                                 padding: const EdgeInsets.all(0.0),
                                 decoration: const BoxDecoration(),
@@ -401,12 +402,14 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       visible: reviewQuestionsBack[questionIndex].instructions!.isNotEmpty ? true : false,
                                       child: Card(
                                           elevation: 0,
+                                          color: Colors.grey[100],
                                           child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(0.0),
                                             child:  AdeoHtmlTex(
                                               widget.user!,
                                               reviewQuestionsBack[questionIndex].instructions!.replaceAll("https", "http"),
                                               useLocalImage: false,
+                                              removeTags: reviewQuestionsBack[questionIndex].instructions!.contains("src") ? false : true,
                                               textColor: Colors.black,
                                             ),
                                           )),
@@ -417,16 +420,17 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                        widget.user!,
                                         reviewQuestionsBack[questionIndex].resource!.replaceAll("https", "http"),
                                         useLocalImage: false,
+                                        removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
+
                                         textColor: Colors.black,
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
+
                                     Visibility(
                                       visible: reviewQuestionsBack[questionIndex].answers![0].solution!.isNotEmpty ? true : false,
                                       child:  Container(
-                                        padding: const EdgeInsets.all(3),
+                                        padding: const EdgeInsets.all(0),
+                                        margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFF00C9B9),
                                           borderRadius: BorderRadius.circular(6),
@@ -449,11 +453,12 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                               color: Colors.white,
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(12.0),
+                                              padding: const EdgeInsets.all(0.0),
                                               child:  AdeoHtmlTex(
                                                widget.user!,
                                                 reviewQuestionsBack[questionIndex].answers![0].solution!.replaceAll("https", "http"),
                                                 useLocalImage: false,
+                                                removeTags: reviewQuestionsBack[questionIndex].answers![0].solution!.contains("src") ? false : true,
                                                 textColor: Colors.black,
                                                 fontSize: 14,
                                               ),
@@ -463,7 +468,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      height: 26,
+                                      height: 10,
                                     ),
                                     ...List.generate(reviewQuestionsBack[questionIndex].answers!.length, (index) {
                                      return answerWidget(reviewQuestionsBack[questionIndex].answers![index]);
@@ -614,7 +619,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
     return  Column(
       children: [
         Container(
-            margin: const EdgeInsets.only(bottom: 25,right: 20,left: 20),
+            margin: const EdgeInsets.only(bottom: 10,right: 20,left: 20),
           child: Row(
             children: [
               Expanded(
@@ -626,6 +631,8 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                   reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 1 ? Colors.white :
                   ((reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id && answer.value == 1) ||  answer.value == 1) ||  (reviewQuestionsBack[questionIndex].isCorrect && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id) || (reviewQuestionsBack[questionIndex].isWrong && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id)  ? Colors.white : Colors.black ,
                   fontSize: 25,
+                  removeTags: answer.text!.contains("src") ? false : true,
+
                   fontWeight: reviewQuestionsBack[questionIndex].selectedAnswer == answer ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -638,7 +645,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
               )
             ],
           ),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
           decoration:
           reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 0 ?
           BoxDecoration(
