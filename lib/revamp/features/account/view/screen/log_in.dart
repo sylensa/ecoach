@@ -120,6 +120,7 @@ class _LogInPageState extends State<LogInPage> {
           Directory documentDirectory = await getApplicationDocumentsDirectory();
           user.applicationDirPath = documentDirectory.path;
           await UserPreferences().setUser(user);
+          await UserPreferences().setLoginWith(status: true);
           await loadTryTest(user,true);
         }, onError: (err) {
           print(err);
