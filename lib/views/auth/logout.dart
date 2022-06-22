@@ -18,7 +18,12 @@ class _LogoutState extends State<Logout> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) async{
       await SubscriptionDB().deleteAll();
-      await GoogleSignInApi().signOut();
+      var status = await UserPreferences().getLoginWith();
+      UserPreferences().removeUser();
+      UserPreferences().setSeenOnboard();
+      if(status){
+        await GoogleSignInApi().signOut();
+      }
       Navigator.of(context).pushReplacementNamed("/login");
     });
     // it will navigate to login page as soon as this state is built
