@@ -4,7 +4,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
-import 'package:ecoach/lib/features/questions/view/screens/quiz_review_page.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
