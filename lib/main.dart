@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/flavor_settings.dart';
-import 'package:ecoach/lib/features/account/view/screen/log_in.dart';
-import 'package:ecoach/lib/features/account/view/screen/phone_number_verification.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
+import 'package:ecoach/revamp/features/account/view/screen/phone_number_verification.dart';
+import 'package:ecoach/test/test.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/review/review_onboarding.dart';
 import 'package:ecoach/views/review/review_questions.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,14 +36,20 @@ import 'views/auth/login_view.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 bool? seenOnboard;
-
+List<String> testDeviceIds = ['B23C05CA86653B5B363BFEB03DCC3406'];
 void main() async {
+  print("object:inti");
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('google_fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
 
   WidgetsFlutterBinding.ensureInitialized();
+  if(Platform.isAndroid){
+    MobileAds.instance.initialize();
+  }
+  RequestConfiguration configuration = RequestConfiguration(testDeviceIds: testDeviceIds);
+  MobileAds.instance.updateRequestConfiguration(configuration);
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,
     overlays: [SystemUiOverlay.bottom],
@@ -44,7 +58,6 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   // await prefs.clear();
   seenOnboard = await prefs.getBool("seenOnboard") ?? false;
-
 
   print("initializing flavor");
   await FlavorSettings.init();
@@ -87,6 +100,7 @@ class _MyAppState extends State<MyApp> {
             }
             else if (snapshot.data != null) {
               User user = snapshot.data as User;
+
               if (!user.activated && user.token != null) {
                 return PhoneNumberVerification(user);
               } else if (!user.activated) {
@@ -110,6 +124,9 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
+
+
+
   @override
  void initState(){
     super.initState();
@@ -138,6 +155,7 @@ class _MyAppState extends State<MyApp> {
                         fontFamily: 'Poppins',
                       ),
                 ),
+                // home: MyTestApp(),
                 home: seenOnboard == true
                     ? myFuture
                     : Onboarding(),
