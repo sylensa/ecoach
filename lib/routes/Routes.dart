@@ -1,5 +1,5 @@
-import 'package:ecoach/lib/features/account/view/screen/create_account.dart';
-import 'package:ecoach/lib/features/account/view/screen/log_in.dart';
+import 'package:ecoach/revamp/features/account/view/screen/create_account.dart';
+import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
@@ -18,7 +18,7 @@ class Routes {
   // static const String dashboard = DashBoard.routeName;
   // static const String subscriptions = SubscriptionsPage.routeName;
   // static const String history = SubscriptionHistoryPage.routeName;
-  // static const String library = LibraryPage.routeName;
+  // static const String revamprary = revampraryPage.routeName;
   // static const String news = NewsPage.routeName;
   static const String store = StorePage.routeName;
   // static const String exams = ExamsPage.routeName;
