@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:ecoach/api/api_call.dart';
-import 'package:ecoach/lib/features/account/view/screen/log_in.dart';
+import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
 import 'package:ecoach/utils/style_sheet.dart';
