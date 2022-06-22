@@ -14,6 +14,15 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>ecoach</string>
+    <key>GADApplicationIdentifier</key>
+    <string>ca-app-pub-3198630326946940~2007193921</string>
+    <key>SKAdNetworkItems</key>
+    	<array>
+    		<dict>
+    		<key>SKAdNetworkIdentifier</key>
+    		<string>cstr6suwn9.skadnetwork </string>
+    		</dict>
+    	</array>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
