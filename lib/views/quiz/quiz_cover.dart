@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_questions.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
@@ -264,33 +265,33 @@ class QuizCover extends StatelessWidget {
                               children: [
                                 OutlinedButton(
                                   onPressed: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      if (category == TestCategory.ESSAY)
-                                        return QuizEssayView(
-                                          user,
-                                          questions,
-                                          name: name,
-                                          course: course,
-                                          timeInSec: time,
-                                          type: type,
-                                          level: level,
-                                        );
-                                      return QuizQuestion(
-                                        controller: QuizController(
-                                          user,
-                                          course!,
-                                          questions: questions,
-                                          level: level,
-                                          name: name,
-                                          time: time,
-                                          type: type,
-                                          challengeType: category,
-                                        ),
-                                        theme: theme,
-                                        diagnostic: diagnostic,
-                                      );
-                                    }));
+                                   goTo(context,
+                                       category == TestCategory.ESSAY ?
+                                    QuizEssayView(
+                                     user,
+                                     questions,
+                                     name: name,
+                                     course: course,
+                                     timeInSec: time,
+                                     type: type,
+                                     level: level,
+                                   ) :
+                                    QuizQuestion(
+                                     controller: QuizController(
+                                       user,
+                                       course!,
+                                       questions: questions,
+                                       level: level,
+                                       name: name,
+                                       time: time,
+                                       type: type,
+                                       challengeType: category,
+                                     ),
+                                     theme: theme,
+                                     diagnostic: diagnostic,
+                                   ),
+                                     replace: true
+                                   );
                                   },
                                   child: Text(
                                     "Let's go",
