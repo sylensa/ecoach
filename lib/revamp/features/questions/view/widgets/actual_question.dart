@@ -13,7 +13,7 @@ class ActualQuestion extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFFEFEFEF),
             border: Border.all(
@@ -24,14 +24,16 @@ class ActualQuestion extends StatelessWidget {
           child:   AdeoHtmlTex(
             user,
             question.replaceAll("https", "http"),
+            fontStyle: FontStyle.italic,
             useLocalImage: false,
+            removeTags: question.contains("src") ? false : true,
             textColor: Colors.black,
           ),
         ),
         Visibility(
           visible: direction.isNotEmpty,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
             decoration: BoxDecoration(
               color: const Color(0xFF67717D),
               border: Border.all(
