@@ -144,15 +144,19 @@ class CourseDB {
     final Database? db = await DBProvider.database;
     List<Course> courses = [];
     for(int i = 0 ; i < courseId.length; i++){
+      print("courseId:${courseId[i]}");
       final List<Map<String, dynamic>> maps = await db!.rawQuery('SELECT * FROM courses WHERE  courseID like "${courseId[i]}%"');
       print("maps:$maps");
       if(maps.isNotEmpty){
-        Course course = Course.fromJson(maps[0]);
-        print(course.toJson());
-        if (course != null) {
+        for(int i = 0; i < maps.length; i++){
+          Course course = Course.fromJson(maps[i]);
           print(course.toJson());
-          courses.add(course);
+          if (course != null) {
+            print(course.toJson());
+            courses.add(course);
+          }
         }
+
       }
 
     }
