@@ -21,11 +21,11 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.123.db" : "ecoach63.db";
+    String name = userId != null ? "ecoach_${userId}.122.db" : "ecoach62.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 19, onOpen: (db) {},
+    return await openDatabase(path, version: 22, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -204,6 +204,26 @@ class DBProvider {
         'id' INTEGER PRIMARY KEY,
         'tag' varchar(255) NOT NULL,
         'plan_id' int unsigned NOT NULL,
+        'question_count' int unsigned NOT NULL,
+        'quiz_count' int unsigned NOT NULL,
+        'topic_count' int unsigned NOT NULL,
+        'name' varchar(255) NOT NULL,
+        'description' varchar(255) DEFAULT NULL,
+        'value' varchar(255) NOT NULL,
+        'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'plan_items' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255) NOT NULL,
+        'plan_id' int unsigned NOT NULL,
+        'question_count' int unsigned NOT NULL,
+        'quiz_count' int unsigned NOT NULL,
+        'topic_count' int unsigned NOT NULL,
         'name' varchar(255) NOT NULL,
         'description' varchar(255) DEFAULT NULL,
         'value' varchar(255) NOT NULL,
@@ -468,6 +488,7 @@ class DBProvider {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
         try{
+          await db.execute("""DROP TABLE 'test_saved_questions'""");
           await db.execute("""CREATE TABLE 'test_saved_questions' (
         'id' INTEGER PRIMARY KEY,
         'course_id' int NOT NULL,
@@ -488,7 +509,25 @@ class DBProvider {
         'deleted' int NOT NULL DEFAULT '0'
         ) """);
         }catch(e){
-          print("$e");
+          await db.execute("""CREATE TABLE 'test_saved_questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+        ) """);
         }
 
         try{
@@ -506,7 +545,18 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       )""");
         }catch(e){
-          print("$e");
+          await db.execute("""CREATE TABLE 'review_test_taken' (
+        id INTEGER PRIMARY KEY, 
+        'user_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'count' int NOT NULL,
+        'completed' int NOT NULL,
+        'topic_id' varchar(255) NOT NULL,
+        'category' varchar(255) NOT NULL,
+        'test_type' varchar(255) NOT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
         }
 
         try{
@@ -518,7 +568,86 @@ class DBProvider {
             'question_id' int NOT NULL
           )""");
         }catch(e){
-          print("$e");
+          await db.execute("""CREATE TABLE 'flag' (
+            id INTEGER PRIMARY KEY, 
+            'reason' varchar(255) NOT NULL,
+            'type' varchar(255) NOT NULL,
+            'question_id' int NOT NULL
+          )""");
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'plan_items'""");
+          await db.execute("""CREATE TABLE 'plan_items' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255) NOT NULL,
+        'plan_id' int unsigned NOT NULL,
+        'question_count' int unsigned NOT NULL,
+        'quiz_count' int unsigned NOT NULL,
+        'topic_count' int unsigned NOT NULL,
+        'name' varchar(255) NOT NULL,
+        'description' varchar(255) DEFAULT NULL,
+        'value' varchar(255) NOT NULL,
+        'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'plan_items' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255) NOT NULL,
+        'plan_id' int unsigned NOT NULL,
+        'question_count' int unsigned NOT NULL,
+        'quiz_count' int unsigned NOT NULL,
+        'topic_count' int unsigned NOT NULL,
+        'name' varchar(255) NOT NULL,
+        'description' varchar(255) DEFAULT NULL,
+        'value' varchar(255) NOT NULL,
+        'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'subscription_items'""");
+          await db.execute("""CREATE TABLE 'subscription_items' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255) NOT NULL,
+        'plan_id' int unsigned NOT NULL,
+        'question_count' int unsigned NOT NULL,
+        'quiz_count' int unsigned NOT NULL,
+        'topic_count' int unsigned NOT NULL,
+        'name' varchar(255) NOT NULL,
+        'description' varchar(255) DEFAULT NULL,
+        'value' varchar(255) NOT NULL,
+        'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'subscription_items' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255) NOT NULL,
+        'plan_id' int unsigned NOT NULL,
+        'question_count' int unsigned NOT NULL,
+        'quiz_count' int unsigned NOT NULL,
+        'topic_count' int unsigned NOT NULL,
+        'name' varchar(255) NOT NULL,
+        'description' varchar(255) DEFAULT NULL,
+        'value' varchar(255) NOT NULL,
+        'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
         }
       }
     });
