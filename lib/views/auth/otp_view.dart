@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:ecoach/lib/features/account/view/screen/create_account.dart';
+import 'package:ecoach/revamp/features/account/view/screen/create_account.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
