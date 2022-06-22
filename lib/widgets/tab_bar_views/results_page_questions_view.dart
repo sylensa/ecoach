@@ -5,7 +5,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
-import 'package:ecoach/lib/features/questions/view/screens/quiz_review_page.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -303,6 +303,7 @@ List<Question>reviewQuestions = [];
                       .toList(),
                 ),
               ),
+
               Expanded(
                 child: PageView(
                   controller: controller,
@@ -312,6 +313,7 @@ List<Question>reviewQuestions = [];
                     });
                   },
                   children: [
+                    !widget.diagnostic ?
                     QuestionTabView(
                       score: "",
                       user: widget.user,
@@ -357,7 +359,22 @@ List<Question>reviewQuestions = [];
 
                         });
                       },
-                    ),
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
+                    ) ,
+                    !widget.diagnostic ?
                     QuestionTabView(
                       score: ExamScore.CORRECTLY_ANSWERED.toString(),
                       user: widget.user,
@@ -408,7 +425,22 @@ List<Question>reviewQuestions = [];
 
                           });
                       },
-                    ),
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
+                    ) ,
+                    !widget.diagnostic ?
                     QuestionTabView(
                       score: ExamScore.WRONGLY_ANSWERED.toString(),
                       testTaken: widget.testTaken,
@@ -457,7 +489,22 @@ List<Question>reviewQuestions = [];
 
                           });
                       },
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
                     ),
+                    !widget.diagnostic ?
                     QuestionTabView(
                       score: ExamScore.NOT_ATTEMPTED.toString(),
                       testTaken: widget.testTaken,
@@ -506,10 +553,24 @@ List<Question>reviewQuestions = [];
 
                           });
                       },
+                    ) :
+                    Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  widget.user,
+                                  index: 0,
+                                );
+                              }));
+                        },
+                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                      ),
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         ),
@@ -519,7 +580,7 @@ List<Question>reviewQuestions = [];
         ),
         Container(
           color: Colors.white,
-          height: 48.0,
+          padding: EdgeInsets.symmetric(vertical: 15),
           child: Row(
             children: [
               if (!widget.diagnostic)
@@ -604,7 +665,7 @@ List<Question>reviewQuestions = [];
                           MaterialPageRoute(builder: (context) {
                             return MainHomePage(
                               widget.user,
-                              index: 1,
+                              index: 0,
                             );
                           }));
                     },
