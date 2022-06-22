@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/google_signin_call.dart';
-import 'package:ecoach/lib/features/account/view/screen/create_account.dart';
+import 'package:ecoach/revamp/features/account/view/screen/create_account.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/screen_size_reducers.dart';
@@ -134,12 +134,12 @@ class _LoginPageState extends State<LoginPage> {
       }
       Directory documentDirectory = await getApplicationDocumentsDirectory();
       user.applicationDirPath = documentDirectory.path;
-      await UserPreferences().setUser(user);
+      UserPreferences().setUser(user);
 
       if (user.subscriptions.length == 0) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => WelcomeAdeo(user)),
+            MaterialPageRoute(builder: (context) => MainHomePage(user)),
             (Route<dynamic> route) => false);
       } else {
         Navigator.pushAndRemoveUntil(
