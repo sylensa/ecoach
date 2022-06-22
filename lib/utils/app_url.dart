@@ -47,4 +47,6 @@ class AppUrl {
       "ws://18.185.228.99:6001/app/programmers@shammah/websocket";
 
   static const String googleLogin = baseURL + "google/signin";
+  static const String bannerAdUnitIdAndroid = "ca-app-pub-3198630326946940~5162048290";
+  static const String bannerAdUnitIdiOS = "ca-app-pub-3198630326946940~5162048290";
 }
