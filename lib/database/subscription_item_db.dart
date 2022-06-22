@@ -20,10 +20,14 @@ class SubscriptionItemDB {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       if (subscriptionItem.course != null) {
+        print("subscriptionItem.course!:${subscriptionItem.course!.toJson()}");
         Batch batch = txn.batch();
         await CourseDB().insert(batch, subscriptionItem.course!);
         await QuizDB().insertAll(batch, subscriptionItem.quizzes!);
         batch.commit();
+      }else{
+        print("subscriptionItem.course!:${subscriptionItem.course}");
+
       }
     });
   }
@@ -138,9 +142,9 @@ class SubscriptionItemDB {
         createdAt: DateTime.parse(maps[i]["created_at"]),
         updatedAt: DateTime.parse(maps[i]["updated_at"]),
         course: await CourseDB().getCourseById(int.parse(maps[i]['tag'])),
-        quizCount: await QuizDB().quizCount(int.parse(maps[i]['tag'])),
-        questionCount:
-            await QuestionDB().getTotalQuestionCount(int.parse(maps[i]['tag'])),
+        quizCount:  maps[i]['quiz_count'],
+        topicCount: maps[i]['topic_count'],
+        questionCount:  maps[i]['question_count'],
       ));
     }
     return items;
@@ -157,8 +161,7 @@ class SubscriptionItemDB {
 
     List<Course> items = [];
     for (int i = 0; i < maps.length; i++) {
-      Course? course =
-          await CourseDB().getCourseById(int.parse(maps[i]['tag']));
+      Course? course = await CourseDB().getCourseById(int.parse(maps[i]['tag']));
       print(int.parse(maps[i]['tag']));
       if (course != null) {
         print(course.toJson());
