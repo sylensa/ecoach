@@ -114,7 +114,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         }, onCallback: (user) async {
           Directory documentDirectory = await getApplicationDocumentsDirectory();
           user.applicationDirPath = documentDirectory.path;
-          UserPreferences().setUser(user);
+          await UserPreferences().setUser(user);
+          await UserPreferences().setLoginWith(status: true);
           await loadTrtTest(user,true);
         }, onError: (err) {
           print(err);
