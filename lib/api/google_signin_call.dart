@@ -1,3 +1,4 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInApi {
@@ -23,4 +24,12 @@ class GoogleSignInApi {
       print(error);
     }
   }
+  Future<void> signOut() async {
+    try {
+      await _googleSignIn.signOut();
+    } catch (err) {
+      print("error:$err");
+    }
+  }
+
 }
