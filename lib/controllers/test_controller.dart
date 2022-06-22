@@ -146,7 +146,7 @@ class TestController {
     Map<String, List<TestAnswer>> topicsMap = Map();
 
     String responses = test.responses;
-    print("respones:");
+    print("respones:${test.responses}");
 
     responses = responses.replaceAll("(", "").replaceAll(")", "");
     // responses = jsonEncode(responses);
@@ -159,6 +159,7 @@ class TestController {
     });
 
     answers!.forEach((answer) {
+      print("answer.topicName:${answer.topicName}");
       topicsMap.update("${answer.topicName}", (list) {
         list.add(answer);
         return list;
