@@ -31,6 +31,18 @@ class UserPreferences {
     print("pref activated: ${prefs.getBool("activated")}");
     return true;
   }
+   setLoginWith({bool status = false}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool("status", status);
+    print("get status: ${prefs.getBool("status")}");
+  }
+  Future<bool> getLoginWith() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var status =  prefs.getBool("status");
+    status == null ? status = false : status = status;
+    print("get status: $status");
+    return status;
+  }
 
   Future<User?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
