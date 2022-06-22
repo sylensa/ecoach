@@ -60,10 +60,10 @@ class _ResultsViewState extends State<ResultsView> {
       mapList.keys.forEach((key) {
         answers = mapList[key]!;
         TopicAnalysis analysis = TopicAnalysis(key, answers!);
-
+          print("topic name:${analysis.name}");
         topicsPlaceholder.add({
           'topicId': analysis.answers[0].topicId,
-          'name': widget.diagnostic ? "Sample Test" : analysis.name,
+          'name': widget.diagnostic ? "Sample Test" : widget.test.testname,
           'rating': analysis.performanceNote,
           'total_questions': analysis.total,
           'correctly_answered': analysis.correct,
@@ -106,6 +106,7 @@ class _ResultsViewState extends State<ResultsView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      bottom: false,
       child: Scaffold(
         backgroundColor: kPageBackgroundGray,
         body: Column(
