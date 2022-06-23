@@ -444,6 +444,10 @@ class QuestionDB {
       whereArgs: [id],
     );
   }
+  deleteAllSavedTest() async {
+    final db = await DBProvider.database;
+    db!.delete('test_saved_questions');
+  }
   deleteSavedTestByCourseId(int id) async {
     final db = await DBProvider.database;
     db!.rawQuery("Delete from test_saved_questions where course_id = $id");
