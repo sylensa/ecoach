@@ -78,7 +78,7 @@ class UserPreferences {
     return user;
   }
 
-  void removeUser() async {
+   removeUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
   }
