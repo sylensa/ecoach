@@ -52,9 +52,11 @@ class _MoreViewState extends State<MoreView> {
       print("len:${ context.read<DownloadUpdate>().plans!.length}");
      List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans![i].planId!);
       for(int t = 0; t < sItem.length; t++){
-        List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
-        print("object:${question.length}");
-        count += question.length;
+        if(sItem[t].course != null){
+          List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
+          print("object:${question.length}");
+          count += question.length;
+        }
       }
       que.add(count);
     }
