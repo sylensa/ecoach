@@ -26,7 +26,7 @@ class GoogleSignInApi {
   }
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
+     _googleSignIn.disconnect();
     } catch (err) {
       print("error:$err");
     }

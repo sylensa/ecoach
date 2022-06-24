@@ -135,7 +135,7 @@ flutter:
       - family: 'Helvetica Rounded'
         fonts:
            - asset: assets/fonts/HelveticaRoundedLTStd-Bd.otf
-      - family: WorkSans
+      - family: "WorkSans"
         fonts:
            - asset: assets/fonts/WorkSans-Regular.ttf
            - asset: assets/fonts/WorkSans-Medium.ttf
@@ -144,17 +144,17 @@ flutter:
              weight: 600
            - asset: assets/fonts/WorkSans-Bold.ttf
              weight: 700
-      - family: Roboto
+      - family: "Roboto"
         fonts:
            - asset: assets/fonts/Roboto-Bold.ttf
            - asset: assets/fonts/Roboto-Regular.ttf
            - asset: assets/fonts/Roboto-Medium.ttf
              weight: 400
-      - family: Cocon
+      - family: "Cocon"
         fonts:
            - asset: assets/fonts/COCON-BOLD-FONT.OTF
            - asset: assets/fonts/COCON-REGULARTR.TTF
-      - family: Helvetica
+      - family: "Helvetica"
         fonts:
            - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BD.OTF
            - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BDCN.OTF

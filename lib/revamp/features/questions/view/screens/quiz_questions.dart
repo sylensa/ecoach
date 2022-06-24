@@ -114,8 +114,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
     setState(() {
       currentCorrectScoreState();
-      currentQuestion++;
       avgScore ();
+      currentQuestion++;
+
 
       pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
 
@@ -276,7 +277,17 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   }
 
+   getWithoutSpaces(String s){
+    String tmp = s.substring(1,s.length-1);
+    while(tmp.startsWith(' ')){
+      tmp = tmp.substring(1);
+    }
+    while(tmp.endsWith(' ')){
+      tmp = tmp.substring(0,tmp.length-1);
+    }
 
+    return '('+tmp+')';
+  }
   @override
   void initState() {
     _bannerAd = BannerAd(
@@ -411,8 +422,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 5,
                   ),
                   isCorrect ?
-                  SvgPicture.asset(
-                    "assets/images/fav.svg",
+                  Image.asset(
+                    "assets/images/un_fav.png",
                     color: Colors.green,
                   ) :   SvgPicture.asset(
                     "assets/images/fav.svg",
@@ -514,15 +525,15 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   for (int i = 0; i < controller.questions.length; i++)
                     Column(
                       children: [
+                        ActualQuestion(
+                          user: controller.user,
+                          question: "${controller.questions[i].text}",
+                          direction: "Choose the right answer to the question above",
+                        ),
                        Expanded(
                          child: ListView(
                            padding: EdgeInsets.zero,
                            children: [
-                             ActualQuestion(
-                               user: controller.user,
-                               question: "${controller.questions[i].text}",
-                               direction: "Choose the right answer to the question above",
-                             ),
                              Container(
                             padding: const EdgeInsets.all(0.0),
                             decoration: const BoxDecoration(),
@@ -532,15 +543,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                 Visibility(
                                   visible: controller.questions[i].instructions!.isNotEmpty ? true : false,
                                   child: Card(
+                                      color: Colors.grey[100],
                                       elevation: 0,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child:  AdeoHtmlTex(
-                                          controller.user,
-                                          controller.questions[i].instructions!.replaceAll("https", "http"),
-                                          useLocalImage: false,
-                                          textColor: Colors.black,
-                                        ),
+                                      child: AdeoHtmlTex(
+                                        controller.user,
+                                        controller.questions[i].instructions!.replaceAll("https", "http"),
+                                        removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                        useLocalImage: false,
+                                        textColor: Colors.black,
                                       )),
                                 ),
                                 Visibility(
@@ -548,6 +558,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                     child: AdeoHtmlTex(
                                       controller.user,
                                       controller.questions[i].resource!.replaceAll("https", "http"),
+                                      removeTags: controller.questions[i].resource!.contains("src") ? false : true,
                                       useLocalImage: false,
                                       textColor: Colors.black,
                                     ),
@@ -571,16 +582,19 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                       });
                                     },
                                     child: Container(
-                                      margin: const EdgeInsets.only(bottom: 25,right: 20,left: 20),
+                                      margin: const EdgeInsets.only(bottom: 10,right: 20,left: 20),
                                       child: Row(
                                         children: [
                                           Expanded(
                                             child:  AdeoHtmlTex(
                                                 controller.user,
                                                 controller.questions[i].answers![index].text!.replaceAll("https", "http"),
+                                                removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+
                                                   useLocalImage: false,
-                                                  textColor: Colors.black,
-                                                  fontSize: 25,
+                                                  textColor: kSecondaryTextColor,
+                                                  fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
+                                                  textAlign: TextAlign.left,
                                                   fontWeight: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? FontWeight.bold : FontWeight.normal,
 
                                                 ),
@@ -594,13 +608,13 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           )
                                         ],
                                       ),
-                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                       decoration: BoxDecoration(
-                                        color:  controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Color(0xFFEFEFEF) : Colors.white,
+                                        color:  controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ?  Colors.white : Colors.white,
                                         borderRadius: BorderRadius.circular(14),
                                         border: Border.all(
-                                          width: 1,
-                                          color: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Color(0xFF00C9B9) : Colors.grey[400]!,
+                                          width: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 3 : 1,
+                                          color: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Color(0xFF00C9B9) : Color(0xFFC8C8C8),
                                         ),
                                       ),
                                     ),
@@ -666,9 +680,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                         }
                         setState(() {
                           currentCorrectScoreState();
-
-                          currentQuestion++;
                           avgScore ();
+                          currentQuestion++;
+
                           pageController.nextPage(
                               duration: Duration(milliseconds: 1), curve: Curves.ease);
 

@@ -127,6 +127,7 @@ class _SelectSubjectWidgetState extends State<SelectSubjectWidget> {
 
                     futureList.then((apiResponse) {
                       Navigator.pop(context);
+                      apiResponse.data.length > 0 ?
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
                             return StartAccessmentPage(
@@ -137,7 +138,10 @@ class _SelectSubjectWidgetState extends State<SelectSubjectWidget> {
                               time: 60 * 20,
                               diagnostic: true,
                             );
-                          }));
+                          })
+                      )  :
+                          showDialogOk(message: "No questions",context: context,dismiss: false);
+
                     });
 
                   },

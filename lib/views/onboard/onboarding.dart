@@ -176,7 +176,8 @@ class _OnboardingState extends State<Onboarding> {
                                children: [
                                  Expanded(
                                    child:   WelcomePage(),
-                                 )
+                                 ),
+
                                ],
                              );
                             }
@@ -188,8 +189,8 @@ class _OnboardingState extends State<Onboarding> {
                       //skip
                      page < 3 ?
                       Container(
-                          height: 60,
-                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          // height: 60,
+                          padding: EdgeInsets.symmetric(horizontal: 24,vertical: 20),
                           child:
                               Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,83 +218,93 @@ class _OnboardingState extends State<Onboarding> {
                           )
 
                       ) :
-                      Padding(
-                        padding: const EdgeInsets.only(left: 27.0, right: 27.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const Text(
-                              'Welcome \nto Adeo',
-                              style: TextStyle(
-                                fontSize: 38,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 9,
-                            ),
-                            const Text(
-                              """Prep for your upcoming exams with ease.\nBECE | WASSCE | JAMB and many others.""",
-                              style: TextStyle(
-                                color: kHomeTextColor,
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 66,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                goToRegisterPage();
-                              },
-                              child: Material(
-                                borderRadius: BorderRadius.circular(35),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15.0),
-                                  child: Text(
-                                    "Join Now",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color(0xFF00A89B),
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Alredy a member?",
-                                  style: TextStyle(
-                                      color: Colors.grey.shade300,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    goToLoginPage();
-                                  },
-                                  child: const Text(
-                                    "Login",
-                                    style: TextStyle(color: Colors.white, fontSize: 15),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 20),
+                     Container(
+                       decoration: const BoxDecoration(
+                         gradient: LinearGradient(
+                           colors: [
+                             Color(0xFF00A396),
+                             Color(0xFF00A396),
+                             // Color(0xFF00C9B9),
+
+                           ],
+                         ),
+                       ),
+                       padding: const EdgeInsets.only(left: 27.0, right: 27.0,bottom: 20),
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.stretch,
+                         children: [
+                           // const Text(
+                           //   'Welcome \nto Adeo',
+                           //   style: TextStyle(
+                           //     fontSize: 38,
+                           //     fontWeight: FontWeight.w500,
+                           //     color: Colors.white,
+                           //   ),
+                           // ),
+                           // const SizedBox(
+                           //   height: 9,
+                           // ),
+                           // const Text(
+                           //   """Prep for your upcoming exams with ease.\nBECE | WASSCE | JAMB and many others.""",
+                           //   style: TextStyle(
+                           //     color: kHomeTextColor,
+                           //     fontSize: 13,
+                           //   ),
+                           // ),
+                           // const SizedBox(
+                           //   height: 66,
+                           // ),
+                           InkWell(
+                             onTap: () {
+                               goToRegisterPage();
+                             },
+                             child: Material(
+                               borderRadius: BorderRadius.circular(35),
+                               child: const Padding(
+                                 padding: EdgeInsets.all(15.0),
+                                 child: Text(
+                                   "Join Now",
+                                   textAlign: TextAlign.center,
+                                   style: TextStyle(
+                                     color: Color(0xFF00A89B),
+                                     fontSize: 18,
+                                     fontWeight: FontWeight.w500,
+                                   ),
+                                 ),
+                               ),
+                             ),
+                           ),
+                           const SizedBox(
+                             height: 16,
+                           ),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             children: [
+                               Text(
+                                 "Alredy a member?",
+                                 style: TextStyle(
+                                     color: Colors.grey.shade300,
+                                     fontSize: 15,
+                                     fontWeight: FontWeight.w300),
+                               ),
+                               const SizedBox(
+                                 width: 5,
+                               ),
+                               InkWell(
+                                 onTap: () {
+                                   goToLoginPage();
+                                 },
+                                 child: const Text(
+                                   "Login",
+                                   style: TextStyle(color: Colors.white, fontSize: 15),
+                                 ),
+                               ),
+                             ],
+                           )
+                         ],
+                       ),
+                     ),
+                      // SizedBox(height: 20),
 
               ],
             ),
@@ -400,6 +411,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -407,81 +419,9 @@ class WelcomePage extends StatelessWidget {
             Color(0xFF00A396),
           ],
         ),
+        image: DecorationImage(image: AssetImage("assets/images/welcome_new.png"),fit: BoxFit.fitWidth)
       ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/welcome_1.png"),
-                    const SizedBox(
-                      height: 1,
-                    ),
-                    Image.asset("assets/images/welcome_2.png")
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/welcome_3.png"),
-                    const SizedBox(
-                      height: 1,
-                    ),
-                    Image.asset("assets/images/welcome_4.png"),
-                    const SizedBox(
-                      height: 1,
-                    ),
-                    Image.asset("assets/images/welcome_5.png")
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 4,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/welcome_6.png"),
-                    const SizedBox(
-                      height: 33,
-                    ),
-                    Image.asset("assets/images/welcome_school.png"),
-                    const SizedBox(
-                      height: 59,
-                    ),
-                    Image.asset("assets/images/welcome_7.png")
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/welcome_8.png"),
-                    const SizedBox(
-                      height: 1,
-                    ),
-                    Image.asset("assets/images/welcome_9.png"),
-                    const SizedBox(
-                      height: 1,
-                    ),
-                    Image.asset("assets/images/welcome_10.png")
-                  ],
-                ),
-              ),
-            ],
-          ),
 
-        ],
-      ),
     );
   }
 }

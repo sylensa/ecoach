@@ -45,10 +45,9 @@ void main() async {
   });
 
   WidgetsFlutterBinding.ensureInitialized();
-  if(Platform.isAndroid){
-    MobileAds.instance.initialize();
-  }
+  MobileAds.instance.initialize();
   RequestConfiguration configuration = RequestConfiguration(testDeviceIds: testDeviceIds);
+
   MobileAds.instance.updateRequestConfiguration(configuration);
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,

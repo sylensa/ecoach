@@ -17,10 +17,11 @@ class AdeoHtmlTex extends StatefulWidget {
     this.text, {
     Key? key,
     this.textColor = Colors.white,
-    this.fontSize = 23,
+    this.fontSize = 18,
     this.fontStyle = FontStyle.normal,
     this.fontWeight = FontWeight.normal,
     this.imageSize,
+    this.textAlign = TextAlign.center,
     this.useLocalImage = true,
     this.removeTags = false,
   }) : super(key: key);
@@ -31,6 +32,7 @@ class AdeoHtmlTex extends StatefulWidget {
   final double fontSize;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
+  final TextAlign textAlign;
   final Size? imageSize;
   final bool useLocalImage;
   final bool removeTags;
@@ -49,7 +51,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20, left: 10),
+      padding: const EdgeInsets.only(right: 0, left: 0),
       child: Html(
         data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: true),
         style: {
@@ -58,16 +60,19 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               maxLines: 7,
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
+              fontFamily: "Poppins",
               fontWeight: widget.fontWeight,
-              padding: const EdgeInsets.only(right: 21, left: 10),
-              textAlign: TextAlign.center),
+              padding: const EdgeInsets.only(right: 0, left: 0),
+              textAlign: widget.textAlign),
           "p": Style(
             padding: EdgeInsets.all(0),
             fontWeight: widget.fontWeight,
+            fontFamily: "Poppins",
           ),
           "table": Style(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontFamily: "Poppins",
               width: 1,
 
               fontSize: FontSize(widget.fontSize),
@@ -77,6 +82,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               color: Colors.black,
               fontWeight: FontWeight.bold,
               width: 1,
+              fontFamily: "Poppins",
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
               textAlign: TextAlign.center),
@@ -86,11 +92,13 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               padding: EdgeInsets.all(2),
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
+              fontFamily: "Poppins",
               textAlign: TextAlign.center),
           'img': Style(
-              width: 200,
+              // width: 400,
               height: 200,
-              padding: EdgeInsets.all(0)),
+              padding: EdgeInsets.all(0)
+          ),
         },
         customRenders: {
           if (widget.useLocalImage)
@@ -98,6 +106,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               String? link = context.tree.element!.attributes['src'];
               if (link != null) {
                 String name = link.substring(link.lastIndexOf("/") + 1);
+                name = name.replaceAll("<br/>", "");
                 print("Image: $name");
                 print("link: $link");
 
@@ -258,7 +267,6 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
   List<String> subTexts = [];
   matches.forEach((m) {
     String mathEquation = text!.substring(m.start, m.end);
-
     subTexts.add(mathEquation);
   });
   subTexts.forEach((equation) {
@@ -272,16 +280,10 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
       .replaceAll('\\)', "");
 
   if (removeBr) {
-    text = text!
-        .replaceAll("<br>", "")
-        .replaceAll("<br/>", "")
-        .replaceAll("<p>", "")
-        .replaceAll("<p/>", "")
-        .replaceAll("</p>", "");
-
-    //print(text);
+    text = text!.replaceAll("<br>", "").replaceAll("<br/>", "").replaceAll("<p>", "").replaceAll("<p/>", "").replaceAll("</p>", "");
+    print(text);
   }
-  return text;
+  return text!.trim();
 }
 
 String parseHtmlString(String htmlString) {
