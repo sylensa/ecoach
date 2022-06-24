@@ -53,7 +53,8 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
     return Padding(
       padding: const EdgeInsets.only(right: 0, left: 0),
       child: Html(
-        data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: true),
+        data: setTexTags(widget.text,
+            removeTags: widget.removeTags, removeBr: true),
         style: {
           "body": Style(
               color: widget.textColor,
@@ -74,7 +75,6 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               fontWeight: FontWeight.bold,
               fontFamily: "Poppins",
               width: 1,
-
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
               textAlign: TextAlign.center),
@@ -97,12 +97,12 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
           'img': Style(
               // width: 400,
               height: 200,
-              padding: EdgeInsets.all(0)
-          ),
+              padding: EdgeInsets.all(0)),
         },
         customRenders: {
           if (widget.useLocalImage)
-            networkSourceMatcher(): CustomRender.widget(widget: (context, element) {
+            networkSourceMatcher():
+                CustomRender.widget(widget: (context, element) {
               String? link = context.tree.element!.attributes['src'];
               if (link != null) {
                 String name = link.substring(link.lastIndexOf("/") + 1);
@@ -177,11 +177,8 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
       style: {
         "body": Style(
           padding: const EdgeInsets.only(right: 21, left: 10),
-          color: widget.imposedColor != null
-              ? widget.imposedColor
-              : widget.selected
-                  ? widget.selectedColor
-                  : widget.color,
+          color: widget.imposedColor ??
+              (widget.selected ? widget.selectedColor : widget.color),
           fontSize: widget.imposedSize != null
               ? FontSize(widget.imposedSize)
               : widget.selected
@@ -230,16 +227,12 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
           return Math.tex(
             context.tree.element!.text,
             textStyle: TextStyle(
-              color: widget.imposedColor != null
-                  ? widget.imposedColor
-                  : widget.selected
-                      ? widget.selectedColor
-                      : widget.color,
-              fontSize: widget.imposedSize != null
-                  ? widget.imposedSize
-                  : widget.selected
+              color: widget.imposedColor ??
+                  (widget.selected ? widget.selectedColor : widget.color),
+              fontSize: widget.imposedSize ??
+                  (widget.selected
                       ? widget.selectedSize ?? 40
-                      : widget.normalSize ?? 16,
+                      : widget.normalSize ?? 16),
             ),
           );
         }),
@@ -280,7 +273,12 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
       .replaceAll('\\)', "");
 
   if (removeBr) {
-    text = text!.replaceAll("<br>", "").replaceAll("<br/>", "").replaceAll("<p>", "").replaceAll("<p/>", "").replaceAll("</p>", "");
+    text = text!
+        .replaceAll("<br>", "")
+        .replaceAll("<br/>", "")
+        .replaceAll("<p>", "")
+        .replaceAll("<p/>", "")
+        .replaceAll("</p>", "");
     print(text);
   }
   return text!.trim();
