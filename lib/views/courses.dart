@@ -1,3 +1,4 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_analysis.dart';
 import 'package:ecoach/models/subscription.dart';
@@ -26,7 +27,7 @@ class _CoursesPageState extends State<CoursesPage> {
   late int page;
   late PageController controller;
   List<Subscription> subscriptions = [];
-
+  bool progressCode = true;
   @override
   void initState() {
     page = 0;
@@ -34,10 +35,11 @@ class _CoursesPageState extends State<CoursesPage> {
     var futureSubs = SubscriptionDB().subscriptions();
     futureSubs.then((List<Subscription> subscriptions) {
       if (subscriptions.length > 0) {
-        setState(() {
-          this.subscriptions = subscriptions;
-        });
+        this.subscriptions = subscriptions;
       }
+      setState(() {
+        progressCode = false;
+      });
     });
     super.initState();
   }
@@ -96,6 +98,7 @@ class _CoursesPageState extends State<CoursesPage> {
       body: SafeArea(
         child: Column(
           children: [
+
             Container(
               // height: 120,
               child: Padding(
@@ -121,9 +124,9 @@ class _CoursesPageState extends State<CoursesPage> {
                       ),
                     ),
                     Text(
-                      subscriptions.length > 0
-                          ? getSubscriptionSubName(subscriptions[page].name!)
-                          : 'Loading...',
+                      subscriptions.isNotEmpty
+                          ? getSubscriptionSubName(subscriptions[page].name!) :
+                      subscriptions.isEmpty && progressCode ?  'Loading...' : "Bundles",
                       textAlign: TextAlign.center,
                       style: kPageHeaderStyle,
                     ),
@@ -147,6 +150,7 @@ class _CoursesPageState extends State<CoursesPage> {
                 ),
               ),
             ),
+            subscriptions.isNotEmpty ?
             Expanded(
               child: GestureDetector(
                 onHorizontalDragEnd: (dragEndDetails) {
@@ -171,7 +175,15 @@ class _CoursesPageState extends State<CoursesPage> {
                   children: subscriptions.map((subscription) => CourseView(widget.user, subscription,),).toList(),
                 ),
               ),
-            ),
+            ) :
+            subscriptions.isEmpty && progressCode ?
+            const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )  :
+            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text("No Subscribed Bundles", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
+
           ],
         ),
       ),
