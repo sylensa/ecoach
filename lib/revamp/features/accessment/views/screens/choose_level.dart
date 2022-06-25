@@ -1,8 +1,13 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/level_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/new_user_data.dart';
 import 'package:ecoach/revamp/features/accessment/views/widgets/select_level_container.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -69,7 +74,26 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
           title: const Text(
             "Assessment",
             style: TextStyle(color: Colors.white),
-          )),
+          ),
+        actions: [
+          IconButton(onPressed:(){
+            showLoaderDialog(context, message: "Refreshing Courses ...");
+            ApiCall<Data>(AppUrl.new_user_data, isList: false,
+                create: (Map<String, dynamic> json) {
+                  return Data.fromJson(json);
+                }, onCallback: (data) async{
+                  if (data != null) {
+                    await LevelDB().insertAll(data!.levels!);
+                    await CourseDB().insertAll(data!.courses!);
+                  }
+                  Navigator.pop(context);
+                  toastMessage("Courses refreshed successfully");
+                }, onError: (e) {
+                  Navigator.pop(context);
+                }).get(context);
+          }, icon: Icon(Icons.refresh,color: Colors.white,))
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
