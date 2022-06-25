@@ -56,6 +56,7 @@ class _SelectSubjectWidgetState extends State<SelectSubjectWidget> {
     super.initState();
   }
 
+
   getCourses() async {
     if(widget.title.toUpperCase() == "LOWER PRIMARY"){
       responseCourses  = await CourseDB().coursesByCourseID(lowerPrimary);
