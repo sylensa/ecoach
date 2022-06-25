@@ -57,7 +57,6 @@ class _LogInPageState extends State<LogInPage> {
             await LevelDB().insertAll(data!.levels!);
             await CourseDB().insertAll(data!.courses!);
           }
-
           if (mounted) {
             Navigator.pop(context);
           }
@@ -185,7 +184,9 @@ class _LogInPageState extends State<LogInPage> {
   @override
   void initState(){
     // PlanController().getPlan();
-    super.initState();
+    UserPreferences().removeUser();
+    UserPreferences().setSeenOnboard();
+     super.initState();
   }
   @override
   Widget build(BuildContext context) {
