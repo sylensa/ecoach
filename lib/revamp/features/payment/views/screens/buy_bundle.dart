@@ -4,8 +4,10 @@ import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/plan.dart';
+import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/preparing_download.dart';
 import 'package:ecoach/revamp/features/payment/views/widgets/payment_options_widget.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/get_bundle_plan.dart';
@@ -156,6 +158,83 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
       },
     );
   }
+  paymentLinkModalBottomSheet(context,{String link = ""}){
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      border: Border.all(color:  Color(0xFFBBCFD6,),width: 2),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        child: sText("Payment Link",weight: FontWeight.bold,size: 20),
+                      ),
+                      SizedBox(height: 10,),
+                      Container(
+                        child: sText("Payment link successfully generated below",weight: FontWeight.bold,color: Colors.grey),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(height: 20,),
+                            Container(
+                              padding: EdgeInsets.all(20),
+                              margin: EdgeInsets.symmetric(horizontal: 30),
+                              child: sText("$link",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color:  Color(0xFFBBCFD6,))
+                              ),
+                            ),
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                Clipboard.setData(ClipboardData(text: "$link"));
+                                Navigator.pop(context);
+                                toastMessage("Link copied to clipboard");
+                                // goTo(context, MainHomePage(widget.user,index: 1,),replace: true);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: sText("Copy Link",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
 
   paymentOptionModalBottomSheet(context){
     bool generateLink = true;
@@ -261,24 +340,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                             GestureDetector(
                               onTap: ()async{
                                 Navigator.pop(context);
-                                var whatappURL_ios= Uri.parse("https://wa.me/send?phone=233205177416&text=");
-                                var whatappURL_android= Uri.parse("whatsapp://send?phone=233205177416&text=");
-                                var whatappURL_caller= Uri.parse("tel://233205177416");
-                                if(Platform.isIOS){
-                                  // for iOS phone only
-                                  if( await canLaunchUrl(whatappURL_ios)){
-                                    await launchUrl(whatappURL_ios);
-                                  }else{
-                                    launchUrl(whatappURL_caller);
-                                  }
-                                }else{
-                                  // android , web
-                                  if( await canLaunchUrl(whatappURL_android)){
-                                    await launchUrl(whatappURL_android);
-                                  }else{
-                                    launchUrl(whatappURL_caller);
-                                  }
-                                }
+                                customerCare();
 
                               },
                               child: Container(
@@ -310,85 +372,6 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
         }
     );
   }
-
-  paymentLinkModalBottomSheet(context,{String link = ""}){
-    showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent ,
-        isScrollControlled: true,
-        builder: (BuildContext context){
-          return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
-              return Container(
-                  height: 300,
-                  decoration: BoxDecoration(
-                      color: Colors.white ,
-                      border: Border.all(color:  Color(0xFFBBCFD6,),width: 2),
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20,),
-                      Container(
-                        color: Colors.grey,
-                        height: 5,
-                        width: 100,
-                      ),
-                      SizedBox(height: 20,),
-                      Container(
-                        child: sText("Payment Link",weight: FontWeight.bold,size: 20),
-                      ),
-                      SizedBox(height: 10,),
-                      Container(
-                        child: sText("Payment link successfully generated below",weight: FontWeight.bold,color: Colors.grey),
-                      ),
-                      Expanded(
-                        child: ListView(
-                          children: [
-                            SizedBox(height: 20,),
-                            Container(
-                              padding: EdgeInsets.all(20),
-                              margin: EdgeInsets.symmetric(horizontal: 30),
-                              child: sText("$link",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
-                              decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color:  Color(0xFFBBCFD6,))
-                              ),
-                            ),
-
-                            SizedBox(height: 20,),
-                            GestureDetector(
-                              onTap: (){
-                                Clipboard.setData(ClipboardData(text: "$link"));
-                                Navigator.pop(context);
-                                toastMessage("Link copied to clipboard");
-                                // goTo(context, MainHomePage(widget.user,index: 1,),replace: true);
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(20),
-                                margin: EdgeInsets.symmetric(horizontal: 30),
-                                child: sText("Copy Link",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-              );
-            },
-
-          );
-        }
-    );
-  }
-
   productKeyModalBottomSheet(context,){
     TextEditingController productKeyController = TextEditingController();
     bool isActivated = true;
@@ -487,7 +470,8 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                             SizedBox(height: 40,),
                             GestureDetector(
                               onTap: ()async{
-                                if(productKeyController.text.isNotEmpty){
+                                // Navigator.pop(context);
+                                if(productKeyController.text.isNotEmpty && isActivated){
                                   stateSetter((){
                                     isActivated = false;
                                   });
@@ -497,9 +481,23 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                     var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"1234"},token!);
                                     print("res:$res");
                                     if(res["code"].toString() == "200"){
-                                      Navigator.pop(context);
-                                      goTo(context, MainHomePage(widget.user),replace: true);
-                                      toastMessage(res["message"]);
+                                      if(res["data"] != null){
+                                        Subscription subRes = Subscription.fromJson(res["data"]);
+                                        await getSubscriptionPlans(widget.bundle,subRes);
+                                      }else{
+                                        stateSetter((){
+                                          isActivated = true;
+                                        });
+                                        showDialogOk(message: "${res["message"]}",context: context,dismiss: false);
+                                      }
+
+
+                                      // goTo(context, MainHomePage(widget.user),replace: true);
+                                    }else  if(res["code"].toString() == "404"){
+                                      stateSetter((){
+                                        isActivated = true;
+                                      });
+                                      showDialogOk(message: "${res["message"]}",context: context,dismiss: false);
                                     }else{
                                       stateSetter((){
                                         isActivated = true;
@@ -551,6 +549,24 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
   }
 
 
+  getSubscriptionPlans(Plan plan,Subscription subscription)async{
+    items =  await PlanDB().planItems(plan.id!);
+    if(items.isEmpty){
+      await PlanController().getSubscriptionPlan(plan.id!);
+      items =  await PlanDB().planItems(plan.id!);
+    }
+    toastMessage("Bundle key redeemed successfully.");
+    List<Subscription> listSub = [];
+    listSub.add(subscription);
+    await SubscriptionItemDB().insertAll(items);
+    await SubscriptionDB().insert(subscription);
+    await getSubscriptionItems();
+    setState((){
+
+    });
+    Navigator.pop(context);
+    await goTo(context, PreparingDownload(widget.user,selectedTableRows: items,controller: widget.controller,bundle: plan,));
+  }
 
 
   @override
@@ -732,7 +748,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                     style: TextStyle(color: Colors.black),
                   ),
                   content: Text(
-                    "Do you want to download this bundle?",
+                    "Do you want to re download this bundle?",
                     style: TextStyle(color: Colors.black),
                     softWrap: true,
                   ),
@@ -754,6 +770,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                             getSubscriptionItems();
                           },
                         );
+
                       },
                       child: Text("Yes"),
                     ),
@@ -771,11 +788,11 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
         );
       },
       child: Container(
-        color: const Color(0xFF00C9B9),
+        color: Color(0xFF2A9CEA),
         height: 56,
         child:  Center(
           child: Text(
-            'Download this Bundle',
+            'Redownload Bundle',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, color: Colors.white),
           ),
@@ -821,6 +838,65 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
+                  isSubscribed ?
+                      IconButton(onPressed: (){
+                        setState(() {
+                          for(int i = 0; i< items.length; i++){
+                            selectedTableRows.add(items[i]);
+                          }
+                        });
+                        if (context.read<DownloadUpdate>().isDownloading) {
+                          return;
+                        }
+                        setState(
+                              () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    "Download bundle",
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  content: Text(
+                                    "Do you want to re download this bundle?",
+                                    style: TextStyle(color: Colors.black),
+                                    softWrap: true,
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        widget.controller.downloadSubscription(
+                                          selectedTableRows,
+                                              (success) {
+                                            UserPreferences().getUser().then(
+                                                  (user) {
+                                                setState(() {
+                                                  widget.user = user!;
+                                                });
+                                              },
+                                            );
+                                            clearList();
+                                            getSubscriptionItems();
+                                          },
+                                        );
+                                      },
+                                      child: Text("Yes"),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("No"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }, icon: Icon(Icons.download,color: Colors.green,)) :
                   SizedBox(
                     height: 27,
                     width: 27,
@@ -978,7 +1054,8 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                     );
                                   },
                                 );
-                              }else{
+                              }
+                              else{
                                 setState(() {
                                   selectedTableRows.add(items[index]);
                                 });
@@ -1069,7 +1146,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                   trailing: Image.asset(
                                     "assets/images/download.png",
                                     color:
-                                    items[index].downloadStatus == "downloaded" ? Colors.green : Colors.grey,
+                                    items[index].downloadStatus == "downloaded"  && isSubscribed && items[index].questionCount! > 0 ? Colors.green : Colors.grey,
                                     height: 27,
                                     width: 27,
                                   ),
