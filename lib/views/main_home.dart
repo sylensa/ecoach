@@ -11,6 +11,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/group.dart';
+import 'package:ecoach/views/more_page.dart';
 import 'package:ecoach/websocket/event_data.dart';
 import 'package:wakelock/wakelock.dart';
 import 'package:ecoach/views/auth/home.dart';
@@ -67,7 +68,11 @@ class _MainHomePageState extends State<MainHomePage>
       GroupPage(widget.user),
       CoursesPage(widget.user),
       AnalysisView(user: widget.user),
-      MoreView(
+      // MoreView(
+      //   widget.user,
+      //   controller: mainController,
+      // ),
+      MorePage(
         widget.user,
         controller: mainController,
       ),
