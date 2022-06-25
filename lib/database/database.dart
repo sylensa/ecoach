@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 22, onOpen: (db) {},
+    return await openDatabase(path, version: 23, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -66,6 +66,7 @@ class DBProvider {
         'resource' text NOT NULL,
         'options' text NOT NULL,
         'position' int NOT NULL,
+        'time' int NOT NULL,
         'created_at' datetime NOT NULL,
         'updated_at' datetime NOT NULL,
         'qtype' varchar(10) DEFAULT 'SINGLE',
@@ -86,6 +87,7 @@ class DBProvider {
         'resource' text NOT NULL,
         'options' text NOT NULL,
         'position' int NOT NULL,
+        'time' int NOT NULL,
         'created_at' datetime NOT NULL,
         'updated_at' datetime NOT NULL,
         'qtype' varchar(10) DEFAULT 'SINGLE',
@@ -500,6 +502,7 @@ class DBProvider {
         'resource' text NOT NULL,
         'options' text NOT NULL,
         'position' int NOT NULL,
+        'time' int NOT NULL,
         'created_at' datetime NOT NULL,
         'updated_at' datetime NOT NULL,
         'qtype' varchar(10) DEFAULT 'SINGLE',
@@ -507,7 +510,7 @@ class DBProvider {
         'public' int NOT NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0'
-        ) """);
+      ) """);
         }catch(e){
           await db.execute("""CREATE TABLE 'test_saved_questions' (
         'id' INTEGER PRIMARY KEY,
@@ -520,6 +523,7 @@ class DBProvider {
         'resource' text NOT NULL,
         'options' text NOT NULL,
         'position' int NOT NULL,
+        'time' int NOT NULL,
         'created_at' datetime NOT NULL,
         'updated_at' datetime NOT NULL,
         'qtype' varchar(10) DEFAULT 'SINGLE',
@@ -527,9 +531,8 @@ class DBProvider {
         'public' int NOT NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0'
-        ) """);
+      ) """);
         }
-
         try{
           await db.execute("""DROP TABLE 'review_test_taken'""");
           await db.execute("""CREATE TABLE 'review_test_taken' (
@@ -647,6 +650,50 @@ class DBProvider {
         'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }
+        try{
+          await db.execute("""DROP TABLE 'questions'""");
+          await db.execute("""CREATE TABLE 'questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'time' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'time' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
       ) """);
         }
       }
