@@ -114,6 +114,7 @@ class Question {
         "qtype": qtype,
         "confirmed": confirmed,
         "public": public,
+         "time": time ?? 0,
         "flagged": flagged,
       };
 }
