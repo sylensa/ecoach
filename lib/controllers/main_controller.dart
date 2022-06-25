@@ -6,6 +6,7 @@ import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/image.dart';
@@ -18,6 +19,7 @@ import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/download_failed.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/notification_service.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -241,8 +243,7 @@ class MainController {
       }
       provider.setNotificationUp(false, 0);
       downloadSuccessful = true;
-      NotificationService().showNotification('Download complete',
-          'subscription items downloaded successfully', "download");
+      NotificationService().showNotification('Download complete', 'subscription items downloaded successfully', "download");
     } on SocketException catch (e, stackTrace) {
       print(e);
       print(stackTrace);
@@ -259,8 +260,8 @@ class MainController {
       print("Error>>>>>>>> download failed");
       print(m);
       print(e);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Download failed")));
+      // goTo(context, DownloadFailed(),replace: true);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Download failed")));
     } finally {
       Wakelock.disable();
 
