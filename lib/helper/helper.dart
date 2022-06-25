@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecoach/helper/hide.dart';
 import 'package:ecoach/models/question.dart';
@@ -12,12 +13,25 @@ import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:recase/recase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 List<BoxShadow> elevation({required Color color, required int elevation}) {
   return [
-    BoxShadow(color: color.withOpacity(0.6), offset: Offset(0.0, 4.0), blurRadius: 3.0 * elevation, spreadRadius: -1.0 * elevation),
-    BoxShadow(color: color.withOpacity(0.44), offset: Offset(0.0, 1.0), blurRadius: 2.2 * elevation, spreadRadius: 1.5),
-    BoxShadow(color: color.withOpacity(0.12), offset: Offset(0.0, 1.0), blurRadius: 4.6 * elevation, spreadRadius: 0.0),
+    BoxShadow(
+        color: color.withOpacity(0.6),
+        offset: Offset(0.0, 4.0),
+        blurRadius: 3.0 * elevation,
+        spreadRadius: -1.0 * elevation),
+    BoxShadow(
+        color: color.withOpacity(0.44),
+        offset: Offset(0.0, 1.0),
+        blurRadius: 2.2 * elevation,
+        spreadRadius: 1.5),
+    BoxShadow(
+        color: color.withOpacity(0.12),
+        offset: Offset(0.0, 1.0),
+        blurRadius: 4.6 * elevation,
+        spreadRadius: 0.0),
   ];
 }
 
@@ -53,46 +67,49 @@ const appMainOrange = Color(0xFFba5927);
 const appGray = Color(0xFFadb4b9);
 const appDarkText = Color(0xFF2F2F2F);
 
-displayImage(imagePath, {double radius = 30.0, double? height,double? width}) {
+displayImage(imagePath, {double radius = 30.0, double? height, double? width}) {
   return CachedNetworkImage(
       imageUrl: imagePath,
       height: height,
       width: width,
       placeholder: (context, url) {
-        return radius > 0 ? CircleAvatar(
-          backgroundColor: Colors.white,
-          backgroundImage: AssetImage('assets/images/none.png'),
-          radius: radius,
-        ) :
-        const Image(
-          image: AssetImage('assets/images/none.png'),
-        );
+        return radius > 0
+            ? CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: AssetImage('assets/images/none.png'),
+                radius: radius,
+              )
+            : const Image(
+                image: AssetImage('assets/images/none.png'),
+              );
       },
       errorWidget: (context, url, error) {
-        return radius > 0 ? CircleAvatar(
-          backgroundColor: Colors.grey,
-          backgroundImage: AssetImage('assets/images/none.png'),
-          radius: radius,
-        ) :
-        const Image(
-          image: AssetImage('assets/images/none.png'),
-        );
+        return radius > 0
+            ? CircleAvatar(
+                backgroundColor: Colors.grey,
+                backgroundImage: AssetImage('assets/images/none.png'),
+                radius: radius,
+              )
+            : const Image(
+                image: AssetImage('assets/images/none.png'),
+              );
       },
       imageBuilder: (context, image) {
-        return radius > 0 ? CircleAvatar(
-          backgroundColor: Colors.white,
-          backgroundImage: image,
-          radius: radius,
-        ) :
-        Image(
-          image: image,
-          fit: BoxFit.cover,
-        );
-      }
-  );
+        return radius > 0
+            ? CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: image,
+                radius: radius,
+              )
+            : Image(
+                image: image,
+                fit: BoxFit.cover,
+              );
+      });
 }
 
-Widget displaySQImage(imagePath, {double radius = 30.0, double height = 0, double width = 0}) {
+Widget displaySQImage(imagePath,
+    {double radius = 30.0, double height = 0, double width = 0}) {
   return CachedNetworkImage(
       imageUrl: imagePath,
       placeholder: (context, url) {
@@ -144,19 +161,24 @@ Widget displayCircularImage(imagePath, {double radius = 30.0}) {
       });
 }
 
-Widget displayLocalImage(String filePath, {double radius = 30.0, double? height, double? width}) {
+Widget displayLocalImage(String filePath,
+    {double radius = 30.0, double? height, double? width}) {
   File file = new File(filePath);
   return radius > 20
       ? CircleAvatar(
           backgroundColor: solonGray200,
-          backgroundImage: (filePath.isEmpty ? AssetImage('images/user_placeholder.png') : FileImage(file)) as ImageProvider<Object>?,
+          backgroundImage: (filePath.isEmpty
+              ? AssetImage('images/user_placeholder.png')
+              : FileImage(file)) as ImageProvider<Object>?,
           radius: radius,
         )
       : Image(
           fit: BoxFit.fitWidth,
           height: height,
           width: width,
-          image: (filePath.isEmpty ? AssetImage('images/user_placeholder.png') : FileImage(file)) as ImageProvider<Object>,
+          image: (filePath.isEmpty
+              ? AssetImage('images/user_placeholder.png')
+              : FileImage(file)) as ImageProvider<Object>,
         );
 }
 
@@ -164,10 +186,12 @@ Widget progress({double size = 30}) {
   return SizedBox(
       width: size,
       height: size,
-      child: CircularProgressIndicator(backgroundColor: solonGray200, valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00C9B9),)));
+      child: CircularProgressIndicator(
+          backgroundColor: solonGray200,
+          valueColor: const AlwaysStoppedAnimation<Color>(
+            Color(0xFF00C9B9),
+          )));
 }
-
-
 
 Widget sText(String? word,
     {double size = 15,
@@ -176,7 +200,7 @@ Widget sText(String? word,
     TextAlign align = TextAlign.left,
     int maxLines = 5,
     double? lHeight = 1.2,
-    String family =  'ProximaRegular' ,
+    String family = 'Poppins',
     int shadow = 0}) {
   return Text(
     word ?? '...',
@@ -190,20 +214,21 @@ Widget sText(String? word,
       fontFamily: 'ProximaRegular',
       fontSize: size,
       fontWeight: weight,
-      shadows: shadow > 0 ? elevation(color: Colors.black38, elevation: shadow) : [],
+      shadows:
+          shadow > 0 ? elevation(color: Colors.black38, elevation: shadow) : [],
     ),
   );
 }
 
 Widget sText2(String? word,
     {double size = 15,
-      FontWeight weight = FontWeight.w400,
-      Color color = solonGray700,
-      TextAlign align = TextAlign.left,
-      int maxLines = 5,
-      double? lHeight = 1.2,
-      String family =  'ProximaRegular' ,
-      int shadow = 0}) {
+    FontWeight weight = FontWeight.w400,
+    Color color = solonGray700,
+    TextAlign align = TextAlign.left,
+    int maxLines = 5,
+    double? lHeight = 1.2,
+    String family = 'ProximaRegular',
+    int shadow = 0}) {
   return Text(
     word ?? '...',
     softWrap: true,
@@ -216,7 +241,8 @@ Widget sText2(String? word,
       fontFamily: 'ProximaRegular',
       fontSize: size,
       fontWeight: weight,
-      shadows: shadow > 0 ? elevation(color: Colors.black38, elevation: shadow) : [],
+      shadows:
+          shadow > 0 ? elevation(color: Colors.black38, elevation: shadow) : [],
     ),
   );
 }
@@ -233,19 +259,23 @@ Widget solonOutlineButton({
   EdgeInsetsGeometry? padding,
   Color outlineColor: const Color(0xFFf2f2f2),
   Color backgroundColor: Colors.white,
-  String family =  'ProximaRegular' ,
+  String family = 'ProximaRegular',
 }) {
   return Container(
     height: height,
     decoration: shadowStrength > 0
-        ? BoxDecoration(boxShadow: elevation(color: solonGray200, elevation: shadowStrength), borderRadius: BorderRadius.circular(radius))
+        ? BoxDecoration(
+            boxShadow:
+                elevation(color: solonGray200, elevation: shadowStrength),
+            borderRadius: BorderRadius.circular(radius))
         : BoxDecoration(borderRadius: BorderRadius.circular(radius)),
     child: TextButton(
       style: TextButton.styleFrom(
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         backgroundColor: backgroundColor,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius), side: BorderSide(color: outlineColor, width: borderWidth)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
+            side: BorderSide(color: outlineColor, width: borderWidth)),
       ),
       onPressed: () => onPressed(),
       child: content,
@@ -266,8 +296,12 @@ Widget dPurpleGradientButton(
     child: Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: gradientDirection == 'left_right' ? Alignment.centerLeft : Alignment.topCenter,
-            end: gradientDirection == 'left_right' ? Alignment.centerRight : Alignment.bottomCenter,
+            begin: gradientDirection == 'left_right'
+                ? Alignment.centerLeft
+                : Alignment.topCenter,
+            end: gradientDirection == 'left_right'
+                ? Alignment.centerRight
+                : Alignment.bottomCenter,
             colors: colors,
           ),
           borderRadius: BorderRadius.circular(radius)),
@@ -275,7 +309,8 @@ Widget dPurpleGradientButton(
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
 //          backgroundColor: col,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radius)),
         ),
         onPressed: () => onPressed(),
         child: content,
@@ -285,19 +320,24 @@ Widget dPurpleGradientButton(
 }
 
 Future goTo(BuildContext context, Widget target,
-    {bool replace = false, PageTransitionType anim = PageTransitionType.size, int millis = 200, bool opaque = true}) {
+    {bool replace = false,
+    PageTransitionType anim = PageTransitionType.size,
+    int millis = 200,
+    bool opaque = true}) {
   if (!opaque) {
     if (!replace) {
       return Navigator.of(context).push(PageRouteBuilder(
           opaque: opaque,
-          pageBuilder: (BuildContext context, animation, secondaryAnimation) => target,
+          pageBuilder: (BuildContext context, animation, secondaryAnimation) =>
+              target,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           }));
     } else {
       return Navigator.of(context).pushReplacement(PageRouteBuilder(
           opaque: opaque,
-          pageBuilder: (BuildContext context, animation, secondaryAnimation) => target,
+          pageBuilder: (BuildContext context, animation, secondaryAnimation) =>
+              target,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           }));
@@ -305,14 +345,29 @@ Future goTo(BuildContext context, Widget target,
   }
   if (!replace) {
     return Navigator.push(
-        context, PageTransition(type: anim, duration: Duration(milliseconds: millis), alignment: Alignment.bottomCenter, child: target));
+        context,
+        PageTransition(
+            type: anim,
+            duration: Duration(milliseconds: millis),
+            alignment: Alignment.bottomCenter,
+            child: target));
   } else
     return Navigator.pushReplacement(
-        context, PageTransition(type: anim, duration: Duration(milliseconds: millis), alignment: Alignment.bottomCenter, child: target));
+        context,
+        PageTransition(
+            type: anim,
+            duration: Duration(milliseconds: millis),
+            alignment: Alignment.bottomCenter,
+            child: target));
 }
 
-TextStyle appStyle({double size = 16, Color? col = dDarkText, FontWeight weight = FontWeight.w400,String family = "ProximaRegular"}) {
-  return TextStyle(fontFamily: family, fontWeight: weight, fontSize: size, color: col);
+TextStyle appStyle(
+    {double size = 16,
+    Color? col = dDarkText,
+    FontWeight weight = FontWeight.w400,
+    String family = "ProximaRegular"}) {
+  return TextStyle(
+      fontFamily: family, fontWeight: weight, fontSize: size, color: col);
 }
 
 EdgeInsets noPadding() {
@@ -328,21 +383,24 @@ InputDecoration textDecor(
     Widget? icon,
     String prefix = '',
     Widget? suffix,
-      Widget? suffixIcon,
+    Widget? suffixIcon,
     bool enabled = true,
     Color? hintColor = solonGray500,
     double hintSize = 16,
     bool showBorder = true,
     double radius = 4,
     String label = '',
-    EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0)}) {
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0)}) {
   return new InputDecoration(
     prefixIcon: icon,
     prefixText: prefix,
     suffix: suffix,
     suffixIcon: suffixIcon,
     hintText: hint,
-    floatingLabelBehavior: (label.isNotEmpty && hint.isNotEmpty) ? FloatingLabelBehavior.never : FloatingLabelBehavior.auto,
+    floatingLabelBehavior: (label.isNotEmpty && hint.isNotEmpty)
+        ? FloatingLabelBehavior.never
+        : FloatingLabelBehavior.auto,
     hintStyle: appStyle(size: hintSize, col: hintColor),
 //    border: UnderlineInputBorder(
 //      borderSide: BorderSide(color: theColor),
@@ -372,27 +430,33 @@ InputDecoration textDecorNoBorder(
     double hintSize = 16,
     Color? hintColor,
     String labelText = '',
-    String family = "ProximaRegular" ,
+    String family = "ProximaRegular",
     FontWeight hintWeight: FontWeight.normal,
     Color? fill,
     Color borderColor = Colors.black,
-      double radius = 4,
-    EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(20.0, 10, 20.0, 0)}) {
+    double radius = 4,
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.fromLTRB(20.0, 10, 20.0, 0)}) {
   return new InputDecoration(
     prefixText: prefix,
     suffix: suffix,
     prefixIcon: prefixIcon,
     hintText: hint,
-    labelText:labelText ,
-    hintStyle: appStyle(size: hintSize, col: hintColor, weight: hintWeight,family:family, ),
+    labelText: labelText,
+    hintStyle: appStyle(
+      size: hintSize,
+      col: hintColor,
+      weight: hintWeight,
+      family: family,
+    ),
     alignLabelWithHint: true,
     enabledBorder: OutlineInputBorder(
       borderSide: BorderSide(color: borderColor, width: 1),
-     borderRadius: BorderRadius.circular(radius),
+      borderRadius: BorderRadius.circular(radius),
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(color: borderColor, width: 1),
-     borderRadius: BorderRadius.circular(radius),
+      borderRadius: BorderRadius.circular(radius),
     ),
     focusColor: dPurple,
     enabled: enabled,
@@ -403,7 +467,13 @@ InputDecoration textDecorNoBorder(
   );
 }
 
-showDialogOk({String? message,BuildContext? context,Widget? target,bool? status = false,bool replace = false,bool dismiss = true}) {
+showDialogOk(
+    {String? message,
+    BuildContext? context,
+    Widget? target,
+    bool? status = false,
+    bool replace = false,
+    bool dismiss = true}) {
   // flutter defined function
   showDialog(
     context: context!,
@@ -417,13 +487,12 @@ showDialogOk({String? message,BuildContext? context,Widget? target,bool? status 
           new FlatButton(
             child: new Text("Ok"),
             onPressed: () {
-              if(status!){
+              if (status!) {
                 Navigator.pop(context);
-                goTo(context, target!,replace: replace);
-              }else{
+                goTo(context, target!, replace: replace);
+              } else {
                 Navigator.pop(context);
               }
-
             },
           ),
         ],
@@ -432,7 +501,8 @@ showDialogOk({String? message,BuildContext? context,Widget? target,bool? status 
   );
 }
 
-showSuccessfulDialog({String? message,BuildContext? context,Widget? target,bool? status}) {
+showSuccessfulDialog(
+    {String? message, BuildContext? context, Widget? target, bool? status}) {
   // flutter defined function
   showDialog(
     context: context!,
@@ -445,13 +515,12 @@ showSuccessfulDialog({String? message,BuildContext? context,Widget? target,bool?
           new FlatButton(
             child: new Text("Ok"),
             onPressed: () {
-              if(status!){
+              if (status!) {
                 Navigator.pop(context);
-                goTo(context, target!,replace: false);
-              }else{
+                goTo(context, target!, replace: false);
+              } else {
                 Navigator.pop(context);
               }
-
             },
           ),
         ],
@@ -460,30 +529,33 @@ showSuccessfulDialog({String? message,BuildContext? context,Widget? target,bool?
   );
 }
 
-showDialogYesNo({String? message,BuildContext? context,Widget? target,bool replace = false}) {
+showDialogYesNo(
+    {String? message,
+    BuildContext? context,
+    Widget? target,
+    bool replace = false}) {
   // flutter defined function
   showDialog(
     context: context!,
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title:  Text("Alert"),
-        content:  Text(message!),
+        title: Text("Alert"),
+        content: Text(message!),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
-           FlatButton(
-            child:  Text("No"),
+          FlatButton(
+            child: Text("No"),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-           FlatButton(
+          FlatButton(
             child: new Text("Yes"),
             onPressed: () {
               print("hey");
               Navigator.pop(context);
-              goTo(context, target!,replace: replace);
-
+              goTo(context, target!, replace: replace);
             },
           ),
         ],
@@ -492,25 +564,22 @@ showDialogYesNo({String? message,BuildContext? context,Widget? target,bool repla
   );
 }
 
-
-
 appWidth(con) {
   return MediaQuery.of(con).size.width;
 }
+
 appHeight(con) {
   return MediaQuery.of(con).size.height;
 }
 
-
-
-List<BoxShadow> appShadow(Color col, double offset, double blur, double spread) {
+List<BoxShadow> appShadow(
+    Color col, double offset, double blur, double spread) {
   return [
     BoxShadow(
         blurRadius: blur,
         color: col,
         offset: Offset(0, 2.0),
-        spreadRadius: spread
-    ),
+        spreadRadius: spread),
   ];
 }
 
@@ -519,6 +588,7 @@ Future<bool> clearPrefs() async {
   sp.clear();
   return true;
 }
+
 Future<bool> setPref(key, value, {type = 'string'}) async {
   var sp = await SharedPreferences.getInstance();
   print("Setting $type pref $key to $value...");
@@ -536,10 +606,10 @@ Future<bool> setPref(key, value, {type = 'string'}) async {
       List<String> ls = value;
       sp.setStringList(key, ls);
       break;
-
   }
   return true;
 }
+
 Future<dynamic> getPref(key, {type = 'string'}) async {
   var sp = await SharedPreferences.getInstance();
   switch (type) {
@@ -569,12 +639,15 @@ EdgeInsets topPadding(double size) {
 EdgeInsets bottomPadding(double size) {
   return EdgeInsets.only(bottom: size);
 }
+
 EdgeInsets leftPadding(double size) {
   return EdgeInsets.only(left: size);
 }
+
 EdgeInsets rightPadding(double size) {
   return EdgeInsets.only(right: size);
 }
+
 EdgeInsets horizontalPadding(double size) {
   return EdgeInsets.symmetric(horizontal: size);
 }
@@ -582,26 +655,26 @@ EdgeInsets horizontalPadding(double size) {
 EdgeInsets verticalPadding(double size) {
   return EdgeInsets.symmetric(vertical: size);
 }
+
 properCase(String txt) {
   return txt.titleCase;
 }
+
 capCase(String txt) {
   return txt.toUpperCase();
 }
+
 sentenceCase(String txt) {
   if (txt.isEmpty) return txt;
   return txt.sentenceCase;
 }
-
-
 
 toastMessage(String text, {bool long = false}) {
   Fluttertoast.showToast(
       msg: text,
       toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
       backgroundColor: dDarkText,
-      textColor: Colors.white
-  );
+      textColor: Colors.white);
 }
 
 Map replaceNulls(Map m) {
@@ -622,79 +695,83 @@ Map replaceNulls(Map m) {
 bool appIsEmpty(value) {
   return value.toString() == '' || value == null || value == 'null';
 }
+
 Map stripNulls(dynamic v) {
   Map m = v.toMap();
   Map<String, String> finalMap = v.toMap();
   for (var i in m.keys) {
-      if (m[i] == "null") {
+    if (m[i] == "null") {
       finalMap.remove(i);
     }
   }
   return finalMap;
 }
+
 doDelete(String urlAfterBase) async {
   var url = Uri.parse('$base$urlAfterBase');
   print("url: $url");
-  var js = await http.delete(url,headers: {"authorization": "Bearer " + userToken});
+  var js =
+      await http.delete(url, headers: {"authorization": "Bearer " + userToken});
   var decoded;
   try {
     decoded = jsonDecode(js.body);
-  } catch(e) {
+  } catch (e) {
     print("decoded: ${js.body}");
     print(e);
   }
   return decoded;
 }
 
-doPost(String urlAfterBase, Map body,String token) async {
+doPost(String urlAfterBase, Map body, String token) async {
   print('Calling $base$urlAfterBase...');
   print('body $body...');
   print('token $token...');
   var url = Uri.parse('$base$urlAfterBase');
   var decoded;
   http.Response js;
-     js = await http.post(url, body: replaceNulls(body),headers:  {
-       'api-token': token
-     },);
-     print("js:${jsonEncode(js.statusCode)}");
+  js = await http.post(
+    url,
+    body: replaceNulls(body),
+    headers: {'api-token': token},
+  );
+  print("js:${jsonEncode(js.statusCode)}");
 
   print("body: ${js.body}");
-  try{
+  try {
     decoded = jsonDecode(js.body);
-  }catch(e){
+  } catch (e) {
     print("post: $e");
   }
   return decoded;
 }
 
-doGet(String urlAfterBase,String token) async {
+doGet(String urlAfterBase, String token) async {
   var url = Uri.parse('$base$urlAfterBase');
   print("url: $url");
   print("userToken: $token");
   var js;
-    js = await http.get(url, headers:  {
-    'api-token': token
-    } );
+  js = await http.get(url, headers: {'api-token': token});
 
   var decoded;
   print("decoded: ${js.body}");
   try {
     decoded = jsonDecode(js.body);
-  } catch(e) {
-
+  } catch (e) {
     print(e);
   }
   return decoded;
 }
 
-
-
-
-navigateTo(BuildContext context, Widget target, {bool replace = false, PageTransitionType anim = PageTransitionType.fade, int millis = 300, bool opaque = false}) {
+navigateTo(BuildContext context, Widget target,
+    {bool replace = false,
+    PageTransitionType anim = PageTransitionType.fade,
+    int millis = 300,
+    bool opaque = false}) {
   if (!replace) {
     Navigator.of(context).push(PageRouteBuilder(
         opaque: opaque,
-        pageBuilder: (BuildContext context, animation, secondaryAnimation) => target,
+        pageBuilder: (BuildContext context, animation, secondaryAnimation) =>
+            target,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         }));
@@ -705,15 +782,8 @@ navigateTo(BuildContext context, Widget target, {bool replace = false, PageTrans
             type: PageTransitionType.size,
             duration: Duration(milliseconds: 300),
             alignment: Alignment.bottomCenter,
-            child: target
-        )
-    );
+            child: target));
 }
-
-
-
-
-
 
 extension StringExtension on String {
   static String displayTimeAgoFromTimestamp(String timestamp) {
@@ -729,7 +799,7 @@ extension StringExtension on String {
     String timeAgo = '';
     String timeUnit = '';
     int timeValue = 0;
-    if(diffInHours < 0){
+    if (diffInHours < 0) {
       diffInHours = diffInHours * -1;
       if (diffInHours < 1) {
         final diffInMinutes = DateTime.now().difference(videoDate).inMinutes;
@@ -755,7 +825,7 @@ extension StringExtension on String {
       timeAgo += timeValue > 1 ? '' : '';
 
       return 'in ' + timeAgo;
-    }else{
+    } else {
       if (diffInHours < 1) {
         final diffInMinutes = DateTime.now().difference(videoDate).inMinutes;
         timeValue = diffInMinutes;
@@ -771,7 +841,7 @@ extension StringExtension on String {
         timeUnit = 'wk';
       } else if (diffInHours >= 24 * 30 && diffInHours < 24 * 12 * 30) {
         timeValue = (diffInHours / (24 * 30)).floor();
-        timeUnit = 'mt';
+        timeUnit = 'mon';
       } else {
         timeValue = (diffInHours / (24 * 365)).floor();
         timeUnit = 'yr';
@@ -781,14 +851,43 @@ extension StringExtension on String {
 
       return timeAgo;
     }
-
-
-
   }
 }
 
-class ListNames{
+customerCare() async {
+  var whatsappURl_android = "https://wa.me/send?phone=233205177416&text=";
+
+  var whatappURL_ios = Uri.parse("https://wa.me/send?phone=233205177416&text=");
+  var whatappURL_android =
+      Uri.parse("https://wa.me/send?phone=233205177416&text=");
+  var whatappURL_caller = Uri.parse("tel://233205177416");
+  if (Platform.isIOS) {
+    // for iOS phone only
+    if (await canLaunchUrl(whatappURL_ios)) {
+      await launchUrl(whatappURL_ios);
+    } else {
+      launchUrl(whatappURL_caller);
+    }
+  } else {
+    // android , web
+    if (await canLaunch(whatsappURl_android)) {
+      await launch(whatsappURl_android);
+    } else {
+      launchUrl(whatappURL_caller);
+    }
+  }
+}
+
+generateRandom(){
+  var rng =  Random();
+  var code = rng.nextInt(900000) + 100000;
+
+  return code;
+}
+
+class ListNames {
   String name;
   String id;
-  ListNames({this.name = '',this.id = ''});
+
+  ListNames({this.name = '', this.id = ''});
 }
