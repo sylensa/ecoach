@@ -27,6 +27,7 @@ class PlanController{
     }
 
   }
+
   getPlan()async{
     futurePlanItem.clear();
     futurePlanItem = await PlanDB().getAllPlans();
@@ -51,6 +52,7 @@ class PlanController{
     }
 
   }
+
   getSubscriptionPlan(int bundleId)async {
     String? token = await UserPreferences().getUserToken();
     token != null ? token = token : token = '';
