@@ -190,7 +190,12 @@ class _QuizQuestionState extends State<QuizQuestion> {
       count += controller.questions[i].time!;
     }
 
-    count = count/(currentQuestion + 1);
+    if(count == 0 && currentQuestion == 0){
+      count = 0;
+    }else{
+      count = count/currentQuestion;
+    }
+
     print("count:$count");
     return count.toStringAsFixed(2);
   }
@@ -348,7 +353,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
         backgroundColor: Colors.grey[100],
         body: Column(
           children: [
-            if(_isBannerAdReady && Platform.isAndroid)
+            if(_isBannerAdReady && Platform.isAndroid && widget.diagnostic)
             Container(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),
@@ -566,6 +571,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                          controller.questions[i].instructions!.replaceAll("https", "http"),
                                          removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
                                          useLocalImage: false,
+                                         fontWeight: FontWeight.w500,
                                          textColor: Colors.black,
                                        )),
                                  ),
@@ -580,7 +586,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                          controller.questions[i].resource!.replaceAll("https", "http"),
                                          removeTags: controller.questions[i].resource!.contains("src") ? false : true,
                                          useLocalImage: false,
-                                         textColor: Colors.grey[200]!,
+                                         textColor: Colors.grey,
+                                         fontWeight: FontWeight.bold,
+
                                        ),
                                      ),
                                  ),
@@ -654,42 +662,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
             ),
 
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              // margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  if (currentQuestion > 0 && (!controller.speedTest || controller.speedTest && !enabled))
-                    Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        // Get.to(() => const QuizReviewPage());
-                        pageController.previousPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
-                        setState(() {
-                          currentQuestion--;
-                          // numberingController.scrollTo(
-                          //     index: currentQuestion,
-                          //     duration: Duration(seconds: 1),
-                          //     curve: Curves.easeInOutCubic);
-                        });
-                        currentCorrectScoreState();
-                      },
-                      child: Container(
-                        color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: const Text(
-                          'Previous',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
 
-                  SizedBox(width: 10,),
                   if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
                   Expanded(
                     child: InkWell(
@@ -717,14 +694,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       },
                       child: Container(
                         color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: const Text(
-                          'Next',
+                          'Skip',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -738,14 +715,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       },
                       child: Container(
                         color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: const Text(
                           'Complete',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -754,6 +731,107 @@ class _QuizQuestionState extends State<QuizQuestion> {
                 ],
               ),
             ),
+            // Container(
+            //   margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     children: [
+            //       if (currentQuestion > 0 && (!controller.speedTest || controller.speedTest && !enabled))
+            //         Expanded(
+            //         child: InkWell(
+            //           onTap: () {
+            //             // Get.to(() => const QuizReviewPage());
+            //             pageController.previousPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
+            //             setState(() {
+            //               currentQuestion--;
+            //               // numberingController.scrollTo(
+            //               //     index: currentQuestion,
+            //               //     duration: Duration(seconds: 1),
+            //               //     curve: Curves.easeInOutCubic);
+            //             });
+            //             currentCorrectScoreState();
+            //           },
+            //           child: Container(
+            //             color: kAccessmentButtonColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 15),
+            //             child: const Text(
+            //               'Previous',
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontSize: 18,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //
+            //       SizedBox(width: 10,),
+            //       if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
+            //       Expanded(
+            //         child: InkWell(
+            //           onTap: () {
+            //             // Get.to(() => const QuizReviewPage());
+            //             if (currentQuestion == controller.questions.length - 1) {
+            //               return;
+            //             }
+            //             setState(() {
+            //               currentCorrectScoreState();
+            //               currentQuestion++;
+            //
+            //               pageController.nextPage(
+            //                   duration: Duration(milliseconds: 1), curve: Curves.ease);
+            //
+            //               // numberingController.scrollTo(
+            //               //     index: currentQuestion,
+            //               //     duration: Duration(seconds: 1),
+            //               //     curve: Curves.easeInOutCubic);
+            //
+            //               if (controller.speedTest && enabled) {
+            //                 resetTimer();
+            //               }
+            //             });
+            //           },
+            //           child: Container(
+            //             color: kAccessmentButtonColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 15),
+            //             child: const Text(
+            //               'Next',
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontSize: 18,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
+            //         Expanded(
+            //         child: InkWell(
+            //           onTap: () {
+            //             completeQuiz();
+            //           },
+            //           child: Container(
+            //             color: kAccessmentButtonColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 15),
+            //             child: const Text(
+            //               'Complete',
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontSize: 18,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
