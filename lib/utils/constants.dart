@@ -1,4 +1,5 @@
 // enum DropdownSize { small, medium, large }
+import 'package:ecoach/models/get_agent_code.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
 
@@ -20,3 +21,5 @@ List<Question> reviewQuestionsBack = [];
 List selectAnsweredQuestions = [];
 List unSelectAnsweredQuestions = [];
 List<Plan> futurePlanItem = [];
+List<AgentData> listAgentData = [];
+bool fetchDiagnosticTest = false;
