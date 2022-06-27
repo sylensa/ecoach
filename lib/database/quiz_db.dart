@@ -69,11 +69,9 @@ class QuizDB {
   }
 
   saveOfflineFlagQuestion(FlagData flagData,int questionId) async {
-    var token = (await UserPreferences().getUserToken());
-    print("token:$token");
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (isConnected) {
-      var res = await doPost("${AppUrl.questionFlag}${questionId}/flag",flagData.toJson() ,token!,);
+      var res = await doPost("${AppUrl.questionFlag}${questionId}/flag",flagData.toJson(),);
       print("res:$res");
       if(res["status"]){
         await QuizDB().deleteFlagQuestionById(flagData.questionId!);
