@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/level_db.dart';
@@ -184,7 +186,7 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
               ],
             ),
           ),
-          if(_isBannerAdReady)
+          if(_isBannerAdReady && Platform.isAndroid)
             Container(
               height: _bannerAd.size.height.toDouble(),
               width: _bannerAd.size.width.toDouble(),
