@@ -45,10 +45,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class BuyBundlePage extends StatefulWidget {
-  BuyBundlePage(this.user, {Key? key, required this.bundle, required this.controller}) : super(key: key);
+  BuyBundlePage(this.user, {Key? key, required this.bundle, required this.controller,this.daysLeft = ""}) : super(key: key);
   final Plan bundle;
   User user;
   MainController controller;
+  String daysLeft;
 
   @override
   State<BuyBundlePage> createState() => _BuyBundlePageState();
@@ -478,7 +479,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                   try{
                                     var token = (await UserPreferences().getUserToken());
                                     print("token:$token");
-                                    var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"1234"},token!);
+                                    var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"1234"});
                                     print("res:$res");
                                     if(res["code"].toString() == "200"){
                                       if(res["data"] != null){
@@ -586,9 +587,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
     // getSubscriptionItems();
   }
   getSubscriptionPlanAnnex()async{
-    String token = (await UserPreferences().getUserToken())!;
-    print("token:$token");
-    var js = await doGet('${AppUrl.plans}/${widget.bundle.id}',token);
+    var js = await doGet('${AppUrl.plans}/${widget.bundle.id}');
     print("res plans: $js");
     if(js["status"] && js["data"].isNotEmpty){
       bundleByPlanData.add(BundleByPlanData.fromJson(js["data"])) ;
@@ -945,10 +944,11 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                   fontWeight: FontWeight.bold,
                   fontSize: 27),
             ),
+            widget.daysLeft.isNotEmpty ?
              Text(
-              "${widget.bundle.tag} days left",
+              "${widget.daysLeft} days left",
               style: TextStyle(fontSize: 11, color: Color(0xFF8E8E8E)),
-            ),
+            ) : Container(),
             SizedBox(
               height: 2.h,
             ),
