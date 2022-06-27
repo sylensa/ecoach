@@ -2,11 +2,20 @@ import 'dart:io';
 
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/get_agent_code.dart';
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/auth/logout.dart';
+import 'package:ecoach/views/commission/commission_agent_page.dart';
+import 'package:ecoach/views/commission/commission_page.dart';
 import 'package:ecoach/views/profile_page.dart';
+import 'package:ecoach/views/saved_questions/saved_bundle_questions.dart';
 import 'package:ecoach/views/subscription_page.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,6 +30,25 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
+  getAgentDetails()async {
+   try{
+     var js = await doGet('${AppUrl.agentPromoCodes}');
+     print("res agentPromoCodes : $js");
+     if (js["status"] && js["data"]["data"].isNotEmpty) {
+       Navigator.pop(context);
+       AgentData agentData = AgentData.fromJson(js["data"]);
+       listAgentData.add(agentData);
+       toastMessage("${js["message"]}");
+       await goTo(context, CommissionAgentPage());
+     }else{
+       Navigator.pop(context);
+       toastMessage("${js["message"]}");
+     }
+   }catch(e){
+     Navigator.pop(context);
+     toastMessage("Failed");
+   }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +75,7 @@ class _MorePageState extends State<MorePage> {
                     ),
                     child: CircleAvatar(
                       radius: 32.0,
-                      backgroundColor: Colors.redAccent,
+                      backgroundColor: Color(0xFF0367B4),
                       child: Text(widget.user.initials),
                     ),
                   ),
@@ -101,9 +129,9 @@ class _MorePageState extends State<MorePage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  GestureDetector(
-                    onTap: (){
-
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: (){
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -129,37 +157,43 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (){
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: (){
                       goTo(context, SubscriptionPage(widget.user,controller: widget.controller,));
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Icon(Icons.video_collection,color: Colors.black,),
-                          SizedBox(width: 20,),
-                          Text(
-                            "Subscriptions",
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                color:  Color(0XFF2D3E50),
-                                height: 1.1,
-                                fontFamily: "Poppins"
-                            ),
+                          Row(
+                            children: [
+                              Icon(Icons.video_collection,color: Colors.black,),
+                              SizedBox(width: 20,),
+                              Text(
+                                "Subscriptions",
+                                softWrap: true,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w500,
+                                    color:  Color(0XFF2D3E50),
+                                    height: 1.1,
+                                    fontFamily: "Poppins"
+                                ),
+                              ),
+                            ],
                           ),
-                          Expanded(child: Container()),
                           Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
                         ],
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (){
-
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: (){
+                      goTo(context, SavedQuestionsPage(widget.user,controller: widget.controller,));
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -185,9 +219,9 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (){
-
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: (){
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -213,9 +247,18 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (){
-
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: ()async{
+                      print("widget.user.isAgent:${widget.user.isAgent}");
+                      if(widget.user.isAgent! && listAgentData.isNotEmpty){
+                        await goTo(context, CommissionAgentPage());
+                      }else if (widget.user.isAgent!){
+                        showLoaderDialog(context, message: "Loading...");
+                        await getAgentDetails();
+                      }else{
+                        goTo(context, CommissionPage());
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -241,9 +284,10 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: (){
-                        goTo(context, ProfilePage(user: widget.user,));
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: (){
+                      goTo(context, ProfilePage(user: widget.user,));
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
