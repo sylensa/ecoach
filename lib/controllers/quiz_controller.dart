@@ -214,7 +214,7 @@ class QuizController {
       return false;
     } else {
       // try{
-        var res = await doPost("${AppUrl.questionFlag}${questionId}/flag",flagData.toJson() ,token!,);
+        var res = await doPost("${AppUrl.questionFlag}${questionId}/flag",flagData.toJson(),);
         print("res:$res");
         if(res["code"].toString() == "200"){
           return true;

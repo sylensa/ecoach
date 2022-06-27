@@ -15,7 +15,7 @@ class PlanController{
       String? token = await UserPreferences().getUserToken();
       token != null ? token = token : token = '';
       print("token:$token");
-      var js = await doGet('${AppUrl.plans}',token);
+      var js = await doGet('${AppUrl.plans}');
       print("res plans: $js");
       if(js["status"] && js["data"].isNotEmpty){
         for(int i = 0; i < js["data"].length; i++){
@@ -35,7 +35,7 @@ class PlanController{
       String? token = await UserPreferences().getUserToken();
       token != null ? token = token : token = '';
       print("token:$token");
-      var js = await doGet('${AppUrl.plans}',token);
+      var js = await doGet('${AppUrl.plans}');
       print("res plans: $js");
       if(js["status"] && js["data"].isNotEmpty){
         for(int i = 0; i < js["data"].length; i++){
@@ -54,10 +54,7 @@ class PlanController{
   }
 
   getSubscriptionPlan(int bundleId)async {
-    String? token = await UserPreferences().getUserToken();
-    token != null ? token = token : token = '';
-    print("token:$token");
-    var js = await doGet('${AppUrl.plans}/$bundleId', token);
+    var js = await doGet('${AppUrl.plans}/$bundleId');
     print("res plans items: $js");
     if (js["status"] && js["data"]["features"].isNotEmpty) {
       for (int i = 0; i < js["data"]["features"].length; i++) {
