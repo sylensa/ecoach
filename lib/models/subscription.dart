@@ -59,7 +59,7 @@ class Subscription {
   }
 
   get timeLeft {
-    return endsAt!.difference(DateTime.now()).inDays.toString();
+    return  endsAt!.difference(startsAt!).inDays.toString();
   }
 
   get updatedAgo {
