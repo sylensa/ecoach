@@ -23,6 +23,7 @@ class _LogoutState extends State<Logout> {
       await SubscriptionDB().deleteAll();
       await SubscriptionItemDB().deleteAll();
       await QuestionDB().deleteAllSavedTest();
+      await QuestionDB().deleteAllQuestions();
       var status = await UserPreferences().getLoginWith() ;
        await UserPreferences().removeUser();
       if(status){
