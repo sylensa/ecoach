@@ -1,0 +1,468 @@
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/get_agent_code.dart';
+import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/widgets.dart';
+import 'package:flutter/material.dart';
+
+class CommissionAgentPage extends StatefulWidget {
+  const CommissionAgentPage({Key? key}) : super(key: key);
+
+  @override
+  State<CommissionAgentPage> createState() => _CommissionAgentPageState();
+}
+
+class _CommissionAgentPageState extends State<CommissionAgentPage> {
+  getPromoCodes()async {
+    // try{
+      var js = await doPost(AppUrl.agentPromoCodes, {});
+      print("res agentPromoCodes : $js");
+      if (js["status"]) {
+        DataCodes agentData = DataCodes.fromJson(js["data"]);
+        listAgentData[0].data!.add(agentData);
+        setState((){
+
+        });
+        toastMessage("${js["message"]}");
+        Navigator.pop(context);
+        successModalBottomSheet(context);
+      }else{
+        Navigator.pop(context);
+        failedModalBottomSheet(context);
+        toastMessage("${js["message"]}");
+      }
+    // }catch(e){
+    //   Navigator.pop(context);
+    //   toastMessage("Failed");
+    // }
+  }
+  deleteCard(String cardId)async {
+    try{
+      var js = await doDelete('${AppUrl.agentPromoCodes}/$cardId');
+      print("res delete card : $js");
+      if (js["code"].toString() == "200") {
+        Navigator.pop(context);
+        toastMessage("${js["message"]}");
+      }else{
+        Navigator.pop(context);
+        toastMessage("${js["message"]}");
+      }
+    }catch(e){
+      Navigator.pop(context);
+      toastMessage("Failed");
+    }
+  }
+  successModalBottomSheet(context){
+    double sheetHeight = 350.00;
+    bool isSubmit = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 0,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(),
+
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(right: 20,),
+                              child: Icon(Icons.clear,color: Colors.black,),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 0,),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.green,width: 15),
+                              shape: BoxShape.circle
+                          ),
+                          child: Icon(Icons.check,color: Colors.green,size: 100,)
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                        child: sText("Promo Code Generated Successfully",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                      )
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+  failedModalBottomSheet(context){
+    double sheetHeight = 330.00;
+    bool isSubmit = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 0,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(),
+
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(right: 20,),
+                              child: Icon(Icons.clear,color: Colors.black,),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 0,),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.red,width: 15),
+                              shape: BoxShape.circle
+                          ),
+                          child: Icon(Icons.close,color: Colors.red,size: 100,)
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                        child: sText("Error, Promo Generate Failed",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                      )
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+  deleteModalBottomSheet(context,String codeId){
+    bool generateLink = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      border: Border.all(color: Color(0xFFBBCFD6,),width: 2),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        child: sText("Are you sure to delete this promo code?",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: ()async{
+                                Navigator.pop(context);
+                                showLoaderDialog(context, message: "Deleting Promo Code...");
+                                deleteCard(codeId);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("Yes",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
+                                    SizedBox(width: 10,),
+                                    generateLink ? Container() : progress()
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: ()async{
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("No",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    color:Color(0xFF0367B4,),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: kHomeBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: kHomeBackgroundColor,
+        elevation: 0,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,color:  Color(0XFF2D3E50),)),
+        title:    Text(
+          "Commissions",
+          softWrap: true,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              color:  Color(0XFF2D3E50),
+              height: 1.1,
+              fontFamily: "Poppins"
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: sText("Total Commission",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 16),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Container(
+                    child: sText("GHC",color: kDefaultBlack,weight: FontWeight.bold,align: TextAlign.left,size: 16),
+                  ),
+                  SizedBox(width: 5,),
+                  Container(
+                    child: sText("500.50",color: Color(0XFF2D3E50),weight: FontWeight.bold,align: TextAlign.left,size: 30),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 150,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  for(int i = 0; i < listAgentData[0].data!.length; i++)
+                  GestureDetector(
+                    onLongPress: (){
+                     deleteModalBottomSheet(context, listAgentData[0].data![i].code!);
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          padding: leftPadding(10),
+                          child: Image.asset("assets/images/com1.png"),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          left: 30,
+                          child:sText("RS",color: kAdeoGray3,weight: FontWeight.w500,size: 14),
+
+                        ),
+                        Positioned(
+                          bottom: 18,
+                          left: 50,
+                          child: sText("180",color: Colors.white,weight: FontWeight.bold,size: 20),
+
+                        ),
+                        Positioned(
+                          top: 30,
+                          left: appWidth(context)/4,
+                          child: sText("${listAgentData[0].data![i].code}",color: Colors.white,weight: FontWeight.bold,size: 30),
+
+                        ),
+                        Positioned(
+                          top: 60,
+                          left: appWidth(context)/3.0,
+                          child:Center(child: sText("Referral codes",color: kAdeoGray3,weight: FontWeight.w500,size: 14,align: TextAlign.center)),
+
+                        ),
+                        Positioned(
+                          top: 40,
+                          left: appWidth(context)/1.5,
+                          child: Icon(Icons.copy,color: kAdeoGray3,),
+
+                        ),
+
+                        Positioned(
+                          bottom: 20,
+                          right: 100,
+                          child:sText("GHC",color: kAdeoGray3,weight: FontWeight.w500,size: 14),
+
+                        ),
+                        Positioned(
+                          bottom: 18,
+                          right: 20,
+                          child: sText("200.50",color: Colors.white,weight: FontWeight.bold,size: 20),
+
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      showLoaderDialog(context, message: "Generating Promo Code...");
+                      getPromoCodes();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Image.asset("assets/images/com2.png",fit: BoxFit.fitHeight,),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 20,),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: sText("Transaction History",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 16),
+            ),
+            SizedBox(height: 20,),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 95,
+                    child: sText("Date & Time",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 14),
+                  ),
+                  Container(
+                    width: 80,
+                    child: sText("Activity",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 14),
+                  ),
+                  Container(
+                    width: 80,
+                    child: sText("Code",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 14),
+                  ),
+                  Container(
+                    width: 80,
+                    child: sText("Amount",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 14),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+
+              child: Divider(color: kDefaultBlack,thickness: 1,),
+            ),
+            SizedBox(height: 0,),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: 10,
+                  itemBuilder: (BuildContext context, int index){
+                  return  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 95,
+                          child: sText("${DateTime.now().toString().split(".").first.split(" ").first} | ${DateTime.now().toString().split(".").first.split(" ").last}",color: kDefaultBlack,weight: FontWeight.w500,align: TextAlign.left,size: 12),
+                        ),
+                        Container(
+                          width: 80,
+                          child: sText("Code Applied",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 12),
+                        ),
+                        Container(
+                          width: 80,
+                          child: sText("FXIOEO",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 12),
+                        ),
+                        Container(
+                          width: 80,
+                          child: sText("GHC 300.00",color: kDefaultBlack,weight: FontWeight.w500,align: TextAlign.right,size: 12),
+                        ),
+                      ],
+                    ),
+                  );
+              }),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
