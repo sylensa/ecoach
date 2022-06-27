@@ -198,7 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Container(
                           child:  Text(
-                            "25",
+                            "0",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -247,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Container(
                           child:  Text(
-                            "125",
+                            "0",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -295,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Container(
                           child:  Text(
-                            "4.5/5",
+                            "0",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -343,7 +343,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Container(
                           child:  Text(
-                            "2000",
+                            "0",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(

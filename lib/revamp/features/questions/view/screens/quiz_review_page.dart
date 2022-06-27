@@ -408,10 +408,10 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                           child:  AdeoHtmlTex(
                                             widget.user!,
                                             reviewQuestionsBack[questionIndex].instructions!.replaceAll("https", "http"),
-                                            useLocalImage: false,
+                                            useLocalImage: true,
                                             removeTags: reviewQuestionsBack[questionIndex].instructions!.contains("src") ? false : true,
                                             textColor: Colors.black,
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.normal,
                                           ),
                                         )),
                                   ),
@@ -425,10 +425,10 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       child: AdeoHtmlTex(
                                        widget.user!,
                                         reviewQuestionsBack[questionIndex].resource!.replaceAll("https", "http"),
-                                        useLocalImage: false,
+                                        useLocalImage: true,
                                         removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
                                         textColor: Colors.grey,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.normal,
                                       ),
                                     ),
                                   ),
@@ -451,7 +451,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 18,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.normal,
                                             color: Colors.white,
                                           ),
                                         ),
@@ -466,7 +466,8 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                               reviewQuestionsBack[questionIndex].answers![0].solution!.replaceAll("https", "http"),
                                               useLocalImage: false,
                                               removeTags: reviewQuestionsBack[questionIndex].answers![0].solution!.contains("src") ? false : true,
-                                              textColor: Colors.black,
+                                              textColor: Colors.white,
+                                              fontWeight: FontWeight.normal,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -632,7 +633,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                 child:  AdeoHtmlTex(
                   widget.user!,
                   answer.text!.replaceAll("https", "http"),
-                  useLocalImage: false,
+                  useLocalImage: true,
                   textColor: reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 0 ? Colors.black :
                   reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 1 ? Colors.white :
                   ((reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id && answer.value == 1) ||  answer.value == 1) ||  (reviewQuestionsBack[questionIndex].isCorrect && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id) || (reviewQuestionsBack[questionIndex].isWrong && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id)  ? Colors.white : Colors.black ,

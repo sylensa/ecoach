@@ -551,6 +551,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                         ActualQuestion(
                           user: controller.user,
                           question: "${controller.questions[i].text}",
+                          diagnostic: widget.diagnostic,
                           direction: "Choose the right answer to the question above",
                         ),
                        Expanded(
@@ -570,8 +571,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                          controller.user,
                                          controller.questions[i].instructions!.replaceAll("https", "http"),
                                          removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
-                                         useLocalImage: false,
-                                         fontWeight: FontWeight.w500,
+                                         useLocalImage:  widget.diagnostic ? false : true,
+                                         fontWeight: FontWeight.normal,
                                          textColor: Colors.black,
                                        )),
                                  ),
@@ -585,9 +586,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                          controller.user,
                                          controller.questions[i].resource!.replaceAll("https", "http"),
                                          removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-                                         useLocalImage: false,
+                                         useLocalImage:  widget.diagnostic ? false : true,
                                          textColor: Colors.grey,
-                                         fontWeight: FontWeight.bold,
+                                         fontWeight: FontWeight.normal,
 
                                        ),
                                      ),
@@ -607,8 +608,13 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                          timeSpent = durationEnd.difference(durationStart).inSeconds;
                                          controller.questions[i].time = timeSpent;
                                          durationStart = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-                                         nextButton();
+                                         if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion)){
+                                           completeQuiz();
+                                         }else{
+                                           nextButton();
+                                         }
                                        });
+
                                      },
                                      child: Container(
                                        margin: const EdgeInsets.only(bottom: 10,right: 20,left: 20),
@@ -618,9 +624,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                              child:  AdeoHtmlTex(
                                                  controller.user,
                                                  controller.questions[i].answers![index].text!.replaceAll("https", "http"),
-                                                 removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-
-                                                   useLocalImage: false,
+                                                   removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                                                   useLocalImage: widget.diagnostic ? false : true,
                                                    textColor: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Colors.white :kSecondaryTextColor,
                                                    fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
                                                    textAlign: TextAlign.left,

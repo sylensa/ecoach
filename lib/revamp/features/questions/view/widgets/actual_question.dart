@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class ActualQuestion extends StatelessWidget {
   final String question, direction;
   User user;
-   ActualQuestion({required this.question, this.direction = "",required this.user});
+  bool diagnostic;
+   ActualQuestion({required this.question, this.direction = "",required this.user,this.diagnostic = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class ActualQuestion extends StatelessWidget {
             user,
             question.replaceAll("https", "http"),
             fontStyle: FontStyle.italic,
-            useLocalImage: false,
+            useLocalImage: diagnostic ? false : true,
             removeTags: question.contains("src") ? false : true,
             textColor: Colors.black,
           ),

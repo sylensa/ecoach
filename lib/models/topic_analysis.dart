@@ -47,7 +47,7 @@ class TopicAnalysis {
   }
 
   double get performace {
-    double performace = correct / answers.length;
+    double performace = (correct / answers.length) * 100;
     return double.parse(performace.toStringAsFixed(2));
   }
 

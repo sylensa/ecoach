@@ -109,7 +109,7 @@ class _ReadSavedQuestionsState extends State<ReadSavedQuestions> {
                                           fontWeight: FontWeight.bold,
                                           textAlign: TextAlign.left,
                                           fontSize: 16,
-                                          useLocalImage: false,
+                                          useLocalImage: true,
                                           removeTags: question.contains("src") ? false : true,
                                           textColor: Color(0XFF707070),
                                         ),
