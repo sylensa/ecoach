@@ -4,6 +4,7 @@ import 'package:ecoach/database/plan.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/subscription.dart';
@@ -41,7 +42,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     if(context.read<DownloadUpdate>().plans != null){
       for(int i =0; i < context.read<DownloadUpdate>().plans!.length; i++){
         print("len:${ context.read<DownloadUpdate>().plans!.length}");
-        List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans![i].planId!);
+        List<Course> sItem = await SubscriptionItemDB().subscriptionCourses( context.read<DownloadUpdate>().plans![i].planId!);
         listCoursesCount.add(sItem.length);
       }
     }
@@ -59,8 +60,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       setState(() {
         subscriptions = user != null ? user.subscriptions : [];
         context.read<DownloadUpdate>().setSubscriptions(subscriptions);
-        getSubscriptionItems();
       });
+      getSubscriptionItems();
+
     });
   }
 
@@ -68,9 +70,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kHomeBackgroundColor,
       appBar: AppBar(
+        backgroundColor: kHomeBackgroundColor,
         elevation: 0,
-        backgroundColor: Colors.white,
         leading: IconButton(onPressed: (){
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color:  Color(0XFF2D3E50),)),
@@ -149,11 +152,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               ),
             ),
             SizedBox(height: 10,),
-            listCoursesCount.isNotEmpty ?
+            context.read<DownloadUpdate>().plans!.isNotEmpty ?
             Expanded(
               flex: 8,
               child: ListView.builder(
-                itemCount: listCoursesCount.length,
+                itemCount: context.read<DownloadUpdate>().plans!.length,
                   itemBuilder: (BuildContext context, int index){
                   return  GestureDetector(
                     onTap: (){
@@ -173,12 +176,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         tier: context.read<DownloadUpdate>().plans![index].tier,
                         trialInterval: context.read<DownloadUpdate>().plans![index].invoiceInterval,
                         trialPeriod: 1,
+
                       );
-                      goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,));
+                      goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,daysLeft: context.read<DownloadUpdate>().plans![index].timeLeft,));
 
                     },
                     child: Card(
-                        color: kAdeoGray,
+                        color: Colors.white,
                         margin: bottomPadding(10),
                         elevation: 0,
                         child: ListTile(
@@ -197,7 +201,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  "${listCoursesCount.isNotEmpty ? listCoursesCount[index] : "..."} courses",
+                                  "${listCoursesCount.isNotEmpty && context.read<DownloadUpdate>().plans!.length == listCoursesCount.length ? listCoursesCount[index] : "0"} courses",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color:  Color(0XFF2D3E50),
@@ -228,13 +232,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   padding: EdgeInsets.all(0),
                   margin: EdgeInsets.only(bottom: 30,right: 20,left: 20),
                   decoration: BoxDecoration(
-                      color: Color(0xFFddfffc),
+                      color: Color(0xFFE8F5FF),
                       borderRadius: BorderRadius.circular(10)
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.lock,color: Color(0xFF00C9B9),),
+                      Icon(Icons.lock,color: Color(0xFF0367B4),),
                       SizedBox(width: 20,),
                       Text(
                         "Unlock Subscription",
@@ -242,8 +246,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF00C9B9),
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0367B4),
                             height: 1.1,
                             fontFamily: "Poppins"
                         ),
@@ -497,9 +501,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                     isActivated = false;
                                   });
                                   try{
-                                    var token = (await UserPreferences().getUserToken());
-                                    print("token:$token");
-                                    var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"${generateRandom()}"},token!);
+                                    var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"${generateRandom()}"});
                                     print("res:$res");
                                     if(res["code"].toString() == "200"){
                                       if(res["data"] != null){
