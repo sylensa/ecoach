@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecoach/helper/hide.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -211,7 +212,7 @@ Widget sText(String? word,
     style: TextStyle(
       height: lHeight,
       color: color,
-      fontFamily: 'ProximaRegular',
+      fontFamily: family,
       fontSize: size,
       fontWeight: weight,
       shadows:
@@ -708,10 +709,12 @@ Map stripNulls(dynamic v) {
 }
 
 doDelete(String urlAfterBase) async {
+  String? token = await UserPreferences().getUserToken();
+  token != null ? token = token : token = '';
   var url = Uri.parse('$base$urlAfterBase');
   print("url: $url");
   var js =
-      await http.delete(url, headers: {"authorization": "Bearer " + userToken});
+      await http.delete(url, headers: {'api-token': token});
   var decoded;
   try {
     decoded = jsonDecode(js.body);
@@ -722,7 +725,9 @@ doDelete(String urlAfterBase) async {
   return decoded;
 }
 
-doPost(String urlAfterBase, Map body, String token) async {
+doPost(String urlAfterBase, Map body) async {
+  String? token = await UserPreferences().getUserToken();
+  token != null ? token = token : token = '';
   print('Calling $base$urlAfterBase...');
   print('body $body...');
   print('token $token...');
@@ -745,7 +750,10 @@ doPost(String urlAfterBase, Map body, String token) async {
   return decoded;
 }
 
-doGet(String urlAfterBase, String token) async {
+doGet(String urlAfterBase) async {
+  String? token = await UserPreferences().getUserToken();
+  token != null ? token = token : token = '';
+  print("token:$token");
   var url = Uri.parse('$base$urlAfterBase');
   print("url: $url");
   print("userToken: $token");
@@ -855,11 +863,8 @@ extension StringExtension on String {
 }
 
 customerCare() async {
-  var whatsappURl_android = "https://wa.me/send?phone=233205177416&text=";
-
+  var whatsappURl_android = "https://wa.me/233205177416?text=";
   var whatappURL_ios = Uri.parse("https://wa.me/send?phone=233205177416&text=");
-  var whatappURL_android =
-      Uri.parse("https://wa.me/send?phone=233205177416&text=");
   var whatappURL_caller = Uri.parse("tel://233205177416");
   if (Platform.isIOS) {
     // for iOS phone only
