@@ -22,7 +22,10 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/subscribe.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -71,6 +74,152 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
     setState((){
     });
   }
+
+  promoCodeModalBottomSheet(context,){
+    TextEditingController productKeyController = TextEditingController();
+    bool isActivated = true;
+    double sheetHeight = 300;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Center(child: sText("Enter your referral or discount code",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(height: 40,),
+                            Container(
+                              padding: EdgeInsets.only(left: 20,right: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      // autofocus: true,
+                                      controller: productKeyController,
+                                      // autofocus: true,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please check that you\'ve entered product key';
+                                        }
+                                        return null;
+                                      },
+                                      inputFormatters: [
+                                        MaskedTextInputFormatter(mask: 'x-x-x-x-x-x'),
+                                      ],
+                                      textCapitalization: TextCapitalization.characters,
+                                      onFieldSubmitted: (value){
+                                        stateSetter((){
+                                          sheetHeight = 300;
+                                        });
+                                      },
+                                      onTap: (){
+                                        stateSetter((){
+                                          sheetHeight = 650;
+                                        });
+                                      },
+                                      textAlign: TextAlign.center,
+                                      style: appStyle(weight: FontWeight.bold,size: 20),
+                                      decoration: textDecorNoBorder(
+                                        hintWeight: FontWeight.bold,
+
+                                        hint: 'x-x-x-x-x-x',
+                                        radius: 10,
+                                        labelText: "Enter code",
+                                        hintColor: Colors.black,
+                                        borderColor: Colors.grey[400]!,
+                                        fill: Colors.white,
+                                        padding: EdgeInsets.symmetric(horizontal: 30),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 40,),
+                            GestureDetector(
+                              onTap: ()async{
+                                // Navigator.pop(context);
+                                if(productKeyController.text.isNotEmpty && isActivated){
+                                  stateSetter((){
+                                    isActivated = false;
+                                  });
+                                  try{
+                                    var res = await doPost(AppUrl.userPromoCodes, {'promo_code':productKeyController.text.replaceAll('-','')});
+                                    print("res:$res");
+                                    if(res["status"]){
+                                      Navigator.pop(context);
+                                      showDialogOk(message: "${res["message"]}",context: context,dismiss: false);
+                                    }else{
+                                      stateSetter((){
+                                        isActivated = true;
+                                      });
+                                      showDialogOk(message: "${res["message"]}",context: context,dismiss: false);
+                                    }
+                                  }catch(e){
+                                    stateSetter((){
+                                      isActivated = true;
+                                    });
+                                    print("error:$e");
+                                    showDialogOk(message: "Promo code is incorrect",context: context,dismiss: false);
+                                  }
+                                }else{
+                                  toastMessage("Promo code is required");
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("Apply code",color: Colors.white,align: TextAlign.center,weight: FontWeight.bold),
+                                    SizedBox(width: 10,),
+                                    isActivated ? Container() : progress()
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isActivated ? Colors.blue : Colors.grey,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+
+
+                          ],
+                        ),
+                      ),
+
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -114,8 +263,44 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
               thickness: 1,
               height: 0,
             ),
+            SizedBox(height: 10,),
+            GestureDetector(
+              onTap: (){
+                toastMessage("Coming soon");
+
+                // promoCodeModalBottomSheet(context);
+              },
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    Container(
+                      padding: EdgeInsets.all(5),
+
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[400]!),
+                        borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: Row(
+                        children: [
+                         Image.asset("assets/images/gift.png",width: 20,),
+                          Text(
+                            "Apply code",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(
-              height: 20.5,
+              height: 10,
             ),
 
             futurePlanItem.isNotEmpty ?
