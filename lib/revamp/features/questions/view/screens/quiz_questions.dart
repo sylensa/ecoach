@@ -353,12 +353,12 @@ class _QuizQuestionState extends State<QuizQuestion> {
         backgroundColor: Colors.grey[100],
         body: Column(
           children: [
-            if(_isBannerAdReady && Platform.isAndroid && widget.diagnostic)
-            Container(
-              height: _bannerAd.size.height.toDouble(),
-              width: _bannerAd.size.width.toDouble(),
-              child: AdWidget(ad: _bannerAd,),
-            ),
+            // if(_isBannerAdReady && Platform.isAndroid && widget.diagnostic)
+            // Container(
+            //   height: _bannerAd.size.height.toDouble(),
+            //   width: _bannerAd.size.width.toDouble(),
+            //   child: AdWidget(ad: _bannerAd,),
+            // ),
             if(Platform.isIOS)
               SizedBox(height: 30,),
             Container(
