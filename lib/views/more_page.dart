@@ -132,6 +132,7 @@ class _MorePageState extends State<MorePage> {
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: (){
+                      toastMessage("Coming soon");
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -222,6 +223,7 @@ class _MorePageState extends State<MorePage> {
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: (){
+                      toastMessage("Coming soon");
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
