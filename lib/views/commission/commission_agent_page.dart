@@ -20,6 +20,7 @@ class CommissionAgentPage extends StatefulWidget {
 class _CommissionAgentPageState extends State<CommissionAgentPage> {
   bool progressCode = true;
   getAgentTransactionDetails()async {
+    listDataResponse.clear();
     try{
       var js = await doGet('${AppUrl.agentTransaction}');
       print("res agentTransaction : $js");
