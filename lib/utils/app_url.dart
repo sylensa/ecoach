@@ -23,6 +23,7 @@ class AppUrl {
 
   static const String plans = baseURL + "plans";
   static const String agentPromoCodes = baseURL + "agent/promo/codes";
+  static const String agentTransaction = baseURL + "agent/transactions";
   static const String levels = baseURL + "levels";
   static const String levelGroups = baseURL + "level-groups";
 
