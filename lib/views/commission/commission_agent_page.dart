@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/agent_transaction.dart';
 import 'package:ecoach/models/get_agent_code.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
@@ -7,6 +8,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CommissionAgentPage extends StatefulWidget {
   const CommissionAgentPage({Key? key}) : super(key: key);
@@ -16,6 +18,31 @@ class CommissionAgentPage extends StatefulWidget {
 }
 
 class _CommissionAgentPageState extends State<CommissionAgentPage> {
+  bool progressCode = true;
+  getAgentTransactionDetails()async {
+    try{
+      var js = await doGet('${AppUrl.agentTransaction}');
+      print("res agentTransaction : $js");
+      if (js["status"] && js["data"]["data"].isNotEmpty) {
+        Navigator.pop(context);
+        AgentTransactionResponse agentData = AgentTransactionResponse.fromJson(js["data"]);
+        listDataResponse.add(agentData);
+        setState((){
+          progressCode = true;
+        });
+      }else{
+        setState((){
+          progressCode = false;
+        });
+      }
+
+    }catch(e){
+      setState((){
+        progressCode = false;
+      });
+      toastMessage("Failed");
+    }
+  }
   getPromoCodes()async {
     // try{
       var js = await doPost(AppUrl.agentPromoCodes, {});
@@ -39,13 +66,16 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
     //   toastMessage("Failed");
     // }
   }
-  deleteCard(String cardId)async {
+  deleteCard(int cardId,int index)async {
     try{
       var js = await doDelete('${AppUrl.agentPromoCodes}/$cardId');
       print("res delete card : $js");
       if (js["code"].toString() == "200") {
-        Navigator.pop(context);
+        setState((){
+          listAgentData[0].data!.removeAt(index);
+        });
         toastMessage("${js["message"]}");
+        Navigator.pop(context);
       }else{
         Navigator.pop(context);
         toastMessage("${js["message"]}");
@@ -178,7 +208,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
         }
     );
   }
-  deleteModalBottomSheet(context,String codeId){
+  deleteModalBottomSheet(context,int codeId,int index){
     bool generateLink = true;
     showModalBottomSheet(
         context: context,
@@ -215,7 +245,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                               onTap: ()async{
                                 Navigator.pop(context);
                                 showLoaderDialog(context, message: "Deleting Promo Code...");
-                                deleteCard(codeId);
+                                deleteCard(codeId,index);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -270,6 +300,12 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
           );
         }
     );
+  }
+
+  @override
+  void initState(){
+    getAgentTransactionDetails();
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -326,7 +362,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                   for(int i = 0; i < listAgentData[0].data!.length; i++)
                   GestureDetector(
                     onLongPress: (){
-                     deleteModalBottomSheet(context, listAgentData[0].data![i].code!);
+                     deleteModalBottomSheet(context, listAgentData[0].data![i].id!,i);
                     },
                     child: Stack(
                       children: [
@@ -349,21 +385,26 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                         Positioned(
                           top: 30,
                           left: appWidth(context)/4,
-                          child: sText("${listAgentData[0].data![i].code}",color: Colors.white,weight: FontWeight.bold,size: 30),
+                          child: Row(
+                            children: [
+                              Column(
+                                children: [
+                                  sText("${listAgentData[0].data![i].code}",color: Colors.white,weight: FontWeight.bold,size: 30),
+                                  sText("Referral codes",color: kAdeoGray3,weight: FontWeight.w500,size: 14,align: TextAlign.center)
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Clipboard.setData(ClipboardData(text: "${listAgentData[0].data![i].code}"));
+                                  toastMessage("Copied to clipboard");
+                                },
+                                  child: Icon(Icons.copy,color: kAdeoGray3,),
+                              )
+                            ],
+                          ),
 
                         ),
-                        Positioned(
-                          top: 60,
-                          left: appWidth(context)/3.0,
-                          child:Center(child: sText("Referral codes",color: kAdeoGray3,weight: FontWeight.w500,size: 14,align: TextAlign.center)),
 
-                        ),
-                        Positioned(
-                          top: 40,
-                          left: appWidth(context)/1.5,
-                          child: Icon(Icons.copy,color: kAdeoGray3,),
-
-                        ),
 
                         Positioned(
                           bottom: 20,
@@ -429,10 +470,11 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
               child: Divider(color: kDefaultBlack,thickness: 1,),
             ),
             SizedBox(height: 0,),
+            listDataResponse.isNotEmpty ?
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.zero,
-                itemCount: 10,
+                itemCount: listDataResponse[0].data!.length,
                   itemBuilder: (BuildContext context, int index){
                   return  Container(
                     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
@@ -441,25 +483,28 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                       children: [
                         Container(
                           width: 95,
-                          child: sText("${DateTime.now().toString().split(".").first.split(" ").first} | ${DateTime.now().toString().split(".").first.split(" ").last}",color: kDefaultBlack,weight: FontWeight.w500,align: TextAlign.left,size: 12),
+                          child: sText("${listDataResponse[0].data![index].createdAt.toString().split(".").first.split(" ").first} | ${listDataResponse[0].data![index].createdAt.toString().split(".").first.split(" ").last}",color: kDefaultBlack,weight: FontWeight.w500,align: TextAlign.left,size: 12),
                         ),
                         Container(
                           width: 80,
-                          child: sText("Code Applied",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 12),
+                          child: sText("${listDataResponse[0].data![index].activity}",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 12),
                         ),
                         Container(
                           width: 80,
-                          child: sText("FXIOEO",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 12),
+                          child: sText("${listDataResponse[0].data![index].promoCode}",color: kAdeoGray3,weight: FontWeight.w500,align: TextAlign.center,size: 12),
                         ),
                         Container(
                           width: 80,
-                          child: sText("GHC 300.00",color: kDefaultBlack,weight: FontWeight.w500,align: TextAlign.right,size: 12),
+                          child: sText("GHC ${listDataResponse[0].data![index].amount}",color: kDefaultBlack,weight: FontWeight.w500,align: TextAlign.right,size: 12),
                         ),
                       ],
                     ),
                   );
               }),
-            )
+            ) :
+            progressCode ?
+            Expanded(child: Center(child: progress(),)) :
+            Expanded(child: Center(child: sText("No transaction history"),))
           ],
         ),
       ),
