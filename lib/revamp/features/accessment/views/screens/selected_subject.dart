@@ -11,6 +11,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../core/utils/text_styles.dart';
@@ -122,29 +123,31 @@ class _SelectSubjectWidgetState extends State<SelectSubjectWidget> {
               itemCount: responseCourses.length,
                 itemBuilder: (BuildContext context, int index){
                   return InkWell(
-                  onTap: () {
-                    showLoaderDialog(context);
-                    Future futureList = TestController().loadDiagnoticQuestionAnnex(responseCourses[index]);
-
-                    futureList.then((apiResponse) {
-                      Navigator.pop(context);
-                      apiResponse.data.length > 0 ?
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                            return StartAccessmentPage(
-                              widget.user!,
-                              apiResponse.data,
-                              name: "Test Diagnostic",
-                              course: responseCourses[index],
-                              time: 60 * 20,
-                              diagnostic: true,
-                            );
-                          })
-                      )  :
-                          showDialogOk(message: "No questions",context: context,dismiss: false);
-
-                    });
-
+                  onTap: () async{
+                    final bool isConnected = await InternetConnectionChecker().hasConnection;
+                    if(isConnected){
+                      showLoaderDialog(context);
+                      Future futureList = TestController().loadDiagnoticQuestionAnnex(responseCourses[index]);
+                      futureList.then((apiResponse) {
+                        Navigator.pop(context);
+                        apiResponse.data.length > 0 ?
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                              return StartAccessmentPage(
+                                widget.user!,
+                                apiResponse.data,
+                                name: "Test Diagnostic",
+                                course: responseCourses[index],
+                                time: 60 * 20,
+                                diagnostic: true,
+                              );
+                            })
+                        )  :
+                        showDialogOk(message: "No questions",context: context,dismiss: false);
+                      });
+                    }else{
+                      showDialogOk(message: "No internet connection",context: context,dismiss: false);
+                    }
                   },
                   child: Container(
                     height: 58,
