@@ -23,5 +23,6 @@ List selectAnsweredQuestions = [];
 List unSelectAnsweredQuestions = [];
 List<Plan> futurePlanItem = [];
 List<AgentData> listAgentData = [];
+var totalCommission;
 List<AgentTransactionResponse> listDataResponse = [];
 bool fetchDiagnosticTest = false;
