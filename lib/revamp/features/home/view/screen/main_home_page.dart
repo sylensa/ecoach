@@ -81,6 +81,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
     double sheetHeight = 300;
     showModalBottomSheet(
         context: context,
+        isDismissible: false,
         backgroundColor: Colors.transparent ,
         isScrollControlled: true,
         builder: (BuildContext context){
@@ -170,14 +171,16 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                                     print("res:$res");
                                     if(res["status"]){
                                       Navigator.pop(context);
-                                      showDialogOk(message: "${res["message"]}",context: context,dismiss: false);
+                                      showDialogOk(message: "You have ${res["data"]["discount"]} on all bundle purchase. The discount expires in ${res["data"]["validity_period"]}",context: context,dismiss: false,title: "${res["message"]}");
                                     }else{
+                                      Navigator.pop(context);
                                       stateSetter((){
                                         isActivated = true;
                                       });
                                       showDialogOk(message: "${res["message"]}",context: context,dismiss: false);
                                     }
                                   }catch(e){
+                                    Navigator.pop(context);
                                     stateSetter((){
                                       isActivated = true;
                                     });
@@ -267,7 +270,6 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
             GestureDetector(
               onTap: (){
                 toastMessage("Coming soon");
-
                 // promoCodeModalBottomSheet(context);
               },
               child: Container(
@@ -311,38 +313,43 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                 shrinkWrap: true,
                 physics: const ClampingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return Card(
-                    color: Colors.white,
-                    elevation: 0,
-                    margin: EdgeInsets.only(bottom: 2.h),
-                    child: ListTile(
-                      onTap: () {
-                        goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
-                      },
-                      title:  Text(
-                        "${futurePlanItem[index].name}",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                  if(futurePlanItem[index].isActive! && futurePlanItem[index].price! > 0){
+                    return Card(
+                      color: Colors.white,
+                      elevation: 0,
+                      margin: EdgeInsets.only(bottom: 2.h),
+                      child: ListTile(
+                        onTap: () {
+                          goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                        },
+                        title:  Text(
+                          "${futurePlanItem[index].name}",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        subtitle:  Text(
+                          "${futurePlanItem[index].description}",
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        trailing:  Text(
+                          "${futurePlanItem[index].currency}${futurePlanItem[index].price}",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                      subtitle:  Text(
-                        "${futurePlanItem[index].description}",
-                        style: TextStyle(
-                          fontSize: 9,
-                          color: Colors.grey,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      trailing:  Text(
-                        "${futurePlanItem[index].currency}${futurePlanItem[index].price}",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  );
+                    );
+                  }else{
+                    return Container();
+                  }
+
                 },
               ),
             ) :
