@@ -186,12 +186,12 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
               ],
             ),
           ),
-          if(_isBannerAdReady && Platform.isAndroid)
-            Container(
-              height: _bannerAd.size.height.toDouble(),
-              width: _bannerAd.size.width.toDouble(),
-              child: AdWidget(ad: _bannerAd,),
-            ),
+          // if(_isBannerAdReady && Platform.isAndroid)
+          //   Container(
+          //     height: _bannerAd.size.height.toDouble(),
+          //     width: _bannerAd.size.width.toDouble(),
+          //     child: AdWidget(ad: _bannerAd,),
+          //   ),
         ],
       ),
     );
