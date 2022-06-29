@@ -470,6 +470,7 @@ InputDecoration textDecorNoBorder(
 
 showDialogOk(
     {String? message,
+      String? title = "Alert",
     BuildContext? context,
     Widget? target,
     bool? status = false,
@@ -482,7 +483,7 @@ showDialogOk(
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title: new Text("Alert"),
+        title: new Text("$title"),
         content: new Text(message!),
         actions: <Widget>[
           new FlatButton(
