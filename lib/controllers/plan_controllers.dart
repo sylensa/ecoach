@@ -54,14 +54,18 @@ class PlanController{
   }
 
   getSubscriptionPlan(int bundleId)async {
-    var js = await doGet('${AppUrl.plans}/$bundleId');
-    print("res plans items: $js");
-    if (js["status"] && js["data"]["features"].isNotEmpty) {
-      for (int i = 0; i < js["data"]["features"].length; i++) {
-        SubscriptionItem subscriptionItem = SubscriptionItem.fromJson(
-            js["data"]["features"][i]);
-        await PlanDB().insert(subscriptionItem);
-      }
-    }
+   try{
+     var js = await doGet('${AppUrl.plans}/$bundleId');
+     print("res plans items: $js");
+     if (js["status"] && js["data"]["features"].isNotEmpty) {
+       for (int i = 0; i < js["data"]["features"].length; i++) {
+         SubscriptionItem subscriptionItem = SubscriptionItem.fromJson(
+             js["data"]["features"][i]);
+         await PlanDB().insert(subscriptionItem);
+       }
+     }
+   }catch(e){
+     print("error");
+   }
   }
 }
