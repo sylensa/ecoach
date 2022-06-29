@@ -105,12 +105,16 @@ class DataCodes {
     this.deletedAt,
     this.createdAt,
     this.updatedAt,
+    this.commission,
+    this.subscribers,
   });
 
   int? id;
   int? agentId;
   String? code;
   int? isDefault;
+  var commission;
+  var subscribers;
   dynamic deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -121,6 +125,8 @@ class DataCodes {
     code: json["code"] == null ? null : json["code"],
     isDefault: json["is_default"] == null ? null : json["is_default"] == true ? 1 : 0,
     deletedAt: json["deleted_at"],
+    commission: json["commission"],
+    subscribers: json["subscribers"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
   );
@@ -131,6 +137,8 @@ class DataCodes {
     "code": code == null ? null : code,
     "is_default": isDefault == null ? null : isDefault,
     "deleted_at": deletedAt,
+    "commission": commission,
+    "subscribers": subscribers,
     "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
     "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
   };
