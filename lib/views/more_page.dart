@@ -35,10 +35,13 @@ class _MorePageState extends State<MorePage> {
      var js = await doGet('${AppUrl.agentPromoCodes}');
      print("res agentPromoCodes : $js");
      if (js["status"] && js["data"]["data"].isNotEmpty) {
-       Navigator.pop(context);
        AgentData agentData = AgentData.fromJson(js["data"]);
+       print("object:${js["data"]["data"][0]["commission"]}");
+       totalCommission = js["total_commissions"];
        listAgentData.add(agentData);
        toastMessage("${js["message"]}");
+       Navigator.pop(context);
+
        await goTo(context, CommissionAgentPage());
      }else{
        Navigator.pop(context);
@@ -254,7 +257,9 @@ class _MorePageState extends State<MorePage> {
                     onPressed: ()async{
                       print("widget.user.isAgent:${widget.user.isAgent}");
                       if(widget.user.isAgent! && listAgentData.isNotEmpty){
-                        await goTo(context, CommissionAgentPage());
+                        showLoaderDialog(context, message: "Loading...");
+                        await getAgentDetails();
+                        // await goTo(context, CommissionAgentPage());
                       }else if (widget.user.isAgent!){
                         showLoaderDialog(context, message: "Loading...");
                         await getAgentDetails();
