@@ -25,7 +25,6 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
       var js = await doGet('${AppUrl.agentTransaction}');
       print("res agentTransaction : $js");
       if (js["status"] && js["data"]["data"].isNotEmpty) {
-        Navigator.pop(context);
         AgentTransactionResponse agentData = AgentTransactionResponse.fromJson(js["data"]);
         listDataResponse.add(agentData);
         setState((){
@@ -350,7 +349,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                   ),
                   SizedBox(width: 5,),
                   Container(
-                    child: sText("500.50",color: Color(0XFF2D3E50),weight: FontWeight.bold,align: TextAlign.left,size: 30),
+                    child: sText("$totalCommission",color: Color(0XFF2D3E50),weight: FontWeight.bold,align: TextAlign.left,size: 30),
                   ),
                 ],
               ),
@@ -374,34 +373,36 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                         Positioned(
                           bottom: 20,
                           left: 30,
-                          child:sText("RS",color: kAdeoGray3,weight: FontWeight.w500,size: 14),
+                          child:Row(
+                            children: [
+                              sText("RS",color: kAdeoGray3,weight: FontWeight.w500,size: 14),
+                              sText("${listAgentData[0].data![i].subscribers}",color: Colors.white,weight: FontWeight.bold,size: 20)
+                            ],
+                          ),
 
                         ),
-                        Positioned(
-                          bottom: 18,
-                          left: 50,
-                          child: sText("180",color: Colors.white,weight: FontWeight.bold,size: 20),
 
-                        ),
                         Positioned(
                           top: 30,
-                          left: appWidth(context)/4,
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  sText("${listAgentData[0].data![i].code}",color: Colors.white,weight: FontWeight.bold,size: 30),
-                                  sText("Referral codes",color: kAdeoGray3,weight: FontWeight.w500,size: 14,align: TextAlign.center)
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  Clipboard.setData(ClipboardData(text: "${listAgentData[0].data![i].code}"));
-                                  toastMessage("Copied to clipboard");
-                                },
-                                  child: Icon(Icons.copy,color: kAdeoGray3,),
-                              )
-                            ],
+                          left: 120,
+                          child: Center(
+                            child: Row(
+                              children: [
+                                Column(
+                                  children: [
+                                    sText("${listAgentData[0].data![i].code}",color: Colors.white,weight: FontWeight.bold,size: 30),
+                                    sText("Referral codes",color: kAdeoGray3,weight: FontWeight.w500,size: 14,align: TextAlign.center)
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Clipboard.setData(ClipboardData(text: "${listAgentData[0].data![i].code}"));
+                                    toastMessage("Copied to clipboard");
+                                  },
+                                    child: Icon(Icons.copy,color: kAdeoGray3,),
+                                )
+                              ],
+                            ),
                           ),
 
                         ),
@@ -409,14 +410,13 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
 
                         Positioned(
                           bottom: 20,
-                          right: 100,
-                          child:sText("GHC",color: kAdeoGray3,weight: FontWeight.w500,size: 14),
-
-                        ),
-                        Positioned(
-                          bottom: 18,
                           right: 20,
-                          child: sText("200.50",color: Colors.white,weight: FontWeight.bold,size: 20),
+                          child:Row(
+                            children: [
+                              sText("GHC",color: kAdeoGray3,weight: FontWeight.w500,size: 14),
+                              sText("${listAgentData[0].data![i].commission}",color: Colors.white,weight: FontWeight.bold,size: 20),
+                            ],
+                          ),
 
                         ),
                       ],
