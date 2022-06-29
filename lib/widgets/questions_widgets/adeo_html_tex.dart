@@ -53,8 +53,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
     return Padding(
       padding: const EdgeInsets.only(right: 0, left: 0),
       child: Html(
-        data: setTexTags(widget.text,
-            removeTags: widget.removeTags, removeBr: true),
+        data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: false),
         style: {
           "body": Style(
               color: widget.textColor,
@@ -172,8 +171,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
   @override
   Widget build(BuildContext context) {
     return Html(
-      data: setTexTags(widget.text,
-          removeTags: widget.removeTags, removeBr: true),
+      data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: false),
       style: {
         "body": Style(
           padding: const EdgeInsets.only(right: 21, left: 10),
