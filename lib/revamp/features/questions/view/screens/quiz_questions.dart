@@ -570,28 +570,33 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                        child: AdeoHtmlTex(
                                          controller.user,
                                          controller.questions[i].instructions!.replaceAll("https", "http"),
-                                         removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                         // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
                                          useLocalImage:  widget.diagnostic ? false : true,
                                          fontWeight: FontWeight.normal,
                                          textColor: Colors.black,
                                        )),
                                  ),
-                                 Visibility(
-                                     visible: controller.questions[i].resource!.isNotEmpty ? true : false,
-                                     child: Card(
-                                       elevation: 0,
-                                       color: Colors.white,
-                                       margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                                       child: AdeoHtmlTex(
-                                         controller.user,
-                                         controller.questions[i].resource!.replaceAll("https", "http"),
-                                         removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-                                         useLocalImage:  widget.diagnostic ? false : true,
-                                         textColor: Colors.grey,
-                                         fontWeight: FontWeight.normal,
+                                 GestureDetector(
+                                   onTap: (){
+                                     print("object");
+                                   },
+                                   child: Visibility(
+                                       visible: controller.questions[i].resource!.isNotEmpty ? true : false,
+                                       child: Card(
+                                         elevation: 0,
+                                         color: Colors.white,
+                                         margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                         child: AdeoHtmlTex(
+                                           controller.user,
+                                           controller.questions[i].resource!.replaceAll("https", "http"),
+                                           // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                           useLocalImage:  widget.diagnostic ? false : true,
+                                           textColor: Colors.grey,
+                                           fontWeight: FontWeight.normal,
 
+                                         ),
                                        ),
-                                     ),
+                                   ),
                                  ),
 
                                  const SizedBox(
@@ -624,7 +629,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                              child:  AdeoHtmlTex(
                                                  controller.user,
                                                  controller.questions[i].answers![index].text!.replaceAll("https", "http"),
-                                                   removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                                                   // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
                                                    useLocalImage: widget.diagnostic ? false : true,
                                                    textColor: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Colors.white :kSecondaryTextColor,
                                                    fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
