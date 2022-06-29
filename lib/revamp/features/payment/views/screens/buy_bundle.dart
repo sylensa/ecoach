@@ -60,6 +60,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
   List<SubscriptionItem> items = [];
   List<SubscriptionItem> listSubscriptionItem = [];
   bool isPressedDown = false;
+  bool progressCode = true;
   bool isSubscribed = false;
   List que = [];
   List<Subscription> subscriptions = [];
@@ -610,6 +611,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
     }
     setState(() {
       print("items:${items.length}");
+      progressCode = false;
     });
 
   }
@@ -626,6 +628,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
           getSubscriptionPlan();
         }else{
           isSubscribed = true;
+          progressCode = false;
         }
         print("object:$items");
         // toast("object:$items");
@@ -1163,7 +1166,9 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                 ),
                 color: const Color(0xFFF5F5F5),
               ),
-            ))
+            )) :
+                !progressCode ?
+                    Expanded(child: Center(child: sText("Plan not found"),))
                 : progress()
           ],
         ),
