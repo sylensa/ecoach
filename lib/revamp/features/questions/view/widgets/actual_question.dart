@@ -27,7 +27,7 @@ class ActualQuestion extends StatelessWidget {
             question.replaceAll("https", "http"),
             fontStyle: FontStyle.italic,
             useLocalImage: diagnostic ? false : true,
-            removeTags: question.contains("src") ? false : true,
+            // removeTags: question.contains("src") ? false : true,
             textColor: Colors.black,
           ),
         ),
