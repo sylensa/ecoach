@@ -104,12 +104,10 @@ class _MyAppState extends State<MyApp> {
                 return PhoneNumberVerification(user);
               } else if (!user.activated) {
                 return LogInPage();
-              }
-
-              if (user.subscriptions.length == 0 && !user.hasTakenTest) {
+              }else if(user.activated){
                 return MainHomePage(user);
               }
-              return MainHomePage(user);
+              return LogInPage();
             }
             else if (snapshot.data == null) {
               return LogInPage();

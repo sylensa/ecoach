@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
@@ -114,7 +115,6 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
     setState(() {
       currentCorrectScoreState();
-      avgScore ();
       currentQuestion++;
 
 
@@ -185,11 +185,19 @@ class _QuizQuestionState extends State<QuizQuestion> {
     return jsonEncode(responses);
   }
   avgTimeComplete(){
-    int count = 0;
+    double count = 0.0;
     for(int i = 0; i <  controller.questions.length; i++){
       count += controller.questions[i].time!;
     }
-    return count;
+
+    if(count == 0 && currentQuestion == 0){
+      count = 0;
+    }else{
+      count = count/currentQuestion;
+    }
+
+    print("count:$count");
+    return count.toStringAsFixed(2);
   }
   completeQuiz() async {
     if (!controller.disableTime) {
@@ -248,18 +256,18 @@ class _QuizQuestionState extends State<QuizQuestion> {
     });
 
   }
-  avgScore () {
+  double get avgScore {
     print("avg scoring current question= $currentQuestion");
-    int totalQuestions = currentQuestion + 1;
+    int totalQuestions = correct + wrong;
 
     int correctAnswers = correct;
     if (totalQuestions == 0) {
       return 0;
     }
-    totalAverage = correctAnswers / totalQuestions * 100;
-    setState((){
+    totalAverage = (correctAnswers / totalQuestions) * 100;
+    return double.parse(totalAverage.toStringAsFixed(2));
 
-    });
+
   }
 
   late BannerAd _bannerAd;
@@ -342,15 +350,17 @@ class _QuizQuestionState extends State<QuizQuestion> {
         return false;
       },
       child: Scaffold(
-
+        backgroundColor: Colors.grey[100],
         body: Column(
           children: [
-            if(_isBannerAdReady)
-            Container(
-              height: _bannerAd.size.height.toDouble(),
-              width: _bannerAd.size.width.toDouble(),
-              child: AdWidget(ad: _bannerAd,),
-            ),
+            // if(_isBannerAdReady && Platform.isAndroid && widget.diagnostic)
+            // Container(
+            //   height: _bannerAd.size.height.toDouble(),
+            //   width: _bannerAd.size.width.toDouble(),
+            //   child: AdWidget(ad: _bannerAd,),
+            // ),
+            if(Platform.isIOS)
+              SizedBox(height: 30,),
             Container(
               child: Row(
                 children: [
@@ -432,7 +442,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 5,
                   ),
                    Text(
-                    "${totalAverage.toStringAsFixed(2)}%",
+                    "${avgScore}%",
                     style: TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
@@ -457,10 +467,16 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 17.6,
                   ),
-                  SvgPicture.asset(
-                    "assets/images/add.svg",
-                    height: 13.8,
-                    width: 13.8,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                   const SizedBox(
                     width: 4,
@@ -475,10 +491,17 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 17,
                   ),
-                  const Icon(
-                    Icons.remove,
-                    color: Colors.red,
+                   Container(
+                     decoration: BoxDecoration(
+                       color: Colors.white,
+                       shape: BoxShape.circle,
+                     ),
+                     child: Icon(
+                      Icons.cancel,
+                      color: Colors.red,
+                       size: 16,
                   ),
+                   ),
                   const SizedBox(
                     width: 6.4,
                   ),
@@ -528,102 +551,117 @@ class _QuizQuestionState extends State<QuizQuestion> {
                         ActualQuestion(
                           user: controller.user,
                           question: "${controller.questions[i].text}",
+                          diagnostic: widget.diagnostic,
                           direction: "Choose the right answer to the question above",
                         ),
                        Expanded(
                          child: ListView(
                            padding: EdgeInsets.zero,
                            children: [
-                             Container(
-                            padding: const EdgeInsets.all(0.0),
-                            decoration: const BoxDecoration(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Visibility(
-                                  visible: controller.questions[i].instructions!.isNotEmpty ? true : false,
-                                  child: Card(
-                                      color: Colors.grey[100],
-                                      elevation: 0,
-                                      child: AdeoHtmlTex(
-                                        controller.user,
-                                        controller.questions[i].instructions!.replaceAll("https", "http"),
-                                        removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
-                                        useLocalImage: false,
-                                        textColor: Colors.black,
-                                      )),
-                                ),
-                                Visibility(
-                                    visible: controller.questions[i].resource!.isNotEmpty ? true : false,
-                                    child: AdeoHtmlTex(
-                                      controller.user,
-                                      controller.questions[i].resource!.replaceAll("https", "http"),
-                                      removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-                                      useLocalImage: false,
-                                      textColor: Colors.black,
-                                    ),
-                                ),
+                             Column(
+                               crossAxisAlignment: CrossAxisAlignment.stretch,
+                               children: [
+                                 Visibility(
+                                   visible: controller.questions[i].instructions!.isNotEmpty ? true : false,
+                                   child: Card(
+                                       elevation: 0,
+                                       color: Colors.white,
+                                       margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                       child: AdeoHtmlTex(
+                                         controller.user,
+                                         controller.questions[i].instructions!.replaceAll("https", "http"),
+                                         // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                         useLocalImage:  widget.diagnostic ? false : true,
+                                         fontWeight: FontWeight.normal,
+                                         textColor: Colors.black,
+                                       )),
+                                 ),
+                                 GestureDetector(
+                                   onTap: (){
+                                     print("object");
+                                   },
+                                   child: Visibility(
+                                       visible: controller.questions[i].resource!.isNotEmpty ? true : false,
+                                       child: Card(
+                                         elevation: 0,
+                                         color: Colors.white,
+                                         margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                         child: AdeoHtmlTex(
+                                           controller.user,
+                                           controller.questions[i].resource!.replaceAll("https", "http"),
+                                           // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                           useLocalImage:  widget.diagnostic ? false : true,
+                                           textColor: Colors.grey,
+                                           fontWeight: FontWeight.normal,
 
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                ...List.generate(controller.questions[i].answers!.length, (index) {
-                                  return GestureDetector(
-                                    onTap: (){
-                                      setState(() {
-                                        print("countdownInSeconds:$countdownInSeconds");
-                                        controller.questions[i].selectedAnswer = controller.questions[i].answers![index];
-                                        var dateFormat = DateFormat('h:m:s');
-                                        DateTime durationEnd =  dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-                                        timeSpent = durationEnd.difference(durationStart).inSeconds;
-                                        controller.questions[i].time = timeSpent;
-                                        durationStart = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-                                        nextButton();
-                                      });
-                                    },
-                                    child: Container(
-                                      margin: const EdgeInsets.only(bottom: 10,right: 20,left: 20),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child:  AdeoHtmlTex(
-                                                controller.user,
-                                                controller.questions[i].answers![index].text!.replaceAll("https", "http"),
-                                                removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                         ),
+                                       ),
+                                   ),
+                                 ),
 
-                                                  useLocalImage: false,
-                                                  textColor: kSecondaryTextColor,
-                                                  fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
-                                                  textAlign: TextAlign.left,
-                                                  fontWeight: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? FontWeight.bold : FontWeight.normal,
+                                 const SizedBox(
+                                   height: 10,
+                                 ),
+                                 ...List.generate(controller.questions[i].answers!.length, (index) {
+                                   return GestureDetector(
+                                     onTap: (){
+                                       setState(() {
+                                         print("countdownInSeconds:$countdownInSeconds");
+                                         controller.questions[i].selectedAnswer = controller.questions[i].answers![index];
+                                         var dateFormat = DateFormat('h:m:s');
+                                         DateTime durationEnd =  dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
+                                         timeSpent = durationEnd.difference(durationStart).inSeconds;
+                                         controller.questions[i].time = timeSpent;
+                                         durationStart = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
+                                         if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion)){
+                                           completeQuiz();
+                                         }else{
+                                           nextButton();
+                                         }
+                                       });
 
-                                                ),
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                           Icon(
-                                            controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Icons.radio_button_checked : Icons.radio_button_off ,
-                                            color: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Color(0xFF00C9B9) : Colors.white,
-                                          )
-                                        ],
-                                      ),
-                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                                      decoration: BoxDecoration(
-                                        color:  controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ?  Colors.white : Colors.white,
-                                        borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(
-                                          width: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 3 : 1,
-                                          color: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Color(0xFF00C9B9) : Color(0xFFC8C8C8),
-                                        ),
-                                      ),
-                                    ),
-                                  );
+                                     },
+                                     child: Container(
+                                       margin: const EdgeInsets.only(bottom: 10,right: 20,left: 20),
+                                       child: Row(
+                                         children: [
+                                           Expanded(
+                                             child:  AdeoHtmlTex(
+                                                 controller.user,
+                                                 controller.questions[i].answers![index].text!.replaceAll("https", "http"),
+                                                   // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                                                   useLocalImage: widget.diagnostic ? false : true,
+                                                   textColor: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Colors.white :kSecondaryTextColor,
+                                                   fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
+                                                   textAlign: TextAlign.left,
+                                                   fontWeight:  FontWeight.bold,
 
-                                })
-                              ],
-                            ),
-                          )
+                                                 ),
+                                           ),
+                                           const SizedBox(
+                                             width: 10,
+                                           ),
+                                            Icon(
+                                              Icons.radio_button_off ,
+                                             color: Colors.white,
+                                           )
+                                         ],
+                                       ),
+                                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                                       decoration: BoxDecoration(
+                                         color:  controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ?  Color(0xFF0367B4) : Colors.white,
+                                         borderRadius: BorderRadius.circular(14),
+                                         border: Border.all(
+                                           width: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 1 : 1,
+                                           color: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Colors.transparent : Color(0xFFC8C8C8),
+                                         ),
+                                       ),
+                                     ),
+                                   );
+
+                                 })
+                               ],
+                             )
                            ],
                          ),
                        )
@@ -634,42 +672,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
             ),
 
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              // margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  if (currentQuestion > 0 && (!controller.speedTest || controller.speedTest && !enabled))
-                    Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        // Get.to(() => const QuizReviewPage());
-                        pageController.previousPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
-                        setState(() {
-                          currentQuestion--;
-                          // numberingController.scrollTo(
-                          //     index: currentQuestion,
-                          //     duration: Duration(seconds: 1),
-                          //     curve: Curves.easeInOutCubic);
-                        });
-                        currentCorrectScoreState();
-                      },
-                      child: Container(
-                        color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        child: const Text(
-                          'Previous',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
 
-                  SizedBox(width: 10,),
                   if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
                   Expanded(
                     child: InkWell(
@@ -680,7 +687,6 @@ class _QuizQuestionState extends State<QuizQuestion> {
                         }
                         setState(() {
                           currentCorrectScoreState();
-                          avgScore ();
                           currentQuestion++;
 
                           pageController.nextPage(
@@ -698,14 +704,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       },
                       child: Container(
                         color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: const Text(
-                          'Next',
+                          'Skip',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -719,14 +725,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       },
                       child: Container(
                         color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: const Text(
                           'Complete',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -735,6 +741,107 @@ class _QuizQuestionState extends State<QuizQuestion> {
                 ],
               ),
             ),
+            // Container(
+            //   margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     children: [
+            //       if (currentQuestion > 0 && (!controller.speedTest || controller.speedTest && !enabled))
+            //         Expanded(
+            //         child: InkWell(
+            //           onTap: () {
+            //             // Get.to(() => const QuizReviewPage());
+            //             pageController.previousPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
+            //             setState(() {
+            //               currentQuestion--;
+            //               // numberingController.scrollTo(
+            //               //     index: currentQuestion,
+            //               //     duration: Duration(seconds: 1),
+            //               //     curve: Curves.easeInOutCubic);
+            //             });
+            //             currentCorrectScoreState();
+            //           },
+            //           child: Container(
+            //             color: kAccessmentButtonColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 15),
+            //             child: const Text(
+            //               'Previous',
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontSize: 18,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //
+            //       SizedBox(width: 10,),
+            //       if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
+            //       Expanded(
+            //         child: InkWell(
+            //           onTap: () {
+            //             // Get.to(() => const QuizReviewPage());
+            //             if (currentQuestion == controller.questions.length - 1) {
+            //               return;
+            //             }
+            //             setState(() {
+            //               currentCorrectScoreState();
+            //               currentQuestion++;
+            //
+            //               pageController.nextPage(
+            //                   duration: Duration(milliseconds: 1), curve: Curves.ease);
+            //
+            //               // numberingController.scrollTo(
+            //               //     index: currentQuestion,
+            //               //     duration: Duration(seconds: 1),
+            //               //     curve: Curves.easeInOutCubic);
+            //
+            //               if (controller.speedTest && enabled) {
+            //                 resetTimer();
+            //               }
+            //             });
+            //           },
+            //           child: Container(
+            //             color: kAccessmentButtonColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 15),
+            //             child: const Text(
+            //               'Next',
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontSize: 18,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
+            //         Expanded(
+            //         child: InkWell(
+            //           onTap: () {
+            //             completeQuiz();
+            //           },
+            //           child: Container(
+            //             color: kAccessmentButtonColor,
+            //             padding: const EdgeInsets.symmetric(vertical: 15),
+            //             child: const Text(
+            //               'Complete',
+            //               textAlign: TextAlign.center,
+            //               style: TextStyle(
+            //                 fontSize: 18,
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -1262,7 +1369,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     }
 
                     return Text(
-                        "${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                        "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
                         style: TextStyle(
                             color: backgroundColor, fontSize: 12));
                   },
@@ -1288,7 +1395,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                 style: TextStyle(color: backgroundColor, fontSize: 14));
           }
 
-          return Text("${remaining.inMinutes}:${remaining.inSeconds % 60}",
+          return Text("${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
               style: TextStyle(color: backgroundColor, fontSize: 14));
         },
         onFinish: () {

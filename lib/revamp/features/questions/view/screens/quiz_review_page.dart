@@ -216,6 +216,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
         return false;
       },
       child: Scaffold(
+        backgroundColor:Colors.grey[100],
         appBar:   AppBar(
           actions: [
             Center(
@@ -392,91 +393,97 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                             padding: EdgeInsets.zero,
                             children: [
 
-                              Container(
-                                padding: const EdgeInsets.all(0.0),
-                                decoration: const BoxDecoration(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    Visibility(
-                                      visible: reviewQuestionsBack[questionIndex].instructions!.isNotEmpty ? true : false,
-                                      child: Card(
-                                          elevation: 0,
-                                          color: Colors.grey[100],
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(0.0),
-                                            child:  AdeoHtmlTex(
-                                              widget.user!,
-                                              reviewQuestionsBack[questionIndex].instructions!.replaceAll("https", "http"),
-                                              useLocalImage: false,
-                                              removeTags: reviewQuestionsBack[questionIndex].instructions!.contains("src") ? false : true,
-                                              textColor: Colors.black,
-                                            ),
-                                          )),
-                                    ),
-                                    Visibility(
-                                      visible: reviewQuestionsBack[questionIndex].resource!.isNotEmpty ? true : false,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if(reviewQuestionsBack[questionIndex].instructions!.isNotEmpty)
+                                  Visibility(
+                                    visible: reviewQuestionsBack[questionIndex].instructions!.isNotEmpty ? true : false,
+                                    child: Card(
+                                        elevation: 0,
+                                        color: Colors.white,
+                                        margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(0.0),
+                                          child:  AdeoHtmlTex(
+                                            widget.user!,
+                                            reviewQuestionsBack[questionIndex].instructions!.replaceAll("https", "http"),
+                                            useLocalImage: true,
+                                            // removeTags: reviewQuestionsBack[questionIndex].instructions!.contains("src") ? false : true,
+                                            textColor: Colors.black,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        )),
+                                  ),
+                                  if(reviewQuestionsBack[questionIndex].resource!.isNotEmpty)
+                                  Visibility(
+                                    visible: reviewQuestionsBack[questionIndex].resource!.isNotEmpty ? true : false,
+                                    child: Card(
+                                      elevation: 0,
+                                      color: Colors.white,
+                                      margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
                                       child: AdeoHtmlTex(
                                        widget.user!,
                                         reviewQuestionsBack[questionIndex].resource!.replaceAll("https", "http"),
-                                        useLocalImage: false,
-                                        removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
-
-                                        textColor: Colors.black,
+                                        useLocalImage: true,
+                                        // removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
+                                        textColor: Colors.grey,
+                                        fontWeight: FontWeight.normal,
                                       ),
                                     ),
+                                  ),
 
-                                    Visibility(
-                                      visible: reviewQuestionsBack[questionIndex].answers![0].solution!.isNotEmpty ? true : false,
-                                      child:  Container(
-                                        padding: const EdgeInsets.all(0),
-                                        margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF00C9B9),
-                                          borderRadius: BorderRadius.circular(6),
+                                  Visibility(
+                                    visible: reviewQuestionsBack[questionIndex].answers![0].solution!.isNotEmpty ? true : false,
+                                    child:  Container(
+                                      padding: const EdgeInsets.all(0),
+                                      margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF00C9B9),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: ExpansionTile(
+                                        textColor: Colors.white,
+                                        iconColor: Colors.white,
+                                        collapsedIconColor: Colors.white,
+                                        title: const Text(
+                                          'Solution',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                        child: ExpansionTile(
-                                          textColor: Colors.white,
-                                          iconColor: Colors.white,
-                                          collapsedIconColor: Colors.white,
-                                          title: const Text(
-                                            'Solution',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
+                                        children: <Widget>[
+                                          const Divider(
+                                            color: Colors.white,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(0.0),
+                                            child:  AdeoHtmlTex(
+                                             widget.user!,
+                                              reviewQuestionsBack[questionIndex].answers![0].solution!.replaceAll("https", "http"),
+                                              useLocalImage: false,
+                                              // removeTags: reviewQuestionsBack[questionIndex].answers![0].solution!.contains("src") ? false : true,
+                                              textColor: Colors.white,
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 14,
                                             ),
                                           ),
-                                          children: <Widget>[
-                                            const Divider(
-                                              color: Colors.white,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(0.0),
-                                              child:  AdeoHtmlTex(
-                                               widget.user!,
-                                                reviewQuestionsBack[questionIndex].answers![0].solution!.replaceAll("https", "http"),
-                                                useLocalImage: false,
-                                                removeTags: reviewQuestionsBack[questionIndex].answers![0].solution!.contains("src") ? false : true,
-                                                textColor: Colors.black,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    ...List.generate(reviewQuestionsBack[questionIndex].answers!.length, (index) {
-                                     return answerWidget(reviewQuestionsBack[questionIndex].answers![index]);
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  ...List.generate(reviewQuestionsBack[questionIndex].answers!.length, (index) {
+                                   return answerWidget(reviewQuestionsBack[questionIndex].answers![index]);
 
 
-                                    })
-                                  ],
-                                ),
+                                  })
+                                ],
                               )
                             ],
                           ),
@@ -626,12 +633,12 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                 child:  AdeoHtmlTex(
                   widget.user!,
                   answer.text!.replaceAll("https", "http"),
-                  useLocalImage: false,
+                  useLocalImage: true,
                   textColor: reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 0 ? Colors.black :
                   reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 1 ? Colors.white :
                   ((reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id && answer.value == 1) ||  answer.value == 1) ||  (reviewQuestionsBack[questionIndex].isCorrect && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id) || (reviewQuestionsBack[questionIndex].isWrong && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id)  ? Colors.white : Colors.black ,
                   fontSize: 25,
-                  removeTags: answer.text!.contains("src") ? false : true,
+                  // removeTags: answer.text!.contains("src") ? false : true,
 
                   fontWeight: reviewQuestionsBack[questionIndex].selectedAnswer == answer ? FontWeight.bold : FontWeight.normal,
                 ),

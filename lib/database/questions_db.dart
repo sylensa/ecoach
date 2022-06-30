@@ -435,7 +435,10 @@ class QuestionDB {
       whereArgs: [id],
     );
   }
-
+  deleteAllQuestions() async {
+    final db = await DBProvider.database;
+    db!.delete('questions');
+  }
   deleteSavedTest(int id) async {
     final db = await DBProvider.database;
     db!.delete(

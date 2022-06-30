@@ -733,9 +733,7 @@ class _ThirdPartyPayState extends State<ThirdPartyPay> {
                                   isActivated = false;
                                 });
                               try{
-                                var token = (await UserPreferences().getUserToken());
-                                print("token:$token");
-                                var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"1234"},token!);
+                                var res = await doPost(AppUrl.productKey, {'product-key':productKeyController.text,'user-id': widget.user.id,'reference-id':"1234"});
                                 print("res:$res");
                                 if(res["code"].toString() == "200"){
                                   Navigator.pop(context);

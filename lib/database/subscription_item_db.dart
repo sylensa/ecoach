@@ -144,7 +144,8 @@ class SubscriptionItemDB {
         course: await CourseDB().getCourseById(int.parse(maps[i]['tag'])),
         quizCount:  maps[i]['quiz_count'],
         topicCount: maps[i]['topic_count'],
-        questionCount:  maps[i]['question_count'],
+        questionCount:
+        await QuestionDB().getTotalQuestionCount(int.parse(maps[i]['tag'])),
       ));
     }
     return items;
@@ -189,5 +190,10 @@ class SubscriptionItemDB {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  deleteAll() async {
+    final db = await DBProvider.database;
+    db!.delete('subscription_items');
   }
 }

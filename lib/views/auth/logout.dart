@@ -2,6 +2,7 @@ import 'package:ecoach/api/google_signin_call.dart';
 import 'package:ecoach/database/plan.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/subscription_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,9 @@ class _LogoutState extends State<Logout> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) async{
       await SubscriptionDB().deleteAll();
+      await SubscriptionItemDB().deleteAll();
       await QuestionDB().deleteAllSavedTest();
+      await QuestionDB().deleteAllQuestions();
       var status = await UserPreferences().getLoginWith() ;
        await UserPreferences().removeUser();
       if(status){

@@ -54,13 +54,17 @@ class _SavedDownloadState extends State<SavedDownload> {
     List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems(widget.bundle.planId!);
     print("sItem:${sItem.length}");
     for(int t = 0; t < sItem.length; t++){
-      List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
+      List<Question> question = [];
+     try{
+       question  = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
+     }catch(e){
+       print("error:$e");
+     }
       print("object:${question.length}");
       if(question.length > 0){
         que.add(question.length);
         this.items.add( sItem[t]);
       }
-
     }
     setState(() {
       print("que:${que.length}");

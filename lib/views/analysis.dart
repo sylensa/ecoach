@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/grade.dart';
 import 'package:ecoach/models/report.dart';
@@ -40,6 +41,7 @@ class _AnalysisViewState extends State<AnalysisView> {
   List<SubscriptionItem> subscriptions = [];
   SubscriptionItem? subscription;
   Future? course;
+  bool progressCode = true;
 
   @override
   void initState() {
@@ -57,8 +59,11 @@ class _AnalysisViewState extends State<AnalysisView> {
           this.course = getCourseById(int.parse(subscriptions[0].tag!));
         }
         this.subscriptions = subscriptions;
-        setState(() {});
+
       }
+      setState(() {
+        progressCode = false;
+      });
     });
     super.initState();
   }
@@ -95,13 +100,8 @@ class _AnalysisViewState extends State<AnalysisView> {
               pageHeading: 'Track your progress',
               size: Sizes.small,
             ),
-            subscription == null || subscriptions.length == 0
-                ? Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : Expanded(
+            subscriptions.isNotEmpty ?
+            Expanded(
                     child: Column(
                       children: [
                         AdeoDropdownBorderless(
@@ -241,7 +241,14 @@ class _AnalysisViewState extends State<AnalysisView> {
                             })
                       ],
                     ),
-                  )
+                  ) :
+            subscriptions.isEmpty && progressCode ?
+            const Expanded(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ) :
+            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text("Subscribe to track your progress", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
           ],
         ),
       ),

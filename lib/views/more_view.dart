@@ -47,19 +47,22 @@ class _MoreViewState extends State<MoreView> {
     });
   }
   getSubscriptionItems() async{
-    for(int i =0; i < context.read<DownloadUpdate>().plans!.length; i++){
-      int count = 0;
-      print("len:${ context.read<DownloadUpdate>().plans!.length}");
-     List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans![i].planId!);
-      for(int t = 0; t < sItem.length; t++){
-        if(sItem[t].course != null){
-          List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
-          print("object:${question.length}");
-          count += question.length;
+    if(context.read<DownloadUpdate>().plans != null){
+      for(int i =0; i < context.read<DownloadUpdate>().plans!.length; i++){
+        int count = 0;
+        print("len:${ context.read<DownloadUpdate>().plans!.length}");
+        List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans![i].planId!);
+        for(int t = 0; t < sItem.length; t++){
+          if(sItem[t].course != null){
+            List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
+            print("object:${question.length}");
+            count += question.length;
+          }
         }
+        que.add(count);
       }
-      que.add(count);
     }
+
     setState(() {
       print("que:$que");
     });
@@ -72,7 +75,7 @@ class _MoreViewState extends State<MoreView> {
     super.initState();
     UserPreferences().getUser().then((user) {
       setState(() {
-        subscriptions = user!.subscriptions;
+        subscriptions = user != null ? user.subscriptions : [];
         context.read<DownloadUpdate>().setSubscriptions(subscriptions);
         getSubscriptionItems();
       });
@@ -80,12 +83,12 @@ class _MoreViewState extends State<MoreView> {
 
     userInfo = UserInfo(
       country: 'Ghana',
-      dateJoined: widget.user.signupDate!.toString(),
-      email: widget.user.email!,
-      name: widget.user.name!,
+      dateJoined: widget.user.signupDate != null ? widget.user.signupDate!.toString() : "",
+      email: widget.user.email != null ? widget.user.email! : "",
+      name: widget.user.name != null ? widget.user.name! : "",
       initials: widget.user.initials,
-      phoneNumber: widget.user.phone!,
-      profileImageURL: widget.user.avatar != null ? widget.user.avatar! : null,
+      phoneNumber: widget.user.phone != null ? widget.user.phone! : "",
+      profileImageURL: widget.user.avatar != null ? widget.user.avatar! : "",
     );
 
     infoList = [
@@ -120,7 +123,6 @@ class _MoreViewState extends State<MoreView> {
       child: SafeArea(
         top: true,
         bottom: false,
-
         maintainBottomViewPadding: false,
         child: Scaffold(
             key: scaffoldKey,
@@ -249,7 +251,8 @@ class _MoreViewState extends State<MoreView> {
                           ),
                         ],
                       ),
-                    ) : Container(
+                    ) :
+                    Container(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Center(child: sText("You haven't subscribe to any bundles yet", color: Colors.white,size: 20,align: TextAlign.center,weight: FontWeight.bold),),
                     ),
@@ -310,8 +313,8 @@ class _MoreViewState extends State<MoreView> {
                           )
                         ],
                       ),
-                    )
-                        : Container(
+                    ) :
+                    Container(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Center(child: sText("You haven't subscribe to any bundles yet", color: Colors.white,size: 20,align: TextAlign.center,weight: FontWeight.bold),),
                     ),

@@ -8,7 +8,7 @@ class AppUrl {
 
   static const String websocket = websocketWS;
 
-  static const String baseURL = qaBaseURL;
+  static const String baseURL = liveBaseURL;
   static const String login = baseURL + "signin";
   static const String register = baseURL + "signup";
   static const String resend_pin = baseURL + "pin/resend";
@@ -22,6 +22,9 @@ class AppUrl {
   static const String payment_callback = baseURL + "paystack/callback";
 
   static const String plans = baseURL + "plans";
+  static const String agentPromoCodes = baseURL + "agent/promo/codes";
+  static const String userPromoCodes = baseURL + "user/promo/codes";
+  static const String agentTransaction = baseURL + "agent/transactions";
   static const String levels = baseURL + "levels";
   static const String levelGroups = baseURL + "level-groups";
 

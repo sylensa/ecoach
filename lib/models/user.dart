@@ -20,6 +20,7 @@ class User {
   String? nickname;
   String? avatar;
   bool activated;
+  bool? isAgent;
   DateTime? signupDate;
 
   Wallet wallet = Wallet();
@@ -40,6 +41,7 @@ class User {
       this.gender,
       this.avatar,
       this.token,
+      this.isAgent,
       this.lastLoggedIn,
       this.activated = false,
       this.signupDate});
@@ -76,6 +78,7 @@ class User {
       type: json['type'],
       gender: json['gender'],
       token: json['api_token'],
+      isAgent: json['is_agent'] ?? false,
       avatar: json['avatar'],
       // activated:
       //     json['activated'] is int && json['activated'] == 1 ? true : false,
@@ -92,6 +95,7 @@ class User {
     type = json['type'];
     gender = json['gender'];
     token = json['api_token'];
+    isAgent = json['is_agent'] ?? false;
     avatar = json['avatar'];
     signupDate = json['signup_date'];
   }
@@ -106,6 +110,7 @@ class User {
         "type": type,
         "gender": gender,
         "api_token": token,
+        "is_agent": isAgent ?? false,
         "avatar": avatar,
         "signup_date": signupDate!.toIso8601String(),
       };
