@@ -40,6 +40,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Adeo uses the local network to connect to devices around you</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Adeo needs access to your Library to save your files</string>
 	<key>NSPhotoLibraryUsageDescription</key>
