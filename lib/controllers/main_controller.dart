@@ -83,10 +83,9 @@ class MainController {
         provider.setSubscriptions(freshSubscriptions);
         await SubscriptionDB().insertAll(freshSubscriptions);
         provider.setNotificationUp(true, newSubs);
-        List<SubscriptionItem> items =
-            await SubscriptionItemDB().undownloadedItems();
-
-        if (items.length > 0) {
+        List<SubscriptionItem> items = await SubscriptionItemDB().undownloadedItems();
+        print("items:${items.length}");
+        if (items.isNotEmpty) {
           showDialog(
               context: context,
               builder: (context) {

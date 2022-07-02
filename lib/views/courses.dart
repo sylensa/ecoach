@@ -230,7 +230,7 @@ class _CourseViewState extends State<CourseView> {
               await LevelDB().insertAll(data!.levels!);
               await CourseDB().insertAll(data!.courses!);
             }
-            getSubscriptionCourse();
+            await getSubscriptionCourse();
           }, onError: (e) {
           }).get(context);
     }
