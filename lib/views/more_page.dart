@@ -31,6 +31,7 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   getAgentDetails()async {
+    listAgentData.clear();
    try{
      var js = await doGet('${AppUrl.agentPromoCodes}');
      print("res agentPromoCodes : $js");
