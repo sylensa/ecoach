@@ -134,7 +134,6 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
   void initState() {
     pageController = PageController(initialPage: 0);
     questionCount = getQuestionIndex();
-    currentCorrectScoreState();
     getAllSaveTestQuestions();
     super.initState();
   }
@@ -153,16 +152,6 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
 
 
   bool swichValue = false;
-  currentCorrectScoreState(){
-    setState((){
-      if(reviewQuestionsBack[questionIndex].isCorrect){
-        isCorrect = true;
-      }else{
-        isCorrect = false;
-      }
-    });
-
-  }
   double get score {
     int totalQuestions = reviewQuestionsBack.length;
     int correctAnswers = correct;
@@ -192,19 +181,6 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
     return unattempted;
   }
 
-  avgScore () {
-    print("avg scoring current question= $questionIndex");
-    int totalQuestions = questionIndex + 1;
-
-    int correctAnswers = correct;
-    if (totalQuestions == 0) {
-      return 0;
-    }
-    totalAverage = correctAnswers / totalQuestions * 100;
-    setState((){
-
-    });
-  }
 
 
 
@@ -508,9 +484,6 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                             toastMessage("Do you want to quit the questions");
                           } else {
                             questionIndex--;
-                            avgScore();
-                            currentCorrectScoreState();
-
                             questionCount = getQuestionIndex();
                           }
                           await Future.delayed(Duration(milliseconds: 1));
@@ -566,14 +539,13 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                             Navigator.pop(context, 1);
                             // showDialogOk(message: "You've finished answering the questions, click on ok to view your scores",context: context,target: Dashboard(),status: true,replace: true,dismiss: false);
                           } else {
-                            await Future.delayed(Duration(milliseconds: 1));
                             questionIndex++;
-                            currentCorrectScoreState();
-                            avgScore();
                             questionCount = getQuestionIndex();
                           }
+                          await Future.delayed(Duration(milliseconds: 1));
+                          pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
+
                           setState(() {
-                            pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
                           });
                         },
                         child: Container(
