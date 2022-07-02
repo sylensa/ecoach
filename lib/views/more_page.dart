@@ -36,12 +36,10 @@ class _MorePageState extends State<MorePage> {
      print("res agentPromoCodes : $js");
      if (js["status"] && js["data"]["data"].isNotEmpty) {
        AgentData agentData = AgentData.fromJson(js["data"]);
-       print("object:${js["data"]["data"][0]["commission"]}");
        totalCommission = js["total_commissions"];
        listAgentData.add(agentData);
        toastMessage("${js["message"]}");
        Navigator.pop(context);
-
        await goTo(context, CommissionAgentPage());
      }else{
        Navigator.pop(context);
