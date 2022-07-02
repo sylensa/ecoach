@@ -105,100 +105,105 @@ class _ResultsViewState extends State<ResultsView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Scaffold(
-        backgroundColor: kPageBackgroundGray,
-        body: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                top: 31.0,
-                bottom: 21.0,
-                left: 24,
-                right: 24,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        widget.test.score!.ceil().toString() + '%',
-                        style: _topMainTextStyle,
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'Score',
-                        style: _topLabelStyle,
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        getDurationTime(
-                          Duration(seconds: widget.test.usedTime ?? 0),
-                        ),
-                        style: _topMainTextStyle,
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'Time Taken',
-                        style: _topLabelStyle,
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        "${widget.test.numberOfQuestions}",
-                        style: _topMainTextStyle,
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'Questions',
-                        style: _topLabelStyle,
-                      )
-                    ],
-                  )
-                ],
-              ),
+    return Scaffold(
+      backgroundColor: kPageBackgroundGray,
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+              top: 31.0,
+              bottom: 21.0,
+              left: 24,
+              right: 24,
             ),
-            Divider(
-              thickness: 3.0,
-              color: Colors.white,
-            ),
-            SizedBox(height: 25),
-            AdeoTabControl(
-              variant: 'default',
-              tabs: ['topics', 'questions'],
-              tabPages: [
-                TopicsTabPage(widget.testType,
-                    topics: topicsPlaceholder,
-                    diagnostic: widget.diagnostic,
-                    user: widget.user,
-                    testTaken:widget.test,
-
-                    // TODO - add course to topics page - find a better way like using getx or provider
-                    course: widget.course,
-                    history: widget.history),
-                QuestionsTabPage(
-                    questions: questionPlaceholder,
-                    diagnostic: widget.diagnostic,
-                    user: widget.user,
-                    history: widget.history,
-                    testTaken:widget.test,
-                    course:widget.course,
-                    testType:widget.testType,
-                    challengeType:widget.testCategory,
-                    controller:widget.controller,
-
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    child:Icon(Icons.arrow_back_ios),
+                  ),
                 ),
+                Column(
+                  children: [
+                    Text(
+                      widget.test.score!.ceil().toString() + '%',
+                      style: _topMainTextStyle,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Score',
+                      style: _topLabelStyle,
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      getDurationTime(
+                        Duration(seconds: widget.test.usedTime ?? 0),
+                      ),
+                      style: _topMainTextStyle,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Time Taken',
+                      style: _topLabelStyle,
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      "${widget.test.numberOfQuestions}",
+                      style: _topMainTextStyle,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Questions',
+                      style: _topLabelStyle,
+                    )
+                  ],
+                )
               ],
             ),
-          ],
-        ),
+          ),
+          Divider(
+            thickness: 3.0,
+            color: Colors.white,
+          ),
+          SizedBox(height: 25),
+          AdeoTabControl(
+            variant: 'default',
+            tabs: ['topics', 'questions'],
+            tabPages: [
+              TopicsTabPage(widget.testType,
+                  topics: topicsPlaceholder,
+                  diagnostic: widget.diagnostic,
+                  user: widget.user,
+                  testTaken:widget.test,
+
+                  // TODO - add course to topics page - find a better way like using getx or provider
+                  course: widget.course,
+                  history: widget.history),
+              QuestionsTabPage(
+                  questions: questionPlaceholder,
+                  diagnostic: widget.diagnostic,
+                  user: widget.user,
+                  history: widget.history,
+                  testTaken:widget.test,
+                  course:widget.course,
+                  testType:widget.testType,
+                  challengeType:widget.testCategory,
+                  controller:widget.controller,
+
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
