@@ -120,6 +120,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kHomeBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: kHomeBackgroundColor,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: Padding(
           padding:

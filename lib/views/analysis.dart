@@ -45,6 +45,8 @@ class _AnalysisViewState extends State<AnalysisView> {
 
   @override
   void initState() {
+    unSelectAnsweredQuestions.clear();
+    selectAnsweredQuestions.clear();
     SubscriptionItemDB()
         .allSubscriptionItems()
         .then((List<SubscriptionItem> subscriptions) {

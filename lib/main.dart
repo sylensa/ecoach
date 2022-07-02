@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/flavor_settings.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/plan.dart';
@@ -60,6 +61,7 @@ void main() async {
 
   print("initializing flavor");
   await FlavorSettings.init();
+  await QuestionDB().questions();
 
   runApp(
     ChangeNotifierProvider<DownloadUpdate>(

@@ -66,7 +66,7 @@ class _MainHomePageState extends State<MainHomePage>
         controller: mainController,
       ),
       GroupPage(widget.user),
-      CoursesPage(widget.user),
+      CoursesPage(widget.user,mainController),
       AnalysisView(user: widget.user),
       // MoreView(
       //   widget.user,
@@ -88,6 +88,7 @@ class _MainHomePageState extends State<MainHomePage>
   }
 
   checkSubscription() {
+    print("hey am here");
     mainController.checkSubscription((success) {
       UserPreferences().getUser().then((user) {
         setState(() {
@@ -115,8 +116,7 @@ class _MainHomePageState extends State<MainHomePage>
         Wakelock.enable();
       }
       WebsocketCall().addListener(this);
-      WebsocketCall().connect(
-          user: widget.user, channel: "${widget.user.id}-subscription");
+      WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
     }
     if (state == AppLifecycleState.paused) {
       Wakelock.disable();

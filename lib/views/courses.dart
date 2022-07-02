@@ -1,11 +1,18 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/level_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_analysis.dart';
+import 'package:ecoach/models/new_user_data.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/ui/course_info.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/subscription_page.dart';
 import 'package:ecoach/widgets/cards/course_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ecoach/models/user.dart';
@@ -16,8 +23,9 @@ getSubscriptionSubName(String name) {
 
 class CoursesPage extends StatefulWidget {
   static const String routeName = '/courses';
-  CoursesPage(this.user, {Key? key}) : super(key: key);
+  CoursesPage(this.user,this.controller, {Key? key}) : super(key: key);
   User user;
+  final MainController controller;
 
   @override
   _CoursesPageState createState() => _CoursesPageState();
@@ -172,7 +180,7 @@ class _CoursesPageState extends State<CoursesPage> {
                 child: PageView(
                   physics: NeverScrollableScrollPhysics(),
                   controller: controller,
-                  children: subscriptions.map((subscription) => CourseView(widget.user, subscription,),).toList(),
+                  children: subscriptions.map((subscription) => CourseView(widget.user, subscription,widget.controller),).toList(),
                 ),
               ),
             ) :
@@ -195,10 +203,12 @@ class CourseView extends StatefulWidget {
   CourseView(
     this.user,
     this.subscription,
+      this.controller
   );
 
   final User user;
   final Subscription subscription;
+  final MainController controller;
 
   @override
   _CourseViewState createState() => _CourseViewState();
@@ -206,73 +216,154 @@ class CourseView extends StatefulWidget {
 
 class _CourseViewState extends State<CourseView> {
   List<Course> courses = [];
-  Future<List<Course>>? futureItems;
+  List<Course>futureItems = [];
   String subName = ""; //FIXME temp;
+  bool progressCode = true;
+  getSubscriptionCourse()async{
+    futureItems = await SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
+    if(futureItems.isEmpty){
+      ApiCall<Data>(AppUrl.new_user_data, isList: false,
+          create: (Map<String, dynamic> json) {
+            return Data.fromJson(json);
+          }, onCallback: (data) async{
+            if (data != null) {
+              await LevelDB().insertAll(data!.levels!);
+              await CourseDB().insertAll(data!.courses!);
+            }
+            getSubscriptionCourse();
+          }, onError: (e) {
+          }).get(context);
+    }
+
+    setState((){
+      progressCode = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    getSubscriptionCourse();
     subName = widget.subscription.name!;
-    subName =
-        subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
-    futureItems = SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
+    subName = subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
+
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: futureItems,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return Container();
-          case ConnectionState.waiting:
-            return Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            );
-          default:
-            if (snapshot.hasError)
-              return Text('Error: ${snapshot.error}');
-            else if (snapshot.data != null) {
-              List<Course> items = snapshot.data! as List<Course>;
-              return ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  CourseAnalytic? analytic = items[index].analytic;
-                  return Padding(
-                    padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                    child: CourseCard(
-                      widget.user,
-                      courseInfo: CourseInfo(
-                        course: items[index],
-                        title: items[index].name!.replaceFirst(subName, "",).replaceFirst(subName.toUpperCase(), ""),
-                        subTitle: 'Take a random test across topics',
-                        progress: items[index].averageScore!,
-                      ),
-                    ),
-                  );
-                },
-              );
-            } else if (snapshot.data == null)
-              return Container();
-            else
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 100,
-                  ),
-                  Center(
-                    child: Text(widget.user.email ?? "Something isn't right"),
-                  ),
-                  SizedBox(height: 100),
-                ],
-              );
-        }
+    // return FutureBuilder(
+    //   future: futureItems,
+    //   builder: (context, snapshot) {
+    //     switch (snapshot.connectionState) {
+    //       case ConnectionState.none:
+    //         return Container();
+    //       case ConnectionState.waiting:
+    //         return Center(
+    //           child: CircularProgressIndicator(
+    //             color: Colors.blue,
+    //           ),
+    //         );
+    //       default:
+    //         if (snapshot.hasError)
+    //           return Text('Error: ${snapshot.error}');
+    //         else if (snapshot.data != null) {
+    //           List<Course> items = snapshot.data! as List<Course>;
+    //           return ListView.builder(
+    //             scrollDirection: Axis.vertical,
+    //             shrinkWrap: true,
+    //             itemCount: items.length,
+    //             itemBuilder: (context, index) {
+    //               CourseAnalytic? analytic = items[index].analytic;
+    //               return Padding(
+    //                 padding: EdgeInsets.only(left: 24.0, right: 24.0),
+    //                 child: CourseCard(
+    //                   widget.user,
+    //                   courseInfo: CourseInfo(
+    //                     course: items[index],
+    //                     title: items[index].name!.replaceFirst(subName, "",).replaceFirst(subName.toUpperCase(), ""),
+    //                     subTitle: 'Take a random test across topics',
+    //                     progress: items[index].averageScore!,
+    //                   ),
+    //                 ),
+    //               );
+    //             },
+    //           );
+    //           // if(items.isNotEmpty){
+    //           //   return ListView.builder(
+    //           //     scrollDirection: Axis.vertical,
+    //           //     shrinkWrap: true,
+    //           //     itemCount: items.length,
+    //           //     itemBuilder: (context, index) {
+    //           //       CourseAnalytic? analytic = items[index].analytic;
+    //           //       return Padding(
+    //           //         padding: EdgeInsets.only(left: 24.0, right: 24.0),
+    //           //         child: CourseCard(
+    //           //           widget.user,
+    //           //           courseInfo: CourseInfo(
+    //           //             course: items[index],
+    //           //             title: items[index].name!.replaceFirst(subName, "",).replaceFirst(subName.toUpperCase(), ""),
+    //           //             subTitle: 'Take a random test across topics',
+    //           //             progress: items[index].averageScore!,
+    //           //           ),
+    //           //         ),
+    //           //       );
+    //           //     },
+    //           //   );
+    //           // }else{
+    //           //   return Center(
+    //           //     child: GestureDetector(
+    //           //       onTap: (){
+    //           //         goTo(context, SubscriptionPage(widget.user, controller: widget.controller));
+    //           //       },
+    //           //       child: Container(
+    //           //         child: sText("Tap to download course"),
+    //           //       ),
+    //           //     ),
+    //           //   );
+    //           // }
+    //
+    //         } else if (snapshot.data == null)
+    //           return Container(
+    //             child: sText("Empty"),
+    //           );
+    //         else
+    //           return Column(
+    //             children: [
+    //               SizedBox(
+    //                 height: 100,
+    //               ),
+    //               Center(
+    //                 child: Text(widget.user.email ?? "Something isn't right"),
+    //               ),
+    //               SizedBox(height: 100),
+    //             ],
+    //           );
+    //     }
+    //   },
+    // );
+    return futureItems.isNotEmpty ?
+    ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: futureItems.length,
+      itemBuilder: (context, index) {
+        CourseAnalytic? analytic = futureItems[index].analytic;
+        return Padding(
+          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          child: CourseCard(
+            widget.user,
+            courseInfo: CourseInfo(
+              course: futureItems[index],
+              title: futureItems[index].name!.replaceFirst(subName, "",).replaceFirst(subName.toUpperCase(), ""),
+              subTitle: 'Take a random test across topics',
+              progress: futureItems[index].averageScore!,
+            ),
+          ),
+        );
       },
-    );
+    ) :
+        progressCode ?
+        Center(child: sText("Loading courses"),) : Center(child: sText("Empty courses"),);
   }
 }

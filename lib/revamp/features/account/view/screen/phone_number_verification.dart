@@ -95,7 +95,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
   }
 
   resendPin() async {
-    showLoaderDialog(context, message: "resending token ...");
+    showLoaderDialog(context, message: "resending pin ...");
 
     http.Response response = await http.get(
       Uri.parse(AppUrl.resend_pin),
@@ -211,7 +211,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
                 height: 10,
               ),
               const Text(
-                "Enter the 4 digit pin you have received via sms",
+                "Enter the 6 digit pin you have received via sms",
                 style: TextStyle(
                   fontSize: 14,
                 ),

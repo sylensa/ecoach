@@ -79,7 +79,7 @@ class _MorePageState extends State<MorePage> {
                     child: CircleAvatar(
                       radius: 32.0,
                       backgroundColor: Color(0xFF0367B4),
-                      child: Text(widget.user.initials),
+                      child: Text("${widget.user.initials != null ? widget.user.initials : ""}"),
                     ),
                   ),
                   SizedBox(width: 10,),
@@ -98,8 +98,7 @@ class _MorePageState extends State<MorePage> {
                         ),
                       ),
                       SizedBox(height: 10,),
-                      Text(
-                        widget.user.name != null ? properCase(widget.user.name!) : "",
+                      Text("${widget.user.name != null ? widget.user.name : ""}",
                         softWrap: true,
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -256,16 +255,21 @@ class _MorePageState extends State<MorePage> {
                     padding: EdgeInsets.zero,
                     onPressed: ()async{
                       print("widget.user.isAgent:${widget.user.isAgent}");
-                      if(widget.user.isAgent! && listAgentData.isNotEmpty){
-                        showLoaderDialog(context, message: "Loading...");
-                        await getAgentDetails();
-                        // await goTo(context, CommissionAgentPage());
-                      }else if (widget.user.isAgent!){
-                        showLoaderDialog(context, message: "Loading...");
-                        await getAgentDetails();
+                      if(widget.user.isAgent != null){
+                        if(widget.user.isAgent! && listAgentData.isNotEmpty){
+                          showLoaderDialog(context, message: "Loading...");
+                          await getAgentDetails();
+                          // await goTo(context, CommissionAgentPage());
+                        }else if (widget.user.isAgent!){
+                          showLoaderDialog(context, message: "Loading...");
+                          await getAgentDetails();
+                        }else{
+                          goTo(context, CommissionPage());
+                        }
                       }else{
                         goTo(context, CommissionPage());
                       }
+
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),

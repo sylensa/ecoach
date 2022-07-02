@@ -53,10 +53,20 @@ class User {
   }
 
   String get initials {
-    String fname = name!.split(" ")[0];
-    String lname = name!.split(" ")[1];
-    return fname.substring(0, 1).toUpperCase() +
-        lname.substring(0, 1).toUpperCase();
+    String fname;
+    String lname;
+    try{
+     fname = name!.split(" ")[0];
+    }catch(e){
+      fname = "";
+    }
+    try{
+     lname = name!.split(" ")[1];
+    }catch(e){
+      lname = "";
+    }
+
+    return "${fname.isNotEmpty ? fname.substring(0, 1).toUpperCase() : "" }${lname.isNotEmpty ? lname.substring(0, 1).toUpperCase() : ""}";
   }
 
   File getImageFile(String name) {

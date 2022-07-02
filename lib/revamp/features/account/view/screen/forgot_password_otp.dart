@@ -122,7 +122,7 @@ class _ForgotPasswordOTPState extends State<ForgotPasswordOTP> {
                 height: 10,
               ),
               const Text(
-                "Enter the 4 digit pin you have received via sms",
+                "Enter the 6 digit pin you have received via sms",
                 style: TextStyle(
                   fontSize: 14,
                 ),
