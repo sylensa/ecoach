@@ -61,6 +61,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
   handleSelection(topic) {
     setState(() {
       selectAnsweredQuestions.clear();
+      unSelectAnsweredQuestions.clear();
       if (selected == topic)
         selected = null;
       else
