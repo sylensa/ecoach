@@ -81,7 +81,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
     double sheetHeight = 300;
     showModalBottomSheet(
         context: context,
-        isDismissible: false,
+        isDismissible: true,
         backgroundColor: Colors.transparent ,
         isScrollControlled: true,
         builder: (BuildContext context){
@@ -269,8 +269,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
             SizedBox(height: 10,),
             GestureDetector(
               onTap: (){
-                toastMessage("Coming soon");
-                // promoCodeModalBottomSheet(context);
+                promoCodeModalBottomSheet(context);
               },
               child: Container(
                 child: Row(
@@ -279,7 +278,6 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                     Container(),
                     Container(
                       padding: EdgeInsets.all(5),
-
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey[400]!),
                         borderRadius: BorderRadius.circular(30)
