@@ -368,7 +368,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                       children: [
                         Container(
                           padding: leftPadding(10),
-                          child: Image.asset("assets/images/com1.png"),
+                          child: Image.asset("assets/images/commission1.png"),
                         ),
                         Positioned(
                           bottom: 20,
@@ -429,7 +429,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Image.asset("assets/images/com2.png",fit: BoxFit.fitHeight,),
+                      child: Image.asset("assets/images/commission2.png",fit: BoxFit.fitHeight,),
                     ),
                   )
                 ],
