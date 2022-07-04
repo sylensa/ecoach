@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
 import 'package:ecoach/database/plan.dart';
@@ -78,7 +80,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color:  Color(0XFF2D3E50),)),
         title:    Text(
-          "Subscriptions",
+          Platform.isAndroid ? "Subscriptions" : "Courses",
           softWrap: true,
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -221,7 +223,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             Expanded(   flex: 8,child: Center(child: progress()))
             :
             Expanded(   flex: 8,child: Center(child: sText("You've no subscription available",color:  Color(0XFF2D3E50),weight: FontWeight.bold,size: 16),)),
-
+            Platform.isAndroid ?
             Expanded(
               flex: 2,
               child: GestureDetector(
@@ -256,7 +258,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                 ),
               ),
-            ),
+            ) : Container(),
           ],
         ),
       ),
