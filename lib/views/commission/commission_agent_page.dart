@@ -49,13 +49,15 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
       print("res agentPromoCodes : $js");
       if (js["status"]) {
         DataCodes agentData = DataCodes.fromJson(js["data"]);
+        agentData.subscribers = 0;
+        agentData.commission = 0.00;
         listAgentData[0].data!.add(agentData);
-        setState((){
-
-        });
         toastMessage("${js["message"]}");
         Navigator.pop(context);
         successModalBottomSheet(context);
+        setState((){
+
+        });
       }else{
         Navigator.pop(context);
         failedModalBottomSheet(context);
@@ -67,22 +69,24 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
     // }
   }
   deleteCard(int cardId,int index)async {
+    var js;
     try{
-      var js = await doDelete('${AppUrl.agentPromoCodes}/$cardId');
+       js = await doDelete('${AppUrl.agentPromoCodes}/$cardId');
       print("res delete card : $js");
-      if (js["code"].toString() == "200") {
+      if (js["status"]) {
         setState((){
           listAgentData[0].data!.removeAt(index);
         });
         toastMessage("${js["message"]}");
         Navigator.pop(context);
+
       }else{
         Navigator.pop(context);
         toastMessage("${js["message"]}");
       }
     }catch(e){
       Navigator.pop(context);
-      toastMessage("Failed");
+      toastMessage("Failed,$js");
     }
   }
   successModalBottomSheet(context){
@@ -245,7 +249,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                               onTap: ()async{
                                 Navigator.pop(context);
                                 showLoaderDialog(context, message: "Deleting Promo Code...");
-                                deleteCard(codeId,index);
+                                await deleteCard(codeId,index);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -432,6 +436,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                       child: Image.asset("assets/images/commission2.png",fit: BoxFit.fitHeight,),
                     ),
                   )
+                  
                 ],
               ),
             ),
