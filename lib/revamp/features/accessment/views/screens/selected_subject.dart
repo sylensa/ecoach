@@ -146,7 +146,7 @@ class _SelectSubjectWidgetState extends State<SelectSubjectWidget> {
                         showDialogOk(message: "No questions",context: context,dismiss: false);
                       });
                     }else{
-                      showDialogOk(message: "No internet connection",context: context,dismiss: false);
+                      toastMessage("No internet connection");
                     }
                   },
                   child: Container(
