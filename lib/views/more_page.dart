@@ -174,7 +174,7 @@ class _MorePageState extends State<MorePage> {
                               Icon(Icons.video_collection,color: Colors.black,),
                               SizedBox(width: 20,),
                               Text(
-                                "Subscriptions",
+                               Platform.isAndroid ? "Subscriptions" : "Courses",
                                 softWrap: true,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
