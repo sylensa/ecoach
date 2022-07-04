@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/database/course_db.dart';
@@ -250,7 +251,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                 child: CircularProgressIndicator(),
               ),
             ) :
-            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text("Subscribe to track your progress", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
+            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text(Platform.isAndroid ? "Subscribe to track your progress" : "No progress available", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
           ],
         ),
       ),
