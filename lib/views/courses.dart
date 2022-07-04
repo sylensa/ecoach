@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/database/course_db.dart';
@@ -190,7 +192,7 @@ class _CoursesPageState extends State<CoursesPage> {
                 child: CircularProgressIndicator(),
               ),
             )  :
-            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text("No Subscribed Bundles", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
+            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text(Platform.isAndroid ? "No Subscribed Bundles" : "No available courses", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
 
           ],
         ),
@@ -233,11 +235,13 @@ class _CourseViewState extends State<CourseView> {
             await getSubscriptionCourse();
           }, onError: (e) {
           }).get(context);
+    }else{
+      setState((){
+        progressCode = false;
+      });
     }
 
-    setState((){
-      progressCode = false;
-    });
+
   }
 
   @override
