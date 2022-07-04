@@ -48,6 +48,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
   int endTime = 0;
   bool switchOn = false;
   bool isCorrect = false;
+  List<Answer> answers=  [];
   double totalAverage = 0.0;
   late final PageController pageController;
 
@@ -135,6 +136,13 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
     pageController = PageController(initialPage: 0);
     questionCount = getQuestionIndex();
     getAllSaveTestQuestions();
+    for(int i =0; i< reviewQuestionsBack.length; i++){
+      for(int t = 0; t < reviewQuestionsBack[i].answers!.length; t++){
+        if(reviewQuestionsBack[i].answers![t].value == 1){
+          answers!.add(reviewQuestionsBack[i].answers![t]);
+        }
+      }
+    }
     super.initState();
   }
 
@@ -408,9 +416,10 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       ),
                                     ),
                                   ),
-
+                                  for(int t = 0; t < reviewQuestionsBack[questionIndex].answers!.length; t++)
+                                    if(reviewQuestionsBack[questionIndex].answers![t].value == 1)
                                   Visibility(
-                                    visible: reviewQuestionsBack[questionIndex].answers![0].solution!.isNotEmpty ? true : false,
+                                    visible: reviewQuestionsBack[questionIndex].answers![t].solution!.isNotEmpty ? true : false,
                                     child:  Container(
                                       padding: const EdgeInsets.all(0),
                                       margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
@@ -439,8 +448,8 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                             padding: const EdgeInsets.all(0.0),
                                             child:  AdeoHtmlTex(
                                              widget.user!,
-                                              reviewQuestionsBack[questionIndex].answers![0].solution!.replaceAll("https", "http"),
-                                              useLocalImage: false,
+                                              reviewQuestionsBack[questionIndex].answers![t].solution!.replaceAll("https", "http"),
+                                              useLocalImage: true,
                                               // removeTags: reviewQuestionsBack[questionIndex].answers![0].solution!.contains("src") ? false : true,
                                               textColor: Colors.white,
                                               fontWeight: FontWeight.normal,
@@ -456,7 +465,6 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                   ),
                                   ...List.generate(reviewQuestionsBack[questionIndex].answers!.length, (index) {
                                    return answerWidget(reviewQuestionsBack[questionIndex].answers![index]);
-
 
                                   })
                                 ],

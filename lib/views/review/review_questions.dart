@@ -518,8 +518,8 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
 
   }
   solutionWidget() {
-    for (int index = 0; index < widget.listQuestionsReview![widget.questionIndex].answers!.length; index++)
-      if(widget.listQuestionsReview![widget.questionIndex].answers![index].solution!.isNotEmpty){
+    for (int index = 0; index < widget.listQuestionsReview![widget.questionIndex].answers!.length; index++) {
+      if(widget.listQuestionsReview![widget.questionIndex].answers![index] == 1){
         return  Column(
           children: [
             Container(
@@ -541,7 +541,7 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
                 child: AdeoHtmlTex(
                   widget.user,
                   widget.listQuestionsReview![widget.questionIndex].answers![index].solution!.replaceAll("https", "http"),
-                  useLocalImage: false,
+                  useLocalImage: true,
                 ),
                 // sText("${widget.listQuestionsReview![widget.questionIndex].answers![index].solution!}",
                 //     color: Colors.white,
@@ -554,6 +554,7 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
       }else{
         return Container();
       }
+    }
 
   }
 
