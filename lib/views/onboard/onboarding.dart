@@ -34,7 +34,7 @@ class _OnboardingState extends State<Onboarding> {
   @override
   void initState() {
     super.initState();
-    PlanController().getPlan();
+    // PlanController().getPlan();
     controller = PageController(initialPage: page);
     UserPreferences().setSeenOnboard();
   }
