@@ -714,14 +714,17 @@ doDelete(String urlAfterBase) async {
   token != null ? token = token : token = '';
   var url = Uri.parse('$base$urlAfterBase');
   print("url: $url");
-  var js =
-      await http.delete(url, headers: {'api-token': token});
+  var js = await http.delete(url, headers: {'api-token': token});
   var decoded;
-  try {
-    decoded = jsonDecode(js.body);
-  } catch (e) {
-    print("decoded: ${js.body}");
-    print(e);
+  if(js.statusCode == 200){
+    try {
+      decoded = jsonDecode(js.body);
+    } catch (e) {
+      print("decoded: ${js.body}");
+      print(e);
+    }
+  }else{
+    decoded = js.statusCode.toString();
   }
   return decoded;
 }
