@@ -71,47 +71,47 @@ class MainController {
   checkSubscription(Function(bool success) finallyCallback) {
     makeSubscriptionsCall().then((freshSubscriptions) async {
       print("freshSubscriptions:${freshSubscriptions.length}");
-      if (freshSubscriptions == null) return;
-      List<Subscription> subscriptions = user.subscriptions;
-      if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
-        Future.delayed(Duration(seconds: 2));
-        int newSubs = freshSubscriptions.length - subscriptions.length;
-
-        for (int i = 0; i < subscriptions.length; i++) {
-          await SubscriptionDB().delete(subscriptions[i].id!);
-        }
-        provider.setSubscriptions(freshSubscriptions);
-        await SubscriptionDB().insertAll(freshSubscriptions);
-        provider.setNotificationUp(true, newSubs);
-        List<SubscriptionItem> items = await SubscriptionItemDB().undownloadedItems();
-        print("items:${items.length}");
-        if (items.isNotEmpty) {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Download Subscription",
-                      style: TextStyle(color: Colors.black)),
-                  content: Text(
-                    "You have new subscriptions. Do you want to download them now?",
-                    softWrap: true,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                        onPressed: () async {
-                          downloadSubscription(items, (success) => null);
-                          Navigator.pop(context);
-                        },
-                        child: Text("Yes")),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("No"))
-                  ],
-                );
-              });
+      if (freshSubscriptions.isNotEmpty){
+        List<Subscription> subscriptions = user.subscriptions;
+        if (!compareSubscriptions(freshSubscriptions, subscriptions)) {
+          Future.delayed(Duration(seconds: 2));
+          int newSubs = freshSubscriptions.length - subscriptions.length;
+          for (int i = 0; i < subscriptions.length; i++) {
+            await SubscriptionDB().delete(subscriptions[i].id!);
+          }
+          provider.setSubscriptions(freshSubscriptions);
+          await SubscriptionDB().insertAll(freshSubscriptions);
+          provider.setNotificationUp(true, newSubs);
+          List<SubscriptionItem> items = await SubscriptionItemDB().undownloadedItems();
+          print("items:${items.length}");
+          if (items.isNotEmpty) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(Platform.isAndroid ? "Download Subscription" : "Download Courses",
+                        style: TextStyle(color: Colors.black)),
+                    content: Text(
+                      Platform.isAndroid ? "You have new subscriptions. Do you want to download them now?" : "You have new courses. Do you want to download them now?",
+                      softWrap: true,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    actions: [
+                      ElevatedButton(
+                          onPressed: () async {
+                            downloadSubscription(items, (success) => null);
+                            Navigator.pop(context);
+                          },
+                          child: Text("Yes")),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("No"))
+                    ],
+                  );
+                });
+          }
         }
       }
     });
