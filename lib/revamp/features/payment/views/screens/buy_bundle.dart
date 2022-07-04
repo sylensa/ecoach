@@ -746,11 +746,11 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
               builder: (context) {
                 return AlertDialog(
                   title: Text(
-                    "Download bundle",
+                    Platform.isAndroid ? "Download bundle" : "Download Courses",
                     style: TextStyle(color: Colors.black),
                   ),
                   content: Text(
-                    "Do you want to re download this bundle?",
+                    Platform.isAndroid ? "Do you want to re download this bundle?" : "Do you want to re download these courses?",
                     style: TextStyle(color: Colors.black),
                     softWrap: true,
                   ),
@@ -794,7 +794,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
         height: 56,
         child:  Center(
           child: Text(
-            'Redownload Bundle',
+           Platform.isAndroid ? 'Redownload Bundle' : "Redownload courses",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, color: Colors.white),
           ),
@@ -803,14 +803,18 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
     ) :
       InkWell(
       onTap: () {
-        paymentOptionModalBottomSheet(context);
+        if(Platform.isIOS){
+          print("Not available");
+        }else{
+          paymentOptionModalBottomSheet(context);
+        }
       },
       child: Container(
         color: const Color(0xFF00C9B9),
         height: 56,
         child:  Center(
           child: Text(
-            'Buy Bundle',
+            Platform.isIOS ? "Available Courses" : 'Buy Bundle',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, color: Colors.white),
           ),
