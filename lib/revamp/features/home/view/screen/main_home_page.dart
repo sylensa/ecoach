@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
@@ -104,7 +106,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                       SizedBox(height: 20,),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Center(child: sText("Enter your referral or discount code",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
+                        child: Center(child: sText(Platform.isAndroid ? "Enter your referral/discount code" : "Enter your referral code",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
                       ),
                       Expanded(
                         child: ListView(
@@ -225,10 +227,11 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
   }
   @override
   void initState() {
-    super.initState();
     if(futurePlanItem.isEmpty){
       getAllPlans();
     }
+    super.initState();
+
   }
 
   @override
@@ -257,8 +260,8 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
             const SizedBox(
               height: 20,
             ),
-            const Text(
-              'Available bundles',
+             Text(
+              Platform.isAndroid ? 'Available bundles' : "Available courses",
               style: TextStyle(color: kSecondaryTextColor, fontSize: 15),
             ),
             const Divider(
@@ -358,7 +361,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                     children: [
                       progress(),
                       SizedBox(width: 10,),
-                      sText("Loading Bundles")
+                      sText(Platform.isAndroid ? "Loading Bundles" : "Loading Courses")
                     ],
                   )
                   ,))
