@@ -61,7 +61,6 @@ void main() async {
 
   print("initializing flavor");
   await FlavorSettings.init();
-  await QuestionDB().questions();
 
   runApp(
     ChangeNotifierProvider<DownloadUpdate>(
