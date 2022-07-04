@@ -216,14 +216,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
     controller.saveTest(context, (test, success) {
       Navigator.pop(context);
-      testTakenSaved = test;
-      setState(() {
-        print('setState');
-        testTaken = testTakenSaved;
-        savedTest = true;
-        enabled = false;
-      });
       if (success) {
+        testTakenSaved = test;
+        setState(() {
+          print('setState');
+          testTaken = testTakenSaved;
+          savedTest = true;
+          enabled = false;
+        });
         viewResults();
       }
     });
