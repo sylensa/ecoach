@@ -24,6 +24,7 @@ class AdeoHtmlTex extends StatefulWidget {
     this.textAlign = TextAlign.center,
     this.useLocalImage = true,
     this.removeTags = false,
+    this.removeBr = false,
   }) : super(key: key);
 
   final User user;
@@ -36,6 +37,7 @@ class AdeoHtmlTex extends StatefulWidget {
   final Size? imageSize;
   final bool useLocalImage;
   final bool removeTags;
+  final bool removeBr;
 
   @override
   _AdeoHtmlTexState createState() => _AdeoHtmlTexState();
@@ -53,7 +55,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
     return Padding(
       padding: const EdgeInsets.only(right: 0, left: 0),
       child: Html(
-        data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: false),
+        data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: widget.removeBr),
         style: {
           "body": Style(
               color: widget.textColor,
