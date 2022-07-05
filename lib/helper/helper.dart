@@ -366,7 +366,7 @@ TextStyle appStyle(
     {double size = 16,
     Color? col = dDarkText,
     FontWeight weight = FontWeight.w400,
-    String family = "ProximaRegular"}) {
+    String family = "Poppins"}) {
   return TextStyle(
       fontFamily: family, fontWeight: weight, fontSize: size, color: col);
 }
@@ -431,7 +431,7 @@ InputDecoration textDecorNoBorder(
     double hintSize = 16,
     Color? hintColor,
     String labelText = '',
-    String family = "ProximaRegular",
+    String family = "Poppins",
     FontWeight hintWeight: FontWeight.normal,
     Color? fill,
     Color borderColor = Colors.black,
@@ -897,6 +897,5 @@ generateRandom(){
 class ListNames {
   String name;
   String id;
-
   ListNames({this.name = '', this.id = ''});
 }
