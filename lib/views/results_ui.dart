@@ -63,7 +63,7 @@ class _ResultsViewState extends State<ResultsView> {
           print("topic name:${analysis.name}");
         topicsPlaceholder.add({
           'topicId': analysis.answers[0].topicId,
-          'name': widget.diagnostic ? "Sample Test" : widget.test.testname,
+          'name': widget.diagnostic ? "Sample Test" : analysis.name,
           'rating': analysis.performanceNote,
           'total_questions': analysis.total,
           'correctly_answered': analysis.correct,
