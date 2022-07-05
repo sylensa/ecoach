@@ -27,6 +27,7 @@ class UserPreferences {
     prefs.setBool("activated", user.activated);
     prefs.setString("api_token", user.token!);
     prefs.setBool("is_agent", user.isAgent!);
+    prefs.setBool("is_editor", user.isEditor!);
     prefs.setString("signup_date", user.signupDate!.toIso8601String());
 
     print("pref activated: ${prefs.getBool("activated")}");
@@ -54,6 +55,7 @@ class UserPreferences {
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
     bool is_agent = prefs.getBool("is_agent") ?? false;
+    bool is_editor = prefs.getBool("is_editor") ?? true;
     bool activated = prefs.getBool("activated") ?? false;
     String? signupDate = prefs.getString("signup_date");
 
@@ -68,6 +70,7 @@ class UserPreferences {
         phone: phone,
         token: token,
         isAgent: is_agent,
+        isEditor: is_editor,
         activated: activated,
         signupDate: signupDate != null ? DateTime.parse(signupDate) : null);
 
