@@ -635,6 +635,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                                    fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
                                                    textAlign: TextAlign.left,
                                                    fontWeight:  FontWeight.bold,
+                                                    removeBr: true,
 
                                                  ),
                                            ),

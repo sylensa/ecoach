@@ -232,7 +232,7 @@ class _ReviewTestState extends State<ReviewTest> {
                                 reviewQuestionsBack[questionIndex]
                                     .text!
                                     .replaceAll("https", "http"),
-                                useLocalImage: false,
+                                useLocalImage: true,
                               ),
                             ],
                           ),
@@ -450,7 +450,7 @@ class _ReviewTestState extends State<ReviewTest> {
                 widget.user!,
                 reviewQuestionsBack[questionIndex].answers![index].solution!
                     .replaceAll("https", "http"),
-                useLocalImage: false,
+                useLocalImage: true,
               ),
               // sText("${reviewQuestionsBack[questionIndex].answers![index].solution!}",
               //     color: Colors.white,
@@ -482,7 +482,8 @@ class _ReviewTestState extends State<ReviewTest> {
                     horizontal: 20, vertical: 20),
                 child: AdeoHtmlTex(
                   widget.user!, answer.text!.replaceAll("https", "http"),
-                  useLocalImage: false,
+                  useLocalImage: true,
+                  removeBr: true,
                   textColor: answer.value == 1 ? Colors.green : Colors.white,
                 ),
 

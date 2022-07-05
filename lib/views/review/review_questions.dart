@@ -274,7 +274,8 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
                                   child: AdeoHtmlTex(
                                     widget.user,
                                     widget.listQuestionsReview![widget.questionIndex].answers![index].text!.replaceAll("https", "http"),
-                                    useLocalImage: false,
+                                    useLocalImage: true,
+                                    removeBr: true,
                                   ),
                                   // sText("${widget.listQuestionsReview![widget.questionIndex].answers![index].text}",weight: FontWeight.bold,color:  Colors.green ,size:  25,align: TextAlign.center),
                                   decoration: BoxDecoration(
@@ -304,7 +305,8 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
                                   child:  AdeoHtmlTex(
                                     widget.user,
                                     widget.listQuestionsReview![widget.questionIndex].answers![index].text!.replaceAll("https", "http"),
-                                    useLocalImage: false,
+                                    useLocalImage: true,
+                                    removeBr: true,
                                   ),
                                   // sText("${widget.listQuestionsReview![widget.questionIndex].answers![index].text}",weight: FontWeight.bold,color: widget.listQuestionsReview![widget.questionIndex].answers![index].value == 1 ? Colors.green : Colors.white,size: widget.listQuestionsReview![widget.questionIndex].answers![index].value == 1 ? 25 : 16,align: TextAlign.center),
                                   decoration: BoxDecoration(
