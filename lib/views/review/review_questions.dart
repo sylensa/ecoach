@@ -191,22 +191,24 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Stack(
-                                    children: [
-                                      CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 5,
-                                        value: ((widget.questionIndex + 1)/widget.listQuestionsReview!.length) * 1,
-                                        backgroundColor: reviewDividerColor,
-                                        semanticsLabel: "5",
-                                        semanticsValue: "4",
+                                  Center(
+                                    child: SizedBox(
+                                      height: 22,
+                                      width: 22,
+                                      child: Stack(
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                            value: ((widget.questionIndex + 1)/widget.listQuestionsReview!.length) * 1,
+                                            backgroundColor: reviewDividerColor,
+                                            semanticsLabel: "5",
+                                            semanticsValue: "4",
+                                          ),
+                                          Center(child: sText("${widget.questionIndex + 1}",color: Colors.white,size: 12,align: TextAlign.center))
+                                        ],
                                       ),
-                                      Positioned(
-                                        left: 12,
-                                        top: 7,
-                                        child: sText("${widget.questionIndex + 1}",color: Colors.white,size: 18,align: TextAlign.center),
-                                      )
-                                    ],
+                                    ),
                                   ),
 
                                   FlutterSwitch(
