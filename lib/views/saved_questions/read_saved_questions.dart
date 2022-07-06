@@ -7,7 +7,9 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/review/review_questions.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +29,7 @@ class _ReadSavedQuestionsState extends State<ReadSavedQuestions> {
   List<Question> question = [];
   bool progressCode = true;
   getSubscriptionItems() async{
+    question.clear();
     try{
       question  = await TestController().getSavedTests(widget.course,limit: widget.questionCount);
     }catch(e){
@@ -85,59 +88,67 @@ class _ReadSavedQuestionsState extends State<ReadSavedQuestions> {
                 padding: EdgeInsets.zero,
                 itemCount: question.length,
                   itemBuilder: (BuildContext context, int index){
-                  return Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.only(bottom: 10),
-                    color: Colors.white,
-                    child: Stack(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 30,right: 10),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                        width: 280,
+                  return GestureDetector(
+                    onTap: ()async{
+                      await goTo(context, ReviewQuestions(user: widget.user,listQuestionsReview: [question[index]],testType: TestType.NONE,course: widget.course,topicId: "0",reviewTestTaken: null,testCategory: TestCategory.SAVED,));
+                      setState((){
+                        getSubscriptionItems();
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.only(bottom: 10),
+                      color: Colors.white,
+                      child: Stack(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 30,right: 10),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Container(
+                                          width: 280,
 
-                                        child: AdeoHtmlTex(
-                                          widget.user,
-                                          question[index].text!.replaceAll("https", "http"),
-                                          fontWeight: FontWeight.bold,
-                                          textAlign: TextAlign.left,
-                                          fontSize: 16,
-                                          useLocalImage: true,
-                                          removeTags: question.contains("src") ? false : true,
-                                          textColor: Color(0XFF707070),
+                                          child: AdeoHtmlTex(
+                                            widget.user,
+                                            question[index].text!.replaceAll("https", "http"),
+                                            fontWeight: FontWeight.normal,
+                                            textAlign: TextAlign.left,
+                                            fontSize: 16,
+                                            useLocalImage: true,
+                                            removeTags: question.contains("src") ? false : true,
+                                            textColor: Color(0XFF707070),
+                                          ),
                                         ),
-                                      ),
 
-                                      SizedBox(height: 10,),
-                                      Container(
-                                        width: 280,
+                                        SizedBox(height: 10,),
+                                        Container(
+                                          width: 280,
 
-                                        child: sText("${question[index].topicName}", color:  Color(0XFF2D3E50), weight: FontWeight.bold,align: TextAlign.right,size: 12,),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Icon(Icons.arrow_forward_ios,color: kAdeoGray3,)
-                                ],
-                              ),
+                                          child: sText("${question[index].topicName}", color:  Color(0XFF2D3E50), weight: FontWeight.bold,align: TextAlign.right,size: 12,),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width: 10,),
+                                    Icon(Icons.arrow_forward_ios,color: kAdeoGray3,)
+                                  ],
+                                ),
 
 
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 10,
-                          left: 10,
-                          child: sText("${index + 1}. ", color:  Color(0XFF2D3E50), weight: FontWeight.bold,align: TextAlign.right),
-                        )
-                      ],
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: sText("${index + 1}. ", color:  Color(0XFF2D3E50), weight: FontWeight.bold,align: TextAlign.right),
+                          )
+                        ],
+                      ),
                     ),
                   );
               }),
