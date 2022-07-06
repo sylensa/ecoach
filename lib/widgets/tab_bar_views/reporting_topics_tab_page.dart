@@ -1,15 +1,20 @@
 import 'dart:developer';
 
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class TopicsTabPage extends StatefulWidget {
@@ -37,6 +42,24 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
       else
         selected = test;
     });
+  }
+
+  getAll(var test)async{
+    reviewQuestionsBack.clear();
+    List<Question> questions = await TestController().getAllQuestions(test);
+    if(questions.isNotEmpty){
+      for(int i = 0; i < questions.length; i++){
+        reviewQuestionsBack.add(questions[i]);
+      }
+      setState(() {
+        print("again savedQuestions:${reviewQuestionsBack.length}");
+      });
+      Navigator.pop(context);
+      goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+    }else{
+      Navigator.pop(context);
+      toastMessage("Question are empty, please download questions");
+    }
   }
 
   @override
@@ -171,7 +194,10 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                           label: 'review',
                           fontSize: 16,
                           color: kAdeoBlue2,
-                          onPressed: () {},
+                          onPressed: () async{
+                            showLoaderDialog(context, message: "Loading");
+                            await  getAll(selected);
+                          },
                         ),
                       ),
                       Container(
