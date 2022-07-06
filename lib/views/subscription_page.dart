@@ -120,6 +120,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                     ),
                   ),
+                  if(Platform.isAndroid)
                   Container(
                     width: 100,
                     child:  Text(
@@ -188,11 +189,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         margin: bottomPadding(10),
                         elevation: 0,
                         child: ListTile(
-                          title:  Container(
+                          title: Platform.isAndroid ? Container(
                             width: 100,
                             child: sText("${context.read<DownloadUpdate>().plans![index].timeLeft} days",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
 
-                          ),
+                             ) : Container(),
 
                           leading: Container(
                             width: 100,
@@ -222,7 +223,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             progressCode ?
             Expanded(   flex: 8,child: Center(child: progress()))
             :
-            Expanded(   flex: 8,child: Center(child: sText("You've no subscription available",color:  Color(0XFF2D3E50),weight: FontWeight.bold,size: 16),)),
+            Expanded(   flex: 8,child: Center(child: sText(Platform.isAndroid ? "You've no subscription available" : "You've no courses available contact your school",color:  Color(0XFF2D3E50),weight: FontWeight.bold,size: 16),)),
             Platform.isAndroid ?
             Expanded(
               flex: 2,

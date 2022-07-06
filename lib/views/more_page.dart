@@ -12,8 +12,10 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/auth/logout.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/commission/commission_page.dart';
+import 'package:ecoach/views/coupouns/index.dart';
 import 'package:ecoach/views/group/content_editor.dart';
 import 'package:ecoach/views/group/not_content_editor.dart';
+import 'package:ecoach/views/points/index.dart';
 import 'package:ecoach/views/profile_page.dart';
 import 'package:ecoach/views/saved_questions/saved_bundle_questions.dart';
 import 'package:ecoach/views/subscription_page.dart';
@@ -132,12 +134,11 @@ class _MorePageState extends State<MorePage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
+                  if(Platform.isAndroid)
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: (){
-                      if(Platform.isAndroid){
-                        toastMessage("Coming soon");
-                      }
+                     goTo(context, CoupounMainPage(widget.user));
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -225,12 +226,11 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
+                  if(Platform.isAndroid)
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: (){
-                      if(Platform.isAndroid){
-                        toastMessage("Coming soon");
-                      }
+                     goTo(context, PointsMainPage(widget.user));
                     },
                     child: Container(
                       padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
@@ -299,45 +299,45 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  MaterialButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: ()async{
-                      print(widget.user.isEditor);
-                      if(widget.user.isEditor != null){
-                        if(widget.user.isEditor! ){
-                          goTo(context, ContentEditor());
-                        }else{
-                          goTo(context, NotContentEditor());
-                        }
-                      }else{
-                        goTo(context, NotContentEditor());
-                      }
-
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
-                      child: Row(
-                        children: [
-                          Icon(Icons.group,color: Colors.black,),
-                          SizedBox(width: 20,),
-                          Text(
-                            "Group Management",
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                color:  Color(0XFF2D3E50),
-                                height: 1.1,
-                                fontFamily: "Poppins"
-                            ),
-                          ),
-                          Expanded(child: Container()),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
-                        ],
-                      ),
-                    ),
-                  ),
+                  // MaterialButton(
+                  //   padding: EdgeInsets.zero,
+                  //   onPressed: ()async{
+                  //     print(widget.user.isEditor);
+                  //     if(widget.user.isEditor != null){
+                  //       if(widget.user.isEditor! ){
+                  //         goTo(context, ContentEditor());
+                  //       }else{
+                  //         goTo(context, NotContentEditor());
+                  //       }
+                  //     }else{
+                  //       goTo(context, NotContentEditor());
+                  //     }
+                  //
+                  //   },
+                  //   child: Container(
+                  //     padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
+                  //     child: Row(
+                  //       children: [
+                  //         Icon(Icons.group,color: Colors.black,),
+                  //         SizedBox(width: 20,),
+                  //         Text(
+                  //           "Group Management",
+                  //           softWrap: true,
+                  //           textAlign: TextAlign.center,
+                  //           style: TextStyle(
+                  //               fontSize: 18.0,
+                  //               fontWeight: FontWeight.w500,
+                  //               color:  Color(0XFF2D3E50),
+                  //               height: 1.1,
+                  //               fontFamily: "Poppins"
+                  //           ),
+                  //         ),
+                  //         Expanded(child: Container()),
+                  //         Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: (){

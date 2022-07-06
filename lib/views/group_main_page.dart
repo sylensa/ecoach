@@ -2,16 +2,16 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:flutter/material.dart';
 
-class GroupPage extends StatefulWidget {
+class GroupMainPage extends StatefulWidget {
   static const String routeName = '/group';
-  GroupPage(this.user, {Key? key}) : super(key: key);
+  GroupMainPage(this.user, {Key? key}) : super(key: key);
   User user;
 
   @override
-  State<GroupPage> createState() => _GroupPageState();
+  State<GroupMainPage> createState() => _GroupMainPageState();
 }
 
-class _GroupPageState extends State<GroupPage> {
+class _GroupMainPageState extends State<GroupMainPage> {
   @override
   Widget build(BuildContext context) {
     return Container(

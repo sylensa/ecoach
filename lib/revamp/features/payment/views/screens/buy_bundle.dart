@@ -248,7 +248,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
           return StatefulBuilder(
             builder: (BuildContext context,StateSetter stateSetter){
               return Container(
-                  height: 300,
+                  height: 450,
                   decoration: BoxDecoration(
                       color: Colors.white ,
                       border: Border.all(color: Color(0xFFBBCFD6,),width: 2),
@@ -269,57 +269,57 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                       Expanded(
                         child: ListView(
                           children: [
-                            // SizedBox(height: 20,),
-                            // GestureDetector(
-                            //   onTap: (){
-                            //     authorisePayment(context,);
-                            //   },
-                            //   child: Container(
-                            //     padding: EdgeInsets.all(20),
-                            //     margin: EdgeInsets.symmetric(horizontal: 30),
-                            //     child: sText("Direct Pay",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
-                            //     decoration: BoxDecoration(
-                            //         color: Colors.grey[200],
-                            //         borderRadius: BorderRadius.circular(10),
-                            //         border: Border.all(color:  Color(0xFFBBCFD6,))
-                            //     ),
-                            //   ),
-                            // ),
-                            //
-                            // SizedBox(height: 20,),
-                            // GestureDetector(
-                            //   onTap: ()async{
-                            //     stateSetter(() {
-                            //       generateLink = false;
-                            //     });
-                            //     String? link = await getUrlFrmInitialization(
-                            //       amount: totalAmount,
-                            //     );
-                            //     stateSetter(() {
-                            //       generatedLink = link != null ? link : "";
-                            //       print("generatedLink:$generatedLink");
-                            //     });
-                            //     Navigator.pop(context);
-                            //     paymentLinkModalBottomSheet(context,link: generatedLink);
-                            //   },
-                            //   child: Container(
-                            //     padding: EdgeInsets.all(20),
-                            //     margin: EdgeInsets.symmetric(horizontal: 30),
-                            //     child: Row(
-                            //       mainAxisAlignment: MainAxisAlignment.center,
-                            //       children: [
-                            //         sText("Generate Payment Link",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
-                            //         SizedBox(width: 10,),
-                            //         generateLink ? Container() : progress()
-                            //       ],
-                            //     ),
-                            //     decoration: BoxDecoration(
-                            //         color: Colors.grey[200],
-                            //         borderRadius: BorderRadius.circular(10),
-                            //         border: Border.all(color:  Color(0xFFBBCFD6,))
-                            //     ),
-                            //   ),
-                            // ),
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                authorisePayment(context,);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: sText("Direct Pay",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: ()async{
+                                stateSetter(() {
+                                  generateLink = false;
+                                });
+                                String? link = await getUrlFrmInitialization(
+                                  amount: totalAmount,
+                                );
+                                stateSetter(() {
+                                  generatedLink = link != null ? link : "";
+                                  print("generatedLink:$generatedLink");
+                                });
+                                Navigator.pop(context);
+                                paymentLinkModalBottomSheet(context,link: generatedLink);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("Generate Payment Link",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                    SizedBox(width: 10,),
+                                    generateLink ? Container() : progress()
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
 
                             SizedBox(height: 20,),
                             GestureDetector(
@@ -805,6 +805,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
       onTap: () {
         if(Platform.isIOS){
           print("Not available");
+          // paymentOptionModalBottomSheet(context);
         }else{
           paymentOptionModalBottomSheet(context);
         }
@@ -951,6 +952,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                   fontWeight: FontWeight.bold,
                   fontSize: 27),
             ),
+            if(Platform.isAndroid)
             widget.daysLeft.isNotEmpty ?
              Text(
               "${widget.daysLeft} days left",
@@ -1122,7 +1124,9 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                               }
 
                             }else{
-                              paymentOptionModalBottomSheet(context);
+                              if(Platform.isAndroid){
+                                paymentOptionModalBottomSheet(context);
+                              }
                             }
                           },
                           child: Padding(

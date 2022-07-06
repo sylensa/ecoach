@@ -231,7 +231,6 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
       getAllPlans();
     }
     super.initState();
-
   }
 
   @override
@@ -270,6 +269,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
               height: 0,
             ),
             SizedBox(height: 10,),
+            Platform.isAndroid ?
             GestureDetector(
               onTap: (){
                 promoCodeModalBottomSheet(context);
@@ -301,7 +301,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                   ],
                 ),
               ),
-            ),
+            ) : Container(),
             const SizedBox(
               height: 10,
             ),
@@ -321,7 +321,9 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                       margin: EdgeInsets.only(bottom: 2.h),
                       child: ListTile(
                         onTap: () {
-                          goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          if(Platform.isAndroid){
+                            goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          }
                         },
                         title:  Text(
                           "${futurePlanItem[index].name}",

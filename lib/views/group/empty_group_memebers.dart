@@ -1,7 +1,7 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
-import 'package:ecoach/views/group.dart';
+import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
 import 'package:ecoach/views/group/group_page.dart';
 import 'package:flutter/material.dart';

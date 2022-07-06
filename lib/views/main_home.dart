@@ -11,7 +11,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/group.dart';
+import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/more_page.dart';
 import 'package:ecoach/websocket/event_data.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -67,7 +67,7 @@ class _MainHomePageState extends State<MainHomePage>
         },
         controller: mainController,
       ),
-      GroupPage(widget.user),
+      GroupMainPage(widget.user),
       CoursesPage(widget.user,mainController),
       AnalysisView(user: widget.user),
       // MoreView(
