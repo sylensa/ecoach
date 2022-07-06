@@ -139,19 +139,35 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
     for(int i =0; i< reviewQuestionsBack.length; i++){
       for(int t = 0; t < reviewQuestionsBack[i].answers!.length; t++){
         if(reviewQuestionsBack[i].answers![t].value == 1){
-          answers!.add(reviewQuestionsBack[i].answers![t]);
+          answers.add(reviewQuestionsBack[i].answers![t]);
         }
       }
     }
     super.initState();
   }
 
+  // avgTimeComplete(){
+  //   int count = 0;
+  //   for(int i = 0; i <  reviewQuestionsBack.length; i++){
+  //     count += reviewQuestionsBack[questionIndex].time!;
+  //   }
+  //   return count;
+  // }
+
   avgTimeComplete(){
-    int count = 0;
+    double count = 0.0;
     for(int i = 0; i <  reviewQuestionsBack.length; i++){
       count += reviewQuestionsBack[questionIndex].time!;
     }
-    return count;
+
+    if(count == 0 && questionIndex == 0){
+      count = 0;
+    }else{
+      count = count/questionIndex;
+    }
+
+    print("count:$count");
+    return count.toStringAsFixed(2);
   }
 
   completeQuiz() async {
@@ -275,7 +291,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                     width: 5,
                   ),
                   Text(
-                    "${widget.testTaken!.score}%",
+                    "${widget.testTaken!.score!.toStringAsFixed(2)}%",
                     style: TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
@@ -500,14 +516,18 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                           });
                         },
                         child: Container(
-                          color: kAccessmentButtonColor,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(5)
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: const Text(
                             'Previous',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
-                              color: Colors.white,
+                              color: Colors.black,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -522,14 +542,18 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                         }
                       },
                       child: Container(
-                        color: kAccessmentButtonColor,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(5)
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         child: const Text(
                           'Return',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -557,14 +581,18 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                           });
                         },
                         child: Container(
-                          color: kAccessmentButtonColor,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5)
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: const Text(
                             'Next',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
-                              color: Colors.white,
+                              color: Colors.black,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -578,14 +606,18 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                         Navigator.pop(context);
                         },
                         child: Container(
-                          color: kAccessmentButtonColor,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5)
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: const Text(
                             'Complete',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
-                              color: Colors.white,
+                              color: Colors.black,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
