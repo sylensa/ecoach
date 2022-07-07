@@ -148,7 +148,6 @@ class _LogInPageState extends State<LogInPage> {
         "password": _passwordController.text
       }),
     );
-
     print(response.statusCode);
     print("AppUrl.login:${AppUrl.login}");
     if (response.statusCode == 200 && response.body != "") {
@@ -157,12 +156,15 @@ class _LogInPageState extends State<LogInPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
-        print("login: token=${user.token}");
-        Directory documentDirectory = await getApplicationDocumentsDirectory();
-        user.applicationDirPath = documentDirectory.path;
-        UserPreferences().setUser(user);
-        await loadTryTest(user,false);
-
+        if(user.activated){
+          print("login: token=${user.token}");
+          Directory documentDirectory = await getApplicationDocumentsDirectory();
+          user.applicationDirPath = documentDirectory.path;
+          UserPreferences().setUser(user);
+          await loadTryTest(user,false);
+        }else{
+          goTo(context, PhoneNumberVerification(user));
+        }
       } else {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
