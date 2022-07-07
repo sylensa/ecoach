@@ -79,6 +79,7 @@ class UserPreferences {
     List<TestTaken> tests = await TestTakenDB().testsTaken();
     user.hasTakenTest = tests.length > 0 ? true : false;
     Directory documentDirectory = await getApplicationDocumentsDirectory();
+    print("documentDirectory.path:${documentDirectory.path}");
     user.applicationDirPath = documentDirectory.path;
 
     return user;
