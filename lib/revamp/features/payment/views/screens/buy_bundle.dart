@@ -862,11 +862,11 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: Text(
-                                    "Download bundle",
+                                    Platform.isAndroid ? "Download bundle" : "Download Course",
                                     style: TextStyle(color: Colors.black),
                                   ),
                                   content: Text(
-                                    "Do you want to re download this bundle?",
+                                    Platform.isAndroid ? "Do you want to re download this bundle?" : "Do you want to re download this course?",
                                     style: TextStyle(color: Colors.black),
                                     softWrap: true,
                                   ),
