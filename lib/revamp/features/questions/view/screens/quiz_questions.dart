@@ -77,6 +77,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
   ListNames? reportTypes;
   TextEditingController descriptionController = TextEditingController();
   final FocusNode descriptionNode = FocusNode();
+  int getUnAttempted = 0;
   double totalAverage = 0.0;
   var timeSpent = 0;
   var avgTimeSpent = 0;
@@ -155,7 +156,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
   int get unattempted {
     int unattempted = 0;
     controller.questions.forEach((question) {
-      if (question.unattempted) unattempted++;
+      if (!question.unattempted) unattempted++;
     });
     return unattempted;
   }
@@ -257,15 +258,15 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   }
   double get avgScore {
-    print("avg scoring current question= $currentQuestion");
-    int totalQuestions = correct + wrong;
+    print("avg scoring current question= $unattempted");
+    int totalQuestions = correct + wrong + getUnAttempted ;
 
     int correctAnswers = correct;
     if (totalQuestions == 0) {
       return 0;
     }
     totalAverage = (correctAnswers / totalQuestions) * 100;
-    return double.parse(totalAverage.toStringAsFixed(2));
+    return double.parse(totalAverage.toInt().toString());
 
 
   }
@@ -689,6 +690,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                         setState(() {
                           currentCorrectScoreState();
                           currentQuestion++;
+                          getUnAttempted++;
 
                           pageController.nextPage(
                               duration: Duration(milliseconds: 1), curve: Curves.ease);
@@ -722,6 +724,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     Expanded(
                     child: InkWell(
                       onTap: () {
+                        setState((){
+                          getUnAttempted++;
+                        });
                         completeQuiz();
                       },
                       child: Container(
