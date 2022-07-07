@@ -432,10 +432,9 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       ),
                                     ),
                                   ),
-                                  for(int t = 0; t < reviewQuestionsBack[questionIndex].answers!.length; t++)
-                                    if(reviewQuestionsBack[questionIndex].answers![t].value == 1)
+
                                   Visibility(
-                                    visible: reviewQuestionsBack[questionIndex].answers![t].solution!.isNotEmpty ? true : false,
+                                    visible: reviewQuestionsBack[questionIndex].correctAnswer!.solution!.isNotEmpty ? true : false,
                                     child:  Container(
                                       padding: const EdgeInsets.all(0),
                                       margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
@@ -464,9 +463,9 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                             padding: const EdgeInsets.all(0.0),
                                             child:  AdeoHtmlTex(
                                              widget.user!,
-                                              reviewQuestionsBack[questionIndex].answers![t].solution!.replaceAll("https", "http"),
-                                              useLocalImage: true,
-                                              // removeTags: reviewQuestionsBack[questionIndex].answers![0].solution!.contains("src") ? false : true,
+                                              reviewQuestionsBack[questionIndex].correctAnswer!.solution!.replaceAll("https", "http"),
+                                              useLocalImage: false,
+                                              // removeTags: reviewQuestionsBack[questionIndex].answers![t].solution!.contains("src") ? false : true,
                                               textColor: Colors.white,
                                               fontWeight: FontWeight.normal,
                                               fontSize: 14,
