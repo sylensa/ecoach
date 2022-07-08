@@ -450,7 +450,7 @@ class _ReviewTestState extends State<ReviewTest> {
                 widget.user!,
                 reviewQuestionsBack[questionIndex].answers![index].solution!
                     .replaceAll("https", "http"),
-                useLocalImage: true,
+                useLocalImage: false,
               ),
               // sText("${reviewQuestionsBack[questionIndex].answers![index].solution!}",
               //     color: Colors.white,
