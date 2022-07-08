@@ -174,11 +174,18 @@ class _LogInPageState extends State<LogInPage> {
       }
     } else {
       Navigator.pop(context);
-      Map<String, dynamic> responseData = json.decode(response.body);
+      try{
+        Map<String, dynamic> responseData = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message'] ?? "Server Error"),
+        ));
+      }catch(e){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Server Error"),
+        ));
+      }
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(responseData['message'] ?? "Server Error"),
-      ));
+
       return;
     }
   }
