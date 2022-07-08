@@ -176,12 +176,15 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               InkWell(
                 onTap: () {
                   if(phoneNumbersController.text.length > 9){
-                    print("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
-                    resetPassword(context);
+                    if(phoneNumbersController.text.substring(0,1) == "0"){
+                      // print("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
+                      resetPassword(context);
+                    }else{
+                      toastMessage("You number should start with 0");
+                    }
                   }else{
                     toastMessage("Expecting 10 numbers");
                   }
-
 
 
                 },
