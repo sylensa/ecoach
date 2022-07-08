@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecoach/models/plan.dart';
@@ -19,11 +20,11 @@ class UserPreferences {
 
   Future<bool> setUser(User? user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
     prefs.setInt("id", user!.id!);
     prefs.setString("name", user.name!);
     prefs.setString("email", user.email!);
     prefs.setString("phone", user.phone ?? "");
+    prefs.setString("promo_code", user.promoCode == null ? ""  : jsonEncode(user.promoCode));
     prefs.setBool("activated", user.activated);
     prefs.setString("api_token", user.token!);
     prefs.setBool("is_agent", user.isAgent!);
@@ -48,19 +49,19 @@ class UserPreferences {
 
   Future<User?> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    PromoCode? promoCode;
     int? id = prefs.getInt("id");
     String? name = prefs.getString("name");
     String? email = prefs.getString("email");
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
+    String? promo_code = prefs.getString("promo_code");
     bool is_agent = prefs.getBool("is_agent") ?? false;
     bool is_editor = prefs.getBool("is_editor") ?? true;
     bool activated = prefs.getBool("activated") ?? false;
     String? signupDate = prefs.getString("signup_date");
 
     // print("shared pref: token=$token");
-    print("activated= $activated");
     if (id == null) return null;
 
     User user = User(
@@ -72,6 +73,7 @@ class UserPreferences {
         isAgent: is_agent,
         isEditor: is_editor,
         activated: activated,
+        promoCode:promo_code!.isEmpty ? promoCode : PromoCode.fromJson(jsonDecode(promo_code)),
         signupDate: signupDate != null ? DateTime.parse(signupDate) : null);
 
     List<Subscription> plans = await SubscriptionDB().subscriptions();
