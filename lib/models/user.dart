@@ -28,6 +28,7 @@ class User {
   List<Subscription> subscriptions = [];
   bool hasTakenTest = false;
   String applicationDirPath = "";
+  PromoCode? promoCode;
 
   User(
       {this.id,
@@ -45,6 +46,7 @@ class User {
       this.isAgent,
       this.isEditor,
       this.lastLoggedIn,
+      this.promoCode,
       this.activated = false,
       this.signupDate});
 
@@ -93,8 +95,7 @@ class User {
       isAgent: json['is_agent'] ?? false,
       isEditor: json['is_editor'] ?? true,
       avatar: json['avatar'],
-      // activated:
-      //     json['activated'] is int && json['activated'] == 1 ? true : false,
+      promoCode: json["promo_code"] == null ? null : PromoCode.fromJson(json["promo_code"]),
       activated: json['activated'] ,
       signupDate: DateTime.parse(json['signup_date']));
 
@@ -108,6 +109,7 @@ class User {
     type = json['type'];
     gender = json['gender'];
     token = json['api_token'];
+    promoCode = json["promo_code"] == null ? null : PromoCode.fromJson(json["promo_code"]);
     isAgent = json['is_agent'] ?? false;
     isEditor = json['is_editor'] ?? false;
     avatar = json['avatar'];
@@ -127,7 +129,8 @@ class User {
         "is_agent": isAgent ?? false,
         "is_editor": isEditor ?? false,
         "avatar": avatar,
-        "signup_date": signupDate!.toIso8601String(),
+        "promo_code": promoCode == null ? null : promoCode!.toJson(),
+       "signup_date": signupDate!.toIso8601String(),
       };
 
   setActivated(bool activate) {
@@ -143,4 +146,65 @@ class User {
 class Wallet {
   double amount = 0;
   DateTime? updated_at;
+}
+
+
+class PromoCode {
+  PromoCode({
+    this.id,
+    this.userId,
+    this.agentId,
+    this.agentPromoCodeId,
+    this.promoCode,
+    this.isActive,
+    this.rate,
+    this.agentRate,
+    this.createdAt,
+    this.updatedAt,
+    this.discount,
+    this.validityPeriod,
+  });
+
+  int? id;
+  int? userId;
+  int? agentId;
+  int? agentPromoCodeId;
+  String? promoCode;
+  bool? isActive;
+  double? rate;
+  double? agentRate;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  String? discount;
+  String? validityPeriod;
+
+  factory PromoCode.fromJson(Map<String, dynamic> json) => PromoCode(
+    id: json["id"] == null ? null : json["id"],
+    userId: json["user_id"] == null ? null : json["user_id"],
+    agentId: json["agent_id"] == null ? null : json["agent_id"],
+    agentPromoCodeId: json["agent_promo_code_id"] == null ? null : json["agent_promo_code_id"],
+    promoCode: json["promo_code"] == null ? null : json["promo_code"],
+    isActive: json["is_active"] == null ? null : json["is_active"],
+    rate: json["rate"] == null ? null : json["rate"].toDouble(),
+    agentRate: json["agent_rate"] == null ? null : json["agent_rate"].toDouble(),
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    discount: json["discount"] == null ? null : json["discount"],
+    validityPeriod: json["validity_period"] == null ? null : json["validity_period"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "user_id": userId == null ? null : userId,
+    "agent_id": agentId == null ? null : agentId,
+    "agent_promo_code_id": agentPromoCodeId == null ? null : agentPromoCodeId,
+    "promo_code": promoCode == null ? null : promoCode,
+    "is_active": isActive == null ? null : isActive,
+    "rate": rate == null ? null : rate,
+    "agent_rate": agentRate == null ? null : agentRate,
+    "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
+    "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
+    "discount": discount == null ? null : discount,
+    "validity_period": validityPeriod == null ? null : validityPeriod,
+  };
 }
