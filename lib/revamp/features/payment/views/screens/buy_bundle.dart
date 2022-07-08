@@ -18,6 +18,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -63,6 +64,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
   bool progressCode = true;
   bool isSubscribed = false;
   List que = [];
+  double bundlePrice = 0.00;
   List<Subscription> subscriptions = [];
   late String subName;
   List<BundleByPlanData> bundleByPlanData = [];
@@ -72,8 +74,8 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
 
   Future<String?> getUrlFrmInitialization({String? email, required double amount, List<String>? metadata}) async {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Initializing payment information ..."),
-    ));
+      content: Text("Initializing payment information ..."),duration: Duration(seconds: 1),
+    ),);
     String? url;
     String? email = widget.user.email;
     if (email == null || email.isEmpty) {
@@ -109,6 +111,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
         url = responseData['data']['authorization_url'];
       } else {
         Navigator.pop(context);
+        showDialogOk(message: responseData['message'],context: context,);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message']),
         ));
@@ -126,12 +129,12 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
   }
 
   authorisePayment(BuildContext context) async {
-    String? authorizationUrl = await getUrlFrmInitialization(email: widget.user.email, amount: totalAmount);
+    String? authorizationUrl = await getUrlFrmInitialization(email: widget.user.email, amount: widget.bundle.price!);
     if (authorizationUrl == null) {
       Navigator.pop(context);
       return;
     }
-
+    Navigator.pop(context);
     showDialog(
       context: context,
       builder: (context) {
@@ -271,8 +274,8 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                           children: [
                             SizedBox(height: 20,),
                             GestureDetector(
-                              onTap: (){
-                                authorisePayment(context,);
+                              onTap: ()async{
+                                await authorisePayment(context,);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -292,15 +295,15 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                 stateSetter(() {
                                   generateLink = false;
                                 });
-                                String? link = await getUrlFrmInitialization(
-                                  amount: totalAmount,
-                                );
+                                String? link = await getUrlFrmInitialization(amount:widget.bundle.price!);
                                 stateSetter(() {
                                   generatedLink = link != null ? link : "";
                                   print("generatedLink:$generatedLink");
                                 });
-                                Navigator.pop(context);
-                                paymentLinkModalBottomSheet(context,link: generatedLink);
+                                if(generatedLink.isNotEmpty){
+                                  Navigator.pop(context);
+                                  paymentLinkModalBottomSheet(context,link: generatedLink);
+                                }
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -580,11 +583,16 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
     UserPreferences().getUser().then((user) {
       setState(() {
         subscriptions = user!.subscriptions;
+        widget.user = user;
         context.read<DownloadUpdate>().setSubscriptions(subscriptions);
       });
     });
 
     getSubscriptionItems();
+
+    if(widget.user.promoCode != null){
+    bundlePrice =  double.parse((widget.bundle.price! -  (widget.user.promoCode!.rate!  * widget.bundle.price!)).toStringAsFixed(2));
+    }
     // getSubscriptionItems();
   }
   getSubscriptionPlanAnnex()async{
@@ -728,100 +736,102 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
           :
       isSubscribed ?
       InkWell(
-      onTap: () {
-        setState(() {
-          for(int i = 0; i< items.length; i++){
-            selectedTableRows.add(items[i]);
+        onTap: () {
+          setState(() {
+            for(int i = 0; i< items.length; i++){
+              selectedTableRows.add(items[i]);
+            }
+          });
+          if (context.read<DownloadUpdate>().isDownloading) {
+            print("hey: ${context.watch<DownloadUpdate>().isDownloading}");
+
+            return;
           }
-        });
-        if (context.read<DownloadUpdate>().isDownloading) {
-          print("hey: ${context.watch<DownloadUpdate>().isDownloading}");
-
-          return;
-        }
-        setState(
-              () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                    Platform.isAndroid ? "Download bundle" : "Download Courses",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  content: Text(
-                    Platform.isAndroid ? "Do you want to re download this bundle?" : "Do you want to re download these courses?",
-                    style: TextStyle(color: Colors.black),
-                    softWrap: true,
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        widget.controller.downloadSubscription(
-                          selectedTableRows,
-                              (success) {
-                            UserPreferences().getUser().then(
-                                  (user) {
-                                setState(() {
-                                  widget.user = user!;
-                                });
-                              },
-                            );
-                            clearList();
-                            getSubscriptionItems();
-                          },
-                        );
-
-                      },
-                      child: Text("Yes"),
+          setState(
+                () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(
+                      Platform.isAndroid ? "Download bundle" : "Download Courses",
+                      style: TextStyle(color: Colors.black),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("No"),
+                    content: Text(
+                      Platform.isAndroid ? "Do you want to re download this bundle?" : "Do you want to re download these courses?",
+                      style: TextStyle(color: Colors.black),
+                      softWrap: true,
                     ),
-                  ],
-                );
-              },
-            );
-          },
-        );
-      },
-      child: Container(
-        color: Color(0xFF2A9CEA),
-        height: 56,
-        child:  Center(
-          child: Text(
-           Platform.isAndroid ? 'Redownload Bundle' : "Redownload courses",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Colors.white),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          widget.controller.downloadSubscription(
+                            selectedTableRows,
+                                (success) {
+                              UserPreferences().getUser().then(
+                                    (user) {
+                                  setState(() {
+                                    widget.user = user!;
+                                  });
+                                },
+                              );
+                              clearList();
+                              getSubscriptionItems();
+                            },
+                          );
+
+                        },
+                        child: Text("Yes"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("No"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          );
+        },
+        child: Container(
+          color: Color(0xFF2A9CEA),
+          height: 56,
+          child:  Center(
+            child: Text(
+              Platform.isAndroid ? 'Redownload Bundle' : "Redownload courses",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
           ),
         ),
-      ),
-    ) :
+      ) :
       InkWell(
-      onTap: () {
-        if(Platform.isIOS){
-          print("Not available");
-          // paymentOptionModalBottomSheet(context);
-        }else{
-          paymentOptionModalBottomSheet(context);
-        }
-      },
-      child: Container(
-        color: const Color(0xFF00C9B9),
-        height: 56,
-        child:  Center(
-          child: Text(
-            Platform.isIOS ? "Available Courses" : 'Buy Bundle',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Colors.white),
+        onTap: () {
+          if(Platform.isIOS){
+            print("Not available");
+            // paymentOptionModalBottomSheet(context);
+          }else{
+            paymentOptionModalBottomSheet(context);
+          }
+        },
+        child: Container(
+          color: const Color(0xFF00C9B9),
+          height: 56,
+          child:  Center(
+            child: Text(
+              Platform.isIOS ? "Available Courses" : 'Buy Bundle',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
           ),
         ),
-      ),
-    ) ,
+      )
+
+     ,
         body: SafeArea(
         child: Column(
           children: [
@@ -938,14 +948,70 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                 ],
               ),
             ),
-             Text(
-              "Rev Shaddy Consult",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-             Text(
+            //  Text(
+            //   "Rev Shaddy Consult",
+            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            // ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
+            widget.user.promoCode != null && Platform.isAndroid ?
+              Column(
+                children: [
+                  Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "You have ${widget.user.promoCode!.discount} discount and it expires in ${widget.user.promoCode!.validityPeriod}",
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: Colors.grey[400]),
+                          ),
+                          const SizedBox(
+                            height: 0,
+                          ),
+                          Text(
+                            "${widget.bundle.currency}${bundlePrice}",
+                            style: TextStyle(
+                                color: Color(0xFF2A9CEA),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 27),
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        left: 60,
+                        bottom: 20,
+                        child: sText("NEW",weight: FontWeight.bold,size: 10,color: Color(0xFF00C9B9)),
+                      )
+                    ],
+                  ),
+                  Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            width: appWidth(context),
+                            child: Text(
+                              "${widget.bundle.currency}${widget.bundle.price}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Color(0xFF2A9CEA),
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 10),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(right: 65),
+                        child: Center(child: sText("OLD",weight: FontWeight.bold,size: 8,color: kAdeoGray3,align: TextAlign.left)),
+                      )
+                    ],
+                  ),
+                ],
+              ) :
+
+            Text(
               "${widget.bundle.currency}${widget.bundle.price}",
               style: TextStyle(
                   color: Color(0xFF2A9CEA),
