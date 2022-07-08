@@ -223,7 +223,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             progressCode ?
             Expanded(   flex: 8,child: Center(child: progress()))
             :
-            Expanded(   flex: 8,child: Center(child: sText(Platform.isAndroid ? "You've no subscription available" : "You've no courses available contact your school",color:  Color(0XFF2D3E50),weight: FontWeight.bold,size: 16),)),
+            Expanded(   flex: 8,child: Center(child: sText(Platform.isAndroid ? "You've no subscription available" : "You've no courses available contact your school",color:  Color(0XFF2D3E50),weight: FontWeight.bold,size: 16,align: TextAlign.center),)),
             Platform.isAndroid ?
             Expanded(
               flex: 2,
