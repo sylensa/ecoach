@@ -465,6 +465,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                              widget.user!,
                                               reviewQuestionsBack[questionIndex].correctAnswer!.solution!.replaceAll("https", "http"),
                                               useLocalImage: false,
+
                                               // removeTags: reviewQuestionsBack[questionIndex].answers![t].solution!.contains("src") ? false : true,
                                               textColor: Colors.white,
                                               fontWeight: FontWeight.normal,
