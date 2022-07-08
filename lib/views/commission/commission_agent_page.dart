@@ -400,7 +400,7 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                                 ),
                                 GestureDetector(
                                   onTap: (){
-                                    Clipboard.setData(ClipboardData(text: "${listAgentData[0].data![i].code}"));
+                                    Clipboard.setData( ClipboardData(text: "Adeo educational app The adeo educational app helps students prep better for their exams. It covers all subjects from Primary to Senior High School. Take a free assessment to determine your performance and buy a bundle to enjoy the full benefits of the adeo app Download the adeo educational app today from the google play store by clicking on this link https://play.google.com/store/apps/details?id=com.ecoach.adeo You can also download the desktop version by clicking here https://bit.ly/3Ia8r6t Use the promo code ${listAgentData[0].data![i].code} to get discounts on all your subscriptions or purchases. Do check our website for more information https://adeo.africa adeo ……………….easy prep, easy pass"));
                                     toastMessage("Copied to clipboard");
                                   },
                                     child: Icon(Icons.copy,color: kAdeoGray3,),
