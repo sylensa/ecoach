@@ -172,6 +172,11 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                                     var res = await doPost(AppUrl.userPromoCodes, {'promo_code':productKeyController.text.replaceAll('-','')});
                                     print("res:$res");
                                     if(res["status"]){
+                                     setState((){
+                                       PromoCode promoCode = PromoCode.fromJson(res["data"]);
+                                       widget.user.promoCode = promoCode;
+                                       UserPreferences().setUser(widget.user);
+                                     });
                                       Navigator.pop(context);
                                       showDialogOk(message: "You have ${res["data"]["discount"]} on all bundle purchase. The discount expires in ${res["data"]["validity_period"]}",context: context,dismiss: false,title: "${res["message"]}");
                                     }else{
@@ -225,11 +230,44 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
         }
     );
   }
+
+  isAlreadySubscribed(Plan plan){
+    print("widget.user.subscriptions.length:${widget.user.subscriptions.length}");
+    for(int i = 0; i < widget.user.subscriptions.length; i++){
+      if(widget.user.subscriptions[i].planId == plan.id){
+        return  Text(
+          "Subscribed",
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 12,
+              fontWeight: FontWeight.bold
+
+          ),
+        );
+      }
+    }
+    return  Text(
+      "${plan.currency}${plan.price}",
+      style: TextStyle(
+        color: Colors.blue,
+        fontSize: 12,
+      ),
+    );
+  }
   @override
   void initState() {
+
     if(futurePlanItem.isEmpty){
       getAllPlans();
     }
+    UserPreferences().getUser().then((user) {
+      setState(() {
+        subscriptions = user!.subscriptions;
+        widget.user.subscriptions = user.subscriptions;
+        context.read<DownloadUpdate>().setSubscriptions(subscriptions);
+      });
+      print("object ${user!.subscriptions.length}");
+    });
     super.initState();
   }
 
@@ -306,7 +344,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
               height: 10,
             ),
 
-            futurePlanItem.isNotEmpty ?
+            futurePlanItem.isNotEmpty && Platform.isAndroid ?
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.zero,
@@ -323,6 +361,54 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                         onTap: () {
                           if(Platform.isAndroid){
                             goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          }else{
+                            // goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          }
+                        },
+                        title:  Text(
+                          "${futurePlanItem[index].name}",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        subtitle:  Text(
+                          "${futurePlanItem[index].description}",
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        trailing:  isAlreadySubscribed(futurePlanItem[index])
+                      ),
+                    );
+                  }else{
+                    return Container();
+                  }
+
+                },
+              ),
+            ) :
+            futurePlanItem.isNotEmpty && Platform.isIOS ?
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: futurePlanItem.length,
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  if(futurePlanItem[index].isActive! && futurePlanItem[index].price! > 0){
+                    return Card(
+                      color: Colors.white,
+                      elevation: 0,
+                      margin: EdgeInsets.only(bottom: 2.h),
+                      child: ListTile(
+                        onTap: () {
+                          if(Platform.isAndroid){
+                            goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          }else{
+                            // goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
                           }
                         },
                         title:  Text(
@@ -341,7 +427,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                           ),
                         ),
                         trailing:  Text(
-                          "${futurePlanItem[index].currency}${futurePlanItem[index].price}",
+                          "",
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 12,
