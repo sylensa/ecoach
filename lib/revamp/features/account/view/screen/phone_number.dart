@@ -127,7 +127,7 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
       body: SafeArea(
         child: Padding(
           padding:
-              const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 18),
+              const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -228,8 +228,12 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
               InkWell(
                 onTap: () {
                   if(phoneNumbersController.text.length > 9){
-                    print("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
-                    doRegister(context);
+                    if(phoneNumbersController.text.substring(0,1) == "0"){
+                      // print("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
+                      doRegister(context);
+                    }else{
+                      toastMessage("You number should start with 0");
+                    }
                   }else{
                     toastMessage("Expecting 10 numbers");
                   }
