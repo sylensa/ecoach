@@ -21,9 +21,16 @@ class PlanController{
         for(int i = 0; i < js["data"].length; i++){
           Plan plan = Plan.fromJson(js["data"][i]);
           futurePlanItem.add(plan);
+          for(int t = 0; t < js["data"][i]["features"].length; t++){
+            SubscriptionItem subscriptionItem = SubscriptionItem.fromJson(js["data"][i]["features"][t]);
+            await PlanDB().insert(subscriptionItem);
+          }
         }
         PlanDB().insertAll(futurePlanItem);
+
       }
+
+
     }
 
   }
