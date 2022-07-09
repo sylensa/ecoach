@@ -55,7 +55,7 @@ class UserPreferences {
     String? email = prefs.getString("email");
     String? phone = prefs.getString("phone");
     String? token = prefs.getString("api_token");
-    String? promo_code = prefs.getString("promo_code");
+    String? promo_code = prefs.getString("promo_code") ?? "";
     bool is_agent = prefs.getBool("is_agent") ?? false;
     bool is_editor = prefs.getBool("is_editor") ?? true;
     bool activated = prefs.getBool("activated") ?? false;
@@ -73,7 +73,7 @@ class UserPreferences {
         isAgent: is_agent,
         isEditor: is_editor,
         activated: activated,
-        promoCode:promo_code!.isEmpty ? promoCode : PromoCode.fromJson(jsonDecode(promo_code)),
+        promoCode:promo_code.isEmpty ? promoCode : PromoCode.fromJson(jsonDecode(promo_code)),
         signupDate: signupDate != null ? DateTime.parse(signupDate) : null);
 
     List<Subscription> plans = await SubscriptionDB().subscriptions();
