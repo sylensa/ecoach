@@ -111,7 +111,7 @@ class _ReadSavedQuestionsState extends State<ReadSavedQuestions> {
                                     Column(
                                       children: [
                                         Container(
-                                          width: 280,
+                                          width: appWidth(context) * 0.75,
 
                                           child: AdeoHtmlTex(
                                             widget.user,
