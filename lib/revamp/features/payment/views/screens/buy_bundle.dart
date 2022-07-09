@@ -958,55 +958,35 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
             widget.user.promoCode != null && Platform.isAndroid ?
               Column(
                 children: [
-                  Stack(
+                  Column(
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            "You have ${widget.user.promoCode!.discount} discount and it expires in ${widget.user.promoCode!.validityPeriod}",
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: Colors.grey[400]),
-                          ),
-                          const SizedBox(
-                            height: 0,
-                          ),
-                          Text(
-                            "${widget.bundle.currency}${bundlePrice}",
-                            style: TextStyle(
-                                color: Color(0xFF2A9CEA),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 27),
-                          ),
-                        ],
+                      Text(
+                        "You have ${widget.user.promoCode!.discount} discount and it expires in ${widget.user.promoCode!.validityPeriod}",
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: Colors.grey[400]),
                       ),
-                      Positioned(
-                        left: 60,
-                        bottom: 20,
-                        child: sText("NEW",weight: FontWeight.bold,size: 10,color: Color(0xFF00C9B9)),
-                      )
+                      const SizedBox(
+                        height: 0,
+                      ),
+                      Text(
+                        "${widget.bundle.currency}${bundlePrice.toStringAsFixed(2)}",
+                        style: TextStyle(
+                            color: Color(0xFF2A9CEA),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 27),
+                      ),
                     ],
                   ),
-                  Stack(
-                    children: [
-                      Column(
-                        children: [
-                          Container(
-                            width: appWidth(context),
-                            child: Text(
-                              "${widget.bundle.currency}${widget.bundle.price}",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Color(0xFF2A9CEA),
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 10),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 65),
-                        child: Center(child: sText("OLD",weight: FontWeight.bold,size: 8,color: kAdeoGray3,align: TextAlign.left)),
-                      )
-                    ],
+                  Text(
+                    "${widget.bundle.currency}${widget.bundle.price!.toStringAsFixed(2)}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Color(0xFF2A9CEA),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 10,
+                        decoration: TextDecoration.lineThrough
+
+                    ),
+
                   ),
                 ],
               ) :
