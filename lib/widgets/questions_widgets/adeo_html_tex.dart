@@ -71,14 +71,14 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             fontWeight: widget.fontWeight,
             fontFamily: "Poppins",
           ),
-          "table": Style(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: "Poppins",
-              width: 1,
-              fontSize: FontSize(widget.fontSize),
-              fontStyle: widget.fontStyle,
-              textAlign: TextAlign.center),
+          // "table": Style(
+          //     color: Colors.white,
+          //     fontWeight: FontWeight.bold,
+          //     fontFamily: "Poppins",
+          //     width: 1,
+          //     fontSize: FontSize(widget.fontSize),
+          //     fontStyle: widget.fontStyle,
+          //     textAlign: TextAlign.center),
           "tr": Style(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -90,15 +90,21 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
           "td": Style(
               color: Colors.black,
               alignment: Alignment.center,
-              padding: EdgeInsets.all(2),
+              padding: EdgeInsets.all(4),
               fontSize: FontSize(widget.fontSize),
               fontStyle: widget.fontStyle,
               fontFamily: "Poppins",
-              textAlign: TextAlign.center),
+              textAlign: TextAlign.center,
+              border: Border.all(color: Colors.grey[200]!, width: 1)
+
+          ),
+
+
           'img': Style(
               // width: 400,
               height: 200,
-              padding: EdgeInsets.all(0)),
+              padding: EdgeInsets.all(0)
+          ),
         },
         customRenders: {
           if (widget.useLocalImage)
