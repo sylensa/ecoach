@@ -465,11 +465,11 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                              widget.user!,
                                               reviewQuestionsBack[questionIndex].correctAnswer!.solution!.replaceAll("https", "http"),
                                               useLocalImage: false,
-
                                               // removeTags: reviewQuestionsBack[questionIndex].answers![t].solution!.contains("src") ? false : true,
                                               textColor: Colors.white,
                                               fontWeight: FontWeight.normal,
                                               fontSize: 14,
+                                              textAlign: TextAlign.center,
                                             ),
                                           ),
                                         ],
@@ -651,7 +651,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                   ((reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id && answer.value == 1) ||  answer.value == 1) ||  (reviewQuestionsBack[questionIndex].isCorrect && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id) || (reviewQuestionsBack[questionIndex].isWrong && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id)  ? Colors.white : Colors.black ,
                   fontSize: 25,
                   // removeTags: answer.text!.contains("src") ? false : true,
-
+                    removeBr: true,
                   fontWeight: reviewQuestionsBack[questionIndex].selectedAnswer == answer ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
