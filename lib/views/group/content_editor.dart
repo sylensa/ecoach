@@ -1,8 +1,15 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
+import 'package:ecoach/models/group_packages_model.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
+import 'package:ecoach/views/user_setup.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ContentEditor extends StatefulWidget {
   const ContentEditor({Key? key}) : super(key: key);
@@ -12,7 +19,44 @@ class ContentEditor extends StatefulWidget {
 }
 
 class _ContentEditorState extends State<ContentEditor> {
-  List<ListNames> listPackages = [ListNames(name: "One Group Test",id: "50"),ListNames(name: "1 Month Pro Account",id: "100",),ListNames(name: "12 Month Pro Account",id: "990")];
+  late String generatedLink = '';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  authorisePayment(BuildContext context,int packageId) async {
+    var res = await doPost(AppUrl.groupPackagesPaymentInitialization, {
+      "group_package_id": packageId,
+    });
+    if(res["status"]){
+      Navigator.pop(_scaffoldKey.currentContext!);
+      generatedLink = res["data"]["authorization_url"];
+      paymentPage(generatedLink);
+    }else{
+      Navigator.pop(_scaffoldKey.currentContext!);
+      toastMessage(res["message"]);
+    }
+  }
+  paymentPage(String authorizationUrl){
+    showDialog(
+      context: _scaffoldKey.currentContext!,
+      builder: (context) {
+        return WebView(
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: authorizationUrl,
+          navigationDelegate: (navigation) async {
+            //Listen for callback URL
+            if (navigation.url.contains('https://standard.paystack.co/close')) {
+              Navigator.of(context).pop(); //close webview
+            }
+            if (navigation.url.contains(AppUrl.payment_callback)) {
+              Navigator.of(context).pop(); //close webview
+              setState(() {});
+              
+            }
+            return NavigationDecision.navigate;
+          },
+        );
+      },
+    );
+  }
   upgradePackageModalBottomSheet(context,){
     TextEditingController productKeyController = TextEditingController();
     bool isActivated = true;
@@ -52,21 +96,28 @@ class _ContentEditorState extends State<ContentEditor> {
                       SizedBox(height: 20,),
                       Expanded(
                         child: ListView.builder(
-                          itemCount: listPackages.length,
+                          itemCount: listGroupPackageData.length,
                             itemBuilder: (BuildContext context,int index){
-                              return Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    sText(listPackages[index].name,color: kAdeoGray3),
-                                    sText("GHS ${listPackages[index].id}",color: Colors.black,weight: FontWeight.bold),
-                                  ],
+                              return MaterialButton(
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                  showLoaderDialog(context);
+                                  authorisePayment(context,listGroupPackageData[index].id!);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      sText(listGroupPackageData[index].name,color: kAdeoGray3),
+                                      sText("GHS ${listGroupPackageData[index].price}",color: Colors.black,weight: FontWeight.bold),
+                                    ],
+                                  ),
                                 ),
                               );
                         })
@@ -81,9 +132,35 @@ class _ContentEditorState extends State<ContentEditor> {
         }
     );
   }
+
+  getGroupList()async {
+    listGroupListData.clear();
+    try{
+      var js = await doGet('${AppUrl.groups}');
+      print("res groups : $js");
+      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
+        for(int i =0; i < js["data"]["data"].length; i++){
+          GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
+          listGroupListData.add(groupListData);
+        }
+        Navigator.pop(context);
+        goTo(context, GroupListPage());
+      }else{
+        Navigator.pop(context);
+        goTo(context, GroupListPage());
+        toastMessage("${js["message"]}");
+      }
+    }catch(e){
+      Navigator.pop(context);
+      toastMessage("Failed");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -129,7 +206,8 @@ class _ContentEditorState extends State<ContentEditor> {
               SizedBox(height: 10),
               GestureDetector(
                 onTap: (){
-                  goTo(context, GroupListPage());
+                showLoaderDialog(context);
+                getGroupList();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -152,7 +230,7 @@ class _ContentEditorState extends State<ContentEditor> {
              SizedBox(height: 20,),
              GestureDetector(
                onTap: ()async{
-                 upgradePackageModalBottomSheet(context);
+                 upgradePackageModalBottomSheet(_scaffoldKey.currentContext);
                },
                child: Container(
                  padding: EdgeInsets.all(20),
