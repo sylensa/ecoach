@@ -4,6 +4,7 @@ import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,6 +21,8 @@ class _LogoutState extends State<Logout> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) async{
+      futurePlanItem.clear();
+      await PlanDB().deleteAllPlans();
       await SubscriptionDB().deleteAll();
       await SubscriptionItemDB().deleteAll();
       await QuestionDB().deleteAllSavedTest();
