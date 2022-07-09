@@ -246,17 +246,48 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
         );
       }
     }
-    return  Text(
-      "${plan.currency}${plan.price}",
-      style: TextStyle(
-        color: Colors.blue,
-        fontSize: 12,
-      ),
-    );
+    if(widget.user.promoCode != null){
+      return    Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+
+          Container(
+            child: Text(
+              "${plan.currency}${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
+              style: TextStyle(
+                  color: Color(0xFF2A9CEA),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14),
+            ),
+          ),
+          Container(
+            child: Text(
+              "${plan.currency}${plan.price!.toStringAsFixed(2)}",
+              style: TextStyle(
+                  color: kAdeoGray3,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 10,
+                  decoration: TextDecoration.lineThrough
+              ),
+            ),
+          ),
+        ],
+      );
+    }else{
+      return Text(
+        "${plan.currency}${plan.price}",
+        style: TextStyle(
+          color: Colors.blue,
+          fontSize: 12,
+
+        ),
+      );
+    }
+
+
   }
   @override
   void initState() {
-
     if(futurePlanItem.isEmpty){
       getAllPlans();
     }
@@ -316,6 +347,14 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    widget.user.promoCode != null ?
+                    Container(
+                      width: 200,
+                      child: Text(
+                        "Discounts expires in ${widget.user.promoCode!.validityPeriod}",
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500,color: Colors.blue),
+                      ),
+                    ) :
                     Container(),
                     Container(
                       padding: EdgeInsets.all(5),
