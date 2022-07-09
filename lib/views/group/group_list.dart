@@ -16,6 +16,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/preparing_download.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/create_group.dart';
@@ -250,10 +251,11 @@ groupActionsModalBottomSheet(context,){
               ),
             ),
             SizedBox(height: 10,),
+            listGroupListData.isNotEmpty ?
             Expanded(
               flex: 8,
               child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: listGroupListData.length,
                   itemBuilder: (BuildContext context, int index){
                     return  GestureDetector(
                       onTap: (){
@@ -266,20 +268,20 @@ groupActionsModalBottomSheet(context,){
                           child: ListTile(
                             title:  Container(
                               width: 100,
-                              child: sText("300 days",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
+                              child: sText("${listGroupListData[index].dateCreated!.difference(DateTime.now()).inDays > 365 ? "365" : listGroupListData[index].dateCreated!.difference(DateTime.now()).inDays.toString()} days",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
 
                             ),
 
                             leading: Container(
                               width: 100,
-                              child: sText("Rev Shaddy",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
+                              child: sText("${listGroupListData[index].name}",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
                             ),
                             trailing: Container(
                               width: 100,
                               child: Row(
                                 children: [
                                   Text(
-                                    "8 members",
+                                    "${listGroupListData[index].membersCount} members",
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       color:  Color(0XFF2D3E50),
@@ -294,40 +296,38 @@ groupActionsModalBottomSheet(context,){
                           )),
                     );
                   }),
-            ),
+            ) :
+            Expanded(child: Center(child: sText("Empty group",weight: FontWeight.bold),)),
 
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                onTap:(){
-                  goTo(context, CreateGroup());
-                },
-                child: Container(
-                  padding: EdgeInsets.all(0),
-                  margin: EdgeInsets.only(bottom: 30,right: 20,left: 20),
-                  decoration: BoxDecoration(
-                      color: Color(0xFFddfffc),
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset("assets/images/add.png"),
-                      SizedBox(width: 20,),
-                      Text(
-                        "Create Group",
-                        softWrap: true,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF00C9B9),
-                            height: 1.1,
-                            fontFamily: "Poppins"
-                        ),
+            GestureDetector(
+              onTap:(){
+                goTo(context, CreateGroup());
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                margin: EdgeInsets.only(bottom: 30,right: 20,left: 20),
+                decoration: BoxDecoration(
+                    color: Color(0xFFddfffc),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/images/add.png"),
+                    SizedBox(width: 20,),
+                    Text(
+                      "Create Group",
+                      softWrap: true,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF00C9B9),
+                          height: 1.1,
+                          fontFamily: "Poppins"
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             )
