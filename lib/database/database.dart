@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 23, onOpen: (db) {},
+    return await openDatabase(path, version: 24, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -154,6 +154,7 @@ class DBProvider {
         'name' varchar(255)  NOT NULL,
         'description' varchar(255)  DEFAULT NULL,
         'is_active' tinyint(1) NOT NULL DEFAULT '1',
+        'subscribed' tinyint(1) NOT NULL DEFAULT '1',
         'price' decimal(8,2) NOT NULL DEFAULT '0.00',
         'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
         'currency' varchar(3)  NOT NULL,
@@ -611,6 +612,47 @@ class DBProvider {
         'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
         'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
         'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'plans'""");
+          await db.execute("""CREATE TABLE 'plans' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255)  NOT NULL,
+        'name' varchar(255)  NOT NULL,
+        'description' varchar(255)  DEFAULT NULL,
+        'is_active' tinyint(1) NOT NULL DEFAULT '1',
+        'subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        'price' decimal(8,2) NOT NULL DEFAULT '0.00',
+        'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
+        'currency' varchar(3)  NOT NULL,
+        'trial_period' smallint unsigned NOT NULL DEFAULT '0',
+        'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
+        'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
+        'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
+        'tier' mediumint unsigned NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'plans' (
+        'id' INTEGER PRIMARY KEY,
+        'tag' varchar(255)  NOT NULL,
+        'name' varchar(255)  NOT NULL,
+        'description' varchar(255)  DEFAULT NULL,
+        'is_active' tinyint(1) NOT NULL DEFAULT '1',
+        'subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        'price' decimal(8,2) NOT NULL DEFAULT '0.00',
+        'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
+        'currency' varchar(3)  NOT NULL,
+        'trial_period' smallint unsigned NOT NULL DEFAULT '0',
+        'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
+        'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
+        'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
+        'tier' mediumint unsigned NOT NULL DEFAULT '0',
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
