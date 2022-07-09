@@ -1,6 +1,8 @@
 // enum DropdownSize { small, medium, large }
 import 'package:ecoach/models/agent_transaction.dart';
 import 'package:ecoach/models/get_agent_code.dart';
+import 'package:ecoach/models/group_list_model.dart';
+import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
 
@@ -26,3 +28,5 @@ List<AgentData> listAgentData = [];
 var totalCommission;
 List<AgentTransactionResponse> listDataResponse = [];
 bool fetchDiagnosticTest = false;
+List<GroupPackageData> listGroupPackageData = [];
+List<GroupListData> listGroupListData = [];
