@@ -1,7 +1,11 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/empty_group_memebers.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
@@ -15,7 +19,25 @@ class CreateGroup extends StatefulWidget {
 class _CreateGroupState extends State<CreateGroup> {
   TextEditingController groupNameController = TextEditingController();
   TextEditingController groupDescriptionController = TextEditingController();
-  bool switchOn = true;
+  bool switchOn = false;
+  bool status = true;
+  createGroup() async {
+    var res = await doPost(AppUrl.groups, {
+      "name": groupNameController.text,
+      "description": groupDescriptionController.text,
+      "type": status ? "Public" : "Private",
+      "discoverability": switchOn
+    });
+    if(res["status"]){
+      GroupListData groupListData = GroupListData.fromJson(res["data"]);
+      listGroupListData.add(groupListData);
+      Navigator.pop(context);
+      goTo(context, EmptyGroupMembers(groupListData: groupListData,));
+    }else{
+      Navigator.pop(context);
+      toastMessage(res["message"]);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -151,60 +173,76 @@ class _CreateGroupState extends State<CreateGroup> {
                       child: sText("Who can join this group",color: kAdeoGray3,size: 16),
                     ),
                     SizedBox(height: 20,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                      color: Colors.white,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          sText("Anyone",color: kAdeoGray3,size: 16),
-                          Container(
-                            padding: EdgeInsets.all(2.0),
-                            height: 20,
-                            width: 20,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(64.0),
-                              border: Border.all(
-                                width: 2.0,
-                                color: Color(0xFF00C9B9),
+                    MaterialButton(
+                      onPressed: (){
+                        setState((){
+                          status = true;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            sText("Anyone",color: kAdeoGray3,size: 16),
+                            status ?
+                            Container(
+                              padding: EdgeInsets.all(2.0),
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(64.0),
+                                border: Border.all(
+                                  width: 2.0,
+                                  color: Color(0xFF00C9B9),
+                                ),
                               ),
-                            ),
-                            child: CircleAvatar(
-                              radius: 32.0,
-                              backgroundColor:   Color(0xFF00C9B9),
-                            ),
-                          ),
-                        ],
+                              child: CircleAvatar(
+                                radius: 32.0,
+                                backgroundColor:   Color(0xFF00C9B9),
+                              ),
+                            ) : Container(),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 1,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                      color: Colors.white,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    MaterialButton(
+                      onPressed: (){
+                        setState((){
+                          status = false;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                        color: Colors.white,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                        children: [
-                          sText("Only Invited members",color: kAdeoGray3,size: 16),
-                          Container(
-                            padding: EdgeInsets.all(2.0),
-                            height: 20,
-                            width: 20,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(64.0),
-                              border: Border.all(
-                                width: 2.0,
-                                color: Color(0xFF00C9B9),
+                          children: [
+                            sText("Only Invited members",color: kAdeoGray3,size: 16),
+                            !status ?
+                            Container(
+                              padding: EdgeInsets.all(2.0),
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(64.0),
+                                border: Border.all(
+                                  width: 2.0,
+                                  color: Color(0xFF00C9B9),
+                                ),
                               ),
-                            ),
-                            child: CircleAvatar(
-                              radius: 32.0,
-                              backgroundColor:   Color(0xFF00C9B9),
-                            ),
-                          ),
-                        ],
+                              child: CircleAvatar(
+                                radius: 32.0,
+                                backgroundColor:   Color(0xFF00C9B9),
+                              ),
+                            ) : Container(),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -212,7 +250,10 @@ class _CreateGroupState extends State<CreateGroup> {
               ),
               GestureDetector(
                 onTap: (){
+                    // showLoaderDialog(context);
+                    // createGroup();
                   goTo(context, EmptyGroupMembers());
+
                 },
                 child: Container(
                   width: appWidth(context),
