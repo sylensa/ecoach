@@ -13,6 +13,7 @@ class Plan {
     this.invoicePeriod,
     this.invoiceInterval,
     this.tier,
+    this.subscribed,
     this.createdAt,
     this.updatedAt,
   });
@@ -22,6 +23,7 @@ class Plan {
   String? name;
   String? description;
   bool? isActive;
+  bool? subscribed;
   double? price;
   double? signupFee;
   String? currency;
@@ -37,6 +39,7 @@ class Plan {
         id: json["id"],
         tag: json["tag"],
         name: json["name"],
+        subscribed: json["subscribed"] == 1 ? true : json["subscribed"] == 0 ? false :  json["subscribed"],
         description: json["description"],
         isActive: json["is_active"] == 1 ? true : json["is_active"] == 0 ? false :  json["is_active"],
         price: double.parse("${json["price"]}"),
@@ -59,6 +62,7 @@ class Plan {
         "is_active": isActive,
         "price": price,
         "signup_fee": signupFee,
+        "subscribed": subscribed ?? false,
         "currency": currency,
         "trial_period": trialPeriod,
         "trial_interval": trialInterval,
