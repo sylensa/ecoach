@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group_main_page.dart';
@@ -8,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class EmptyGroupMembers extends StatefulWidget {
-  const EmptyGroupMembers({Key? key}) : super(key: key);
+  GroupListData? groupListData;
+   EmptyGroupMembers({this.groupListData}) ;
 
   @override
   State<EmptyGroupMembers> createState() => _EmptyGroupMembersState();
