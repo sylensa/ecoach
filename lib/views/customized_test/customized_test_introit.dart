@@ -40,6 +40,10 @@ class _CustomizedTestIntroitState extends State<CustomizedTestIntroit> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kAdeoTaupe,
+      appBar: AppBar(
+          elevation: 0,
+          backgroundColor: kAdeoTaupe
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
