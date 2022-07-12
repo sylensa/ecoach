@@ -122,13 +122,13 @@ class _ReadSavedQuestionsState extends State<ReadSavedQuestions> {
                                             useLocalImage: true,
                                             removeTags: question.contains("src") ? false : true,
                                             textColor: Color(0XFF707070),
+                                            removeBr: true,
                                           ),
                                         ),
 
                                         SizedBox(height: 10,),
                                         Container(
                                           width: 280,
-
                                           child: sText("${question[index].topicName}", color:  Color(0XFF2D3E50), weight: FontWeight.bold,align: TextAlign.right,size: 12,),
                                         ),
                                       ],
