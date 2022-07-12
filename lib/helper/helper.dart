@@ -454,6 +454,7 @@ InputDecoration textDecorNoBorder(
     enabledBorder: OutlineInputBorder(
       borderSide: BorderSide(color: borderColor, width: 1),
       borderRadius: BorderRadius.circular(radius),
+
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(color: borderColor, width: 1),
@@ -461,7 +462,7 @@ InputDecoration textDecorNoBorder(
     ),
     focusColor: dPurple,
     enabled: enabled,
-    labelStyle: appStyle(size: hintSize),
+    labelStyle: appStyle(size: hintSize,col: hintColor),
     filled: true,
     fillColor: fill,
     contentPadding: padding,
