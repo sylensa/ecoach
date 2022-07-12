@@ -273,6 +273,7 @@ class _ReviewQuestionsState extends State<ReviewQuestions> {
                                 widget.user,
                                 widget.listQuestionsReview![widget.questionIndex].text!.replaceAll("https", "http"),
                                 useLocalImage: true,
+                                removeBr: true,
                                 imageSize: Size(10, 10),
                               ),
                             ],
