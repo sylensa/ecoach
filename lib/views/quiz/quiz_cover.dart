@@ -257,7 +257,7 @@ class QuizCover extends StatelessWidget {
                             ),
                           ),
                           SizedBox(
-                            height: 220,
+                            height: 170,
                           ),
                           Container(
                             child: Row(
