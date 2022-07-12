@@ -101,7 +101,10 @@ class _OthersTabPageState extends State<OthersTabPage> {
                               TestCategory.TOPIC.toString() &&
                           element.challengeType !=
                               TestCategory.EXAM.toString() &&
-                          element.challengeType != TestCategory.MOCK.toString())
+                          element.challengeType != TestCategory.MOCK.toString()
+                              &&
+                              element.challengeType != TestCategory.NONE.toString()
+                  )
                       .toList();
                   return Expanded(
                     child: otherTests.length == 0
