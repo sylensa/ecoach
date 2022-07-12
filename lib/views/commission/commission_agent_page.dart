@@ -366,7 +366,12 @@ class _CommissionAgentPageState extends State<CommissionAgentPage> {
                   for(int i = 0; i < listAgentData[0].data!.length; i++)
                   GestureDetector(
                     onLongPress: (){
-                     deleteModalBottomSheet(context, listAgentData[0].data![i].id!,i);
+                      print(listAgentData[0].data![i].isDefault);
+                      if(listAgentData[0].data![i].isDefault != 1){
+                        deleteModalBottomSheet(context, listAgentData[0].data![i].id!,i);
+                      }else{
+                        toastMessage("Your default promo code cant be deleted");
+                      }
                     },
                     child: Stack(
                       children: [
