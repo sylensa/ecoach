@@ -233,56 +233,110 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
 
   isAlreadySubscribed(Plan plan){
     print("widget.user.subscriptions.length:${widget.user.subscriptions.length}");
-    for(int i = 0; i < widget.user.subscriptions.length; i++){
-      if(widget.user.subscriptions[i].planId == plan.id){
-        return  Text(
-          "Subscribed",
+    if(widget.user.subscriptions.isNotEmpty){
+      for(int i = 0; i < widget.user.subscriptions.length; i++){
+        if(widget.user.subscriptions[i].planId == plan.id){
+          return  Text(
+            "Subscribed",
+            style: TextStyle(
+                color: Colors.blue,
+                fontSize: 12,
+                fontWeight: FontWeight.bold
+
+            ),
+          );
+        }
+      }
+      if(widget.user.promoCode != null){
+        return    Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            Container(
+              child: Text(
+                "${plan.currency}${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
+                style: TextStyle(
+                    color: Color(0xFF2A9CEA),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
+              ),
+            ),
+            Container(
+              child: Text(
+                "${plan.currency}${plan.price!.toStringAsFixed(2)}",
+                style: TextStyle(
+                    color: kAdeoGray3,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 10,
+                    decoration: TextDecoration.lineThrough
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+      else{
+        return Text(
+          "${plan.currency}${plan.price}",
           style: TextStyle(
             color: Colors.blue,
             fontSize: 12,
+
+          ),
+        );
+      }
+    }else{
+      if(plan.subscribed!){
+        return  Text(
+          "Subscribed",
+          style: TextStyle(
+              color: Colors.blue,
+              fontSize: 12,
               fontWeight: FontWeight.bold
 
           ),
         );
       }
-    }
-    if(widget.user.promoCode != null){
-      return    Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      else if(widget.user.promoCode != null){
+        return    Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
 
-          Container(
-            child: Text(
-              "${plan.currency}${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
-              style: TextStyle(
-                  color: Color(0xFF2A9CEA),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14),
-            ),
-          ),
-          Container(
-            child: Text(
-              "${plan.currency}${plan.price!.toStringAsFixed(2)}",
-              style: TextStyle(
-                  color: kAdeoGray3,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 10,
-                  decoration: TextDecoration.lineThrough
+            Container(
+              child: Text(
+                "${plan.currency}${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
+                style: TextStyle(
+                    color: Color(0xFF2A9CEA),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
               ),
             ),
-          ),
-        ],
-      );
-    }else{
-      return Text(
-        "${plan.currency}${plan.price}",
-        style: TextStyle(
-          color: Colors.blue,
-          fontSize: 12,
+            Container(
+              child: Text(
+                "${plan.currency}${plan.price!.toStringAsFixed(2)}",
+                style: TextStyle(
+                    color: kAdeoGray3,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 10,
+                    decoration: TextDecoration.lineThrough
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+      else{
+        return Text(
+          "${plan.currency}${plan.price}",
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 12,
 
-        ),
-      );
+          ),
+        );
+      }
     }
+
 
 
   }
