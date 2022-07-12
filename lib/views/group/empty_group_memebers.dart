@@ -1,10 +1,12 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
 import 'package:ecoach/views/group/group_page.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
@@ -17,6 +19,27 @@ class EmptyGroupMembers extends StatefulWidget {
 }
 
 class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
+
+  inviteToGroup(String email) async {
+  try{
+    var res = await doPost(AppUrl.inviteGroup,
+        {
+          "email": email,
+          "group_id": widget.groupListData!.id,
+        });
+    if(res["status"] && res["code"].toString() == "200"){
+      Navigator.pop(context);
+      toastMessage(res["message"]);
+    }else{
+      Navigator.pop(context);
+      toastMessage(res["message"]);
+    }
+  }catch(e){
+    Navigator.pop(context);
+    print("error:$e");
+
+  }
+  }
 
   inviteModalBottomSheet(context,){
     TextEditingController emailController = TextEditingController();
@@ -70,6 +93,7 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
                                       Expanded(
                                         child: TextFormField(
                                           controller: emailController,
+                                          keyboardType: TextInputType.emailAddress,
                                           validator: (value) {
                                             if (value == null || value.isEmpty) {
                                               return 'Please check that you\'ve entered email';
@@ -123,7 +147,12 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
                                 onConfirmation:(){
                                   stateSetter((){
                                     confirmText = "Confirmed";
-                                    goTo(context, GroupProfilePage());
+                                    if(emailController.text.isNotEmpty){
+                                      Navigator.pop(context);
+                                      showLoaderDialog(context);
+                                      inviteToGroup(emailController.text);
+                                    }
+                                    // goTo(context, GroupProfilePage());
                                   });
                                 } ,
                                 backgroundColor: Color(0xFFE8F5FF),
@@ -164,7 +193,7 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color:  Color(0XFF2D3E50),)),
         title:    Text(
-          "SHS Physics A1",
+          properCase(widget.groupListData!.name!),
           softWrap: true,
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -184,7 +213,7 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: sText("01290",color: Color(0xFF2A9CEA),weight: FontWeight.w500,align: TextAlign.center,size: 25),
+                child: sText("${widget.groupListData!.uid!}",color: Color(0xFF2A9CEA),weight: FontWeight.w500,align: TextAlign.center,size: 25),
               ),
               SizedBox(height: 100,),
               Container(
