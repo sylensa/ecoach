@@ -29,6 +29,7 @@ class ActualQuestion extends StatelessWidget {
             useLocalImage: diagnostic ? false : true,
             // removeTags: question.contains("src") ? false : true,
             textColor: Colors.black,
+            removeBr: true,
           ),
         ),
         Visibility(
