@@ -89,11 +89,10 @@ class _CreateGroupState extends State<CreateGroup> {
                                 }
                                 return null;
                               },
-
                               decoration: textDecorNoBorder(
                                 radius: 10,
                                 labelText: "Name",
-                                hintColor: kAdeoGray3,
+                                hintColor: Color(0xFFB9B9B9),
                                 borderColor:Colors.white ,
                                 fill: Colors.white,
                                 padding: EdgeInsets.only(left: 10,right: 10),
@@ -123,7 +122,7 @@ class _CreateGroupState extends State<CreateGroup> {
                               decoration: textDecorNoBorder(
                                 radius: 10,
                                 labelText: "Description",
-
+                                hintColor: Color(0xFFB9B9B9),
                                 borderColor:Colors.white ,
                                 fill: Colors.white,
                                 padding: EdgeInsets.only(left: 10,right: 10),
@@ -250,9 +249,9 @@ class _CreateGroupState extends State<CreateGroup> {
               ),
               GestureDetector(
                 onTap: (){
-                    // showLoaderDialog(context);
-                    // createGroup();
-                  goTo(context, EmptyGroupMembers());
+                    showLoaderDialog(context);
+                    createGroup();
+                  // goTo(context, EmptyGroupMembers());
 
                 },
                 child: Container(
