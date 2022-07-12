@@ -100,7 +100,9 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                       .where((element) =>
                           element.challengeType ==
                               TestCategory.EXAM.toString() ||
-                          element.challengeType == TestCategory.MOCK.toString())
+                          element.challengeType == TestCategory.MOCK.toString() ||
+                              element.challengeType == TestCategory.NONE.toString()
+                  )
                       .toList();
 
                   return Expanded(
