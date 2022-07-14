@@ -43,14 +43,21 @@ class PlanDB {
   Future<List<Plan>> getAllPlans() async {
     final Database? db = await DBProvider.database;
     List<Plan> plans = [];
+    List<Plan> listPlans = [];
     final List<Map<String, dynamic>> maps = await db!.query('plans', orderBy: "created_at DESC");
     for(int i = 0; i < maps.length; i++){
       if(maps[i].isNotEmpty){
         Plan plan = Plan.fromJson(maps[i]);
-        plans.add(plan);
+        if(plan.subscribed!){
+          listPlans.add(plan);
+        }else{
+          plans.add(plan);
+        }
       }
     }
-    print("plans:${plans.length}");
+    plans.insertAll(0, listPlans);
+    print("listPlans:${listPlans.length}");
+    print("plans:${listPlans.length}");
     return plans;
 
   }
