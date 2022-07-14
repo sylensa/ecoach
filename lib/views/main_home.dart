@@ -30,7 +30,8 @@ class MainHomePage extends StatefulWidget {
   static const String routeName = '/main';
   User user;
   int index;
-  MainHomePage(this.user, {this.index = 0});
+  int planId;
+  MainHomePage(this.user, {this.index = 0,this.planId = -1});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
@@ -68,7 +69,7 @@ class _MainHomePageState extends State<MainHomePage>
         controller: mainController,
       ),
       GroupMainPage(widget.user),
-      CoursesPage(widget.user,mainController),
+      CoursesPage(widget.user,mainController,planId: widget.planId,),
       AnalysisView(user: widget.user),
       // MoreView(
       //   widget.user,
