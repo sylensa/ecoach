@@ -25,8 +25,9 @@ getSubscriptionSubName(String name) {
 
 class CoursesPage extends StatefulWidget {
   static const String routeName = '/courses';
-  CoursesPage(this.user,this.controller, {Key? key}) : super(key: key);
+  CoursesPage(this.user,this.controller, {Key? key,this.planId = -1}) : super(key: key);
   User user;
+  int planId ;
   final MainController controller;
 
   @override
@@ -38,19 +39,40 @@ class _CoursesPageState extends State<CoursesPage> {
   late PageController controller;
   List<Subscription> subscriptions = [];
   bool progressCode = true;
+  getUserSubscriptions()async{
+      Subscription? res =  await SubscriptionDB().getSubscriptionByPlanId(widget.planId);
+      if(res != null){
+       subscriptions.add(res);
+       var futureSubs = SubscriptionDB().subscriptions();
+       futureSubs.then((List<Subscription> subscriptions) {
+         if (subscriptions.isNotEmpty) {
+          for(int i =0; i < subscriptions.length; i++){
+            if(subscriptions[i].id != res.id){
+              this.subscriptions.add(subscriptions[i]);
+            }
+          }
+         }
+         setState(() {
+           progressCode = false;
+         });
+       });
+      }else{
+        var futureSubs = SubscriptionDB().subscriptions();
+        futureSubs.then((List<Subscription> subscriptions) {
+          if (subscriptions.isNotEmpty) {
+            this.subscriptions = subscriptions;
+          }
+          setState(() {
+            progressCode = false;
+          });
+        });
+      }
+    }
   @override
   void initState() {
     page = 0;
     controller = PageController();
-    var futureSubs = SubscriptionDB().subscriptions();
-    futureSubs.then((List<Subscription> subscriptions) {
-      if (subscriptions.length > 0) {
-        this.subscriptions = subscriptions;
-      }
-      setState(() {
-        progressCode = false;
-      });
-    });
+    getUserSubscriptions();
     super.initState();
   }
 
