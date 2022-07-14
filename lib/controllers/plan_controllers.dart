@@ -10,6 +10,7 @@ class PlanController{
 
   getPlanOnly()async{
     futurePlanItem.clear();
+    List<Plan> listPlans = [];
     futurePlanItem = await PlanDB().getAllPlans();
     if(futurePlanItem.isEmpty){
       String? token = await UserPreferences().getUserToken();
@@ -20,12 +21,17 @@ class PlanController{
       if(js["status"] && js["data"].isNotEmpty){
         for(int i = 0; i < js["data"].length; i++){
           Plan plan = Plan.fromJson(js["data"][i]);
-          futurePlanItem.add(plan);
+          if(plan.subscribed!){
+            listPlans.add(plan);
+          }else{
+            futurePlanItem.add(plan);
+          }
           for(int t = 0; t < js["data"][i]["features"].length; t++){
             SubscriptionItem subscriptionItem = SubscriptionItem.fromJson(js["data"][i]["features"][t]);
             await PlanDB().insert(subscriptionItem);
           }
         }
+        futurePlanItem.insertAll(0, listPlans);
         PlanDB().insertAll(futurePlanItem);
 
       }
