@@ -20,6 +20,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/create_group.dart';
+import 'package:ecoach/views/group/group_page.dart';
 import 'package:ecoach/views/group/group_profile.dart';
 import 'package:ecoach/views/subscribe.dart';
 import 'package:flutter/material.dart';
@@ -37,112 +38,7 @@ class GroupListPage extends StatefulWidget {
 
 class _GroupListPageState extends State<GroupListPage> {
 bool progressCode = false;
-popUpMenu({BuildContext? context}) {
-  return PopupMenuButton(
-    onSelected: (result) async {
-      if (result == "report") {
-      }
 
-    },
-    padding: bottomPadding(0),
-    child: Container(
-      margin: EdgeInsets.only(right: 10),
-      child: Icon(Icons.more_vert, color: Colors.black),
-    ),
-    // add this line
-    itemBuilder: (_) => <PopupMenuItem<String>>[
-      PopupMenuItem<String>(
-        child: Container(
-          // height: 30,
-          child: sText("Group Actions", size: 18),
-        ),
-        value: 'report',
-        onTap: () {},
-      ),
-
-    ],
-  );
-}
-groupActionsModalBottomSheet(context,){
-  TextEditingController productKeyController = TextEditingController();
-  bool isActivated = true;
-  double sheetHeight = 400;
-  showModalBottomSheet(
-      context: context,
-      isDismissible: true,
-      backgroundColor: Colors.transparent ,
-      isScrollControlled: true,
-      builder: (BuildContext context){
-        return StatefulBuilder(
-          builder: (BuildContext context,StateSetter stateSetter){
-            return Container(
-                height: sheetHeight,
-                decoration: BoxDecoration(
-                    color: kAdeoGray ,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20,),
-                    Container(
-                      color: Colors.grey,
-                      height: 5,
-                      width: 100,
-                    ),
-                    SizedBox(height: 20,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Center(child: sText("Group Actions",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
-                    ),
-                    SizedBox(height: 10,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: sText("Perform an action",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
-                    ),
-                    SizedBox(height: 20,),
-                    Expanded(
-                        child: ListView(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                              decoration:BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: sText("Delete Group",color: kAdeoGray3,align: TextAlign.center),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                              decoration:BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: sText("Suspend Group",color: kAdeoGray3,align: TextAlign.center),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                              decoration:BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
-                            ),
-                          ],
-                        )
-                    ),
-
-                  ],
-                )
-            );
-          },
-
-        );
-      }
-  );
-}
   @override
   void initState() {
     super.initState();
@@ -170,11 +66,7 @@ groupActionsModalBottomSheet(context,){
               fontFamily: "Poppins"
           ),
         ),
-        actions: [
-          IconButton(onPressed: (){
-            groupActionsModalBottomSheet(context);
-          }, icon: Icon(Icons.more_vert, color: Colors.black))
-        ],
+
         centerTitle: true,
       ),
       body: Container(
@@ -190,7 +82,7 @@ groupActionsModalBottomSheet(context,){
                 SizedBox(height: 0,),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: sText("Validity : 365 days",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                  child: sText("Validity : ${listActivePackageData[0].validity}",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
                 ),
               ],
             ),
@@ -259,7 +151,9 @@ groupActionsModalBottomSheet(context,){
                   itemBuilder: (BuildContext context, int index){
                     return  GestureDetector(
                       onTap: (){
-                        goTo(context, GroupProfilePage());
+                        goTo(context, GroupPage(groupListData:listGroupListData[index]));
+
+                        // goTo(context, GroupProfilePage());
                       },
                       child: Card(
                           color: Colors.white,
