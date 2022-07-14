@@ -123,7 +123,7 @@ class DataCodes {
     id: json["id"] == null ? null : json["id"],
     agentId: json["agent_id"] == null ? null : json["agent_id"],
     code: json["code"] == null ? null : json["code"],
-    isDefault: json["is_default"] == null ? null : json["is_default"] == true ? 1 : 0,
+    isDefault: json["is_default"] ,
     deletedAt: json["deleted_at"],
     commission: json["commission"],
     subscribers: json["subscribers"],
