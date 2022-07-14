@@ -30,6 +30,8 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
     if(res["status"] && res["code"].toString() == "200"){
       Navigator.pop(context);
       toastMessage(res["message"]);
+      goTo(context, GroupPage(groupListData:widget.groupListData));
+
     }else{
       Navigator.pop(context);
       toastMessage(res["message"]);
@@ -152,7 +154,7 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
                                       showLoaderDialog(context);
                                       inviteToGroup(emailController.text);
                                     }
-                                    // goTo(context, GroupProfilePage());
+                                    // goTo(context, GroupProfilePage(groupListData:widget.groupListData));
                                   });
                                 } ,
                                 backgroundColor: Color(0xFFE8F5FF),
