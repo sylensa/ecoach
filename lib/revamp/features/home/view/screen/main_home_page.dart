@@ -25,6 +25,8 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/subscribe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -254,7 +256,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
 
             Container(
               child: Text(
-                "${plan.currency}${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
+                "${plan.currency} ${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
                 style: TextStyle(
                     color: Color(0xFF2A9CEA),
                     fontWeight: FontWeight.bold,
@@ -263,7 +265,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
             ),
             Container(
               child: Text(
-                "${plan.currency}${plan.price!.toStringAsFixed(2)}",
+                "${plan.currency} ${plan.price!.toStringAsFixed(2)}",
                 style: TextStyle(
                     color: kAdeoGray3,
                     fontWeight: FontWeight.normal,
@@ -277,7 +279,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
       }
       else{
         return Text(
-          "${plan.currency}${plan.price}",
+          "${plan.currency} ${plan.price}",
           style: TextStyle(
             color: Colors.blue,
             fontSize: 12,
@@ -304,7 +306,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
 
             Container(
               child: Text(
-                "${plan.currency}${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
+                "${plan.currency} ${double.parse((plan.price! -  (widget.user.promoCode!.rate!  * plan.price!)).toStringAsFixed(2))}",
                 style: TextStyle(
                     color: Color(0xFF2A9CEA),
                     fontWeight: FontWeight.bold,
@@ -313,7 +315,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
             ),
             Container(
               child: Text(
-                "${plan.currency}${plan.price!.toStringAsFixed(2)}",
+                "${plan.currency} ${plan.price!.toStringAsFixed(2)}",
                 style: TextStyle(
                     color: kAdeoGray3,
                     fontWeight: FontWeight.normal,
@@ -327,7 +329,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
       }
       else{
         return Text(
-          "${plan.currency}${plan.price}",
+          "${plan.currency} ${plan.price}",
           style: TextStyle(
             color: Colors.blue,
             fontSize: 12,
@@ -437,7 +439,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
               height: 10,
             ),
 
-            futurePlanItem.isNotEmpty && Platform.isAndroid ?
+            futurePlanItem.isNotEmpty && Platform.isIOS ?
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.zero,
@@ -452,9 +454,13 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                       margin: EdgeInsets.only(bottom: 2.h),
                       child: ListTile(
                         onTap: () {
-                          if(Platform.isAndroid){
+                          if(Platform.isAndroid && futurePlanItem[index].subscribed!){
+                            goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          }
+                          else if(Platform.isAndroid && !futurePlanItem[index].subscribed!){
                             goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
                           }else{
+                            goTo(context, MainHomePage(widget.user,index: 2,planId: futurePlanItem[index].id!,),);
                             // goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
                           }
                         },
