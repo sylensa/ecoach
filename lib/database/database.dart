@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 24, onOpen: (db) {},
+    return await openDatabase(path, version: 25, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -154,7 +154,7 @@ class DBProvider {
         'name' varchar(255)  NOT NULL,
         'description' varchar(255)  DEFAULT NULL,
         'is_active' tinyint(1) NOT NULL DEFAULT '1',
-        'subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
         'price' decimal(8,2) NOT NULL DEFAULT '0.00',
         'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
         'currency' varchar(3)  NOT NULL,
@@ -625,7 +625,7 @@ class DBProvider {
         'name' varchar(255)  NOT NULL,
         'description' varchar(255)  DEFAULT NULL,
         'is_active' tinyint(1) NOT NULL DEFAULT '1',
-        'subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
         'price' decimal(8,2) NOT NULL DEFAULT '0.00',
         'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
         'currency' varchar(3)  NOT NULL,
@@ -644,7 +644,7 @@ class DBProvider {
         'name' varchar(255)  NOT NULL,
         'description' varchar(255)  DEFAULT NULL,
         'is_active' tinyint(1) NOT NULL DEFAULT '1',
-        'subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
         'price' decimal(8,2) NOT NULL DEFAULT '0.00',
         'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
         'currency' varchar(3)  NOT NULL,
