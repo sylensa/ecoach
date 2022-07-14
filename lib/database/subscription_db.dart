@@ -27,6 +27,15 @@ class SubscriptionDB {
     return result.isNotEmpty ? Subscription.fromJson(result.first) : null;
   }
 
+  Future<Subscription?> getSubscriptionByPlanId(int id) async {
+    final db = await DBProvider.database;
+    var result = await db!.query("subscriptions", where: "plan_id = ?", whereArgs: [id]);
+    print("result:${result}");
+
+    return result.isNotEmpty ? Subscription.fromJson(result.first) : null;
+  }
+
+
   Future<void> insertAll(List<Subscription> subscriptions) async {
     print("insert all subs");
     final Database? db = await DBProvider.database;
