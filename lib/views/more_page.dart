@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/get_agent_code.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -72,6 +73,31 @@ class _MorePageState extends State<MorePage> {
       }else{
         Navigator.pop(context);
         toastMessage("${js["message"]}");
+        goTo(context, ContentEditor());
+      }
+    }catch(e){
+      Navigator.pop(context);
+      toastMessage("Failed");
+    }
+  }
+  getActivePackage()async {
+    listActivePackageData.clear();
+    try{
+      var js = await doGet('${AppUrl.groupActivePackage}');
+      print("res groupActivePackage : $js");
+      if (js["code"].toString() == "200") {
+        ActivePackageData activePackageData = ActivePackageData.fromJson(js["data"]);
+        listActivePackageData.add(activePackageData);
+        if(listGroupPackageData.isEmpty){
+          await getGroupPackList();
+        }else{
+          Navigator.pop(context);
+          goTo(context, ContentEditor());
+        }
+      }else{
+        Navigator.pop(context);
+        toastMessage("${js["message"]}");
+        goTo(context, NotContentEditor());
       }
     }catch(e){
       Navigator.pop(context);
@@ -322,49 +348,43 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  // MaterialButton(
-                  //   padding: EdgeInsets.zero,
-                  //   onPressed: ()async{
-                  //     if(widget.user.isEditor != null){
-                  //       if(widget.user.isEditor!){
-                  //         if(listGroupPackageData.isNotEmpty){
-                  //           goTo(context, ContentEditor());
-                  //         }else{
-                  //           showLoaderDialog(context, message: "Loading...");
-                  //           await getGroupPackList();
-                  //         }
-                  //       }else{
-                  //         goTo(context, NotContentEditor());
-                  //       }
-                  //     }else{
-                  //       goTo(context, NotContentEditor());
-                  //     }
-                  //
-                  //   },
-                  //   child: Container(
-                  //     padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
-                  //     child: Row(
-                  //       children: [
-                  //         Icon(Icons.group,color: Colors.black,),
-                  //         SizedBox(width: 20,),
-                  //         Text(
-                  //           "Group Management",
-                  //           softWrap: true,
-                  //           textAlign: TextAlign.center,
-                  //           style: TextStyle(
-                  //               fontSize: 18.0,
-                  //               fontWeight: FontWeight.w500,
-                  //               color:  Color(0XFF2D3E50),
-                  //               height: 1.1,
-                  //               fontFamily: "Poppins"
-                  //           ),
-                  //         ),
-                  //         Expanded(child: Container()),
-                  //         Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: ()async{
+                          if(listActivePackageData.isNotEmpty){
+                            goTo(context, ContentEditor());
+                          }else{
+                            showLoaderDialog(context, message: "Loading...");
+                            await getActivePackage();
+                          }
+
+
+
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
+                      child: Row(
+                        children: [
+                          Icon(Icons.group,color: Colors.black,),
+                          SizedBox(width: 20,),
+                          Text(
+                            "Group Management",
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500,
+                                color:  Color(0XFF2D3E50),
+                                height: 1.1,
+                                fontFamily: "Poppins"
+                            ),
+                          ),
+                          Expanded(child: Container()),
+                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
+                        ],
+                      ),
+                    ),
+                  ),
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: (){
