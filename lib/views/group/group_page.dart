@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
@@ -6,14 +7,15 @@ import 'package:ecoach/views/group/group_list.dart';
 import 'package:flutter/material.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
-class GroupProfilePage extends StatefulWidget {
-  const GroupProfilePage({Key? key}) : super(key: key);
+class GroupPage extends StatefulWidget {
+  GroupListData? groupListData;
+  GroupPage({this.groupListData});
 
   @override
-  State<GroupProfilePage> createState() => _GroupProfilePageState();
+  State<GroupPage> createState() => _GroupPageState();
 }
 
-class _GroupProfilePageState extends State<GroupProfilePage> {
+class _GroupPageState extends State<GroupPage> {
   List<ListNames> listMembers = [ListNames(name: "Victor Adatsi",id: "1"),ListNames(name: "Samuel Quaye",id: "2"),ListNames(name: "Peter Ocansey",id: "1"),];
   memberActionsModalBottomSheet(context,){
     TextEditingController productKeyController = TextEditingController();
@@ -230,6 +232,112 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
         }
     );
   }
+  popUpMenu({BuildContext? context}) {
+    return PopupMenuButton(
+      onSelected: (result) async {
+        if (result == "report") {
+        }
+
+      },
+      padding: bottomPadding(0),
+      child: Container(
+        margin: EdgeInsets.only(right: 10),
+        child: Icon(Icons.more_vert, color: Colors.black),
+      ),
+      // add this line
+      itemBuilder: (_) => <PopupMenuItem<String>>[
+        PopupMenuItem<String>(
+          child: Container(
+            // height: 30,
+            child: sText("Group Actions", size: 18),
+          ),
+          value: 'report',
+          onTap: () {},
+        ),
+
+      ],
+    );
+  }
+  groupActionsModalBottomSheet(context,){
+    TextEditingController productKeyController = TextEditingController();
+    bool isActivated = true;
+    double sheetHeight = 400;
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: kAdeoGray ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Center(child: sText("Group Actions",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
+                      ),
+                      SizedBox(height: 10,),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: sText("Perform an action",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                      ),
+                      SizedBox(height: 20,),
+                      Expanded(
+                          child: ListView(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                decoration:BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: sText("Delete Group",color: kAdeoGray3,align: TextAlign.center),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                decoration:BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: sText("Suspend Group",color: kAdeoGray3,align: TextAlign.center),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                decoration:BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
+                              ),
+                            ],
+                          )
+                      ),
+
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -241,7 +349,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color:  Color(0XFF2D3E50),)),
         title:    Text(
-          "SHS Physics A1",
+          widget.groupListData!.name!,
           softWrap: true,
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -252,6 +360,11 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
               fontFamily: "Poppins"
           ),
         ),
+        actions: [
+          IconButton(onPressed: (){
+            groupActionsModalBottomSheet(context);
+          }, icon: Icon(Icons.more_vert, color: Colors.black))
+        ],
         centerTitle: true,
       ),
       body: Column(
@@ -260,7 +373,7 @@ class _GroupProfilePageState extends State<GroupProfilePage> {
           Center(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: sText("01290",color: Color(0xFF2A9CEA),weight: FontWeight.w500,align: TextAlign.center,size: 25),
+              child: sText(widget.groupListData!.uid!,color: Color(0xFF2A9CEA),weight: FontWeight.w500,align: TextAlign.center,size: 25),
             ),
           ),
 
