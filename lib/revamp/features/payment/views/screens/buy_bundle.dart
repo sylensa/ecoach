@@ -968,7 +968,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                         height: 0,
                       ),
                       Text(
-                        "${widget.bundle.currency}${bundlePrice.toStringAsFixed(2)}",
+                        "${widget.bundle.currency} ${bundlePrice.toStringAsFixed(2)}",
                         style: TextStyle(
                             color: Color(0xFF2A9CEA),
                             fontWeight: FontWeight.bold,
@@ -977,7 +977,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                     ],
                   ),
                   Text(
-                    "${widget.bundle.currency}${widget.bundle.price!.toStringAsFixed(2)}",
+                    "${widget.bundle.currency} ${widget.bundle.price!.toStringAsFixed(2)}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Color(0xFF2A9CEA),
@@ -992,7 +992,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
               ) :
 
             Text(
-              "${widget.bundle.currency}${widget.bundle.price}",
+              "${widget.bundle.currency} ${widget.bundle.price}",
               style: TextStyle(
                   color: Color(0xFF2A9CEA),
                   fontWeight: FontWeight.bold,
