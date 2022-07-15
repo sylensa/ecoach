@@ -52,6 +52,7 @@ class BuyBundlePage extends StatefulWidget {
   MainController controller;
   String daysLeft;
 
+
   @override
   State<BuyBundlePage> createState() => _BuyBundlePageState();
 }
@@ -69,6 +70,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
   late String subName;
   List<BundleByPlanData> bundleByPlanData = [];
   double totalAmount = 0.0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late String generatedLink = '';
 
@@ -275,7 +277,9 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                             SizedBox(height: 20,),
                             GestureDetector(
                               onTap: ()async{
-                                await authorisePayment(context,);
+                                Navigator.pop(context);
+                                showLoaderDialog(context);
+                                await authorisePayment(_scaffoldKey.currentContext!,);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -302,7 +306,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                 });
                                 if(generatedLink.isNotEmpty){
                                   Navigator.pop(context);
-                                  paymentLinkModalBottomSheet(context,link: generatedLink);
+                                  paymentLinkModalBottomSheet(_scaffoldKey.currentContext!,link: generatedLink);
                                 }
                               },
                               child: Container(
@@ -325,6 +329,87 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                             ),
 
                             SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                                productKeyModalBottomSheet(context);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: sText("Enter Product Key",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20,),
+                            GestureDetector(
+                              onTap: ()async{
+                                Navigator.pop(context);
+                                customerCare();
+
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                margin: EdgeInsets.symmetric(horizontal: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    sText("Contact customer care",color: Colors.grey,align: TextAlign.center,weight: FontWeight.bold),
+                                  ],
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color:  Color(0xFFBBCFD6,))
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+              );
+            },
+
+          );
+        }
+    );
+  }
+  iosPaymentOptionModalBottomSheet(context){
+    bool generateLink = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return Container(
+                  height: 250,
+                  decoration: BoxDecoration(
+                      color: Colors.white ,
+                      border: Border.all(color: Color(0xFFBBCFD6,),width: 2),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(height: 20,),
+
+                      Expanded(
+                        child: ListView(
+                          children: [
                             GestureDetector(
                               onTap: (){
                                 Navigator.pop(context);
@@ -652,6 +737,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       bottomNavigationBar:
       context.watch<DownloadUpdate>().isDownloading ?
       Container(
@@ -811,11 +897,15 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
       ) :
       InkWell(
         onTap: () {
+
           if(Platform.isIOS){
+            toastMessage("Product added to cart");
             print("Not available");
-            // paymentOptionModalBottomSheet(context);
+            paymentOptionModalBottomSheet(_scaffoldKey.currentContext!);
+            // iosPaymentOptionModalBottomSheet(context);
+
           }else{
-            paymentOptionModalBottomSheet(context);
+            paymentOptionModalBottomSheet(_scaffoldKey.currentContext!);
           }
         },
         child: Container(
@@ -823,7 +913,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
           height: 56,
           child:  Center(
             child: Text(
-              Platform.isIOS ? "Available Courses" : 'Buy Bundle',
+              Platform.isIOS ? "Add to cart and proceed to checkout" : 'Buy Bundle',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18, color: Colors.white),
             ),
@@ -948,14 +1038,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                 ],
               ),
             ),
-            //  Text(
-            //   "Rev Shaddy Consult",
-            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            // ),
-            // const SizedBox(
-            //   height: 10,
-            // ),
-            widget.user.promoCode != null && Platform.isAndroid ?
+            widget.user.promoCode != null?
               Column(
                 children: [
                   Column(
@@ -998,7 +1081,6 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                   fontWeight: FontWeight.bold,
                   fontSize: 27),
             ),
-            if(Platform.isAndroid)
             widget.daysLeft.isNotEmpty ?
              Text(
               "${widget.daysLeft} days left",
@@ -1171,7 +1253,7 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
 
                             }else{
                               if(Platform.isAndroid){
-                                paymentOptionModalBottomSheet(context);
+                                paymentOptionModalBottomSheet(_scaffoldKey.currentContext!);
                               }
                             }
                           },
@@ -1200,13 +1282,15 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                       fontSize: 29,
                                     ),
                                   ),
-                                  trailing: Image.asset(
+                                  trailing:
+                                  Platform.isAndroid ?
+                                  Image.asset(
                                     "assets/images/download.png",
                                     color:
                                     items[index].downloadStatus == "downloaded"  && isSubscribed && items[index].questionCount! > 0 ? Colors.green : Colors.grey,
                                     height: 27,
                                     width: 27,
-                                  ),
+                                  ) : Text(''),
                                 )),
                           ),
                         );
