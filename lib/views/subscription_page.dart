@@ -259,7 +259,44 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                 ),
               ),
-            ) : Container(),
+            ) :
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                onTap:(){
+                  paymentOptionModalBottomSheet(context);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  margin: EdgeInsets.only(bottom: 30,right: 20,left: 20),
+                  decoration: BoxDecoration(
+                      color: Color(0xFFE8F5FF),
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Icon(Icons.lock,color: Color(0xFF0367B4),),
+                      // SizedBox(width: 20,),
+                      Expanded(
+                        child: Text(
+                          "Enter Course Key and Proceed to Checkout",
+                          softWrap: true,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0367B4),
+                              height: 1.1,
+                              fontFamily: "Poppins"
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ) ,
           ],
         ),
       ),
