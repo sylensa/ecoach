@@ -239,7 +239,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
       for(int i = 0; i < widget.user.subscriptions.length; i++){
         if(widget.user.subscriptions[i].planId == plan.id){
           return  Text(
-            "Subscribed",
+            Platform.isAndroid ? "Subscribed" : "Product Delivered",
             style: TextStyle(
                 color: Colors.blue,
                 fontSize: 12,
@@ -394,7 +394,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
               height: 0,
             ),
             SizedBox(height: 10,),
-            Platform.isAndroid ?
+
             GestureDetector(
               onTap: (){
                 promoCodeModalBottomSheet(context);
@@ -434,12 +434,12 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                   ],
                 ),
               ),
-            ) : Container(),
+            ) ,
             const SizedBox(
               height: 10,
             ),
 
-            futurePlanItem.isNotEmpty && Platform.isIOS ?
+            futurePlanItem.isNotEmpty ?
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.zero,
@@ -454,13 +454,13 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                       margin: EdgeInsets.only(bottom: 2.h),
                       child: ListTile(
                         onTap: () {
-                          if(Platform.isAndroid && futurePlanItem[index].subscribed!){
-                            goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+                          if(futurePlanItem[index].subscribed!){
+                            goTo(context, MainHomePage(widget.user,index: 2,planId: futurePlanItem[index].id!,),);
                           }
-                          else if(Platform.isAndroid && !futurePlanItem[index].subscribed!){
+                          else if(!futurePlanItem[index].subscribed!){
                             goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
                           }else{
-                            goTo(context, MainHomePage(widget.user,index: 2,planId: futurePlanItem[index].id!,),);
+                            goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
                             // goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
                           }
                         },
@@ -489,58 +489,58 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                 },
               ),
             ) :
-            futurePlanItem.isNotEmpty && Platform.isIOS ?
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                itemCount: futurePlanItem.length,
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  if(futurePlanItem[index].isActive! && futurePlanItem[index].price! > 0){
-                    return Card(
-                      color: Colors.white,
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2.h),
-                      child: ListTile(
-                        onTap: () {
-                          if(Platform.isAndroid){
-                            goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
-                          }else{
-                            // goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
-                          }
-                        },
-                        title:  Text(
-                          "${futurePlanItem[index].name}",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        subtitle:  Text(
-                          "${futurePlanItem[index].description}",
-                          style: TextStyle(
-                            fontSize: 9,
-                            color: Colors.grey,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                        trailing:  Text(
-                          "",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    );
-                  }else{
-                    return Container();
-                  }
-
-                },
-              ),
-            ) :
+            // futurePlanItem.isNotEmpty && Platform.isIOS ?
+            // Expanded(
+            //   child: ListView.builder(
+            //     padding: EdgeInsets.zero,
+            //     itemCount: futurePlanItem.length,
+            //     shrinkWrap: true,
+            //     physics: const ClampingScrollPhysics(),
+            //     itemBuilder: (context, index) {
+            //       if(futurePlanItem[index].isActive! && futurePlanItem[index].price! > 0){
+            //         return Card(
+            //           color: Colors.white,
+            //           elevation: 0,
+            //           margin: EdgeInsets.only(bottom: 2.h),
+            //           child: ListTile(
+            //             onTap: () {
+            //               if(Platform.isAndroid){
+            //                 goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+            //               }else{
+            //                 // goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: futurePlanItem[index],));
+            //               }
+            //             },
+            //             title:  Text(
+            //               "${futurePlanItem[index].name}",
+            //               style: TextStyle(
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //             subtitle:  Text(
+            //               "${futurePlanItem[index].description}",
+            //               style: TextStyle(
+            //                 fontSize: 9,
+            //                 color: Colors.grey,
+            //                 fontStyle: FontStyle.italic,
+            //               ),
+            //             ),
+            //             trailing:  Text(
+            //               "",
+            //               style: TextStyle(
+            //                 color: Colors.blue,
+            //                 fontSize: 12,
+            //               ),
+            //             ),
+            //           ),
+            //         );
+            //       }else{
+            //         return Container();
+            //       }
+            //
+            //     },
+            //   ),
+            // ) :
             Expanded(
                 child: Center(
                   child: Row(
