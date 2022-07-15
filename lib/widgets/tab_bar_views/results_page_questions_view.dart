@@ -5,6 +5,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
@@ -24,6 +25,7 @@ import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/QuestionCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class QuestionsTabPage extends StatefulWidget {
   const QuestionsTabPage({
@@ -371,7 +373,7 @@ List<Question>reviewQuestions = [];
                                 );
                               }));
                         },
-                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                        child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ) ,
                     !widget.diagnostic ?
@@ -437,7 +439,7 @@ List<Question>reviewQuestions = [];
                                 );
                               }));
                         },
-                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                        child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ) ,
                     !widget.diagnostic ?
@@ -501,7 +503,7 @@ List<Question>reviewQuestions = [];
                                 );
                               }));
                         },
-                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                        child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ),
                     !widget.diagnostic ?
@@ -565,7 +567,7 @@ List<Question>reviewQuestions = [];
                                 );
                               }));
                         },
-                        child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+                        child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ),
                   ],
@@ -591,19 +593,24 @@ List<Question>reviewQuestions = [];
                         child: Button(
                           label: 'review',
                           onPressed: () async{
-                            if (widget.history) {
-                            } else {
-                              if(reviewQuestionsBack.isNotEmpty){
-                                await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
-                                setState(() {
+                            if(widget.diagnostic){
+                              toastMessage("No review for diagnostic test");
+    }
+                              else{
+                              if (widget.history) {
+                              } else {
+                                if(reviewQuestionsBack.isNotEmpty){
+                                  await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
+                                  setState(() {
 
-                                });
-                              }else{
-                                getAllAnsweredQuestions(answerType);
-                                // toastMessage("No review for diagnostic test");
+                                  });
+                                }else{
+                                  getAllAnsweredQuestions(answerType);
+                                  // toastMessage("No review for diagnostic test");
+                                }
+
+
                               }
-
-
                             }
                           },
                         ),
@@ -656,7 +663,7 @@ List<Question>reviewQuestions = [];
                     },
                   ),
                 ),
-              if (widget.diagnostic)
+              if (widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
                 Expanded(
                   child: Button(
                     label: 'Purchase',

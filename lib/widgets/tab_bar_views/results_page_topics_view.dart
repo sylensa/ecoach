@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -22,6 +23,7 @@ import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TopicsTabPage extends StatefulWidget {
   const TopicsTabPage(
@@ -175,9 +177,9 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                     );
                   }));
             },
-            child: Center(child: sText("Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+            child: Center(child: sText(widget.diagnostic && context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
            ),
-        ) : Container(),
+        ) : Expanded(child: Container()),
         Divider(
           thickness: 3.0,
           color: kPageBackgroundGray,
@@ -199,10 +201,15 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                             if (widget.history) {
                             } else {
                               // Navigator.pop(context,[0,0]);
+                              if(widget.diagnostic){
+                                toastMessage("No reviews for diagnostic test");
+                              }else{
                                 await goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
-                              setState(() {
+                                setState(() {
 
-                              });
+                                });
+                              }
+
 
                             }
                           },
@@ -220,9 +227,12 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                         child: Button(
                           label: 'revise',
                           onPressed: () async {
+                          if(widget.diagnostic){
+                            toastMessage("No revise for diagnostic test");
+                          }else{
                             int topicId = selected['topicId']!;
                             Topic? topic =
-                                await TopicDB().getTopicById(topicId);
+                            await TopicDB().getTopicById(topicId);
 
                             if (topic != null) {
                               // print(
@@ -236,6 +246,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                             } else {
                               showFeedback(context, "No notes available");
                             }
+                          }
                           },
                         ),
                       ),
@@ -273,7 +284,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                           },
                         ),
                       ),
-              if (widget.diagnostic)
+              if (widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
                 Expanded(
                   child: Button(
                     label: 'Purchase',
