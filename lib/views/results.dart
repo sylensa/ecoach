@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
@@ -10,6 +11,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class ResultView extends StatefulWidget {
   ResultView(this.user, this.course,
@@ -123,12 +125,12 @@ class _ResultViewState extends State<ResultView> {
                           ),
                         ),
                       ),
-                      if (widget.diagnostic)
+                       if(widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
                         VerticalDivider(
                           width: 2,
                           color: Colors.white,
                         ),
-                      if (widget.diagnostic)
+                      if (widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(11.0),
@@ -148,7 +150,7 @@ class _ResultViewState extends State<ResultView> {
                             ),
                           ),
                         ),
-                      if (!widget.diagnostic)
+                      if (context.read<DownloadUpdate>().plans.isNotEmpty )
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(11.0),
@@ -165,7 +167,7 @@ class _ResultViewState extends State<ResultView> {
                             ),
                           ),
                         ),
-                      if (!widget.diagnostic)
+                      if (context.read<DownloadUpdate>().plans.isNotEmpty)
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(11.0),
