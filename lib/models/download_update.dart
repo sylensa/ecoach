@@ -21,20 +21,20 @@ class DownloadUpdate with ChangeNotifier {
   bool notificationUp;
   List<String> doneDownloads = [];
 
-  List<Subscription>? plans = [];
+  List<Subscription> plans = [];
   String downloadCount = "";
   String downloadStatus = "";
   int currentPlanId = -1;
 
-  void setSubscriptions(List<Subscription>? plans) {
+  void setSubscriptions(List<Subscription> plans) {
     this.plans = plans;
     notifyListeners();
   }
 
   Subscription? getPlan(int planId) {
-    for (int i = 0; i < plans!.length; i++) {
-      if (plans![i].id == planId) {
-        return plans![i];
+    for (int i = 0; i < plans.length; i++) {
+      if (plans[i].id == planId) {
+        return plans[i];
       }
     }
     return null;
@@ -80,14 +80,14 @@ class DownloadUpdate with ChangeNotifier {
   }
 
   void setDownloadCount(int planId, int count) async {
-    if (plans == null) return;
+    if (plans.isEmpty) return;
 
     currentPlanId = planId;
 
     int totalCount = 0;
-    for (int i = 0; i < plans!.length; i++) {
-      if (planId == plans![i].id) {
-        List<SubscriptionItem>? items = plans![i].subscriptionItems;
+    for (int i = 0; i < plans.length; i++) {
+      if (planId == plans[i].id) {
+        List<SubscriptionItem>? items = plans[i].subscriptionItems;
         totalCount = items == null ? 0 : items.length;
       }
     }
