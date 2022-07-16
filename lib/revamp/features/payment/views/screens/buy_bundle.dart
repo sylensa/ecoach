@@ -1290,7 +1290,15 @@ class _BuyBundlePageState extends State<BuyBundlePage> {
                                     items[index].downloadStatus == "downloaded"  && isSubscribed && items[index].questionCount! > 0 ? Colors.green : Colors.grey,
                                     height: 27,
                                     width: 27,
-                                  ) : Text(''),
+                                  ) : isSubscribed ?
+                                  Image.asset(
+                                    "assets/images/download.png",
+                                    color:
+                                    items[index].downloadStatus == "downloaded"  && isSubscribed && items[index].questionCount! > 0 ? Colors.green : Colors.grey,
+                                    height: 27,
+                                    width: 27,
+                                  ) :
+                                  Text(''),
                                 )),
                           ),
                         );
