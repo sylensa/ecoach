@@ -31,15 +31,15 @@ class ExamsTabPage extends StatefulWidget {
 
 class _ExamsTabPageState extends State<ExamsTabPage> {
   late bool showInPercentage;
-  dynamic selected = null;
+  List<TestTaken> selected = [];
   Future<List<TestTaken>>? tests;
 
   handleSelection(test) {
     setState(() {
-      if (selected == test)
-        selected = null;
+      if (selected.contains(test))
+        selected = selected.where((item) => item != test).toList();
       else
-        selected = test;
+        selected = [...selected, test];
     });
   }
   getAll(var test)async{
@@ -53,7 +53,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
         print("again savedQuestions:${reviewQuestionsBack.length}");
       });
       Navigator.pop(context);
-      goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      goTo(context, QuizReviewPage(testTaken: selected[0],user: widget.user,));
     }else{
       Navigator.pop(context);
       toastMessage("Question are empty, please download questions");
@@ -143,8 +143,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                                         ),
                                         child: AnalysisCard(
                                           showInPercentage: showInPercentage,
-                                          // isSelected: selected.contains(test),
-                                          isSelected: selected == test ? true : false,
+                                          isSelected: selected.contains(test),
                                           metaData: ActivityMetaData(
                                             date: test.datetime
                                                 .toString()
@@ -188,36 +187,33 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
               color: Colors.white,
               boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
             ),
-            child:
-            // selected.length > 1
-            //     ? Row(
-            //         children: [
-            //           Expanded(
-            //             child: AdeoTextButton(
-            //               label: 'analyse',
-            //               fontSize: 16,
-            //               color: kAdeoBlue2,
-            //               onPressed: () {
-            //                 Navigator.push(
-            //                   context,
-            //                   MaterialPageRoute(
-            //                     builder: (context) {
-            //                       return CompareView(
-            //                         user: widget.user,
-            //                         course: widget.course,
-            //                         operands: selected,
-            //                       );
-            //                     },
-            //                   ),
-            //                 );
-            //               },
-            //             ),
-            //           ),
-            //         ],
-            //       )
-            //     :
-
-               Row(
+            child: selected.length > 1
+                ? Row(
+                    children: [
+                      Expanded(
+                        child: AdeoTextButton(
+                          label: 'analyse',
+                          fontSize: 16,
+                          color: kAdeoBlue2,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return CompareView(
+                                    user: widget.user,
+                                    course: widget.course,
+                                    operands: selected,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
                     children: [
                       Expanded(
                         child: Row(
@@ -229,7 +225,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                                 color: kAdeoBlue2,
                                 onPressed: () async{
                                   showLoaderDialog(context, message: "Loading");
-                                  await  getAll(selected);
+                                  await  getAll(selected[0]);
                                 },
                               ),
                             ),

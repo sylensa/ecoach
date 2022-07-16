@@ -392,7 +392,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Container(
                           child:  Text(
-                            "${context.read<DownloadUpdate>().plans != null ? context.read<DownloadUpdate>().plans!.length : "0"}",
+                            "${context.read<DownloadUpdate>().plans != null ? context.read<DownloadUpdate>().plans.length : "0"}",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(

@@ -46,10 +46,10 @@ class _SavedQuestionsPageState extends State<SavedQuestionsPage> {
   getSubscriptionItems() async{
     que.clear();
     if(context.read<DownloadUpdate>().plans != null){
-      for(int i =0; i < context.read<DownloadUpdate>().plans!.length; i++){
+      for(int i =0; i < context.read<DownloadUpdate>().plans.length; i++){
         int count = 0;
-        print("len:${ context.read<DownloadUpdate>().plans!.length}");
-        List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans![i].planId!);
+        print("len:${ context.read<DownloadUpdate>().plans.length}");
+        List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans[i].planId!);
         for(int t = 0; t < sItem.length; t++){
           if(sItem[t].course != null){
             List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
@@ -142,17 +142,17 @@ class _SavedQuestionsPageState extends State<SavedQuestionsPage> {
               ),
             ),
             SizedBox(height: 10,),
-            context.read<DownloadUpdate>().plans!.isNotEmpty ?
+            context.read<DownloadUpdate>().plans.isNotEmpty ?
             Expanded(
               flex: 8,
               child: ListView.builder(
-                  itemCount: context.read<DownloadUpdate>().plans!.length,
+                  itemCount: context.read<DownloadUpdate>().plans.length,
                   itemBuilder: (BuildContext context, int index){
                     return  GestureDetector(
                       onTap: ()async{
                         if(que.isNotEmpty){
                           if(que[index] > 0){
-                            await  goTo(context, SavedCoursePage(widget.user, controller: widget.controller,bundle: context.read<DownloadUpdate>().plans![index],));
+                            await  goTo(context, SavedCoursePage(widget.user, controller: widget.controller,bundle: context.read<DownloadUpdate>().plans[index],));
                             getSubscriptionItems();
                           }else{
                             toastMessage("No saved questions for this bundle");
@@ -173,13 +173,13 @@ class _SavedQuestionsPageState extends State<SavedQuestionsPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  child: sText("${context.read<DownloadUpdate>().plans![index].name}",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
+                                  child: sText("${context.read<DownloadUpdate>().plans[index].name}",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "${que.length == context.read<DownloadUpdate>().plans!.length && que.isNotEmpty ? que[index] : "0"} Q",
+                                      "${que.length == context.read<DownloadUpdate>().plans.length && que.isNotEmpty ? que[index] : "0"} Q",
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         color:  Color(0XFF2D3E50),

@@ -41,7 +41,7 @@ class MainController {
   }
 
   List<Subscription> getSubscriptions() {
-    return provider.plans!;
+    return provider.plans;
   }
 
   bool compareSubscriptions(

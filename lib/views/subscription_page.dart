@@ -42,9 +42,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   getSubscriptionItems() async{
     listCoursesCount.clear();
     if(context.read<DownloadUpdate>().plans != null){
-      for(int i =0; i < context.read<DownloadUpdate>().plans!.length; i++){
-        print("len:${ context.read<DownloadUpdate>().plans!.length}");
-        List<Course> sItem = await SubscriptionItemDB().subscriptionCourses( context.read<DownloadUpdate>().plans![i].planId!);
+      for(int i =0; i < context.read<DownloadUpdate>().plans.length; i++){
+        print("len:${ context.read<DownloadUpdate>().plans.length}");
+        List<Course> sItem = await SubscriptionItemDB().subscriptionCourses( context.read<DownloadUpdate>().plans[i].planId!);
         listCoursesCount.add(sItem.length);
       }
     }
@@ -155,33 +155,33 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               ),
             ),
             SizedBox(height: 10,),
-            context.read<DownloadUpdate>().plans!.isNotEmpty ?
+            context.read<DownloadUpdate>().plans.isNotEmpty ?
             Expanded(
               flex: 8,
               child: ListView.builder(
-                itemCount: context.read<DownloadUpdate>().plans!.length,
+                itemCount: context.read<DownloadUpdate>().plans.length,
                   itemBuilder: (BuildContext context, int index){
                   return  GestureDetector(
                     onTap: (){
                       Plan newPlan = Plan(
-                        id: context.read<DownloadUpdate>().plans![index].planId,
-                        updatedAt: context.read<DownloadUpdate>().plans![index].updatedAt,
-                        name: context.read<DownloadUpdate>().plans![index].name,
-                        createdAt: context.read<DownloadUpdate>().plans![index].createdAt,
-                        currency: context.read<DownloadUpdate>().plans![index].currency,
-                        description: context.read<DownloadUpdate>().plans![index].description,
-                        invoiceInterval: context.read<DownloadUpdate>().plans![index].invoiceInterval,
-                        invoicePeriod: context.read<DownloadUpdate>().plans![index].invoicePeriod,
+                        id: context.read<DownloadUpdate>().plans[index].planId,
+                        updatedAt: context.read<DownloadUpdate>().plans[index].updatedAt,
+                        name: context.read<DownloadUpdate>().plans[index].name,
+                        createdAt: context.read<DownloadUpdate>().plans[index].createdAt,
+                        currency: context.read<DownloadUpdate>().plans[index].currency,
+                        description: context.read<DownloadUpdate>().plans[index].description,
+                        invoiceInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
+                        invoicePeriod: context.read<DownloadUpdate>().plans[index].invoicePeriod,
                         isActive: true,
-                        price: context.read<DownloadUpdate>().plans![index].price!.toDouble(),
-                        signupFee: context.read<DownloadUpdate>().plans![index].price!.toDouble(),
-                        tag: context.read<DownloadUpdate>().plans![index].tag,
-                        tier: context.read<DownloadUpdate>().plans![index].tier,
-                        trialInterval: context.read<DownloadUpdate>().plans![index].invoiceInterval,
+                        price: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
+                        signupFee: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
+                        tag: context.read<DownloadUpdate>().plans[index].tag,
+                        tier: context.read<DownloadUpdate>().plans[index].tier,
+                        trialInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
                         trialPeriod: 1,
 
                       );
-                      goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,daysLeft: context.read<DownloadUpdate>().plans![index].timeLeft,));
+                      goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,daysLeft: context.read<DownloadUpdate>().plans[index].timeLeft,));
 
                     },
                     child: Card(
@@ -191,20 +191,20 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         child: ListTile(
                           title: Platform.isAndroid ? Container(
                             width: 100,
-                            child: sText("${context.read<DownloadUpdate>().plans![index].timeLeft} days",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
+                            child: sText("${context.read<DownloadUpdate>().plans[index].timeLeft} days",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
 
                              ) : Container(),
 
                           leading: Container(
                             width: 100,
-                            child: sText("${context.read<DownloadUpdate>().plans![index].name}",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
+                            child: sText("${context.read<DownloadUpdate>().plans[index].name}",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center),
                           ),
                           trailing: Container(
                             width: 100,
                             child: Row(
                               children: [
                                 Text(
-                                  "${listCoursesCount.isNotEmpty && context.read<DownloadUpdate>().plans!.length == listCoursesCount.length ? listCoursesCount[index] : "0"} courses",
+                                  "${listCoursesCount.isNotEmpty && context.read<DownloadUpdate>().plans.length == listCoursesCount.length ? listCoursesCount[index] : "0"} courses",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color:  Color(0XFF2D3E50),
@@ -636,7 +636,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     toastMessage("Bundle key redeemed successfully.");
     List<Subscription> listSub = [];
     listSub.add(subscription);
-    context.read<DownloadUpdate>().plans!.add(subscription);
+    context.read<DownloadUpdate>().plans.add(subscription);
     await SubscriptionItemDB().insertAll(items);
     await SubscriptionDB().insert(subscription);
     await getSubscriptionItems();

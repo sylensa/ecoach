@@ -48,10 +48,10 @@ class _MoreViewState extends State<MoreView> {
   }
   getSubscriptionItems() async{
     if(context.read<DownloadUpdate>().plans != null){
-      for(int i =0; i < context.read<DownloadUpdate>().plans!.length; i++){
+      for(int i =0; i < context.read<DownloadUpdate>().plans.length; i++){
         int count = 0;
-        print("len:${ context.read<DownloadUpdate>().plans!.length}");
-        List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans![i].planId!);
+        print("len:${ context.read<DownloadUpdate>().plans.length}");
+        List<SubscriptionItem> sItem = await SubscriptionItemDB().subscriptionItems( context.read<DownloadUpdate>().plans[i].planId!);
         for(int t = 0; t < sItem.length; t++){
           if(sItem[t].course != null){
             List<Question> question = await TestController().getSavedTests(sItem[t].course!,limit: sItem[t].questionCount);
@@ -151,7 +151,7 @@ class _MoreViewState extends State<MoreView> {
 
                       ),
                     ),
-                    // if (context.read<DownloadUpdate>().plans!.length > 0)
+                    // if (context.read<DownloadUpdate>().plans.length > 0)
                       SliverPersistentHeader(
                         floating: false,
                         delegate: _SliverAppBarDelegate(
@@ -204,7 +204,7 @@ class _MoreViewState extends State<MoreView> {
 
                 TabBarView(
                   children: [
-                    context.read<DownloadUpdate>().plans!.length > 0 ?
+                    context.read<DownloadUpdate>().plans.length > 0 ?
                     Container(
                       color: Colors.grey[200],
                       child: Column(
@@ -225,12 +225,12 @@ class _MoreViewState extends State<MoreView> {
                           Expanded(
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: context.read<DownloadUpdate>().plans!.length,
+                              itemCount: context.read<DownloadUpdate>().plans.length,
                               itemBuilder: (context, index) {
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                   child: BundleListItem(
-                                    bundle: widget.controller.provider.plans![index],
+                                    bundle: widget.controller.provider.plans[index],
                                     isFirstChild: index == 0,
                                     onTap: () {
                                       Navigator.push(
@@ -239,7 +239,7 @@ class _MoreViewState extends State<MoreView> {
                                           builder: (context) => BundleDownload(
                                             widget.user,
                                             controller: widget.controller,
-                                            bundle: widget.controller.provider.plans![index],
+                                            bundle: widget.controller.provider.plans[index],
                                           ),
                                         ),
                                       );
@@ -256,7 +256,7 @@ class _MoreViewState extends State<MoreView> {
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Center(child: sText("You haven't subscribe to any bundles yet", color: Colors.white,size: 20,align: TextAlign.center,weight: FontWeight.bold),),
                     ),
-                    context.read<DownloadUpdate>().plans!.length > 0 ?
+                    context.read<DownloadUpdate>().plans.length > 0 ?
                     Container(
                       color: Colors.grey[200],
                       child: Column(
@@ -278,12 +278,12 @@ class _MoreViewState extends State<MoreView> {
                           Expanded(
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: context.read<DownloadUpdate>().plans!.length,
+                              itemCount: context.read<DownloadUpdate>().plans.length,
                               itemBuilder: (context, index) {
                                 return Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                   child: SavedQuestionsListItem(
-                                    bundle: widget.controller.provider.plans![index],
+                                    bundle: widget.controller.provider.plans[index],
                                     count:  que.isNotEmpty ? que[index] : 0,
                                     isFirstChild: index == 0,
                                     onTap: () async{
@@ -294,7 +294,7 @@ class _MoreViewState extends State<MoreView> {
                                             builder: (context) => SavedDownload(
                                               widget.user,
                                               controller: widget.controller,
-                                              bundle: widget.controller.provider.plans![index],
+                                              bundle: widget.controller.provider.plans[index],
                                             ),
                                           ),
                                         );
@@ -538,7 +538,7 @@ class SavedQuestionsListItem extends StatelessWidget {
 //                    child: Column(
 //                      children: [
 //                        SizedBox(height: 32),
-//                        if (context.read<DownloadUpdate>().plans!.length > 0)
+//                        if (context.read<DownloadUpdate>().plans.length > 0)
 //                          Padding(
 //                            padding: const EdgeInsets.only(left: 24.0, bottom: 16),
 //                            child: Text(
@@ -554,12 +554,12 @@ class SavedQuestionsListItem extends StatelessWidget {
 //                        Expanded(
 //                          child: ListView.builder(
 //                            shrinkWrap: true,
-//                            itemCount: context.read<DownloadUpdate>().plans!.length,
+//                            itemCount: context.read<DownloadUpdate>().plans.length,
 //                            itemBuilder: (context, index) {
 //                              return Padding(
 //                                padding: const EdgeInsets.symmetric(horizontal: 24.0),
 //                                child: BundleListItem(
-//                                  bundle: widget.controller.provider.plans![index],
+//                                  bundle: widget.controller.provider.plans[index],
 //                                  isFirstChild: index == 0,
 //                                  onTap: () {
 //                                    Navigator.push(
@@ -569,7 +569,7 @@ class SavedQuestionsListItem extends StatelessWidget {
 //                                          widget.user,
 //                                          controller: widget.controller,
 //                                          bundle:
-//                                          widget.controller.provider.plans![index],
+//                                          widget.controller.provider.plans[index],
 //                                        ),
 //                                      ),
 //                                    );
