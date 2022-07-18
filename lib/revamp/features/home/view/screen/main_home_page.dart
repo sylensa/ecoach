@@ -290,7 +290,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
     }else{
       if(plan.subscribed!){
         return  Text(
-          "Subscribed",
+          Platform.isAndroid ? "Subscribed" : "Product Delivered",
           style: TextStyle(
               color: Colors.blue,
               fontSize: 12,
