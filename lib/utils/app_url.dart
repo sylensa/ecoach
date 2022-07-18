@@ -29,6 +29,12 @@ class AppUrl {
   static String groupActivePackage = baseURL + "group/packages/active";
   static String groupPackagesPaymentInitialization = baseURL + "group/package/paystack/initialize";
   static String groups = baseURL + "groups";
+  static String suspendGroupMember = baseURL + "groups/member/suspend";
+  static String unSuspendGroupMember = baseURL + "groups/member/unsuspend";
+  static String makeMemberAdmin = baseURL + "groups/member/admin";
+  static String makeMemberParticipant = baseURL + "groups/member/participant";
+  static String removeMember = baseURL + "groups/member/remove";
+
   static String inviteGroup = baseURL + "groups/invite/user";
   static String userPromoCodes = baseURL + "user/promo/codes";
   static String agentTransaction = baseURL + "agent/transactions";
