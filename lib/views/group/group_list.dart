@@ -8,6 +8,7 @@ import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/group_page_view_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -38,6 +39,7 @@ class GroupListPage extends StatefulWidget {
 
 class _GroupListPageState extends State<GroupListPage> {
 bool progressCode = false;
+
 
   @override
   void initState() {
@@ -162,7 +164,7 @@ bool progressCode = false;
                           child: ListTile(
                             title:  Container(
                               width: 100,
-                              child: sText("${listGroupListData[index].dateCreated!.difference(DateTime.now()).inDays > 365 ? "365" : listGroupListData[index].dateCreated!.difference(DateTime.now()).inDays.toString()} days",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
+                              child: sText("${listActivePackageData[0].createdAt!.difference(listGroupListData[index].dateCreated!).inDays > 365 ? "365" : listGroupListData[index].dateCreated!.difference(DateTime.now()).inDays.toString()} days",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
 
                             ),
 
@@ -195,7 +197,11 @@ bool progressCode = false;
 
             GestureDetector(
               onTap:(){
-                goTo(context, CreateGroup());
+                if(listActivePackageData[0].maxGroups! == listGroupListData.length){
+                  showDialogOk(message: "You have reached your limit, to create more groups upgrade your package",context: context);
+                }else{
+                  goTo(context, CreateGroup());
+                }
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20),
