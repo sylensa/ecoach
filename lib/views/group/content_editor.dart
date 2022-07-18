@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/utils/app_url.dart';
@@ -6,6 +7,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
+import 'package:ecoach/views/group/not_content_editor.dart';
 import 'package:ecoach/views/user_setup.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -156,6 +158,25 @@ class _ContentEditorState extends State<ContentEditor> {
     }
   }
 
+  getActivePackage()async {
+    listActivePackageData.clear();
+    try{
+      var js = await doGet('${AppUrl.groupActivePackage}');
+      print("res groupActivePackage : $js");
+      if (js["code"].toString() == "200") {
+        ActivePackageData activePackageData = ActivePackageData.fromJson(js["data"]);
+        listActivePackageData.add(activePackageData);
+        await getGroupList();
+      }else{
+        Navigator.pop(context);
+        toastMessage("${js["message"]}");
+        goTo(context, NotContentEditor());
+      }
+    }catch(e){
+      Navigator.pop(context);
+      toastMessage("Failed");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +228,8 @@ class _ContentEditorState extends State<ContentEditor> {
               GestureDetector(
                 onTap: (){
                 showLoaderDialog(context);
-                getGroupList();
+                getActivePackage();
+                // getGroupList();
                 },
                 child: Container(
                   decoration: BoxDecoration(
