@@ -212,8 +212,9 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                         ),
                       ),
                     ],
-                  )
-                : Row(
+                  ) :
+                 selected.length == 1 ?
+                 Row(
                     children: [
                       Expanded(
                         child: Row(
@@ -269,7 +270,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                       //   ),
                       // ),
                     ],
-                  ),
+                  ) : Container(),
           )
       ],
     );
