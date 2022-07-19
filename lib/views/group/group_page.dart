@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
@@ -7,8 +8,10 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class GroupPage extends StatefulWidget {
@@ -24,7 +27,7 @@ class _GroupPageState extends State<GroupPage> {
   List<GroupViewData> listGroupViewData = [];
   bool progressCode = true;
 
-  memberActionsModalBottomSheet(context,String userId){
+  memberActionsModalBottomSheet(context,String userId,bool isMember){
     TextEditingController productKeyController = TextEditingController();
     bool isActivated = true;
     double sheetHeight = 400;
@@ -82,6 +85,7 @@ class _GroupPageState extends State<GroupPage> {
                                 ),
                                 child: sText("Suspend member",color: kAdeoGray3,align: TextAlign.center),
                               ),
+                              isMember ?
                               GestureDetector(
                                 onTap: (){
                                   Navigator.pop(context);
@@ -97,7 +101,23 @@ class _GroupPageState extends State<GroupPage> {
                                   ),
                                   child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
                                 ),
-                              ),
+                              ) :
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  showLoaderDialog(context);
+                                  makeAdminParticipant(userId);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: sText("Make Admin a Participant",color: kAdeoGray3,align: TextAlign.center),
+                                ),
+                              ) ,
                             ],
                           )
                       ),
@@ -353,92 +373,67 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
   getGroupPageView() async{
-    listGroupViewData.clear();
-    try{
-      var js = await doGet('${AppUrl.groups}/${widget.groupListData!.id}');
-      print("res groups view : $js");
-      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
-        GroupViewData groupViewData = GroupViewData.fromJson(js["data"]);
-        listGroupViewData.add(groupViewData);
-      }else{
-        toastMessage("${js["message"]}");
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      listGroupViewData.clear();
+      try{
+        listGroupViewData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).getGroupPageView();
+        setState((){
+          progressCode = false;
+        });
+      }catch(e){
+        Navigator.pop(context);
+        setState((){
+          progressCode = false;
+        });
+        toastMessage("Failed");
       }
-    }catch(e){
+    }else{
       Navigator.pop(context);
-      toastMessage("Failed");
-    }
+      showNoConnectionToast(context);
+      }
+
 
     setState((){
       progressCode = false;
     });
 
   }
-  suspendUser(String userId) async {
-    var res = await doPost(AppUrl.suspendGroupMember, {
-      "group_id": widget.groupListData!.id,
-      "user_id": userId,
-    });
-    if(res["status"]){
-      Navigator.pop(context);
-     toastMessage(res["message"]);
-    }else{
-      Navigator.pop(context);
-      toastMessage(res["message"]);
-    }
-  }
-  unSuspendUser(String userId) async {
-    var res = await doPost(AppUrl.unSuspendGroupMember, {
-      "group_id": widget.groupListData!.id,
-      "user_id": userId,
-    });
-    if(res["status"]){
-      Navigator.pop(context);
-      toastMessage(res["message"]);
-    }else{
-      Navigator.pop(context);
-      toastMessage(res["message"]);
-    }
-  }
+
   makeUserAdmin(String userId) async {
-    var res = await doPost(AppUrl.makeMemberAdmin, {
-      "group_id": widget.groupListData!.id,
-      "user_id": userId,
-    });
-    if(res["status"]){
-      await getGroupPageView();
-      Navigator.pop(context);
-      toastMessage(res["message"]);
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+       if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).makeUserAdmin(userId)){
+         await getGroupPageView();
+         Navigator.pop(context);
+
+       }else{
+         Navigator.pop(context);
+         // toastMessage("Failed");
+       }
     }else{
       Navigator.pop(context);
-      toastMessage(res["message"]);
+      showNoConnectionToast(context);
     }
   }
-  makeUserParticipant(String userId) async {
-    var res = await doPost(AppUrl.makeMemberParticipant, {
-      "group_id": widget.groupListData!.id,
-      "user_id": userId,
-    });
-    if(res["status"]){
-      Navigator.pop(context);
-      toastMessage(res["message"]);
+  makeAdminParticipant(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+       if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).makeUserParticipant(userId)){
+         await getGroupPageView();
+         Navigator.pop(context);
+
+       }else{
+         Navigator.pop(context);
+         // toastMessage("Failed");
+       }
     }else{
       Navigator.pop(context);
-      toastMessage(res["message"]);
+      showNoConnectionToast(context);
     }
   }
-  removeUser(String userId) async {
-    var res = await doPost(AppUrl.removeMember, {
-      "group_id": widget.groupListData!.id,
-      "user_id": userId,
-    });
-    if(res["status"]){
-      Navigator.pop(context);
-      toastMessage(res["message"]);
-    }else{
-      Navigator.pop(context);
-      toastMessage(res["message"]);
-    }
-  }
+
+
 
 
   @override
@@ -494,170 +489,183 @@ class _GroupPageState extends State<GroupPage> {
                   if(index == 0){
                     return Column(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Admins",weight: FontWeight.w500,size: 16),
-                              ),
-                              Container(
-                                child: Icon(Icons.add_circle_outline,color: Colors.black,),
-                              )
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+
+                            childrenPadding: EdgeInsets.zero,
+
+
+                            collapsedIconColor: Colors.white,
+                            leading: Container(
+                              child: sText("Admins",weight: FontWeight.w500,size: 16),
+                            ) ,
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
+                                        MaterialButton(
+                                          padding: EdgeInsets.zero,
+
+                                          onPressed: (){
+                                            memberActionsModalBottomSheet(context,listGroupViewData[0].admins![i].id.toString(),false);
+
+                                          },
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      displayLocalImage("filePath",radius: 30),
+                                                      Positioned(
+                                                        bottom: 5,
+                                                        right: 0,
+                                                        child: Image.asset("assets/images/tick-mark.png"),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 10,),
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                      SizedBox(height: 5,),
+                                                      sText("Admin",color: kAdeoGray3,size: 12),
+                                                    ],
+                                                  ),
+                                                  Expanded(child: Container()),
+                                                  Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                                ],
+                                              ),
+                                              SizedBox(height: 10,)
+                                            ],
+                                          ),
+                                        ),
+
+                                    ],
+                                  ),
+                                ),
                             ],
                           ),
                         ),
-                        SizedBox(height: 10,),
 
-                          if(listGroupViewData[0].admins!.isNotEmpty)
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                            margin: EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(5)
-                            ),
-                            child: Column(
-                              children: [
-                                for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            displayLocalImage("filePath",radius: 30),
-                                            Positioned(
-                                              bottom: 5,
-                                              right: 0,
-                                              child: Image.asset("assets/images/tick-mark.png"),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(width: 10,),
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
-                                            SizedBox(height: 5,),
-                                            sText("Admin",color: kAdeoGray3,size: 12),
-                                          ],
-                                        ),
-                                        Expanded(child: Container()),
-                                        Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-                                      ],
-                                    ),
-                                    SizedBox(height: 10,)
-                                  ],
-                                ),
 
-                              ],
-                            ),
-                          ),
                       ],
                     );
                   }
                   else if(index == 1){
                     return Column(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          margin: EdgeInsets.only(top: 20),
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading:   Container(
+                            child: sText("Members",weight: FontWeight.w500,size: 16),
+                             ) ,
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              if(listGroupViewData[0].members!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          for(int i = 0; i< listGroupViewData[0].members!.length; i++)
+                                            MaterialButton(
+                                              padding: EdgeInsets.zero,
+                                              onPressed: (){
+                                                memberActionsModalBottomSheet(context,listGroupViewData[0].members![i].id.toString(),true);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Stack(
+                                                        children: [
+                                                          displayLocalImage("filePath",radius: 30),
+                                                          Positioned(
+                                                            bottom: 5,
+                                                            right: 0,
+                                                            child: Image.asset("assets/images/tick-mark.png"),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(width: 10,),
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          sText(listGroupViewData[0].members![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                          SizedBox(height: 5,),
+                                                          sText("${listGroupViewData[0].members![i].testCount} Tests",color: kAdeoGray3,size: 12),
+                                                        ],
+                                                      ),
+                                                      Expanded(child: Container()),
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          sText("${listGroupViewData[0].members![i].testPercent}",color: Colors.black,weight: FontWeight.w500),
+                                                          SizedBox(height: 5,),
+                                                          sText("${listGroupViewData[0].members![i].testGrade == null ? "No Grade" : listGroupViewData[0].members![i].testGrade}",color: kAdeoGray3,size: 12),
+                                                        ],
+                                                      ),
+                                                      SizedBox(width: 10,),
+                                                      Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  listGroupViewData[0].members!.length -1 != i ?
+                                                  Column(
+                                                    children: [
+                                                      Divider(color: kAdeoGray,height: 1,),
+                                                      SizedBox(height: 10,),
+                                                    ],
+                                                  ) : Container(),
+                                                ],
+                                              ),
+                                            ),
 
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Members",weight: FontWeight.w500,size: 16),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  if(listActivePackageData[0].maxParticipants! == listMembers.length){
-                                    showDialogOk(message: "You have reached your limit, to add more members upgrade your package",context: context);
-                                  }else{
-                                    inviteModalBottomSheet(context);
-                                  }
-                                },
-                                child: Container(
-                                  child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              )
                             ],
                           ),
                         ),
-                        SizedBox(height: 10,),
-                        if(listGroupViewData[0].members!.isNotEmpty)
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                            margin: EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(5)
-                            ),
-                            child: Column(
-                              children: [
-                                Column(
-                                  children: [
-                                    for(int i = 0; i< listGroupViewData[0].members!.length; i++)
-                                    MaterialButton(
-                                      padding: EdgeInsets.zero,
-                                      onPressed: (){
-                                        memberActionsModalBottomSheet(context,listGroupViewData[0].members![i].id.toString());
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  displayLocalImage("filePath",radius: 30),
-                                                  Positioned(
-                                                    bottom: 5,
-                                                    right: 0,
-                                                    child: Image.asset("assets/images/tick-mark.png"),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(width: 10,),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  sText(listGroupViewData[0].members![i].name,color: Colors.black,weight: FontWeight.w500),
-                                                  SizedBox(height: 5,),
-                                                  sText("${listGroupViewData[0].members![i].testCount} Tests",color: kAdeoGray3,size: 12),
-                                                ],
-                                              ),
-                                              Expanded(child: Container()),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  sText("${listGroupViewData[0].members![i].testPercent}",color: Colors.black,weight: FontWeight.w500),
-                                                  SizedBox(height: 5,),
-                                                  sText("${listGroupViewData[0].members![i].testGrade == null ? "No Grade" : listGroupViewData[0].members![i].testGrade}",color: kAdeoGray3,size: 12),
-                                                ],
-                                              ),
-                                              SizedBox(width: 10,),
-                                              Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-                                            ],
-                                          ),
-                                          SizedBox(height: 10,),
-                                          listGroupViewData[0].members!.length -1 != i ?
-                                          Column(
-                                            children: [
-                                              Divider(color: kAdeoGray,height: 1,),
-                                              SizedBox(height: 10,),
-                                            ],
-                                          ) : Container(),
-                                        ],
-                                      ),
-                                    ),
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
 
                       ],
                     );
@@ -665,204 +673,214 @@ class _GroupPageState extends State<GroupPage> {
                   else   if(index == 2){
                     return Column(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          margin: EdgeInsets.only(top: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading: Container(
+                              child: sText("Pending Invites",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
                               Container(
-                                child: sText("Pending Invites",weight: FontWeight.w500,size: 16),
-                              ),
-                              Container(
-                                child: Icon(Icons.add_circle_outline,color: Colors.black,),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10,),
-
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5)
-                          ),
-                          child: Column(
-                            children: [
-                              for(int i = 0; i< listGroupViewData[0].pendingInvites!.length; i++)
-                                Column(
+                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                margin: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5)
+                                ),
+                                child: Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            sText(listGroupViewData[0].pendingInvites![i].email,color: Colors.black,weight: FontWeight.w500),
-                                            SizedBox(height: 5,),
-                                            sText("10 days ago",color: kAdeoGray3,size: 12),
-                                          ],
-                                        ),
-                                        Expanded(child: Container()),
-                                        Icon(Icons.horizontal_rule,color: Colors.red,size: 25,)
-                                      ],
-                                    ),
-                                    SizedBox(height: 10,),
-                                    listMembers.length -1 != i ?
-                                    Column(
-                                      children: [
-                                        Divider(color: kAdeoGray,height: 1,),
-                                        SizedBox(height: 10,),
-                                      ],
-                                    ) : Container(),
+                                    for(int i = 0; i< listGroupViewData[0].pendingInvites!.length; i++)
+                                      Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  sText(listGroupViewData[0].pendingInvites![i].email,color: Colors.black,weight: FontWeight.w500),
+                                                  SizedBox(height: 5,),
+                                                  sText("10 days ago",color: kAdeoGray3,size: 12),
+                                                ],
+                                              ),
+                                              Expanded(child: Container()),
+                                              Icon(Icons.horizontal_rule,color: Colors.red,size: 25,)
+                                            ],
+                                          ),
+                                          SizedBox(height: 10,),
+                                          listMembers.length -1 != i ?
+                                          Column(
+                                            children: [
+                                              Divider(color: kAdeoGray,height: 1,),
+                                              SizedBox(height: 10,),
+                                            ],
+                                          ) : Container(),
+
+                                        ],
+                                      ),
 
                                   ],
                                 ),
-
+                              ),
                             ],
                           ),
                         ),
+
                       ],
                     );
                   }
                   else  if(index == 3){
                     return Column(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          margin: EdgeInsets.only(top: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Announcements",weight: FontWeight.w500,size: 16),
-                              ),
-                              Container(
-                                child: Icon(Icons.add_circle_outline,color: Colors.black,),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10,),
-                        if(listGroupViewData[0].admins!.isNotEmpty)
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5)
-                          ),
-                          child: Column(
-                            children: [
-                              for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            displayLocalImage("filePath",radius: 30),
-                                            Positioned(
-                                              bottom: 5,
-                                              right: 0,
-                                              child: Image.asset("assets/images/tick-mark.png"),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(width: 10,),
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading: Container(
+                              child: sText("Announcements",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
-                                            SizedBox(height: 5,),
-                                            sText("Admin",color: kAdeoGray3,size: 12),
+                                            Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    displayLocalImage("filePath",radius: 30),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      child: Image.asset("assets/images/tick-mark.png"),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("Admin",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,)
                                           ],
                                         ),
-                                        Expanded(child: Container()),
-                                        Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-                                      ],
-                                    ),
-                                    SizedBox(height: 10,)
-                                  ],
-                                ),
 
+                                    ],
+                                  ),
+                                ),
                             ],
                           ),
                         ),
+
                       ],
                     );
                   }else{
                     return Column(
                       children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          margin: EdgeInsets.only(top: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Tests",weight: FontWeight.w500,size: 16),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  if(listActivePackageData[0].maxTests! == listMembers.length){
-                                    showDialogOk(message: "You have reached your limit, to add more test upgrade your package",context: context);
-                                  }
-                                },
-                                child: Container(
-                                  child: Icon(Icons.add_circle_outline,color: Colors.black,),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10,),
-                        if(listGroupViewData[0].admins!.isNotEmpty)
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5)
-                          ),
-                          child: Column(
-                            children: [
-                              for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            displayLocalImage("filePath",radius: 30),
-                                            Positioned(
-                                              bottom: 5,
-                                              right: 0,
-                                              child: Image.asset("assets/images/tick-mark.png"),
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(width: 10,),
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading:  Container(
+                              child: sText("Tests",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
-                                            SizedBox(height: 5,),
-                                            sText("Admin",color: kAdeoGray3,size: 12),
+                                            Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    displayLocalImage("filePath",radius: 30),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      child: Image.asset("assets/images/tick-mark.png"),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("Admin",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,)
                                           ],
                                         ),
-                                        Expanded(child: Container()),
-                                        Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-                                      ],
-                                    ),
-                                    SizedBox(height: 10,)
-                                  ],
-                                ),
 
+                                    ],
+                                  ),
+                                ),
                             ],
                           ),
                         ),
+
                       ],
                     );
                   }

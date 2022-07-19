@@ -9,8 +9,10 @@ import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
 import 'package:ecoach/views/group/not_content_editor.dart';
 import 'package:ecoach/views/user_setup.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ContentEditor extends StatefulWidget {
@@ -134,48 +136,52 @@ class _ContentEditorState extends State<ContentEditor> {
         }
     );
   }
-
   getGroupList()async {
-    listGroupListData.clear();
-    try{
-      var js = await doGet('${AppUrl.groups}');
-      print("res groups : $js");
-      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
-        for(int i =0; i < js["data"]["data"].length; i++){
-          GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
-          listGroupListData.add(groupListData);
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      listGroupListData.clear();
+      try{
+        listGroupListData = await groupManagementController.getGroupList();
+        if (listGroupListData.isNotEmpty) {
+          Navigator.pop(context);
+          goTo(context, GroupListPage());
+        }else{
+          Navigator.pop(context);
+          goTo(context, GroupListPage());
         }
+      }catch(e){
         Navigator.pop(context);
-        goTo(context, GroupListPage());
-      }else{
-        Navigator.pop(context);
-        goTo(context, GroupListPage());
-        toastMessage("${js["message"]}");
+        toastMessage("Failed");
       }
-    }catch(e){
+    }else{
       Navigator.pop(context);
-      toastMessage("Failed");
+      showNoConnectionToast(context);
     }
+
+
   }
 
   getActivePackage()async {
     listActivePackageData.clear();
-    try{
-      var js = await doGet('${AppUrl.groupActivePackage}');
-      print("res groupActivePackage : $js");
-      if (js["code"].toString() == "200") {
-        ActivePackageData activePackageData = ActivePackageData.fromJson(js["data"]);
-        listActivePackageData.add(activePackageData);
-        await getGroupList();
-      }else{
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      try{
+        listActivePackageData = await groupManagementController.getActivePackage();
+        if (listActivePackageData.isNotEmpty) {
+          await getGroupList();
+        }else{
+          Navigator.pop(context);
+          goTo(context, NotContentEditor());
+        }
+      }catch(e){
         Navigator.pop(context);
-        toastMessage("${js["message"]}");
-        goTo(context, NotContentEditor());
+        toastMessage("Failed");
       }
-    }catch(e){
+    }else{
       Navigator.pop(context);
-      toastMessage("Failed");
+      showNoConnectionToast(context);
     }
+
   }
 
   @override
