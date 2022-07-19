@@ -31,11 +31,16 @@ class AppUrl {
   static String groups = baseURL + "groups";
   static String suspendGroupMember = baseURL + "groups/member/suspend";
   static String unSuspendGroupMember = baseURL + "groups/member/unsuspend";
+  static String groupRequestAccept = baseURL + "groups/request/accept";
+  static String groupRequestReject = baseURL + "groups/request/reject";
   static String makeMemberAdmin = baseURL + "groups/member/admin";
   static String makeMemberParticipant = baseURL + "groups/member/participant";
   static String removeMember = baseURL + "groups/member/remove";
 
   static String inviteGroup = baseURL + "groups/invite/user";
+  static String groupInviteAccept = baseURL + "groups/invite/accept";
+  static String groupInviteReject = baseURL + "groups/invite/reject";
+  static String groupRequestJoin = baseURL + "groups/join/request";
   static String userPromoCodes = baseURL + "user/promo/codes";
   static String agentTransaction = baseURL + "agent/transactions";
   static String levels = baseURL + "levels";
