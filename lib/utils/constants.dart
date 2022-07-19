@@ -1,4 +1,5 @@
 // enum DropdownSize { small, medium, large }
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/agent_transaction.dart';
 import 'package:ecoach/models/get_agent_code.dart';
@@ -32,3 +33,6 @@ bool fetchDiagnosticTest = false;
 List<GroupPackageData> listGroupPackageData = [];
 List<ActivePackageData> listActivePackageData = [];
 List<GroupListData> listGroupListData = [];
+GroupManagementController groupManagementController = GroupManagementController();
+
+
