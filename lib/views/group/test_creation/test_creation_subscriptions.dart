@@ -1,7 +1,9 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/test_creation/test_creations_courses.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TestCreationSubscriptions extends StatefulWidget {
   const TestCreationSubscriptions({Key? key}) : super(key: key);
@@ -53,179 +55,85 @@ class _TestCreationSubscriptionsState extends State<TestCreationSubscriptions> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: appWidth(context),
-              child: sText("Select your source for the test",color: kAdeoGray2,align: TextAlign.center),
-            ),
-            SizedBox(height: 20,),
-            Container(
-              padding: appPadding(20),
-              margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              decoration: BoxDecoration(
-                color: kAdeoGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  MaterialButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: (){
-                      goTo(context, TestCreationCourses());
-                    },
-                    child: Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Column(
+        children: [
+          Container(
+            width: appWidth(context),
+            child: sText("Select your source for the test",color: kAdeoGray2,align: TextAlign.center),
+          ),
+          SizedBox(height: 20,),
+          Expanded(
+            child: ListView.builder(
+                itemCount: context.read<DownloadUpdate>().plans.length,
+                itemBuilder: (BuildContext context, int index){
+                  if(context.read<DownloadUpdate>().plans[index].price != 0){
+                    return  Container(
+                      padding: appPadding(20),
+                      margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: kAdeoGray,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
                         children: [
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: sText("Primary 1",size: 20,weight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 10,),
-                                Container(
-                                  width: appWidth(context) * 0.65,
+                          MaterialButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: (){
+                              goTo(context, TestCreationCourses(subscription: context.read<DownloadUpdate>().plans[index],));
+                            },
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: appWidth(context) * 0.70,
 
-                                  child: sText("Pick a quiz from your existing subscription",size: 12,color: kAdeoGray2),
-                                )
+                                          child: sText("${context.read<DownloadUpdate>().plans[index].name}",size: 16,weight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 10,),
+                                        Container(
+                                          width: appWidth(context) * 0.65,
 
-                              ],
+                                          child: sText("Pick a quiz from your existing subscription",size: 12,color: kAdeoGray2),
+                                        )
+
+                                      ],
+                                    ),
+                                  ),
+                                  Image.asset("assets/images/stopwatch.png",width: 30,)
+                                ],
+                              ),
                             ),
                           ),
-                          Image.asset("assets/images/stopwatch.png")
+                          SizedBox(height: 20,),
+                          Row(
+                            children: [
+                              Flexible(
+                                flex: 1,
+                                child: Container(color: Color(0XFF00C9B9),height: 5,),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: Container(
+                                    color: Color(0XFF0367B4),height: 5
+                                ),
+                              ),
+
+                            ],
+                          )
                         ],
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(color: Color(0XFF00C9B9),height: 5,),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                            color: Color(0XFF0367B4),height: 5
-                        ),
-                      ),
+                    );
+                  }
+                 return Container();
+            }),
+          )
 
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Container(
-              padding: appPadding(20),
-              margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              decoration: BoxDecoration(
-                color: kAdeoGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: sText("Primary 2",size: 20,weight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 10,),
-                              Container(
-                                width: appWidth(context) * 0.65,
-                                child: sText("Pick a quiz you created with your questions",size: 12,color: kAdeoGray2),
-                              )
-
-                            ],
-                          ),
-                        ),
-                        Image.asset("assets/images/stopwatch.png",)
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(color: Color(0XFF00C9B9),height: 5,),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                            color: Color(0XFF0367B4),height: 5
-                        ),
-                      ),
-
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Container(
-              padding: appPadding(20),
-              margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-              decoration: BoxDecoration(
-                color: kAdeoGray,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                child: sText("Primary 3",size: 20,weight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 10,),
-                              Container(
-                                width: appWidth(context) * 0.65,
-                                child: sText("Pick a quiz you generated from our questions database",size: 12,color: kAdeoGray2),
-                              )
-
-                            ],
-                          ),
-                        ),
-                        Image.asset("assets/images/stopwatch.png",)
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Container(color: Color(0XFF00C9B9),height: 5,),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Container(
-                            color: Color(0XFF0367B4),height: 5
-                        ),
-                      ),
-
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
