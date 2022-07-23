@@ -82,9 +82,18 @@ bool progressCode = false;
                   child: sText("${listActivePackageData[0].name}",color: Color(0xFF2A9CEA),weight: FontWeight.bold,align: TextAlign.center,size: 25),
                 ),
                 SizedBox(height: 0,),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: sText("Validity : ${listActivePackageData[0].validity}",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      child: sText("Validity:",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: sText(listActivePackageData[0].endAt != null ? "${DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays > 365 ? "365" : DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays.toString()} days" : "No Expiration",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                    ),
+                  ],
                 ),
               ],
             ),
