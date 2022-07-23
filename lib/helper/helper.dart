@@ -754,6 +754,30 @@ doPost(String urlAfterBase, Map body) async {
   }
   return decoded;
 }
+doPut(String urlAfterBase, Map body) async {
+  String? token = await UserPreferences().getUserToken();
+  token != null ? token = token : token = '';
+  print('Calling $base$urlAfterBase...');
+  print('body $body...');
+  print('token $token...');
+  var url = Uri.parse('$base$urlAfterBase');
+  var decoded;
+  http.Response js;
+  js = await http.put(
+    url,
+    body: replaceNulls(body),
+    headers: {'api-token': token},
+  );
+  print("js:${jsonEncode(js.statusCode)}");
+
+  print("body: ${js.body}");
+  try {
+    decoded = jsonDecode(js.body);
+  } catch (e) {
+    print("post: $e");
+  }
+  return decoded;
+}
 
 doGet(String urlAfterBase) async {
   String? token = await UserPreferences().getUserToken();
