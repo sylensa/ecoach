@@ -28,6 +28,60 @@ class _GroupPageState extends State<GroupPage> {
   List<GroupViewData> listGroupViewData = [];
   bool progressCode = true;
 
+  showRevokeDialog(
+      {String? message,
+        BuildContext? context,
+        Widget? target,
+        bool replace = false,
+        String? userId}) {
+    // flutter defined function
+    showDialog(
+      context: context!,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: sText("Alert",color: Colors.black,weight: FontWeight.bold),
+          content: sText(message!),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            GestureDetector(
+              onTap: ()async{
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
+                margin: rightPadding(10),
+                child: sText("No",color: Colors.white),
+
+                decoration: BoxDecoration(
+                    color:kAccessmentButtonColor,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+              ),
+            ),
+
+            GestureDetector(
+              onTap: ()async{
+                Navigator.pop(context);
+                showLoaderDialog(context);
+                await revokeGroupInvite(userId!);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
+                margin: rightPadding(10),
+                child: sText("Yes",color: Colors.white),
+
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
   memberActionsModalBottomSheet(context,String userId,bool isMember){
     TextEditingController productKeyController = TextEditingController();
     bool isActivated = true;
@@ -68,23 +122,37 @@ class _GroupPageState extends State<GroupPage> {
                       Expanded(
                           child: ListView(
                             children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  showLoaderDialog(context);
+                                  removeMember(userId);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: sText("Remove member",color: kAdeoGray3,align: TextAlign.center),
                                 ),
-                                child: sText("Remove member",color: kAdeoGray3,align: TextAlign.center),
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  showLoaderDialog(context);
+                                  suspendMember(userId);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: sText("Suspend member",color: kAdeoGray3,align: TextAlign.center),
                                 ),
-                                child: sText("Suspend member",color: kAdeoGray3,align: TextAlign.center),
                               ),
                               isMember ?
                               GestureDetector(
@@ -333,33 +401,60 @@ class _GroupPageState extends State<GroupPage> {
                       Expanded(
                           child: ListView(
                             children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)
+                              MaterialButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: ()async{
+
+                                },
+                                child: Container(
+                                  width: appWidth(context),
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: sText("Delete Group",color: kAdeoGray3,align: TextAlign.center),
                                 ),
-                                child: sText("Delete Group",color: kAdeoGray3,align: TextAlign.center),
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)
+                              MaterialButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: ()async{
+                                  Navigator.pop(context);
+                                    showLoaderDialog(context);
+                                    if(widget.groupListData!.status!.toLowerCase() == "suspended"){
+                                     await unSuspendGroup();
+                                    }else{
+                                      await suspendGroup();
+                                    }
+                                },
+                                child: Container(
+                                  width: appWidth(context),
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: sText(widget.groupListData!.status!.toLowerCase() == "suspended" ? "Unsuspend Group" : "Suspend Group",color: kAdeoGray3,align: TextAlign.center),
                                 ),
-                                child: sText("Suspend Group",color: kAdeoGray3,align: TextAlign.center),
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
-                              ),
+                              // MaterialButton(
+                              //   padding: EdgeInsets.zero,
+                              //   onPressed: ()async{
+                              //
+                              //   },
+                              //   child: Container(
+                              //     width: appWidth(context),
+                              //     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                              //     margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                              //     decoration:BoxDecoration(
+                              //         color: Colors.white,
+                              //         borderRadius: BorderRadius.circular(10)
+                              //     ),
+                              //     child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
+                              //   ),
+                              // ),
                             ],
                           )
                       ),
@@ -561,7 +656,87 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
 
+  suspendGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupSuspend()){
+        setState((){
+          widget.groupListData!.status = "SUSPENDED";
+        });
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  unSuspendGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupUnSuspend()){
+        setState((){
+          widget.groupListData!.status = "ACTIVE";
+        });
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  suspendMember(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).suspendUser(userId)){
+        await getGroupPageView();
+        Navigator.pop(context);
 
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  removeMember(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).removeUser(userId)){
+        await getGroupPageView();
+        Navigator.pop(context);
+
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  revokeGroupInvite(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupInviteRevoke(userId)){
+        await getGroupPageView();
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
   @override
  void initState(){
     getGroupPageView();
@@ -827,32 +1002,37 @@ class _GroupPageState extends State<GroupPage> {
                                 child: Column(
                                   children: [
                                     for(int i = 0; i< listGroupViewData[0].pendingInvites!.length; i++)
-                                      Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  sText(listGroupViewData[0].pendingInvites![i].email,color: Colors.black,weight: FontWeight.w500),
-                                                  SizedBox(height: 5,),
-                                                  sText("10 days ago",color: kAdeoGray3,size: 12),
-                                                ],
-                                              ),
-                                              Expanded(child: Container()),
-                                              Icon(Icons.horizontal_rule,color: Colors.red,size: 25,)
-                                            ],
-                                          ),
-                                          SizedBox(height: 10,),
-                                          listMembers.length -1 != i ?
-                                          Column(
-                                            children: [
-                                              Divider(color: kAdeoGray,height: 1,),
-                                              SizedBox(height: 10,),
-                                            ],
-                                          ) : Container(),
+                                      MaterialButton(
+                                        onPressed: (){
+                                          showRevokeDialog(context: context,message: "Are you sure you want to revoke this invite",userId: listGroupViewData[0].pendingInvites![i].id.toString());
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].pendingInvites![i].email,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("10 days ago",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.horizontal_rule,color: Colors.red,size: 25,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,),
+                                            listMembers.length -1 != i ?
+                                            Column(
+                                              children: [
+                                                Divider(color: kAdeoGray,height: 1,),
+                                                SizedBox(height: 10,),
+                                              ],
+                                            ) : Container(),
 
-                                        ],
+                                          ],
+                                        ),
                                       ),
 
                                   ],
