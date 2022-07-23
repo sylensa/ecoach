@@ -115,7 +115,7 @@ class GroupManagementController{
     }
   }
   suspendUser(String userId) async {
-    var res = await doPost(AppUrl.suspendGroupMember, {
+    var res = await doPut(AppUrl.suspendGroupMember, {
       "group_id": groupId,
       "user_id": userId,
     });
@@ -240,6 +240,25 @@ class GroupManagementController{
       return false;
     }
   }
+  groupInviteRevoke(String userId) async {
+    try{
+      var res = await doPut(AppUrl.groupInviteRevoke,
+          {
+            "invite_id": userId,
+          });
+      if(res["status"] && res["code"].toString() == "200"){
+        toastMessage(res["message"]);
+        return true;
+      }else{
+        toastMessage(res["message"]);
+        return false;
+
+      }
+    }catch(e){
+      print("error:$e");
+      return false;
+    }
+  }
   groupInviteReject() async {
     try{
       var res = await doPost(AppUrl.groupInviteReject,
@@ -272,6 +291,59 @@ class GroupManagementController{
         toastMessage(res["message"]);
         return false;
 
+      }
+    }catch(e){
+      print("error:$e");
+      return false;
+    }
+  }
+  groupSuspend() async {
+    try{
+      var res = await doPut(AppUrl.groupSuspend,
+          {
+            "group_id": groupId,
+          });
+      if(res["status"] && res["code"].toString() == "200"){
+        toastMessage(res["message"]);
+        return true;
+      }else{
+        toastMessage(res["message"]);
+        return false;
+
+      }
+    }catch(e){
+      print("error:$e");
+      return false;
+    }
+  }
+  groupUnSuspend() async {
+    try{
+      var res = await doPut(AppUrl.groupUnSuspend,
+          {
+            "group_id": groupId,
+          });
+      if(res["status"] && res["code"].toString() == "200"){
+        toastMessage(res["message"]);
+        return true;
+      }else{
+        toastMessage(res["message"]);
+        return false;
+
+      }
+    }catch(e){
+      print("error:$e");
+      return false;
+    }
+  }
+  groupDelete() async {
+    try{
+      var res = await doDelete("${AppUrl.groupUnSuspend}/$groupId",);
+      if(res["status"] && res["code"].toString() == "200"){
+        toastMessage(res["message"]);
+        return true;
+      }else{
+        toastMessage(res["message"]);
+        return false;
       }
     }catch(e){
       print("error:$e");
