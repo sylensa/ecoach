@@ -40,7 +40,10 @@ class AppUrl {
   static String inviteGroup = baseURL + "groups/invite/user";
   static String groupInviteAccept = baseURL + "groups/invite/accept";
   static String groupInviteReject = baseURL + "groups/invite/reject";
+  static String groupInviteRevoke = baseURL + "groups/invite/cancel";
   static String groupRequestJoin = baseURL + "groups/join/request";
+  static String groupSuspend = baseURL + "group/suspend";
+  static String groupUnSuspend = baseURL + "group/unsuspend";
   static String userPromoCodes = baseURL + "user/promo/codes";
   static String agentTransaction = baseURL + "agent/transactions";
   static String levels = baseURL + "levels";
