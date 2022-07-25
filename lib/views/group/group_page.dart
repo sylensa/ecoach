@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/announcement_list_model.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
@@ -11,6 +16,7 @@ import 'package:ecoach/views/group/group_list.dart';
 import 'package:ecoach/views/group/test_creation/test_creation.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
@@ -27,7 +33,22 @@ class _GroupPageState extends State<GroupPage> {
   List<ListNames> listMembers = [ListNames(name: "Victor Adatsi",id: "1"),ListNames(name: "Samuel Quaye",id: "2"),ListNames(name: "Peter Ocansey",id: "1"),];
   List<GroupViewData> listGroupViewData = [];
   bool progressCode = true;
-
+  bool progressCodeAnnouncement = true;
+  int _currentSlide = 0;
+  List<File> listFiles = [];
+  List<AnnouncementData> listAnnouncementData = [];
+  List base64Images = [];
+  List<T> map<T>(int listLength, Function handler) {
+    List list = [];
+    for (var i = 0; i < listLength; i++) {
+      list.add(i);
+    }
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+    return result;
+  }
   showRevokeDialog(
       {String? message,
         BuildContext? context,
@@ -527,7 +548,87 @@ class _GroupPageState extends State<GroupPage> {
       showNoConnectionToast(context);
     }
   }
+  suspendGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupSuspend()){
+        setState((){
+          widget.groupListData!.status = "SUSPENDED";
+        });
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  unSuspendGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupUnSuspend()){
+        setState((){
+          widget.groupListData!.status = "ACTIVE";
+        });
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  suspendMember(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).suspendUser(userId)){
+        await getGroupPageView();
+        Navigator.pop(context);
 
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  removeMember(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).removeUser(userId)){
+        await getGroupPageView();
+        Navigator.pop(context);
+
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+  revokeGroupInvite(String userId) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupInviteRevoke(userId)){
+        await getGroupPageView();
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        // toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
   announcementModalBottomSheet(context,){
     TextEditingController titleController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
@@ -628,9 +729,15 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                             ),
                             SizedBox(height: 20,),
-                            Container(
-                              child: Image.asset("assets/images/upload_images.png")
-                            )
+                            _previewImage(stateSetter)
+                            // MaterialButton(
+                            //   onPressed: (){
+                            //     attachDoc();
+                            //   },
+                            //   child: Container(
+                            //     child: Image.asset("assets/images/upload_images.png")
+                            //   ),
+                            // )
                           ],
                         ),
                       ),
@@ -656,90 +763,184 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
 
-  suspendGroup() async {
+  createAnnouncement({String title = '',String description = ''})async{
     final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupSuspend()){
-        setState((){
-          widget.groupListData!.status = "SUSPENDED";
-        });
-        Navigator.pop(context);
-      }else{
-        Navigator.pop(context);
-        // toastMessage("Failed");
+      try{
+        if(isConnected){
+          AnnouncementData? announcementData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).createAnnouncement(title: title,description: description);
+          if(announcementData != null){
+            Navigator.pop(context);
+            listAnnouncementData.add(announcementData);
+          }else{
+            Navigator.pop(context);
+          }
+        }else{
+          Navigator.pop(context);
+          showNoConnectionToast(context);
+        }
+      }catch(e){
+        print(e.toString());
       }
-    }else{
-      Navigator.pop(context);
-      showNoConnectionToast(context);
-    }
-  }
-  unSuspendGroup() async {
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupUnSuspend()){
-        setState((){
-          widget.groupListData!.status = "ACTIVE";
-        });
-        Navigator.pop(context);
-      }else{
-        Navigator.pop(context);
-        // toastMessage("Failed");
-      }
-    }else{
-      Navigator.pop(context);
-      showNoConnectionToast(context);
-    }
-  }
-  suspendMember(String userId) async {
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).suspendUser(userId)){
-        await getGroupPageView();
-        Navigator.pop(context);
+    setState((){
+    });
 
-      }else{
-        Navigator.pop(context);
-        // toastMessage("Failed");
-      }
-    }else{
-      Navigator.pop(context);
-      showNoConnectionToast(context);
-    }
   }
-  removeMember(String userId) async {
+  getAnnouncement()async{
     final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).removeUser(userId)){
-        await getGroupPageView();
-        Navigator.pop(context);
+      try{
+        if(isConnected){
+          listAnnouncementData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).getAnnouncement();
+          if(listAnnouncementData.isNotEmpty){
+          }else{
+          }
+        }else{
+          showNoConnectionToast(context);
+        }
+      }catch(e){
+        print(e.toString());
+      }
 
-      }else{
-        Navigator.pop(context);
-        // toastMessage("Failed");
-      }
-    }else{
-      Navigator.pop(context);
-      showNoConnectionToast(context);
-    }
+    setState((){
+      progressCodeAnnouncement = false;
+    });
+
   }
-  revokeGroupInvite(String userId) async {
+
+  updateAnnouncement({String title = '',String description = '',int index = 0,String aId = ''}) async {
+   try{
+     final bool isConnected = await InternetConnectionChecker().hasConnection;
+     if(isConnected){
+       AnnouncementData? announcementData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).updateAnnouncement(title: title,description: description,id: aId);
+       if(announcementData != null){
+         listAnnouncementData.removeAt(index);
+         listAnnouncementData.insert(index, announcementData);
+         Navigator.pop(context);
+       }else{
+         Navigator.pop(context);
+       }
+     }else{
+       Navigator.pop(context);
+       showNoConnectionToast(context);
+     }
+   }catch(e){
+     Navigator.pop(context);
+     print(e.toString());
+   }
+    setState((){
+
+    });
+  }
+
+  deleteAnnouncement(String aId) async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if(isConnected){
-      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupInviteRevoke(userId)){
-        await getGroupPageView();
+      if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).deleteAnnouncement(aId)){
         Navigator.pop(context);
       }else{
         Navigator.pop(context);
-        // toastMessage("Failed");
       }
     }else{
       Navigator.pop(context);
       showNoConnectionToast(context);
     }
   }
+
+  attachDoc() async{
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.image,withData: true);
+    if(result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      // List<PlatformFile> listFiles = result.files;
+      print(files.first.path);
+      if(files.isNotEmpty){
+        for(int i = 0; i< files.length; i++){
+          listFiles.add(files[i]);
+        }
+      }
+      if(listFiles.isNotEmpty){
+        for(int i = 0; i < listFiles.length; i++){
+          base64Images.add(base64Encode(listFiles.first.readAsBytesSync()));
+        }
+      }
+
+
+      setState(() {
+
+      });
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Widget _previewImage(StateSetter stateSetter) {
+
+    if (listFiles.isNotEmpty) {
+          return GestureDetector(
+            onTap: ()async {
+             await  attachDoc();
+
+             stateSetter(() {
+
+             });
+              print(listFiles);
+            },
+            child: Center(
+              child: Container(
+                height: 200,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+
+                child: GridView.count(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 4,
+                    childAspectRatio: 1,
+                    scrollDirection: Axis.horizontal,
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    children:listFiles.map<Widget>( (_imageFiles) {
+                      return  Stack(
+                        children: [
+                          Semantics(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                  child:displayLocalImage( _imageFiles.path,radius: 10,height: 100,width: appWidth(context))
+                              ),
+                              label: 'image_picker_example_picked_image'
+                          ),
+
+                          Positioned(
+                            left: 0,
+                              child: IconButton(icon: Icon(Icons.cancel,color: Colors.red,size: 30,), onPressed: ()async{
+                             listFiles.remove(_imageFiles);
+                            stateSetter(() {
+
+                            });
+                          }))
+                        ],
+                      );
+                    }).toList()),
+              ),
+            ),
+          );
+
+    } else {
+      return  MaterialButton(
+        onPressed: ()async{
+          await attachDoc();
+          stateSetter(() {
+
+          });
+        },
+        child: Container(
+            child: Image.asset("assets/images/upload_images.png")
+        ),
+      );
+    }
+  }
+
   @override
  void initState(){
     getGroupPageView();
+    getAnnouncement();
     super.initState();
   }
   @override
@@ -1083,11 +1284,10 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                             ),
                                 SizedBox(height: 20,),
-                              if(listGroupViewData[0].admins!.isNotEmpty)
+                             listAnnouncementData.isNotEmpty ?
                                 Column(
                                   children: [
-                                    for(int i = 0; i< 2; i++)
-
+                                    for(int i = 0; i< listAnnouncementData.length; i++)
                                       Column(
                                         children: [
                                           Container(
@@ -1110,26 +1310,69 @@ class _GroupPageState extends State<GroupPage> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 10,),
-                                                sText("10 mins ago",color: kAdeoGray2),
+                                                sText( "${StringExtension.displayTimeAgoFromTimestamp(listAnnouncementData[i].createdAt.toString())} ago",color: kAdeoGray2),
                                                 SizedBox(height: 10,),
                                                 Container(
-                                                  child:   sText("Read chapters 9 to 10 of the textbook before class tomorrow",color: kAdeoGray3,weight: FontWeight.w500),
+                                                  child:sText(listAnnouncementData[i].title,color: kAdeoGray3,weight: FontWeight.w500),
                                                 ),
                                                 SizedBox(height: 10,),
-                                                Container(
-                                                  child: Image.asset("assets/images/First Screen.png"),
-                                                )
+                                                if(listAnnouncementData[i].resources!.isNotEmpty)
+                                                  Column(
+                                                    children: [
+                                                      CarouselSlider.builder(
+                                                          options: CarouselOptions(
+                                                            height: 200,
+                                                            autoPlay: false,
+                                                            enableInfiniteScroll: false,
+                                                            autoPlayAnimationDuration: Duration(seconds: 1),
+                                                            enlargeCenterPage: false,
+                                                            viewportFraction: 1,
+                                                            aspectRatio: 2.0,
+                                                            pageSnapping: true,
+                                                            onPageChanged: (index, reason) {
+                                                              setState(() {
+                                                                _currentSlide = index;
+                                                              });
+                                                            },
+                                                          ),
+                                                          itemCount: listAnnouncementData[i].resources!.length,
+                                                          itemBuilder: (BuildContext context, int index, int index2) {
+                                                            return ClipRRect(
+                                                              borderRadius: BorderRadius.circular(20),
+                                                              child: Container(
+                                                                child: displayImage(listAnnouncementData[i].resources![index].url,radius: 0,height: 200,width: appWidth(context),),
+                                                              ),
+                                                            );
+                                                          }),
+                                                      SizedBox(height: 10,),
+                                                      Padding(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: map<Widget>(listAnnouncementData[i].resources!.length, (index, url) {
+                                                            return Container(
+                                                              width: 25,
+                                                              height: 3,
+                                                              margin: EdgeInsets.only(right: 5),
+                                                              decoration: BoxDecoration(color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray),
+                                                            );
+                                                          }),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+
                                               ],
                                             ),
                                           ),
-                                          listMembers.length -1 != i ?
+                                          listAnnouncementData.length -1 != i ?
                                           SizedBox(height: 10,child: Container(color: kHomeBackgroundColor,),): Container(),
                                         ],
                                       ),
 
 
                                   ],
-                                ),
+                                ) : Center(child:sText("You've no announcement") ,),
                             ],
                           ),
                         ),
