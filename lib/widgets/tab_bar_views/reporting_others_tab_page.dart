@@ -54,7 +54,11 @@ class _OthersTabPageState extends State<OthersTabPage> {
         print("again savedQuestions:${reviewQuestionsBack.length}");
       });
       Navigator.pop(context);
-      goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      if(test.testname.toString().toLowerCase() == "test diagnostic"){
+        goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,disgnostic: true,));
+      }else{
+        goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      }
     }else{
       Navigator.pop(context);
       toastMessage("Question are empty, please download questions");
@@ -231,6 +235,7 @@ class _OthersTabPageState extends State<OthersTabPage> {
                                   widget.course,
                                   TestType.NONE,
                                   test: selected,
+                                  diagnostic: selected.testname.toString().toLowerCase() == "test diagnostic" ? true : false,
                                 );
                               }),
                             );

@@ -60,6 +60,8 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     );
   }
 
+
+
   handleSelection(topic) {
     setState(() {
       selectAnsweredQuestions.clear();
@@ -110,30 +112,30 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
           },
         ),
         SizedBox(height: 8),
-        widget.diagnostic && widget.topics.isNotEmpty ?
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: MultiPurposeCourseCard(
-              onTap: () {
-                handleSelection(widget.topics[0]);
-              },
-              isActive: selected == widget.topics[0],
-              title: widget.topics[0]['name'],
-              subTitle: widget.topics[0]['rating'],
-              rightWidget: showInPercentage
-                  ? PercentageSnippet(
-                correctlyAnswered: widget.topics[0]
-                ['correctly_answered'],
-                totalQuestions: widget.topics[0]['total_questions'],
-                isSelected: selected == widget.topics[0],
-              )
-                  : FractionSnippet(
-                correctlyAnswered: widget.topics[0]
-                ['correctly_answered'],
-                totalQuestions: widget.topics[0]['total_questions'],
-                isSelected: selected == widget.topics[0],
-              )),
-        ) :
+        // widget.diagnostic && widget.topics.isNotEmpty ?
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        //   child: MultiPurposeCourseCard(
+        //       onTap: () {
+        //         handleSelection(widget.topics[0]);
+        //       },
+        //       isActive: selected == widget.topics[0],
+        //       title: widget.topics[0]['name'],
+        //       subTitle: widget.topics[0]['rating'],
+        //       rightWidget: showInPercentage
+        //           ? PercentageSnippet(
+        //         correctlyAnswered: widget.topics[0]
+        //         ['correctly_answered'],
+        //         totalQuestions: widget.topics[0]['total_questions'],
+        //         isSelected: selected == widget.topics[0],
+        //       )
+        //           : FractionSnippet(
+        //         correctlyAnswered: widget.topics[0]
+        //         ['correctly_answered'],
+        //         totalQuestions: widget.topics[0]['total_questions'],
+        //         isSelected: selected == widget.topics[0],
+        //       )),
+        // ) :
         Expanded(
           child: ListView.builder(
             shrinkWrap: true,
@@ -165,21 +167,23 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
             },
           ),
         ),
-        widget.diagnostic ?
-        Expanded(
-          child: GestureDetector(
-            onTap: (){
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) {
-                    return MainHomePage(
-                      widget.user,
-                      index: 0,
-                    );
-                  }));
-            },
-            child: Center(child: sText(widget.diagnostic && context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
-           ),
-        ) : Expanded(child: Container()),
+        // widget.diagnostic ?
+        // Expanded(
+        //   child: GestureDetector(
+        //     onTap: (){
+        //       Navigator.pushReplacement(context,
+        //           MaterialPageRoute(builder: (context) {
+        //             return MainHomePage(
+        //               widget.user,
+        //               index: 0,
+        //             );
+        //           }));
+        //     },
+        //     child: Center(child: sText(widget.diagnostic && context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
+        //    ),
+        // ) :
+        // Expanded(child: Container()),
+
         Divider(
           thickness: 3.0,
           color: kPageBackgroundGray,
@@ -190,7 +194,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
 
           child: Row(
             children: [
-              if (selected != null &&  !widget.diagnostic)
+              if (selected != null ||  !widget.diagnostic)
                 Expanded(
                   child: Row(
                     children: [
@@ -202,7 +206,11 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                             } else {
                               // Navigator.pop(context,[0,0]);
                               if(widget.diagnostic){
-                                toastMessage("No reviews for diagnostic test");
+                                // toastMessage("No reviews for diagnostic test");
+                                await goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,disgnostic: true,));
+                                setState(() {
+
+                                });
                               }else{
                                 await goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
                                 setState(() {
@@ -229,7 +237,8 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                           onPressed: () async {
                           if(widget.diagnostic){
                             toastMessage("No revise for diagnostic test");
-                          }else{
+                          }
+                          else{
                             int topicId = selected['topicId']!;
                             Topic? topic =
                             await TopicDB().getTopicById(topicId);
