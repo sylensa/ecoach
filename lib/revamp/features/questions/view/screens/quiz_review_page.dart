@@ -32,8 +32,9 @@ import '../../../../core/utils/app_colors.dart';
 class QuizReviewPage extends StatefulWidget {
   TestTaken? testTaken;
   User? user;
+  bool disgnostic = false;
 
-  QuizReviewPage({this.testTaken, this.user});
+  QuizReviewPage({this.testTaken, this.user,this.disgnostic = false});
 
   @override
   State<QuizReviewPage> createState() => _QuizReviewPageState();
@@ -385,6 +386,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                       children: [
                         ActualQuestion(
                           user: widget.user!,
+                          diagnostic: widget.disgnostic,
                           question: "${reviewQuestionsBack[questionIndex].text}",
                           direction: "Choose the right answer to the question above",
                         ),
@@ -408,7 +410,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                           child:  AdeoHtmlTex(
                                             widget.user!,
                                             reviewQuestionsBack[questionIndex].instructions!.replaceAll("https", "http"),
-                                            useLocalImage: true,
+                                            useLocalImage:!widget.disgnostic ,
                                             // removeTags: reviewQuestionsBack[questionIndex].instructions!.contains("src") ? false : true,
                                             textColor: Colors.black,
                                             fontWeight: FontWeight.normal,
@@ -425,7 +427,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       child: AdeoHtmlTex(
                                        widget.user!,
                                         reviewQuestionsBack[questionIndex].resource!.replaceAll("https", "http"),
-                                        useLocalImage: true,
+                                        useLocalImage: !widget.disgnostic,
                                         // removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
                                         textColor: Colors.grey,
                                         fontWeight: FontWeight.normal,
@@ -464,7 +466,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                             child:  AdeoHtmlTex(
                                              widget.user!,
                                               reviewQuestionsBack[questionIndex].correctAnswer!.solution!.replaceAll("https", "http"),
-                                              useLocalImage: false,
+                                              useLocalImage: !widget.disgnostic,
                                               // removeTags: reviewQuestionsBack[questionIndex].answers![t].solution!.contains("src") ? false : true,
                                               textColor: Colors.white,
                                               fontWeight: FontWeight.normal,
@@ -645,7 +647,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                 child:  AdeoHtmlTex(
                   widget.user!,
                   answer.text!.replaceAll("https", "http"),
-                  useLocalImage: true,
+                  useLocalImage: !widget.disgnostic,
                   textColor: reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 0 ? Colors.black :
                   reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 1 ? Colors.white :
                   ((reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id && answer.value == 1) ||  answer.value == 1) ||  (reviewQuestionsBack[questionIndex].isCorrect && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id) || (reviewQuestionsBack[questionIndex].isWrong && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id)  ? Colors.white : Colors.black ,
