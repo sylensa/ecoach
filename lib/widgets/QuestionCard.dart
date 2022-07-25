@@ -13,6 +13,8 @@ class QuestionCard extends StatelessWidget {
     required this.isSelected,
     required this.onSaveToggled,
     required this.onSelected,
+    required this.diagnostic,
+
     Key? key,
   }) : super(key: key);
 
@@ -23,6 +25,7 @@ class QuestionCard extends StatelessWidget {
   final bool isSelected;
   final Function onSaveToggled;
   final Function onSelected;
+  final bool diagnostic;
 
   static TextStyle questionStyle(isSelected) {
     return TextStyle(
@@ -68,7 +71,7 @@ class QuestionCard extends StatelessWidget {
                     ),
                     SizedBox(width: 13),
                     Expanded(
-                      child: AdeoHtmlTex(user, question['question'], textColor: isSelected ? Colors.white : Color(0xFF323232), fontSize: 12,),
+                      child: AdeoHtmlTex(user, question['question'], textColor: isSelected ? Colors.white : Color(0xFF323232), fontSize: 12,useLocalImage: !diagnostic),
                         
                     ),
                     SizedBox(width: 13),
