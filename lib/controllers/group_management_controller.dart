@@ -1,5 +1,6 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/active_package_model.dart';
+import 'package:ecoach/models/announcement_list_model.dart';
 import 'package:ecoach/models/get_agent_code.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
@@ -200,7 +201,6 @@ class GroupManagementController{
       return false;
     }
   }
-
   inviteToGroup(String email) async {
     try{
       var res = await doPost(AppUrl.inviteGroup,
@@ -338,6 +338,84 @@ class GroupManagementController{
   groupDelete() async {
     try{
       var res = await doDelete("${AppUrl.groupUnSuspend}/$groupId",);
+      if(res["status"] && res["code"].toString() == "200"){
+        toastMessage(res["message"]);
+        return true;
+      }else{
+        toastMessage(res["message"]);
+        return false;
+      }
+    }catch(e){
+      print("error:$e");
+      return false;
+    }
+  }
+
+  Future<List<AnnouncementData>> getAnnouncement()async {
+    List<AnnouncementData> listAnnouncementData = [];
+    try{
+      var js = await doGet('${AppUrl.getAnnouncement}');
+      print("res getAnnouncement : $js");
+      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
+        for(int i =0; i < js["data"]["data"].length; i++){
+          AnnouncementData announcementData = AnnouncementData.fromJson(js["data"]["data"][i]);
+          listAnnouncementData.add(announcementData);
+        }
+        toastMessage("${js["message"]}");
+        return listAnnouncementData;
+      }else{
+        toastMessage("${js["message"]}");
+        return listAnnouncementData;
+      }
+    }catch(e){
+      return listAnnouncementData;
+    }
+  }
+
+  Future<AnnouncementData?>  createAnnouncement({String title = '',String description = ''}) async {
+    AnnouncementData? announcementData;
+   try{
+     var res = await doPost(AppUrl.getAnnouncement, {
+       "group_id": groupId,
+       "title": title,
+       "description": description,
+     });
+     if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+        announcementData = AnnouncementData.fromJson(res["data"]);
+       toastMessage("${res["message"]}");
+       return announcementData;
+     }else{
+       toastMessage("${res["message"]}");
+       return null;
+     }
+   }catch(e){
+     print(e.toString());
+     return null;
+   }
+  }
+  Future<AnnouncementData?>  updateAnnouncement({String title = '',String description = '',String id = ''}) async {
+    AnnouncementData? announcementData;
+   try{
+     var res = await doPut("${AppUrl.removeMember}/$id", {
+       "title": title,
+       "description": description,
+     });
+     if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+        announcementData = AnnouncementData.fromJson(res["data"]);
+       toastMessage("${res["message"]}");
+       return announcementData;
+     }else{
+       toastMessage("${res["message"]}");
+       return null;
+     }
+   }catch(e){
+     print(e.toString());
+     return null;
+   }
+  }
+  deleteAnnouncement(String id) async {
+    try{
+      var res = await doDelete("${AppUrl.getAnnouncement}/$id",);
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
         return true;
