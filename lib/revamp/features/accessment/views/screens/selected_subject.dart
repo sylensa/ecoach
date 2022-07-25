@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/level_db.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/revamp/features/accessment/views/screens/start_accessment_page.dart';
 import 'package:ecoach/models/course.dart';
@@ -128,22 +129,25 @@ class _SelectSubjectWidgetState extends State<SelectSubjectWidget> {
                     if(isConnected){
                       showLoaderDialog(context);
                       Future futureList = TestController().loadDiagnoticQuestionAnnex(responseCourses[index]);
-                      futureList.then((apiResponse) {
+                      futureList.then((apiResponse) async{
                         Navigator.pop(context);
-                        apiResponse.data.length > 0 ?
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                              return StartAccessmentPage(
-                                widget.user!,
-                                apiResponse.data,
-                                name: "Test Diagnostic",
-                                course: responseCourses[index],
-                                time: 60 * 20,
-                                diagnostic: true,
-                              );
-                            })
-                        )  :
-                        showDialogOk(message: "No questions",context: context,dismiss: false);
+                         if(apiResponse.data.length > 0){
+                           await QuestionDB().insertAll(apiResponse.data);
+                           Navigator.push(context,
+                               MaterialPageRoute(builder: (context) {
+                                 return StartAccessmentPage(
+                                   widget.user!,
+                                   apiResponse.data,
+                                   name: "Test Diagnostic",
+                                   course: responseCourses[index],
+                                   time: 60 * 20,
+                                   diagnostic: true,
+                                 );
+                               })
+                           );
+                         }else{
+                           showDialogOk(message: "No questions",context: context,dismiss: false);
+                         }
                       });
                     }else{
                       toastMessage("No internet connection");
