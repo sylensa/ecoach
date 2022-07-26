@@ -372,13 +372,15 @@ class GroupManagementController{
     }
   }
 
-  Future<AnnouncementData?>  createAnnouncement({String title = '',String description = ''}) async {
+  Future<AnnouncementData?>  createAnnouncement(List resources,{String title = '',String description = ''}) async {
     AnnouncementData? announcementData;
+
    try{
      var res = await doPost(AppUrl.getAnnouncement, {
        "group_id": groupId,
        "title": title,
        "description": description,
+       "resources": resources,
      });
      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
         announcementData = AnnouncementData.fromJson(res["data"]);
