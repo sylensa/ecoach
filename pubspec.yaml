@@ -96,6 +96,8 @@ dependencies:
    flutter_rounded_date_picker: ^3.0.1
    flutter_datetime_picker: ^1.5.1
    file_picker: ^5.0.0
+   charts_flutter: ^0.12.0
+   syncfusion_flutter_charts: ^20.2.39
 
 flutter_icons:
    image_path: "assets/images/adeo_app_icon.png"
