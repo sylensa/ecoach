@@ -62,7 +62,6 @@ class _AllTabPageState extends State<AllTabPage> {
         goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,disgnostic: true,));
       }else{
         goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
-
       }
     }else{
       Navigator.pop(context);
