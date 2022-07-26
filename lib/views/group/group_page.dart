@@ -642,119 +642,126 @@ class _GroupPageState extends State<GroupPage> {
         builder: (BuildContext context){
           return StatefulBuilder(
             builder: (BuildContext context,StateSetter stateSetter){
-              return Container(
-                  height: sheetHeight,
-                  decoration: BoxDecoration(
-                      color: kAdeoGray ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20,),
-                      Container(
-                        color: Colors.grey,
-                        height: 5,
-                        width: 100,
-                      ),
-                      SizedBox(height: 20,),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Center(child: sText("Announcement",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
-                      ),
-                      SizedBox(height: 10,),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: sText("Select Your Preferred Upgrade",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
-                      ),
-                      SizedBox(height: 20,),
-                      Expanded(
-                        child: ListView(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(left: 20,right: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      // autofocus: true,
-                                      controller:titleController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please check that you\'ve entered group email';
-                                        }
-                                        return null;
-                                      },
-                                      decoration: textDecorNoBorder(
-                                        radius: 10,
-                                        labelText: "Name",
-                                        hintColor: Color(0xFFB9B9B9),
-                                        borderColor:Colors.white ,
-                                        fill: Colors.white,
-                                        padding: EdgeInsets.only(left: 10,right: 10),
+              return GestureDetector(
+                onTap: (){
+                  FocusScope.of(context).unfocus();
+                },
+                child: Container(
+                    height: sheetHeight,
+                    decoration: BoxDecoration(
+                        color: kAdeoGray ,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20,),
+                        Container(
+                          color: Colors.grey,
+                          height: 5,
+                          width: 100,
+                        ),
+                        SizedBox(height: 20,),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Center(child: sText("Announcement",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
+                        ),
+                        // SizedBox(height: 10,),
+                        // Container(
+                        //   padding: EdgeInsets.symmetric(horizontal: 20),
+                        //   child: sText("Select Your Preferred Upgrade",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                        // ),
+                        SizedBox(height: 20,),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        // autofocus: true,
+                                        controller:titleController,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please check that you\'ve entered group email';
+                                          }
+                                          return null;
+                                        },
+                                        decoration: textDecorNoBorder(
+                                          radius: 10,
+                                          labelText: "Title",
+                                          hintColor: Color(0xFFB9B9B9),
+                                          borderColor:Colors.white ,
+                                          fill: Colors.white,
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 20,),
-                            Container(
-                              padding: EdgeInsets.only(left: 20,right: 20),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      // autofocus: true,
-                                      controller: descriptionController,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please check that you\'ve entered your group description';
-                                        }
-                                        return null;
-                                      },
-                                      maxLines: 10,
-                                      decoration: textDecorNoBorder(
-                                        radius: 10,
-                                        labelText: "Description",
-                                        hintColor: Color(0xFFB9B9B9),
-                                        borderColor:Colors.white ,
-                                        fill: Colors.white,
-                                        padding: EdgeInsets.only(left: 10,right: 10),
+                              SizedBox(height: 20,),
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        // autofocus: true,
+                                        controller: descriptionController,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please check that you\'ve entered your group description';
+                                          }
+                                          return null;
+                                        },
+                                        maxLines: 10,
+                                        decoration: textDecorNoBorder(
+                                          radius: 10,
+                                          labelText: "Description",
+                                          hintColor: Color(0xFFB9B9B9),
+                                          borderColor:Colors.white ,
+                                          fill: Colors.white,
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 20,),
-                            _previewImage(stateSetter)
-                            // MaterialButton(
-                            //   onPressed: (){
-                            //     attachDoc();
-                            //   },
-                            //   child: Container(
-                            //     child: Image.asset("assets/images/upload_images.png")
-                            //   ),
-                            // )
-                          ],
+                              SizedBox(height: 20,),
+                              _previewImage(stateSetter)
+                              // MaterialButton(
+                              //   onPressed: (){
+                              //     attachDoc();
+                              //   },
+                              //   child: Container(
+                              //     child: Image.asset("assets/images/upload_images.png")
+                              //   ),
+                              // )
+                            ],
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          showLoaderDialog(context);
-                        },
-                        child: Container(
-                          width: appWidth(context),
-                          color: Color(0xFF00C9B9),
-                          padding: EdgeInsets.symmetric(horizontal: 30,vertical: 20),
-                          child: sText("Send Announcement",color: Colors.white,weight: FontWeight.w500,align: TextAlign.center,size: 18),
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                            showLoaderDialog(context);
+                            createAnnouncement(title: titleController.text,description: descriptionController.text);
+                          },
+                          child: Container(
+                            width: appWidth(context),
+                            color: Color(0xFF00C9B9),
+                            padding: EdgeInsets.symmetric(horizontal: 30,vertical: 20),
+                            child: sText("Send Announcement",color: Colors.white,weight: FontWeight.w500,align: TextAlign.center,size: 18),
+                          ),
                         ),
-                      ),
 
-                    ],
-                  )
+                      ],
+                    )
+                ),
               );
             },
 
@@ -767,8 +774,10 @@ class _GroupPageState extends State<GroupPage> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
       try{
         if(isConnected){
-          AnnouncementData? announcementData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).createAnnouncement(title: title,description: description);
+          AnnouncementData? announcementData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).createAnnouncement(base64Images,title: title,description: description);
           if(announcementData != null){
+            base64Images.clear();
+            listFiles.clear();
             Navigator.pop(context);
             listAnnouncementData.add(announcementData);
           }else{
@@ -779,7 +788,8 @@ class _GroupPageState extends State<GroupPage> {
           showNoConnectionToast(context);
         }
       }catch(e){
-        print(e.toString());
+        Navigator.pop(context);
+        print("error:${e.toString()}");
       }
     setState((){
     });
@@ -1303,8 +1313,8 @@ class _GroupPageState extends State<GroupPage> {
                                               children: [
                                                 Row(
                                                   children: [
-                                                   sText("Victor Adatsi",color: Colors.black,weight: FontWeight.bold),
-                                                   sText(" (group admin)",color: kAdeoGray2),
+                                                   sText(listAnnouncementData[i].user!.name,color: Colors.black,weight: FontWeight.bold),
+                                                   sText(" (${listAnnouncementData[i].user!.role})",color: kAdeoGray2),
                                                     Expanded(child: Container()),
                                                     Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
                                                   ],
