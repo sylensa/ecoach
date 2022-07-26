@@ -111,6 +111,7 @@ class AnnouncementData {
     this.deletedAt,
     this.createdAt,
     this.updatedAt,
+    this.user,
     this.resources,
   });
 
@@ -123,6 +124,7 @@ class AnnouncementData {
   dynamic deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
+  User? user;
   List<Resource>? resources;
 
   factory AnnouncementData.fromJson(Map<String, dynamic> json) => AnnouncementData(
@@ -135,6 +137,7 @@ class AnnouncementData {
     deletedAt: json["deleted_at"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
     resources: json["resources"] == null ? null : List<Resource>.from(json["resources"].map((x) => Resource.fromJson(x))),
   );
 
@@ -148,6 +151,7 @@ class AnnouncementData {
     "deleted_at": deletedAt,
     "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
     "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
+    "user": user == null ? null : user!.toJson(),
     "resources": resources == null ? null : List<dynamic>.from(resources!.map((x) => x.toJson())),
   };
 }
@@ -173,6 +177,38 @@ class Resource {
     "id": id == null ? null : id,
     "type": type == null ? null : type,
     "url": url == null ? null : url,
+  };
+}
+
+class User {
+  User({
+    this.id,
+    this.name,
+    this.role,
+    this.isAgent,
+    this.isGroupCreator,
+  });
+
+  int? id;
+  String? name;
+  String? role;
+  bool? isAgent;
+  bool? isGroupCreator;
+
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"] == null ? null : json["name"],
+    role: json["role"] == null ? null : json["role"],
+    isAgent: json["is_agent"] == null ? null : json["is_agent"],
+    isGroupCreator: json["is_group_creator"] == null ? null : json["is_group_creator"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "name": name == null ? null : name,
+    "role": role == null ? null : role,
+    "is_agent": isAgent == null ? null : isAgent,
+    "is_group_creator": isGroupCreator == null ? null : isGroupCreator,
   };
 }
 
