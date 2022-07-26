@@ -146,6 +146,7 @@ class _CompareViewState extends State<CompareView> {
                     }
                   });
                 },
+                course: widget.course,
               ),
             SizedBox(height: 20),
             Expanded(
