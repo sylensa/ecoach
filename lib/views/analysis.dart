@@ -184,6 +184,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                                                     return getStatsBlock(
                                                       stats,
                                                       c.packageCode,
+                                                      c
                                                     );
                                                   } else if (snapshot
                                                       .hasError) {
@@ -259,7 +260,7 @@ class _AnalysisViewState extends State<AnalysisView> {
   }
 }
 
-StatsSliderCard getStatsBlock(Report stats, packageCode) {
+StatsSliderCard getStatsBlock(Report stats, packageCode,Course course) {
   CourseStat courseStat1 = stats.courseStats![0];
   dynamic courseStat2 =
       stats.courseStats!.length > 1 ? stats.courseStats![1] : null;
@@ -337,6 +338,7 @@ StatsSliderCard getStatsBlock(Report stats, packageCode) {
         statLabel: 'Rank',
       ),
     ],
+    course: course,
   );
 }
 
