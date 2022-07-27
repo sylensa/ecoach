@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/grade.dart';
 import 'package:ecoach/models/topic_analysis.dart';
+import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -38,6 +40,7 @@ class _CompareViewState extends State<CompareView> {
   String rightWidgetState = '';
   late Map<String, dynamic> stats;
   List topics = [];
+  List listTopicsTestTaken = [];
 
   @override
   void initState() {
@@ -65,10 +68,12 @@ class _CompareViewState extends State<CompareView> {
             'name': analysis.name,
             'total_questions': analysis.total,
             'correctly_answered': analysis.correct,
+            'test_id':test.id,
           });
-
           setState(() {});
         });
+
+
       });
     });
 
@@ -84,6 +89,85 @@ class _CompareViewState extends State<CompareView> {
         level: widget.course.packageCode!,
       ).grade,
     };
+  }
+
+  getTopicsTaken(int testId){
+    listTopicsTestTaken.clear();
+    for(int i = 0; i< topics.length; i++){
+      if(topics[i]["test_id"] == testId){
+        listTopicsTestTaken.add(topics[i]);
+      }
+    }
+   return SizedBox(
+     height: 200,
+     child: ListView.builder(
+          itemCount: listTopicsTestTaken.length,
+          itemBuilder: (BuildContext context, int index){
+            var test = listTopicsTestTaken[index];
+            print("test:$test");
+            print("listTopicsTestTaken:${listTopicsTestTaken.length}");
+          return Padding(
+            padding:
+            EdgeInsets.symmetric(horizontal: 24),
+            child: MultiPurposeCourseCard(
+              hasSmallHeading: true,
+              title: test['name'],
+              subTitle: 'Topic',
+              isActive: selected == test,
+              rightWidget: (() {
+                switch (
+                rightWidgetState.toUpperCase()) {
+                  case 'TOTAL_POINTS':
+                    return FractionSnippet(
+                      correctlyAnswered:
+                      test['correctly_answered'],
+                      totalQuestions:
+                      test['total_questions'],
+                      isSelected: selected == test,
+                    );
+                  case 'STRENGTH':
+                    return AdeoSignalStrengthIndicator(
+                      strength: (test[
+                      'correctly_answered'] /
+                          test['total_questions']) *
+                          100,
+                      size: Sizes.small,
+                    );
+                  case 'GRADE':
+                    return Text(
+                      GradingSystem(
+                          score: test[
+                          'correctly_answered'] /
+                              test[
+                              'total_questions'],
+                          level: widget
+                              .course.packageCode!)
+                          .grade,
+                      style: TextStyle(
+                        color: selected == test
+                            ? Colors.white
+                            : Color(0xFF2A9CEA),
+                        fontSize: 11.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  default:
+                    return PercentageSnippet(
+                      correctlyAnswered:
+                      test['correctly_answered'],
+                      totalQuestions:
+                      test['total_questions'],
+                      isSelected: selected == test,
+                    );
+                }
+              })(),
+              onTap: () {
+                handleSelection(test);
+              },
+            ),
+          );
+      }),
+   );
   }
 
   handleSelection(test) {
@@ -215,8 +299,7 @@ class _CompareViewState extends State<CompareView> {
                           .toList(),
                     ),
                     SizedBox(height: 14),
-                    if (rightWidgetState.toUpperCase() != 'GRADE' &&
-                        topics.length > 0)
+                    if (rightWidgetState.toUpperCase() != 'GRADE' && topics.length > 0)
                       Column(
                         children: [
                           Container(height: 3, color: Colors.white),
@@ -230,72 +313,33 @@ class _CompareViewState extends State<CompareView> {
                             ),
                           ),
                           SizedBox(height: 15),
+                          for(int i =0; i < widget.operands.length; i++)
                           Column(
-                            children: topics
-                                .map(
-                                  (test) => Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 24),
-                                    child: MultiPurposeCourseCard(
-                                      hasSmallHeading: true,
-                                      title: test['name'],
-                                      subTitle: 'Topic',
-                                      isActive: selected == test,
-                                      rightWidget: (() {
-                                        switch (
-                                            rightWidgetState.toUpperCase()) {
-                                          case 'TOTAL_POINTS':
-                                            return FractionSnippet(
-                                              correctlyAnswered:
-                                                  test['correctly_answered'],
-                                              totalQuestions:
-                                                  test['total_questions'],
-                                              isSelected: selected == test,
-                                            );
-                                          case 'STRENGTH':
-                                            return AdeoSignalStrengthIndicator(
-                                              strength: (test[
-                                                          'correctly_answered'] /
-                                                      test['total_questions']) *
-                                                  100,
-                                              size: Sizes.small,
-                                            );
-                                          case 'GRADE':
-                                            return Text(
-                                              GradingSystem(
-                                                      score: test[
-                                                              'correctly_answered'] /
-                                                          test[
-                                                              'total_questions'],
-                                                      level: widget
-                                                          .course.packageCode!)
-                                                  .grade,
-                                              style: TextStyle(
-                                                color: selected == test
-                                                    ? Colors.white
-                                                    : Color(0xFF2A9CEA),
-                                                fontSize: 11.0,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            );
-                                          default:
-                                            return PercentageSnippet(
-                                              correctlyAnswered:
-                                                  test['correctly_answered'],
-                                              totalQuestions:
-                                                  test['total_questions'],
-                                              isSelected: selected == test,
-                                            );
-                                        }
-                                      })(),
-                                      onTap: () {
-                                        handleSelection(test);
-                                      },
-                                    ),
+                            children: [
+                              Theme(
+                                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                child: ExpansionTile(
+                                  textColor: Colors.white,
+                                  iconColor: Colors.black,
+                                  initiallyExpanded: false,
+                                  maintainState: false,
+                                  backgroundColor: kHomeBackgroundColor,
+                                  childrenPadding: EdgeInsets.zero,
+                                  collapsedIconColor: Colors.black,
+                                  leading:  Container(
+                                    child: sText("${widget.operands[i].testname}",weight: FontWeight.w500,size: 16),
                                   ),
-                                )
-                                .toList(),
-                          )
+
+                                  title: Container()  ,
+                                  children: <Widget>[
+                                    getTopicsTaken(widget.operands[i].id!)
+                                  ],
+                                ),
+                              ),
+
+                            ],
+                          ),
+
                         ],
                       )
                   ],
