@@ -1,6 +1,7 @@
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/widgets/adeo_analysis_graph.dart';
 import 'package:ecoach/widgets/cards/stats_slider_card.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -11,8 +12,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AverageScoreGraph extends StatefulWidget {
    Stat? stats;
+   String tabName;
   final Course course;
-  AverageScoreGraph({this.stats,required this.course});
+  AverageScoreGraph({this.stats,required this.course,this.tabName = "all"});
 
   @override
   State<AverageScoreGraph> createState() => _AverageScoreGraphState();
@@ -25,9 +27,37 @@ List<FlSpot> testdata = [];
   getStats(String period)async{
     testData.clear();
     testdata.clear();
-    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!,period);
-    for (int i = 0; i < testData.length; i++) {
-      final test = testData[i];
+    List<TestTaken> graphResultData = [];
+    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!.toString(),period);
+    if(widget.tabName.toLowerCase() == "exam"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.EXAM.toString() ||
+          element.challengeType == TestCategory.MOCK.toString() ||
+          element.challengeType == TestCategory.NONE.toString()
+      ).toList();
+    }else if(widget.tabName.toLowerCase() == "topic"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.TOPIC.toString()).toList();
+    }else if(widget.tabName.toLowerCase() == "other"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType !=
+          TestCategory.TOPIC.toString() &&
+          element.challengeType !=
+              TestCategory.EXAM.toString() &&
+          element.challengeType != TestCategory.MOCK.toString()
+          &&
+          element.challengeType != TestCategory.NONE.toString()
+      ).toList();
+    }else{
+      graphResultData = testData;
+    }
+    for (int i = 0; i < graphResultData.length; i++) {
+      final test = graphResultData[i];
       testdata.add(
         FlSpot(
           (i + 1).toDouble(),
