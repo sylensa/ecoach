@@ -13,8 +13,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 class AverageScoreGraph extends StatefulWidget {
    Stat? stats;
    String tabName;
+   String rightWidgetState;
   final Course course;
-  AverageScoreGraph({this.stats,required this.course,this.tabName = "all"});
+  AverageScoreGraph({this.stats,required this.course,this.tabName = "all",this.rightWidgetState = 'average'});
 
   @override
   State<AverageScoreGraph> createState() => _AverageScoreGraphState();
