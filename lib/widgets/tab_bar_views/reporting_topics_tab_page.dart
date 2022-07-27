@@ -23,10 +23,14 @@ class TopicsTabPage extends StatefulWidget {
   const TopicsTabPage({
     required this.course,
     required this.user,
+    required this.rightWidgetState,
+
     Key? key,
   }) : super(key: key);
   final Course course;
   final User user;
+  final String rightWidgetState;
+
 
   @override
   State<TopicsTabPage> createState() => _TopicsTabPageState();
@@ -80,7 +84,8 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     return Column(
       children: [
         //graph
-        AverageScoreGraph(course:widget.course ,tabName: "topic",),
+        if(widget.rightWidgetState  == "average")
+          AverageScoreGraph(course:widget.course ,tabName: "topic",),
         FutureBuilder(
           future: tests,
           builder: (context, snapshot) {

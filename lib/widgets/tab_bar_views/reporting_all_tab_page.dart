@@ -26,11 +26,12 @@ class AllTabPage extends StatefulWidget {
   const AllTabPage({
     required this.course,
     required this.user,
+   required this.rightWidgetState,
     Key? key,
   }) : super(key: key);
   final Course course;
   final User user;
-
+  final String rightWidgetState;
   @override
   State<AllTabPage> createState() => _AllTabPageState();
 }
@@ -86,11 +87,12 @@ class _AllTabPageState extends State<AllTabPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("object hjjh:${widget.rightWidgetState}");
     return Column(
       children: [
         //graph
-        AverageScoreGraph(course:widget.course ,),
-
+        if(widget.rightWidgetState  == "average")
+        AverageScoreGraph(course:widget.course,rightWidgetState:widget.rightWidgetState ,),
         FutureBuilder(
           future: tests,
           builder: (context, snapshot) {
