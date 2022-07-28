@@ -769,6 +769,167 @@ class _GroupPageState extends State<GroupPage> {
         }
     );
   }
+  updateAnnouncementModalBottomSheet(context,AnnouncementData announcementData,int index){
+    TextEditingController titleController = TextEditingController();
+    TextEditingController descriptionController = TextEditingController();
+    titleController.text = announcementData.title!;
+    descriptionController.text = announcementData.description!;
+    List images = [];
+    for(int i =0; i< announcementData.resources!.length; i++){
+      images.add(announcementData.resources![i].url);
+    }
+    bool isActivated = true;
+    double sheetHeight = 600;
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        backgroundColor: Colors.transparent ,
+        isScrollControlled: true,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+            builder: (BuildContext context,StateSetter stateSetter){
+              return GestureDetector(
+                onTap: (){
+                  FocusScope.of(context).unfocus();
+                },
+                child: Container(
+                    height: sheetHeight,
+                    decoration: BoxDecoration(
+                        color: kAdeoGray ,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(),
+                            Container(
+                              color: Colors.grey,
+                              height: 5,
+                              width: 100,
+                            ),
+                            GestureDetector(
+                              onTap: ()async{
+                                Navigator.pop(context);
+                                showLoaderDialog(context);
+                                deleteAnnouncement(announcementData.id.toString(),index);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
+                                margin: rightPadding(10),
+                                child: sText("Delete",color: Colors.white),
+
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 20,),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Center(child: sText("Announcement",weight: FontWeight.bold,size: 20,align: TextAlign.center)),
+                        ),
+                        SizedBox(height: 20,),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        // autofocus: true,
+                                        controller:titleController,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please check that you\'ve entered group email';
+                                          }
+                                          return null;
+                                        },
+                                        decoration: textDecorNoBorder(
+                                          radius: 10,
+                                          labelText: "Title",
+                                          hintColor: Color(0xFFB9B9B9),
+                                          borderColor:Colors.white ,
+                                          fill: Colors.white,
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        // autofocus: true,
+                                        controller: descriptionController,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please check that you\'ve entered your group description';
+                                          }
+                                          return null;
+                                        },
+                                        maxLines: 10,
+                                        decoration: textDecorNoBorder(
+                                          radius: 10,
+                                          labelText: "Description",
+                                          hintColor: Color(0xFFB9B9B9),
+                                          borderColor:Colors.white ,
+                                          fill: Colors.white,
+                                          padding: EdgeInsets.only(left: 10,right: 10),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              listFiles.isNotEmpty ?
+                              _previewImage(stateSetter) :
+                              announcementData.resources!.isNotEmpty ?
+                              _previewImageUpdate(stateSetter, images) :
+                              _previewImage(stateSetter)
+
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                            showLoaderDialog(context);
+                            createAnnouncement(title: titleController.text,description: descriptionController.text);
+                          },
+                          child: Container(
+                            width: appWidth(context),
+                            color: Color(0xFF00C9B9),
+                            padding: EdgeInsets.symmetric(horizontal: 30,vertical: 20),
+                            child: sText("Update Announcement",color: Colors.white,weight: FontWeight.w500,align: TextAlign.center,size: 18),
+                          ),
+                        ),
+
+                      ],
+                    )
+                ),
+              );
+            },
+
+          );
+        }
+    );
+  }
 
   createAnnouncement({String title = '',String description = ''})async{
     final bool isConnected = await InternetConnectionChecker().hasConnection;
@@ -841,10 +1002,13 @@ class _GroupPageState extends State<GroupPage> {
     });
   }
 
-  deleteAnnouncement(String aId) async {
+  deleteAnnouncement(String aId,int index) async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if(isConnected){
       if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).deleteAnnouncement(aId)){
+       setState((){
+         listAnnouncementData.removeAt(index);
+       });
         Navigator.pop(context);
       }else{
         Navigator.pop(context);
@@ -856,7 +1020,7 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   attachDoc() async{
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.image,withData: true);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: false, type: FileType.image,withData: true);
     if(result != null) {
       List<File> files = result.paths.map((path) => File(path!)).toList();
       // List<PlatformFile> listFiles = result.files;
@@ -932,7 +1096,73 @@ class _GroupPageState extends State<GroupPage> {
             ),
           );
 
-    } else {
+    }
+    else {
+      return  MaterialButton(
+        onPressed: ()async{
+          await attachDoc();
+          stateSetter(() {
+
+          });
+        },
+        child: Container(
+            child: Image.asset("assets/images/upload_images.png")
+        ),
+      );
+    }
+  }
+  Widget _previewImageUpdate(StateSetter stateSetter,List url) {
+
+    if (url.isNotEmpty) {
+          return GestureDetector(
+            onTap: ()async {
+             await  attachDoc();
+
+             stateSetter(() {
+
+             });
+              print(listFiles);
+            },
+            child: Center(
+              child: Container(
+                height: 200,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+
+                child: GridView.count(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 4,
+                    childAspectRatio: 1,
+                    scrollDirection: Axis.horizontal,
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    children:url.map<Widget>( (_imageFiles) {
+                      return  Stack(
+                        children: [
+                          Semantics(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                  child:displayImage( _imageFiles,radius: 0,height: 100,width: appWidth(context))
+                              ),
+                              label: 'image_picker_example_picked_image'
+                          ),
+
+                          Positioned(
+                            left: 0,
+                              child: IconButton(icon: Icon(Icons.cancel,color: Colors.red,size: 30,), onPressed: ()async{
+                                url.remove(_imageFiles);
+                            stateSetter(() {
+
+                            });
+                          }))
+                        ],
+                      );
+                    }).toList()),
+              ),
+            ),
+          );
+    }
+    else {
       return  MaterialButton(
         onPressed: ()async{
           await attachDoc();
@@ -1284,6 +1514,7 @@ class _GroupPageState extends State<GroupPage> {
                                 announcementModalBottomSheet(context);
                               },
                               child: Container(
+                                width: appWidth(context) * 0.75,
                                 child:  sText("New Announcements",weight: FontWeight.w500,size: 16,align: TextAlign.center),
                                 padding: EdgeInsets.symmetric(vertical: 15,horizontal: 30),
                                 decoration: BoxDecoration(
@@ -1298,86 +1529,93 @@ class _GroupPageState extends State<GroupPage> {
                                 Column(
                                   children: [
                                     for(int i = 0; i< listAnnouncementData.length; i++)
-                                      Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(5)
-                                            ),
-                                            margin: EdgeInsets.symmetric(horizontal: 20),
-                                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                      MaterialButton(
+                                        padding: EdgeInsets.zero,
+                                        onPressed: (){
+                                          listFiles.clear();
+                                          updateAnnouncementModalBottomSheet(context,listAnnouncementData[i],i);
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(5)
+                                              ),
+                                              margin: EdgeInsets.symmetric(horizontal: 20),
+                                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
 
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                   sText(listAnnouncementData[i].user!.name,color: Colors.black,weight: FontWeight.bold),
-                                                   sText(" (${listAnnouncementData[i].user!.role})",color: kAdeoGray2),
-                                                    Expanded(child: Container()),
-                                                    Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-                                                  ],
-                                                ),
-                                                SizedBox(height: 10,),
-                                                sText( "${StringExtension.displayTimeAgoFromTimestamp(listAnnouncementData[i].createdAt.toString())} ago",color: kAdeoGray2),
-                                                SizedBox(height: 10,),
-                                                Container(
-                                                  child:sText(listAnnouncementData[i].title,color: kAdeoGray3,weight: FontWeight.w500),
-                                                ),
-                                                SizedBox(height: 10,),
-                                                if(listAnnouncementData[i].resources!.isNotEmpty)
-                                                  Column(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
                                                     children: [
-                                                      CarouselSlider.builder(
-                                                          options: CarouselOptions(
-                                                            height: 200,
-                                                            autoPlay: false,
-                                                            enableInfiniteScroll: false,
-                                                            autoPlayAnimationDuration: Duration(seconds: 1),
-                                                            enlargeCenterPage: false,
-                                                            viewportFraction: 1,
-                                                            aspectRatio: 2.0,
-                                                            pageSnapping: true,
-                                                            onPageChanged: (index, reason) {
-                                                              setState(() {
-                                                                _currentSlide = index;
-                                                              });
-                                                            },
-                                                          ),
-                                                          itemCount: listAnnouncementData[i].resources!.length,
-                                                          itemBuilder: (BuildContext context, int index, int index2) {
-                                                            return ClipRRect(
-                                                              borderRadius: BorderRadius.circular(20),
-                                                              child: Container(
-                                                                child: displayImage(listAnnouncementData[i].resources![index].url,radius: 0,height: 200,width: appWidth(context),),
-                                                              ),
-                                                            );
-                                                          }),
-                                                      SizedBox(height: 10,),
-                                                      Padding(
-                                                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: map<Widget>(listAnnouncementData[i].resources!.length, (index, url) {
-                                                            return Container(
-                                                              width: 25,
-                                                              height: 3,
-                                                              margin: EdgeInsets.only(right: 5),
-                                                              decoration: BoxDecoration(color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray),
-                                                            );
-                                                          }),
-                                                        ),
-                                                      ),
+                                                     sText(listAnnouncementData[i].user!.name,color: Colors.black,weight: FontWeight.bold),
+                                                     sText(" (${listAnnouncementData[i].user!.role})",color: kAdeoGray2),
+                                                      Expanded(child: Container()),
+                                                      Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
                                                     ],
                                                   ),
+                                                  SizedBox(height: 10,),
+                                                  sText( "${StringExtension.displayTimeAgoFromTimestamp(listAnnouncementData[i].createdAt.toString())} ago",color: kAdeoGray2),
+                                                  SizedBox(height: 10,),
+                                                  Container(
+                                                    child:sText(listAnnouncementData[i].title,color: kAdeoGray3,weight: FontWeight.w500),
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  if(listAnnouncementData[i].resources!.isNotEmpty)
+                                                    Column(
+                                                      children: [
+                                                        CarouselSlider.builder(
+                                                            options: CarouselOptions(
+                                                              height: 200,
+                                                              autoPlay: false,
+                                                              enableInfiniteScroll: false,
+                                                              autoPlayAnimationDuration: Duration(seconds: 1),
+                                                              enlargeCenterPage: false,
+                                                              viewportFraction: 1,
+                                                              aspectRatio: 2.0,
+                                                              pageSnapping: true,
+                                                              onPageChanged: (index, reason) {
+                                                                setState(() {
+                                                                  _currentSlide = index;
+                                                                });
+                                                              },
+                                                            ),
+                                                            itemCount: listAnnouncementData[i].resources!.length,
+                                                            itemBuilder: (BuildContext context, int index, int index2) {
+                                                              return ClipRRect(
+                                                                borderRadius: BorderRadius.circular(20),
+                                                                child: Container(
+                                                                  child: displayImage(listAnnouncementData[i].resources![index].url,radius: 0,height: 200,width: appWidth(context),),
+                                                                ),
+                                                              );
+                                                            }),
+                                                        // SizedBox(height: 10,),
+                                                        // Padding(
+                                                        //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                        //   child: Row(
+                                                        //     mainAxisAlignment: MainAxisAlignment.center,
+                                                        //     children: map<Widget>(listAnnouncementData[i].resources!.length, (index, url) {
+                                                        //       return Container(
+                                                        //         width: 25,
+                                                        //         height: 3,
+                                                        //         margin: EdgeInsets.only(right: 5),
+                                                        //         decoration: BoxDecoration(color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray),
+                                                        //       );
+                                                        //     }),
+                                                        //   ),
+                                                        // ),
+                                                      ],
+                                                    ),
 
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          listAnnouncementData.length -1 != i ?
-                                          SizedBox(height: 10,child: Container(color: kHomeBackgroundColor,),): Container(),
-                                        ],
+                                            listAnnouncementData.length -1 != i ?
+                                            SizedBox(height: 10,child: Container(color: kHomeBackgroundColor,),): Container(),
+                                          ],
+                                        ),
                                       ),
 
 
@@ -1415,6 +1653,7 @@ class _GroupPageState extends State<GroupPage> {
                                  goTo(context, TestCreation());
                                 },
                                 child: Container(
+                                  width: appWidth(context) * 0.75,
                                   child:  sText("New Test",weight: FontWeight.w500,size: 16,align: TextAlign.center),
                                   padding: EdgeInsets.symmetric(vertical: 15,horizontal: 30),
                                   decoration: BoxDecoration(
