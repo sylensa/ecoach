@@ -5,6 +5,7 @@ Treadmill treadmillFromJson(String str) => Treadmill.fromJson(json.decode(str));
 String treadmillToJson(Treadmill data) => json.encode(data.toJson());
 
 enum TreadmillStatus { NEW, IN_PROGRESS, PAUSED, COMPLETED }
+
 enum TreadmillType { TOPIC, MOCK, BANK }
 
 class Treadmill {
@@ -130,6 +131,7 @@ class TreadmillProgress {
   int? bankId;
   String? topicName;
   int? time;
+
   String? status;
   Question? question;
 

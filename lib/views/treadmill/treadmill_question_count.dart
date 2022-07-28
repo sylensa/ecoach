@@ -1,24 +1,33 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/treadmill/treadmill_time_and_instruction.dart';
+import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/topic.dart';
+
 class TreadmillQuestionCount extends StatelessWidget {
   TreadmillQuestionCount({
+    this.topics = const [],
     required this.controller,
     required this.mode,
     this.count = 0,
     this.topicId,
     this.bankId,
     this.bankName,
+    this.topic,
   });
-
+  final List<TestNameAndCount> topics;
   final TreadmillController controller;
+
   final int count;
   final TreadmillMode mode;
   final int? topicId;
+  Topic? topic;
   final int? bankId;
   final String? bankName;
 
@@ -96,13 +105,21 @@ class TreadmillQuestionCount extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return TreadmillWelcome(
+                                return TreadmillTime(
                                   controller: controller,
+                                  topic: topic,
                                   mode: mode,
                                   topicId: topicId,
                                   bankId: bankId,
                                   bankName: bankName,
                                 );
+                                //TreadmillWelcome(
+                                // controller: controller,
+                                // mode: mode,
+                                // topicId: topicId,
+                                // bankId: bankId,
+                                // bankName: bankName,
+                                // );
                               },
                             ),
                           );

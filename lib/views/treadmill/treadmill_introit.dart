@@ -49,6 +49,7 @@ class _TreadmillIntroitState extends State<TreadmillIntroit> {
         screenToNavigateTo = TreadmillLive();
         break;
       case TestMode.PRACTISE:
+        print("Testing");
         Treadmill? treadmill =
             await TestController().getCurrentTreadmill(widget.course);
         if (treadmill == null) {
@@ -60,13 +61,11 @@ class _TreadmillIntroitState extends State<TreadmillIntroit> {
             ),
           );
         } else {
+          print('jjjjjjjjjjjj');
           print(treadmill.toJson());
           screenToNavigateTo = TreadmillSaveResumptionMenu(
-            controller: TreadmillController(
-              widget.user,
-              widget.course,
-              name: widget.course.name!,
-            ),
+            controller: TreadmillController(widget.user, widget.course,
+                name: widget.course.name!, treadmill: treadmill),
           );
         }
         break;

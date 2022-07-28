@@ -63,6 +63,28 @@ class TreadmillController {
   TimerController? speedtimerController;
   int countdownInSeconds = 0;
   DateTime questionTimer = DateTime.now();
+  String? topicName;
+  Topic? topicData;
+  dynamic topicid;
+  int timeQ = 0;
+  int timePerQuestion = 0;
+  int countQuestions = 0;
+  String? min_1;
+  String? min_2;
+  String? sec_1;
+  String? sec_2;
+  String? s1;
+  String? s2;
+  String? m1;
+  String? m2;
+  String? minutes;
+  String? seconds;
+  int? countdown_sec;
+  int? countdown_min;
+  int countdown = 0;
+  int correctAnswer = 0;
+  int wrongAnswer = 0;
+  double count = 0.0;
 
   startTest() {
     speedtimerController!.start();
@@ -222,28 +244,30 @@ class TreadmillController {
 
   saveTest(BuildContext context,
       Function(TestTaken? test, bool success) callback) async {
+    print('save');
     TestTaken testTaken = TestTaken(
-        userId: user.id,
-        datetime: startTime,
-        totalQuestions: questions.length,
-        courseId: course.id,
-        testname: name,
-        testType: type.toString(),
-        testTime: !speedTest
-            ? duration == null
-                ? -1
-                : duration!.inSeconds
-            : speedDuration == null
-                ? -1
-                : speedDuration!.inSeconds,
-        usedTime: DateTime.now().difference(startTime!).inSeconds,
-        responses: responses,
-        score: score,
-        correct: correct,
-        wrong: wrong,
-        unattempted: unattempted,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now());
+      userId: user.id,
+      datetime: startTime,
+      totalQuestions: questions.length,
+      courseId: course.id,
+      testname: name,
+      testType: type.toString(),
+      testTime: !speedTest
+          ? duration == null
+              ? -1
+              : duration!.inSeconds
+          : speedDuration == null
+              ? -1
+              : speedDuration!.inSeconds,
+      usedTime: DateTime.now().difference(startTime!).inSeconds,
+      responses: responses,
+      score: score,
+      correct: correct,
+      wrong: wrong,
+      unattempted: unattempted,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
 
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (!isConnected) {
@@ -287,7 +311,7 @@ class TreadmillController {
     }
     treadmill!.avgScore = avgScore;
     treadmill!.avgTime = avgTime;
-    treadmill!.totalTime = duration!.inSeconds;
+    treadmill!.totalTime = 50; //duration!.inSeconds;
     treadmill!.totalCorrect = correct;
     treadmill!.totalWrong = wrong;
     treadmill!.totalQuestions =
@@ -472,6 +496,7 @@ class TreadmillController {
     treadmill = await TreadmillDB().getCurrentTreadmill(course);
     if (treadmill != null) {
       questions = await TreadmillDB().getProgresses(treadmill!.id!);
+      print('deleted ${treadmill!.id!}');
       await TreadmillDB().delete(treadmill!.id!);
       for (int i = 0; i < questions.length; i++) {
         await TreadmillDB().deleteProgress(questions[i].id!);

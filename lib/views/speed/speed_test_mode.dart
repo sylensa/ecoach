@@ -83,6 +83,7 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
                       onChanged: (v) {
                         setState(() {
                           durationRight = v.split('').join('');
+                          print('......Done');
                         });
                       },
                     ),

@@ -173,7 +173,11 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return TreadmillCompleteCongratulations(
+            correct: correct,
+            wrong: wrong,
+            avgScore: avgScore,
             controller: controller,
+            // avgTimeComplete: avgTimeComplete(),
           );
         },
       ),

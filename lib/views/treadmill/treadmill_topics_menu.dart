@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_question_count.dart';
@@ -25,7 +28,8 @@ class TreadmillTopicsMenu extends StatefulWidget {
 class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
   late dynamic topicId;
   late TreadmillController controller;
-  int count = 0;
+
+  Topic? topic;
 
   @override
   void initState() {
@@ -36,11 +40,12 @@ class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
 
   handleTopicSelection(newTopic) {
     setState(() {
+      //topic = newTopic;
       if (topicId == newTopic.id)
         topicId = '';
       else {
         topicId = newTopic.id;
-        count = newTopic.totalCount;
+        controller.countQuestions = newTopic.totalCount;
       }
     });
   }
@@ -101,7 +106,8 @@ class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
                           builder: (context) {
                             return TreadmillQuestionCount(
                               topicId: topicId,
-                              count: count,
+                              count: controller.countQuestions,
+                              topic: topic,
                               controller: controller,
                               mode: TreadmillMode.TOPIC,
                             );

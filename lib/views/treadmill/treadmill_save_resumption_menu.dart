@@ -1,8 +1,11 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_countdown.dart';
+import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
+import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -10,6 +13,8 @@ import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+
+import '../../database/treadmill_db.dart';
 
 class TreadmillSaveResumptionMenu extends StatefulWidget {
   TreadmillSaveResumptionMenu({required this.controller});
@@ -75,7 +80,7 @@ class _TreadmillSaveResumptionMenuState
           MaterialPageRoute(
             builder: (context) {
               return Caution(
-                controller: widget.controller,
+                controller_treadmill: widget.controller,
               );
             },
           ),
@@ -175,8 +180,8 @@ class _TreadmillSaveResumptionMenuState
 }
 
 class Caution extends StatelessWidget {
-  Caution({required this.controller});
-  TreadmillController controller;
+  Caution({required this.controller_treadmill});
+  TreadmillController controller_treadmill;
 
   @override
   Widget build(BuildContext context) {
@@ -222,13 +227,38 @@ class Caution extends StatelessWidget {
                 color: kAdeoBlue,
                 label: 'Continue',
                 onPressed: () async {
-                  showLoaderDialog(context, message: "Restarting Treadmill");
-                  await controller.restartTreadmill();
+                  showLoaderDialog(context, message: "Deleting Treadmill");
+                  //restart
+                  //await controller.restartTreadmill();
+
+                  // await controller_treadmill.deleteTreadmill();
+                  controller_treadmill.treadmill!.status =
+                      TreadmillStatus.COMPLETED.toString();
+                  controller_treadmill.treadmill!.endTime = DateTime.now();
+                  TreadmillDB().update(controller_treadmill.treadmill!);
+                  // controller.treadmill;
+                  // await controller.endTreadmill();
+                  List<TreadmillProgress> questions = [];
+                  questions = await TreadmillDB()
+                      .getProgresses(controller_treadmill.treadmill!.id!);
+                  print(questions);
+                  await TreadmillDB()
+                      .delete(controller_treadmill.treadmill!.id!);
+                  for (int i = 0; i < questions.length; i++) {
+                    await TreadmillDB().deleteProgress(questions[i].id!);
+                    //await TreadmillDB().delete(treadmill!.id!);
+                  }
                   Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
-                      return TreadmillCountdown(controller: controller);
+                      return TreadmillPractiseMenu(
+                        controller: TreadmillController(
+                          controller_treadmill.user,
+                          controller_treadmill.course,
+                          name: controller_treadmill.course.name,
+                        ),
+                      );
                     }),
                   );
                 },

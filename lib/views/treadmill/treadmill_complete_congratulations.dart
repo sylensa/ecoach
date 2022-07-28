@@ -8,37 +8,85 @@ import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:flutter/material.dart';
 
-class TreadmillCompleteCongratulations extends StatelessWidget {
-  TreadmillCompleteCongratulations({required this.controller});
+class TreadmillCompleteCongratulations extends StatefulWidget {
+  TreadmillCompleteCongratulations({
+    required this.controller,
+    required this.avgScore,
+    required this.correct,
+    required this.wrong,
+    // required this.avgTimeComplete,
+  });
 
   final TreadmillController controller;
+  final double avgScore;
+  final int correct;
+  final int wrong;
+  // final dynamic avgTimeComplete;
 
+  @override
+  State<TreadmillCompleteCongratulations> createState() =>
+      _TreadmillCompleteCongratulationsState();
+}
+
+class _TreadmillCompleteCongratulationsState
+    extends State<TreadmillCompleteCongratulations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kAdeoRoyalBlue,
       body: SafeArea(
         child: Column(children: [
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              AdeoOutlinedButton(
-                label: 'Exit',
-                size: Sizes.small,
-                color: kAdeoOrange,
-                borderRadius: 5,
-                fontSize: 14,
-                onPressed: () {
+              GestureDetector(
+                onTap: () {
+                  widget.controller.endTreadmill();
                   Navigator.popUntil(context,
                       ModalRoute.withName(CourseDetailsPage.routeName));
                 },
+                child: Container(
+                    margin: EdgeInsets.all(8),
+                    width: 90,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2D3E50),
+                      border: Border.all(
+                        color: const Color(0xFFFF4949),
+                      ),
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Exit',
+                        style: TextStyle(
+                          color: Color(0xFFFF4949),
+                        ),
+                      ),
+                    )),
               ),
-              SizedBox(width: 10),
+
+              // AdeoOutlinedButton(
+              //   label: 'Exit',
+              //   size: Sizes.small,
+              //   color: kAdeoOrange,
+              //   borderRadius: 5,
+              //   fontSize: 14,
+              //   onPressed: () {
+              //     widget.controller.endTreadmill();
+              //     Navigator.popUntil(context,
+              //         ModalRoute.withName(CourseDetailsPage.routeName));
+              //   },
+              // ),
+
+              const SizedBox(width: 10),
             ],
           ),
-          SizedBox(height: 33),
-          Text(
+          const SizedBox(height: 33),
+          const Text(
             'Congratulations',
             style: TextStyle(
               fontSize: 41,
@@ -46,7 +94,7 @@ class TreadmillCompleteCongratulations extends StatelessWidget {
               color: kAdeoBlue,
             ),
           ),
-          Text(
+          const Text(
             'Run Completed',
             style: TextStyle(
               fontSize: 18,
@@ -54,7 +102,7 @@ class TreadmillCompleteCongratulations extends StatelessWidget {
               fontStyle: FontStyle.italic,
             ),
           ),
-          SizedBox(height: 48),
+          const SizedBox(height: 48),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -62,38 +110,48 @@ class TreadmillCompleteCongratulations extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Net Score: ${controller.treadmill!.totalCorrect! - controller.treadmill!.totalWrong!}',
-                    style: TextStyle(
+                    // 'Net Score: ${controller.treadmill!.totalCorrect! - controller.treadmill!.totalWrong!}'
+                    'Net Score: ${widget.correct - widget.wrong}',
+                    style: const TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
-                    '${Duration(seconds: controller.treadmill!.totalTime!).inHours} hrs : ${Duration(seconds: controller.treadmill!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.treadmill!.totalTime!).inSeconds % 60} sec',
-                    style: TextStyle(
+                    // '${Duration(seconds: controller.treadmill!.totalTime!).inHours} hrs : ${Duration(seconds: controller.treadmill!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.treadmill!.totalTime!).inSeconds % 60} sec',
+                    '${widget.controller.minutes} min : ${widget.controller.seconds} sec',
+                    style: const TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
-                    '${controller.questions.length} Questions',
-                    style: TextStyle(
+                    // '${controller.questions.length} Questions',
+                    '${widget.controller.countQuestions} Questions',
+                    style: const TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
                     ),
                   ),
-                  SizedBox(height: 48),
+                  const SizedBox(height: 48),
+                  // QuizStats(
+                  //   changeUp: true,
+                  //   averageScore:
+                  //       '${controller.getAvgScore().toStringAsFixed(2)}%',
+                  //   speed: '${controller.getAvgTime().toStringAsFixed(2)}s',
+                  //   correctScore: '${controller.getTotalCorrect()}',
+                  //   wrongScrore: '${controller.getTotalWrong()}',
+                  // ),
                   QuizStats(
                     changeUp: true,
-                    averageScore:
-                        '${controller.getAvgScore().toStringAsFixed(2)}%',
-                    speed: '${controller.getAvgTime().toStringAsFixed(2)}s',
-                    correctScore: '${controller.getTotalCorrect()}',
-                    wrongScrore: '${controller.getTotalWrong()}',
+                    averageScore: '${widget.avgScore}%',
+                    speed: '${widget.controller.count.toStringAsFixed(2)}s',
+                    correctScore: '${widget.correct}',
+                    wrongScrore: '${widget.wrong}',
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // AdeoTextButton(
                   //   label: 'View Ranking',
                   //   onPressed: () {
@@ -105,14 +163,14 @@ class TreadmillCompleteCongratulations extends StatelessWidget {
                   //   color: kAdeoBlue,
                   //   background: Colors.transparent,
                   // ),
-                  SizedBox(height: 96),
+                  const SizedBox(height: 96),
                 ],
               ),
             ),
           ),
           Container(
             height: 48.0,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               boxShadow: [BoxShadow(blurRadius: 4, color: Color(0x26000000))],
             ),
@@ -120,7 +178,7 @@ class TreadmillCompleteCongratulations extends StatelessWidget {
               children: [
                 Expanded(
                   child: AdeoTextButton(
-                    label: 'new test',
+                    label: 'New Test',
                     fontSize: 20,
                     color: Colors.white,
                     background: kAdeoBlue,
@@ -129,8 +187,8 @@ class TreadmillCompleteCongratulations extends StatelessWidget {
                         context,
                         MaterialPageRoute(builder: (c) {
                           return TreadmillIntroit(
-                            controller.user,
-                            controller.course,
+                            widget.controller.user,
+                            widget.controller.course,
                           );
                         }),
                       );
