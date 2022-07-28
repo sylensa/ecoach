@@ -42,6 +42,7 @@ class _AllTabPageState extends State<AllTabPage> {
   late bool showInPercentage;
   dynamic selected = null;
   Future<List<TestTaken>>? tests;
+  List<TestTaken> listTests = [];
 
   handleSelection(test) {
     setState(() {
@@ -94,7 +95,7 @@ class _AllTabPageState extends State<AllTabPage> {
     return Column(
       children: [
         //graph
-        if(widget.rightWidgetState  == "average")
+        if(widget.rightWidgetState  == "average" && listTests.isNotEmpty)
         AverageScoreGraph(course:widget.course,rightWidgetState:widget.rightWidgetState ,onChangeStatus: widget.onChangeStatus),
         FutureBuilder(
           future: tests,
@@ -120,6 +121,7 @@ class _AllTabPageState extends State<AllTabPage> {
                 else if (snapshot.data != null) {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
                   // List<TestTaken> testTakenData = testData;
+                    listTests = testData;
                   inspect(testData);
                   return Expanded(
                     child: testData.length > 0
