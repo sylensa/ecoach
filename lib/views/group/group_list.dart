@@ -79,7 +79,7 @@ bool progressCode = false;
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: sText("Pro Editor",color: Color(0xFF2A9CEA),weight: FontWeight.bold,align: TextAlign.center,size: 25),
+                  child: sText("${listActivePackageData[0].name}",color: Color(0xFF2A9CEA),weight: FontWeight.bold,align: TextAlign.center,size: 25),
                 ),
                 SizedBox(height: 0,),
                 Container(
@@ -152,9 +152,11 @@ bool progressCode = false;
                   itemCount: listGroupListData.length,
                   itemBuilder: (BuildContext context, int index){
                     return  GestureDetector(
-                      onTap: (){
-                        goTo(context, GroupPage(groupListData:listGroupListData[index]));
+                      onTap: ()async{
+                        await goTo(context, GroupPage(groupListData:listGroupListData[index]));
+                          setState((){
 
+                          });
                         // goTo(context, GroupProfilePage());
                       },
                       child: Card(
@@ -164,10 +166,9 @@ bool progressCode = false;
                           child: ListTile(
                             title:  Container(
                               width: 100,
-                              child: sText("${listActivePackageData[0].createdAt!.difference(listGroupListData[index].dateCreated!).inDays > 365 ? "365" : listGroupListData[index].dateCreated!.difference(DateTime.now()).inDays.toString()} days",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
+                              child: sText( listActivePackageData[0].endAt != null ? "${DateTime.parse(listActivePackageData[0].endAt!).difference(listGroupListData[index].dateCreated!).inDays > 365 ? "365" : DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays.toString()} days" : "No Expiration",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
 
                             ),
-
                             leading: Container(
                               width: 100,
                               child: sText("${listGroupListData[index].name}",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),

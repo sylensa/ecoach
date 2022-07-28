@@ -162,10 +162,10 @@ flutter:
       - family: "Cocon"
         fonts:
            - asset: assets/fonts/COCON-BOLD-FONT.OTF
-           - asset: assets/fonts/COCON-REGULARTR.TTF
-      - family: "Helvetica"
-        fonts:
-           - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BD.OTF
-           - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BDCN.OTF
-           - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BLACK.OTF
+      #      - asset: assets/fonts/COCON-REGULARTR.TTF
+      # - family: "Helvetica"
+      #   fonts:
+      #      - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BD.OTF
+      #      - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BDCN.OTF
+      #      - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BLACK.OTF
 

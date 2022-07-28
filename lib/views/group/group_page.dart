@@ -7,6 +7,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
@@ -20,7 +21,10 @@ class GroupPage extends StatefulWidget {
 
 class _GroupPageState extends State<GroupPage> {
   List<ListNames> listMembers = [ListNames(name: "Victor Adatsi",id: "1"),ListNames(name: "Samuel Quaye",id: "2"),ListNames(name: "Peter Ocansey",id: "1"),];
-  memberActionsModalBottomSheet(context,){
+  List<GroupViewData> listGroupViewData = [];
+  bool progressCode = true;
+
+  memberActionsModalBottomSheet(context,String userId){
     TextEditingController productKeyController = TextEditingController();
     bool isActivated = true;
     double sheetHeight = 400;
@@ -78,14 +82,21 @@ class _GroupPageState extends State<GroupPage> {
                                 ),
                                 child: sText("Suspend member",color: kAdeoGray3,align: TextAlign.center),
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                decoration:BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  showLoaderDialog(context);
+                                  makeUserAdmin(userId);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                  margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  decoration:BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
                                 ),
-                                child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
                               ),
                             ],
                           )
@@ -341,10 +352,8 @@ class _GroupPageState extends State<GroupPage> {
         }
     );
   }
-  List<GroupViewData> listGroupViewData = [];
- bool progressCode = true;
   getGroupPageView() async{
-    listGroupListData.clear();
+    listGroupViewData.clear();
     try{
       var js = await doGet('${AppUrl.groups}/${widget.groupListData!.id}');
       print("res groups view : $js");
@@ -364,7 +373,6 @@ class _GroupPageState extends State<GroupPage> {
     });
 
   }
-
   suspendUser(String userId) async {
     var res = await doPost(AppUrl.suspendGroupMember, {
       "group_id": widget.groupListData!.id,
@@ -397,6 +405,7 @@ class _GroupPageState extends State<GroupPage> {
       "user_id": userId,
     });
     if(res["status"]){
+      await getGroupPageView();
       Navigator.pop(context);
       toastMessage(res["message"]);
     }else{
@@ -430,6 +439,7 @@ class _GroupPageState extends State<GroupPage> {
       toastMessage(res["message"]);
     }
   }
+
 
   @override
  void initState(){
@@ -476,388 +486,7 @@ class _GroupPageState extends State<GroupPage> {
           ),
 
           SizedBox(height: 40,),
-          // listGroupViewData.isNotEmpty ?
-          // Expanded(
-          //   child: ListView.builder(
-          //       itemCount: 5,
-          //       itemBuilder: (BuildContext context, int index){
-          //         if(index == 0){
-          //           return Column(
-          //             children: [
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20),
-          //                 child: Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Container(
-          //                       child: sText("Admins",weight: FontWeight.w500,size: 16),
-          //                     ),
-          //                     Container(
-          //                       child: Icon(Icons.add_circle_outline,color: Colors.black,),
-          //                     )
-          //                   ],
-          //                 ),
-          //               ),
-          //               SizedBox(height: 10,),
-          //
-          //                 Container(
-          //                   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-          //                   margin: EdgeInsets.symmetric(horizontal: 20),
-          //                   decoration: BoxDecoration(
-          //                       color: Colors.white,
-          //                       borderRadius: BorderRadius.circular(5)
-          //                   ),
-          //                   child: Column(
-          //                     children: [
-          //                       for(int i = 0; i< listMembers.length; i++)
-          //                       Column(
-          //                         children: [
-          //                           Row(
-          //                             children: [
-          //                               Stack(
-          //                                 children: [
-          //                                   displayLocalImage("filePath",radius: 30),
-          //                                   Positioned(
-          //                                     bottom: 5,
-          //                                     right: 0,
-          //                                     child: Image.asset("assets/images/tick-mark.png"),
-          //                                   )
-          //                                 ],
-          //                               ),
-          //                               SizedBox(width: 10,),
-          //                               Column(
-          //                                 crossAxisAlignment: CrossAxisAlignment.start,
-          //                                 children: [
-          //                                   sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
-          //                                   SizedBox(height: 5,),
-          //                                   sText("Admin",color: kAdeoGray3,size: 12),
-          //                                 ],
-          //                               ),
-          //                               Expanded(child: Container()),
-          //                               Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-          //                             ],
-          //                           ),
-          //                           SizedBox(height: 10,)
-          //                         ],
-          //                       ),
-          //
-          //                     ],
-          //                   ),
-          //                 ),
-          //             ],
-          //           );
-          //         }
-          //         else if(index == 1){
-          //           return Column(
-          //             children: [
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20),
-          //                 margin: EdgeInsets.only(top: 20),
-          //
-          //                 child: Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Container(
-          //                       child: sText("Members",weight: FontWeight.w500,size: 16),
-          //                     ),
-          //                     GestureDetector(
-          //                       onTap: (){
-          //                         if(listActivePackageData[0].maxParticipants! == listMembers.length){
-          //                           showDialogOk(message: "You have reached your limit, to add more members upgrade your package",context: context);
-          //                         }else{
-          //                           inviteModalBottomSheet(context);
-          //                         }
-          //                       },
-          //                       child: Container(
-          //                         child: Icon(Icons.add_circle_outline,color: Colors.black,),
-          //                       ),
-          //                     )
-          //                   ],
-          //                 ),
-          //               ),
-          //               SizedBox(height: 10,),
-          //
-          //                 Container(
-          //                   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-          //                   margin: EdgeInsets.symmetric(horizontal: 20),
-          //                   decoration: BoxDecoration(
-          //                       color: Colors.white,
-          //                       borderRadius: BorderRadius.circular(5)
-          //                   ),
-          //                   child: Column(
-          //                     children: [
-          //                       Column(
-          //                         children: [
-          //                           for(int i = 0; i< listMembers.length; i++)
-          //                           MaterialButton(
-          //                             padding: EdgeInsets.zero,
-          //                             onPressed: (){
-          //                               memberActionsModalBottomSheet(context);
-          //                             },
-          //                             child: Column(
-          //                               children: [
-          //                                 Row(
-          //                                   children: [
-          //                                     Stack(
-          //                                       children: [
-          //                                         displayLocalImage("filePath",radius: 30),
-          //                                         Positioned(
-          //                                           bottom: 5,
-          //                                           right: 0,
-          //                                           child: Image.asset("assets/images/tick-mark.png"),
-          //                                         )
-          //                                       ],
-          //                                     ),
-          //                                     SizedBox(width: 10,),
-          //                                     Column(
-          //                                       crossAxisAlignment: CrossAxisAlignment.start,
-          //                                       children: [
-          //                                         sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
-          //                                         SizedBox(height: 5,),
-          //                                         sText("280 Tests",color: kAdeoGray3,size: 12),
-          //                                       ],
-          //                                     ),
-          //                                     Expanded(child: Container()),
-          //                                     Column(
-          //                                       crossAxisAlignment: CrossAxisAlignment.start,
-          //                                       children: [
-          //                                         sText("85.67%",color: Colors.black,weight: FontWeight.w500),
-          //                                         SizedBox(height: 5,),
-          //                                         sText("Grade A",color: kAdeoGray3,size: 12),
-          //                                       ],
-          //                                     ),
-          //                                     SizedBox(width: 10,),
-          //                                     Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-          //                                   ],
-          //                                 ),
-          //                                 SizedBox(height: 10,),
-          //                                 listMembers.length -1 != i ?
-          //                                 Column(
-          //                                   children: [
-          //                                     Divider(color: kAdeoGray,height: 1,),
-          //                                     SizedBox(height: 10,),
-          //                                   ],
-          //                                 ) : Container(),
-          //                               ],
-          //                             ),
-          //                           ),
-          //
-          //                         ],
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //
-          //             ],
-          //           );
-          //         }
-          //         else   if(index == 2){
-          //           return Column(
-          //             children: [
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20),
-          //                 margin: EdgeInsets.only(top: 20),
-          //                 child: Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Container(
-          //                       child: sText("Pending Invites",weight: FontWeight.w500,size: 16),
-          //                     ),
-          //                     Container(
-          //                       child: Icon(Icons.add_circle_outline,color: Colors.black,),
-          //                     )
-          //                   ],
-          //                 ),
-          //               ),
-          //               SizedBox(height: 10,),
-          //
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-          //                 margin: EdgeInsets.symmetric(horizontal: 20),
-          //                 decoration: BoxDecoration(
-          //                     color: Colors.white,
-          //                     borderRadius: BorderRadius.circular(5)
-          //                 ),
-          //                 child: Column(
-          //                   children: [
-          //                     for(int i = 0; i< listMembers.length; i++)
-          //                       Column(
-          //                         children: [
-          //                           Row(
-          //                             children: [
-          //                               Column(
-          //                                 crossAxisAlignment: CrossAxisAlignment.start,
-          //                                 children: [
-          //                                   sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
-          //                                   SizedBox(height: 5,),
-          //                                   sText("10 days ago",color: kAdeoGray3,size: 12),
-          //                                 ],
-          //                               ),
-          //                               Expanded(child: Container()),
-          //                               Icon(Icons.horizontal_rule,color: Colors.red,size: 25,)
-          //                             ],
-          //                           ),
-          //                           SizedBox(height: 10,),
-          //                           listMembers.length -1 != i ?
-          //                           Column(
-          //                             children: [
-          //                               Divider(color: kAdeoGray,height: 1,),
-          //                               SizedBox(height: 10,),
-          //                             ],
-          //                           ) : Container(),
-          //
-          //                         ],
-          //                       ),
-          //
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           );
-          //         }
-          //         else  if(index == 3){
-          //           return Column(
-          //             children: [
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20),
-          //                 margin: EdgeInsets.only(top: 20),
-          //                 child: Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Container(
-          //                       child: sText("Announcements",weight: FontWeight.w500,size: 16),
-          //                     ),
-          //                     Container(
-          //                       child: Icon(Icons.add_circle_outline,color: Colors.black,),
-          //                     )
-          //                   ],
-          //                 ),
-          //               ),
-          //               SizedBox(height: 10,),
-          //
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-          //                 margin: EdgeInsets.symmetric(horizontal: 20),
-          //                 decoration: BoxDecoration(
-          //                     color: Colors.white,
-          //                     borderRadius: BorderRadius.circular(5)
-          //                 ),
-          //                 child: Column(
-          //                   children: [
-          //                     for(int i = 0; i< listMembers.length; i++)
-          //                       Column(
-          //                         children: [
-          //                           Row(
-          //                             children: [
-          //                               Stack(
-          //                                 children: [
-          //                                   displayLocalImage("filePath",radius: 30),
-          //                                   Positioned(
-          //                                     bottom: 5,
-          //                                     right: 0,
-          //                                     child: Image.asset("assets/images/tick-mark.png"),
-          //                                   )
-          //                                 ],
-          //                               ),
-          //                               SizedBox(width: 10,),
-          //                               Column(
-          //                                 crossAxisAlignment: CrossAxisAlignment.start,
-          //                                 children: [
-          //                                   sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
-          //                                   SizedBox(height: 5,),
-          //                                   sText("Admin",color: kAdeoGray3,size: 12),
-          //                                 ],
-          //                               ),
-          //                               Expanded(child: Container()),
-          //                               Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-          //                             ],
-          //                           ),
-          //                           SizedBox(height: 10,)
-          //                         ],
-          //                       ),
-          //
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           );
-          //         }else{
-          //           return Column(
-          //             children: [
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20),
-          //                 margin: EdgeInsets.only(top: 20),
-          //                 child: Row(
-          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                   children: [
-          //                     Container(
-          //                       child: sText("Tests",weight: FontWeight.w500,size: 16),
-          //                     ),
-          //                     GestureDetector(
-          //                       onTap: (){
-          //                         if(listActivePackageData[0].maxTests! == listMembers.length){
-          //                           showDialogOk(message: "You have reached your limit, to add more test upgrade your package",context: context);
-          //                         }
-          //                       },
-          //                       child: Container(
-          //                         child: Icon(Icons.add_circle_outline,color: Colors.black,),
-          //                       ),
-          //                     )
-          //                   ],
-          //                 ),
-          //               ),
-          //               SizedBox(height: 10,),
-          //
-          //               Container(
-          //                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-          //                 margin: EdgeInsets.symmetric(horizontal: 20),
-          //                 decoration: BoxDecoration(
-          //                     color: Colors.white,
-          //                     borderRadius: BorderRadius.circular(5)
-          //                 ),
-          //                 child: Column(
-          //                   children: [
-          //                     for(int i = 0; i< listMembers.length; i++)
-          //                       Column(
-          //                         children: [
-          //                           Row(
-          //                             children: [
-          //                               Stack(
-          //                                 children: [
-          //                                   displayLocalImage("filePath",radius: 30),
-          //                                   Positioned(
-          //                                     bottom: 5,
-          //                                     right: 0,
-          //                                     child: Image.asset("assets/images/tick-mark.png"),
-          //                                   )
-          //                                 ],
-          //                               ),
-          //                               SizedBox(width: 10,),
-          //                               Column(
-          //                                 crossAxisAlignment: CrossAxisAlignment.start,
-          //                                 children: [
-          //                                   sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
-          //                                   SizedBox(height: 5,),
-          //                                   sText("Admin",color: kAdeoGray3,size: 12),
-          //                                 ],
-          //                               ),
-          //                               Expanded(child: Container()),
-          //                               Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
-          //                             ],
-          //                           ),
-          //                           SizedBox(height: 10,)
-          //                         ],
-          //                       ),
-          //
-          //                   ],
-          //                 ),
-          //               ),
-          //             ],
-          //           );
-          //         }
-          //
-          //   }),
-          // ) : progressCode ? Expanded(child: Center(child: progress())) : Expanded(child: Center(child: sText("Group does not exist")))
+          listGroupViewData.isNotEmpty ?
           Expanded(
             child: ListView.builder(
                 itemCount: 5,
@@ -881,16 +510,17 @@ class _GroupPageState extends State<GroupPage> {
                         ),
                         SizedBox(height: 10,),
 
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5)
-                          ),
-                          child: Column(
-                            children: [
-                              for(int i = 0; i< listMembers.length; i++)
+                          if(listGroupViewData[0].admins!.isNotEmpty)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5)
+                            ),
+                            child: Column(
+                              children: [
+                                for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
                                 Column(
                                   children: [
                                     Row(
@@ -909,7 +539,7 @@ class _GroupPageState extends State<GroupPage> {
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
+                                            sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
                                             SizedBox(height: 5,),
                                             sText("Admin",color: kAdeoGray3,size: 12),
                                           ],
@@ -922,9 +552,9 @@ class _GroupPageState extends State<GroupPage> {
                                   ],
                                 ),
 
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     );
                   }
@@ -957,23 +587,23 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                         ),
                         SizedBox(height: 10,),
-
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5)
-                          ),
-                          child: Column(
-                            children: [
-                              Column(
-                                children: [
-                                  for(int i = 0; i< listMembers.length; i++)
+                        if(listGroupViewData[0].members!.isNotEmpty)
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5)
+                            ),
+                            child: Column(
+                              children: [
+                                Column(
+                                  children: [
+                                    for(int i = 0; i< listGroupViewData[0].members!.length; i++)
                                     MaterialButton(
                                       padding: EdgeInsets.zero,
                                       onPressed: (){
-                                        memberActionsModalBottomSheet(context);
+                                        memberActionsModalBottomSheet(context,listGroupViewData[0].members![i].id.toString());
                                       },
                                       child: Column(
                                         children: [
@@ -993,18 +623,18 @@ class _GroupPageState extends State<GroupPage> {
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
+                                                  sText(listGroupViewData[0].members![i].name,color: Colors.black,weight: FontWeight.w500),
                                                   SizedBox(height: 5,),
-                                                  sText("280 Tests",color: kAdeoGray3,size: 12),
+                                                  sText("${listGroupViewData[0].members![i].testCount} Tests",color: kAdeoGray3,size: 12),
                                                 ],
                                               ),
                                               Expanded(child: Container()),
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  sText("85.67%",color: Colors.black,weight: FontWeight.w500),
+                                                  sText("${listGroupViewData[0].members![i].testPercent}",color: Colors.black,weight: FontWeight.w500),
                                                   SizedBox(height: 5,),
-                                                  sText("Grade A",color: kAdeoGray3,size: 12),
+                                                  sText("${listGroupViewData[0].members![i].testGrade == null ? "No Grade" : listGroupViewData[0].members![i].testGrade}",color: kAdeoGray3,size: 12),
                                                 ],
                                               ),
                                               SizedBox(width: 10,),
@@ -1012,7 +642,7 @@ class _GroupPageState extends State<GroupPage> {
                                             ],
                                           ),
                                           SizedBox(height: 10,),
-                                          listMembers.length -1 != i ?
+                                          listGroupViewData[0].members!.length -1 != i ?
                                           Column(
                                             children: [
                                               Divider(color: kAdeoGray,height: 1,),
@@ -1023,11 +653,11 @@ class _GroupPageState extends State<GroupPage> {
                                       ),
                                     ),
 
-                                ],
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
 
                       ],
                     );
@@ -1061,7 +691,7 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                           child: Column(
                             children: [
-                              for(int i = 0; i< listMembers.length; i++)
+                              for(int i = 0; i< listGroupViewData[0].pendingInvites!.length; i++)
                                 Column(
                                   children: [
                                     Row(
@@ -1069,7 +699,7 @@ class _GroupPageState extends State<GroupPage> {
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
+                                            sText(listGroupViewData[0].pendingInvites![i].email,color: Colors.black,weight: FontWeight.w500),
                                             SizedBox(height: 5,),
                                             sText("10 days ago",color: kAdeoGray3,size: 12),
                                           ],
@@ -1115,7 +745,7 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                         ),
                         SizedBox(height: 10,),
-
+                        if(listGroupViewData[0].admins!.isNotEmpty)
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -1125,7 +755,7 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                           child: Column(
                             children: [
-                              for(int i = 0; i< listMembers.length; i++)
+                              for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
                                 Column(
                                   children: [
                                     Row(
@@ -1144,7 +774,7 @@ class _GroupPageState extends State<GroupPage> {
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
+                                            sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
                                             SizedBox(height: 5,),
                                             sText("Admin",color: kAdeoGray3,size: 12),
                                           ],
@@ -1188,7 +818,7 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                         ),
                         SizedBox(height: 10,),
-
+                        if(listGroupViewData[0].admins!.isNotEmpty)
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -1198,7 +828,7 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                           child: Column(
                             children: [
-                              for(int i = 0; i< listMembers.length; i++)
+                              for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
                                 Column(
                                   children: [
                                     Row(
@@ -1217,7 +847,7 @@ class _GroupPageState extends State<GroupPage> {
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            sText(listMembers[i].name,color: Colors.black,weight: FontWeight.w500),
+                                            sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
                                             SizedBox(height: 5,),
                                             sText("Admin",color: kAdeoGray3,size: 12),
                                           ],
@@ -1237,8 +867,9 @@ class _GroupPageState extends State<GroupPage> {
                     );
                   }
 
-                }),
-          )
+            }),
+          ) : progressCode ? Expanded(child: Center(child: progress())) : Expanded(child: Center(child: sText("Group does not exist")))
+
         ],
       ),
     );

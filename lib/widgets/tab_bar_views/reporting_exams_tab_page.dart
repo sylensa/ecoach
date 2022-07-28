@@ -270,7 +270,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                       //   ),
                       // ),
                     ],
-                  ) : Container(),
+                  ) : SizedBox.shrink(),
           )
       ],
     );
