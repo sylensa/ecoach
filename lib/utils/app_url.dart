@@ -25,6 +25,7 @@ class AppUrl {
 
   static String plans = baseURL + "plans";
   static String agentPromoCodes = baseURL + "agent/promo/codes";
+  static String groupTest = baseURL + "group/tests";
   static String groupPackages = baseURL + "group/packages";
   static String getAnnouncement = baseURL + "group/announcements";
   static String groupActivePackage = baseURL + "group/packages/active";
