@@ -47,9 +47,9 @@ class _AnalysisViewState extends State<AnalysisView> {
   SubscriptionItem? subscription;
   Future? course;
   bool progressCode = true;
-
+  bool onChangeStatus = false;
   Future? stats;
-  String rightWidgetState = '';
+  String rightWidgetState = 'average';
   @override
   void initState() {
     print("hey");
@@ -94,6 +94,8 @@ class _AnalysisViewState extends State<AnalysisView> {
       params: {'course_id': jsonEncode(courseId)},
       isList: false,
       create: (data) {
+        setState((){
+        });
         return Report.fromJson(data);
       },
     ).get(context);
@@ -119,6 +121,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                           items: subscriptions,
                           onChanged: (item) {
                             setState(() {
+                              stats = null;
                               subscription = item;
                               course = getCourseById(int.parse(item.tag!));
                             });
@@ -160,7 +163,9 @@ class _AnalysisViewState extends State<AnalysisView> {
                                     );
                                   else if (snapshot.data != null) {
                                     Course c = snapshot.data! as Course;
-                                     stats = getCourseStats(c.id!);
+                                    if(stats == null){
+                                      stats = getCourseStats(c.id!);
+                                    }
 
                                     return Expanded(
                                       child: Column(
@@ -230,21 +235,25 @@ class _AnalysisViewState extends State<AnalysisView> {
                                                 user: widget.user,
                                                 course: c,
                                                 rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                               ExamsTabPage(
                                                 user: widget.user,
                                                 course: c,
                                                 rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                               TopicsTabPage(
                                                 user: widget.user,
                                                 course: c,
                                                 rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                               OthersTabPage(
                                                 user: widget.user,
                                                 course: c,
                                                 rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                             ],
                                           ),
@@ -362,9 +371,15 @@ class _AnalysisViewState extends State<AnalysisView> {
           switch (page) {
             case 0:
               rightWidgetState = 'average';
+              setState((){
+                onChangeStatus = true;
+              });
               break;
             case 1:
               rightWidgetState = 'points';
+              setState((){
+                onChangeStatus = true;
+              });
               break;
             case 2:
               rightWidgetState = 'exposure';

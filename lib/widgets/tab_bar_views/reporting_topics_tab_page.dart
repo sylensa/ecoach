@@ -20,16 +20,18 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class TopicsTabPage extends StatefulWidget {
-  const TopicsTabPage({
+   TopicsTabPage({
     required this.course,
     required this.user,
     required this.rightWidgetState,
+    this.onChangeStatus = false,
 
     Key? key,
   }) : super(key: key);
   final Course course;
   final User user;
   final String rightWidgetState;
+  bool onChangeStatus;
 
 
   @override
@@ -85,7 +87,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
       children: [
         //graph
         if(widget.rightWidgetState  == "average")
-          AverageScoreGraph(course:widget.course ,tabName: "topic",),
+          AverageScoreGraph(course:widget.course ,tabName: "topic",rightWidgetState: widget.rightWidgetState,onChangeStatus: widget.onChangeStatus,),
         FutureBuilder(
           future: tests,
           builder: (context, snapshot) {

@@ -23,15 +23,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class AllTabPage extends StatefulWidget {
-  const AllTabPage({
+   AllTabPage({
     required this.course,
     required this.user,
    required this.rightWidgetState,
+    this.onChangeStatus = false,
     Key? key,
   }) : super(key: key);
   final Course course;
   final User user;
   final String rightWidgetState;
+  bool onChangeStatus;
   @override
   State<AllTabPage> createState() => _AllTabPageState();
 }
@@ -77,6 +79,7 @@ class _AllTabPageState extends State<AllTabPage> {
   void initState() {
     super.initState();
     showInPercentage = false;
+    print("object hjjh:${widget.rightWidgetState}");
     tests = TestTakenDB().courseTestsTaken(widget.course.id!);
   }
 
@@ -87,12 +90,12 @@ class _AllTabPageState extends State<AllTabPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("object hjjh:${widget.rightWidgetState}");
+
     return Column(
       children: [
         //graph
         if(widget.rightWidgetState  == "average")
-        AverageScoreGraph(course:widget.course,rightWidgetState:widget.rightWidgetState ,),
+        AverageScoreGraph(course:widget.course,rightWidgetState:widget.rightWidgetState ,onChangeStatus: widget.onChangeStatus),
         FutureBuilder(
           future: tests,
           builder: (context, snapshot) {

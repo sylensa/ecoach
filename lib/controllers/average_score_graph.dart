@@ -14,8 +14,9 @@ class AverageScoreGraph extends StatefulWidget {
    Stat? stats;
    String tabName;
    String rightWidgetState;
+   bool onChangeStatus;
   final Course course;
-  AverageScoreGraph({this.stats,required this.course,this.tabName = "all",this.rightWidgetState = 'average'});
+  AverageScoreGraph({this.stats,required this.course,this.tabName = "all",this.rightWidgetState = 'average',this.onChangeStatus = false});
 
   @override
   State<AverageScoreGraph> createState() => _AverageScoreGraphState();
@@ -25,7 +26,7 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
 List <TestTaken> testData = [];
 String dropdownValue = 'All';
 List<FlSpot> testdata = [];
-  getStats(String period)async{
+  getAverageStats(String period)async{
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
@@ -38,12 +39,14 @@ List<FlSpot> testdata = [];
           element.challengeType == TestCategory.MOCK.toString() ||
           element.challengeType == TestCategory.NONE.toString()
       ).toList();
-    }else if(widget.tabName.toLowerCase() == "topic"){
+    }
+    else if(widget.tabName.toLowerCase() == "topic"){
       graphResultData = testData
           .where((element) =>
       element.challengeType ==
           TestCategory.TOPIC.toString()).toList();
-    }else if(widget.tabName.toLowerCase() == "other"){
+    }
+    else if(widget.tabName.toLowerCase() == "other"){
       graphResultData = testData
           .where((element) =>
       element.challengeType !=
@@ -54,7 +57,8 @@ List<FlSpot> testdata = [];
           &&
           element.challengeType != TestCategory.NONE.toString()
       ).toList();
-    }else{
+    }
+    else{
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -70,6 +74,168 @@ List<FlSpot> testdata = [];
 
     });
   }
+  getPointStats(String period)async{
+    testData.clear();
+    testdata.clear();
+    List<TestTaken> graphResultData = [];
+    testData = await TestTakenDB().courseTestsTakenPeriodPoint(widget.course.id!.toString(),period);
+    if(widget.tabName.toLowerCase() == "exam"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.EXAM.toString() ||
+          element.challengeType == TestCategory.MOCK.toString() ||
+          element.challengeType == TestCategory.NONE.toString()
+      ).toList();
+    }
+    else if(widget.tabName.toLowerCase() == "topic"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.TOPIC.toString()).toList();
+    }
+    else if(widget.tabName.toLowerCase() == "other"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType !=
+          TestCategory.TOPIC.toString() &&
+          element.challengeType !=
+              TestCategory.EXAM.toString() &&
+          element.challengeType != TestCategory.MOCK.toString()
+          &&
+          element.challengeType != TestCategory.NONE.toString()
+      ).toList();
+    }
+    else{
+      graphResultData = testData;
+    }
+    for (int i = 0; i < graphResultData.length; i++) {
+      final test = graphResultData[i];
+      testdata.add(
+        FlSpot(
+          (i + 1).toDouble(),
+          double.parse(test.score!.toStringAsFixed(2)),
+        ),
+      );
+    }
+    setState((){
+
+    });
+  }
+  getSpeedStats(String period)async{
+    testData.clear();
+    testdata.clear();
+    List<TestTaken> graphResultData = [];
+    testData = await TestTakenDB().courseTestsTakenSpeedPoint(widget.course.id!.toString(),period);
+    if(widget.tabName.toLowerCase() == "exam"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.EXAM.toString() ||
+          element.challengeType == TestCategory.MOCK.toString() ||
+          element.challengeType == TestCategory.NONE.toString()
+      ).toList();
+    }
+    else if(widget.tabName.toLowerCase() == "topic"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.TOPIC.toString()).toList();
+    }
+    else if(widget.tabName.toLowerCase() == "other"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType !=
+          TestCategory.TOPIC.toString() &&
+          element.challengeType !=
+              TestCategory.EXAM.toString() &&
+          element.challengeType != TestCategory.MOCK.toString()
+          &&
+          element.challengeType != TestCategory.NONE.toString()
+      ).toList();
+    }
+    else{
+      graphResultData = testData;
+    }
+    for (int i = 0; i < graphResultData.length; i++) {
+      final test = graphResultData[i];
+      testdata.add(
+        FlSpot(
+          (i + 1).toDouble(),
+          double.parse(test.score!.toStringAsFixed(2)),
+        ),
+      );
+    }
+    setState((){
+
+    });
+  }
+  getStrengthStats(String period)async{
+    testData.clear();
+    testdata.clear();
+    List<TestTaken> graphResultData = [];
+    testData = await TestTakenDB().courseTestsTakenStrengthPoint(widget.course.id!.toString(),period);
+    if(widget.tabName.toLowerCase() == "exam"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.EXAM.toString() ||
+          element.challengeType == TestCategory.MOCK.toString() ||
+          element.challengeType == TestCategory.NONE.toString()
+      ).toList();
+    }
+    else if(widget.tabName.toLowerCase() == "topic"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType ==
+          TestCategory.TOPIC.toString()).toList();
+    }
+    else if(widget.tabName.toLowerCase() == "other"){
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType !=
+          TestCategory.TOPIC.toString() &&
+          element.challengeType !=
+              TestCategory.EXAM.toString() &&
+          element.challengeType != TestCategory.MOCK.toString()
+          &&
+          element.challengeType != TestCategory.NONE.toString()
+      ).toList();
+    }
+    else{
+      graphResultData = testData;
+    }
+    for (int i = 0; i < graphResultData.length; i++) {
+      final test = graphResultData[i];
+      testdata.add(
+        FlSpot(
+          (i + 1).toDouble(),
+          double.parse(test.score!.toStringAsFixed(2)),
+        ),
+      );
+    }
+    setState((){
+
+    });
+  }
+
+  getStat()async{
+      if(widget.rightWidgetState == "points"){
+        await getPointStats(dropdownValue);
+      } else if(widget.rightWidgetState == "speed"){
+        await getSpeedStats(dropdownValue);
+      } else if(widget.rightWidgetState == "strength"){
+        await getStrengthStats(dropdownValue);
+      }
+      else{
+        await getAverageStats(dropdownValue);
+      }
+
+      setState((){
+        widget.onChangeStatus = false;
+      });
+  }
+
   buildDropDownButton() {
   return DropdownButton<String>(
     dropdownColor: Colors.blue,
@@ -90,7 +256,7 @@ List<FlSpot> testdata = [];
     onChanged: (String? newValue) {
       setState(() {
         dropdownValue = newValue!;
-        getStats(dropdownValue);
+        getStat();
         print(dropdownValue);
       });
     },
@@ -118,10 +284,15 @@ List<FlSpot> testdata = [];
   @override
  void initState(){
     super.initState();
-    getStats('All');
+    print("object point:${widget.rightWidgetState}");
+    getStat();
   }
   @override
   Widget build(BuildContext context) {
+    if(widget.onChangeStatus){
+      getStat();
+    }
+
     return Padding(
       padding: EdgeInsets.only(
         left: MediaQuery.of(context).size.width * 0.05,
