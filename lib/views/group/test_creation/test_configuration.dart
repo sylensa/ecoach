@@ -2,10 +2,8 @@ import 'package:another_xlider/another_xlider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 
 class TestConfigurations extends StatefulWidget {
   const TestConfigurations({Key? key}) : super(key: key);
@@ -17,7 +15,7 @@ class TestConfigurations extends StatefulWidget {
 class _TestConfigurationsState extends State<TestConfigurations> {
   TextEditingController testNameController = TextEditingController();
   TextEditingController testDescriptionController = TextEditingController();
-  List<ListNames> listTiming = [ListNames(name: "Time per Question",id: "1"),ListNames(name: "Time per Quiz",id: "2")];
+  List<ListNames> listTiming = [ListNames(name: "Time per Question",id: "1"),ListNames(name: "Time per Quiz",id: "2",),ListNames(name: "Untimed",id: "3")];
   ListNames? timing;
   double _lowerValue = 0;
   double _upperValue = 100;
@@ -263,6 +261,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                       ),
                     ],
                   ) :
+                  timing!.id == "2" ?
                   Column(
                     children: [
                       Container(
@@ -319,7 +318,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                         ),
                       ),
                     ],
-                  ),
+                  ) : Container(),
 
                   SizedBox(height: 20,),
                   Container(
