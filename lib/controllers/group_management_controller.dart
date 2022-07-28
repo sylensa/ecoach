@@ -5,6 +5,7 @@ import 'package:ecoach/models/get_agent_code.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
+import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 
@@ -418,6 +419,101 @@ class GroupManagementController{
   deleteAnnouncement(String id) async {
     try{
       var res = await doDelete("${AppUrl.getAnnouncement}/$id",);
+      if(res["status"] && res["code"].toString() == "200"){
+        toastMessage(res["message"]);
+        return true;
+      }else{
+        toastMessage(res["message"]);
+        return false;
+      }
+    }catch(e){
+      print("error:$e");
+      return false;
+    }
+  }
+
+  Future<List<GroupTestData>> getGroupTest()async {
+    List<GroupTestData> listGroupTestData = [];
+    try{
+      var js = await doGet('${AppUrl.getAnnouncement}');
+      print("res getAnnouncement : $js");
+      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
+        for(int i =0; i < js["data"]["data"].length; i++){
+          GroupTestData groupTestData = GroupTestData.fromJson(js["data"]["data"][i]);
+          listGroupTestData.add(groupTestData);
+        }
+        toastMessage("${js["message"]}");
+        return listGroupTestData;
+      }else{
+        toastMessage("${js["message"]}");
+        return listGroupTestData;
+      }
+    }catch(e){
+      return listGroupTestData;
+    }
+  }
+  Future<GroupTestData?> getGroupTestView(String id)async {
+    try{
+      var js = await doGet('${AppUrl.groupTest}/$id');
+      print("res getAnnouncement : $js");
+      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
+        GroupTestData groupTestData = GroupTestData.fromJson(js["data"]);
+        toastMessage("${js["message"]}");
+        return groupTestData;
+      }else{
+        toastMessage("${js["message"]}");
+        return null;
+      }
+    }catch(e){
+      return null;
+    }
+  }
+  Future<GroupTestData?>  createGroupTest(Map testConfig,{String name = '',String instruction = ''}) async {
+    GroupTestData? groupTestData;
+    try{
+      var res = await doPost(AppUrl.groupTest, {
+        "group_id": groupId,
+        "name": name,
+        "instruction": instruction,
+        "configurations": testConfig,
+      });
+      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+        groupTestData = GroupTestData.fromJson(res["data"]);
+        toastMessage("${res["message"]}");
+        return groupTestData;
+      }else{
+        toastMessage("${res["message"]}");
+        return null;
+      }
+    }catch(e){
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future<GroupTestData?>  updateGroupTest({String name = '',String id = ''}) async {
+    GroupTestData? groupTestData;
+    try{
+      var res = await doPut("${AppUrl.groupTest}/$id", {
+        "name": name,
+      });
+      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+        groupTestData = GroupTestData.fromJson(res["data"]);
+        toastMessage("${res["message"]}");
+        return groupTestData;
+      }else{
+        toastMessage("${res["message"]}");
+        return null;
+      }
+    }catch(e){
+      print(e.toString());
+      return null;
+    }
+  }
+
+  deleteGroupTest(String id) async {
+    try{
+      var res = await doDelete("${AppUrl.groupTest}/$id",);
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
         return true;
