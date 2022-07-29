@@ -1,4 +1,5 @@
 import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -305,112 +306,121 @@ List<FlSpot> testdata = [];
           borderRadius: BorderRadius.circular(5),
         ),
         color: Colors.blue.withOpacity(0.05),
-        child: ExpansionTile(
-          collapsedTextColor: Colors.black,
-          collapsedIconColor: Colors.black,
-          iconColor: Colors.black,
-          title: const Text(
-            'Performance Graph',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.blue,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            collapsedTextColor: Colors.black,
+            collapsedIconColor: Colors.black,
+            iconColor: Colors.black,
+            title: const Text(
+              'Performance Graph',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.blue,
+              ),
             ),
-          ),
-          children: [
-            Stack(
-              fit: StackFit.passthrough,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
+            children: [
+              testdata.isNotEmpty ?
+              Stack(
+                fit: StackFit.passthrough,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 5,
+                        right: 12,
+                      ),
+                      child: Container(
+                        height: 30,
+                        width: 100,
+                        padding: EdgeInsets.only(left: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: buildDropDownButton(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // sfCartesianChart(),
+                  Container(
                     padding: const EdgeInsets.only(
-                      top: 5,
-                      right: 12,
+                      right: 18.0,
+                      left: 12.0,
+                      top: 24,
+                      bottom: 12,
                     ),
-                    child: Container(
-                      height: 30,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: buildDropDownButton(),
-                      ),
-                    ),
-                  ),
-                ),
-                // sfCartesianChart(),
-                Container(
-                  padding: const EdgeInsets.only(
-                    right: 18.0,
-                    left: 12.0,
-                    top: 24,
-                    bottom: 12,
-                  ),
-                  height: 250,
-                  child: LineChart(
-                    LineChartData(
-                      minX: 1,
-                      maxY: 100.0,
-                      minY: 0,
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      gridData: FlGridData(
-                        show: false,
-                      ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        rightTitles: SideTitles(
-                          showTitles: false,
+                    height: 250,
+                    child: LineChart(
+                      LineChartData(
+                        minX: 1,
+                        maxY: 100.0,
+                        minY: 0,
+                        borderData: FlBorderData(
+                          show: false,
                         ),
-                        topTitles: SideTitles(
-                          showTitles: false,
+                        gridData: FlGridData(
+                          show: false,
                         ),
-                        bottomTitles: SideTitles(
-                          showTitles: true,
-                          getTitles: (double value) {
-                            debugPrint(value.toInt().toString());
-                            return value.toInt().toString();
-                            // return widget
-                            //     .testData![(value - 1).toInt()].testname!;
-                          },
-                          getTextStyles: (BuildContext context, value) =>
-                          const TextStyle(
-                            color: Color(0xFF67727D),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                        titlesData: FlTitlesData(
+                          show: true,
+                          rightTitles: SideTitles(
+                            showTitles: false,
                           ),
-                          margin: 8,
-                          interval: 1,
-                        ),
-                      ),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: testdata,
-                          isCurved: true,
-                          colors: [Colors.blue, Colors.green],
-                          barWidth: 2,
-                          isStrokeCapRound: true,
-                          dotData: FlDotData(
-                            show: true,
+                          topTitles: SideTitles(
+                            showTitles: false,
                           ),
-                          belowBarData: BarAreaData(
-                            show: true,
-                            colors: [
-                              Colors.blue.withOpacity(0.3),
-                              Colors.green.withOpacity(0.3),
-                            ],
+                          bottomTitles: SideTitles(
+                            showTitles: true,
+                            getTitles: (double value) {
+                              debugPrint(value.toInt().toString());
+                              return value.toInt().toString();
+                              // return widget
+                              //     .testData![(value - 1).toInt()].testname!;
+                            },
+                            getTextStyles: (BuildContext context, value) =>
+                            const TextStyle(
+                              color: Color(0xFF67727D),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                            margin: 8,
+                            interval: 1,
                           ),
                         ),
-                      ],
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: testdata,
+                            isCurved: true,
+                            colors: [Colors.blue, Colors.green],
+                            barWidth: 2,
+                            isStrokeCapRound: true,
+                            dotData: FlDotData(
+                              show: true,
+                            ),
+                            belowBarData: BarAreaData(
+                              show: true,
+                              colors: [
+                                Colors.blue.withOpacity(0.3),
+                                Colors.green.withOpacity(0.3),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
-            )
-          ],
+                  )
+                ],
+              ) :
+              Container(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: sText("No records for graph")
+              )
+            ],
+          ),
         ),
       ),
     );
