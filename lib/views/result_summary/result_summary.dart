@@ -1,14 +1,49 @@
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/result_summary/components/lower_button.dart';
+import 'package:ecoach/views/results.dart';
+import 'package:ecoach/views/results_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ResultSummaryScreen extends StatelessWidget {
-  const ResultSummaryScreen({Key? key}) : super(key: key);
+class ResultSummaryScreen extends StatefulWidget {
+  ResultSummaryScreen(
+    this.user,
+    this.course,
+    this.testType, {
+    Key? key,
+    required this.test,
+    required this.testCategory,
+    this.controller,
+    this.history = false,
+    this.diagnostic = false,
+  }) : super(key: key);
 
+  TestTaken test;
+  final User user;
+  final Course course;
+  bool diagnostic;
+  bool history;
+  TestType testType;
+  TestCategory testCategory;
+  QuizController? controller;
+
+  @override
+  State<ResultSummaryScreen> createState() => _ResultSummaryScreenState();
+}
+
+class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     Orientation orientation = MediaQuery.of(context).orientation;
+
     return SafeArea(
       child: Container(
         decoration: const BoxDecoration(
@@ -123,7 +158,7 @@ class ResultSummaryScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.03),
                       Text(
-                        "74/100",
+                        widget.test.score!.ceil().toString() + "/ 100",
                         style: TextStyle(
                           fontSize: orientation == Orientation.portrait
                               ? height * 0.04
@@ -147,7 +182,19 @@ class ResultSummaryScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pop(context);
+                          goTo(
+                            context,
+                            ResultsView(
+                              widget.controller!.user,
+                              widget.controller!.course,
+                              widget.controller!.type,
+                              controller: widget.controller,
+                              testCategory: widget.controller!.challengeType,
+                              diagnostic: widget.diagnostic,
+                              test: widget.test,
+                            ),
+                            replace: true,
+                          );
                         },
                         child: const Text('View Details'),
                       ),
@@ -168,6 +215,7 @@ class ResultSummaryScreen extends StatelessWidget {
                       text: "Share",
                       image: "assets/images/share.png",
                       orientation: orientation,
+                      onpress: () {},
                     ),
                     LowerButtons(
                       height: height,
@@ -175,6 +223,7 @@ class ResultSummaryScreen extends StatelessWidget {
                       text: "Re-Test",
                       image: "assets/images/refresh.png",
                       orientation: orientation,
+                      onpress: () {},
                     ),
                   ],
                 ),

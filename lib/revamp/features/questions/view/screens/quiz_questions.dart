@@ -20,6 +20,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
+import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
@@ -35,9 +36,9 @@ import '../../../../core/utils/app_colors.dart';
 class QuizQuestion extends StatefulWidget {
   QuizQuestion(
       {Key? key,
-        required this.controller,
-        this.theme = QuizTheme.GREEN,
-        this.diagnostic = false})
+      required this.controller,
+      this.theme = QuizTheme.GREEN,
+      this.diagnostic = false})
       : super(key: key);
 
   QuizController controller;
@@ -49,10 +50,12 @@ class QuizQuestion extends StatefulWidget {
 }
 
 class _QuizQuestionState extends State<QuizQuestion> {
-  _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
+
   late final PageController pageController;
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
@@ -73,7 +76,12 @@ class _QuizQuestionState extends State<QuizQuestion> {
   int finalQuestion = 0;
   late Color backgroundColor, backgroundColor2;
   late QuizController controller;
-  List<ListNames> listReportsTypes = [ListNames(name: "Select Error Type",id: "0"),ListNames(name: "Typographical Mistake",id: "1"),ListNames(name: "Wrong Answer",id: "2"),ListNames(name: "Problem With The Question",id: "3")];
+  List<ListNames> listReportsTypes = [
+    ListNames(name: "Select Error Type", id: "0"),
+    ListNames(name: "Typographical Mistake", id: "1"),
+    ListNames(name: "Wrong Answer", id: "2"),
+    ListNames(name: "Problem With The Question", id: "3")
+  ];
   ListNames? reportTypes;
   TextEditingController descriptionController = TextEditingController();
   final FocusNode descriptionNode = FocusNode();
@@ -81,9 +89,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
   double totalAverage = 0.0;
   var timeSpent = 0;
   var avgTimeSpent = 0;
-  var durationStart ;
+  var durationStart;
   Duration remainingTimeQuestion = Duration(seconds: 0);
-
 
   startTimer() {
     if (!controller.disableTime) {
@@ -107,8 +114,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
     completeQuiz();
   }
 
-  nextButton()async {
-
+  nextButton() async {
     if (currentQuestion == controller.questions.length - 1) {
       return;
     }
@@ -118,8 +124,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
       currentCorrectScoreState();
       currentQuestion++;
 
-
-      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
+      pageController.nextPage(
+          duration: Duration(milliseconds: 1), curve: Curves.ease);
 
       // numberingController.scrollTo(
       //     index: currentQuestion,
@@ -131,6 +137,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
       }
     });
   }
+
   double get score {
     int totalQuestions = controller.questions.length;
     int correctAnswers = correct;
@@ -176,8 +183,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
         "status": question.isCorrect
             ? "correct"
             : question.isWrong
-            ? "wrong"
-            : "unattempted",
+                ? "wrong"
+                : "unattempted",
       };
 
       responses["Q$i"] = answer;
@@ -185,21 +192,23 @@ class _QuizQuestionState extends State<QuizQuestion> {
     });
     return jsonEncode(responses);
   }
-  avgTimeComplete(){
+
+  avgTimeComplete() {
     double count = 0.0;
-    for(int i = 0; i <  controller.questions.length; i++){
+    for (int i = 0; i < controller.questions.length; i++) {
       count += controller.questions[i].time!;
     }
 
-    if(count == 0 && currentQuestion == 0){
+    if (count == 0 && currentQuestion == 0) {
       count = 0;
-    }else{
-      count = count/currentQuestion;
+    } else {
+      count = count / currentQuestion;
     }
 
     print("count:$count");
     return count.toStringAsFixed(2);
   }
+
   completeQuiz() async {
     if (!controller.disableTime) {
       timerController.pause();
@@ -226,40 +235,67 @@ class _QuizQuestionState extends State<QuizQuestion> {
           enabled = false;
         });
         viewResults();
+
+        //Pass the test score from here to the result summary screen
+        // ResultSummaryScreen(
+        //   widget.controller.user,
+        //   widget.controller.course,
+        //   widget.controller.type,
+        //   controller: widget.controller,
+        //   diagnostic: widget.diagnostic,
+        //   test: testTakenSaved!,
+        //   testCategory: controller.challengeType,
+        // );
       }
     });
   }
+
   viewResults() {
     print("viewing results");
     print(testTakenSaved != null
         ? testTakenSaved!.toJson().toString()
         : "null test");
-      goTo(context, ResultsView(
-        controller.user,
-        controller.course,
-        controller.type,
-        controller: controller,
-        testCategory: controller.challengeType,
+    goTo(
+      context,
+      // ResultsView(
+      //   controller.user,
+      //   controller.course,
+      //   controller.type,
+      //   controller: controller,
+      //   testCategory: controller.challengeType,
+      //   test: testTakenSaved!,
+      //   diagnostic: widget.diagnostic,
+      // ),
+      ResultSummaryScreen(
+        widget.controller.user,
+        widget.controller.course,
+        widget.controller.type,
         test: testTakenSaved!,
         diagnostic: widget.diagnostic,
-      ),replace: true);
+        controller: widget.controller,
+        testCategory: controller.challengeType,
+      ),
+      replace: true,
+    );
   }
-  insertSaveTestQuestion(int qid)async{
+
+  insertSaveTestQuestion(int qid) async {
     await TestController().insertSaveTestQuestion(qid);
     setState(() {
       print("savedQuestions2:$savedQuestions");
     });
   }
-  getAllSaveTestQuestions()async{
+
+  getAllSaveTestQuestions() async {
     await TestController().getAllSaveTestQuestions();
     setState(() {
       print("again savedQuestions:${savedQuestions}");
     });
-
   }
+
   double get avgScore {
     print("avg scoring current question= $unattempted");
-    int totalQuestions = correct + wrong + getUnAttempted ;
+    int totalQuestions = correct + wrong + getUnAttempted;
 
     int correctAnswers = correct;
     if (totalQuestions == 0) {
@@ -267,68 +303,62 @@ class _QuizQuestionState extends State<QuizQuestion> {
     }
     totalAverage = (correctAnswers / totalQuestions) * 100;
     return double.parse(totalAverage.toInt().toString());
-
-
   }
 
   late BannerAd _bannerAd;
 
   bool _isBannerAdReady = false;
 
-  currentCorrectScoreState(){
-    setState((){
-      if(widget.controller.questions[currentQuestion].isCorrect){
+  currentCorrectScoreState() {
+    setState(() {
+      if (widget.controller.questions[currentQuestion].isCorrect) {
         isCorrect = true;
-      }else{
+      } else {
         isCorrect = false;
       }
     });
-
   }
 
-   getWithoutSpaces(String s){
-    String tmp = s.substring(1,s.length-1);
-    while(tmp.startsWith(' ')){
+  getWithoutSpaces(String s) {
+    String tmp = s.substring(1, s.length - 1);
+    while (tmp.startsWith(' ')) {
       tmp = tmp.substring(1);
     }
-    while(tmp.endsWith(' ')){
-      tmp = tmp.substring(0,tmp.length-1);
+    while (tmp.endsWith(' ')) {
+      tmp = tmp.substring(0, tmp.length - 1);
     }
 
-    return '('+tmp+')';
+    return '(' + tmp + ')';
   }
+
   @override
   void initState() {
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
         adUnitId: "ca-app-pub-3940256099942544/6300978111",
-        listener: BannerAdListener(
-            onAdLoaded: (_){
-              setState((){
-                _isBannerAdReady = true;
-                print("_isBannerAdReady:$_isBannerAdReady");
-              });
-            },
-            onAdFailedToLoad: (ad, error){
-              print("Failed to load a banner Ad${error.message}");
-              _isBannerAdReady = false;
-              ad.dispose();
-            }
-        ),
-        request: AdRequest()
-    )..load();
+        listener: BannerAdListener(onAdLoaded: (_) {
+          setState(() {
+            _isBannerAdReady = true;
+            print("_isBannerAdReady:$_isBannerAdReady");
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          print("Failed to load a banner Ad${error.message}");
+          _isBannerAdReady = false;
+          ad.dispose();
+        }),
+        request: AdRequest())
+      ..load();
     var dateFormat = DateFormat('h:m:s');
-    durationStart = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
+    durationStart =
+        dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
     getAllSaveTestQuestions();
     if (widget.theme == QuizTheme.GREEN) {
       backgroundColor = const Color(0xFF00C664);
       backgroundColor2 = const Color(0xFF05A958);
-    }
-    else if (widget.theme == QuizTheme.ORANGE) {
+    } else if (widget.theme == QuizTheme.ORANGE) {
       backgroundColor = kAdeoOrangeH;
       backgroundColor2 = kAdeoOrangeH;
-    }
-    else {
+    } else {
       backgroundColor = const Color(0xFF5DA5EA);
       backgroundColor2 = const Color(0xFF5DA5CA);
     }
@@ -342,6 +372,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -360,16 +391,20 @@ class _QuizQuestionState extends State<QuizQuestion> {
             //   width: _bannerAd.size.width.toDouble(),
             //   child: AdWidget(ad: _bannerAd,),
             // ),
-            if(Platform.isIOS)
-              SizedBox(height: 30,),
+            if (Platform.isIOS)
+              SizedBox(
+                height: 30,
+              ),
             Container(
               child: Row(
                 children: [
-                  IconButton(onPressed: (){
-                    timerController.pause();
-                    Get.bottomSheet(quitWidget());
-                    return;
-                  }, icon: Icon(Icons.arrow_back)),
+                  IconButton(
+                      onPressed: () {
+                        timerController.pause();
+                        Get.bottomSheet(quitWidget());
+                        return;
+                      },
+                      icon: Icon(Icons.arrow_back)),
                   Container(
                     width: 250,
                     child: Text(
@@ -379,17 +414,23 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
-                  Expanded(child: Container(),),
+                  Expanded(
+                    child: Container(),
+                  ),
                   Center(
                     child: SizedBox(
                       height: 22,
                       width: 22,
                       child: Stack(
-                        children:  [
+                        children: [
                           CircularProgressIndicator(
                             color: Colors.black,
                             strokeWidth: 2,
-                            value: currentQuestion == controller.questions.length -1 ? 1 :  currentQuestion/(controller.questions.length -1),
+                            value: currentQuestion ==
+                                    controller.questions.length - 1
+                                ? 1
+                                : currentQuestion /
+                                    (controller.questions.length - 1),
                           ),
                           Center(
                             child: Text(
@@ -404,11 +445,16 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       ),
                     ),
                   ),
-                  IconButton(onPressed: ()async{
-                    timerController.pause();
-                    await reportModalBottomSheet(context,question: controller.questions[currentQuestion]);
-
-                  }, icon: Icon(Icons.more_vert,color: Colors.black,)),
+                  IconButton(
+                      onPressed: () async {
+                        timerController.pause();
+                        await reportModalBottomSheet(context,
+                            question: controller.questions[currentQuestion]);
+                      },
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: Colors.black,
+                      )),
                 ],
               ),
             ),
@@ -432,17 +478,18 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 5,
                   ),
-                  isCorrect ?
-                  Image.asset(
-                    "assets/images/un_fav.png",
-                    color: Colors.green,
-                  ) :   SvgPicture.asset(
-                    "assets/images/fav.svg",
-                  ),
+                  isCorrect
+                      ? Image.asset(
+                          "assets/images/un_fav.png",
+                          color: Colors.green,
+                        )
+                      : SvgPicture.asset(
+                          "assets/images/fav.svg",
+                        ),
                   const SizedBox(
                     width: 5,
                   ),
-                   Text(
+                  Text(
                     "${avgScore}%",
                     style: TextStyle(
                       fontSize: 10,
@@ -458,7 +505,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 6.4,
                   ),
-                   Text(
+                  Text(
                     "${avgTimeComplete()}s",
                     style: TextStyle(
                       fontSize: 10,
@@ -482,7 +529,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 4,
                   ),
-                   Text(
+                  Text(
                     "$correct",
                     style: TextStyle(
                       fontSize: 10,
@@ -492,21 +539,21 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 17,
                   ),
-                   Container(
-                     decoration: BoxDecoration(
-                       color: Colors.white,
-                       shape: BoxShape.circle,
-                     ),
-                     child: Icon(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
                       Icons.cancel,
                       color: Colors.red,
-                       size: 16,
+                      size: 16,
+                    ),
                   ),
-                   ),
                   const SizedBox(
                     width: 6.4,
                   ),
-                   Text(
+                  Text(
                     "$wrong",
                     style: TextStyle(
                       fontSize: 10,
@@ -526,23 +573,27 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 6.2,
                   ),
-                  if(!widget.diagnostic)
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        swichValue = !swichValue;
-                      });
-                      insertSaveTestQuestion(controller.questions[currentQuestion].id!);
-                    },
-                    child: SvgPicture.asset(
-                      savedQuestions.contains(controller.questions[currentQuestion].id) ? "assets/images/on_switch.svg" : "assets/images/off_switch.svg",
+                  if (!widget.diagnostic)
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          swichValue = !swichValue;
+                        });
+                        insertSaveTestQuestion(
+                            controller.questions[currentQuestion].id!);
+                      },
+                      child: SvgPicture.asset(
+                        savedQuestions.contains(
+                                controller.questions[currentQuestion].id)
+                            ? "assets/images/on_switch.svg"
+                            : "assets/images/off_switch.svg",
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
             Expanded(
-              child:  PageView(
+              child: PageView(
                 controller: pageController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
@@ -553,120 +604,184 @@ class _QuizQuestionState extends State<QuizQuestion> {
                           user: controller.user,
                           question: "${controller.questions[i].text}",
                           diagnostic: widget.diagnostic,
-                          direction: "Choose the right answer to the question above",
+                          direction:
+                              "Choose the right answer to the question above",
                         ),
-                       Expanded(
-                         child: ListView(
-                           padding: EdgeInsets.zero,
-                           children: [
-                             Column(
-                               crossAxisAlignment: CrossAxisAlignment.stretch,
-                               children: [
-                                 Visibility(
-                                   visible: controller.questions[i].instructions!.isNotEmpty ? true : false,
-                                   child: Card(
-                                       elevation: 0,
-                                       color: Colors.white,
-                                       margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                                       child: AdeoHtmlTex(
-                                         controller.user,
-                                         controller.questions[i].instructions!.replaceAll("https", "http"),
-                                         // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
-                                         useLocalImage:  widget.diagnostic ? false : true,
-                                         fontWeight: FontWeight.normal,
-                                         textColor: Colors.black,
-                                       )),
-                                 ),
-                                 GestureDetector(
-                                   onTap: (){
-                                     print("object");
-                                   },
-                                   child: Visibility(
-                                       visible: controller.questions[i].resource!.isNotEmpty ? true : false,
-                                       child: Card(
-                                         elevation: 0,
-                                         color: Colors.white,
-                                         margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                                         child: AdeoHtmlTex(
-                                           controller.user,
-                                           controller.questions[i].resource!.replaceAll("https", "http"),
-                                           // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-                                           useLocalImage:  widget.diagnostic ? false : true,
-                                           textColor: Colors.grey,
-                                           fontWeight: FontWeight.normal,
-
-                                         ),
-                                       ),
-                                   ),
-                                 ),
-
-                                 const SizedBox(
-                                   height: 10,
-                                 ),
-                                 ...List.generate(controller.questions[i].answers!.length, (index) {
-                                   return GestureDetector(
-                                     onTap: (){
-                                       setState(() {
-                                         print("countdownInSeconds:$countdownInSeconds");
-                                         controller.questions[i].selectedAnswer = controller.questions[i].answers![index];
-                                         var dateFormat = DateFormat('h:m:s');
-                                         DateTime durationEnd =  dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-                                         timeSpent = durationEnd.difference(durationStart).inSeconds;
-                                         controller.questions[i].time = timeSpent;
-                                         durationStart = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-                                         if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion)){
-                                           completeQuiz();
-                                         }else{
-                                           nextButton();
-                                         }
-                                       });
-
-                                     },
-                                     child: Container(
-                                       margin: const EdgeInsets.only(bottom: 10,right: 20,left: 20),
-                                       child: Row(
-                                         children: [
-                                           Expanded(
-                                             child:  AdeoHtmlTex(
-                                                 controller.user,
-                                                 controller.questions[i].answers![index].text!.replaceAll("https", "http"),
-                                                   // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
-                                                   useLocalImage: widget.diagnostic ? false : true,
-                                                   textColor: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Colors.white :kSecondaryTextColor,
-                                                   fontSize: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 25 : 16,
-                                                   textAlign: TextAlign.left,
-                                                   fontWeight:  FontWeight.bold,
-                                                    removeBr: true,
-
-                                                 ),
-                                           ),
-                                           const SizedBox(
-                                             width: 10,
-                                           ),
+                        Expanded(
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Visibility(
+                                    visible: controller.questions[i]
+                                            .instructions!.isNotEmpty
+                                        ? true
+                                        : false,
+                                    child: Card(
+                                        elevation: 0,
+                                        color: Colors.white,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 5),
+                                        child: AdeoHtmlTex(
+                                          controller.user,
+                                          controller.questions[i].instructions!
+                                              .replaceAll("https", "http"),
+                                          // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                          useLocalImage:
+                                              widget.diagnostic ? false : true,
+                                          fontWeight: FontWeight.normal,
+                                          textColor: Colors.black,
+                                        )),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      print("object");
+                                    },
+                                    child: Visibility(
+                                      visible: controller
+                                              .questions[i].resource!.isNotEmpty
+                                          ? true
+                                          : false,
+                                      child: Card(
+                                        elevation: 0,
+                                        color: Colors.white,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 5),
+                                        child: AdeoHtmlTex(
+                                          controller.user,
+                                          controller.questions[i].resource!
+                                              .replaceAll("https", "http"),
+                                          // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                          useLocalImage:
+                                              widget.diagnostic ? false : true,
+                                          textColor: Colors.grey,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  ...List.generate(
+                                      controller.questions[i].answers!.length,
+                                      (index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          print(
+                                              "countdownInSeconds:$countdownInSeconds");
+                                          controller
+                                                  .questions[i].selectedAnswer =
+                                              controller
+                                                  .questions[i].answers![index];
+                                          var dateFormat = DateFormat('h:m:s');
+                                          DateTime durationEnd = dateFormat
+                                              .parse(DateFormat('hh:mm:ss')
+                                                  .format(DateTime.now()));
+                                          timeSpent = durationEnd
+                                              .difference(durationStart)
+                                              .inSeconds;
+                                          controller.questions[i].time =
+                                              timeSpent;
+                                          durationStart = dateFormat.parse(
+                                              DateFormat('hh:mm:ss')
+                                                  .format(DateTime.now()));
+                                          if (!savedTest &&
+                                                  currentQuestion ==
+                                                      controller.questions
+                                                              .length -
+                                                          1 ||
+                                              (enabled &&
+                                                  controller.speedTest &&
+                                                  currentQuestion ==
+                                                      finalQuestion)) {
+                                            completeQuiz();
+                                          } else {
+                                            nextButton();
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(
+                                            bottom: 10, right: 20, left: 20),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: AdeoHtmlTex(
+                                                controller.user,
+                                                controller.questions[i]
+                                                    .answers![index].text!
+                                                    .replaceAll(
+                                                        "https", "http"),
+                                                // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                                                useLocalImage: widget.diagnostic
+                                                    ? false
+                                                    : true,
+                                                textColor: controller
+                                                            .questions[i]
+                                                            .selectedAnswer ==
+                                                        controller.questions[i]
+                                                            .answers![index]
+                                                    ? Colors.white
+                                                    : kSecondaryTextColor,
+                                                fontSize: controller
+                                                            .questions[i]
+                                                            .selectedAnswer ==
+                                                        controller.questions[i]
+                                                            .answers![index]
+                                                    ? 25
+                                                    : 16,
+                                                textAlign: TextAlign.left,
+                                                fontWeight: FontWeight.bold,
+                                                removeBr: true,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
                                             Icon(
-                                              Icons.radio_button_off ,
-                                             color: Colors.white,
-                                           )
-                                         ],
-                                       ),
-                                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                                       decoration: BoxDecoration(
-                                         color:  controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ?  Color(0xFF0367B4) : Colors.white,
-                                         borderRadius: BorderRadius.circular(14),
-                                         border: Border.all(
-                                           width: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? 1 : 1,
-                                           color: controller.questions[i].selectedAnswer == controller.questions[i].answers![index] ? Colors.transparent : Color(0xFFC8C8C8),
-                                         ),
-                                       ),
-                                     ),
-                                   );
-
-                                 })
-                               ],
-                             )
-                           ],
-                         ),
-                       )
+                                              Icons.radio_button_off,
+                                              color: Colors.white,
+                                            )
+                                          ],
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 5),
+                                        decoration: BoxDecoration(
+                                          color: controller.questions[i]
+                                                      .selectedAnswer ==
+                                                  controller.questions[i]
+                                                      .answers![index]
+                                              ? Color(0xFF0367B4)
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
+                                            width: controller.questions[i]
+                                                        .selectedAnswer ==
+                                                    controller.questions[i]
+                                                        .answers![index]
+                                                ? 1
+                                                : 1,
+                                            color: controller.questions[i]
+                                                        .selectedAnswer ==
+                                                    controller.questions[i]
+                                                        .answers![index]
+                                                ? Colors.transparent
+                                                : Color(0xFFC8C8C8),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  })
+                                ],
+                              )
+                            ],
+                          ),
+                        )
                       ],
                     )
                 ],
@@ -678,72 +793,80 @@ class _QuizQuestionState extends State<QuizQuestion> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-
-                  if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        // Get.to(() => const QuizReviewPage());
-                        if (currentQuestion == controller.questions.length - 1) {
-                          return;
-                        }
-                        setState(() {
-                          currentCorrectScoreState();
-                          currentQuestion++;
-                          getUnAttempted++;
-
-                          pageController.nextPage(
-                              duration: Duration(milliseconds: 1), curve: Curves.ease);
-
-                          // numberingController.scrollTo(
-                          //     index: currentQuestion,
-                          //     duration: Duration(seconds: 1),
-                          //     curve: Curves.easeInOutCubic);
-
-                          if (controller.speedTest && enabled) {
-                            resetTimer();
-                          }
-                        });
-                      },
-                      child: Container(
-                        color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: const Text(
-                          'Skip',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
+                  if (currentQuestion < controller.questions.length - 1 &&
+                      !(!enabled &&
+                          controller.speedTest &&
+                          currentQuestion == finalQuestion))
                     Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        setState((){
-                          getUnAttempted++;
-                        });
-                        completeQuiz();
-                      },
-                      child: Container(
-                        color: kAccessmentButtonColor,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: const Text(
-                          'Complete',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                      child: InkWell(
+                        onTap: () {
+                          // Get.to(() => const QuizReviewPage());
+                          if (currentQuestion ==
+                              controller.questions.length - 1) {
+                            return;
+                          }
+                          setState(() {
+                            currentCorrectScoreState();
+                            currentQuestion++;
+                            getUnAttempted++;
+
+                            pageController.nextPage(
+                                duration: Duration(milliseconds: 1),
+                                curve: Curves.ease);
+
+                            // numberingController.scrollTo(
+                            //     index: currentQuestion,
+                            //     duration: Duration(seconds: 1),
+                            //     curve: Curves.easeInOutCubic);
+
+                            if (controller.speedTest && enabled) {
+                              resetTimer();
+                            }
+                          });
+                        },
+                        child: Container(
+                          color: kAccessmentButtonColor,
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: const Text(
+                            'Skip',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  if (!savedTest &&
+                          currentQuestion == controller.questions.length - 1 ||
+                      (enabled &&
+                          controller.speedTest &&
+                          currentQuestion == finalQuestion))
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            getUnAttempted++;
+                          });
+                          completeQuiz();
+                        },
+                        child: Container(
+                          color: kAccessmentButtonColor,
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: const Text(
+                            'Complete',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -854,7 +977,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
     );
   }
 
-  quitWidget(){
+  quitWidget() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 1),
       child: Column(
@@ -883,7 +1006,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
           ),
           const SizedBox(height: 33),
           OutlinedButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -899,13 +1022,13 @@ class _QuizQuestionState extends State<QuizQuestion> {
               ),
 
               side: MaterialStateProperty.resolveWith(
-                    (Set<MaterialState> states) {
+                (Set<MaterialState> states) {
                   return states.contains(MaterialState.pressed)
                       ? BorderSide.none
                       : const BorderSide(
-                    color: Color(0xFF707070),
-                    width: 1,
-                  );
+                          color: Color(0xFF707070),
+                          width: 1,
+                        );
                 },
               ),
               // backgroundColor: MaterialStateProperty.resolveWith(
@@ -914,13 +1037,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
               //       : Colors.white,
               // ),
               foregroundColor: MaterialStateProperty.resolveWith(
-                    (states) => states.contains(MaterialState.pressed)
+                (states) => states.contains(MaterialState.pressed)
                     ? Colors.white
                     : Colors.black,
               ),
               overlayColor: MaterialStateProperty.resolveWith(
-                    (states) =>
-                states.contains(MaterialState.pressed) ?  Color(0xFFFF6060) : Colors.white,
+                (states) => states.contains(MaterialState.pressed)
+                    ? Color(0xFFFF6060)
+                    : Colors.white,
               ),
             ),
             child: Text(
@@ -931,10 +1055,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
               ),
             ),
           ),
-
           SizedBox(height: 10),
           OutlinedButton(
-            onPressed: (){
+            onPressed: () {
               startTimer();
               Navigator.pop(context);
             },
@@ -950,13 +1073,13 @@ class _QuizQuestionState extends State<QuizQuestion> {
               ),
 
               side: MaterialStateProperty.resolveWith(
-                    (Set<MaterialState> states) {
+                (Set<MaterialState> states) {
                   return states.contains(MaterialState.pressed)
                       ? BorderSide.none
                       : const BorderSide(
-                    color: Color(0xFF707070),
-                    width: 1,
-                  );
+                          color: Color(0xFF707070),
+                          width: 1,
+                        );
                 },
               ),
               // backgroundColor: MaterialStateProperty.resolveWith(
@@ -965,13 +1088,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
               //       : Colors.white,
               // ),
               foregroundColor: MaterialStateProperty.resolveWith(
-                    (states) => states.contains(MaterialState.pressed)
+                (states) => states.contains(MaterialState.pressed)
                     ? Colors.white
                     : Colors.black,
               ),
               overlayColor: MaterialStateProperty.resolveWith(
-                    (states) =>
-                states.contains(MaterialState.pressed) ?  Color(0xFF00C664) : Colors.white,
+                (states) => states.contains(MaterialState.pressed)
+                    ? Color(0xFF00C664)
+                    : Colors.white,
               ),
             ),
             child: Text(
@@ -982,7 +1106,6 @@ class _QuizQuestionState extends State<QuizQuestion> {
               ),
             ),
           ),
-
           SizedBox(height: 82),
         ],
       ),
@@ -996,73 +1119,92 @@ class _QuizQuestionState extends State<QuizQuestion> {
     );
   }
 
-  reportModalBottomSheet(context,{Question? question}) async{
+  reportModalBottomSheet(context, {Question? question}) async {
     double sheetHeight = 440.00;
     bool isSubmit = true;
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent ,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
+            builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
                   child: Column(
                     children: [
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(),
-
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               timerController.resume();
                             },
                             child: Container(
-                              padding: EdgeInsets.only(right: 20,),
-                              child: Icon(Icons.clear,color: Colors.black,),
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Container(
-                        child: Icon(Icons.warning,color: Colors.orange,size: 50,),
+                        child: Icon(
+                          Icons.warning,
+                          color: Colors.orange,
+                          size: 50,
+                        ),
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey[200]
-                        ),
+                            shape: BoxShape.circle, color: Colors.grey[200]),
                       ),
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Container(
-                        child: sText("Error Reporting",weight: FontWeight.bold,size: 20),
+                        child: sText("Error Reporting",
+                            weight: FontWeight.bold, size: 20),
                       ),
                       Expanded(
                         child: ListView(
                           children: [
-                            SizedBox(height: 40,),
+                            SizedBox(
+                              height: 40,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
                               child: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(color: Colors.black),
-                                    borderRadius: BorderRadius.circular(10)
-                                ),
+                                    borderRadius: BorderRadius.circular(10)),
                                 padding: EdgeInsets.only(left: 12, right: 4),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<ListNames>(
-                                    value: reportTypes == null ? listReportsTypes[0] : reportTypes,
+                                    value: reportTypes == null
+                                        ? listReportsTypes[0]
+                                        : reportTypes,
                                     itemHeight: 48,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -1074,35 +1216,40 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                     //   });
                                     // },
 
-                                    onChanged: (ListNames? value){
-                                      stateSetter((){
+                                    onChanged: (ListNames? value) {
+                                      stateSetter(() {
                                         reportTypes = value;
                                         sheetHeight = 700;
-                                        FocusScope.of(context).requestFocus(descriptionNode);
+                                        FocusScope.of(context)
+                                            .requestFocus(descriptionNode);
                                       });
                                     },
-                                    items: listReportsTypes.map(
+                                    items: listReportsTypes
+                                        .map(
                                           (item) => DropdownMenuItem<ListNames>(
-                                        value: item,
-                                        child: Text(
-                                          item.name,
-                                          style: TextStyle(
-                                            color: kDefaultBlack,
-                                            fontSize: 16,
+                                            value: item,
+                                            child: Text(
+                                              item.name,
+                                              style: TextStyle(
+                                                color: kDefaultBlack,
+                                                fontSize: 16,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    )
+                                        )
                                         .toList(),
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 40,),
+                            SizedBox(
+                              height: 40,
+                            ),
                             Container(
-                              padding: EdgeInsets.only(left: 20,right: 20),
+                              padding: EdgeInsets.only(left: 20, right: 20),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: TextFormField(
@@ -1115,13 +1262,13 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                         }
                                         return null;
                                       },
-                                      onFieldSubmitted: (value){
-                                        stateSetter((){
+                                      onFieldSubmitted: (value) {
+                                        stateSetter(() {
                                           sheetHeight = 440;
                                         });
                                       },
-                                      onTap: (){
-                                        stateSetter((){
+                                      onTap: () {
+                                        stateSetter(() {
                                           sheetHeight = 700;
                                         });
                                       },
@@ -1131,308 +1278,350 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                         labelText: "Description",
                                         hintColor: Colors.black,
                                         fill: Colors.white,
-                                        padding: EdgeInsets.only(left: 10,right: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 10, right: 10),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(height: 40,),
-
-
-
+                            SizedBox(
+                              height: 40,
+                            ),
                           ],
                         ),
                       ),
                       GestureDetector(
-                        onTap: ()async{
+                        onTap: () async {
                           print("${reportTypes}");
-                          if(descriptionController.text.isNotEmpty){
-                            if( reportTypes != null){
-                              stateSetter((){
+                          if (descriptionController.text.isNotEmpty) {
+                            if (reportTypes != null) {
+                              stateSetter(() {
                                 isSubmit = false;
                               });
-                              try{
-                                FlagData flagData = FlagData(reason: descriptionController.text,type:reportTypes!.name,questionId:question!.id );
-                                var res = await QuizController(controller.user,controller.course,name: "").saveFlagQuestion(context, flagData,question.id!);
+                              try {
+                                FlagData flagData = FlagData(
+                                    reason: descriptionController.text,
+                                    type: reportTypes!.name,
+                                    questionId: question!.id);
+                                var res = await QuizController(
+                                        controller.user, controller.course,
+                                        name: "")
+                                    .saveFlagQuestion(
+                                        context, flagData, question.id!);
                                 print("final res:$res");
-                                if(res){
-                                  stateSetter((){
+                                if (res) {
+                                  stateSetter(() {
                                     descriptionController.clear();
                                   });
                                   Navigator.pop(context);
                                   successModalBottomSheet(context);
-                                }else{
+                                } else {
                                   Navigator.pop(context);
                                   failedModalBottomSheet(context);
                                   print("object res: $res");
                                 }
-                              }catch(e){
-                                stateSetter((){
+                              } catch (e) {
+                                stateSetter(() {
                                   isSubmit = true;
                                 });
                                 print("error: $e");
                               }
-                            }else{
+                            } else {
                               toastMessage("Select error type");
                             }
-                          }
-                          else{
+                          } else {
                             toastMessage("Description is required");
                           }
                         },
                         child: Container(
                           padding: appPadding(20),
                           width: appWidth(context),
-                          color: isSubmit ?  Colors.blue : Colors.grey,
+                          color: isSubmit ? Colors.blue : Colors.grey,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              sText("Submit",align: TextAlign.center,weight: FontWeight.bold,color: isSubmit ? Colors.white : Colors.black,size: 25),
-                              SizedBox(width: 10,),
+                              sText("Submit",
+                                  align: TextAlign.center,
+                                  weight: FontWeight.bold,
+                                  color: isSubmit ? Colors.white : Colors.black,
+                                  size: 25),
+                              SizedBox(
+                                width: 10,
+                              ),
                               isSubmit ? Container() : progress()
                             ],
                           ),
-
                         ),
                       )
                     ],
-                  )
-              );
+                  ));
             },
-
           );
-        }
-    );
+        });
   }
 
-  successModalBottomSheet(context,{Question? question}){
+  successModalBottomSheet(context, {Question? question}) {
     double sheetHeight = 350.00;
     bool isSubmit = true;
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent ,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
+            builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(),
-
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               timerController.resume();
                             },
                             child: Container(
-                              padding: EdgeInsets.only(right: 20,),
-                              child: Icon(Icons.clear,color: Colors.black,),
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: Colors.green,width: 15),
-                              shape: BoxShape.circle
-                          ),
-                          child: Icon(Icons.check,color: Colors.green,size: 100,)
+                              border:
+                                  Border.all(color: Colors.green, width: 15),
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.green,
+                            size: 100,
+                          )),
+                      SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(height: 20,),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                        child: sText("Error report successfully submitted",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        child: sText("Error report successfully submitted",
+                            weight: FontWeight.bold,
+                            size: 20,
+                            align: TextAlign.center),
                       )
                     ],
-                  )
-              );
+                  ));
             },
-
           );
-        }
-    );
+        });
   }
-  failedModalBottomSheet(context,{Question? question}){
+
+  failedModalBottomSheet(context, {Question? question}) {
     double sheetHeight = 330.00;
     bool isSubmit = true;
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent ,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
+            builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(),
-
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               timerController.resume();
                             },
                             child: Container(
-                              padding: EdgeInsets.only(right: 20,),
-                              child: Icon(Icons.clear,color: Colors.black,),
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: Colors.red,width: 15),
-                              shape: BoxShape.circle
-                          ),
-                          child: Icon(Icons.close,color: Colors.red,size: 100,)
+                              border: Border.all(color: Colors.red, width: 15),
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 100,
+                          )),
+                      SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(height: 20,),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                        child: sText("Error report failed try again",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        child: sText("Error report failed try again",
+                            weight: FontWeight.bold,
+                            size: 20,
+                            align: TextAlign.center),
                       )
                     ],
-                  )
-              );
+                  ));
             },
-
           );
-        }
-    );
-  }
-  getTimerWidget() {
-    return controller.speedTest
-        ?
-    Row(
-      children: [
-        Image(image: AssetImage('assets/images/watch.png')),
-        SizedBox(width: 4),
-        GestureDetector(
-          onTap: Feedback.wrapForTap(() {
-            showPauseDialog();
-          }, context),
-          child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: Color(0xFF222E3B),
-                  width: 1,
-                ),
-              ),
-              child: AdeoTimer(
-                  controller: timerController,
-                  startDuration: controller.duration!,
-                  callbackWidget: (time) {
-                    if (controller.disableTime) {
-                      return Image(
-                          image:
-                          AssetImage("assets/images/infinite.png"));
-                    }
-
-                    Duration remaining = Duration(seconds: time.toInt());
-                    controller.duration = remaining;
-                    countdownInSeconds = remaining.inSeconds;
-                    if (remaining.inSeconds == 0) {
-                      return Text("Time Up",
-                          style: TextStyle(
-                              color: backgroundColor, fontSize: 12));
-                    }
-
-                    return Text(
-                        "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                        style: TextStyle(
-                            color: backgroundColor, fontSize: 12));
-                  },
-                  onFinish: () {
-                    onEnd();
-                  })),
-        ),
-      ],
-    )
-        : AdeoTimer(
-        controller: timerController,
-        startDuration: controller.duration!,
-        callbackWidget: (time) {
-          if (controller.disableTime) {
-            return Image(image: AssetImage("assets/images/infinite.png"));
-          }
-          Duration remaining = Duration(seconds: time.toInt());
-          controller.duration = remaining;
-          countdownInSeconds = remaining.inSeconds;
-
-          if (remaining.inSeconds == 0) {
-            return Text("Time Up",
-                style: TextStyle(color: backgroundColor, fontSize: 14));
-          }
-
-          return Text("${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-              style: TextStyle(color: backgroundColor, fontSize: 14));
-        },
-        onFinish: () {
-          onEnd();
         });
   }
+
+  getTimerWidget() {
+    return controller.speedTest
+        ? Row(
+            children: [
+              Image(image: AssetImage('assets/images/watch.png')),
+              SizedBox(width: 4),
+              GestureDetector(
+                onTap: Feedback.wrapForTap(() {
+                  showPauseDialog();
+                }, context),
+                child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Color(0xFF222E3B),
+                        width: 1,
+                      ),
+                    ),
+                    child: AdeoTimer(
+                        controller: timerController,
+                        startDuration: controller.duration!,
+                        callbackWidget: (time) {
+                          if (controller.disableTime) {
+                            return Image(
+                                image:
+                                    AssetImage("assets/images/infinite.png"));
+                          }
+
+                          Duration remaining = Duration(seconds: time.toInt());
+                          controller.duration = remaining;
+                          countdownInSeconds = remaining.inSeconds;
+                          if (remaining.inSeconds == 0) {
+                            return Text("Time Up",
+                                style: TextStyle(
+                                    color: backgroundColor, fontSize: 12));
+                          }
+
+                          return Text(
+                              "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                              style: TextStyle(
+                                  color: backgroundColor, fontSize: 12));
+                        },
+                        onFinish: () {
+                          onEnd();
+                        })),
+              ),
+            ],
+          )
+        : AdeoTimer(
+            controller: timerController,
+            startDuration: controller.duration!,
+            callbackWidget: (time) {
+              if (controller.disableTime) {
+                return Image(image: AssetImage("assets/images/infinite.png"));
+              }
+              Duration remaining = Duration(seconds: time.toInt());
+              controller.duration = remaining;
+              countdownInSeconds = remaining.inSeconds;
+
+              if (remaining.inSeconds == 0) {
+                return Text("Time Up",
+                    style: TextStyle(color: backgroundColor, fontSize: 14));
+              }
+
+              return Text(
+                  "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                  style: TextStyle(color: backgroundColor, fontSize: 14));
+            },
+            onFinish: () {
+              onEnd();
+            });
+  }
+
   Future<bool> showPauseDialog() async {
     return (await showDialog<bool>(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return PauseDialog(
-            backgroundColor: backgroundColor,
-            backgroundColor2: backgroundColor2,
-            time: countdownInSeconds,
-            callback: (action) {
-              Navigator.pop(context);
-              if (action == "resume") {
-                startTimer();
-              } else if (action == "quit") {
-                // Navigator.pushAndRemoveUntil(context,
-                //     MaterialPageRoute(builder: (context) {
-                //   return MainHomePage(controller.user, index: 2);
-                // }), (route) => false);
-                Navigator.pop(context);
-              } else if (action == "end") {
-                completeQuiz();
-              }
-            },
-          );
-        })) ??
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return PauseDialog(
+                backgroundColor: backgroundColor,
+                backgroundColor2: backgroundColor2,
+                time: countdownInSeconds,
+                callback: (action) {
+                  Navigator.pop(context);
+                  if (action == "resume") {
+                    startTimer();
+                  } else if (action == "quit") {
+                    // Navigator.pushAndRemoveUntil(context,
+                    //     MaterialPageRoute(builder: (context) {
+                    //   return MainHomePage(controller.user, index: 2);
+                    // }), (route) => false);
+                    Navigator.pop(context);
+                  } else if (action == "end") {
+                    completeQuiz();
+                  }
+                },
+              );
+            })) ??
         false;
   }
 }

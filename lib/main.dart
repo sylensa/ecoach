@@ -5,11 +5,13 @@ import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/flavor_settings.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:ecoach/revamp/features/account/view/screen/phone_number_verification.dart';
 import 'package:ecoach/test/test.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/review/review_onboarding.dart';
 import 'package:ecoach/views/review/review_questions.dart';
 import 'package:flutter/foundation.dart';
@@ -47,7 +49,8 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  RequestConfiguration configuration = RequestConfiguration(testDeviceIds: testDeviceIds);
+  RequestConfiguration configuration =
+      RequestConfiguration(testDeviceIds: testDeviceIds);
 
   MobileAds.instance.updateRequestConfiguration(configuration);
   SystemChrome.setEnabledSystemUIMode(
@@ -80,7 +83,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   late final Widget myFuture;
-  getData(){
+  getData() {
     return FutureBuilder(
       future: UserPreferences().getUser(),
       builder: (context, AsyncSnapshot<User?> snapshot) {
@@ -97,23 +100,20 @@ class _MyAppState extends State<MyApp> {
             print("!user.hasTakenTest:");
             if (snapshot.hasError) {
               return Text("${snapshot.error}");
-            }
-            else if (snapshot.data != null) {
+            } else if (snapshot.data != null) {
               User user = snapshot.data as User;
 
               if (!user.activated && user.token != null) {
                 return PhoneNumberVerification(user);
               } else if (!user.activated) {
                 return LogInPage();
-              }else if(user.activated){
+              } else if (user.activated) {
                 return MainHomePage(user);
               }
               return LogInPage();
-            }
-            else if (snapshot.data == null) {
+            } else if (snapshot.data == null) {
               return LogInPage();
-            }
-            else {
+            } else {
               return CircularProgressIndicator(
                 color: Colors.blue,
               );
@@ -123,13 +123,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-
-
   @override
- void initState(){
+  void initState() {
     super.initState();
     myFuture = getData();
   }
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -139,7 +138,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, widget) {
           return FlavorBanner(
             child: ResponsiveSizer(
-              builder:  (_, __, ___) => GetMaterialApp(
+              builder: (_, __, ___) => GetMaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: 'Adeo',
                 theme: ThemeData(
@@ -154,9 +153,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                 ),
                 // home: MyTestApp(),
-                home: seenOnboard == true
-                    ? myFuture
-                    : Onboarding(),
+                home: seenOnboard == true ? myFuture : Onboarding(),
                 routes: routes,
               ),
             ),
