@@ -95,7 +95,7 @@ class _AllTabPageState extends State<AllTabPage> {
     return Column(
       children: [
         //graph
-        if(widget.rightWidgetState  == "average" && listTests.isNotEmpty)
+        if(widget.rightWidgetState  == "average")
         AverageScoreGraph(course:widget.course,rightWidgetState:widget.rightWidgetState ,onChangeStatus: widget.onChangeStatus),
         FutureBuilder(
           future: tests,
