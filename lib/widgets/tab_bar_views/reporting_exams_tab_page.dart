@@ -118,67 +118,67 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
                       .toList();
 
                   return Expanded(
-                    child: examTest.length == 0
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
-                              ),
-                              child: Text(
-                                'You haven\'t taken any EXAMS-based tests under this course yet',
-                                style: inlinePromptStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )
-                        : Column(
-                            children: [
-                              SizedBox(height: 16),
-                              PercentageSwitch(
-                                showInPercentage: showInPercentage,
-                                onChanged: (val) {
-                                  setState(() {
-                                    showInPercentage = val;
-                                  });
-                                },
-                              ),
-                              SizedBox(height: 15),
-                              Expanded(
-                                child: ListView.builder(
-                                    itemCount: examTest.length,
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      TestTaken test = examTest[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                        ),
-                                        child: AnalysisCard(
-                                          showInPercentage: showInPercentage,
-                                          isSelected: selected.contains(test),
-                                          metaData: ActivityMetaData(
-                                            date: test.datetime
-                                                .toString()
-                                                .split(' ')[0],
-                                            time: test.datetime
-                                                .toString()
-                                                .split(' ')[1]
-                                                .split('.')[0],
-                                            duration: test.usedTimeText,
-                                          ),
-                                          activity: test.testname!,
-                                          activityType: 'Exam',
-                                          correctlyAnswered: test.correct!,
-                                          totalQuestions: test.totalQuestions,
-                                          onTap: () {
-                                            handleSelection(test);
-                                          },
-                                        ),
-                                      );
-                                    }),
-                              ),
-                            ],
-                          ),
+                    child: examTest.length > 0
+                        ? ListView(
+                      children: [
+                        SizedBox(height: 16),
+                        PercentageSwitch(
+                          showInPercentage: showInPercentage,
+                          onChanged: (val) {
+                            setState(() {
+                              showInPercentage = val;
+                            });
+                          },
+                        ),
+                        SizedBox(height: 15),
+                        Expanded(
+                          child: ListView.builder(
+                              itemCount: examTest.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                TestTaken test = examTest[index];
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                  ),
+                                  child: AnalysisCard(
+                                    showInPercentage: showInPercentage,
+                                    isSelected: selected.contains(test),
+                                    metaData: ActivityMetaData(
+                                      date: test.datetime
+                                          .toString()
+                                          .split(' ')[0],
+                                      time: test.datetime
+                                          .toString()
+                                          .split(' ')[1]
+                                          .split('.')[0],
+                                      duration: test.usedTimeText,
+                                    ),
+                                    activity: test.testname!,
+                                    activityType: 'Exam',
+                                    correctlyAnswered: test.correct!,
+                                    totalQuestions: test.totalQuestions,
+                                    onTap: () {
+                                      handleSelection(test);
+                                    },
+                                  ),
+                                );
+                              }),
+                        ),
+                      ],
+                    )
+                        : Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                        ),
+                        child: Text(
+                          'You haven\'t taken any EXAMS-based tests under this course yet',
+                          style: inlinePromptStyle,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
                   );
                 } else
                   return Expanded(

@@ -132,7 +132,7 @@ class _OthersTabPageState extends State<OthersTabPage> {
                               ),
                             ),
                           )
-                        : Column(
+                        : ListView(
                             children: [
                               SizedBox(height: 16),
                               PercentageSwitch(
