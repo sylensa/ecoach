@@ -106,7 +106,6 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    _controller!.endTreadmill();
                     Navigator.popUntil(context,
                         ModalRoute.withName(CourseDetailsPage.routeName));
                   },
@@ -159,13 +158,12 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                                 correctlyAnswered: treadmills[i].correct!,
                                 totalQuestions: treadmills[i].totalQuestions,
                                 activity: treadmills[i].testname!,
-                                activityType:
-                                    treadmills[i].challengeType != null
-                                        ? treadmills[i]
-                                            .challengeType!
-                                            .split('.')[1]
-                                            .toLowerCase()
-                                        : ' ',
+                                activityType: treadmills[i].testType != null
+                                    ? treadmills[i]
+                                        .testType!
+                                        .split('.')[1]
+                                        .toLowerCase()
+                                    : ' ',
                                 showInPercentage: showInPercentage,
                                 isSelected: selected.contains(i + 1),
                                 selectedBackground: kAdeoLightTeal,

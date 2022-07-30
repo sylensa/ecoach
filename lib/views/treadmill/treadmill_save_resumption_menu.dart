@@ -17,8 +17,9 @@ import 'package:flutter/material.dart';
 import '../../database/treadmill_db.dart';
 
 class TreadmillSaveResumptionMenu extends StatefulWidget {
-  TreadmillSaveResumptionMenu({required this.controller});
+  TreadmillSaveResumptionMenu({required this.controller, this.topicId});
   final TreadmillController controller;
+  final int? topicId;
 
   @override
   State<TreadmillSaveResumptionMenu> createState() =>
@@ -80,6 +81,7 @@ class _TreadmillSaveResumptionMenuState
           MaterialPageRoute(
             builder: (context) {
               return Caution(
+                //topicId: topicId,
                 controller_treadmill: widget.controller,
               );
             },
@@ -166,7 +168,7 @@ class _TreadmillSaveResumptionMenuState
                   AdeoFilledButton(
                     label: 'Next',
                     onPressed: handleNext,
-                    background: kAdeoBlue,
+                    background: kAdeoLightTeal,
                     size: Sizes.large,
                   ),
                   SizedBox(height: 53),
@@ -180,8 +182,9 @@ class _TreadmillSaveResumptionMenuState
 }
 
 class Caution extends StatelessWidget {
-  Caution({required this.controller_treadmill});
+  Caution({required this.controller_treadmill, this.topicId});
   TreadmillController controller_treadmill;
+  int? topicId;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +206,7 @@ class Caution extends StatelessWidget {
                 Text(
                   'You will lose your saved treadmill session\nonce you begin a new one.',
                   style: kCustomizedTestSubtextStyle.copyWith(
-                    color: kAdeoBlueAccent,
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -212,7 +215,7 @@ class Caution extends StatelessWidget {
                 Text(
                   'Click on CONTINUE if you wish to do so. \nIf not kindly go back to your old Treadmill',
                   style: kCustomizedTestSubtextStyle.copyWith(
-                    color: kAdeoBlueAccent,
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -224,40 +227,21 @@ class Caution extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AdeoOutlinedButton(
-                color: kAdeoBlue,
+                color: kAdeoLightTeal,
                 label: 'Continue',
                 onPressed: () async {
-                  showLoaderDialog(context, message: "Deleting Treadmill");
+                  showLoaderDialog(context, message: "Restarting Treadmill");
                   //restart
-                  //await controller.restartTreadmill();
+                  await controller_treadmill.restartTreadmill();
 
-                  // await controller_treadmill.deleteTreadmill();
-                  controller_treadmill.treadmill!.status =
-                      TreadmillStatus.COMPLETED.toString();
-                  controller_treadmill.treadmill!.endTime = DateTime.now();
-                  TreadmillDB().update(controller_treadmill.treadmill!);
-                  // controller.treadmill;
-                  // await controller.endTreadmill();
-                  List<TreadmillProgress> questions = [];
-                  questions = await TreadmillDB()
-                      .getProgresses(controller_treadmill.treadmill!.id!);
-                  print(questions);
-                  await TreadmillDB()
-                      .delete(controller_treadmill.treadmill!.id!);
-                  for (int i = 0; i < questions.length; i++) {
-                    await TreadmillDB().deleteProgress(questions[i].id!);
-                    //await TreadmillDB().delete(treadmill!.id!);
-                  }
                   Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
-                      return TreadmillPractiseMenu(
-                        controller: TreadmillController(
-                          controller_treadmill.user,
-                          controller_treadmill.course,
-                          name: controller_treadmill.course.name,
-                        ),
+                      return TreadmillCountdown(
+                        // course: controller_treadmill.course,
+                        // user: controller_treadmill.user,
+                        controller: controller_treadmill,
                       );
                     }),
                   );
