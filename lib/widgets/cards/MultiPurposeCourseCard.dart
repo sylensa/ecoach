@@ -1,3 +1,4 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/general_utils.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -18,6 +19,7 @@ class MultiPurposeCourseCard extends StatefulWidget {
     this.activeBackground: kAdeoBlue2,
     this.darkenActiveBackgroundOnPress: false,
     this.onTap,
+    this.height = 16
   });
 
   final String title;
@@ -25,6 +27,7 @@ class MultiPurposeCourseCard extends StatefulWidget {
   final bool isActive;
   final String? iconURL;
   final double? progress;
+  final double? height;
   final bool? hasProgressed;
   final String? subscription;
   final bool? hasSmallHeading;
@@ -154,7 +157,7 @@ class _MultiPurposeCourseCardState extends State<MultiPurposeCourseCard> {
             ),
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: widget.height),
       ],
     );
   }
@@ -217,7 +220,7 @@ class PercentageSnippet extends StatelessWidget {
       ),
       style: kRightWidgetStyle(isSelected).copyWith(
         fontWeight: FontWeight.w700,
-        color: Color(0xFF2A9CEA)
+        color: isSelected ? Colors.white : Color(0xFF2A9CEA)
       ),
     );
   }
@@ -275,7 +278,7 @@ class _MultiPurposeCourseCardAnnexState extends State<MultiPurposeCourseCardAnne
             });
           }, context),
           child: Container(
-            padding: EdgeInsets.all(20.0),
+            padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
             decoration: BoxDecoration(
               color: isPressedDown
                   ? widget.isActive
@@ -284,9 +287,168 @@ class _MultiPurposeCourseCardAnnexState extends State<MultiPurposeCourseCardAnne
                   : Color(0xFF0573BA)
                   : Color(0x1A000000)
                   : widget.isActive
-                  ? Colors.white
-                  : Colors.blue[100],
+                  ? Colors.blue
+                  : Colors.white,
               borderRadius: BorderRadius.circular(0.0),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      widget.isActive ?
+                      Icon(Icons.keyboard_arrow_down,color: Colors.white,) :  Icon(Icons.keyboard_arrow_right) ,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: appWidth(context) * 0.50,
+                            child: Text(
+                              widget.title.trim().toLowerCase().toTitleCase(),
+                              style: TextStyle(
+                                color:
+                                widget.isActive ? Colors.white : Colors.black,
+                                fontSize: widget.hasSmallHeading! ? 11.0 : 16.0,
+                                fontWeight: FontWeight.bold,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                          if (widget.subTitle.length > 0)
+                            Column(
+                              children: [
+                                SizedBox(height: 4),
+                                Text(
+                                  widget.subTitle,
+                                  style: TextStyle(
+                                    color: widget.isActive
+                                        ? Colors.white
+                                        : Colors.grey[400],
+                                    fontSize: 9.0,
+                                    fontStyle: FontStyle.italic,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ],
+                            )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 24.0),
+                if (widget.iconURL != null)
+                  Container(
+                    width: 35.0,
+                    height: 35.0,
+                    child: Image.asset(widget.iconURL!, fit: BoxFit.fill),
+                  )
+                else if (widget.subscription != null)
+                  Text(
+                    widget.subscription!,
+                    style: TextStyle(
+                      color: Color(0xFF2A9CEA),
+                      fontSize: 11.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                else if (widget.progress != null)
+                    Row(
+                      children: [
+                        // Container(
+                        //   width: 16.0,
+                        //   height: 12.0,
+                        //   child: Image.asset(
+                        //     hasProgressed!
+                        //         ? 'assets/icons/progress_up.png'
+                        //         : 'assets/icons/progress_down.png',
+                        //     fit: BoxFit.fill,
+                        //   ),
+                        // ),
+                        // SizedBox(width: 4),
+                        Text(
+                          widget.progress!.toString() + '%',
+                          style: TextStyle(
+                            color: widget.isActive
+                                ? Colors.white
+                                : Color(0xFF2A9CEA),
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      ],
+                    )
+                  else if (widget.rightWidget != null)
+                      widget.rightWidget!
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 0),
+      ],
+    );
+  }
+}
+
+class MultiPurposeCourseCardCompare extends StatefulWidget {
+  const MultiPurposeCourseCardCompare({
+    required this.title,
+    required this.subTitle,
+    this.isActive: false,
+    this.iconURL: null,
+    this.progress: null,
+    this.subscription: null,
+    this.hasProgressed: false,
+    this.hasSmallHeading: false,
+    this.rightWidget,
+    this.activeBackground: kAdeoBlue2,
+    this.darkenActiveBackgroundOnPress: false,
+    this.onTap,
+    this.height = 16
+  });
+
+  final String title;
+  final String subTitle;
+  final bool isActive;
+  final String? iconURL;
+  final double? progress;
+  final double? height;
+  final bool? hasProgressed;
+  final String? subscription;
+  final bool? hasSmallHeading;
+  final Widget? rightWidget;
+  final Color activeBackground;
+  final bool darkenActiveBackgroundOnPress;
+  final onTap;
+
+  @override
+  State<MultiPurposeCourseCardCompare> createState() => _MultiPurposeCourseCardCompareState();
+}
+
+class _MultiPurposeCourseCardCompareState extends State<MultiPurposeCourseCardCompare> {
+  bool isPressedDown = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: Feedback.wrapForTap(() async {
+            setState(() {
+              isPressedDown = true;
+            });
+            await Future.delayed(Duration(milliseconds: 300));
+            widget.onTap();
+            setState(() {
+              isPressedDown = false;
+            });
+          }, context),
+          child: Container(
+            padding: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.blue[100],
+              borderRadius: BorderRadius.circular(4.0),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -298,8 +460,7 @@ class _MultiPurposeCourseCardAnnexState extends State<MultiPurposeCourseCardAnne
                       Text(
                         widget.title.trim().toLowerCase().toTitleCase(),
                         style: TextStyle(
-                          color:
-                          widget.isActive ? Color(0xFF2A9CEA) : Color(0xFF2A9CEA),
+                          color:Colors.blue[600],
                           fontSize: widget.hasSmallHeading! ? 11.0 : 16.0,
                           fontWeight: FontWeight.bold,
                           height: 1.2,
@@ -313,8 +474,8 @@ class _MultiPurposeCourseCardAnnexState extends State<MultiPurposeCourseCardAnne
                               widget.subTitle,
                               style: TextStyle(
                                 color: widget.isActive
-                                    ? Color(0xFF2A9CEA)
-                                    : Color(0xFF2A9CEA),
+                                    ? Colors.white
+                                    : Color(0xAA000000),
                                 fontSize: 9.0,
                                 fontStyle: FontStyle.italic,
                                 height: 1.2,
@@ -373,7 +534,7 @@ class _MultiPurposeCourseCardAnnexState extends State<MultiPurposeCourseCardAnne
             ),
           ),
         ),
-        SizedBox(height: 0),
+        SizedBox(height: widget.height),
       ],
     );
   }
