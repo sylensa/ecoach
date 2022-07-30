@@ -132,7 +132,7 @@ class TestTakenDB {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"'");
+    maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"'");
     }else if(period.toLowerCase() == 'daily'){
       maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){
@@ -155,7 +155,7 @@ class TestTakenDB {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, AVG(correct) as avg_correct from tests_taken where course_id = '"+ courseId +"'");
+    maps = await db!.rawQuery("Select *, correct as avg_correct from tests_taken where course_id = '"+ courseId +"'");
     }else if(period.toLowerCase() == 'daily'){
       maps = await db!.rawQuery("Select *, AVG(correct) as avg_correct from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){
@@ -178,7 +178,7 @@ class TestTakenDB {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, AVG(used_time) as avg_used_time,AVG(total_questions) as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'");
+    maps = await db!.rawQuery("Select *, used_time as avg_used_time,total_questions as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'");
     }else if(period.toLowerCase() == 'daily'){
       maps = await db!.rawQuery("Select *, AVG(used_time) as avg_used_time,AVG(total_questions) as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){
@@ -201,7 +201,7 @@ class TestTakenDB {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, AVG(correct) as avg_correct,AVG(total_questions) as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'");
+    maps = await db!.rawQuery("Select *, correct as avg_correct,total_questions as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'");
     }else if(period.toLowerCase() == 'daily'){
       maps = await db!.rawQuery("Select *, AVG(correct) as avg_correct,AVG(total_questions) as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){
