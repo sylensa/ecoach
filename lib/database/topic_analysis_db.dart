@@ -22,11 +22,10 @@ class TopicAnalysisDB {
     return id;
   }
 
-  Future<List<TopicAnalysisList>> getTopicsAnalysisAverageScore() async {
+  Future<List<TopicAnalysisList>> getTopicsAnalysisAverageScore(String topicId) async {
     final Database? db = await DBProvider.database;
     List<Map<String, dynamic>> maps = [];
-      maps = await db!.rawQuery(
-          "Select *, AVG(correctly_answered) as avg_score from topic_analysis group by topic_id");
+      maps = await db!.rawQuery("Select *, SUM(correctly_answered) as avg_score,SUM(total_questions) as sum_total_questions from topic_analysis where topic_id = '" + topicId + "' group by topic_id");
 
       print("object maps:$maps");
       List<TopicAnalysisList> tests = [];
@@ -34,6 +33,7 @@ class TopicAnalysisDB {
         TopicAnalysisList test = TopicAnalysisList.fromJson(maps[i]);
         // print(test.toJson().toString().substring(0, 100));
         test.correctlyAnswered = maps[i]["avg_score"];
+        test.totalQuestions = maps[i]["sum_total_questions"];
         // test.totalQuestions = maps[i]["sum_questions"];
         tests.add(test);
         print("object maps:${test.correctlyAnswered}");
