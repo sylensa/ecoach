@@ -19,6 +19,8 @@ class FlavorSettings {
         FlavorConfig(variables: {"baseUrl": AppUrl.liveBaseURL});
         break;
       default:
+        // flavor = FlavorType.PROD;
+        // FlavorConfig(variables: {"baseUrl": AppUrl.liveBaseURL});
         flavor = FlavorType.DEV;
         FlavorConfig(
             name: "TEST",

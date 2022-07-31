@@ -131,7 +131,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                               ),
                             ),
                           )
-                        : ListView(
+                        : Column(
                             children: [
                               SizedBox(height: 16),
                               PercentageSwitch(

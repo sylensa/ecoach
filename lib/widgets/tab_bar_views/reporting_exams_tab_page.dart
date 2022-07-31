@@ -119,7 +119,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
 
                   return Expanded(
                     child: examTest.length > 0
-                        ? ListView(
+                        ? Column(
                       children: [
                         SizedBox(height: 16),
                         PercentageSwitch(
@@ -192,7 +192,7 @@ class _ExamsTabPageState extends State<ExamsTabPage> {
             }
           },
         ),
-        if (selected != null)
+        if (selected.isNotEmpty)
           Container(
             height: 48.0,
             decoration: BoxDecoration(

@@ -125,7 +125,7 @@ class _AllTabPageState extends State<AllTabPage> {
                   inspect(testData);
                   return Expanded(
                     child: testData.length > 0
-                        ? ListView(
+                        ? Column(
                             children: [
                               SizedBox(height: 16),
                               PercentageSwitch(

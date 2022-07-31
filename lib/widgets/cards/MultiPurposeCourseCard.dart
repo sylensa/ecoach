@@ -448,7 +448,7 @@ class _MultiPurposeCourseCardCompareState extends State<MultiPurposeCourseCardCo
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
               color: Colors.blue[100],
-              borderRadius: BorderRadius.circular(4.0),
+              borderRadius: BorderRadius.circular(0.0),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
