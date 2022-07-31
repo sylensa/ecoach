@@ -1,8 +1,11 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_countdown.dart';
+import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
+import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -11,9 +14,12 @@ import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
+import '../../database/treadmill_db.dart';
+
 class TreadmillSaveResumptionMenu extends StatefulWidget {
-  TreadmillSaveResumptionMenu({required this.controller});
+  TreadmillSaveResumptionMenu({required this.controller, this.topicId});
   final TreadmillController controller;
+  final int? topicId;
 
   @override
   State<TreadmillSaveResumptionMenu> createState() =>
@@ -75,7 +81,8 @@ class _TreadmillSaveResumptionMenuState
           MaterialPageRoute(
             builder: (context) {
               return Caution(
-                controller: widget.controller,
+                //topicId: topicId,
+                controller_treadmill: widget.controller,
               );
             },
           ),
@@ -161,7 +168,7 @@ class _TreadmillSaveResumptionMenuState
                   AdeoFilledButton(
                     label: 'Next',
                     onPressed: handleNext,
-                    background: kAdeoBlue,
+                    background: kAdeoLightTeal,
                     size: Sizes.large,
                   ),
                   SizedBox(height: 53),
@@ -175,8 +182,9 @@ class _TreadmillSaveResumptionMenuState
 }
 
 class Caution extends StatelessWidget {
-  Caution({required this.controller});
-  TreadmillController controller;
+  Caution({required this.controller_treadmill, this.topicId});
+  TreadmillController controller_treadmill;
+  int? topicId;
 
   @override
   Widget build(BuildContext context) {
@@ -198,7 +206,7 @@ class Caution extends StatelessWidget {
                 Text(
                   'You will lose your saved treadmill session\nonce you begin a new one.',
                   style: kCustomizedTestSubtextStyle.copyWith(
-                    color: kAdeoBlueAccent,
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -207,7 +215,7 @@ class Caution extends StatelessWidget {
                 Text(
                   'Click on CONTINUE if you wish to do so. \nIf not kindly go back to your old Treadmill',
                   style: kCustomizedTestSubtextStyle.copyWith(
-                    color: kAdeoBlueAccent,
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
@@ -219,16 +227,22 @@ class Caution extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AdeoOutlinedButton(
-                color: kAdeoBlue,
+                color: kAdeoLightTeal,
                 label: 'Continue',
                 onPressed: () async {
                   showLoaderDialog(context, message: "Restarting Treadmill");
-                  await controller.restartTreadmill();
+                  //restart
+                  await controller_treadmill.restartTreadmill();
+
                   Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
-                      return TreadmillCountdown(controller: controller);
+                      return TreadmillCountdown(
+                        // course: controller_treadmill.course,
+                        // user: controller_treadmill.user,
+                        controller: controller_treadmill,
+                      );
                     }),
                   );
                 },

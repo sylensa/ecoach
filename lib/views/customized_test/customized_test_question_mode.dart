@@ -56,7 +56,7 @@ class _CustomizedTestQuestionModeState
                   number: numberOfQuestion,
                   numberFocus: numberFocus,
                   onChange: (number) {
-                    print("number of question = $number");
+                    print("number of questions = $number");
                     numberOfQuestion = number;
                   }),
             ],

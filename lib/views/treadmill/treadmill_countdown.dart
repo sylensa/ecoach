@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/treadmill/quiz_questions_copy.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -30,7 +31,7 @@ class _TreadmillCountdownState extends State<TreadmillCountdown> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (c) {
-                    return TreadmillQuizView(controller: widget.controller);
+                    return QuizQuestionCopy(controller: widget.controller);
                   }),
                 );
               });
@@ -71,7 +72,7 @@ class _TreadmillCountdownState extends State<TreadmillCountdown> {
                   SizedBox(height: 70),
                   Center(
                     child: Text(
-                      'Marathon\nbegins in',
+                      'Run\nbegins in',
                       textAlign: TextAlign.center,
                       style: kIntroitScreenHeadingStyle(color: Colors.white),
                     ),
@@ -84,10 +85,8 @@ class _TreadmillCountdownState extends State<TreadmillCountdown> {
                 child: duration == 0
                     ? Text(
                         'Let\'s go',
-                        style: TextStyle(
-                          fontSize: 69,
-                          fontFamily: 'Helvetica Rounded',
-                        ),
+                        textAlign: TextAlign.center,
+                        style: kIntroitScreenHeadingStyle(color: Colors.white),
                       )
                     : Text(
                         duration.toString(),

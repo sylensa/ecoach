@@ -25,9 +25,10 @@ getSubscriptionSubName(String name) {
 
 class CoursesPage extends StatefulWidget {
   static const String routeName = '/courses';
-  CoursesPage(this.user,this.controller, {Key? key,this.planId = -1}) : super(key: key);
+  CoursesPage(this.user, this.controller, {Key? key, this.planId = -1})
+      : super(key: key);
   User user;
-  int planId ;
+  int planId;
   final MainController controller;
 
   @override
@@ -39,35 +40,37 @@ class _CoursesPageState extends State<CoursesPage> {
   late PageController controller;
   List<Subscription> subscriptions = [];
   bool progressCode = true;
-  getUserSubscriptions()async{
-      Subscription? res =  await SubscriptionDB().getSubscriptionByPlanId(widget.planId);
-      if(res != null){
-       subscriptions.add(res);
-       var futureSubs = SubscriptionDB().subscriptions();
-       futureSubs.then((List<Subscription> subscriptions) {
-         if (subscriptions.isNotEmpty) {
-          for(int i =0; i < subscriptions.length; i++){
-            if(subscriptions[i].id != res.id){
+  getUserSubscriptions() async {
+    Subscription? res =
+        await SubscriptionDB().getSubscriptionByPlanId(widget.planId);
+    if (res != null) {
+      subscriptions.add(res);
+      var futureSubs = SubscriptionDB().subscriptions();
+      futureSubs.then((List<Subscription> subscriptions) {
+        if (subscriptions.isNotEmpty) {
+          for (int i = 0; i < subscriptions.length; i++) {
+            if (subscriptions[i].id != res.id) {
               this.subscriptions.add(subscriptions[i]);
             }
           }
-         }
-         setState(() {
-           progressCode = false;
-         });
-       });
-      }else{
-        var futureSubs = SubscriptionDB().subscriptions();
-        futureSubs.then((List<Subscription> subscriptions) {
-          if (subscriptions.isNotEmpty) {
-            this.subscriptions = subscriptions;
-          }
-          setState(() {
-            progressCode = false;
-          });
+        }
+        setState(() {
+          progressCode = false;
         });
-      }
+      });
+    } else {
+      var futureSubs = SubscriptionDB().subscriptions();
+      futureSubs.then((List<Subscription> subscriptions) {
+        if (subscriptions.isNotEmpty) {
+          this.subscriptions = subscriptions;
+        }
+        setState(() {
+          progressCode = false;
+        });
+      });
     }
+  }
+
   @override
   void initState() {
     page = 0;
@@ -130,7 +133,6 @@ class _CoursesPageState extends State<CoursesPage> {
       body: SafeArea(
         child: Column(
           children: [
-
             Container(
               // height: 120,
               child: Padding(
@@ -157,8 +159,10 @@ class _CoursesPageState extends State<CoursesPage> {
                     ),
                     Text(
                       subscriptions.isNotEmpty
-                          ? getSubscriptionSubName(subscriptions[page].name!) :
-                      subscriptions.isEmpty && progressCode ?  'Loading...' : "Bundles",
+                          ? getSubscriptionSubName(subscriptions[page].name!)
+                          : subscriptions.isEmpty && progressCode
+                              ? 'Loading...'
+                              : "Bundles",
                       textAlign: TextAlign.center,
                       style: kPageHeaderStyle,
                     ),
@@ -182,40 +186,55 @@ class _CoursesPageState extends State<CoursesPage> {
                 ),
               ),
             ),
-            subscriptions.isNotEmpty ?
-            Expanded(
-              child: GestureDetector(
-                onHorizontalDragEnd: (dragEndDetails) {
-                  // left to right
-                  if (dragEndDetails.primaryVelocity! > 0) {
-                    if (page == 0)
-                      goToLastPage();
-                    else
-                      goToPreviousPage();
-                  }
-                  // right to left
-                  else if (dragEndDetails.primaryVelocity! < 0) {
-                    if (page == subscriptions.length - 1)
-                      goToFirstPage();
-                    else
-                      goToNextPage();
-                  }
-                },
-                child: PageView(
-                  physics: NeverScrollableScrollPhysics(),
-                  controller: controller,
-                  children: subscriptions.map((subscription) => CourseView(widget.user, subscription,widget.controller),).toList(),
-                ),
-              ),
-            ) :
-            subscriptions.isEmpty && progressCode ?
-            const Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )  :
-            Expanded(child: Container(padding: EdgeInsets.all(20), width: appWidth(context),child: Center(child: Text(Platform.isAndroid ? "No Subscribed Bundles" : "No available courses", textAlign: TextAlign.center, style: kPageHeaderStyle,))))
-
+            subscriptions.isNotEmpty
+                ? Expanded(
+                    child: GestureDetector(
+                      onHorizontalDragEnd: (dragEndDetails) {
+                        // left to right
+                        if (dragEndDetails.primaryVelocity! > 0) {
+                          if (page == 0)
+                            goToLastPage();
+                          else
+                            goToPreviousPage();
+                        }
+                        // right to left
+                        else if (dragEndDetails.primaryVelocity! < 0) {
+                          if (page == subscriptions.length - 1)
+                            goToFirstPage();
+                          else
+                            goToNextPage();
+                        }
+                      },
+                      child: PageView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: controller,
+                        children: subscriptions
+                            .map(
+                              (subscription) => CourseView(
+                                  widget.user, subscription, widget.controller),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  )
+                : subscriptions.isEmpty && progressCode
+                    ? const Expanded(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : Expanded(
+                        child: Container(
+                            padding: EdgeInsets.all(20),
+                            width: appWidth(context),
+                            child: Center(
+                                child: Text(
+                              Platform.isAndroid
+                                  ? "No Subscribed Bundles"
+                                  : "No available courses",
+                              textAlign: TextAlign.center,
+                              style: kPageHeaderStyle,
+                            ))))
           ],
         ),
       ),
@@ -224,11 +243,7 @@ class _CoursesPageState extends State<CoursesPage> {
 }
 
 class CourseView extends StatefulWidget {
-  CourseView(
-    this.user,
-    this.subscription,
-      this.controller
-  );
+  CourseView(this.user, this.subscription, this.controller);
 
   final User user;
   final Subscription subscription;
@@ -240,30 +255,29 @@ class CourseView extends StatefulWidget {
 
 class _CourseViewState extends State<CourseView> {
   List<Course> courses = [];
-  List<Course>futureItems = [];
+  List<Course> futureItems = [];
   String subName = ""; //FIXME temp;
   bool progressCode = true;
-  getSubscriptionCourse()async{
-    futureItems = await SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
-    if(futureItems.isEmpty){
+  getSubscriptionCourse() async {
+    futureItems = await SubscriptionItemDB()
+        .subscriptionCourses(widget.subscription.planId!);
+    if (futureItems.isEmpty) {
       ApiCall<Data>(AppUrl.new_user_data, isList: false,
-          create: (Map<String, dynamic> json) {
-            return Data.fromJson(json);
-          }, onCallback: (data) async{
-            if (data != null) {
-              await LevelDB().insertAll(data!.levels!);
-              await CourseDB().insertAll(data!.courses!);
-            }
-            await getSubscriptionCourse();
-          }, onError: (e) {
-          }).get(context);
-    }else{
-      setState((){
+              create: (Map<String, dynamic> json) {
+        return Data.fromJson(json);
+      }, onCallback: (data) async {
+        if (data != null) {
+          await LevelDB().insertAll(data!.levels!);
+          await CourseDB().insertAll(data!.courses!);
+        }
+        await getSubscriptionCourse();
+      }, onError: (e) {})
+          .get(context);
+    } else {
+      setState(() {
         progressCode = false;
       });
     }
-
-
   }
 
   @override
@@ -271,9 +285,8 @@ class _CourseViewState extends State<CourseView> {
     super.initState();
     getSubscriptionCourse();
     subName = widget.subscription.name!;
-    subName = subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
-
-
+    subName =
+        subName.replaceFirst("Bundle", "").replaceFirst("bundle", "").trim();
   }
 
   @override
@@ -368,28 +381,39 @@ class _CourseViewState extends State<CourseView> {
     //     }
     //   },
     // );
-    return futureItems.isNotEmpty ?
-    ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: futureItems.length,
-      itemBuilder: (context, index) {
-        CourseAnalytic? analytic = futureItems[index].analytic;
-        return Padding(
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
-          child: CourseCard(
-            widget.user,
-            courseInfo: CourseInfo(
-              course: futureItems[index],
-              title: futureItems[index].name!.replaceFirst(subName, "",).replaceFirst(subName.toUpperCase(), ""),
-              subTitle: 'Take a random test across topics',
-              progress: futureItems[index].averageScore!,
-            ),
-          ),
-        );
-      },
-    ) :
-        progressCode ?
-        Center(child: sText("Loading courses"),) : Center(child: sText("Empty courses"),);
+    return futureItems.isNotEmpty
+        ? ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: futureItems.length,
+            itemBuilder: (context, index) {
+              CourseAnalytic? analytic = futureItems[index].analytic;
+              return Padding(
+                padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                child: CourseCard(
+                  widget.user,
+                  courseInfo: CourseInfo(
+                    course: futureItems[index],
+                    title: futureItems[index]
+                        .name!
+                        .replaceFirst(
+                          subName,
+                          "",
+                        )
+                        .replaceFirst(subName.toUpperCase(), ""),
+                    subTitle: 'Take a random test across topics',
+                    progress: futureItems[index].averageScore!,
+                  ),
+                ),
+              );
+            },
+          )
+        : progressCode
+            ? Center(
+                child: sText("Loading courses"),
+              )
+            : Center(
+                child: sText("Empty courses"),
+              );
   }
 }

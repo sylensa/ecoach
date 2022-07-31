@@ -1,24 +1,32 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/views/treadmill/treadmill_time_and_instruction.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/user.dart';
+
 class TreadmillWelcome extends StatelessWidget {
   TreadmillWelcome({
-    required this.controller,
-    required this.mode,
-    this.topicId,
-    this.bankId,
-    this.bankName,
+    //   required this.controller,
+    //   required this.mode,
+    //   this.topicId,
+    //   this.bankId,
+    //   this.bankName,
+    required this.user,
+    required this.course,
   });
 
-  final TreadmillController controller;
-  final TreadmillMode mode;
-  final int? topicId;
-  final int? bankId;
-  final String? bankName;
+  // final TreadmillController controller;
+  // final TreadmillMode mode;
+  // final int? topicId;
+  // final int? bankId;
+  // final String? bankName;
+  final User user;
+  final Course course;
 
   @override
   Widget build(BuildContext context) {
@@ -69,17 +77,23 @@ class TreadmillWelcome extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) {
-                      return TreadmillTimeAndInstruction(
-                        topicId: topicId,
-                        bankId: bankId,
-                        bankName: bankName,
-                        controller: controller,
-                        mode: mode,
-                      );
-                    },
+                    builder: (context) => TreadmillIntroit(user, course),
                   ),
                 );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) {
+                //       return TreadmillTimeAndInstruction(
+                //         topicId: topicId,
+                //         bankId: bankId,
+                //         bankName: bankName,
+                //         controller: controller,
+                //         mode: mode,
+                //       );
+                //     },
+                //   ),
+                // );
               },
             ),
           ],

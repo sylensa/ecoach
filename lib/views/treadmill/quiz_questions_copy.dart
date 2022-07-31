@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/revamp/features/questions/view/widgets/actual_question.dart';
 import 'package:ecoach/revamp/features/questions/view/widgets/end_question.dart';
@@ -20,8 +22,10 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
-import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/treadmill/completed.dart';
+import 'package:ecoach/views/treadmill/treadmill_complete_congratulations.dart';
+import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -31,25 +35,29 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import '../../../../core/utils/app_colors.dart';
 
-class QuizQuestion extends StatefulWidget {
-  QuizQuestion(
-      {Key? key,
-      required this.controller,
-      this.theme = QuizTheme.GREEN,
-      this.diagnostic = false})
-      : super(key: key);
+import '../../controllers/treadmill_controller.dart';
 
-  QuizController controller;
-  bool diagnostic;
-  QuizTheme theme;
+class QuizQuestionCopy extends StatefulWidget {
+  QuizQuestionCopy({
+    Key? key,
+    required this.controller,
+    this.topicId,
+    // this.questions,
+    this.themeColor = kAdeoLightTeal,
+  }) : super(key: key);
+
+  final TreadmillController controller;
+  int? topicId;
+  //final List<Question>? questions;
+
+  final Color themeColor;
 
   @override
-  State<QuizQuestion> createState() => _QuizQuestionState();
+  State<QuizQuestionCopy> createState() => _QuizQuestionCopyState();
 }
 
-class _QuizQuestionState extends State<QuizQuestion> {
+class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
   _fieldFocusChange(
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
@@ -57,7 +65,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
   }
 
   late final PageController pageController;
-  int currentQuestion = 0;
+  late TreadmillController controller;
+
   List<QuestionWidget> questionWidgets = [];
 
   late TimerController timerController;
@@ -74,8 +83,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
   late ItemScrollController numberingController;
   bool swichValue = false;
   int finalQuestion = 0;
-  late Color backgroundColor, backgroundColor2;
-  late QuizController controller;
+  //late Color backgroundColor, backgroundColor2;
   List<ListNames> listReportsTypes = [
     ListNames(name: "Select Error Type", id: "0"),
     ListNames(name: "Typographical Mistake", id: "1"),
@@ -89,53 +97,122 @@ class _QuizQuestionState extends State<QuizQuestion> {
   double totalAverage = 0.0;
   var timeSpent = 0;
   var avgTimeSpent = 0;
+  int _start = 0;
+  Timer? _timer;
+  double? value = 0.0;
+  double values = 0;
   var durationStart;
   Duration remainingTimeQuestion = Duration(seconds: 0);
 
-  startTimer() {
-    if (!controller.disableTime) {
-      timerController.start();
-    }
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
   }
 
-  resetTimer() {
-    print("reset timer");
-    timerController.reset();
-    Future.delayed(Duration(seconds: 1), () {
-      timerController.start();
-    });
-    setState(() {
-      duration = resetDuration;
-    });
-  }
+  // resetTimer() {
+  //   print("reset timer");
+  //   timerController.reset();
+  //   Future.delayed(Duration(seconds: 1), () {
+  //     timerController.start();
+  //   });
+  //   setState(() {
+  //     duration = resetDuration;
+  //   });
+  // }
 
   onEnd() {
     print("timer ended");
     completeQuiz();
   }
 
+  void startTimer() {
+    setState(() {
+      // countdown = countdown * 1000;
+      if (widget.controller.countdown == 0) {
+        widget.controller.countdown = 3840;
+      }
+      _start = widget.controller.countdown;
+    });
+    // _start = countdown;
+    const oneSec = Duration(milliseconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) async {
+        if (_start == 0) {
+          nextButton();
+          setState(() {
+            // saveForLater();
+
+            _start = widget.controller.countdown;
+            value = 0;
+          });
+        } else {
+          setState(() {
+            values = (_start - 1) / widget.controller.countdown;
+            value = 1.0 - values;
+            _start--;
+          });
+        }
+        if (controller.currentQuestion ==
+            widget.controller.questions.length - 1) {
+          // mark(position: 19);
+          if (value == 1) {
+            testTaken = controller.getTest();
+
+            controller.duration = oneSec;
+            _timer!.cancel();
+            controller.endTime;
+
+            currentCorrectScoreState();
+            completeQuiz();
+
+            showDialogOk(
+              message: 'Time is up. View Scores.',
+              context: context,
+              // target: TreadmillCompleteCongratulations(
+              //   controller: widget.controller,
+              //   correct: correct,
+              //   wrong: wrong,
+              //   avgScore: avgScore,
+              // ),
+              target: TreadmillCompleted(
+                  widget.controller.user, widget.controller.course),
+              status: true,
+              replace: true,
+              dismiss: false,
+            );
+          }
+        }
+      },
+    );
+  }
+
   nextButton() async {
-    if (currentQuestion == controller.questions.length - 1) {
+    if (controller.currentQuestion == controller.questions.length - 1) {
       return;
     }
     await Future.delayed(Duration(milliseconds: 200));
+    if (mounted) {
+      setState(() {
+        _timer!.cancel();
+        startTimer();
+        currentCorrectScoreState();
+        controller.currentQuestion++;
 
-    setState(() {
-      currentCorrectScoreState();
-      currentQuestion++;
+        pageController.nextPage(
+            duration: Duration(milliseconds: 1), curve: Curves.ease);
 
-      pageController.nextPage(
-          duration: Duration(milliseconds: 1), curve: Curves.ease);
+        // numberingController.scrollTo(
+        //     index: currentQuestion,
+        //     duration: Duration(seconds: 1),
+        //     curve: Curves.easeInOutCubic);
 
-      // numberingController.scrollTo(
-      //     index: currentQuestion,
-      //     duration: Duration(seconds: 1),
-      //     curve: Curves.easeInOutCubic);
-
-      if (controller.speedTest && enabled) {
-        resetTimer();
-      }
-    });
+        if (widget.controller.speedTest && enabled) {
+          startTimer();
+        }
+      });
+    }
   }
 
   double get score {
@@ -172,7 +249,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
     Map<String, dynamic> responses = Map();
     int i = 1;
     controller.questions.forEach((question) {
-      print(question.topicName);
+      //print(question.topicName);
       Map<String, dynamic> answer = {
         "question_id": question.id,
         "topic_id": question.topicId,
@@ -194,67 +271,74 @@ class _QuizQuestionState extends State<QuizQuestion> {
   }
 
   avgTimeComplete() {
-    double count = 0.0;
-    for (int i = 0; i < controller.questions.length; i++) {
-      count += controller.questions[i].time!;
+    //print("avgTimeComplete");
+
+    for (int i = 0; i < widget.controller.questions.length; i++) {
+      controller.count += widget.controller.questions[i].question!.time!;
     }
 
-    if (count == 0 && currentQuestion == 0) {
-      count = 0;
+    if (controller.count == 0 && controller.currentQuestion == 0) {
+      controller.count = 0;
     } else {
-      count = count / currentQuestion;
+      controller.count = controller.count / controller.currentQuestion;
     }
 
-    print("count:$count");
-    return count.toStringAsFixed(2);
+    return controller.count.toStringAsFixed(2);
   }
 
+  //int df = avgTimeComplete();
   completeQuiz() async {
-    if (!controller.disableTime) {
-      timerController.pause();
+    // if (!controller.disableTime) {
+    //   timerController.pause();
+    // }
+    if (widget.controller.speedTest) {
+      finalQuestion = controller.currentQuestion;
     }
-    if (controller.speedTest) {
-      finalQuestion = currentQuestion;
-    }
+    widget.controller.endTreadmill();
+    print('++++++++++++++++++++++++++++++');
     setState(() {
       enabled = false;
     });
     showLoaderDialog(context, message: "Test Completed\nSaving results");
-    if (controller.speedTest) {
+
+    if (widget.controller.speedTest) {
       await Future.delayed(Duration(seconds: 1));
     }
+    bool succes = await controller.scoreCurrentQuestion();
 
-    controller.saveTest(context, (test, success) {
+    widget.controller.saveTest(context, (test, success) {
       Navigator.pop(context);
       if (success) {
         testTakenSaved = test;
         setState(() {
           print('setState');
           testTaken = testTakenSaved;
+
           savedTest = true;
           enabled = false;
         });
         viewResults();
+      } else {
+        // Navigator.pop(context);
+        print("success $success");
       }
     });
   }
 
   viewResults() {
     print("viewing results");
-    print(testTakenSaved != null
-        ? testTakenSaved!.toJson().toString()
-        : "null test");
+    // print(testTakenSaved != null
+    // ? testTakenSaved!.toJson().toString()
+    // : "null test");
     goTo(
       context,
-      ResultSummaryScreen(
-        widget.controller.user,
-        widget.controller.course,
-        widget.controller.type,
-        test: testTakenSaved!,
-        diagnostic: widget.diagnostic,
-        controller: widget.controller,
-        testCategory: controller.challengeType,
-      ),
+      // TreadmillCompleteCongratulations(
+      //   controller: widget.controller,
+      //   correct: correct,
+      //   wrong: wrong,
+      //   avgScore: avgScore,
+      // ),
+      TreadmillCompleted(widget.controller.user, widget.controller.course),
       replace: true,
     );
   }
@@ -274,7 +358,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
   }
 
   double get avgScore {
-    print("avg scoring current question= $unattempted");
+    // print("avg scoring current question= $unattempted");
     int totalQuestions = correct + wrong + getUnAttempted;
 
     int correctAnswers = correct;
@@ -291,7 +375,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   currentCorrectScoreState() {
     setState(() {
-      if (widget.controller.questions[currentQuestion].isCorrect) {
+      if (controller.questions[controller.currentQuestion].isCorrect) {
         isCorrect = true;
       } else {
         isCorrect = false;
@@ -313,6 +397,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   @override
   void initState() {
+    startTimer();
+    widget.controller.startTest();
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
         adUnitId: "ca-app-pub-3940256099942544/6300978111",
@@ -331,24 +417,15 @@ class _QuizQuestionState extends State<QuizQuestion> {
     var dateFormat = DateFormat('h:m:s');
     durationStart =
         dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-    getAllSaveTestQuestions();
-    if (widget.theme == QuizTheme.GREEN) {
-      backgroundColor = const Color(0xFF00C664);
-      backgroundColor2 = const Color(0xFF05A958);
-    } else if (widget.theme == QuizTheme.ORANGE) {
-      backgroundColor = kAdeoOrangeH;
-      backgroundColor2 = kAdeoOrangeH;
-    } else {
-      backgroundColor = const Color(0xFF5DA5EA);
-      backgroundColor2 = const Color(0xFF5DA5CA);
-    }
+    //getAllSaveTestQuestions();
     controller = widget.controller;
-    pageController = PageController(initialPage: currentQuestion);
+    pageController = PageController(initialPage: controller.currentQuestion);
     numberingController = ItemScrollController();
     timerController = TimerController();
-    controller.startTest();
+    //controller.endTreadmill();
+    // //controller.startTest();
     Future.delayed(Duration(seconds: 1), () {
-      startTimer();
+      //  startTimer();
     });
     super.initState();
   }
@@ -372,7 +449,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
             //   child: AdWidget(ad: _bannerAd,),
             // ),
             if (Platform.isIOS)
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
             Container(
@@ -388,7 +465,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   Container(
                     width: 250,
                     child: Text(
-                      controller.name,
+                      "${widget.controller.name}",
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(fontSize: 14),
@@ -406,18 +483,18 @@ class _QuizQuestionState extends State<QuizQuestion> {
                           CircularProgressIndicator(
                             color: Colors.black,
                             strokeWidth: 2,
-                            value: currentQuestion ==
+                            value: controller.currentQuestion ==
                                     controller.questions.length - 1
                                 ? 1
-                                : currentQuestion /
+                                : controller.currentQuestion /
                                     (controller.questions.length - 1),
                           ),
                           Center(
                             child: Text(
-                              "${currentQuestion + 1}",
-                              style: TextStyle(
+                              "${controller.currentQuestion + 1}",
+                              style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.black,
+                                color: Color.fromARGB(255, 160, 125, 125),
                               ),
                             ),
                           ),
@@ -426,15 +503,17 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     ),
                   ),
                   IconButton(
-                      onPressed: () async {
-                        timerController.pause();
-                        await reportModalBottomSheet(context,
-                            question: controller.questions[currentQuestion]);
-                      },
-                      icon: Icon(
-                        Icons.more_vert,
-                        color: Colors.black,
-                      )),
+                    onPressed: () async {
+                      timerController.pause();
+                      await reportModalBottomSheet(context,
+                          question: widget.controller
+                              .questions[controller.currentQuestion].question);
+                    },
+                    icon: const Icon(
+                      Icons.more_vert,
+                      color: Colors.black,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -444,7 +523,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  getTimerWidget(),
+                  // getTimerWidget(),
+                  const Text(
+                    'Treadmill',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF9EE4FF),
+                    ),
+                  ),
                   const SizedBox(
                     width: 7,
                   ),
@@ -470,8 +556,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 5,
                   ),
                   Text(
-                    "${avgScore}%",
-                    style: TextStyle(
+                    "$avgScore%",
+                    style: const TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
                     ),
@@ -486,8 +572,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 6.4,
                   ),
                   Text(
-                    "${avgTimeComplete()}s",
-                    style: TextStyle(
+                    "${controller.count.toStringAsFixed(2)}s",
+                    style: const TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
                     ),
@@ -496,11 +582,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 17.6,
                   ),
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.green,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.check,
                       color: Colors.white,
                       size: 16,
@@ -511,7 +597,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   ),
                   Text(
                     "$correct",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
                     ),
@@ -520,11 +606,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 17,
                   ),
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.cancel,
                       color: Colors.red,
                       size: 16,
@@ -535,7 +621,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   ),
                   Text(
                     "$wrong",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
                     ),
@@ -553,39 +639,47 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   const SizedBox(
                     width: 6.2,
                   ),
-                  if (!widget.diagnostic)
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          swichValue = !swichValue;
-                        });
-                        insertSaveTestQuestion(
-                            controller.questions[currentQuestion].id!);
-                      },
-                      child: SvgPicture.asset(
-                        savedQuestions.contains(
-                                controller.questions[currentQuestion].id)
-                            ? "assets/images/on_switch.svg"
-                            : "assets/images/off_switch.svg",
-                      ),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        swichValue = !swichValue;
+                      });
+                      insertSaveTestQuestion(
+                          controller.questions[controller.currentQuestion].id!);
+                    },
+                    child: SvgPicture.asset(
+                      savedQuestions.contains(controller
+                              .questions[controller.currentQuestion].id)
+                          ? "assets/images/on_switch.svg"
+                          : "assets/images/off_switch.svg",
                     ),
+                  ),
                 ],
               ),
+            ),
+            LinearProgressIndicator(
+              value: value,
+              minHeight: 8,
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
             ),
             Expanded(
               child: PageView(
                 controller: pageController,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   for (int i = 0; i < controller.questions.length; i++)
                     Column(
                       children: [
                         ActualQuestion(
                           user: controller.user,
-                          question: "${controller.questions[i].text}",
-                          diagnostic: widget.diagnostic,
+                          question: "${controller.questions[i].question!.text}",
+                          diagnostic: false,
                           direction:
                               "Choose the right answer to the question above",
+                        ),
+                        const SizedBox(
+                          height: 26,
                         ),
                         Expanded(
                           child: ListView(
@@ -595,47 +689,47 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Visibility(
-                                    visible: controller.questions[i]
+                                    visible: controller.questions[i].question!
                                             .instructions!.isNotEmpty
                                         ? true
                                         : false,
                                     child: Card(
                                         elevation: 0,
                                         color: Colors.white,
-                                        margin: EdgeInsets.symmetric(
+                                        margin: const EdgeInsets.symmetric(
                                             horizontal: 5, vertical: 5),
                                         child: AdeoHtmlTex(
                                           controller.user,
-                                          controller.questions[i].instructions!
+                                          controller.questions[i].question!
+                                              .instructions!
                                               .replaceAll("https", "http"),
-                                          // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
-                                          useLocalImage:
-                                              widget.diagnostic ? false : true,
+                                          useLocalImage: false,
                                           fontWeight: FontWeight.normal,
                                           textColor: Colors.black,
                                         )),
                                   ),
                                   GestureDetector(
                                     onTap: () {
-                                      print("object");
+                                      avgTimeComplete();
+                                      // print("object");
                                     },
                                     child: Visibility(
-                                      visible: controller
-                                              .questions[i].resource!.isNotEmpty
+                                      visible: widget.controller.questions[i]
+                                              .question!.resource!.isNotEmpty
                                           ? true
                                           : false,
                                       child: Card(
                                         elevation: 0,
                                         color: Colors.white,
-                                        margin: EdgeInsets.symmetric(
+                                        margin: const EdgeInsets.symmetric(
                                             horizontal: 5, vertical: 5),
                                         child: AdeoHtmlTex(
                                           controller.user,
-                                          controller.questions[i].resource!
+                                          widget.controller.questions[i]
+                                              .question!.resource!
                                               .replaceAll("https", "http"),
-                                          // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-                                          useLocalImage:
-                                              widget.diagnostic ? false : true,
+                                          // removeTags:  widget.controller.questions[i].question!.resource!.contains("src") ? false : true,
+                                          useLocalImage: false,
                                           textColor: Colors.grey,
                                           fontWeight: FontWeight.normal,
                                         ),
@@ -646,17 +740,19 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                     height: 10,
                                   ),
                                   ...List.generate(
-                                      controller.questions[i].answers!.length,
-                                      (index) {
+                                      widget.controller.questions[i].question!
+                                          .answers!.length, (index) {
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          print(
-                                              "countdownInSeconds:$countdownInSeconds");
-                                          controller
-                                                  .questions[i].selectedAnswer =
-                                              controller
-                                                  .questions[i].answers![index];
+                                          avgTimeComplete();
+                                          controller.scoreCurrentQuestion();
+                                          // print(
+                                          //     "countdownInSeconds:$countdownInSeconds");
+                                          widget.controller.questions[i]
+                                                  .question!.selectedAnswer =
+                                              widget.controller.questions[i]
+                                                  .question!.answers![index];
                                           var dateFormat = DateFormat('h:m:s');
                                           DateTime durationEnd = dateFormat
                                               .parse(DateFormat('hh:mm:ss')
@@ -664,21 +760,25 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           timeSpent = durationEnd
                                               .difference(durationStart)
                                               .inSeconds;
-                                          controller.questions[i].time =
-                                              timeSpent;
+                                          widget.controller.questions[i]
+                                              .question!.time = timeSpent;
                                           durationStart = dateFormat.parse(
                                               DateFormat('hh:mm:ss')
                                                   .format(DateTime.now()));
                                           if (!savedTest &&
-                                                  currentQuestion ==
-                                                      controller.questions
+                                                  controller.currentQuestion ==
+                                                      widget
+                                                              .controller
+                                                              .questions
                                                               .length -
                                                           1 ||
                                               (enabled &&
                                                   controller.speedTest &&
-                                                  currentQuestion ==
+                                                  controller.currentQuestion ==
                                                       finalQuestion)) {
+                                            // widget.controller.endTreadmill();
                                             completeQuiz();
+                                            _timer!.cancel();
                                           } else {
                                             nextButton();
                                           }
@@ -692,25 +792,37 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                             Expanded(
                                               child: AdeoHtmlTex(
                                                 controller.user,
-                                                controller.questions[i]
-                                                    .answers![index].text!
+                                                widget
+                                                    .controller
+                                                    .questions[i]
+                                                    .question!
+                                                    .answers![index]
+                                                    .text!
                                                     .replaceAll(
                                                         "https", "http"),
-                                                // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
-                                                useLocalImage: widget.diagnostic
-                                                    ? false
-                                                    : true,
-                                                textColor: controller
+                                                // removeTags:  widget.controller.questions[i].question!.answers![index].text!.contains("src") ? false : true,
+                                                useLocalImage: false,
+                                                textColor: widget
+                                                            .controller
                                                             .questions[i]
+                                                            .question!
                                                             .selectedAnswer ==
-                                                        controller.questions[i]
+                                                        widget
+                                                            .controller
+                                                            .questions[i]
+                                                            .question!
                                                             .answers![index]
                                                     ? Colors.white
                                                     : kSecondaryTextColor,
-                                                fontSize: controller
+                                                fontSize: widget
+                                                            .controller
                                                             .questions[i]
+                                                            .question!
                                                             .selectedAnswer ==
-                                                        controller.questions[i]
+                                                        widget
+                                                            .controller
+                                                            .questions[i]
+                                                            .question!
                                                             .answers![index]
                                                     ? 25
                                                     : 16,
@@ -722,7 +834,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                             const SizedBox(
                                               width: 10,
                                             ),
-                                            Icon(
+                                            const Icon(
                                               Icons.radio_button_off,
                                               color: Colors.white,
                                             )
@@ -731,27 +843,42 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 5),
                                         decoration: BoxDecoration(
-                                          color: controller.questions[i]
+                                          color: widget
+                                                      .controller
+                                                      .questions[i]
+                                                      .question!
                                                       .selectedAnswer ==
-                                                  controller.questions[i]
-                                                      .answers![index]
-                                              ? Color(0xFF0367B4)
+                                                  widget.controller.questions[i]
+                                                      .question!.answers![index]
+                                              ? const Color(0xFF0367B4)
                                               : Colors.white,
                                           borderRadius:
                                               BorderRadius.circular(14),
                                           border: Border.all(
-                                            width: controller.questions[i]
+                                            width: widget
+                                                        .controller
+                                                        .questions[i]
+                                                        .question!
                                                         .selectedAnswer ==
-                                                    controller.questions[i]
+                                                    widget
+                                                        .controller
+                                                        .questions[i]
+                                                        .question!
                                                         .answers![index]
                                                 ? 1
                                                 : 1,
-                                            color: controller.questions[i]
+                                            color: widget
+                                                        .controller
+                                                        .questions[i]
+                                                        .question!
                                                         .selectedAnswer ==
-                                                    controller.questions[i]
+                                                    widget
+                                                        .controller
+                                                        .questions[i]
+                                                        .question!
                                                         .answers![index]
                                                 ? Colors.transparent
-                                                : Color(0xFFC8C8C8),
+                                                : const Color(0xFFC8C8C8),
                                           ),
                                         ),
                                       ),
@@ -773,23 +900,26 @@ class _QuizQuestionState extends State<QuizQuestion> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  if (currentQuestion < controller.questions.length - 1 &&
+                  if (controller.currentQuestion <
+                          widget.controller.questions.length - 1 &&
                       !(!enabled &&
                           controller.speedTest &&
-                          currentQuestion == finalQuestion))
+                          controller.currentQuestion == finalQuestion))
                     Expanded(
                       child: InkWell(
                         onTap: () {
                           // Get.to(() => const QuizReviewPage());
-                          if (currentQuestion ==
-                              controller.questions.length - 1) {
+                          if (controller.currentQuestion ==
+                              widget.controller.questions.length - 1) {
                             return;
                           }
                           setState(() {
+                            _timer!.cancel();
+                            startTimer();
                             currentCorrectScoreState();
-                            currentQuestion++;
+                            controller.currentQuestion++;
                             getUnAttempted++;
-
+                            avgTimeComplete();
                             pageController.nextPage(
                                 duration: Duration(milliseconds: 1),
                                 curve: Curves.ease);
@@ -800,7 +930,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                             //     curve: Curves.easeInOutCubic);
 
                             if (controller.speedTest && enabled) {
-                              resetTimer();
+                              _timer!.cancel();
+                              startTimer();
                             }
                           });
                         },
@@ -820,17 +951,21 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       ),
                     ),
                   if (!savedTest &&
-                          currentQuestion == controller.questions.length - 1 ||
+                          controller.currentQuestion ==
+                              widget.controller.questions.length - 1 ||
                       (enabled &&
                           controller.speedTest &&
-                          currentQuestion == finalQuestion))
+                          controller.currentQuestion == finalQuestion))
                     Expanded(
                       child: InkWell(
                         onTap: () {
                           setState(() {
                             getUnAttempted++;
                           });
+                          // widget.controller.endTreadmill();
+                          // controller.endTreadmill();
                           completeQuiz();
+                          _timer!.cancel();
                         },
                         child: Container(
                           color: kAccessmentButtonColor,
@@ -887,12 +1022,12 @@ class _QuizQuestionState extends State<QuizQuestion> {
             //       ),
             //
             //       SizedBox(width: 10,),
-            //       if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
+            //       if (currentQuestion < widget.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
             //       Expanded(
             //         child: InkWell(
             //           onTap: () {
             //             // Get.to(() => const QuizReviewPage());
-            //             if (currentQuestion == controller.questions.length - 1) {
+            //             if (currentQuestion == widget.questions.length - 1) {
             //               return;
             //             }
             //             setState(() {
@@ -927,7 +1062,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
             //           ),
             //         ),
             //       ),
-            //       if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
+            //       if (!savedTest && currentQuestion == widget.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
             //         Expanded(
             //         child: InkWell(
             //           onTap: () {
@@ -987,6 +1122,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
           const SizedBox(height: 33),
           OutlinedButton(
             onPressed: () {
+              widget.controller.endTreadmill();
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -1038,7 +1174,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
           SizedBox(height: 10),
           OutlinedButton(
             onPressed: () {
-              startTimer();
+              // startTimer();
               Navigator.pop(context);
             },
             style: ButtonStyle(
@@ -1274,7 +1410,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          print("${reportTypes}");
+                          // print("${reportTypes}");
                           if (descriptionController.text.isNotEmpty) {
                             if (reportTypes != null) {
                               stateSetter(() {
@@ -1300,7 +1436,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                 } else {
                                   Navigator.pop(context);
                                   failedModalBottomSheet(context);
-                                  print("object res: $res");
+                                  // print("object res: $res");
                                 }
                               } catch (e) {
                                 stateSetter(() {
@@ -1503,93 +1639,19 @@ class _QuizQuestionState extends State<QuizQuestion> {
         });
   }
 
-  getTimerWidget() {
-    return controller.speedTest
-        ? Row(
-            children: [
-              Image(image: AssetImage('assets/images/watch.png')),
-              SizedBox(width: 4),
-              GestureDetector(
-                onTap: Feedback.wrapForTap(() {
-                  showPauseDialog();
-                }, context),
-                child: Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(
-                        color: Color(0xFF222E3B),
-                        width: 1,
-                      ),
-                    ),
-                    child: AdeoTimer(
-                        controller: timerController,
-                        startDuration: controller.duration!,
-                        callbackWidget: (time) {
-                          if (controller.disableTime) {
-                            return Image(
-                                image:
-                                    AssetImage("assets/images/infinite.png"));
-                          }
-
-                          Duration remaining = Duration(seconds: time.toInt());
-                          controller.duration = remaining;
-                          countdownInSeconds = remaining.inSeconds;
-                          if (remaining.inSeconds == 0) {
-                            return Text("Time Up",
-                                style: TextStyle(
-                                    color: backgroundColor, fontSize: 12));
-                          }
-
-                          return Text(
-                              "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                              style: TextStyle(
-                                  color: backgroundColor, fontSize: 12));
-                        },
-                        onFinish: () {
-                          onEnd();
-                        })),
-              ),
-            ],
-          )
-        : AdeoTimer(
-            controller: timerController,
-            startDuration: controller.duration!,
-            callbackWidget: (time) {
-              if (controller.disableTime) {
-                return Image(image: AssetImage("assets/images/infinite.png"));
-              }
-              Duration remaining = Duration(seconds: time.toInt());
-              controller.duration = remaining;
-              countdownInSeconds = remaining.inSeconds;
-
-              if (remaining.inSeconds == 0) {
-                return Text("Time Up",
-                    style: TextStyle(color: backgroundColor, fontSize: 14));
-              }
-
-              return Text(
-                  "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                  style: TextStyle(color: backgroundColor, fontSize: 14));
-            },
-            onFinish: () {
-              onEnd();
-            });
-  }
-
   Future<bool> showPauseDialog() async {
     return (await showDialog<bool>(
             barrierDismissible: false,
             context: context,
             builder: (context) {
               return PauseDialog(
-                backgroundColor: backgroundColor,
-                backgroundColor2: backgroundColor2,
+                backgroundColor: Colors.amber,
+                backgroundColor2: Colors.amber,
                 time: countdownInSeconds,
                 callback: (action) {
                   Navigator.pop(context);
                   if (action == "resume") {
-                    startTimer();
+                    //startTimer();
                   } else if (action == "quit") {
                     // Navigator.pushAndRemoveUntil(context,
                     //     MaterialPageRoute(builder: (context) {

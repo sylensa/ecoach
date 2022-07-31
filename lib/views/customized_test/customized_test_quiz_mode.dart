@@ -44,10 +44,7 @@ class _CustomizedTestQuizModeState extends State<CustomizedTestQuizMode> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: kAdeoTaupe
-      ),
+      appBar: AppBar(elevation: 0, backgroundColor: kAdeoTaupe),
       body: TestIntroitLayout(
         background: kAdeoTaupe,
         backgroundImageURL: 'assets/images/deep_pool_taupe.png',

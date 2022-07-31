@@ -1,0 +1,1 @@
+{id: 54, course_id: 172, user_id: 60, title: DOUBLE CLICKING OF THE MOUSE, type: TreadmillType.TOPIC, topic_id: null, bank_id: null, avg_score: 0.0, avg_time: 0.0, total_correct: 0, total_wrong: 0, total_questions: 0, total_time: 0, start_time: 2022-07-29T23:17:56.191336, end_time: null, status: TreadmillStatus.NEW}
