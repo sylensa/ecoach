@@ -1,13 +1,18 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/quiz/quiz_cover.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:ecoach/views/result_summary/components/lower_button.dart';
 import 'package:ecoach/views/results.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/speed/speed_quiz_cover.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -223,7 +228,61 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                       text: "Re-Test",
                       image: "assets/images/refresh.png",
                       orientation: orientation,
-                      onpress: () {},
+                      onpress: () async {
+                        List<Question> questions = [];
+                        switch (widget.testCategory) {
+                          case TestCategory.BANK:
+                          case TestCategory.EXAM:
+                          case TestCategory.ESSAY:
+                            questions = await TestController().getQuizQuestions(
+                              widget.test.id!,
+                              limit: 40,
+                            );
+                            break;
+                          case TestCategory.TOPIC:
+                            List<int> topicIds = widget.test.getTopicIds();
+
+                            questions =
+                                await TestController().getTopicQuestions(
+                              topicIds,
+                              limit: () {
+                                if (widget.testType == TestType.CUSTOMIZED)
+                                  return 40;
+                                return widget.testType != TestType.SPEED
+                                    ? 10
+                                    : 1000;
+                              }(),
+                            );
+                            break;
+                          default:
+                            questions =
+                                await TestController().getMockQuestions(0);
+                        }
+                        print(questions.toString());
+                        print(questions.length);
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return QuizCover(
+                                widget.user,
+                                questions,
+                                type: widget.testType,
+                                name: widget.test.testname!,
+                                theme: QuizTheme.ORANGE,
+                                category: widget.testCategory,
+                                time: widget.test.testTime != null
+                                    ? widget.test.testTime!
+                                    : widget.test.testType == TestType.SPEED
+                                        ? widget.test.testTime!
+                                        : questions.length * 60,
+                                course: widget.course,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
