@@ -288,7 +288,10 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                 ),
                 SizedBox(height: height * 0.03),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     "Return to Course",
                     style: TextStyle(
