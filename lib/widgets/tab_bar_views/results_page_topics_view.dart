@@ -283,14 +283,14 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                         child: Button(
                           label: 'new test',
                           onPressed: () {
-                            Navigator.pop(context);
-                            // Navigator.push(context,
-                            //     MaterialPageRoute(builder: (context) {
-                            //   return TestTypeView(
-                            //     widget.user,
-                            //     widget.course,
-                            //   );
-                            // }));
+                            // Navigator.pop(context);
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return TestTypeView(
+                                widget.user,
+                                widget.course,
+                              );
+                            }));
                           },
                         ),
                       ),
