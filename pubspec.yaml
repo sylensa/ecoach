@@ -98,6 +98,8 @@ dependencies:
    file_picker: ^5.0.0
    charts_flutter: ^0.12.0
    syncfusion_flutter_charts: ^20.2.39
+   flutter_pin_code_fields: ^1.1.0
+   otp_pin_field: ^1.0.1
 
 flutter_icons:
    image_path: "assets/images/adeo_app_icon.png"
@@ -165,10 +167,10 @@ flutter:
       - family: "Cocon"
         fonts:
            - asset: assets/fonts/COCON-BOLD-FONT.OTF
-           - asset: assets/fonts/COCON-REGULARTR.TTF
-      - family: "Helvetica"
-        fonts:
-           - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BD.OTF
-           - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BDCN.OTF
-           - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BLACK.OTF
+      #      - asset: assets/fonts/COCON-REGULARTR.TTF
+      # - family: "Helvetica"
+      #   fonts:
+      #      - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BD.OTF
+      #      - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BDCN.OTF
+      #      - asset: assets/fonts/HELVETICAROUNDEDLTSTD-BLACK.OTF
 

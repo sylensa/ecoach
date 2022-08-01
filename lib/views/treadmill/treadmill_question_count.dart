@@ -1,26 +1,46 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/treadmill/treadmill_time_and_instruction.dart';
+import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:flutter/material.dart';
 
-class TreadmillQuestionCount extends StatelessWidget {
+import '../../models/topic.dart';
+
+class TreadmillQuestionCount extends StatefulWidget {
   TreadmillQuestionCount({
+    this.topics = const [],
     required this.controller,
     required this.mode,
     this.count = 0,
     this.topicId,
     this.bankId,
     this.bankName,
+    this.topic,
   });
-
+  final List<TestNameAndCount> topics;
   final TreadmillController controller;
+
   final int count;
   final TreadmillMode mode;
   final int? topicId;
+  Topic? topic;
   final int? bankId;
   final String? bankName;
+
+  @override
+  State<TreadmillQuestionCount> createState() => _TreadmillQuestionCountState();
+}
+
+class _TreadmillQuestionCountState extends State<TreadmillQuestionCount> {
+  @override
+  void initState() {
+    super.initState();
+    print(widget.topicId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,14 +75,14 @@ class TreadmillQuestionCount extends StatelessWidget {
                     children: [
                       SizedBox(height: 40),
                       Text(
-                        count.toString(),
-                        style: TextStyle(
+                        widget.count.toString(),
+                        style: const TextStyle(
                           fontSize: 109,
                           fontWeight: FontWeight.w600,
                           color: kAdeoWhiteAlpha50,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Questions',
                         style: TextStyle(
                           fontSize: 41,
@@ -75,7 +95,7 @@ class TreadmillQuestionCount extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    if (count == 0)
+                    if (widget.count == 0)
                       AdeoFilledButton(
                         color: Colors.white,
                         background: kAdeoLightTeal,
@@ -96,13 +116,21 @@ class TreadmillQuestionCount extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return TreadmillWelcome(
-                                  controller: controller,
-                                  mode: mode,
-                                  topicId: topicId,
-                                  bankId: bankId,
-                                  bankName: bankName,
+                                return TreadmillTime(
+                                  controller: widget.controller,
+                                  topic: widget.topic,
+                                  mode: widget.mode,
+                                  topicId: widget.topicId,
+                                  bankId: widget.bankId,
+                                  bankName: widget.bankName,
                                 );
+                                //TreadmillWelcome(
+                                // controller: controller,
+                                // mode: mode,
+                                // topicId: topicId,
+                                // bankId: bankId,
+                                // bankName: bankName,
+                                // );
                               },
                             ),
                           );

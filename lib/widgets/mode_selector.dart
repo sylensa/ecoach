@@ -11,7 +11,7 @@ class ModeSelector extends StatelessWidget {
     this.isUnselected = false,
     this.onTap,
     this.size = Sizes.large,
-    this.activeBorderColor = kAdeoBlue,
+    this.activeBorderColor = kAdeoLightTeal,
     Key? key,
   }) : super(key: key);
 

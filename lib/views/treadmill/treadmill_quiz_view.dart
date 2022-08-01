@@ -63,7 +63,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
 
     print("No of Questions = ${controller.questions.length}");
     controller.startTest();
-    controller.endTreadmill();
+    //  controller.endTreadmill();
   }
 
   void handleObjectiveSelection(id) {
@@ -129,7 +129,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   }
 
   sumbitAnswer() async {
-    bool success = await controller.scoreCurrentQuestion();
+    // bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.treadmill!.avgScore!;
 
     setState(() {
@@ -149,19 +149,19 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
       controller.endTreadmill;
       viewResults();
     } else {
-      if (success) {
-        setState(() {
-          controller.nextQuestion();
-          pageController.nextPage(
-              duration: Duration(milliseconds: 1), curve: Curves.ease);
-        });
-      } else {
-        setState(() {
-          showNext = true;
-          controller.reviewMode = true;
-          controller.pauseTimer();
-        });
-      }
+      // if (success) {
+      //   setState(() {
+      //     controller.nextQuestion();
+      //     pageController.nextPage(
+      //         duration: Duration(milliseconds: 1), curve: Curves.ease);
+      //   });
+      // } else {
+      //   setState(() {
+      //     showNext = true;
+      //     controller.reviewMode = true;
+      //     controller.pauseTimer();
+      //   });
+      // }
     }
   }
 
@@ -173,7 +173,11 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return TreadmillCompleteCongratulations(
+            correct: correct,
+            wrong: wrong,
+            avgScore: avgScore,
             controller: controller,
+            // avgTimeComplete: avgTimeComplete(),
           );
         },
       ),
@@ -653,7 +657,7 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                         );
                         break;
                       case 7:
-                        controller.scoreCurrentQuestion();
+                        // controller.scoreCurrentQuestion();
                         showPopup(context, TestPausedPrompt());
                         break;
                       case 8:
@@ -682,7 +686,7 @@ class SessionSavedPrompt extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await controller.scoreCurrentQuestion();
+        //    await controller.scoreCurrentQuestion();
         Navigator.popUntil(
             context, ModalRoute.withName(CourseDetailsPage.routeName));
         return false;
@@ -717,7 +721,7 @@ class SessionSavedPrompt extends StatelessWidget {
                 AdeoOutlinedButton(
                   label: 'Exit',
                   onPressed: () {
-                    controller.scoreCurrentQuestion();
+                    //  controller.scoreCurrentQuestion();
                     Navigator.popUntil(context,
                         ModalRoute.withName(CourseDetailsPage.routeName));
                   },
