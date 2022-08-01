@@ -57,6 +57,10 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Adeo needs access to your Library to save your files</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Adeo needs access to your Library to save your files</string>
 	<key>UIStatusBarHidden</key>
 	<false/>
 	<key>UISupportedInterfaceOrientations</key>

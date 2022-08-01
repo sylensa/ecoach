@@ -42,7 +42,7 @@ class _TreadmillCompleteCongratulationsState
             children: [
               GestureDetector(
                 onTap: () {
-                  widget.controller.endTreadmill();
+                  //  widget.controller.endTreadmill();
                   Navigator.popUntil(context,
                       ModalRoute.withName(CourseDetailsPage.routeName));
                 },

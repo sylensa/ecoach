@@ -8,9 +8,13 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_question_count.dart';
+import 'package:ecoach/views/treadmill/treadmill_save_resumption_menu.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:flutter/material.dart';
+
+import '../../database/treadmill_db.dart';
+import '../../models/treadmill.dart';
 
 class TreadmillTopicsMenu extends StatefulWidget {
   TreadmillTopicsMenu({
@@ -47,8 +51,53 @@ class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
         topicId = newTopic.id;
         controller.countQuestions = newTopic.totalCount;
       }
+      print("topicId: $topicId");
     });
   }
+
+  // handleNext() async {
+  //   dynamic screenToNavigateTo;
+  //   //TreadmillDB().deleteAll();
+
+  //   Treadmill? treadmill =
+  //       await TestController().getCurrentTreadmill(controller.course);
+  //   print(treadmill);
+  //   print(topicId);
+  //   // return;
+
+  //   if (treadmill == null) {
+  //     screenToNavigateTo = TreadmillQuestionCount(
+  //       topicId: topicId,
+  //       count: controller.countQuestions,
+  //       topic: topic,
+  //       controller: controller,
+  //       mode: TreadmillMode.TOPIC,
+  //     );
+  //   } else {
+  //     print('jjjjjjjjjjjj');
+  //     print(treadmill.toJson());
+  //     print(treadmill.topicId);
+  //     print('${controller.course.name}, ${topicId},${treadmill.title}');
+
+  //     screenToNavigateTo = TreadmillSaveResumptionMenu(
+  //       controller: TreadmillController(
+  //         controller.user,
+  //         controller.course,
+  //         name: treadmill.title,
+  //         treadmill: treadmill,
+  //       ),
+  //     );
+  //   }
+
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) {
+  //         return screenToNavigateTo;
+  //       },
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

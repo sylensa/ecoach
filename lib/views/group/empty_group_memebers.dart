@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/utils/app_url.dart';
@@ -6,8 +7,10 @@ import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/group/group_list.dart';
 import 'package:ecoach/views/group/group_page.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class EmptyGroupMembers extends StatefulWidget {
@@ -21,26 +24,24 @@ class EmptyGroupMembers extends StatefulWidget {
 class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
 
   inviteToGroup(String email) async {
-  try{
-    var res = await doPost(AppUrl.inviteGroup,
-        {
-          "email": email,
-          "group_id": widget.groupListData!.id,
-        });
-    if(res["status"] && res["code"].toString() == "200"){
-      Navigator.pop(context);
-      toastMessage(res["message"]);
-      goTo(context, GroupPage(groupListData:widget.groupListData));
-
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      try{
+        if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).inviteToGroup(email)){
+          Navigator.pop(context);
+          goTo(context, GroupPage(groupListData:widget.groupListData));
+        }else{
+          Navigator.pop(context);
+        }
+      }catch(e){
+        Navigator.pop(context);
+        print("error:$e");
+      }
     }else{
       Navigator.pop(context);
-      toastMessage(res["message"]);
+      showNoConnectionToast(context);
     }
-  }catch(e){
-    Navigator.pop(context);
-    print("error:$e");
 
-  }
   }
 
   inviteModalBottomSheet(context,){

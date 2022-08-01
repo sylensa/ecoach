@@ -16,12 +16,13 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class ResultsView extends StatefulWidget {
-   ResultsView(this.user, this.course, this.testType,
+  ResultsView(this.user, this.course, this.testType,
       {Key? key,
       required this.test,
-        this.testCategory,
-         this.controller,
-      this.history = false, this.diagnostic = false})
+      this.testCategory,
+      this.controller,
+      this.history = false,
+      this.diagnostic = false})
       : super(key: key);
   final User user;
   final Course course;
@@ -30,7 +31,8 @@ class ResultsView extends StatefulWidget {
   bool history;
   TestType testType;
   TestCategory? testCategory;
-   QuizController? controller;
+  QuizController? controller;
+
   @override
   State<ResultsView> createState() => _ResultsViewState();
 }
@@ -60,7 +62,7 @@ class _ResultsViewState extends State<ResultsView> {
       mapList.keys.forEach((key) {
         answers = mapList[key]!;
         TopicAnalysis analysis = TopicAnalysis(key, answers!);
-          print("topic name:${analysis.name}");
+        print("topic name:${analysis.name}");
         topicsPlaceholder.add({
           'topicId': analysis.answers[0].topicId,
           'name': widget.diagnostic ? "Sample Test" : analysis.name,
@@ -70,7 +72,8 @@ class _ResultsViewState extends State<ResultsView> {
         });
       });
 
-      List<Question> questions = await TestController().getAllQuestions(widget.test);
+      List<Question> questions =
+          await TestController().getAllQuestions(widget.test);
 
       print("questions=${questions.length}");
       for (int i = 0; i < questions.length; i++) {
@@ -120,11 +123,11 @@ class _ResultsViewState extends State<ResultsView> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
                   },
                   child: Container(
-                    child:Icon(Icons.arrow_back_ios),
+                    child: Icon(Icons.arrow_back_ios),
                   ),
                 ),
                 Column(
@@ -184,22 +187,21 @@ class _ResultsViewState extends State<ResultsView> {
                   topics: topicsPlaceholder,
                   diagnostic: widget.diagnostic,
                   user: widget.user,
-                  testTaken:widget.test,
+                  testTaken: widget.test,
 
                   // TODO - add course to topics page - find a better way like using getx or provider
                   course: widget.course,
                   history: widget.history),
               QuestionsTabPage(
-                  questions: questionPlaceholder,
-                  diagnostic: widget.diagnostic,
-                  user: widget.user,
-                  history: widget.history,
-                  testTaken:widget.test,
-                  course:widget.course,
-                  testType:widget.testType,
-                  challengeType:widget.testCategory,
-                  controller:widget.controller,
-
+                questions: questionPlaceholder,
+                diagnostic: widget.diagnostic,
+                user: widget.user,
+                history: widget.history,
+                testTaken: widget.test,
+                course: widget.course,
+                testType: widget.testType,
+                challengeType: widget.testCategory,
+                controller: widget.controller,
               ),
             ],
           ),

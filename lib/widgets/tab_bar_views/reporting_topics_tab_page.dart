@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ecoach/controllers/average_score_graph.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -15,16 +16,23 @@ import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:ecoach/widgets/widgets.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class TopicsTabPage extends StatefulWidget {
-  const TopicsTabPage({
+   TopicsTabPage({
     required this.course,
     required this.user,
+    required this.rightWidgetState,
+    this.onChangeStatus = false,
+
     Key? key,
   }) : super(key: key);
   final Course course;
   final User user;
+  final String rightWidgetState;
+  bool onChangeStatus;
+
 
   @override
   State<TopicsTabPage> createState() => _TopicsTabPageState();
@@ -55,7 +63,11 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
         print("again savedQuestions:${reviewQuestionsBack.length}");
       });
       Navigator.pop(context);
-      goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      if(test.testname.toString().toLowerCase() == "test diagnostic"){
+        goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,disgnostic: true,));
+      }else{
+        goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      }
     }else{
       Navigator.pop(context);
       toastMessage("Question are empty, please download questions");
@@ -73,6 +85,9 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        //graph
+        if(widget.rightWidgetState  == "average")
+          AverageScoreGraph(course:widget.course ,tabName: "topic",rightWidgetState: widget.rightWidgetState,onChangeStatus: widget.onChangeStatus,),
         FutureBuilder(
           future: tests,
           builder: (context, snapshot) {
@@ -224,6 +239,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                                   widget.course,
                                   TestType.NONE,
                                   test: selected[0],
+                                  diagnostic: selected[0].testname.toString().toLowerCase() == "test diagnostic" ? true : false,
                                 );
                               }),
                             );

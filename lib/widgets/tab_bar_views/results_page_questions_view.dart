@@ -315,8 +315,9 @@ List<Question>reviewQuestions = [];
                     });
                   },
                   children: [
-                    !widget.diagnostic ?
+                    !widget.diagnostic  || widget.diagnostic ?
                     QuestionTabView(
+                      diagnostic:  widget.diagnostic,
                       score: "",
                       user: widget.user,
                       questions: questions,
@@ -376,8 +377,10 @@ List<Question>reviewQuestions = [];
                         child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ) ,
-                    !widget.diagnostic ?
+                    !widget.diagnostic  || widget.diagnostic ?
                     QuestionTabView(
+                      diagnostic:  widget.diagnostic,
+
                       score: ExamScore.CORRECTLY_ANSWERED.toString(),
                       user: widget.user,
                       testTaken: widget.testTaken,
@@ -442,8 +445,10 @@ List<Question>reviewQuestions = [];
                         child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ) ,
-                    !widget.diagnostic ?
+                    !widget.diagnostic || widget.diagnostic  ?
                     QuestionTabView(
+                      diagnostic:  widget.diagnostic,
+
                       score: ExamScore.WRONGLY_ANSWERED.toString(),
                       testTaken: widget.testTaken,
                       user: widget.user,
@@ -506,8 +511,10 @@ List<Question>reviewQuestions = [];
                         child: Center(child: sText(context.read<DownloadUpdate>().plans.isNotEmpty ? "No review for diagnostic test" :"Purchase to get full access to quiz",color: Colors.black,weight: FontWeight.bold,size: 18),),
                       ),
                     ),
-                    !widget.diagnostic ?
+                    !widget.diagnostic || widget.diagnostic  ?
                     QuestionTabView(
+                      diagnostic:  widget.diagnostic,
+
                       score: ExamScore.NOT_ATTEMPTED.toString(),
                       testTaken: widget.testTaken,
                       user: widget.user,
@@ -585,7 +592,7 @@ List<Question>reviewQuestions = [];
           padding: EdgeInsets.symmetric(vertical: 15),
           child: Row(
             children: [
-              if (!widget.diagnostic)
+              if (!widget.diagnostic || widget.diagnostic)
                 Expanded(
                   child: Row(
                     children: [
@@ -594,8 +601,18 @@ List<Question>reviewQuestions = [];
                           label: 'review',
                           onPressed: () async{
                             if(widget.diagnostic){
-                              toastMessage("No review for diagnostic test");
-    }
+                              // toastMessage("No review for diagnostic test");
+                              if(reviewQuestionsBack.isNotEmpty){
+                                await  goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,disgnostic: true,));
+                                setState(() {
+
+                                });
+                              }else{
+                                // getAllAnsweredQuestions(answerType);
+                                // toastMessage("No review for diagnostic test");
+                              }
+
+                            }
                               else{
                               if (widget.history) {
                               } else {
@@ -605,7 +622,7 @@ List<Question>reviewQuestions = [];
 
                                   });
                                 }else{
-                                  getAllAnsweredQuestions(answerType);
+                                  // getAllAnsweredQuestions(answerType);
                                   // toastMessage("No review for diagnostic test");
                                 }
 
@@ -653,13 +670,14 @@ List<Question>reviewQuestions = [];
                   child: Button(
                     label: 'new test',
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                            return TestTypeView(
-                              widget.user,
-                              widget.course!,
-                            );
-                          }));
+                      Navigator.pop(context);
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) {
+                      //       return TestTypeView(
+                      //         widget.user,
+                      //         widget.course!,
+                      //       );
+                      //     }));
                     },
                   ),
                 ),
@@ -695,6 +713,7 @@ class QuestionTabView extends StatefulWidget {
     required this.onQuestionToggled,
     required this.onSelected,
     required this.testTaken,
+    required this.diagnostic,
      this.score = "",
     Key? key,
   }) : super(key: key);
@@ -707,6 +726,7 @@ class QuestionTabView extends StatefulWidget {
    final TestTaken? testTaken;
   final Function onSelected;
   final String score ;
+  bool diagnostic;
 
   @override
   State<QuestionTabView> createState() => _QuestionTabViewState();
@@ -780,6 +800,7 @@ class _QuestionTabViewState extends State<QuestionTabView> {
         return QuestionCard(
           user: widget.user,
           question: question,
+          diagnostic: widget.diagnostic,
           questionNumber: question['position'].toString(),
           isSaved: widget.savedQuestions.contains(question['id']),
           isSelected: widget.selectedQuestions.contains(question),

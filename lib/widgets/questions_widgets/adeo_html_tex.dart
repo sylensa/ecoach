@@ -46,7 +46,7 @@ class AdeoHtmlTex extends StatefulWidget {
 class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
   @override
   void initState() {
-    print(widget.text);
+    // print(widget.text);
     super.initState();
   }
 
@@ -55,7 +55,8 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
     return Padding(
       padding: const EdgeInsets.only(right: 0, left: 0),
       child: Html(
-        data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: widget.removeBr),
+        data: setTexTags(widget.text,
+            removeTags: widget.removeTags, removeBr: widget.removeBr),
         style: {
           "body": Style(
               color: widget.textColor,
@@ -95,16 +96,12 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               fontStyle: widget.fontStyle,
               fontFamily: "Poppins",
               textAlign: TextAlign.center,
-              border: Border.all(color: Colors.grey[200]!, width: 1)
-
-          ),
-
+              border: Border.all(color: Colors.grey[200]!, width: 1)),
 
           'img': Style(
               // width: 400,
               height: 200,
-              padding: EdgeInsets.all(0)
-          ),
+              padding: EdgeInsets.all(0)),
         },
         customRenders: {
           if (widget.useLocalImage)
@@ -114,8 +111,8 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               if (link != null) {
                 String name = link.substring(link.lastIndexOf("/") + 1);
                 name = name.replaceAll("<br/>", "");
-                print("Image: $name");
-                print("link: $link");
+                // print("Image: $name");
+                // print("link: $link");
 
                 return Image.file(
                   widget.user.getImageFile(name),
@@ -125,7 +122,7 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
             }),
           texMatcher():
               CustomRender.widget(widget: (RenderContext context, child) {
-            print(context.tree.element!.text);
+            // print(context.tree.element!.text);
             return Math.tex(
               context.tree.element!.text,
               textStyle: TextStyle(
@@ -179,7 +176,8 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
   @override
   Widget build(BuildContext context) {
     return Html(
-      data: setTexTags(widget.text, removeTags: widget.removeTags, removeBr: false),
+      data: setTexTags(widget.text,
+          removeTags: widget.removeTags, removeBr: false),
       style: {
         "body": Style(
           padding: const EdgeInsets.only(right: 21, left: 10),
@@ -209,7 +207,7 @@ class _AdeoAnswerTexState extends State<AdeoAnswerTex> {
           String? link = context.tree.element!.attributes['src'];
           if (link != null) {
             String name = link.substring(link.lastIndexOf("/") + 1);
-            print("Image: $name");
+            // print("Image: $name");
 
             return Container(
                 decoration: widget.selected
@@ -285,7 +283,7 @@ setTexTags(String? text, {bool removeTags = false, bool removeBr = false}) {
         .replaceAll("<p>", "")
         .replaceAll("<p/>", "")
         .replaceAll("</p>", "");
-    print(text);
+    // print(text);
   }
   return text!.trim();
 }

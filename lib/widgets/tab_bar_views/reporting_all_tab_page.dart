@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ecoach/controllers/average_score_graph.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
@@ -18,17 +19,21 @@ import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/percentage_switch.dart';
 import 'package:ecoach/widgets/widgets.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class AllTabPage extends StatefulWidget {
-  const AllTabPage({
+   AllTabPage({
     required this.course,
     required this.user,
+   required this.rightWidgetState,
+    this.onChangeStatus = false,
     Key? key,
   }) : super(key: key);
   final Course course;
   final User user;
-
+  final String rightWidgetState;
+  bool onChangeStatus;
   @override
   State<AllTabPage> createState() => _AllTabPageState();
 }
@@ -37,6 +42,7 @@ class _AllTabPageState extends State<AllTabPage> {
   late bool showInPercentage;
   dynamic selected = null;
   Future<List<TestTaken>>? tests;
+  List<TestTaken> listTests = [];
 
   handleSelection(test) {
     setState(() {
@@ -57,7 +63,12 @@ class _AllTabPageState extends State<AllTabPage> {
         print("again savedQuestions:${reviewQuestionsBack.length}");
       });
       Navigator.pop(context);
-     goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      print("test.testname:${test.testname}");
+      if(test.testname.toString().toLowerCase() == "test diagnostic"){
+        goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,disgnostic: true,));
+      }else{
+        goTo(context, QuizReviewPage(testTaken: selected,user: widget.user,));
+      }
     }else{
       Navigator.pop(context);
       toastMessage("Question are empty, please download questions");
@@ -69,6 +80,7 @@ class _AllTabPageState extends State<AllTabPage> {
   void initState() {
     super.initState();
     showInPercentage = false;
+    print("object hjjh:${widget.rightWidgetState}");
     tests = TestTakenDB().courseTestsTaken(widget.course.id!);
   }
 
@@ -79,8 +91,12 @@ class _AllTabPageState extends State<AllTabPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: [
+        //graph
+        if(widget.rightWidgetState  == "average")
+        AverageScoreGraph(course:widget.course,rightWidgetState:widget.rightWidgetState ,onChangeStatus: widget.onChangeStatus),
         FutureBuilder(
           future: tests,
           builder: (context, snapshot) {
@@ -104,6 +120,8 @@ class _AllTabPageState extends State<AllTabPage> {
                   );
                 else if (snapshot.data != null) {
                   List<TestTaken> testData = snapshot.data! as List<TestTaken>;
+                  // List<TestTaken> testTakenData = testData;
+                    listTests = testData;
                   inspect(testData);
                   return Expanded(
                     child: testData.length > 0
@@ -229,6 +247,7 @@ class _AllTabPageState extends State<AllTabPage> {
                                   widget.user,
                                   widget.course,
                                   TestType.NONE,
+                                  diagnostic: selected.testname.toString().toLowerCase() == "test diagnostic" ? true : false,
                                   test: selected,
                                 );
                               }),

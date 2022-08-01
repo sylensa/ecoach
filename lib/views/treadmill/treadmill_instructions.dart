@@ -64,6 +64,7 @@ class _InstructionPageState extends State<InstructionPage> {
   void initState() {
     gTime();
     super.initState();
+    print(widget.topicId);
   }
 
   @override
@@ -75,15 +76,20 @@ class _InstructionPageState extends State<InstructionPage> {
         child: InkWell(
           onTap: () async {
             showLoaderDialog(context, message: "Creating Treadmill Run");
+            print(widget.mode);
 
             switch (widget.mode) {
               case TreadmillMode.MOCK:
                 await widget.controller.createTreadmill();
                 break;
               case TreadmillMode.TOPIC:
+                // print(topicId);
+                // return;
                 await widget.controller.createTopicTreadmill(widget.topicId!);
+
                 Topic? topic = await TopicDB().getTopicById(widget.topicId!);
-                widget.controller.name = topic!.name!;
+                widget.controller.name = topic!.name;
+                widget.controller.topicid = widget.topicId!;
                 break;
               case TreadmillMode.BANK:
                 await widget.controller.createBankTreadmill(widget.bankId!);

@@ -68,6 +68,19 @@ class TreadmillDB {
     return treadmill;
   }
 
+  Future<Treadmill?> getAllTreadmill() async {
+    final db = await DBProvider.database;
+
+    var result = await db!.query("treadmills");
+    Treadmill? treadmill = result.isNotEmpty
+        ? Treadmill.fromJson(
+            result.first,
+          )
+        : null;
+
+    return treadmill;
+  }
+
   Future<TreadmillProgress?> getTreadmillProgress(
       int courseId, int questionId) async {
     final Database? db = await DBProvider.database;
@@ -158,7 +171,7 @@ class TreadmillDB {
 
     var result = await db!.query(
       "treadmills",
-      where: "course_id= ? AND status <> ? ",
+      where: "course_id= ? AND status <> ?  ",
       whereArgs: [course.id!, TreadmillStatus.COMPLETED.toString()],
     );
 
@@ -234,6 +247,11 @@ class TreadmillDB {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  deleteAll() async {
+    final db = await DBProvider.database;
+    db!.rawQuery('delete from treadmills');
   }
 
   deleteProgress(int id) async {

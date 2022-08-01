@@ -128,6 +128,98 @@ class TestTakenDB {
     }
     return tests;
   }
+  Future<List<TestTaken>> courseTestsTakenPeriod(String courseId,String period) async {
+    final Database? db = await DBProvider.database;
+     List<Map<String, dynamic>> maps = [];
+    if(period.toLowerCase() == 'all'){
+    maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"'");
+    }else if(period.toLowerCase() == 'daily'){
+      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
+    }else if(period.toLowerCase() == 'weekly'){
+    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
+    }else if(period.toLowerCase() == 'monthly'){
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
+    }
+    print("object maps:$maps");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      test.score = maps[i]["avg_score"];
+      tests.add(test);
+      print("object maps:${test.score}");
+    }
+    return tests;
+  }
+  Future<List<TestTaken>> courseTestsTakenPeriodPoint(String courseId,String period) async {
+    final Database? db = await DBProvider.database;
+     List<Map<String, dynamic>> maps = [];
+    if(period.toLowerCase() == 'all'){
+    maps = await db!.rawQuery("Select *, correct as avg_correct from tests_taken where course_id = '"+ courseId +"'");
+    }else if(period.toLowerCase() == 'daily'){
+      maps = await db!.rawQuery("Select *, AVG(correct) as avg_correct from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
+    }else if(period.toLowerCase() == 'weekly'){
+    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(correct) as avg_correct FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(correct) desc");
+    }else if(period.toLowerCase() == 'monthly'){
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(correct) as avg_correct FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(correct) desc");
+    }
+    print("object maps:$maps");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      test.score = maps[i]["avg_correct"];
+      tests.add(test);
+      print("object maps avg_correct:${test.score}");
+    }
+    return tests;
+  }
+  Future<List<TestTaken>> courseTestsTakenSpeedPoint(String courseId,String period) async {
+    final Database? db = await DBProvider.database;
+     List<Map<String, dynamic>> maps = [];
+    if(period.toLowerCase() == 'all'){
+    maps = await db!.rawQuery("Select *, used_time as avg_used_time,total_questions as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'");
+    }else if(period.toLowerCase() == 'daily'){
+      maps = await db!.rawQuery("Select *, AVG(used_time) as avg_used_time,AVG(total_questions) as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
+    }else if(period.toLowerCase() == 'weekly'){
+    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(used_time) as avg_used_time,AVG(total_questions) as avg_total_questions FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(used_time) desc");
+    }else if(period.toLowerCase() == 'monthly'){
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(used_time) as avg_used_time,AVG(total_questions) as avg_total_questions FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(used_time) desc");
+    }
+    print("object maps:$maps");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      test.score = maps[i]["avg_used_time"]/maps[i]["avg_total_questions"] ;
+      tests.add(test);
+      print("object maps avg_used_time:${test.score}");
+    }
+    return tests;
+  }
+  Future<List<TestTaken>> courseTestsTakenStrengthPoint(String courseId,String period) async {
+    final Database? db = await DBProvider.database;
+     List<Map<String, dynamic>> maps = [];
+    if(period.toLowerCase() == 'all'){
+    maps = await db!.rawQuery("Select *, correct as avg_correct,total_questions as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'");
+    }else if(period.toLowerCase() == 'daily'){
+      maps = await db!.rawQuery("Select *, AVG(correct) as avg_correct,AVG(total_questions) as avg_total_questions  from tests_taken where course_id = '"+ courseId +"'  group by Date(created_at)");
+    }else if(period.toLowerCase() == 'weekly'){
+    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(correct) as avg_correct,AVG(total_questions) as avg_total_questions FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(correct) desc");
+    }else if(period.toLowerCase() == 'monthly'){
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(correct) as avg_correct,AVG(total_questions) as avg_total_questions FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(correct) desc");
+    }
+    print("object maps:$maps");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      test.score = maps[i]["avg_correct"]/maps[i]["avg_total_questions"] ;
+      tests.add(test);
+      print("object maps avg_used_time:${test.score}");
+    }
+    return tests;
+  }
 
   Future<TestTaken?> courseLastTest(int courseId) async {
     final Database? db = await DBProvider.database;

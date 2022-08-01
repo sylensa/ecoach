@@ -42,11 +42,13 @@ class QuizQuestionCopy extends StatefulWidget {
   QuizQuestionCopy({
     Key? key,
     required this.controller,
+    this.topicId,
     // this.questions,
     this.themeColor = kAdeoLightTeal,
   }) : super(key: key);
 
   final TreadmillController controller;
+  int? topicId;
   //final List<Question>? questions;
 
   final Color themeColor;
@@ -64,7 +66,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
 
   late final PageController pageController;
   late TreadmillController controller;
-  int currentQuestion = 0;
+
   List<QuestionWidget> questionWidgets = [];
 
   late TimerController timerController;
@@ -152,18 +154,18 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
             _start--;
           });
         }
-        if (currentQuestion == widget.controller.questions.length - 1) {
+        if (controller.currentQuestion ==
+            widget.controller.questions.length - 1) {
           // mark(position: 19);
           if (value == 1) {
             testTaken = controller.getTest();
-            controller.endTreadmill();
+
             controller.duration = oneSec;
             _timer!.cancel();
             controller.endTime;
 
             currentCorrectScoreState();
             completeQuiz();
-            // saveCompleted();
 
             showDialogOk(
               message: 'Time is up. View Scores.',
@@ -187,7 +189,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
   }
 
   nextButton() async {
-    if (currentQuestion == controller.questions.length - 1) {
+    if (controller.currentQuestion == controller.questions.length - 1) {
       return;
     }
     await Future.delayed(Duration(milliseconds: 200));
@@ -196,7 +198,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
         _timer!.cancel();
         startTimer();
         currentCorrectScoreState();
-        currentQuestion++;
+        controller.currentQuestion++;
 
         pageController.nextPage(
             duration: Duration(milliseconds: 1), curve: Curves.ease);
@@ -247,7 +249,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
     Map<String, dynamic> responses = Map();
     int i = 1;
     controller.questions.forEach((question) {
-      print(question.topicName);
+      //print(question.topicName);
       Map<String, dynamic> answer = {
         "question_id": question.id,
         "topic_id": question.topicId,
@@ -275,10 +277,10 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
       controller.count += widget.controller.questions[i].question!.time!;
     }
 
-    if (controller.count == 0 && currentQuestion == 0) {
+    if (controller.count == 0 && controller.currentQuestion == 0) {
       controller.count = 0;
     } else {
-      controller.count = controller.count / currentQuestion;
+      controller.count = controller.count / controller.currentQuestion;
     }
 
     return controller.count.toStringAsFixed(2);
@@ -290,8 +292,10 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
     //   timerController.pause();
     // }
     if (widget.controller.speedTest) {
-      finalQuestion = currentQuestion;
+      finalQuestion = controller.currentQuestion;
     }
+    widget.controller.endTreadmill();
+    print('++++++++++++++++++++++++++++++');
     setState(() {
       enabled = false;
     });
@@ -371,7 +375,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
 
   currentCorrectScoreState() {
     setState(() {
-      if (controller.questions[currentQuestion].isCorrect) {
+      if (controller.questions[controller.currentQuestion].isCorrect) {
         isCorrect = true;
       } else {
         isCorrect = false;
@@ -396,8 +400,6 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
     startTimer();
     widget.controller.startTest();
 
-    currentQuestion = widget.controller.currentQuestion;
-    print("CURRENT QUESTION ================= $currentQuestion");
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
         adUnitId: "ca-app-pub-3940256099942544/6300978111",
@@ -416,12 +418,13 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
     var dateFormat = DateFormat('h:m:s');
     durationStart =
         dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
-    getAllSaveTestQuestions();
+    //getAllSaveTestQuestions();
     controller = widget.controller;
-    pageController = PageController(initialPage: currentQuestion);
+    pageController = PageController(initialPage: controller.currentQuestion);
     numberingController = ItemScrollController();
     timerController = TimerController();
-    controller.endTreadmill(); //controller.startTest();
+    //controller.endTreadmill();
+    // //controller.startTest();
     Future.delayed(Duration(seconds: 1), () {
       //  startTimer();
     });
@@ -447,7 +450,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
             //   child: AdWidget(ad: _bannerAd,),
             // ),
             if (Platform.isIOS)
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
             Container(
@@ -481,15 +484,15 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                           CircularProgressIndicator(
                             color: Colors.black,
                             strokeWidth: 2,
-                            value: currentQuestion ==
+                            value: controller.currentQuestion ==
                                     controller.questions.length - 1
                                 ? 1
-                                : currentQuestion /
+                                : controller.currentQuestion /
                                     (controller.questions.length - 1),
                           ),
                           Center(
                             child: Text(
-                              "${currentQuestion + 1}",
+                              "${controller.currentQuestion + 1}",
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Color.fromARGB(255, 160, 125, 125),
@@ -504,8 +507,8 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                     onPressed: () async {
                       timerController.pause();
                       await reportModalBottomSheet(context,
-                          question: widget
-                              .controller.questions[currentQuestion].question);
+                          question: widget.controller
+                              .questions[controller.currentQuestion].question);
                     },
                     icon: const Icon(
                       Icons.more_vert,
@@ -643,11 +646,11 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                         swichValue = !swichValue;
                       });
                       insertSaveTestQuestion(
-                          controller.questions[currentQuestion].id!);
+                          controller.questions[controller.currentQuestion].id!);
                     },
                     child: SvgPicture.asset(
-                      savedQuestions.contains(
-                              controller.questions[currentQuestion].id)
+                      savedQuestions.contains(controller
+                              .questions[controller.currentQuestion].id)
                           ? "assets/images/on_switch.svg"
                           : "assets/images/off_switch.svg",
                     ),
@@ -744,8 +747,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                                       onTap: () {
                                         setState(() {
                                           avgTimeComplete();
-                                          // bool succes = await controller
-                                          //     .scoreCurrentQuestion();
+                                          controller.scoreCurrentQuestion();
                                           // print(
                                           //     "countdownInSeconds:$countdownInSeconds");
                                           widget.controller.questions[i]
@@ -765,7 +767,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                                               DateFormat('hh:mm:ss')
                                                   .format(DateTime.now()));
                                           if (!savedTest &&
-                                                  currentQuestion ==
+                                                  controller.currentQuestion ==
                                                       widget
                                                               .controller
                                                               .questions
@@ -773,9 +775,9 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                                                           1 ||
                                               (enabled &&
                                                   controller.speedTest &&
-                                                  currentQuestion ==
+                                                  controller.currentQuestion ==
                                                       finalQuestion)) {
-                                            controller.endTreadmill();
+                                            // widget.controller.endTreadmill();
                                             completeQuiz();
                                             _timer!.cancel();
                                           } else {
@@ -899,16 +901,16 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  if (currentQuestion <
+                  if (controller.currentQuestion <
                           widget.controller.questions.length - 1 &&
                       !(!enabled &&
                           controller.speedTest &&
-                          currentQuestion == finalQuestion))
+                          controller.currentQuestion == finalQuestion))
                     Expanded(
                       child: InkWell(
                         onTap: () {
                           // Get.to(() => const QuizReviewPage());
-                          if (currentQuestion ==
+                          if (controller.currentQuestion ==
                               widget.controller.questions.length - 1) {
                             return;
                           }
@@ -916,7 +918,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                             _timer!.cancel();
                             startTimer();
                             currentCorrectScoreState();
-                            currentQuestion++;
+                            controller.currentQuestion++;
                             getUnAttempted++;
                             avgTimeComplete();
                             pageController.nextPage(
@@ -950,19 +952,19 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
                       ),
                     ),
                   if (!savedTest &&
-                          currentQuestion ==
+                          controller.currentQuestion ==
                               widget.controller.questions.length - 1 ||
                       (enabled &&
                           controller.speedTest &&
-                          currentQuestion == finalQuestion))
+                          controller.currentQuestion == finalQuestion))
                     Expanded(
                       child: InkWell(
                         onTap: () {
                           setState(() {
                             getUnAttempted++;
                           });
-                          widget.controller.endTreadmill();
-                          controller.endTreadmill();
+                          // widget.controller.endTreadmill();
+                          // controller.endTreadmill();
                           completeQuiz();
                           _timer!.cancel();
                         },
@@ -1121,6 +1123,7 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
           const SizedBox(height: 33),
           OutlinedButton(
             onPressed: () {
+              widget.controller.endTreadmill();
               Navigator.pop(context);
               Navigator.pop(context);
             },
@@ -1636,82 +1639,6 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
           );
         });
   }
-
-  // getTimerWidget() {
-  //   return widget.controller.speedTest
-  //       ? Row(
-  //           children: [
-  //             Image(image: AssetImage('assets/images/watch.png')),
-  //             SizedBox(width: 4),
-  //             GestureDetector(
-  //               onTap: Feedback.wrapForTap(() {
-  //                 showPauseDialog();
-  //               }, context),
-  //               child: Container(
-  //                   padding: EdgeInsets.all(4),
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(5),
-  //                     border: Border.all(
-  //                       color: Color(0xFF222E3B),
-  //                       width: 1,
-  //                     ),
-  //                   ),
-  //                   child: AdeoTimer(
-  //                       controller: timerController,
-  //                       startDuration: widget.controller.duration!,
-  //                       callbackWidget: (time) {
-  //                         // if (controller.disableTime) {
-  //                         //   return Image(
-  //                         //       image:
-  //                         //           AssetImage("assets/images/infinite.png"));
-  //                         // }
-
-  //                         Duration remaining = Duration(seconds: time.toInt());
-  //                         widget.controller.duration = remaining;
-  //                         countdownInSeconds = remaining.inSeconds;
-  //                         if (remaining.inSeconds == 0) {
-  //                           return Text("Time Up",
-  //                               style: TextStyle(
-  //                                   color: Colors.amber, fontSize: 12));
-  //                         }
-
-  //                         return Text(
-  //                             "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-  //                             style:
-  //                                 TextStyle(color: Colors.amber, fontSize: 12));
-  //                       },
-  //                       onFinish: () {
-  //                         onEnd();
-  //                       })),
-  //             ),
-  //           ],
-  //         )
-  //       : AdeoTimer(
-  //           controller: timerController,
-  //           startDuration: Duration(minutes: 1000),
-  //           callbackWidget: (time) {
-  //             // if (controller.disableTime) {
-  //             //   return Image(image: AssetImage("assets/images/infinite.png"));
-  //             // }
-  //             Duration remaining = Duration(seconds: time.toInt());
-  //             widget.controller.duration = remaining;
-  //             countdownInSeconds = remaining.inSeconds;
-
-  //             if (remaining.inSeconds == 0) {
-  //               return Text("Time Up",
-  //                   style: TextStyle(color: Colors.amber, fontSize: 14));
-  //             }
-
-  //             return Text(
-  //               "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-  //               style: TextStyle(color: Colors.amber, fontSize: 14),
-  //             );
-  //           },
-  //           onFinish: () {
-  //             onEnd();
-  //           },
-  //         );
-  // }
 
   Future<bool> showPauseDialog() async {
     return (await showDialog<bool>(

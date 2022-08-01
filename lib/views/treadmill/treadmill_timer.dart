@@ -45,6 +45,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
   @override
   void initState() {
     super.initState();
+    print(widget.topicId);
   }
 
   @override
@@ -66,6 +67,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
         padding: const EdgeInsets.fromLTRB(50.0, 50.0, 50.0, 16.0),
         child: InkWell(
           onTap: () async {
+            print(widget.topicId);
             if (_fieldOne.text == "0" &&
                 _fieldTwo.text == "0" &&
                 _fieldThree.text == "0" &&

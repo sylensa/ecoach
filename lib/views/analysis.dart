@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -16,6 +17,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
+import 'package:ecoach/widgets/buttons/arrow_button.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/cards/stats_slider_card.dart';
 import 'package:ecoach/widgets/dropdowns/adeo_dropdown_borderless.dart';
@@ -31,7 +33,9 @@ class AnalysisView extends StatefulWidget {
   final Course? course;
   final User user;
 
-  const AnalysisView({required this.user, this.course, Key? key})
+
+  const AnalysisView({required this.user, this.course,
+    Key? key})
       : super(key: key);
 
   @override
@@ -43,9 +47,12 @@ class _AnalysisViewState extends State<AnalysisView> {
   SubscriptionItem? subscription;
   Future? course;
   bool progressCode = true;
-
+  bool onChangeStatus = false;
+  Future? stats;
+  String rightWidgetState = 'average';
   @override
   void initState() {
+    print("hey");
     unSelectAnsweredQuestions.clear();
     selectAnsweredQuestions.clear();
     SubscriptionItemDB()
@@ -87,6 +94,8 @@ class _AnalysisViewState extends State<AnalysisView> {
       params: {'course_id': jsonEncode(courseId)},
       isList: false,
       create: (data) {
+        setState((){
+        });
         return Report.fromJson(data);
       },
     ).get(context);
@@ -112,6 +121,7 @@ class _AnalysisViewState extends State<AnalysisView> {
                           items: subscriptions,
                           onChanged: (item) {
                             setState(() {
+                              stats = null;
                               subscription = item;
                               course = getCourseById(int.parse(item.tag!));
                             });
@@ -153,7 +163,10 @@ class _AnalysisViewState extends State<AnalysisView> {
                                     );
                                   else if (snapshot.data != null) {
                                     Course c = snapshot.data! as Course;
-                                    Future stats = getCourseStats(c.id!);
+                                    if(stats == null){
+                                      stats = getCourseStats(c.id!);
+                                    }
+
                                     return Expanded(
                                       child: Column(
                                         children: [
@@ -165,25 +178,33 @@ class _AnalysisViewState extends State<AnalysisView> {
                                                 case ConnectionState.none:
                                                 case ConnectionState.waiting:
                                                 case ConnectionState.active:
-                                                  return StatsNonDataWidget(
-                                                    isLoading: true,
-                                                  );
+                                                  if(snapshot.data == null){
+                                                    return StatsNonDataWidget(
+                                                      isLoading: true,
+                                                    );
+                                                  }else{
+                                                    Report stats = snapshot.data as Report;
+                                                    return getStatsBlock(
+                                                        stats,
+                                                        c.packageCode,
+                                                        c
+                                                    );
+                                                  }
+
                                                 case ConnectionState.done:
                                                   if (snapshot.data != null) {
                                                     Report stats = snapshot
                                                         .data! as Report;
                                                     // inspect(snapshot);
-                                                    if (stats.courseStats!
-                                                            .length ==
-                                                        0)
+                                                    if (stats.courseStats!.length == 0)
                                                       return StatsNonDataWidget(
                                                         message:
                                                             'No statistics for this course yet.',
                                                       );
-
                                                     return getStatsBlock(
                                                       stats,
                                                       c.packageCode,
+                                                      c
                                                     );
                                                   } else if (snapshot
                                                       .hasError) {
@@ -213,18 +234,26 @@ class _AnalysisViewState extends State<AnalysisView> {
                                               AllTabPage(
                                                 user: widget.user,
                                                 course: c,
+                                                rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                               ExamsTabPage(
                                                 user: widget.user,
                                                 course: c,
+                                                rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                               TopicsTabPage(
                                                 user: widget.user,
                                                 course: c,
+                                                rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                               OthersTabPage(
                                                 user: widget.user,
                                                 course: c,
+                                                rightWidgetState: rightWidgetState,
+                                                onChangeStatus: onChangeStatus,
                                               ),
                                             ],
                                           ),
@@ -257,88 +286,209 @@ class _AnalysisViewState extends State<AnalysisView> {
       ),
     );
   }
-}
 
-StatsSliderCard getStatsBlock(Report stats, packageCode) {
-  CourseStat courseStat1 = stats.courseStats![0];
-  dynamic courseStat2 =
-      stats.courseStats!.length > 1 ? stats.courseStats![1] : null;
+  getStatsBlock(Report stats, packageCode,Course course) {
+    print("heyyy ${rightWidgetState}");
+    CourseStat courseStat1 = stats.courseStats![0];
+    dynamic courseStat2 =
+    stats.courseStats!.length > 1 ? stats.courseStats![1] : null;
 
-  String getPositionPostfix(int position) {
-    List<String> stringifiedPosition = position.toString().split('');
-    int len = stringifiedPosition.length;
-    dynamic penultimateChar = len >= 2 ? stringifiedPosition[len - 2] : null;
-    String lastChar = stringifiedPosition[len - 1];
+    String getPositionPostfix(int position) {
+      List<String> stringifiedPosition = position.toString().split('');
+      int len = stringifiedPosition.length;
+      dynamic penultimateChar = len >= 2 ? stringifiedPosition[len - 2] : null;
+      String lastChar = stringifiedPosition[len - 1];
 
-    if (lastChar == '1') {
-      if (len >= 2 && penultimateChar == '1')
-        return 'th';
-      else
-        return 'st';
-    } else if (lastChar == '2') {
-      if (len >= 2 && penultimateChar == '1')
-        return 'th';
-      else
-        return 'nd';
-    } else if (lastChar == '3') {
-      if (len >= 2 && penultimateChar == '1')
-        return 'th';
-      else
-        return 'rd';
+      if (lastChar == '1') {
+        if (len >= 2 && penultimateChar == '1')
+          return 'th';
+        else
+          return 'st';
+      } else if (lastChar == '2') {
+        if (len >= 2 && penultimateChar == '1')
+          return 'th';
+        else
+          return 'nd';
+      } else if (lastChar == '3') {
+        if (len >= 2 && penultimateChar == '1')
+          return 'th';
+        else
+          return 'rd';
+      }
+
+      return 'th';
     }
 
-    return 'th';
+    return  StatsSliderCard(
+      items: [
+        Stat(
+          value: courseStat1.avgScore!,
+          statLabel: 'average score',
+          hasDeprecated: courseStat2 != null
+              ? double.parse(courseStat1.avgScore!) <
+              double.parse(courseStat2.avgScore!)
+              : false,
+          hasAppreciated: courseStat2 != null
+              ? double.parse(courseStat1.avgScore!) >
+              double.parse(courseStat2.avgScore!)
+              : true,
+        ),
+        Stat(
+          value: courseStat1.totalCorrectQuestions.toString(),
+          statLabel: 'points',
+        ),
+        Stat(
+          value: '${courseStat1.exposure}%',
+          statLabel: 'exposure',
+        ),
+        Stat(
+          value: '${courseStat1.speed}q/m',
+          statLabel: 'speed',
+        ),
+        Stat(
+          value: AdeoSignalStrengthIndicator(
+            strength: double.parse(courseStat1.avgScore!),
+          ),
+          statLabel: 'strength',
+          hasStandaloneWidgetAsValue: true,
+        ),
+        Stat(
+          value: GradingSystem(
+            score: double.parse(courseStat1.avgScore!),
+            level: packageCode,
+          ).grade,
+          statLabel: 'grade',
+        ),
+        Stat(
+          value: '${courseStat1.rank}${getPositionPostfix(courseStat1.rank!)}',
+          statLabel: 'Rank',
+        ),
+      ],
+
+      onChanged: (page) {
+        print("page:$page");
+        setState(() {
+          switch (page) {
+            case 0:
+              rightWidgetState = 'average';
+              setState((){
+                onChangeStatus = true;
+              });
+              break;
+            case 1:
+              rightWidgetState = 'points';
+              setState((){
+                onChangeStatus = true;
+              });
+              break;
+            case 2:
+              rightWidgetState = 'exposure';
+              break;
+            case 3:
+              rightWidgetState = 'speed';
+              break;
+            case 4:
+              rightWidgetState = 'strength';
+              break;
+            case 5:
+              rightWidgetState = 'grade';
+              break;
+            case 6:
+              rightWidgetState = 'rank';
+              break;
+            default:
+              rightWidgetState = '';
+          }
+        });
+      },
+      course: course,
+    );
   }
 
-  ;
 
-  return StatsSliderCard(
-    items: [
-      Stat(
-        value: courseStat1.avgScore!,
-        statLabel: 'average score',
-        hasDeprecated: courseStat2 != null
-            ? double.parse(courseStat1.avgScore!) <
-                double.parse(courseStat2.avgScore!)
-            : false,
-        hasAppreciated: courseStat2 != null
-            ? double.parse(courseStat1.avgScore!) >
-                double.parse(courseStat2.avgScore!)
-            : true,
-      ),
-      Stat(
-        value: courseStat1.totalCorrectQuestions.toString(),
-        statLabel: 'points',
-      ),
-      Stat(
-        value: '${courseStat1.exposure}%',
-        statLabel: 'exposure',
-      ),
-      Stat(
-        value: '${courseStat1.speed}q/m',
-        statLabel: 'speed',
-      ),
-      Stat(
-        value: AdeoSignalStrengthIndicator(
-          strength: double.parse(courseStat1.avgScore!),
-        ),
-        statLabel: 'strength',
-        hasStandaloneWidgetAsValue: true,
-      ),
-      Stat(
-        value: GradingSystem(
-          score: double.parse(courseStat1.avgScore!),
-          level: packageCode,
-        ).grade,
-        statLabel: 'grade',
-      ),
-      Stat(
-        value: '${courseStat1.rank}${getPositionPostfix(courseStat1.rank!)}',
-        statLabel: 'Rank',
-      ),
-    ],
-  );
 }
+
+// StatsSliderCard getStatsBlock(Report stats, packageCode,Course course) {
+//   CourseStat courseStat1 = stats.courseStats![0];
+//   dynamic courseStat2 =
+//       stats.courseStats!.length > 1 ? stats.courseStats![1] : null;
+//
+//   String getPositionPostfix(int position) {
+//     List<String> stringifiedPosition = position.toString().split('');
+//     int len = stringifiedPosition.length;
+//     dynamic penultimateChar = len >= 2 ? stringifiedPosition[len - 2] : null;
+//     String lastChar = stringifiedPosition[len - 1];
+//
+//     if (lastChar == '1') {
+//       if (len >= 2 && penultimateChar == '1')
+//         return 'th';
+//       else
+//         return 'st';
+//     } else if (lastChar == '2') {
+//       if (len >= 2 && penultimateChar == '1')
+//         return 'th';
+//       else
+//         return 'nd';
+//     } else if (lastChar == '3') {
+//       if (len >= 2 && penultimateChar == '1')
+//         return 'th';
+//       else
+//         return 'rd';
+//     }
+//
+//     return 'th';
+//   }
+//
+//   ;
+//
+//   return StatsSliderCard(
+//     items: [
+//       Stat(
+//         value: courseStat1.avgScore!,
+//         statLabel: 'average score',
+//         hasDeprecated: courseStat2 != null
+//             ? double.parse(courseStat1.avgScore!) <
+//                 double.parse(courseStat2.avgScore!)
+//             : false,
+//         hasAppreciated: courseStat2 != null
+//             ? double.parse(courseStat1.avgScore!) >
+//                 double.parse(courseStat2.avgScore!)
+//             : true,
+//       ),
+//       Stat(
+//         value: courseStat1.totalCorrectQuestions.toString(),
+//         statLabel: 'points',
+//       ),
+//       Stat(
+//         value: '${courseStat1.exposure}%',
+//         statLabel: 'exposure',
+//       ),
+//       Stat(
+//         value: '${courseStat1.speed}q/m',
+//         statLabel: 'speed',
+//       ),
+//       Stat(
+//         value: AdeoSignalStrengthIndicator(
+//           strength: double.parse(courseStat1.avgScore!),
+//         ),
+//         statLabel: 'strength',
+//         hasStandaloneWidgetAsValue: true,
+//       ),
+//       Stat(
+//         value: GradingSystem(
+//           score: double.parse(courseStat1.avgScore!),
+//           level: packageCode,
+//         ).grade,
+//         statLabel: 'grade',
+//       ),
+//       Stat(
+//         value: '${courseStat1.rank}${getPositionPostfix(courseStat1.rank!)}',
+//         statLabel: 'Rank',
+//       ),
+//     ],
+//     course: course,
+//   );
+// }
 
 class StatsNonDataWidget extends StatelessWidget {
   const StatsNonDataWidget({

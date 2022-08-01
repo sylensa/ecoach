@@ -8,7 +8,7 @@ dynamic enumFromString(List values, String? comp) {
   return enumValue;
 }
 
-calculatePercentage(int totalNumberOfQuestions, int correctlyAnswered) {
+calculatePercentage(dynamic totalNumberOfQuestions, dynamic correctlyAnswered) {
   double fraction = correctlyAnswered / totalNumberOfQuestions;
   double percentage = fraction * 100;
   return percentage.toStringAsFixed(1) + '%';

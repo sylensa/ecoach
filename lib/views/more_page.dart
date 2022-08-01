@@ -21,8 +21,10 @@ import 'package:ecoach/views/points/index.dart';
 import 'package:ecoach/views/profile_page.dart';
 import 'package:ecoach/views/saved_questions/saved_bundle_questions.dart';
 import 'package:ecoach/views/subscription_page.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MorePage extends StatefulWidget {
@@ -37,72 +39,80 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   getAgentDetails()async {
-    listAgentData.clear();
-   try{
-     var js = await doGet('${AppUrl.agentPromoCodes}');
-     print("res agentPromoCodes : $js");
-     if (js["status"] && js["data"]["data"].isNotEmpty) {
-       AgentData agentData = AgentData.fromJson(js["data"]);
-       totalCommission = js["total_commissions"];
-       listAgentData.add(agentData);
-       toastMessage("${js["message"]}");
-       Navigator.pop(context);
-       await goTo(context, CommissionAgentPage());
-     }else{
-       Navigator.pop(context);
-       toastMessage("${js["message"]}");
-     }
-   }catch(e){
-     Navigator.pop(context);
-     toastMessage("Failed");
-   }
-  }
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      listAgentData.clear();
+      try{
+        listAgentData = await groupManagementController.getAgentDetails();
+        if (listAgentData.isNotEmpty) {
+          Navigator.pop(context);
+          await goTo(context, CommissionAgentPage());
+        }else{
+          toastMessage("You're not an agent");
+          Navigator.pop(context);
+        }
+      }catch(e){
+        Navigator.pop(context);
+        toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
 
+      showNoConnectionToast(context);
+    }
+
+  }
   getGroupPackList()async {
     listGroupPackageData.clear();
-    try{
-      var js = await doGet('${AppUrl.groupPackages}');
-      print("res groupPackages : $js");
-      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
-        for(int i =0; i < js["data"]["data"].length; i++){
-          GroupPackageData groupPackageData = GroupPackageData.fromJson(js["data"]["data"][i]);
-          listGroupPackageData.add(groupPackageData);
-        }
-        Navigator.pop(context);
-        goTo(context, ContentEditor());
-      }else{
-        Navigator.pop(context);
-        toastMessage("${js["message"]}");
-        goTo(context, ContentEditor());
-      }
-    }catch(e){
-      Navigator.pop(context);
-      toastMessage("Failed");
-    }
-  }
-  getActivePackage()async {
-    listActivePackageData.clear();
-    try{
-      var js = await doGet('${AppUrl.groupActivePackage}');
-      print("res groupActivePackage : $js");
-      if (js["code"].toString() == "200") {
-        ActivePackageData activePackageData = ActivePackageData.fromJson(js["data"]);
-        listActivePackageData.add(activePackageData);
-        if(listGroupPackageData.isEmpty){
-          await getGroupPackList();
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      try{
+        listGroupPackageData = await groupManagementController.getGroupPackList();
+        if (listGroupPackageData.isNotEmpty) {
+          Navigator.pop(context);
+          goTo(context, ContentEditor());
         }else{
           Navigator.pop(context);
           goTo(context, ContentEditor());
         }
-      }else{
+      }catch(e){
         Navigator.pop(context);
-        toastMessage("${js["message"]}");
-        goTo(context, NotContentEditor());
+        toastMessage("Failed");
       }
-    }catch(e){
+    }else{
       Navigator.pop(context);
-      toastMessage("Failed");
+
+      showNoConnectionToast(context);
     }
+
+  }
+  getActivePackage()async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      listActivePackageData.clear();
+      try{
+        listActivePackageData = await groupManagementController.getActivePackage();
+        if (listActivePackageData.isNotEmpty) {
+          if(listGroupPackageData.isEmpty){
+            await getGroupPackList();
+          }else{
+            Navigator.pop(context);
+            goTo(context, ContentEditor());
+          }
+        }else{
+          Navigator.pop(context);
+          goTo(context, NotContentEditor());
+        }
+      }catch(e){
+        Navigator.pop(context);
+        toastMessage("Failed");
+      }
+    }else{
+      Navigator.pop(context);
+
+      showNoConnectionToast(context);
+    }
+
   }
   @override
   Widget build(BuildContext context) {
@@ -351,15 +361,8 @@ class _MorePageState extends State<MorePage> {
                   // MaterialButton(
                   //   padding: EdgeInsets.zero,
                   //   onPressed: ()async{
-                  //         if(listActivePackageData.isNotEmpty){
-                  //           goTo(context, ContentEditor());
-                  //         }else{
-                  //           showLoaderDialog(context, message: "Loading...");
-                  //           await getActivePackage();
-                  //         }
-                  //
-                  //
-                  //
+                  //     showLoaderDialog(context, message: "Loading...");
+                  //     await getActivePackage();
                   //   },
                   //   child: Container(
                   //     padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),

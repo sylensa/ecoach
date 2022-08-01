@@ -226,6 +226,7 @@ class MainController {
         for (int i = 0; i < images.length; i++) {
           ImageFile image = images[i];
           if (image.base64 == null) continue;
+          print("image.name:${image.name}");
           await saveBase64(image.base64!, image.name);
 
           File file = user.getImageFile(image.name);

@@ -25,17 +25,27 @@ class AppUrl {
 
   static String plans = baseURL + "plans";
   static String agentPromoCodes = baseURL + "agent/promo/codes";
+  static String groupTest = baseURL + "group/tests";
   static String groupPackages = baseURL + "group/packages";
+  static String getAnnouncement = baseURL + "group/announcements";
   static String groupActivePackage = baseURL + "group/packages/active";
   static String groupPackagesPaymentInitialization = baseURL + "group/package/paystack/initialize";
   static String groups = baseURL + "groups";
   static String suspendGroupMember = baseURL + "groups/member/suspend";
   static String unSuspendGroupMember = baseURL + "groups/member/unsuspend";
+  static String groupRequestAccept = baseURL + "groups/request/accept";
+  static String groupRequestReject = baseURL + "groups/request/reject";
   static String makeMemberAdmin = baseURL + "groups/member/admin";
   static String makeMemberParticipant = baseURL + "groups/member/participant";
   static String removeMember = baseURL + "groups/member/remove";
 
   static String inviteGroup = baseURL + "groups/invite/user";
+  static String groupInviteAccept = baseURL + "groups/invite/accept";
+  static String groupInviteReject = baseURL + "groups/invite/reject";
+  static String groupInviteRevoke = baseURL + "groups/invite/cancel";
+  static String groupRequestJoin = baseURL + "groups/join/request";
+  static String groupSuspend = baseURL + "group/suspend";
+  static String groupUnSuspend = baseURL + "group/unsuspend";
   static String userPromoCodes = baseURL + "user/promo/codes";
   static String agentTransaction = baseURL + "agent/transactions";
   static String levels = baseURL + "levels";

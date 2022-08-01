@@ -32,7 +32,7 @@ class _CreateGroupState extends State<CreateGroup> {
       GroupListData groupListData = GroupListData.fromJson(res["data"]);
       listGroupListData.add(groupListData);
       Navigator.pop(context);
-      goTo(context, EmptyGroupMembers(groupListData: groupListData,));
+      goTo(context, EmptyGroupMembers(groupListData: groupListData,),replace: true);
     }else{
       Navigator.pop(context);
       toastMessage(res["message"]);

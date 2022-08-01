@@ -209,7 +209,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
     controller = widget.controller;
     print("No of Questions = ${controller.questions.length}");
     controller.startTest();
-    controller.endTreadmill();
+    //controller.endTreadmill();
 
     //countdown = 0;
 

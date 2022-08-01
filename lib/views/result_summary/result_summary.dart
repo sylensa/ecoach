@@ -1,14 +1,54 @@
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/quiz/quiz_cover.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:ecoach/views/result_summary/components/lower_button.dart';
+import 'package:ecoach/views/results.dart';
+import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/speed/speed_quiz_cover.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ResultSummaryScreen extends StatelessWidget {
-  const ResultSummaryScreen({Key? key}) : super(key: key);
+class ResultSummaryScreen extends StatefulWidget {
+  ResultSummaryScreen(
+    this.user,
+    this.course,
+    this.testType, {
+    Key? key,
+    required this.test,
+    required this.testCategory,
+    this.controller,
+    this.history = false,
+    this.diagnostic = false,
+  }) : super(key: key);
 
+  TestTaken test;
+  final User user;
+  final Course course;
+  bool diagnostic;
+  bool history;
+  TestType testType;
+  TestCategory testCategory;
+  QuizController? controller;
+
+  @override
+  State<ResultSummaryScreen> createState() => _ResultSummaryScreenState();
+}
+
+class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     Orientation orientation = MediaQuery.of(context).orientation;
+
     return SafeArea(
       child: Container(
         decoration: const BoxDecoration(
@@ -88,15 +128,18 @@ class ResultSummaryScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: height * 0.03),
-                Text(
-                  "That was some great performance on the test.\n Keep it up",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
-                    fontSize: orientation == Orientation.portrait
-                        ? height * 0.022
-                        : width * 0.025,
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "That was some great performance on the test.\n Keep it up",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: orientation == Orientation.portrait
+                          ? height * 0.022
+                          : width * 0.025,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: height * 0.03),
                 Container(
@@ -123,7 +166,7 @@ class ResultSummaryScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.03),
                       Text(
-                        "74/100",
+                        widget.test.score!.ceil().toString() + "/ 100",
                         style: TextStyle(
                           fontSize: orientation == Orientation.portrait
                               ? height * 0.04
@@ -147,7 +190,19 @@ class ResultSummaryScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.pop(context);
+                          goTo(
+                            context,
+                            ResultsView(
+                              widget.controller!.user,
+                              widget.controller!.course,
+                              widget.controller!.type,
+                              controller: widget.controller,
+                              testCategory: widget.controller!.challengeType,
+                              diagnostic: widget.diagnostic,
+                              test: widget.test,
+                            ),
+                            replace: true,
+                          );
                         },
                         child: const Text('View Details'),
                       ),
@@ -168,6 +223,7 @@ class ResultSummaryScreen extends StatelessWidget {
                       text: "Share",
                       image: "assets/images/share.png",
                       orientation: orientation,
+                      onpress: () {},
                     ),
                     LowerButtons(
                       height: height,
@@ -175,12 +231,66 @@ class ResultSummaryScreen extends StatelessWidget {
                       text: "Re-Test",
                       image: "assets/images/refresh.png",
                       orientation: orientation,
+                      onpress: () async {
+                        List<Question> questions = [];
+                        switch (widget.testCategory) {
+                          case TestCategory.BANK:
+                          case TestCategory.EXAM:
+                          case TestCategory.ESSAY:
+                            questions = await TestController().getQuizQuestions(
+                              widget.test.id!,
+                              limit: 40,
+                            );
+                            break;
+                          case TestCategory.TOPIC:
+                            List<int> topicIds = widget.test.getTopicIds();
+
+                            questions =
+                                await TestController().getTopicQuestions(
+                              topicIds,
+                              limit: () {
+                                if (widget.testType == TestType.CUSTOMIZED)
+                                  return 40;
+                                return widget.testType != TestType.SPEED
+                                    ? 10
+                                    : 1000;
+                              }(),
+                            );
+                            break;
+                          default:
+                            questions =
+                                await TestController().getMockQuestions(0);
+                        }
+                        print(questions.toString());
+                        print(questions.length);
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return QuizCover(
+                                widget.user,
+                                questions,
+                                type: widget.testType,
+                                name: widget.test.testname!,
+                                theme: QuizTheme.ORANGE,
+                                category: widget.testCategory,
+                                time: questions.length * 60,
+                                course: widget.course,
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
                 SizedBox(height: height * 0.03),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Navigator.pop(context);
+                  },
                   child: Text(
                     "Return to Course",
                     style: TextStyle(

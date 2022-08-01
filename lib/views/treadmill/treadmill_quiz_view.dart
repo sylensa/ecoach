@@ -65,7 +65,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     print("CURRENT QUESTION ================= ${controller.currentQuestion}");
 
     controller.startTest();
-    // controller.endTreadmill();
   }
 
   void handleObjectiveSelection(id) {

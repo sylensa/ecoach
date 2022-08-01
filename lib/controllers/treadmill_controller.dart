@@ -202,7 +202,7 @@ class TreadmillController {
     Map<String, dynamic> responses = Map();
     int i = 1;
     questions.forEach((question) {
-      print(question.topicName);
+      // print(question.topicName);
       Map<String, dynamic> answer = {
         "question_id": question.questionId,
         "topic_id": question.topicId,
@@ -246,6 +246,7 @@ class TreadmillController {
       Function(TestTaken? test, bool success) callback) async {
     print('save');
     TestTaken testTaken = TestTaken(
+      //challengeType: ,
       userId: user.id,
       datetime: startTime,
       totalQuestions: questions.length,
@@ -283,8 +284,8 @@ class TreadmillController {
         OfflineSaveController(context, user).saveTestTaken(testTaken);
         callback(null, false);
       }, onCallback: (data) {
-        print('onCallback');
-        print(data);
+        // print('onCallback');
+        // print(data);
         TestController().saveTestTaken(data!);
 
         callback(data, true);
@@ -293,7 +294,8 @@ class TreadmillController {
   }
 
   Future<bool> scoreCurrentQuestion() async {
-    print("scoring...");
+    print("scoring...___________________-------------------------------------");
+    print('j');
     TreadmillProgress mp = questions[currentQuestion];
     Question question = mp.question!;
     if (question.unattempted) {
@@ -303,15 +305,18 @@ class TreadmillController {
     mp.selectedAnswerId = question.selectedAnswer!.id;
     mp.time = DateTime.now().difference(questionTimer).inSeconds;
     print("time=${mp.time}");
-    print(mp.toJson());
+    // print(mp.toJson());
     if (question.isCorrect) {
       mp.status = "correct";
     } else if (question.isWrong) {
       mp.status = "wrong";
+    } else {
+      mp.status = 'skipped';
     }
     treadmill!.avgScore = avgScore;
-    treadmill!.avgTime = avgTime;
-    treadmill!.totalTime = 50; //duration!.inSeconds;
+    treadmill!.topicId = topicid;
+    treadmill!.avgTime = 2;
+    treadmill!.totalTime = 5; //duration!.inSeconds;
     treadmill!.totalCorrect = correct;
     treadmill!.totalWrong = wrong;
     treadmill!.totalQuestions =
@@ -321,23 +326,6 @@ class TreadmillController {
     await TreadmillDB().update(treadmill!);
     await TreadmillDB().updateProgress(mp);
 
-    if (mp.status == "wrong") {
-      TreadmillProgress newMp = TreadmillProgress();
-      newMp.userId = mp.userId;
-      newMp.courseId = mp.courseId;
-      newMp.treadmillId = mp.treadmillId;
-      newMp.topicId = mp.topicId;
-      newMp.topicName = mp.topicName;
-      newMp.questionId = mp.questionId;
-      newMp.question = await QuestionDB().getQuestionById(mp.questionId!);
-
-      int? progressId = await TreadmillDB().insertProgress(newMp);
-      if (progressId != null) newMp.id = progressId;
-      print("++++++++++++++++++");
-      questions.add(newMp);
-      print(newMp.toJson());
-      return false;
-    }
     return true;
   }
 
@@ -401,6 +389,8 @@ class TreadmillController {
       startTime: DateTime.now(),
     );
 
+    print(treadmill!.toJson());
+    //return;
     int treadmillId = await TreadmillDB().insert(treadmill!);
     treadmill!.id = treadmillId;
     List<Question> quesList =
@@ -423,6 +413,8 @@ class TreadmillController {
 
     await TreadmillDB().insertAllProgress(questions);
     questions = await TreadmillDB().getProgresses(treadmillId);
+    // Treadmill? treadmillRes = await TreadmillDB().getAllTreadmill();
+    // print("treadmil res:$treadmillRes");
   }
 
   createBankTreadmill(int bankId) async {
@@ -464,7 +456,7 @@ class TreadmillController {
     treadmill = await TreadmillDB().getCurrentTreadmill(course);
 
     if (treadmill != null) {
-      print(treadmill!.toJson());
+      print("Treadmill:  ${treadmill!.toJson()}");
       int? topicId = treadmill!.topicId;
       if (topicId != null) {
         Topic? topic = await TopicDB().getTopicById(topicId);
@@ -473,9 +465,12 @@ class TreadmillController {
       questions = await TreadmillDB().getProgresses(treadmill!.id!);
       int index = 0;
       for (int i = 0; i < questions.length; i++) {
+        print('-----------------------------------------------------');
         if (questions[i].status == null) {
-          print(questions[i].toJson());
+          // print(questions[i].toJson());
           currentQuestion = index;
+          print(currentQuestion);
+          print('-----------------------------------------------------');
           break;
         }
         index++;
@@ -490,6 +485,7 @@ class TreadmillController {
     treadmill!.status = TreadmillStatus.COMPLETED.toString();
     treadmill!.endTime = DateTime.now();
     TreadmillDB().update(treadmill!);
+    print('=============================');
   }
 
   deleteTreadmill() async {

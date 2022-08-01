@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/topic.dart';
 
-class TreadmillQuestionCount extends StatelessWidget {
+class TreadmillQuestionCount extends StatefulWidget {
   TreadmillQuestionCount({
     this.topics = const [],
     required this.controller,
@@ -30,6 +30,17 @@ class TreadmillQuestionCount extends StatelessWidget {
   Topic? topic;
   final int? bankId;
   final String? bankName;
+
+  @override
+  State<TreadmillQuestionCount> createState() => _TreadmillQuestionCountState();
+}
+
+class _TreadmillQuestionCountState extends State<TreadmillQuestionCount> {
+  @override
+  void initState() {
+    super.initState();
+    print(widget.topicId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +75,14 @@ class TreadmillQuestionCount extends StatelessWidget {
                     children: [
                       SizedBox(height: 40),
                       Text(
-                        count.toString(),
-                        style: TextStyle(
+                        widget.count.toString(),
+                        style: const TextStyle(
                           fontSize: 109,
                           fontWeight: FontWeight.w600,
                           color: kAdeoWhiteAlpha50,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Questions',
                         style: TextStyle(
                           fontSize: 41,
@@ -84,7 +95,7 @@ class TreadmillQuestionCount extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    if (count == 0)
+                    if (widget.count == 0)
                       AdeoFilledButton(
                         color: Colors.white,
                         background: kAdeoLightTeal,
@@ -106,12 +117,12 @@ class TreadmillQuestionCount extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) {
                                 return TreadmillTime(
-                                  controller: controller,
-                                  topic: topic,
-                                  mode: mode,
-                                  topicId: topicId,
-                                  bankId: bankId,
-                                  bankName: bankName,
+                                  controller: widget.controller,
+                                  topic: widget.topic,
+                                  mode: widget.mode,
+                                  topicId: widget.topicId,
+                                  bankId: widget.bankId,
+                                  bankName: widget.bankName,
                                 );
                                 //TreadmillWelcome(
                                 // controller: controller,

@@ -159,13 +159,12 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                                 correctlyAnswered: treadmills[i].correct!,
                                 totalQuestions: treadmills[i].totalQuestions,
                                 activity: treadmills[i].testname!,
-                                activityType:
-                                    treadmills[i].challengeType != null
-                                        ? treadmills[i]
-                                            .challengeType!
-                                            .split('.')[1]
-                                            .toLowerCase()
-                                        : ' ',
+                                activityType: treadmills[i].testType != null
+                                    ? treadmills[i]
+                                        .testType!
+                                        .split('.')[1]
+                                        .toLowerCase()
+                                    : ' ',
                                 showInPercentage: showInPercentage,
                                 isSelected: selected.contains(i + 1),
                                 selectedBackground: kAdeoLightTeal,
@@ -210,7 +209,8 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
           //     child: AdeoTextButton(
           //       label: 'Next',
           //       fontSize: 20,
-          //       background: kAdeoLightTeal,
+          //       bac
+
           //       color: Colors.white,
           //       onPressed: () {
           //         // Navigator.push(
