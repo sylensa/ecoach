@@ -37,10 +37,11 @@ class _TreadmillSaveResumptionMenuState
 
   handleModeSelection(TestMode newMode) {
     setState(() {
-      if (mode == newMode)
+      if (mode == newMode) {
         mode = '';
-      else
+      } else {
         mode = newMode;
+      }
     });
   }
 
@@ -180,7 +181,7 @@ class _TreadmillSaveResumptionMenuState
 }
 
 class Caution extends StatelessWidget {
-  Caution({required this.controller_treadmill});
+  Caution({Key? key, required this.controller_treadmill}) : super(key: key);
   TreadmillController controller_treadmill;
 
   @override
@@ -229,36 +230,38 @@ class Caution extends StatelessWidget {
                 onPressed: () async {
                   showLoaderDialog(context, message: "Deleting Treadmill");
                   //restart
-                  //await controller.restartTreadmill();
+                  await controller_treadmill.restartTreadmill();
 
                   // await controller_treadmill.deleteTreadmill();
-                  controller_treadmill.treadmill!.status =
-                      TreadmillStatus.COMPLETED.toString();
-                  controller_treadmill.treadmill!.endTime = DateTime.now();
-                  TreadmillDB().update(controller_treadmill.treadmill!);
-                  // controller.treadmill;
-                  // await controller.endTreadmill();
-                  List<TreadmillProgress> questions = [];
-                  questions = await TreadmillDB()
-                      .getProgresses(controller_treadmill.treadmill!.id!);
-                  print(questions);
-                  await TreadmillDB()
-                      .delete(controller_treadmill.treadmill!.id!);
-                  for (int i = 0; i < questions.length; i++) {
-                    await TreadmillDB().deleteProgress(questions[i].id!);
-                    //await TreadmillDB().delete(treadmill!.id!);
-                  }
+                  // controller_treadmill.treadmill!.status =
+                  //     TreadmillStatus.COMPLETED.toString();
+                  // controller_treadmill.treadmill!.endTime = DateTime.now();
+                  // TreadmillDB().update(controller_treadmill.treadmill!);
+                  // // controller.treadmill;
+                  // // await controller.endTreadmill();
+                  // List<TreadmillProgress> questions = [];
+                  // questions = await TreadmillDB()
+                  //     .getProgresses(controller_treadmill.treadmill!.id!);
+                  // print(questions);
+                  // await TreadmillDB()
+                  //     .delete(controller_treadmill.treadmill!.id!);
+                  // for (int i = 0; i < questions.length; i++) {
+                  //   await TreadmillDB().deleteProgress(questions[i].id!);
+                  //   //await TreadmillDB().delete(treadmill!.id!);
+                  // }
                   Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
-                      return TreadmillPractiseMenu(
-                        controller: TreadmillController(
-                          controller_treadmill.user,
-                          controller_treadmill.course,
-                          name: controller_treadmill.course.name,
-                        ),
-                      );
+                      return TreadmillCountdown(
+                          controller: controller_treadmill);
+                      // return TreadmillPractiseMenu(
+                      //   controller: TreadmillController(
+                      //     controller_treadmill.user,
+                      //     controller_treadmill.course,
+                      //     name: controller_treadmill.course.name,
+                      //   ),
+                      // );
                     }),
                   );
                 },
