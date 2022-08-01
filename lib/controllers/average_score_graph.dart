@@ -353,7 +353,7 @@ List<FlSpot> testdata = [];
                       top: 24,
                       bottom: 12,
                     ),
-                    height: 250,
+                    height: 200,
                     child: LineChart(
                       LineChartData(
                         minX: 1,
@@ -361,12 +361,14 @@ List<FlSpot> testdata = [];
                         minY: 0,
                         borderData: FlBorderData(
                           show: false,
+
                         ),
                         gridData: FlGridData(
                           show: false,
                         ),
                         titlesData: FlTitlesData(
                           show: true,
+
                           rightTitles: SideTitles(
                             showTitles: false,
                           ),
@@ -389,17 +391,20 @@ List<FlSpot> testdata = [];
                             ),
                             margin: 8,
                             interval: 1,
+
                           ),
                         ),
                         lineBarsData: [
                           LineChartBarData(
                             spots: testdata,
                             isCurved: true,
+                            show: true,
                             colors: [Colors.blue, Colors.green],
                             barWidth: 2,
                             isStrokeCapRound: true,
                             dotData: FlDotData(
                               show: true,
+
                             ),
                             belowBarData: BarAreaData(
                               show: true,
