@@ -651,7 +651,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                   textColor: reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 0 ? Colors.black :
                   reviewQuestionsBack[questionIndex].selectedAnswer == null && answer.value == 1 ? Colors.white :
                   ((reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id && answer.value == 1) ||  answer.value == 1) ||  (reviewQuestionsBack[questionIndex].isCorrect && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id) || (reviewQuestionsBack[questionIndex].isWrong && reviewQuestionsBack[questionIndex].selectedAnswer!.id == answer.id)  ? Colors.white : Colors.black ,
-                  fontSize: 25,
+                  fontSize: 16,
                   // removeTags: answer.text!.contains("src") ? false : true,
                     removeBr: true,
                   fontWeight: reviewQuestionsBack[questionIndex].selectedAnswer == answer ? FontWeight.bold : FontWeight.normal,
