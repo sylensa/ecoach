@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 26, onOpen: (db) {},
+    return await openDatabase(path, version: 27, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -385,6 +385,7 @@ class DBProvider {
         'course_id' int NOT NULL,
         'title' varchar(255)  NOT NULL,
         'type' varchar(255)  NOT NULL,
+        'bank_id' int NULL,
         'topic_id' int NULL,
         'avg_score' double NOT NULL DEFAULT 0,
         'avg_time' double NOT NULL DEFAULT 0,
@@ -404,6 +405,7 @@ class DBProvider {
         'course_id' int NOT NULL,
         'user_id' int NOT NULL,
         'topic_id' int NULL,
+        'bank_id' int NULL,
         'topic_name' varchar(255)  NULL,
         'selected_answer_id' int NULL,
          'time' int NULL DEFAULT 0,
@@ -615,6 +617,80 @@ class DBProvider {
       ) """);
         }
 
+        try{
+          await db.execute("""DROP TABLE 'treadmills'""");
+          await db.execute("""CREATE TABLE 'treadmills' (
+        id INTEGER PRIMARY KEY, 
+        'user_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'title' varchar(255)  NOT NULL,
+        'type' varchar(255)  NOT NULL,
+        'bank_id' int NULL,
+        'topic_id' int NULL,
+        'avg_score' double NOT NULL DEFAULT 0,
+        'avg_time' double NOT NULL DEFAULT 0,
+        'total_questions' int NOT NULL DEFAULT 0,
+        'total_correct' int NOT NULL DEFAULT 0,
+        'total_wrong' int NOT NULL DEFAULT 0,
+        'total_time' int NOT NULL DEFAULT 0,
+        'status' varchar(255)  NOT NULL,
+        'start_time' timestamp NULL DEFAULT NULL,
+        'end_time' timestamp NULL DEFAULT NULL
+      )""");
+        }catch(e){
+          print(e.toString());
+          await db.execute("""CREATE TABLE 'treadmills' (
+        id INTEGER PRIMARY KEY, 
+        'user_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'title' varchar(255)  NOT NULL,
+        'type' varchar(255)  NOT NULL,
+        'bank_id' int NULL,
+        'topic_id' int NULL,
+        'avg_score' double NOT NULL DEFAULT 0,
+        'avg_time' double NOT NULL DEFAULT 0,
+        'total_questions' int NOT NULL DEFAULT 0,
+        'total_correct' int NOT NULL DEFAULT 0,
+        'total_wrong' int NOT NULL DEFAULT 0,
+        'total_time' int NOT NULL DEFAULT 0,
+        'status' varchar(255)  NOT NULL,
+        'start_time' timestamp NULL DEFAULT NULL,
+        'end_time' timestamp NULL DEFAULT NULL
+      )""");
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'treadmill_progress'""");
+
+          await db.execute("""CREATE TABLE 'treadmill_progress' (
+        id INTEGER PRIMARY KEY, 
+        'treadmill_id' int NOT NULL,
+        'question_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'user_id' int NOT NULL,
+        'topic_id' int NULL,
+        'bank_id' int NULL,
+        'topic_name' varchar(255)  NULL,
+        'selected_answer_id' int NULL,
+         'time' int NULL DEFAULT 0,
+        'status' varchar(255)  NULL
+      ) """);
+        }catch(e){
+          print(e.toString());
+          await db.execute("""CREATE TABLE 'treadmill_progress' (
+        id INTEGER PRIMARY KEY, 
+        'treadmill_id' int NOT NULL,
+        'question_id' int NOT NULL,
+        'course_id' int NOT NULL,
+        'user_id' int NOT NULL,
+        'topic_id' int NULL,
+        'bank_id' int NULL,
+        'topic_name' varchar(255)  NULL,
+        'selected_answer_id' int NULL,
+         'time' int NULL DEFAULT 0,
+        'status' varchar(255)  NULL
+      ) """);
+        }
       //   try{
       //     await db.execute("""DROP TABLE 'plan_items'""");
       //     await db.execute("""CREATE TABLE 'plan_items' (
