@@ -274,6 +274,7 @@ class _CourseViewState extends State<CourseView> {
       }, onError: (e) {})
           .get(context);
     } else {
+      if(mounted)
       setState(() {
         progressCode = false;
       });
