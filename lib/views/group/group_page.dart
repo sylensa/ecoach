@@ -1224,12 +1224,11 @@ class _GroupPageState extends State<GroupPage> {
 
           SizedBox(height: 40,),
           listGroupViewData.isNotEmpty ?
-          Expanded(
-            child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (BuildContext context, int index){
-                  if(index == 0){
-                    return Column(
+              Expanded(
+                child: ListView(
+                  children: [
+                    // admin
+                    Column(
                       children: [
                         Theme(
                           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1311,10 +1310,9 @@ class _GroupPageState extends State<GroupPage> {
 
 
                       ],
-                    );
-                  }
-                  else if(index == 1){
-                    return Column(
+                    ),
+                    //members
+                    Column(
                       children: [
                         Theme(
                           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1327,8 +1325,8 @@ class _GroupPageState extends State<GroupPage> {
                             childrenPadding: EdgeInsets.zero,
                             collapsedIconColor: Colors.white,
                             leading:   Container(
-                            child: sText("Members",weight: FontWeight.w500,size: 16),
-                             ) ,
+                              child: sText("Members",weight: FontWeight.w500,size: 16),
+                            ) ,
                             trailing:  Container(
                               child: Icon(Icons.add_circle_outline,color: Colors.black,),
                             ),
@@ -1410,10 +1408,9 @@ class _GroupPageState extends State<GroupPage> {
                         ),
 
                       ],
-                    );
-                  }
-                  else   if(index == 2){
-                    return Column(
+                    ),
+                    // pending
+                    Column(
                       children: [
                         Theme(
                           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1464,7 +1461,7 @@ class _GroupPageState extends State<GroupPage> {
                                               ],
                                             ),
                                             SizedBox(height: 10,),
-                                            listMembers.length -1 != i ?
+                                            listGroupViewData[0].pendingInvites!.length -1 != i ?
                                             Column(
                                               children: [
                                                 Divider(color: kAdeoGray,height: 1,),
@@ -1484,10 +1481,82 @@ class _GroupPageState extends State<GroupPage> {
                         ),
 
                       ],
-                    );
-                  }
-                  else  if(index == 3){
-                    return Column(
+                    ),
+                    // suspended
+                    Column(
+                      children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading: Container(
+                              child: sText("Suspended",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                margin: EdgeInsets.symmetric(horizontal: 20),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5)
+                                ),
+                                child: Column(
+                                  children: [
+                                    for(int i = 0; i< listGroupViewData[0].pendingInvites!.length; i++)
+                                      MaterialButton(
+                                        onPressed: (){
+                                          showRevokeDialog(context: context,message: "Are you sure you want to revoke this invite",userId: listGroupViewData[0].pendingInvites![i].id.toString());
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].pendingInvites![i].email,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("10 days ago",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.horizontal_rule,color: Colors.red,size: 25,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,),
+                                            listGroupViewData[0].pendingInvites!.length -1 != i ?
+                                            Column(
+                                              children: [
+                                                Divider(color: kAdeoGray,height: 1,),
+                                                SizedBox(height: 10,),
+                                              ],
+                                            ) : Container(),
+
+                                          ],
+                                        ),
+                                      ),
+
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    //announcement
+                    Column(
                       children: [
                         Theme(
                           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1509,126 +1578,126 @@ class _GroupPageState extends State<GroupPage> {
 
                             title: Container()  ,
                             children: <Widget>[
-                            GestureDetector(
-                              onTap: (){
-                                announcementModalBottomSheet(context);
-                              },
-                              child: Container(
-                                width: appWidth(context) * 0.75,
-                                child:  sText("New Announcements",weight: FontWeight.w500,size: 16,align: TextAlign.center),
-                                padding: EdgeInsets.symmetric(vertical: 15,horizontal: 30),
-                                decoration: BoxDecoration(
-                                  color: Color(0XFFF0F7FF),
-                                  border: Border.all(color: Color(0XFF489CFF)),
-                                  borderRadius: BorderRadius.circular(10)
+                              GestureDetector(
+                                onTap: (){
+                                  announcementModalBottomSheet(context);
+                                },
+                                child: Container(
+                                  width: appWidth(context) * 0.75,
+                                  child:  sText("New Announcements",weight: FontWeight.w500,size: 16,align: TextAlign.center),
+                                  padding: EdgeInsets.symmetric(vertical: 15,horizontal: 30),
+                                  decoration: BoxDecoration(
+                                      color: Color(0XFFF0F7FF),
+                                      border: Border.all(color: Color(0XFF489CFF)),
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
                                 ),
                               ),
-                            ),
-                                SizedBox(height: 20,),
-                             listAnnouncementData.isNotEmpty ?
-                                Column(
-                                  children: [
-                                    for(int i = 0; i< listAnnouncementData.length; i++)
-                                      MaterialButton(
-                                        padding: EdgeInsets.zero,
-                                        onPressed: (){
-                                          listFiles.clear();
-                                          updateAnnouncementModalBottomSheet(context,listAnnouncementData[i],i);
-                                        },
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius: BorderRadius.circular(5)
-                                              ),
-                                              margin: EdgeInsets.symmetric(horizontal: 20),
-                                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                              SizedBox(height: 20,),
+                              listAnnouncementData.isNotEmpty ?
+                              Column(
+                                children: [
+                                  for(int i = 0; i< listAnnouncementData.length; i++)
+                                    MaterialButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: (){
+                                        listFiles.clear();
+                                        updateAnnouncementModalBottomSheet(context,listAnnouncementData[i],i);
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(5)
+                                            ),
+                                            margin: EdgeInsets.symmetric(horizontal: 20),
+                                            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
 
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    sText(listAnnouncementData[i].user!.name,color: Colors.black,weight: FontWeight.bold),
+                                                    sText(" (${listAnnouncementData[i].user!.role})",color: kAdeoGray2),
+                                                    Expanded(child: Container()),
+                                                    Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                                  ],
+                                                ),
+                                                SizedBox(height: 10,),
+                                                sText( "${StringExtension.displayTimeAgoFromTimestamp(listAnnouncementData[i].createdAt.toString())} ago",color: kAdeoGray2),
+                                                SizedBox(height: 10,),
+                                                Container(
+                                                  child:sText(listAnnouncementData[i].title,color: kAdeoGray3,weight: FontWeight.w500),
+                                                ),
+                                                SizedBox(height: 10,),
+                                                if(listAnnouncementData[i].resources!.isNotEmpty)
+                                                  Column(
                                                     children: [
-                                                     sText(listAnnouncementData[i].user!.name,color: Colors.black,weight: FontWeight.bold),
-                                                     sText(" (${listAnnouncementData[i].user!.role})",color: kAdeoGray2),
-                                                      Expanded(child: Container()),
-                                                      Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                                      CarouselSlider.builder(
+                                                          options: CarouselOptions(
+                                                            height: 200,
+                                                            autoPlay: false,
+                                                            enableInfiniteScroll: false,
+                                                            autoPlayAnimationDuration: Duration(seconds: 1),
+                                                            enlargeCenterPage: false,
+                                                            viewportFraction: 1,
+                                                            aspectRatio: 2.0,
+                                                            pageSnapping: true,
+                                                            onPageChanged: (index, reason) {
+                                                              setState(() {
+                                                                _currentSlide = index;
+                                                              });
+                                                            },
+                                                          ),
+                                                          itemCount: listAnnouncementData[i].resources!.length,
+                                                          itemBuilder: (BuildContext context, int index, int index2) {
+                                                            return ClipRRect(
+                                                              borderRadius: BorderRadius.circular(20),
+                                                              child: Container(
+                                                                child: displayImage(listAnnouncementData[i].resources![index].url,radius: 0,height: 200,width: appWidth(context),),
+                                                              ),
+                                                            );
+                                                          }),
+                                                      // SizedBox(height: 10,),
+                                                      // Padding(
+                                                      //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                      //   child: Row(
+                                                      //     mainAxisAlignment: MainAxisAlignment.center,
+                                                      //     children: map<Widget>(listAnnouncementData[i].resources!.length, (index, url) {
+                                                      //       return Container(
+                                                      //         width: 25,
+                                                      //         height: 3,
+                                                      //         margin: EdgeInsets.only(right: 5),
+                                                      //         decoration: BoxDecoration(color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray),
+                                                      //       );
+                                                      //     }),
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: 10,),
-                                                  sText( "${StringExtension.displayTimeAgoFromTimestamp(listAnnouncementData[i].createdAt.toString())} ago",color: kAdeoGray2),
-                                                  SizedBox(height: 10,),
-                                                  Container(
-                                                    child:sText(listAnnouncementData[i].title,color: kAdeoGray3,weight: FontWeight.w500),
-                                                  ),
-                                                  SizedBox(height: 10,),
-                                                  if(listAnnouncementData[i].resources!.isNotEmpty)
-                                                    Column(
-                                                      children: [
-                                                        CarouselSlider.builder(
-                                                            options: CarouselOptions(
-                                                              height: 200,
-                                                              autoPlay: false,
-                                                              enableInfiniteScroll: false,
-                                                              autoPlayAnimationDuration: Duration(seconds: 1),
-                                                              enlargeCenterPage: false,
-                                                              viewportFraction: 1,
-                                                              aspectRatio: 2.0,
-                                                              pageSnapping: true,
-                                                              onPageChanged: (index, reason) {
-                                                                setState(() {
-                                                                  _currentSlide = index;
-                                                                });
-                                                              },
-                                                            ),
-                                                            itemCount: listAnnouncementData[i].resources!.length,
-                                                            itemBuilder: (BuildContext context, int index, int index2) {
-                                                              return ClipRRect(
-                                                                borderRadius: BorderRadius.circular(20),
-                                                                child: Container(
-                                                                  child: displayImage(listAnnouncementData[i].resources![index].url,radius: 0,height: 200,width: appWidth(context),),
-                                                                ),
-                                                              );
-                                                            }),
-                                                        // SizedBox(height: 10,),
-                                                        // Padding(
-                                                        //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                                                        //   child: Row(
-                                                        //     mainAxisAlignment: MainAxisAlignment.center,
-                                                        //     children: map<Widget>(listAnnouncementData[i].resources!.length, (index, url) {
-                                                        //       return Container(
-                                                        //         width: 25,
-                                                        //         height: 3,
-                                                        //         margin: EdgeInsets.only(right: 5),
-                                                        //         decoration: BoxDecoration(color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray),
-                                                        //       );
-                                                        //     }),
-                                                        //   ),
-                                                        // ),
-                                                      ],
-                                                    ),
 
-                                                ],
-                                              ),
+                                              ],
                                             ),
-                                            listAnnouncementData.length -1 != i ?
-                                            SizedBox(height: 10,child: Container(color: kHomeBackgroundColor,),): Container(),
-                                          ],
-                                        ),
+                                          ),
+                                          listAnnouncementData.length -1 != i ?
+                                          SizedBox(height: 10,child: Container(color: kHomeBackgroundColor,),): Container(),
+                                        ],
                                       ),
+                                    ),
 
 
-                                  ],
-                                ) : Center(child:sText("You've no announcement") ,),
+                                ],
+                              ) : Center(child:sText("You've no announcement") ,),
                             ],
                           ),
                         ),
 
                       ],
-                    );
-                  }else{
-                    return Column(
+                    ),
+                    // test
+                    Column(
                       children: [
                         Theme(
                           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1650,7 +1719,7 @@ class _GroupPageState extends State<GroupPage> {
                             children: <Widget>[
                               GestureDetector(
                                 onTap: (){
-                                 goTo(context, TestCreation());
+                                  goTo(context, TestCreation());
                                 },
                                 child: Container(
                                   width: appWidth(context) * 0.75,
@@ -1714,11 +1783,318 @@ class _GroupPageState extends State<GroupPage> {
                         ),
 
                       ],
-                    );
-                  }
+                    ),
+                    // notes
+                    Column(
+                      children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading:  Container(
+                              child: sText("Notes",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: (){
+                                  goTo(context, TestCreation());
+                                },
+                                child: Container(
+                                  width: appWidth(context) * 0.75,
+                                  child:  sText("New Note",weight: FontWeight.w500,size: 16,align: TextAlign.center),
+                                  padding: EdgeInsets.symmetric(vertical: 15,horizontal: 30),
+                                  decoration: BoxDecoration(
+                                      color: Color(0XFFF0F7FF),
+                                      border: Border.all(color: Color(0XFF489CFF)),
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    displayLocalImage("filePath",radius: 30),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      child: Image.asset("assets/images/tick-mark.png"),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("Admin",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,)
+                                          ],
+                                        ),
 
-            }),
-          ) : progressCode ? Expanded(child: Center(child: progress())) : Expanded(child: Center(child: sText("Group does not exist")))
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    // stats
+                    Column(
+                      children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading:  Container(
+                              child: sText("Stats",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              SizedBox(height: 10,),
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    displayLocalImage("filePath",radius: 30),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      child: Image.asset("assets/images/tick-mark.png"),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("Admin",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,)
+                                          ],
+                                        ),
+
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    // wallet
+                    Column(
+                      children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading:  Container(
+                              child: sText("Wallet",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              SizedBox(height: 10,),
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    displayLocalImage("filePath",radius: 30),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      child: Image.asset("assets/images/tick-mark.png"),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("Admin",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,)
+                                          ],
+                                        ),
+
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                    // Setting
+                    Column(
+                      children: [
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: Colors.white,
+                            initiallyExpanded: false,
+                            maintainState: false,
+                            backgroundColor: kHomeBackgroundColor,
+                            childrenPadding: EdgeInsets.zero,
+                            collapsedIconColor: Colors.white,
+                            leading:  Container(
+                              child: sText("Settings",weight: FontWeight.w500,size: 16),
+                            ),
+                            trailing:  Container(
+                              child: Icon(Icons.add_circle_outline,color: Colors.black,),
+                            ),
+                            title: Container()  ,
+                            children: <Widget>[
+                              SizedBox(height: 10,),
+                              if(listGroupViewData[0].admins!.isNotEmpty)
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      for(int i = 0; i< listGroupViewData[0].admins!.length; i++)
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    displayLocalImage("filePath",radius: 30),
+                                                    Positioned(
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      child: Image.asset("assets/images/tick-mark.png"),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    sText(listGroupViewData[0].admins![i].name,color: Colors.black,weight: FontWeight.w500),
+                                                    SizedBox(height: 5,),
+                                                    sText("Admin",color: kAdeoGray3,size: 12),
+                                                  ],
+                                                ),
+                                                Expanded(child: Container()),
+                                                Icon(Icons.arrow_forward_ios,color: kAdeoGray3,size: 16,)
+                                              ],
+                                            ),
+                                            SizedBox(height: 10,)
+                                          ],
+                                        ),
+
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    )
+                  ],
+                ),
+              )
+              : progressCode ? Expanded(child: Center(child: progress())) : Expanded(child: Center(child: sText("Group does not exist")))
 
         ],
       ),
