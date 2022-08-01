@@ -128,15 +128,18 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                   ),
                 ),
                 SizedBox(height: height * 0.03),
-                Text(
-                  "That was some great performance on the test.\n Keep it up",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
-                    fontSize: orientation == Orientation.portrait
-                        ? height * 0.022
-                        : width * 0.025,
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "That was some great performance on the test.\n Keep it up",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                      fontSize: orientation == Orientation.portrait
+                          ? height * 0.022
+                          : width * 0.025,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: height * 0.03),
                 Container(
@@ -272,11 +275,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                                 name: widget.test.testname!,
                                 theme: QuizTheme.ORANGE,
                                 category: widget.testCategory,
-                                time: widget.test.testTime != null
-                                    ? widget.test.testTime!
-                                    : widget.test.testType == TestType.SPEED
-                                        ? widget.test.testTime!
-                                        : questions.length * 60,
+                                time: questions.length * 60,
                                 course: widget.course,
                               );
                             },
@@ -290,7 +289,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   },
                   child: Text(
                     "Return to Course",
