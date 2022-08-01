@@ -395,6 +395,9 @@ class _QuizQuestionCopyState extends State<QuizQuestionCopy> {
   void initState() {
     startTimer();
     widget.controller.startTest();
+
+    currentQuestion = widget.controller.currentQuestion;
+    print("CURRENT QUESTION ================= $currentQuestion");
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
         adUnitId: "ca-app-pub-3940256099942544/6300978111",

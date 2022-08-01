@@ -62,8 +62,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     pageController = PageController(initialPage: controller.currentQuestion);
 
     print("No of Questions = ${controller.questions.length}");
+    print("CURRENT QUESTION ================= ${controller.currentQuestion}");
+
     controller.startTest();
-    controller.endTreadmill();
+    // controller.endTreadmill();
   }
 
   void handleObjectiveSelection(id) {
@@ -115,14 +117,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     print("timer ended");
     print("timer ended");
     print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
 
-    controller.endTreadmill;
+    controller.endTreadmill();
     Navigator.push(context, MaterialPageRoute(builder: (c) {
       return SpeedQuizEnded(controller: controller);
     }));

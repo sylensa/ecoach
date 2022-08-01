@@ -106,7 +106,7 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    _controller!.endTreadmill();
+                    // _controller!.endTreadmill();
                     Navigator.popUntil(context,
                         ModalRoute.withName(CourseDetailsPage.routeName));
                   },
