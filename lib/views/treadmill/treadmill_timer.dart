@@ -45,6 +45,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
   @override
   void initState() {
     super.initState();
+    print('###############################################3');
     print(widget.topicId);
   }
 

@@ -60,7 +60,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     super.initState();
     controller = widget.controller;
     pageController = PageController(initialPage: controller.currentQuestion);
-
+    controller.endTreadmill();
     print("No of Questions = ${controller.questions.length}");
     print("CURRENT QUESTION ================= ${controller.currentQuestion}");
 

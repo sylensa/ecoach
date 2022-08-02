@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 27, onOpen: (db) {},
+    return await openDatabase(path, version: 28, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -385,7 +385,6 @@ class DBProvider {
         'course_id' int NOT NULL,
         'title' varchar(255)  NOT NULL,
         'type' varchar(255)  NOT NULL,
-        'bank_id' int NULL,
         'topic_id' int NULL,
         'bank_id' int NULL,
         'avg_score' double NOT NULL DEFAULT 0,
@@ -500,11 +499,10 @@ class DBProvider {
         'test_name' varchar(255) NOT NULL,
         'test_score' double NOT NULL
       ) """);
-
-    }, onUpgrade: (db, oldVersion, newVersion)async {
+    }, onUpgrade: (db, oldVersion, newVersion) async {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
-        try{
+        try {
           await db.execute("""DROP TABLE 'test_saved_questions'""");
           await db.execute("""CREATE TABLE 'test_saved_questions' (
         'id' INTEGER PRIMARY KEY,
@@ -526,7 +524,7 @@ class DBProvider {
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0'
       ) """);
-        }catch(e){
+        } catch (e) {
           await db.execute("""CREATE TABLE 'test_saved_questions' (
         'id' INTEGER PRIMARY KEY,
         'course_id' int NOT NULL,
@@ -548,7 +546,7 @@ class DBProvider {
         'deleted' int NOT NULL DEFAULT '0'
       ) """);
         }
-        try{
+        try {
           await db.execute("""DROP TABLE 'review_test_taken'""");
           await db.execute("""CREATE TABLE 'review_test_taken' (
         id INTEGER PRIMARY KEY, 
@@ -562,7 +560,7 @@ class DBProvider {
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       )""");
-        }catch(e){
+        } catch (e) {
           await db.execute("""CREATE TABLE 'review_test_taken' (
         id INTEGER PRIMARY KEY, 
         'user_id' int NOT NULL,
@@ -577,7 +575,7 @@ class DBProvider {
       )""");
         }
 
-        try{
+        try {
           await db.execute("""DROP TABLE 'flag'""");
           await db.execute("""CREATE TABLE 'flag' (
             id INTEGER PRIMARY KEY, 
@@ -585,7 +583,7 @@ class DBProvider {
             'type' varchar(255) NOT NULL,
             'question_id' int NOT NULL
           )""");
-        }catch(e){
+        } catch (e) {
           await db.execute("""CREATE TABLE 'flag' (
             id INTEGER PRIMARY KEY, 
             'reason' varchar(255) NOT NULL,
@@ -593,7 +591,7 @@ class DBProvider {
             'question_id' int NOT NULL
           )""");
         }
-        try{
+        try {
           await db.execute("""DROP TABLE 'topic_analysis'""");
           await db.execute("""CREATE TABLE 'topic_analysis' (
         'id' INTEGER PRIMARY KEY,
@@ -605,7 +603,7 @@ class DBProvider {
         'test_name' varchar(255) NOT NULL,
         'test_score' double NOT NULL
       ) """);
-        }catch(e){
+        } catch (e) {
           await db.execute("""CREATE TABLE 'topic_analysis' (
         'id' INTEGER PRIMARY KEY,
         'name' varchar(255) NOT NULL,
@@ -618,7 +616,7 @@ class DBProvider {
       ) """);
         }
 
-        try{
+        try {
           await db.execute("""DROP TABLE 'treadmills'""");
           await db.execute("""CREATE TABLE 'treadmills' (
         id INTEGER PRIMARY KEY, 
@@ -638,7 +636,7 @@ class DBProvider {
         'start_time' timestamp NULL DEFAULT NULL,
         'end_time' timestamp NULL DEFAULT NULL
       )""");
-        }catch(e){
+        } catch (e) {
           print(e.toString());
           await db.execute("""CREATE TABLE 'treadmills' (
         id INTEGER PRIMARY KEY, 
@@ -660,7 +658,7 @@ class DBProvider {
       )""");
         }
 
-        try{
+        try {
           await db.execute("""DROP TABLE 'treadmill_progress'""");
 
           await db.execute("""CREATE TABLE 'treadmill_progress' (
@@ -676,7 +674,7 @@ class DBProvider {
          'time' int NULL DEFAULT 0,
         'status' varchar(255)  NULL
       ) """);
-        }catch(e){
+        } catch (e) {
           print(e.toString());
           await db.execute("""CREATE TABLE 'treadmill_progress' (
         id INTEGER PRIMARY KEY, 
@@ -692,164 +690,164 @@ class DBProvider {
         'status' varchar(255)  NULL
       ) """);
         }
-      //   try{
-      //     await db.execute("""DROP TABLE 'plan_items'""");
-      //     await db.execute("""CREATE TABLE 'plan_items' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'tag' varchar(255) NOT NULL,
-      //   'plan_id' int unsigned NOT NULL,
-      //   'question_count' int unsigned NOT NULL,
-      //   'quiz_count' int unsigned NOT NULL,
-      //   'topic_count' int unsigned NOT NULL,
-      //   'name' varchar(255) NOT NULL,
-      //   'description' varchar(255) DEFAULT NULL,
-      //   'value' varchar(255) NOT NULL,
-      //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
-      //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
-      //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
-      //   'created_at' timestamp NULL DEFAULT NULL,
-      //   'updated_at' timestamp NULL DEFAULT NULL
-      // ) """);
-      //   }catch(e){
-      //     await db.execute("""CREATE TABLE 'plan_items' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'tag' varchar(255) NOT NULL,
-      //   'plan_id' int unsigned NOT NULL,
-      //   'question_count' int unsigned NOT NULL,
-      //   'quiz_count' int unsigned NOT NULL,
-      //   'topic_count' int unsigned NOT NULL,
-      //   'name' varchar(255) NOT NULL,
-      //   'description' varchar(255) DEFAULT NULL,
-      //   'value' varchar(255) NOT NULL,
-      //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
-      //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
-      //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
-      //   'created_at' timestamp NULL DEFAULT NULL,
-      //   'updated_at' timestamp NULL DEFAULT NULL
-      // ) """);
-      //   }
-      //
-      //   try{
-      //     await db.execute("""DROP TABLE 'plans'""");
-      //     await db.execute("""CREATE TABLE 'plans' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'tag' varchar(255)  NOT NULL,
-      //   'name' varchar(255)  NOT NULL,
-      //   'description' varchar(255)  DEFAULT NULL,
-      //   'is_active' tinyint(1) NOT NULL DEFAULT '1',
-      //   'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
-      //   'price' decimal(8,2) NOT NULL DEFAULT '0.00',
-      //   'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
-      //   'currency' varchar(3)  NOT NULL,
-      //   'trial_period' smallint unsigned NOT NULL DEFAULT '0',
-      //   'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
-      //   'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
-      //   'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
-      //   'tier' mediumint unsigned NOT NULL DEFAULT '0',
-      //   'created_at' timestamp NULL DEFAULT NULL,
-      //   'updated_at' timestamp NULL DEFAULT NULL
-      // ) """);
-      //   }catch(e){
-      //     await db.execute("""CREATE TABLE 'plans' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'tag' varchar(255)  NOT NULL,
-      //   'name' varchar(255)  NOT NULL,
-      //   'description' varchar(255)  DEFAULT NULL,
-      //   'is_active' tinyint(1) NOT NULL DEFAULT '1',
-      //   'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
-      //   'price' decimal(8,2) NOT NULL DEFAULT '0.00',
-      //   'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
-      //   'currency' varchar(3)  NOT NULL,
-      //   'trial_period' smallint unsigned NOT NULL DEFAULT '0',
-      //   'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
-      //   'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
-      //   'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
-      //   'tier' mediumint unsigned NOT NULL DEFAULT '0',
-      //   'created_at' timestamp NULL DEFAULT NULL,
-      //   'updated_at' timestamp NULL DEFAULT NULL
-      // ) """);
-      //   }
+        //   try{
+        //     await db.execute("""DROP TABLE 'plan_items'""");
+        //     await db.execute("""CREATE TABLE 'plan_items' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'tag' varchar(255) NOT NULL,
+        //   'plan_id' int unsigned NOT NULL,
+        //   'question_count' int unsigned NOT NULL,
+        //   'quiz_count' int unsigned NOT NULL,
+        //   'topic_count' int unsigned NOT NULL,
+        //   'name' varchar(255) NOT NULL,
+        //   'description' varchar(255) DEFAULT NULL,
+        //   'value' varchar(255) NOT NULL,
+        //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        //   'created_at' timestamp NULL DEFAULT NULL,
+        //   'updated_at' timestamp NULL DEFAULT NULL
+        // ) """);
+        //   }catch(e){
+        //     await db.execute("""CREATE TABLE 'plan_items' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'tag' varchar(255) NOT NULL,
+        //   'plan_id' int unsigned NOT NULL,
+        //   'question_count' int unsigned NOT NULL,
+        //   'quiz_count' int unsigned NOT NULL,
+        //   'topic_count' int unsigned NOT NULL,
+        //   'name' varchar(255) NOT NULL,
+        //   'description' varchar(255) DEFAULT NULL,
+        //   'value' varchar(255) NOT NULL,
+        //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        //   'created_at' timestamp NULL DEFAULT NULL,
+        //   'updated_at' timestamp NULL DEFAULT NULL
+        // ) """);
+        //   }
+        //
+        //   try{
+        //     await db.execute("""DROP TABLE 'plans'""");
+        //     await db.execute("""CREATE TABLE 'plans' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'tag' varchar(255)  NOT NULL,
+        //   'name' varchar(255)  NOT NULL,
+        //   'description' varchar(255)  DEFAULT NULL,
+        //   'is_active' tinyint(1) NOT NULL DEFAULT '1',
+        //   'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        //   'price' decimal(8,2) NOT NULL DEFAULT '0.00',
+        //   'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
+        //   'currency' varchar(3)  NOT NULL,
+        //   'trial_period' smallint unsigned NOT NULL DEFAULT '0',
+        //   'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
+        //   'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
+        //   'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
+        //   'tier' mediumint unsigned NOT NULL DEFAULT '0',
+        //   'created_at' timestamp NULL DEFAULT NULL,
+        //   'updated_at' timestamp NULL DEFAULT NULL
+        // ) """);
+        //   }catch(e){
+        //     await db.execute("""CREATE TABLE 'plans' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'tag' varchar(255)  NOT NULL,
+        //   'name' varchar(255)  NOT NULL,
+        //   'description' varchar(255)  DEFAULT NULL,
+        //   'is_active' tinyint(1) NOT NULL DEFAULT '1',
+        //   'user_subscribed' tinyint(1) NOT NULL DEFAULT '1',
+        //   'price' decimal(8,2) NOT NULL DEFAULT '0.00',
+        //   'signup_fee' decimal(8,2) NOT NULL DEFAULT '0.00',
+        //   'currency' varchar(3)  NOT NULL,
+        //   'trial_period' smallint unsigned NOT NULL DEFAULT '0',
+        //   'trial_interval' varchar(255)  NOT NULL DEFAULT 'day',
+        //   'invoice_period' smallint unsigned NOT NULL DEFAULT '1',
+        //   'invoice_interval' varchar(255)  NOT NULL DEFAULT 'month',
+        //   'tier' mediumint unsigned NOT NULL DEFAULT '0',
+        //   'created_at' timestamp NULL DEFAULT NULL,
+        //   'updated_at' timestamp NULL DEFAULT NULL
+        // ) """);
+        //   }
 
-      //   try{
-      //     await db.execute("""DROP TABLE 'subscription_items'""");
-      //     await db.execute("""CREATE TABLE 'subscription_items' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'tag' varchar(255) NOT NULL,
-      //   'plan_id' int unsigned NOT NULL,
-      //   'question_count' int unsigned NOT NULL,
-      //   'quiz_count' int unsigned NOT NULL,
-      //   'topic_count' int unsigned NOT NULL,
-      //   'name' varchar(255) NOT NULL,
-      //   'description' varchar(255) DEFAULT NULL,
-      //   'value' varchar(255) NOT NULL,
-      //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
-      //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
-      //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
-      //   'created_at' timestamp NULL DEFAULT NULL,
-      //   'updated_at' timestamp NULL DEFAULT NULL
-      // ) """);
-      //   }catch(e){
-      //     await db.execute("""CREATE TABLE 'subscription_items' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'tag' varchar(255) NOT NULL,
-      //   'plan_id' int unsigned NOT NULL,
-      //   'question_count' int unsigned NOT NULL,
-      //   'quiz_count' int unsigned NOT NULL,
-      //   'topic_count' int unsigned NOT NULL,
-      //   'name' varchar(255) NOT NULL,
-      //   'description' varchar(255) DEFAULT NULL,
-      //   'value' varchar(255) NOT NULL,
-      //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
-      //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
-      //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
-      //   'created_at' timestamp NULL DEFAULT NULL,
-      //   'updated_at' timestamp NULL DEFAULT NULL
-      // ) """);
-      //   }
-      //   try{
-      //     await db.execute("""DROP TABLE 'questions'""");
-      //     await db.execute("""CREATE TABLE 'questions' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'course_id' int NOT NULL,
-      //   'topic_id' int NOT NULL,
-      //   'topic_name' text NULL,
-      //   'qid' varchar(50) NOT NULL,
-      //   'text' text NOT NULL,
-      //   'instructions' text NOT NULL,
-      //   'resource' text NOT NULL,
-      //   'options' text NOT NULL,
-      //   'position' int NOT NULL,
-      //   'time' int NOT NULL,
-      //   'created_at' datetime NOT NULL,
-      //   'updated_at' datetime NOT NULL,
-      //   'qtype' varchar(10) DEFAULT 'SINGLE',
-      //   'confirmed' int NOT NULL DEFAULT '0',
-      //   'public' int NOT NULL DEFAULT '0',
-      //   'flagged' int NOT NULL DEFAULT '0',
-      //   'deleted' int NOT NULL DEFAULT '0'
-      // ) """);
-      //   }catch(e){
-      //     await db.execute("""CREATE TABLE 'questions' (
-      //   'id' INTEGER PRIMARY KEY,
-      //   'course_id' int NOT NULL,
-      //   'topic_id' int NOT NULL,
-      //   'topic_name' text NULL,
-      //   'qid' varchar(50) NOT NULL,
-      //   'text' text NOT NULL,
-      //   'instructions' text NOT NULL,
-      //   'resource' text NOT NULL,
-      //   'options' text NOT NULL,
-      //   'position' int NOT NULL,
-      //   'time' int NOT NULL,
-      //   'created_at' datetime NOT NULL,
-      //   'updated_at' datetime NOT NULL,
-      //   'qtype' varchar(10) DEFAULT 'SINGLE',
-      //   'confirmed' int NOT NULL DEFAULT '0',
-      //   'public' int NOT NULL DEFAULT '0',
-      //   'flagged' int NOT NULL DEFAULT '0',
-      //   'deleted' int NOT NULL DEFAULT '0'
-      // ) """);
-      //   }
+        //   try{
+        //     await db.execute("""DROP TABLE 'subscription_items'""");
+        //     await db.execute("""CREATE TABLE 'subscription_items' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'tag' varchar(255) NOT NULL,
+        //   'plan_id' int unsigned NOT NULL,
+        //   'question_count' int unsigned NOT NULL,
+        //   'quiz_count' int unsigned NOT NULL,
+        //   'topic_count' int unsigned NOT NULL,
+        //   'name' varchar(255) NOT NULL,
+        //   'description' varchar(255) DEFAULT NULL,
+        //   'value' varchar(255) NOT NULL,
+        //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        //   'created_at' timestamp NULL DEFAULT NULL,
+        //   'updated_at' timestamp NULL DEFAULT NULL
+        // ) """);
+        //   }catch(e){
+        //     await db.execute("""CREATE TABLE 'subscription_items' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'tag' varchar(255) NOT NULL,
+        //   'plan_id' int unsigned NOT NULL,
+        //   'question_count' int unsigned NOT NULL,
+        //   'quiz_count' int unsigned NOT NULL,
+        //   'topic_count' int unsigned NOT NULL,
+        //   'name' varchar(255) NOT NULL,
+        //   'description' varchar(255) DEFAULT NULL,
+        //   'value' varchar(255) NOT NULL,
+        //   'resettable_period' smallint unsigned NOT NULL DEFAULT '0',
+        //   'resettable_interval' varchar(255) NOT NULL DEFAULT 'month',
+        //   'sort_order' mediumint unsigned NOT NULL DEFAULT '0',
+        //   'created_at' timestamp NULL DEFAULT NULL,
+        //   'updated_at' timestamp NULL DEFAULT NULL
+        // ) """);
+        //   }
+        //   try{
+        //     await db.execute("""DROP TABLE 'questions'""");
+        //     await db.execute("""CREATE TABLE 'questions' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'course_id' int NOT NULL,
+        //   'topic_id' int NOT NULL,
+        //   'topic_name' text NULL,
+        //   'qid' varchar(50) NOT NULL,
+        //   'text' text NOT NULL,
+        //   'instructions' text NOT NULL,
+        //   'resource' text NOT NULL,
+        //   'options' text NOT NULL,
+        //   'position' int NOT NULL,
+        //   'time' int NOT NULL,
+        //   'created_at' datetime NOT NULL,
+        //   'updated_at' datetime NOT NULL,
+        //   'qtype' varchar(10) DEFAULT 'SINGLE',
+        //   'confirmed' int NOT NULL DEFAULT '0',
+        //   'public' int NOT NULL DEFAULT '0',
+        //   'flagged' int NOT NULL DEFAULT '0',
+        //   'deleted' int NOT NULL DEFAULT '0'
+        // ) """);
+        //   }catch(e){
+        //     await db.execute("""CREATE TABLE 'questions' (
+        //   'id' INTEGER PRIMARY KEY,
+        //   'course_id' int NOT NULL,
+        //   'topic_id' int NOT NULL,
+        //   'topic_name' text NULL,
+        //   'qid' varchar(50) NOT NULL,
+        //   'text' text NOT NULL,
+        //   'instructions' text NOT NULL,
+        //   'resource' text NOT NULL,
+        //   'options' text NOT NULL,
+        //   'position' int NOT NULL,
+        //   'time' int NOT NULL,
+        //   'created_at' datetime NOT NULL,
+        //   'updated_at' datetime NOT NULL,
+        //   'qtype' varchar(10) DEFAULT 'SINGLE',
+        //   'confirmed' int NOT NULL DEFAULT '0',
+        //   'public' int NOT NULL DEFAULT '0',
+        //   'flagged' int NOT NULL DEFAULT '0',
+        //   'deleted' int NOT NULL DEFAULT '0'
+        // ) """);
+        //   }
       }
     });
   }
