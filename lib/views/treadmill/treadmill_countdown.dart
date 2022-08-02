@@ -31,7 +31,8 @@ class _TreadmillCountdownState extends State<TreadmillCountdown> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (c) {
-                    return QuizQuestionCopy(controller: widget.controller);
+                    return TreadmillQuizView(controller: widget.controller);
+                    // return QuizQuestionCopy(controller: widget.controller);
                   }),
                 );
               });

@@ -106,6 +106,7 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    // _controller!.endTreadmill();
                     Navigator.popUntil(context,
                         ModalRoute.withName(CourseDetailsPage.routeName));
                   },
@@ -208,7 +209,8 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
           //     child: AdeoTextButton(
           //       label: 'Next',
           //       fontSize: 20,
-          //       background: kAdeoLightTeal,
+          //       bac
+
           //       color: Colors.white,
           //       onPressed: () {
           //         // Navigator.push(

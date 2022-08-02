@@ -103,8 +103,8 @@ class _InstructionPageState extends State<InstructionPage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return QuizQuestionCopy(
-                    controller: widget.controller, topicId: widget.topicId);
+                return TreadmillQuizView(controller: widget.controller);
+                // return QuizQuestionCopy(controller: widget.controller);
               }),
             );
             //getQ();

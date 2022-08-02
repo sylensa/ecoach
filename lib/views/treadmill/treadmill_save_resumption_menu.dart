@@ -4,8 +4,6 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_countdown.dart';
-import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
-import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -38,10 +36,11 @@ class _TreadmillSaveResumptionMenuState
 
   handleModeSelection(TestMode newMode) {
     setState(() {
-      if (mode == newMode)
+      if (mode == newMode) {
         mode = '';
-      else
+      } else {
         mode = newMode;
+      }
     });
   }
 
@@ -182,7 +181,7 @@ class _TreadmillSaveResumptionMenuState
 }
 
 class Caution extends StatelessWidget {
-  Caution({required this.controller_treadmill, this.topicId});
+  Caution({Key? key, required this.controller_treadmill}) : super(key: key);
   TreadmillController controller_treadmill;
   int? topicId;
 
@@ -234,15 +233,36 @@ class Caution extends StatelessWidget {
                   //restart
                   await controller_treadmill.restartTreadmill();
 
+                  // await controller_treadmill.deleteTreadmill();
+                  // controller_treadmill.treadmill!.status =
+                  //     TreadmillStatus.COMPLETED.toString();
+                  // controller_treadmill.treadmill!.endTime = DateTime.now();
+                  // TreadmillDB().update(controller_treadmill.treadmill!);
+                  // // controller.treadmill;
+                  // // await controller.endTreadmill();
+                  // List<TreadmillProgress> questions = [];
+                  // questions = await TreadmillDB()
+                  //     .getProgresses(controller_treadmill.treadmill!.id!);
+                  // print(questions);
+                  // await TreadmillDB()
+                  //     .delete(controller_treadmill.treadmill!.id!);
+                  // for (int i = 0; i < questions.length; i++) {
+                  //   await TreadmillDB().deleteProgress(questions[i].id!);
+                  //   //await TreadmillDB().delete(treadmill!.id!);
+                  // }
                   Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
                       return TreadmillCountdown(
-                        // course: controller_treadmill.course,
-                        // user: controller_treadmill.user,
-                        controller: controller_treadmill,
-                      );
+                          controller: controller_treadmill);
+                      // return TreadmillPractiseMenu(
+                      //   controller: TreadmillController(
+                      //     controller_treadmill.user,
+                      //     controller_treadmill.course,
+                      //     name: controller_treadmill.course.name,
+                      //   ),
+                      // );
                     }),
                   );
                 },

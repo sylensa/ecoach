@@ -61,7 +61,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
 
     print("No of Questions = ${controller.questions.length}");
     controller.startTest();
-    controller.endMarathon();
+    // controller.endMarathon();
   }
 
   void handleObjectiveSelection(id) {
@@ -108,14 +108,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   onEnd() {
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
-    print("timer ended");
     print("timer ended");
 
     controller.endMarathon();

@@ -485,6 +485,7 @@ class TreadmillController {
     treadmill!.status = TreadmillStatus.COMPLETED.toString();
     treadmill!.endTime = DateTime.now();
     TreadmillDB().update(treadmill!);
+    print(treadmill!.status);
     print('=============================');
   }
 
