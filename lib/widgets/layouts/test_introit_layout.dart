@@ -144,7 +144,7 @@ class TestIntroitLayout extends StatelessWidget {
                   Column(
                     children: [
                       page.footer,
-                      SizedBox(height: 53),
+                      SizedBox(height: 0),
                     ],
                   ),
                 ],
