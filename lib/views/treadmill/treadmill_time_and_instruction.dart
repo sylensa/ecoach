@@ -6,6 +6,7 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view.dart';
+import 'package:ecoach/views/treadmill/treadmill_quiz_view_old.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/pin_input.dart';

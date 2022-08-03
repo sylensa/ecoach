@@ -5,6 +5,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/treadmill/quiz_questions.dart';
 import 'package:ecoach/views/treadmill/quiz_questions_copy.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view.dart';
+import 'package:ecoach/views/treadmill/treadmill_quiz_view_old.dart';
 import 'package:flutter/material.dart';
 
 import '../../database/topics_db.dart';
@@ -104,7 +105,6 @@ class _InstructionPageState extends State<InstructionPage> {
               context,
               MaterialPageRoute(builder: (context) {
                 return TreadmillQuizView(controller: widget.controller);
-                // return QuizQuestionCopy(controller: widget.controller);
               }),
             );
             //getQ();

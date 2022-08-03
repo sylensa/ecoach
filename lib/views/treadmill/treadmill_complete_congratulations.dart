@@ -111,7 +111,7 @@ class _TreadmillCompleteCongratulationsState
                 children: [
                   Text(
                     // 'Net Score: ${controller.treadmill!.totalCorrect! - controller.treadmill!.totalWrong!}'
-                    'Net Score: ${widget.correct - widget.wrong}',
+                    'Net Score: ${widget.controller.getTotalCorrect() - widget.controller.getTotalWrong()}',
                     style: const TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -119,8 +119,8 @@ class _TreadmillCompleteCongratulationsState
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    // '${Duration(seconds: controller.treadmill!.totalTime!).inHours} hrs : ${Duration(seconds: controller.treadmill!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.treadmill!.totalTime!).inSeconds % 60} sec',
-                    '${widget.controller.minutes} min : ${widget.controller.seconds} sec',
+                    '${Duration(seconds: widget.controller.treadmill!.totalTime!).inMinutes % 60} min : ${Duration(seconds: widget.controller.treadmill!.totalTime!).inSeconds % 60} sec',
+                    // '${widget.controller.minutes} min : ${widget.controller.seconds} sec',
                     style: const TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -129,7 +129,7 @@ class _TreadmillCompleteCongratulationsState
                   const SizedBox(height: 12),
                   Text(
                     // '${controller.questions.length} Questions',
-                    '${widget.controller.countQuestions} Questions',
+                    '${widget.controller.questions.length} Questions',
                     style: const TextStyle(
                       fontSize: 15,
                       color: kAdeoBlueAccent,
@@ -146,10 +146,10 @@ class _TreadmillCompleteCongratulationsState
                   // ),
                   QuizStats(
                     changeUp: true,
-                    averageScore: '${widget.avgScore}%',
-                    speed: '${widget.controller.count.toStringAsFixed(2)}s',
-                    correctScore: '${widget.correct}',
-                    wrongScrore: '${widget.wrong}',
+                    averageScore: '${widget.avgScore.toStringAsFixed(2)}%',
+                    speed: '${widget.controller.avgTime.toStringAsFixed(2)}s',
+                    correctScore: '${widget.controller.getTotalCorrect()}',
+                    wrongScrore: '${widget.controller.getTotalWrong()}',
                   ),
                   const SizedBox(height: 20),
                   // AdeoTextButton(

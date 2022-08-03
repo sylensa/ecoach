@@ -315,12 +315,12 @@ class TreadmillController {
     }
     treadmill!.avgScore = avgScore;
     treadmill!.topicId = topicid;
-    treadmill!.avgTime = 2;
-    treadmill!.totalTime = 5; //duration!.inSeconds;
+    treadmill!.avgTime = avgTime;
+    treadmill!.totalTime = countdown; //duration!.inSeconds;
     treadmill!.totalCorrect = correct;
     treadmill!.totalWrong = wrong;
-    treadmill!.totalQuestions =
-        treadmill!.totalCorrect! + treadmill!.totalWrong!;
+    treadmill!.totalQuestions = questions.length;
+    // treadmill!.totalCorrect! + treadmill!.totalWrong!;
     treadmill!.status = TreadmillStatus.IN_PROGRESS.toString();
 
     await TreadmillDB().update(treadmill!);
@@ -484,9 +484,12 @@ class TreadmillController {
   endTreadmill() async {
     treadmill!.status = TreadmillStatus.COMPLETED.toString();
     treadmill!.endTime = DateTime.now();
+    treadmill!.title = name;
+
     TreadmillDB().update(treadmill!);
     print(treadmill!.status);
     print('=============================');
+    print(treadmill!.toJson());
   }
 
   deleteTreadmill() async {
