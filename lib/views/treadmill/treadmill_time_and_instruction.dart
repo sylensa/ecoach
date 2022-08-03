@@ -21,7 +21,6 @@ class TreadmillTimeAndInstruction extends StatefulWidget {
     this.topicId,
     this.bankId,
     this.bankName,
-    this.topic,
   });
 
   final TreadmillController controller;
@@ -29,7 +28,6 @@ class TreadmillTimeAndInstruction extends StatefulWidget {
   final int? bankId;
   final String? bankName;
   final TreadmillMode mode;
-  final Topic? topic;
 
   @override
   State<TreadmillTimeAndInstruction> createState() =>
@@ -38,31 +36,29 @@ class TreadmillTimeAndInstruction extends StatefulWidget {
 
 class _TreadmillTimeAndInstructionState
     extends State<TreadmillTimeAndInstruction> {
-  late FocusNode focusNode, focusNode2, numberFocus;
+  late FocusNode focusNode, focusNode2;
   String durationLeft = '';
   String durationRight = '';
   int timePerQuestion = 0;
 
-  // @override
-  // void setState(VoidCallback fn) {
-  //   if (mounted) super.setState(fn);
-  // }
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
+  }
 
   @override
   void initState() {
     super.initState();
     focusNode = FocusNode();
     focusNode2 = FocusNode();
-    numberFocus = FocusNode();
-    numberFocus.requestFocus();
   }
 
-  // @override
-  // void dispose() {
-  //   focusNode.dispose();
-  //   focusNode2.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    focusNode.dispose();
+    focusNode2.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,25 +72,26 @@ class _TreadmillTimeAndInstructionState
           subText: 'Allocation per question',
           foregroundColor: Colors.white,
           middlePiece: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     width: 120,
                     child: PinInput(
-                      length: 2,
                       focusNode: focusNode,
-                      textColor: Colors.white,
+                      textColor: kAdeoWhiteAlpha81,
+                      length: 2,
                       onChanged: (v) {
-                        setState(() {
-                          durationLeft = v.split('').join('');
-                          if (durationLeft.length > 1) {
-                            focusNode2.requestFocus();
-                          }
-                        });
+                        // String value = v.split('').join('');
+                        inspect(v);
+                        if (v.length > 1) {
+                          setState(() {
+                            durationLeft = v;
+                          });
+                          focusNode2.requestFocus();
+                        }
                       },
                     ),
                   ),
@@ -109,13 +106,16 @@ class _TreadmillTimeAndInstructionState
                     child: PinInput(
                       autoFocus: durationLeft.length == 2,
                       focusNode: focusNode2,
+                      textColor: kAdeoWhiteAlpha81,
                       length: 2,
-                      textColor: Colors.white,
                       onChanged: (v) {
-                        setState(() {
-                          durationRight = v.split('').join('');
-                          print('......Done');
-                        });
+                        print('second');
+                        inspect(v);
+                        if (v.length > 1) {
+                          setState(() {
+                            durationRight = v;
+                          });
+                        }
                       },
                     ),
                   ),

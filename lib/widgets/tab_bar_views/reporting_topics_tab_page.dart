@@ -238,8 +238,8 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                                   widget.user,
                                   widget.course,
                                   TestType.NONE,
-                                  test: selected[0],
-                                  diagnostic: selected[0].testname.toString().toLowerCase() == "test diagnostic" ? true : false,
+                                  test: selected,
+                                  diagnostic: selected.testname.toString().toLowerCase() == "test diagnostic" ? true : false,
                                 );
                               }),
                             );

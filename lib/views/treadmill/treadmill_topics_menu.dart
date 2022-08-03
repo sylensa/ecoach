@@ -159,6 +159,7 @@ class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
                               topic: topic,
                               controller: controller,
                               mode: TreadmillMode.TOPIC,
+
                             );
                           },
                         ),
