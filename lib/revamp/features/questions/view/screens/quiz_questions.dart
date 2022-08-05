@@ -20,6 +20,7 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
+import 'package:ecoach/views/result_summary/below_pass_mark.dart';
 import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
@@ -244,19 +245,50 @@ class _QuizQuestionState extends State<QuizQuestion> {
     print(testTakenSaved != null
         ? testTakenSaved!.toJson().toString()
         : "null test");
-    goTo(
-      context,
-      ResultSummaryScreen(
-        widget.controller.user,
-        widget.controller.course,
-        widget.controller.type,
-        test: testTakenSaved!,
-        diagnostic: widget.diagnostic,
-        controller: widget.controller,
-        testCategory: controller.challengeType,
-      ),
-      replace: true,
-    );
+    if (testTakenSaved != null &&
+        (testTakenSaved?.score)! < 50 &&
+        testTakenSaved?.testType == "speed") {
+      goTo(
+        context,
+        BelowPassMark(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    } else {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    }
+    // goTo(
+    //   context,
+    //   ResultSummaryScreen(
+    //     widget.controller.user,
+    //     widget.controller.course,
+    //     widget.controller.type,
+    //     test: testTakenSaved!,
+    //     diagnostic: widget.diagnostic,
+    //     controller: widget.controller,
+    //     testCategory: controller.challengeType,
+    //   ),
+    //   replace: true,
+    // );
   }
 
   insertSaveTestQuestion(int qid) async {
