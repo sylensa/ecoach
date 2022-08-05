@@ -17,6 +17,7 @@ import 'package:ecoach/views/group/group_list.dart';
 import 'package:ecoach/views/group/test_creation/test_creation.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -31,6 +32,8 @@ class GroupPage extends StatefulWidget {
 }
 
 class _GroupPageState extends State<GroupPage> {
+  final GlobalKey<ExpansionTileCardState> cardA = new GlobalKey();
+
   List<ListNames> listMembers = [
     ListNames(name: "Victor Adatsi", id: "1"),
     ListNames(name: "Samuel Quaye", id: "2"),
@@ -2158,18 +2161,18 @@ class _GroupPageState extends State<GroupPage> {
                                     goTo(context, TestCreation());
                                   },
                                   child: Container(
+                                    margin: EdgeInsets.all(6.0),
                                     decoration: BoxDecoration(
-                                      color:
-                                          Color(0XFF489CFF).withOpacity(0.05),
+                                      color: Color(0xFFF0F7FF),
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                     child: DottedBorder(
-                                      color: const Color(0XFF489CFF),
+                                      color: const Color(0xFF489CFF),
                                       strokeWidth: 1.2,
                                       dashPattern: const [8, 4],
                                       strokeCap: StrokeCap.round,
                                       borderType: BorderType.RRect,
-                                      radius: Radius.circular(8.0),
+                                      radius: const Radius.circular(6.0),
                                       padding: EdgeInsets.symmetric(
                                         vertical:
                                             MediaQuery.of(context).size.height *
@@ -2188,22 +2191,6 @@ class _GroupPageState extends State<GroupPage> {
                                       ),
                                     ),
                                   ),
-
-                                  // child: Container(
-                                  //   width: appWidth(context) * 0.75,
-                                  //   child: sText("New Test",
-                                  //       weight: FontWeight.w500,
-                                  //       size: 16,
-                                  //       align: TextAlign.center),
-                                  //   padding: EdgeInsets.symmetric(
-                                  //       vertical: 15, horizontal: 30),
-                                  //   decoration: BoxDecoration(
-                                  //       color: Color(0XFFF0F7FF),
-                                  //       border: Border.all(
-                                  //           color: Color(0XFF489CFF)),
-                                  //       borderRadius:
-                                  //           BorderRadius.circular(10)),
-                                  // ),
                                 ),
                                 SizedBox(
                                   height: 20,
@@ -2215,23 +2202,187 @@ class _GroupPageState extends State<GroupPage> {
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 20),
                                     decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
                                     child: Column(
                                       children: [
                                         ExpansionTile(
-                                          controlAffinity:
-                                              ListTileControlAffinity.leading,
-                                          childrenPadding:
-                                              const EdgeInsets.symmetric(
-                                            vertical: 10,
-                                            horizontal: 20,
+                                          iconColor: Color(0xFFB5B5B5),
+                                          title: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              RichText(
+                                                text: TextSpan(
+                                                  text: "Victor Adatsi",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Poppins',
+                                                    color: Color(0xFF000000),
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: " (group admin)",
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color:
+                                                            Color(0xFF5A6775),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 6,
+                                              ),
+                                              sText(
+                                                "10 mins ago",
+                                                size: 12,
+                                                color: Color(0xFF5A6775),
+                                              ),
+                                            ],
                                           ),
-                                          expandedCrossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          maintainState: true,
-                                          title: const Text('title'),
-                                        )
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.symmetric(
+                                                vertical: 20,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFF8F8F8)
+                                                    .withOpacity(1),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  width: 1.5,
+                                                  color: Color(0xFF489CFF),
+                                                ),
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ListTile(
+                                                    title: sText(
+                                                      "Test Name",
+                                                      size: 14.0,
+                                                      color: Color(0xFF5A6775),
+                                                    ),
+                                                    subtitle: sText(
+                                                      "Mid-term test 1",
+                                                      weight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  ListTile(
+                                                    title: sText(
+                                                      "Test Source",
+                                                      size: 14.0,
+                                                      color: Color(0xFF5A6775),
+                                                    ),
+                                                    subtitle: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        sText(
+                                                          "Subscription",
+                                                          weight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                        sText(
+                                                          "Physics - wassce 2012",
+                                                          style:
+                                                              FontStyle.italic,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  ListTile(
+                                                    title: sText(
+                                                      "Timing",
+                                                      size: 14.0,
+                                                      color: Color(0xFF5A6775),
+                                                    ),
+                                                    subtitle: sText(
+                                                      "Time per Question",
+                                                      weight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                  ListTile(
+                                                    title: sText(
+                                                      "Test Period",
+                                                      size: 14.0,
+                                                      color: Color(0xFF5A6775),
+                                                    ),
+                                                    subtitle: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        sText(
+                                                          "Exact Time",
+                                                          weight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                        sText(
+                                                            "10:00 am - 22/07/22",
+                                                            style: FontStyle
+                                                                .italic),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  ListTile(
+                                                    title: sText(
+                                                      "Status",
+                                                      size: 14.0,
+                                                      color: Color(0xFF5A6775),
+                                                    ),
+                                                    subtitle: sText(
+                                                      "Active",
+                                                      weight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+
+                                        // Container(
+                                        //   padding: const EdgeInsets.symmetric(
+                                        //     vertical: 0,
+                                        //   ),
+                                        //   child: ExpansionTileCard(
+                                        //     baseColor: Colors.cyan[50],
+                                        //     expandedColor: Colors.red[50],
+                                        //     key: cardA,
+                                        //     title: Text("title"),
+                                        //     subtitle: Text("10 min ago"),
+                                        //     children: <Widget>[
+                                        //       // Divider(
+                                        //       //   thickness: 1.0,
+                                        //       //   height: 1.0,
+                                        //       // ),
+                                        //       Align(
+                                        //         alignment: Alignment.centerLeft,
+                                        //         child: Padding(
+                                        //           padding: const EdgeInsets
+                                        //               .symmetric(
+                                        //             horizontal: 16.0,
+                                        //             vertical: 8.0,
+                                        //           ),
+                                        //           child: Text(
+                                        //             "Flu globe.",
+                                        //             style: Theme.of(context)
+                                        //                 .textTheme
+                                        //                 .bodyText2!
+                                        //                 .copyWith(fontSize: 16),
+                                        //           ),
+                                        //         ),
+                                        //       ),
+                                        //     ],
+                                        //   ),
+                                        // ),
                                         /**
                                          * 
                                          * for (int i = 0;
