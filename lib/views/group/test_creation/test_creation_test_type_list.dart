@@ -84,6 +84,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
             child: sText("Select your source for the test",color: kAdeoGray2,align: TextAlign.center),
           ),
           SizedBox(height: 20,),
+          listTopics.isNotEmpty ?
           Expanded(
             child: ListView.builder(
               itemCount: listTopics.length,
@@ -149,7 +150,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
                   ),
                 );
             }),
-          )
+          ) : Expanded(child: Center(child: sText("No ${properCase(widget.type)}s",weight: FontWeight.w500),))
 
         ],
       ),
