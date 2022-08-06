@@ -37,7 +37,7 @@ class LowerButtons extends StatelessWidget {
           children: [
             Image.asset(
               image,
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white,
               height: orientation == Orientation.portrait
                   ? height * 0.025
                   : width * 0.04,
@@ -45,14 +45,13 @@ class LowerButtons extends StatelessWidget {
                   ? height * 0.025
                   : width * 0.025,
             ),
-            SizedBox(width: width * 0.015),
+            SizedBox(width: width * 0.025),
             Center(
               child: Text(
                 text,
                 style: TextStyle(
-                  fontSize: orientation == Orientation.portrait
-                      ? height * 0.02
-                      : width * 0.022,
+                  fontFamily: 'Poppins',
+                  fontSize: height * 0.02,
                   color: Colors.white,
                 ),
               ),

@@ -202,6 +202,7 @@ Widget sText(String? word,
     int maxLines = 5,
     double? lHeight = 1.2,
     String family = 'Poppins',
+    FontStyle style = FontStyle.normal,
     int shadow = 0}) {
   return Text(
     word ?? '...',
@@ -211,6 +212,7 @@ Widget sText(String? word,
     textAlign: align,
     style: TextStyle(
       height: lHeight,
+      fontStyle: style,
       color: color,
       fontFamily: family,
       fontSize: size,
@@ -454,7 +456,6 @@ InputDecoration textDecorNoBorder(
     enabledBorder: OutlineInputBorder(
       borderSide: BorderSide(color: borderColor, width: 1),
       borderRadius: BorderRadius.circular(radius),
-
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(color: borderColor, width: 1),
@@ -462,7 +463,7 @@ InputDecoration textDecorNoBorder(
     ),
     focusColor: dPurple,
     enabled: enabled,
-    labelStyle: appStyle(size: hintSize,col: hintColor),
+    labelStyle: appStyle(size: hintSize, col: hintColor),
     filled: true,
     fillColor: fill,
     contentPadding: padding,
@@ -471,7 +472,7 @@ InputDecoration textDecorNoBorder(
 
 showDialogOk(
     {String? message,
-      String? title = "Alert",
+    String? title = "Alert",
     BuildContext? context,
     Widget? target,
     bool? status = false,
@@ -717,14 +718,14 @@ doDelete(String urlAfterBase) async {
   print("url: $url");
   var js = await http.delete(url, headers: {'api-token': token});
   var decoded;
-  if(js.statusCode == 200){
+  if (js.statusCode == 200) {
     try {
       decoded = jsonDecode(js.body);
     } catch (e) {
       print("decoded: ${js.body}");
       print(e);
     }
-  }else{
+  } else {
     decoded = js.statusCode.toString();
   }
   return decoded;
@@ -754,6 +755,7 @@ doPost(String urlAfterBase, Map body) async {
   }
   return decoded;
 }
+
 doPut(String urlAfterBase, Map body) async {
   String? token = await UserPreferences().getUserToken();
   token != null ? token = token : token = '';
@@ -912,8 +914,8 @@ customerCare() async {
   }
 }
 
-generateRandom(){
-  var rng =  Random();
+generateRandom() {
+  var rng = Random();
   var code = rng.nextInt(900000) + 100000;
 
   return code;
