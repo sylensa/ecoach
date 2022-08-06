@@ -4,6 +4,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 class TestConfigurations extends StatefulWidget {
   const TestConfigurations({Key? key}) : super(key: key);
@@ -21,7 +22,9 @@ class _TestConfigurationsState extends State<TestConfigurations> {
   double _upperValue = 100;
   DateTime? startDateTime;
   DateTime? dueDateTime;
-
+  bool passMarkOn = false;
+  bool instantResultOn = false;
+  bool reviewOn = false;
 @override
  void  initState(){
   timing = listTiming[0];
@@ -485,6 +488,103 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 20,),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                    margin: EdgeInsets.symmetric(horizontal: 20,),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: sText("Pass mark", size: 16,weight: FontWeight.w500),
+                            ),
+                            FlutterSwitch(
+                              width: 50.0,
+                              height: 20.0,
+                              valueFontSize: 10.0,
+                              toggleSize: 15.0,
+                              value: passMarkOn,
+                              borderRadius: 30.0,
+                              padding: 2.0,
+                              showOnOff: false,
+                              activeColor: Color(0xFF555555),
+                              inactiveColor: Colors.grey[200]!,
+                              inactiveTextColor: Colors.red,
+                              inactiveToggleColor: Colors.white,
+                              onToggle: (val) {
+                                setState(() {
+                                  passMarkOn = val;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: sText("Instant Result", size: 16,weight: FontWeight.w500),
+                            ),
+                            FlutterSwitch(
+                              width: 50.0,
+                              height: 20.0,
+                              valueFontSize: 10.0,
+                              toggleSize: 15.0,
+                              value: instantResultOn,
+                              borderRadius: 30.0,
+                              padding: 2.0,
+                              showOnOff: false,
+                              activeColor: Color(0xFF555555),
+                              inactiveColor: Colors.grey[200]!,
+                              inactiveTextColor: Colors.red,
+                              inactiveToggleColor: Colors.white,
+                              onToggle: (val) {
+                                setState(() {
+                                  instantResultOn = val;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 15,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              child: sText("Review", size: 16,weight: FontWeight.w500),
+                            ),
+                            FlutterSwitch(
+                              width: 50.0,
+                              height: 20.0,
+                              valueFontSize: 10.0,
+                              toggleSize: 15.0,
+                              value: reviewOn,
+                              borderRadius: 30.0,
+                              padding: 2.0,
+                              showOnOff: false,
+                              activeColor: Color(0xFF555555),
+                              inactiveColor: Colors.grey[200]!,
+                              inactiveTextColor: Colors.red,
+                              inactiveToggleColor: Colors.white,
+                              onToggle: (val) {
+                                setState(() {
+                                  reviewOn = val;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
