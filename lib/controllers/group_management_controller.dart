@@ -396,12 +396,13 @@ class GroupManagementController{
      return null;
    }
   }
-  Future<AnnouncementData?>  updateAnnouncement({String title = '',String description = '',String id = ''}) async {
+  Future<AnnouncementData?>  updateAnnouncement(List resources,{String title = '',String description = '',String id = ''}) async {
     AnnouncementData? announcementData;
    try{
-     var res = await doPut("${AppUrl.removeMember}/$id", {
+     var res = await doPut("${AppUrl.getAnnouncement}/$id", {
        "title": title,
-       "description": description,
+       // "description": description,
+       // "resources": resources,
      });
      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
         announcementData = AnnouncementData.fromJson(res["data"]);
