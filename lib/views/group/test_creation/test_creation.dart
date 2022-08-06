@@ -1,8 +1,10 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/test_creation/test_creation_subscriptions.dart';
 import 'package:ecoach/views/group/test_creation/test_creations_courses.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TestCreation extends StatefulWidget {
   const TestCreation({Key? key}) : super(key: key);
@@ -74,7 +76,11 @@ class _TestCreationState extends State<TestCreation> {
                     MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: (){
-                        goTo(context, TestCreationSubscriptions());
+                        if(context.read<DownloadUpdate>().plans.isNotEmpty){
+                          goTo(context, TestCreationSubscriptions());
+                        }else{
+                          toastMessage("You have no subscriptions");
+                        }
                       },
                       child: Container(
                         child: Row(
