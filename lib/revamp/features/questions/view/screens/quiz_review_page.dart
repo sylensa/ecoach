@@ -395,6 +395,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                           child: ExpansionTile(
                             textColor: Colors.white,
                             iconColor: kAdeoGray3,
+                            initiallyExpanded: true,
                             collapsedIconColor: kAdeoGray3,
                             backgroundColor: Color(0xFFEFEFEF),
                             title: Text(
