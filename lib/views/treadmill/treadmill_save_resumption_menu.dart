@@ -4,6 +4,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_countdown.dart';
+import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -51,6 +52,8 @@ class _TreadmillSaveResumptionMenuState
         bool success = await widget.controller.loadTreadmill();
         Navigator.pop(context);
 
+        //return;
+
         if (success) {
           Navigator.push(
             context,
@@ -80,7 +83,6 @@ class _TreadmillSaveResumptionMenuState
           MaterialPageRoute(
             builder: (context) {
               return Caution(
-                //topicId: topicId,
                 controller_treadmill: widget.controller,
               );
             },
@@ -229,9 +231,9 @@ class Caution extends StatelessWidget {
                 color: kAdeoLightTeal,
                 label: 'Continue',
                 onPressed: () async {
-                  showLoaderDialog(context, message: "Restarting Treadmill");
+                  showLoaderDialog(context, message: "Deleting Treadmill");
                   //restart
-                  await controller_treadmill.restartTreadmill();
+                  await controller_treadmill.deleteTreadmill();
 
                   // await controller_treadmill.deleteTreadmill();
                   // controller_treadmill.treadmill!.status =
@@ -254,15 +256,10 @@ class Caution extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
-                      return TreadmillCountdown(
-                          controller: controller_treadmill);
-                      // return TreadmillPractiseMenu(
-                      //   controller: TreadmillController(
-                      //     controller_treadmill.user,
-                      //     controller_treadmill.course,
-                      //     name: controller_treadmill.course.name,
-                      //   ),
-                      // );
+                      return TreadmillIntroit(
+                        controller_treadmill.user,
+                        controller_treadmill.course,
+                      );
                     }),
                   );
                 },

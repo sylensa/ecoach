@@ -50,8 +50,7 @@ class _InstructionPageState extends State<InstructionPage> {
             int.parse(widget.controller.minutes!) * 60;
         widget.controller.countdown_sec = int.parse(widget.controller.seconds!);
         widget.controller.countdown += (widget.controller.countdown_min! +
-                widget.controller.countdown_sec!) *
-            128;
+            widget.controller.countdown_sec!);
         print(
             'mim: ${widget.controller.minutes}, ${widget.controller.countdown_min}');
         print(
@@ -98,7 +97,7 @@ class _InstructionPageState extends State<InstructionPage> {
                 break;
             }
 
-            widget.controller.time = widget.controller.timePerQuestion;
+            widget.controller.time = widget.controller.countdown;
 
             Navigator.pop(context);
             Navigator.push(
