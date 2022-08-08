@@ -21,10 +21,8 @@ import 'package:ecoach/views/points/index.dart';
 import 'package:ecoach/views/profile_page.dart';
 import 'package:ecoach/views/saved_questions/saved_bundle_questions.dart';
 import 'package:ecoach/views/subscription_page.dart';
-import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MorePage extends StatefulWidget {
@@ -38,90 +36,88 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
-  getAgentDetails()async {
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      listAgentData.clear();
-      try{
-        listAgentData = await groupManagementController.getAgentDetails();
-        if (listAgentData.isNotEmpty) {
-          Navigator.pop(context);
-          await goTo(context, CommissionAgentPage());
-        }else{
-          toastMessage("You're not an agent");
-          Navigator.pop(context);
-        }
-      }catch(e){
+  getAgentDetails() async {
+    listAgentData.clear();
+    try {
+      var js = await doGet('${AppUrl.agentPromoCodes}');
+      print("res agentPromoCodes : $js");
+      if (js["status"] && js["data"]["data"].isNotEmpty) {
+        AgentData agentData = AgentData.fromJson(js["data"]);
+        totalCommission = js["total_commissions"];
+        listAgentData.add(agentData);
+        toastMessage("${js["message"]}");
         Navigator.pop(context);
-        toastMessage("Failed");
+        await goTo(context, CommissionAgentPage());
+      } else {
+        Navigator.pop(context);
+        toastMessage("${js["message"]}");
       }
-    }else{
+    } catch (e) {
       Navigator.pop(context);
-
-      showNoConnectionToast(context);
+      toastMessage("Failed");
     }
-
   }
-  getGroupPackList()async {
+
+  getGroupPackList() async {
     listGroupPackageData.clear();
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      try{
-        listGroupPackageData = await groupManagementController.getGroupPackList();
-        if (listGroupPackageData.isNotEmpty) {
-          Navigator.pop(context);
-          goTo(context, ContentEditor());
-        }else{
+    try {
+      var js = await doGet('${AppUrl.groupPackages}');
+      print("res groupPackages : $js");
+      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
+        for (int i = 0; i < js["data"]["data"].length; i++) {
+          GroupPackageData groupPackageData =
+              GroupPackageData.fromJson(js["data"]["data"][i]);
+          listGroupPackageData.add(groupPackageData);
+        }
+        Navigator.pop(context);
+        goTo(context, ContentEditor());
+      } else {
+        Navigator.pop(context);
+        toastMessage("${js["message"]}");
+        goTo(context, ContentEditor());
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      toastMessage("Failed");
+    }
+  }
+
+  getActivePackage() async {
+    listActivePackageData.clear();
+    try {
+      var js = await doGet('${AppUrl.groupActivePackage}');
+      print("res groupActivePackage : $js");
+      if (js["code"].toString() == "200") {
+        ActivePackageData activePackageData =
+            ActivePackageData.fromJson(js["data"]);
+        listActivePackageData.add(activePackageData);
+        if (listGroupPackageData.isEmpty) {
+          await getGroupPackList();
+        } else {
           Navigator.pop(context);
           goTo(context, ContentEditor());
         }
-      }catch(e){
+      } else {
         Navigator.pop(context);
-        toastMessage("Failed");
+        toastMessage("${js["message"]}");
+        goTo(context, NotContentEditor());
       }
-    }else{
+    } catch (e) {
       Navigator.pop(context);
-
-      showNoConnectionToast(context);
+      toastMessage("Failed");
     }
-
   }
-  getActivePackage()async {
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
-    if(isConnected){
-      listActivePackageData.clear();
-      try{
-        listActivePackageData = await groupManagementController.getActivePackage();
-        if (listActivePackageData.isNotEmpty) {
-          if(listGroupPackageData.isEmpty){
-            await getGroupPackList();
-          }else{
-            Navigator.pop(context);
-            goTo(context, ContentEditor());
-          }
-        }else{
-          Navigator.pop(context);
-          goTo(context, NotContentEditor());
-        }
-      }catch(e){
-        Navigator.pop(context);
-        toastMessage("Failed");
-      }
-    }else{
-      Navigator.pop(context);
 
-      showNoConnectionToast(context);
-    }
-
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
         child: Column(
           children: [
-            SizedBox(height: 40,),
+            SizedBox(
+              height: 40,
+            ),
             Container(
               margin: rightPadding(0),
               child: Row(
@@ -141,10 +137,13 @@ class _MorePageState extends State<MorePage> {
                     child: CircleAvatar(
                       radius: 32.0,
                       backgroundColor: Color(0xFF0367B4),
-                      child: Text("${widget.user.initials != null ? widget.user.initials : ""}"),
+                      child: Text(
+                          "${widget.user.initials != null ? widget.user.initials : ""}"),
                     ),
                   ),
-                  SizedBox(width: 10,),
+                  SizedBox(
+                    width: 10,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -159,246 +158,336 @@ class _MorePageState extends State<MorePage> {
                           height: 1.1,
                         ),
                       ),
-                      SizedBox(height: 10,),
-                      Text("${widget.user.name != null ? widget.user.name : ""}",
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "${widget.user.name != null ? widget.user.name : ""}",
                         softWrap: true,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
-                          color:  Color(0XFF2D3E50),
+                          color: Color(0XFF2D3E50),
                           height: 1.1,
                         ),
                       ),
-
                     ],
                   ),
                   Expanded(child: Container()),
                   Container(
                     margin: rightPadding(0),
-                    child: IconButton(onPressed: (){
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (context) {
+                    child: IconButton(
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(context,
+                              MaterialPageRoute(builder: (context) {
                             return Logout();
                           }), (route) => false);
-                    }, icon: Icon(Icons.logout,color: Colors.black,)),
+                        },
+                        icon: Icon(
+                          Icons.logout,
+                          color: Colors.black,
+                        )),
                   )
                 ],
               ),
             ),
-            SizedBox(height: 20,),
-            Divider(color: Colors.grey[200],),
+            SizedBox(
+              height: 20,
+            ),
+            Divider(
+              color: Colors.grey[200],
+            ),
             Expanded(
               flex: 7,
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  if(Platform.isAndroid)
-                  MaterialButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: (){
-                     goTo(context, CoupounMainPage(widget.user));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
-                      child: Row(
-                        children: [
-                          Icon(Icons.card_giftcard,color: Colors.black,),
-                          SizedBox(width: 20,),
-                          Text(
-                            "Coupons",
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500,
-                              color:  Color(0XFF2D3E50),
-                              height: 1.1,
-                              fontFamily: "Poppins"
+                  if (Platform.isAndroid)
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        goTo(context, CoupounMainPage(widget.user));
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 10, right: 20, top: 20, bottom: 20),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.card_giftcard,
+                              color: Colors.black,
                             ),
-                          ),
-                          Expanded(child: Container()),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
-                        ],
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              "Coupons",
+                              softWrap: true,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0XFF2D3E50),
+                                  height: 1.1,
+                                  fontFamily: "Poppins"),
+                            ),
+                            Expanded(child: Container()),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.grey[400],
+                              size: 16,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                   MaterialButton(
                     padding: EdgeInsets.zero,
-                    onPressed: (){
-                      goTo(context, SubscriptionPage(widget.user,controller: widget.controller,));
+                    onPressed: () {
+                      goTo(
+                          context,
+                          SubscriptionPage(
+                            widget.user,
+                            controller: widget.controller,
+                          ));
                     },
                     child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 20, top: 20, bottom: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.video_collection,color: Colors.black,),
-                              SizedBox(width: 20,),
+                              Icon(
+                                Icons.video_collection,
+                                color: Colors.black,
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
                               Text(
-                               Platform.isAndroid ? "Subscriptions" : "Courses",
+                                Platform.isAndroid
+                                    ? "Subscriptions"
+                                    : "Courses",
                                 softWrap: true,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.w500,
-                                    color:  Color(0XFF2D3E50),
+                                    color: Color(0XFF2D3E50),
                                     height: 1.1,
-                                    fontFamily: "Poppins"
-                                ),
+                                    fontFamily: "Poppins"),
                               ),
                             ],
                           ),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey[400],
+                            size: 16,
+                          )
                         ],
                       ),
                     ),
                   ),
                   MaterialButton(
                     padding: EdgeInsets.zero,
-                    onPressed: (){
-                      goTo(context, SavedQuestionsPage(widget.user,controller: widget.controller,));
+                    onPressed: () {
+                      goTo(
+                          context,
+                          SavedQuestionsPage(
+                            widget.user,
+                            controller: widget.controller,
+                          ));
                     },
                     child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 20, top: 20, bottom: 20),
                       child: Row(
                         children: [
-                          Icon(Icons.bookmark,color: Colors.black,),
-                          SizedBox(width: 20,),
+                          Icon(
+                            Icons.bookmark,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
                           Text(
-                             "Saved Questions",
+                            "Saved Questions",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w500,
-                                color:  Color(0XFF2D3E50),
+                                color: Color(0XFF2D3E50),
                                 height: 1.1,
-                                fontFamily: "Poppins"
-                            ),
+                                fontFamily: "Poppins"),
                           ),
                           Expanded(child: Container()),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey[400],
+                            size: 16,
+                          )
                         ],
                       ),
                     ),
                   ),
-                  if(Platform.isAndroid)
-                  MaterialButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: (){
-                     goTo(context, PointsMainPage(widget.user));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
-                      child: Row(
-                        children: [
-                          Icon(Icons.stars_rounded,color: Colors.black,),
-                          SizedBox(width: 20,),
-                          Text(
-                             "Points",
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                color:  Color(0XFF2D3E50),
-                                height: 1.1,
-                                fontFamily: "Poppins"
+                  if (Platform.isAndroid)
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        goTo(context, PointsMainPage(widget.user));
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: 10, right: 20, top: 20, bottom: 20),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.stars_rounded,
+                              color: Colors.black,
                             ),
-                          ),
-                          Expanded(child: Container()),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
-                        ],
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              "Points",
+                              softWrap: true,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0XFF2D3E50),
+                                  height: 1.1,
+                                  fontFamily: "Poppins"),
+                            ),
+                            Expanded(child: Container()),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.grey[400],
+                              size: 16,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                   MaterialButton(
                     padding: EdgeInsets.zero,
-                    onPressed: ()async{
-                      if(widget.user.isAgent != null){
-                        if(widget.user.isAgent! && listAgentData.isNotEmpty){
+                    onPressed: () async {
+                      if (widget.user.isAgent != null) {
+                        if (widget.user.isAgent! && listAgentData.isNotEmpty) {
                           showLoaderDialog(context, message: "Loading...");
                           await getAgentDetails();
                           // await goTo(context, CommissionAgentPage());
-                        }else if (widget.user.isAgent!){
+                        } else if (widget.user.isAgent!) {
                           showLoaderDialog(context, message: "Loading...");
                           await getAgentDetails();
-                        }else{
+                        } else {
                           goTo(context, CommissionPage());
                         }
-                      }else{
+                      } else {
                         goTo(context, CommissionPage());
                       }
-
                     },
                     child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 20, top: 20, bottom: 20),
                       child: Row(
                         children: [
-                          Icon(Icons.monetization_on,color: Colors.black,),
-                          SizedBox(width: 20,),
+                          Icon(
+                            Icons.monetization_on,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
                           Text(
-                           "Commissions",
+                            "Commissions",
                             softWrap: true,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w500,
-                                color:  Color(0XFF2D3E50),
+                                color: Color(0XFF2D3E50),
                                 height: 1.1,
-                                fontFamily: "Poppins"
-                            ),
+                                fontFamily: "Poppins"),
                           ),
                           Expanded(child: Container()),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey[400],
+                            size: 16,
+                          )
                         ],
                       ),
                     ),
                   ),
-                  // MaterialButton(
-                  //   padding: EdgeInsets.zero,
-                  //   onPressed: ()async{
-                  //     showLoaderDialog(context, message: "Loading...");
-                  //     await getActivePackage();
-                  //   },
-                  //   child: Container(
-                  //     padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
-                  //     child: Row(
-                  //       children: [
-                  //         Icon(Icons.group,color: Colors.black,),
-                  //         SizedBox(width: 20,),
-                  //         Text(
-                  //           "Group Management",
-                  //           softWrap: true,
-                  //           textAlign: TextAlign.center,
-                  //           style: TextStyle(
-                  //               fontSize: 18.0,
-                  //               fontWeight: FontWeight.w500,
-                  //               color:  Color(0XFF2D3E50),
-                  //               height: 1.1,
-                  //               fontFamily: "Poppins"
-                  //           ),
-                  //         ),
-                  //         Expanded(child: Container()),
-                  //         Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                   MaterialButton(
                     padding: EdgeInsets.zero,
-                    onPressed: (){
-                      goTo(context, ProfilePage(user: widget.user,));
+                    onPressed: () async {
+                      if (listActivePackageData.isNotEmpty) {
+                        goTo(context, ContentEditor());
+                      } else {
+                        showLoaderDialog(context, message: "Loading...");
+                        await getActivePackage();
+                      }
                     },
                     child: Container(
-                      padding: EdgeInsets.only(left: 10,right: 20,top: 20,bottom: 20),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 20, top: 20, bottom: 20),
                       child: Row(
                         children: [
-                          Icon(Icons.person,color: Colors.black,),
-                          SizedBox(width: 20,),
+                          Icon(
+                            Icons.group,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            "Group Management",
+                            softWrap: true,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0XFF2D3E50),
+                                height: 1.1,
+                                fontFamily: "Poppins"),
+                          ),
+                          Expanded(child: Container()),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey[400],
+                            size: 16,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      goTo(
+                          context,
+                          ProfilePage(
+                            user: widget.user,
+                          ));
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: 10, right: 20, top: 20, bottom: 20),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
                           Text(
                             "Profile",
                             softWrap: true,
@@ -406,13 +495,16 @@ class _MorePageState extends State<MorePage> {
                             style: TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w500,
-                                color:  Color(0XFF2D3E50),
+                                color: Color(0XFF2D3E50),
                                 height: 1.1,
-                                fontFamily: "Poppins"
-                            ),
+                                fontFamily: "Poppins"),
                           ),
                           Expanded(child: Container()),
-                          Icon(Icons.arrow_forward_ios,color: Colors.grey[400],size: 16,)
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey[400],
+                            size: 16,
+                          )
                         ],
                       ),
                     ),
@@ -423,21 +515,25 @@ class _MorePageState extends State<MorePage> {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: ()async{
+                onTap: () async {
                   customerCare();
                 },
                 child: Container(
                   padding: EdgeInsets.all(0),
-                  margin: EdgeInsets.only(bottom: 30,right: 20,left: 20),
+                  margin: EdgeInsets.only(bottom: 30, right: 20, left: 20),
                   decoration: BoxDecoration(
-                    color: Color(0xFFddfffc),
-                    borderRadius: BorderRadius.circular(10)
-                  ),
+                      color: Color(0xFFddfffc),
+                      borderRadius: BorderRadius.circular(10)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.headset_mic_outlined,color: Color(0xFF00C9B9),),
-                      SizedBox(width: 20,),
+                      Icon(
+                        Icons.headset_mic_outlined,
+                        color: Color(0xFF00C9B9),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
                       Text(
                         "How can we help you?",
                         softWrap: true,
@@ -447,8 +543,7 @@ class _MorePageState extends State<MorePage> {
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF00C9B9),
                             height: 1.1,
-                            fontFamily: "Poppins"
-                        ),
+                            fontFamily: "Poppins"),
                       ),
                     ],
                   ),

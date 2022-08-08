@@ -1,32 +1,28 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
-import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
-import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:ecoach/views/result_summary/components/lower_button.dart';
-import 'package:ecoach/views/results.dart';
 import 'package:ecoach/views/results_ui.dart';
-import 'package:ecoach/views/speed/speed_quiz_cover.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/models/course.dart';
 
-class ResultSummaryScreen extends StatefulWidget {
-  ResultSummaryScreen(
+class BelowPassMark extends StatefulWidget {
+  BelowPassMark(
     this.user,
     this.course,
     this.testType, {
-    Key? key,
     required this.test,
     required this.testCategory,
     this.controller,
     this.history = false,
     this.diagnostic = false,
+    Key? key,
   }) : super(key: key);
 
   TestTaken test;
@@ -39,10 +35,10 @@ class ResultSummaryScreen extends StatefulWidget {
   QuizController? controller;
 
   @override
-  State<ResultSummaryScreen> createState() => _ResultSummaryScreenState();
+  State<BelowPassMark> createState() => _BelowPassMarkState();
 }
 
-class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
+class _BelowPassMarkState extends State<BelowPassMark> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -83,7 +79,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                               fontSize: orientation == Orientation.portrait
                                   ? height * 0.025
                                   : width * 0.030,
-                              color: Colors.white..withOpacity(0.3),
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -105,21 +101,24 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.0),
+                  padding: EdgeInsets.only(
+                    left: width * 0.0,
+                    bottom: height * 0.05,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image(
                         width: width * 0.30,
                         image: const AssetImage(
-                          "assets/images/success.png",
+                          "assets/images/below.png",
                         ),
                       ),
                     ],
                   ),
                 ),
                 Text(
-                  "You did it !",
+                  "Let's try again !",
                   style: TextStyle(
                     fontSize: orientation == Orientation.portrait
                         ? height * 0.035
@@ -132,7 +131,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "That was some great performance on the test.\n Keep it up",
+                    "Revise a bit more and give this another try. \n Yes you can!",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       color: Colors.white.withOpacity(0.5),
@@ -162,7 +161,9 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                         "Your Score",
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: height * 0.023,
+                          fontSize: orientation == Orientation.portrait
+                              ? height * 0.023
+                              : width * 0.025,
                         ),
                       ),
                       SizedBox(height: height * 0.03),
@@ -205,7 +206,14 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                             replace: true,
                           );
                         },
-                        child: const Text('View Details'),
+                        child: Text(
+                          'View Details',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: height * 0.023,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -250,9 +258,8 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                                 await TestController().getTopicQuestions(
                               topicIds,
                               limit: () {
-                                if (widget.testType == TestType.CUSTOMIZED) {
+                                if (widget.testType == TestType.CUSTOMIZED)
                                   return 40;
-                                }
                                 return widget.testType != TestType.SPEED
                                     ? 10
                                     : 1000;
@@ -263,8 +270,7 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                             questions =
                                 await TestController().getMockQuestions(0);
                         }
-                        print(questions.toString());
-                        print(questions.length);
+
                         Navigator.pop(context);
                         Navigator.push(
                           context,
@@ -293,11 +299,12 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                     Navigator.pop(context);
                     // Navigator.pop(context);
                   },
-                  child: Text(
+                  child: const Text(
                     "Return to Course",
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
