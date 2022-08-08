@@ -17,6 +17,11 @@ import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
+import '../../controllers/test_controller.dart';
+import '../../controllers/treadmill_controller.dart';
+import '../../models/treadmill.dart';
+import '../treadmill/treadmill_save_resumption_menu.dart';
+
 class TestTypeView extends StatefulWidget {
   static const String routeName = '/testtype';
   TestTypeView(
@@ -175,16 +180,35 @@ class _TestTypeViewState extends State<TestTypeView> {
                         title: 'Treadmill',
                         subTitle: 'Crank up the speed, how far can you go?',
                         iconURL: 'assets/icons/courses/treadmill.png',
-                        onTap: () {
-                          return Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TreadmillWelcome(
-                                user: widget.user,
-                                course: widget.course,
+                        onTap: () async {
+                          Treadmill? treadmill = await TestController()
+                              .getCurrentTreadmill(widget.course);
+                          if (treadmill == null) {
+                            return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TreadmillWelcome(
+                                  user: widget.user,
+                                  course: widget.course,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            return Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    TreadmillSaveResumptionMenu(
+                                  controller: TreadmillController(
+                                    widget.user,
+                                    widget.course,
+                                    name: widget.course.name!,
+                                    treadmill: treadmill,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
 
                           // Navigator.push(
                           //   context,

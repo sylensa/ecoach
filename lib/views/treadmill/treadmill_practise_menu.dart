@@ -11,6 +11,8 @@ import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/treadmill.dart';
+
 class TreadmillPractiseMenu extends StatefulWidget {
   TreadmillPractiseMenu({
     Key? key,
@@ -55,6 +57,8 @@ class _TreadmillPractiseMenuState extends State<TreadmillPractiseMenu> {
           topics: topics,
           controller: controller,
         );
+        // controller.treadmillType = TreadmillType.TOPIC;
+        controller.treadmillType = 'TOPIC';
         break;
       case TreadmillMode.MOCK:
         int count = await QuestionDB().getTotalQuestionCount(
@@ -65,6 +69,8 @@ class _TreadmillPractiseMenuState extends State<TreadmillPractiseMenu> {
           controller: controller,
           mode: TreadmillMode.MOCK,
         );
+        //controller.treadmillType = TreadmillType.MOCK;
+        controller.treadmillType = 'MOCK';
         break;
       case TreadmillMode.BANK:
         List<TestNameAndCount> banks = await TestController().getBankTest(
@@ -74,6 +80,9 @@ class _TreadmillPractiseMenuState extends State<TreadmillPractiseMenu> {
           banks: banks,
           controller: controller,
         );
+        // controller.treadmillType = TreadmillType.BANK;
+        controller.treadmillType = 'BANK';
+
         break;
     }
 

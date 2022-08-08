@@ -57,32 +57,32 @@ class _TreadmillIntroitState extends State<TreadmillIntroit> {
         //     name: widget.course.name!,
         //   ),
         // );
-        Treadmill? treadmill =
-            await TestController().getCurrentTreadmill(widget.course);
+        // Treadmill? treadmill =
+        //     await TestController().getCurrentTreadmill(widget.course);
         // print(treadmill!.toJson());
 
-        if (treadmill == null) {
-          screenToNavigateTo = TreadmillPractiseMenu(
-            controller: TreadmillController(
-              widget.user,
-              widget.course,
-              name: widget.course.name!,
-            ),
-          );
-        } else {
-          print('jjjjjjjjjjjj');
-          print(treadmill.toJson());
-          print(treadmill.topicId);
+        // if (treadmill == null) {
+        screenToNavigateTo = TreadmillPractiseMenu(
+          controller: TreadmillController(
+            widget.user,
+            widget.course,
+            name: widget.course.name!,
+          ),
+        );
+        // } else {
+        //   print('jjjjjjjjjjjj');
+        //   print(treadmill.toJson());
+        //   print(treadmill.topicId);
 
-          screenToNavigateTo = TreadmillSaveResumptionMenu(
-            controller: TreadmillController(
-              widget.user,
-              widget.course,
-              name: widget.course.name!,
-              treadmill: treadmill,
-            ),
-          );
-        }
+        //   screenToNavigateTo = TreadmillSaveResumptionMenu(
+        //     controller: TreadmillController(
+        //       widget.user,
+        //       widget.course,
+        //       name: widget.course.name!,
+        //       treadmill: treadmill,
+        //     ),
+        //   );
+        // }
         break;
       case TestMode.COMPLETED:
         screenToNavigateTo = TreadmillCompleted(widget.user, widget.course);

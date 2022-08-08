@@ -51,7 +51,7 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
   @override
   void initState() {
     showInPercentage = false;
-    print("${widget.course.name} ${widget.user.name}");
+    print("${widget.course.name} ${widget.user.name} here");
 
     // TreadmillDB().treadmills().then((mList) {
     //   setState(() {
@@ -160,10 +160,7 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                                 totalQuestions: treadmills[i].totalQuestions,
                                 activity: treadmills[i].testname!,
                                 activityType: treadmills[i].testType != null
-                                    ? treadmills[i]
-                                        .testType!
-                                        .split('.')[1]
-                                        .toLowerCase()
+                                    ? treadmills[i].testType!
                                     : ' ',
                                 showInPercentage: showInPercentage,
                                 isSelected: selected.contains(i + 1),
@@ -181,6 +178,7 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                                   duration: '${treadmills[i].usedTimeText}',
                                 ),
                                 onTap: () {
+                                  // print(treadmills[i].testType);
                                   handleSelection(treadmills[i]);
                                 },
                               ),
