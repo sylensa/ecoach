@@ -11,6 +11,7 @@ import 'package:ecoach/revamp/features/account/view/screen/phone_number_verifica
 import 'package:ecoach/test/test.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/group/test_creation/settings.dart';
 import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/review/review_onboarding.dart';
 import 'package:ecoach/views/review/review_questions.dart';
@@ -153,7 +154,8 @@ class _MyAppState extends State<MyApp> {
                       ),
                 ),
                 // home: MyTestApp(),
-                home: seenOnboard == true ? myFuture : Onboarding(),
+                // home: seenOnboard == true ? myFuture : Onboarding(),
+                home: Settings(),
                 routes: routes,
               ),
             ),

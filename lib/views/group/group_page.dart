@@ -2385,7 +2385,7 @@ class _GroupPageState extends State<GroupPage> {
                                         // ),
                                         /**
                                          * 
-                                         * for (int i = 0;
+                                        //  * for (int i = 0;
                                             i <
                                                 listGroupViewData[0]
                                                     .admins!
@@ -2813,9 +2813,14 @@ class _GroupPageState extends State<GroupPage> {
                                     weight: FontWeight.w500, size: 16),
                               ),
                               trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // Get.to(() => Settings(),);
+                                  },
+                                  icon: Icon(
+                                    Icons.add_circle_outline,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                               title: Container(),
