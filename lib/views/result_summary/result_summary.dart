@@ -105,7 +105,10 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: width * 0.0),
+                  padding: EdgeInsets.only(
+                    left: width * 0.0,
+                    bottom: height * 0.05,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -167,7 +170,13 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                       ),
                       SizedBox(height: height * 0.03),
                       Text(
-                        widget.test.score!.ceil().toString() + "/ 10",
+                        // widget.test.score!.ceil().toString() + "/ 10",
+                        // get the correct score divided by the total number of questions
+                        (widget.test.correct! / widget.test.totalQuestions)
+                                .ceil()
+                                .toString() +
+                            "/ 10",
+                        // widget.test.correct + "/ " + widget.test.total,
                         style: TextStyle(
                           fontSize: orientation == Orientation.portrait
                               ? height * 0.04

@@ -45,6 +45,9 @@ class _BelowPassMarkState extends State<BelowPassMark> {
     double height = MediaQuery.of(context).size.height;
     Orientation orientation = MediaQuery.of(context).orientation;
 
+    print("viewing results");
+    print(widget.test.score);
+
     return SafeArea(
       child: Container(
         decoration: const BoxDecoration(
@@ -168,7 +171,9 @@ class _BelowPassMarkState extends State<BelowPassMark> {
                       ),
                       SizedBox(height: height * 0.03),
                       Text(
-                        widget.test.score!.ceil().toString() + "/ 10",
+                        widget.test.correct!.toString() +
+                            " / " +
+                            widget.test.totalQuestions.toString(),
                         style: TextStyle(
                           fontSize: orientation == Orientation.portrait
                               ? height * 0.04

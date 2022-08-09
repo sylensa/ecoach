@@ -1,5 +1,6 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:country_icons/country_icons.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 
 class Settings extends StatefulWidget {
@@ -10,13 +11,9 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  // bool isMonthly = false;
-  // bool isYearly = false;
-
   Map<String, bool> selectedSwitch = {
     'monthly': false,
     'yearly': false,
-    'all': false,
   };
 
   var selectedRadio;
@@ -26,15 +23,16 @@ class _SettingsState extends State<Settings> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Color(0xFF757575),
+      // backgroundColor: Color(0xFF757575),
+      backgroundColor: Colors.white.withOpacity(0.8),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              buildSizedBox(height * 0.04, width * 0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
                     icon: Icon(
@@ -45,13 +43,18 @@ class _SettingsState extends State<Settings> {
                       Navigator.pop(context);
                     },
                   ),
-                  sText(
-                    "Group Settings",
-                    color: Color(0xFF000000),
+                  buildSizedBox(width * 0.04, width * 0),
+                  Padding(
+                    padding: EdgeInsets.only(left: width * 0.08),
+                    child: sText(
+                      "Group Settings",
+                      color: Color(0xFF000000),
+                      size: width * 0.05,
+                    ),
                   ),
                 ],
               ),
-              buildSizedBox(height * 0.04),
+              buildSizedBox(height * 0.04, width * 0),
               sText(
                 "Access".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -59,7 +62,7 @@ class _SettingsState extends State<Settings> {
                 family: "Poppins",
                 weight: FontWeight.w500,
               ),
-              buildSizedBox(height * 0.02),
+              buildSizedBox(height * 0.02, width * 0),
               Container(
                 height: height * 0.18,
                 padding: EdgeInsets.symmetric(
@@ -68,11 +71,11 @@ class _SettingsState extends State<Settings> {
                 ),
                 decoration: BoxDecoration(
                   color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.02),
+                  borderRadius: BorderRadius.circular(width * 0.025),
                 ),
                 child: Column(
                   children: [
-                    buildSizedBox(height * 0.02),
+                    buildSizedBox(height * 0.02, width * 0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,11 +84,11 @@ class _SettingsState extends State<Settings> {
                         Icon(Icons.keyboard_arrow_down),
                       ],
                     ),
-                    buildSizedBox(height * 0.01),
+                    buildSizedBox(height * 0.01, width * 0),
                     Divider(
                       color: Colors.black.withOpacity(0.5),
                     ),
-                    buildSizedBox(height * 0.02),
+                    buildSizedBox(height * 0.02, width * 0),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -111,7 +114,7 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-              buildSizedBox(height * 0.04),
+              buildSizedBox(height * 0.06, width * 0),
               sText(
                 "Subscription".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -119,7 +122,7 @@ class _SettingsState extends State<Settings> {
                 family: "Poppins",
                 weight: FontWeight.w500,
               ),
-              buildSizedBox(height * 0.02),
+              buildSizedBox(height * 0.02, width * 0),
               Container(
                 height: height * 0.18,
                 padding: EdgeInsets.symmetric(
@@ -128,7 +131,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 decoration: BoxDecoration(
                   color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.02),
+                  borderRadius: BorderRadius.circular(width * 0.025),
                 ),
                 child: Column(
                   children: [
@@ -159,7 +162,7 @@ class _SettingsState extends State<Settings> {
                         )
                       ],
                     ),
-                    buildSizedBox(height * 0.015),
+                    buildSizedBox(height * 0.015, width * 0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +191,7 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-              buildSizedBox(height * 0.04),
+              buildSizedBox(height * 0.06, width * 0),
               sText(
                 "Features".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -196,7 +199,7 @@ class _SettingsState extends State<Settings> {
                 family: "Poppins",
                 weight: FontWeight.w500,
               ),
-              buildSizedBox(height * 0.02),
+              buildSizedBox(height * 0.02, width * 0),
               Container(
                 height: height * 0.75,
                 padding: EdgeInsets.symmetric(
@@ -205,11 +208,11 @@ class _SettingsState extends State<Settings> {
                 ),
                 decoration: BoxDecoration(
                   color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.02),
+                  borderRadius: BorderRadius.circular(width * 0.025),
                 ),
                 child: Column(
                   children: [
-                    buildSizedBox(height * 0.02),
+                    buildSizedBox(height * 0.02, width * 0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,13 +445,16 @@ class _SettingsState extends State<Settings> {
                         Switch(
                           value: selectedSwitch.keys.contains(switchValue[11]),
                           onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[11]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[11]);
-                              }
-                            });
+                            setState(
+                              () {
+                                if (value) {
+                                  selectedSwitch
+                                      .addAll({switchValue[11]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[11]);
+                                }
+                              },
+                            );
                           },
                           activeTrackColor: Colors.lightBlueAccent,
                           activeColor: Colors.blue,
@@ -458,7 +464,7 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-              buildSizedBox(height * 0.04),
+              buildSizedBox(height * 0.06, width * 0),
               sText(
                 "Grading System".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -466,22 +472,22 @@ class _SettingsState extends State<Settings> {
                 family: "Poppins",
                 weight: FontWeight.w500,
               ),
-              buildSizedBox(height * 0.02),
+              buildSizedBox(height * 0.02, width * 0),
               Container(
-                height: height * 0.5,
+                height: height * 0.55,
                 padding: EdgeInsets.symmetric(
                   horizontal: width * 0.03,
                   vertical: height * 0.01,
                 ),
                 decoration: BoxDecoration(
                   color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.02),
+                  borderRadius: BorderRadius.circular(width * 0.025),
                 ),
                 child: Column(
                   children: [
-                    buildSizedBox(height * 0.06),
+                    buildSizedBox(height * 0.06, width * 0),
                     sText("Choose Your Preferred Grading System"),
-                    buildSizedBox(height * 0.04),
+                    buildSizedBox(height * 0.06, width * 0),
                     buildRadioButton(
                       selectedRadio: selectedRadio,
                       height: height,
@@ -529,7 +535,7 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-              buildSizedBox(height * 0.04),
+              buildSizedBox(height * 0.06, width * 0),
               // Container(
               //   height: height * 0.5,
               //   padding: EdgeInsets.symmetric(
@@ -538,7 +544,7 @@ class _SettingsState extends State<Settings> {
               //   ),
               //   decoration: BoxDecoration(
               //     color: Color(0xFFFfFFFF),
-              //     borderRadius: BorderRadius.circular(width * 0.02),
+              //     borderRadius: BorderRadius.circular(width * 0.025),
               //   ),
               //   child: sText(
               //     "Grading System".toUpperCase(),
@@ -548,7 +554,7 @@ class _SettingsState extends State<Settings> {
               //     weight: FontWeight.w500,
               //   ),
               // ),
-              buildSizedBox(height * 0.02),
+              buildSizedBox(height * 0.02, width * 0),
             ],
           ),
         ),
@@ -556,7 +562,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  SizedBox buildSizedBox(double height) {
+  SizedBox buildSizedBox(double height, double width) {
     return SizedBox(
       height: height,
     );
@@ -564,7 +570,8 @@ class _SettingsState extends State<Settings> {
 }
 
 class buildRadioButton extends StatelessWidget {
-  const buildRadioButton({
+  final GlobalKey<ExpansionTileCardState> expansionKey = new GlobalKey();
+  buildRadioButton({
     Key? key,
     required this.selectedRadio,
     required this.height,
@@ -581,7 +588,12 @@ class buildRadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return ExpansionTileCard(
+      key: expansionKey,
+      elevation: 0.0,
+      // title: text == selectedRadio
+      //     ? sText(text, color: Color(0xFF0E0E0E), size: 14)
+      //     : sText(text, color: Color(0xFF5a6775), size: 14),
       leading: Radio(
         value: groupValue,
         groupValue: selectedRadio,
@@ -589,17 +601,124 @@ class buildRadioButton extends StatelessWidget {
           onChanged(value);
         },
       ),
-      title: sText(
-        text,
-        size: 14,
-        weight: FontWeight.w500,
-      ),
-      trailing: Icon(
-        Icons.chevron_right,
-        size: height * 0.05,
-        color: Color(0xFF0E0E0E),
-      ),
+      title: Text(text),
+      // children: [
+      //   ListTile(
+      //     trailing: Padding(
+      //       padding: EdgeInsets.only(left: width * 0.05),
+      //       child: Radio(
+      //         value: groupValue,
+      //         groupValue: selectedRadio,
+      //         onChanged: (value) {
+      //           onChanged(value);
+      //         },
+      //       ),
+      //     ),
+      //     title: Padding(
+      //       padding: EdgeInsets.only(left: width * 0.03),
+      //       child: sText(
+      //         text,
+      //         size: 14,
+      //         weight: FontWeight.w500,
+      //       ),
+      //     ),
+      //     leading: Icon(
+      //       Icons.play_arrow_sharp,
+      //       size: height * 0.05,
+      //       color: Color(0xFF0E0E0E).withOpacity(0.5),
+      //     ),
+      //   ),
+      //   // Column(
+      //   //   children: [
+      //   //     Padding(
+      //   //       padding: EdgeInsets.symmetric(horizontal: width * 0.07),
+      //   //       child: Row(
+      //   //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //   //         children: [
+      //   //           sText("Grade"),
+      //   //           sText("Range"),
+      //   //         ],
+      //   //       ),
+      //   //     ),
+      //   //     SizedBox(
+      //   //       height: height * 0.0,
+      //   //     ),
+      //   //     Container(
+      //   //       height: height * 0.2,
+      //   //       width: width * 0.9,
+      //   //       margin: EdgeInsets.symmetric(
+      //   //         horizontal: width * 0.040,
+      //   //         vertical: height * 0.015,
+      //   //       ),
+      //   //       decoration: BoxDecoration(
+      //   //         color: Color(0xFFF0E0E0E),
+      //   //         borderRadius: BorderRadius.circular(width * 0.025),
+      //   //       ),
+      //   //       child: ListView.builder(
+      //   //         shrinkWrap: true,
+      //   //         itemCount: 1,
+      //   //         itemBuilder: (context, index) {
+      //   //           return Container(
+      //   //             width: width * 0.4,
+      //   //             child: Column(
+      //   //               children: [
+      //   //                 Row(
+      //   //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //   //                   children: [
+      //   //                     sText(" ${index + 1}"),
+      //   //                     Padding(
+      //   //                       padding: EdgeInsets.only(
+      //   //                         left: width * 0.1,
+      //   //                       ),
+      //   //                       child: Row(
+      //   //                         mainAxisAlignment:
+      //   //                             MainAxisAlignment.spaceBetween,
+      //   //                         children: [
+      //   //                           TextButton(
+      //   //                             onPressed: () {},
+      //   //                             child: sText(" - "),
+      //   //                           ),
+      //   //                           sText(
+      //   //                             "80",
+      //   //                           ),
+      //   //                           TextButton(
+      //   //                             onPressed: () {},
+      //   //                             child: sText(" + "),
+      //   //                           ),
+      //   //                         ],
+      //   //                       ),
+      //   //                     )
+      //   //                   ],
+      //   //                 ),
+      //   //               ],
+      //   //             ),
+      //   //           );
+      //   //         },
+      //   //       ),
+      //   //     ),
+      //   //   ],
+      //   // ),
+      // ],
     );
+    // return ListTile(
+    //   leading: Radio(
+    //     value: groupValue,
+    //     groupValue: selectedRadio,
+    //     onChanged: (value) {
+    //       onChanged(value);
+    //     },
+    //   ),
+    //   title: sText(
+    //     text,
+    //     size: 14,
+    //     weight: FontWeight.w500,
+    //   ),
+    //   trailing: Icon(
+    //     Icons.chevron_right,
+    //     size: height * 0.05,
+    //     color: Color(0xFF0E0E0E).withOpacity(0.5),
+    //   ),
+    // );
   }
 }
 

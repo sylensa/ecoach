@@ -239,15 +239,16 @@ class _QuizQuestionState extends State<QuizQuestion> {
       }
     });
   }
+  // widget.test.correct! / widget.test.totalQuestions)
+  // .ceil()
+  // .toString()
 
   viewResults() {
     print("viewing results");
     print(testTakenSaved != null
         ? testTakenSaved!.toJson().toString()
         : "null test");
-    if (testTakenSaved != null &&
-        (testTakenSaved?.score)! < 50 &&
-        testTakenSaved?.testType == "speed") {
+    if (testTaken!.correct! / testTaken!.totalQuestions < 5) {
       goTo(
         context,
         BelowPassMark(
