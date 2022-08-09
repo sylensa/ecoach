@@ -239,47 +239,16 @@ class _QuizQuestionState extends State<QuizQuestion> {
       }
     });
   }
-  // widget.test.correct! / widget.test.totalQuestions)
-  // .ceil()
-  // .toString()
 
   viewResults() {
     print("viewing results");
     print(testTakenSaved != null
         ? testTakenSaved!.toJson().toString()
         : "null test");
-    // if (testTaken!.correct! / testTaken!.totalQuestions < 5) {
-    //   goTo(
-    //     context,
-    //     BelowPassMark(
-    //       widget.controller.user,
-    //       widget.controller.course,
-    //       widget.controller.type,
-    //       test: testTakenSaved!,
-    //       diagnostic: widget.diagnostic,
-    //       controller: widget.controller,
-    //       testCategory: controller.challengeType,
-    //     ),
-    //     replace: true,
-    //   );
-    // } else {
-    //   goTo(
-    //     context,
-    //     ResultSummaryScreen(
-    //       widget.controller.user,
-    //       widget.controller.course,
-    //       widget.controller.type,
-    //       test: testTakenSaved!,
-    //       diagnostic: widget.diagnostic,
-    //       controller: widget.controller,
-    //       testCategory: controller.challengeType,
-    //     ),
-    //     replace: true,
-    //   );
-    // }
 
-    if (testTaken!.correct! < 5) {
-      Get.offAll(
+    if (testTaken!.totalQuestions == 5 && testTaken!.correct! <= 2) {
+      goTo(
+        context,
         BelowPassMark(
           widget.controller.user,
           widget.controller.course,
@@ -289,10 +258,12 @@ class _QuizQuestionState extends State<QuizQuestion> {
           controller: widget.controller,
           testCategory: controller.challengeType,
         ),
+        replace: true,
       );
-    } else {
-      Get.offAll(
-        () => ResultSummaryScreen(
+    } else if (testTaken!.totalQuestions == 10 && testTaken!.correct! < 5) {
+      goTo(
+        context,
+        BelowPassMark(
           widget.controller.user,
           widget.controller.course,
           widget.controller.type,
@@ -301,22 +272,51 @@ class _QuizQuestionState extends State<QuizQuestion> {
           controller: widget.controller,
           testCategory: controller.challengeType,
         ),
+        replace: true,
+      );
+    } else if (testTaken!.totalQuestions == 5 && testTaken!.correct! > 2) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.totalQuestions == 10 && testTaken!.correct! >= 5) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    } else {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
       );
     }
-
-    // goTo(
-    //   context,
-    //   ResultSummaryScreen(
-    //     widget.controller.user,
-    //     widget.controller.course,
-    //     widget.controller.type,
-    //     test: testTakenSaved!,
-    //     diagnostic: widget.diagnostic,
-    //     controller: widget.controller,
-    //     testCategory: controller.challengeType,
-    //   ),
-    //   replace: true,
-    // );
   }
 
   insertSaveTestQuestion(int qid) async {
