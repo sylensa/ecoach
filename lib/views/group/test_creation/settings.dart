@@ -23,8 +23,7 @@ class _SettingsState extends State<Settings> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      // backgroundColor: Color(0xFF757575),
-      backgroundColor: Colors.white.withOpacity(0.8),
+      backgroundColor: Colors.white.withOpacity(0.90),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: width * 0.05),
