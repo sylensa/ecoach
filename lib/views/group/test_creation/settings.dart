@@ -31,7 +31,7 @@ class _SettingsState extends State<Settings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildSizedBox(height * 0.04, width * 0),
+              buildSizedBox(height * 0.005, width * 0),
               Row(
                 children: [
                   IconButton(
@@ -474,10 +474,8 @@ class _SettingsState extends State<Settings> {
               ),
               buildSizedBox(height * 0.02, width * 0),
               Container(
-                height: height * 0.55,
                 padding: EdgeInsets.symmetric(
                   horizontal: width * 0.03,
-                  vertical: height * 0.01,
                 ),
                 decoration: BoxDecoration(
                   color: Color(0xFFFfFFFF),
@@ -536,25 +534,6 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
               buildSizedBox(height * 0.06, width * 0),
-              // Container(
-              //   height: height * 0.5,
-              //   padding: EdgeInsets.symmetric(
-              //     horizontal: width * 0.03,
-              //     vertical: height * 0.01,
-              //   ),
-              //   decoration: BoxDecoration(
-              //     color: Color(0xFFFfFFFF),
-              //     borderRadius: BorderRadius.circular(width * 0.025),
-              //   ),
-              //   child: sText(
-              //     "Grading System".toUpperCase(),
-              //     color: Color(0xFF0E0E0E),
-              //     size: 14,
-              //     family: "Poppins",
-              //     weight: FontWeight.w500,
-              //   ),
-              // ),
-              buildSizedBox(height * 0.02, width * 0),
             ],
           ),
         ),
@@ -570,7 +549,7 @@ class _SettingsState extends State<Settings> {
 }
 
 class buildRadioButton extends StatelessWidget {
-  final GlobalKey<ExpansionTileCardState> expansionKey = new GlobalKey();
+  final GlobalKey<ExpansionTileCardState> expansionKey = GlobalKey();
   buildRadioButton({
     Key? key,
     required this.selectedRadio,
@@ -588,137 +567,257 @@ class buildRadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTileCard(
-      key: expansionKey,
-      elevation: 0.0,
-      // title: text == selectedRadio
-      //     ? sText(text, color: Color(0xFF0E0E0E), size: 14)
-      //     : sText(text, color: Color(0xFF5a6775), size: 14),
-      leading: Radio(
-        value: groupValue,
-        groupValue: selectedRadio,
-        onChanged: (value) {
-          onChanged(value);
-        },
+    double width = MediaQuery.of(context).size.width;
+    return Container(
+      child: ExpansionTileCard(
+        expandedTextColor: Color(0xFF0E0E0E),
+        key: expansionKey,
+        elevation: 0.0,
+        leading: Radio(
+          activeColor: Color(
+            0xFF00C9B9,
+          ),
+          value: groupValue,
+          groupValue: selectedRadio,
+          onChanged: (value) {
+            onChanged(value);
+          },
+        ),
+        title: Text(text),
+        children: [
+          ListTile(
+            trailing: Padding(
+              padding: EdgeInsets.only(left: width * 0.05),
+              child: Radio(
+                activeColor: Color(
+                  0xFF00C9B9,
+                ),
+                value: groupValue,
+                groupValue: selectedRadio,
+                onChanged: (value) {
+                  onChanged(value);
+                },
+              ),
+            ),
+            title: Padding(
+              padding: EdgeInsets.only(left: width * 0.03),
+              child: sText(
+                text,
+                size: 14,
+                weight: FontWeight.w500,
+              ),
+            ),
+            leading: Icon(
+              Icons.play_arrow_sharp,
+              size: height * 0.05,
+              color: Color(0xFF0E0E0E).withOpacity(0.5),
+            ),
+          ),
+          Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.07),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    sText("Grade"),
+                    Padding(
+                      padding: EdgeInsets.only(right: width * 0.1),
+                      child: sText("Range"),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: height * 0.0,
+              ),
+              Container(
+                height: height * 0.7,
+                width: width * 0.9,
+                margin: EdgeInsets.symmetric(
+                  horizontal: width * 0.040,
+                  vertical: height * 0.015,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xFFf0f7ff),
+                  borderRadius: BorderRadius.circular(width * 0.025),
+                ),
+                child: Stack(
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 6,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: width * 0.4,
+                          child: Column(
+                            children: [
+                              GradeAndRange(
+                                width: width,
+                                numbering: " ${index + 1}",
+                                grade: '80',
+                                add: '+',
+                                subtract: '-',
+                                height: 0.0,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    Positioned(
+                      bottom: 0.0,
+                      top: height * 0.6,
+                      child: Container(
+                        height: height * 0.1,
+                        width: width * 0.762,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF263E4A),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(width * 0.025),
+                            bottomRight: Radius.circular(width * 0.025),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width * 0.04,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              sText(
+                                "Pass Mark",
+                                color: Colors.white.withOpacity(0.5),
+                                weight: FontWeight.w500,
+                                family: "Poppins",
+                              ),
+                              Row(
+                                children: [
+                                  subtractButton(),
+                                  SizedBox(
+                                    width: width * 0.0,
+                                  ),
+                                  sText(
+                                    "80",
+                                    color: Colors.white,
+                                    weight: FontWeight.w500,
+                                    family: "Poppins",
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.0,
+                                  ),
+                                  addButton(),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-      title: Text(text),
-      // children: [
-      //   ListTile(
-      //     trailing: Padding(
-      //       padding: EdgeInsets.only(left: width * 0.05),
-      //       child: Radio(
-      //         value: groupValue,
-      //         groupValue: selectedRadio,
-      //         onChanged: (value) {
-      //           onChanged(value);
-      //         },
-      //       ),
-      //     ),
-      //     title: Padding(
-      //       padding: EdgeInsets.only(left: width * 0.03),
-      //       child: sText(
-      //         text,
-      //         size: 14,
-      //         weight: FontWeight.w500,
-      //       ),
-      //     ),
-      //     leading: Icon(
-      //       Icons.play_arrow_sharp,
-      //       size: height * 0.05,
-      //       color: Color(0xFF0E0E0E).withOpacity(0.5),
-      //     ),
-      //   ),
-      //   // Column(
-      //   //   children: [
-      //   //     Padding(
-      //   //       padding: EdgeInsets.symmetric(horizontal: width * 0.07),
-      //   //       child: Row(
-      //   //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //   //         children: [
-      //   //           sText("Grade"),
-      //   //           sText("Range"),
-      //   //         ],
-      //   //       ),
-      //   //     ),
-      //   //     SizedBox(
-      //   //       height: height * 0.0,
-      //   //     ),
-      //   //     Container(
-      //   //       height: height * 0.2,
-      //   //       width: width * 0.9,
-      //   //       margin: EdgeInsets.symmetric(
-      //   //         horizontal: width * 0.040,
-      //   //         vertical: height * 0.015,
-      //   //       ),
-      //   //       decoration: BoxDecoration(
-      //   //         color: Color(0xFFF0E0E0E),
-      //   //         borderRadius: BorderRadius.circular(width * 0.025),
-      //   //       ),
-      //   //       child: ListView.builder(
-      //   //         shrinkWrap: true,
-      //   //         itemCount: 1,
-      //   //         itemBuilder: (context, index) {
-      //   //           return Container(
-      //   //             width: width * 0.4,
-      //   //             child: Column(
-      //   //               children: [
-      //   //                 Row(
-      //   //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //   //                   children: [
-      //   //                     sText(" ${index + 1}"),
-      //   //                     Padding(
-      //   //                       padding: EdgeInsets.only(
-      //   //                         left: width * 0.1,
-      //   //                       ),
-      //   //                       child: Row(
-      //   //                         mainAxisAlignment:
-      //   //                             MainAxisAlignment.spaceBetween,
-      //   //                         children: [
-      //   //                           TextButton(
-      //   //                             onPressed: () {},
-      //   //                             child: sText(" - "),
-      //   //                           ),
-      //   //                           sText(
-      //   //                             "80",
-      //   //                           ),
-      //   //                           TextButton(
-      //   //                             onPressed: () {},
-      //   //                             child: sText(" + "),
-      //   //                           ),
-      //   //                         ],
-      //   //                       ),
-      //   //                     )
-      //   //                   ],
-      //   //                 ),
-      //   //               ],
-      //   //             ),
-      //   //           );
-      //   //         },
-      //   //       ),
-      //   //     ),
-      //   //   ],
-      //   // ),
-      // ],
     );
-    // return ListTile(
-    //   leading: Radio(
-    //     value: groupValue,
-    //     groupValue: selectedRadio,
-    //     onChanged: (value) {
-    //       onChanged(value);
-    //     },
-    //   ),
-    //   title: sText(
-    //     text,
-    //     size: 14,
-    //     weight: FontWeight.w500,
-    //   ),
-    //   trailing: Icon(
-    //     Icons.chevron_right,
-    //     size: height * 0.05,
-    //     color: Color(0xFF0E0E0E).withOpacity(0.5),
-    //   ),
-    // );
+  }
+
+  Widget addButton() {
+    return TextButton(
+      onPressed: () {},
+      child: sText(
+        "+",
+        color: Colors.white.withOpacity(0.5),
+        weight: FontWeight.w500,
+        family: "Poppins",
+        size: 20,
+      ),
+    );
+  }
+
+  Widget subtractButton() {
+    return TextButton(
+      onPressed: () {},
+      child: sText(
+        "-",
+        color: Colors.white.withOpacity(0.5),
+        weight: FontWeight.w500,
+        family: "Poppins",
+        size: 20,
+      ),
+    );
+  }
+}
+
+class GradeAndRange extends StatelessWidget {
+  const GradeAndRange({
+    Key? key,
+    required this.width,
+    required this.numbering,
+    required this.grade,
+    required this.add,
+    required this.subtract,
+    required this.height,
+  }) : super(key: key);
+
+  final double width, height;
+  final String numbering, grade, add, subtract;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: width * 0.08,
+              ),
+              child: sText(numbering),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: width * 0.1,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: sText(
+                      "-",
+                      color: Colors.grey.withOpacity(0.8),
+                      weight: FontWeight.w500,
+                      family: "Poppins",
+                      size: 20,
+                    ),
+                  ),
+                  sText(
+                    "80",
+                    color: Colors.black87,
+                    weight: FontWeight.w500,
+                    family: "Poppins",
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: sText(
+                      "+",
+                      color: Colors.grey.withOpacity(0.8),
+                      weight: FontWeight.w500,
+                      family: "Poppins",
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
+    );
   }
 }
 
