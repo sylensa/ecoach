@@ -245,12 +245,53 @@ class _QuizQuestionState extends State<QuizQuestion> {
     print(testTakenSaved != null
         ? testTakenSaved!.toJson().toString()
         : "null test");
-    if (testTakenSaved != null &&
-        (testTakenSaved?.score)! < 50 &&
-        testTakenSaved?.testType == "speed") {
+
+    if (testTaken!.totalQuestions == 5 && testTaken!.correct! <= 2) {
       goTo(
         context,
         BelowPassMark(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.totalQuestions == 10 && testTaken!.correct! < 5) {
+      goTo(
+        context,
+        BelowPassMark(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.totalQuestions == 5 && testTaken!.correct! > 2) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.totalQuestions == 10 && testTaken!.correct! >= 5) {
+      goTo(
+        context,
+        ResultSummaryScreen(
           widget.controller.user,
           widget.controller.course,
           widget.controller.type,
@@ -276,19 +317,6 @@ class _QuizQuestionState extends State<QuizQuestion> {
         replace: true,
       );
     }
-    // goTo(
-    //   context,
-    //   ResultSummaryScreen(
-    //     widget.controller.user,
-    //     widget.controller.course,
-    //     widget.controller.type,
-    //     test: testTakenSaved!,
-    //     diagnostic: widget.diagnostic,
-    //     controller: widget.controller,
-    //     testCategory: controller.challengeType,
-    //   ),
-    //   replace: true,
-    // );
   }
 
   insertSaveTestQuestion(int qid) async {

@@ -45,18 +45,21 @@ class _BelowPassMarkState extends State<BelowPassMark> {
     double height = MediaQuery.of(context).size.height;
     Orientation orientation = MediaQuery.of(context).orientation;
 
+    print("viewing results");
+    print(widget.test.score);
+
     return SafeArea(
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F2749), Color(0XFF09131F)],
-          ),
-        ),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF0F2749), Color(0XFF09131F)],
+              ),
+            ),
             child: Column(
               children: [
                 Padding(
@@ -168,7 +171,9 @@ class _BelowPassMarkState extends State<BelowPassMark> {
                       ),
                       SizedBox(height: height * 0.03),
                       Text(
-                        widget.test.score!.ceil().toString() + "/ 10",
+                        widget.test.correct!.toString() +
+                            " / " +
+                            widget.test.totalQuestions.toString(),
                         style: TextStyle(
                           fontSize: orientation == Orientation.portrait
                               ? height * 0.04

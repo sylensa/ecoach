@@ -105,6 +105,8 @@ dependencies:
 
    dotted_border: ^2.0.0+2
    expansion_tile_card: ^2.0.0
+   country_icons: ^2.0.2
+   expandable: ^5.0.1
 
 
 flutter_icons:
