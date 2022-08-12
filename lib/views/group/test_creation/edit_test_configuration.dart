@@ -15,7 +15,8 @@ import '../../../utils/constants.dart';
 
 class EditTestConfigurations extends StatefulWidget {
   GroupTestData? groupTestData;
-  EditTestConfigurations({this.groupTestData,Key? key}) : super(key: key);
+  int index;
+  EditTestConfigurations({this.groupTestData,this.index = 0,Key? key}) : super(key: key);
 
   @override
   State<EditTestConfigurations> createState() => _EditTestConfigurationsState();
@@ -54,14 +55,13 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
         "test_id": widget.groupTestData!.configurations!.testId,
       };
       print("configuration:${configuration}");
-      List<GroupTestData> test = [];
       if (isConnected) {
         GroupTestData? groupTestData = await GroupManagementController(groupId: groupID).updateGroupTest(configuration,name: testNameController.text,instruction: testDescriptionController.text,id: widget.groupTestData!.id.toString());
         if (groupTestData != null) {
+          listGroupTestData.removeAt(widget.index);
+          listGroupTestData.insert(widget.index, groupTestData);
           Navigator.pop(context);
           Navigator.pop(context,groupTestData);
-          test.add(groupTestData);
-          listGroupTestData.insertAll(0, test);
         } else {
           Navigator.pop(context);
         }
@@ -80,11 +80,9 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (isConnected) {
       if (await GroupManagementController(groupId: widget.groupTestData!.groupId.toString()).deleteGroupTest(widget.groupTestData!.id.toString())) {
-        setState(() {
-          listGroupTestData.remove(widget.groupTestData!);
-        });
+          listGroupTestData.removeAt(widget.index);
         Navigator.pop(context);
-        Navigator.pop(context);
+        Navigator.pop(context,);
       } else {
         Navigator.pop(context);
       }
@@ -94,6 +92,60 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
     }
   }
 
+  showDeleteDialog(
+      {String? message,
+        BuildContext? context,
+        Widget? target,
+        bool replace = false,int index = 0,bool deleteAll = false}) {
+    // flutter defined function
+    showDialog(
+      context: context!,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: sText("Alert",color: Colors.black,weight: FontWeight.bold),
+          content: sText(message!),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            GestureDetector(
+              onTap: ()async{
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
+                margin: rightPadding(10),
+                child: sText("No",color: Colors.white),
+
+                decoration: BoxDecoration(
+                    color:kAccessmentButtonColor,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+              ),
+            ),
+
+            GestureDetector(
+              onTap: ()async{
+                Navigator.pop(context);
+                showLoaderDialog(context);
+              await  deleteGroupTest();
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 12,horizontal: 15),
+                margin: rightPadding(10),
+                child: sText("Yes",color: Colors.white),
+
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+              ),
+            )
+
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void  initState(){
@@ -132,8 +184,7 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
         elevation: 0,
         actions: [
           IconButton(onPressed: ()async{
-            showLoaderDialog(context);
-            await deleteGroupTest();
+           showDeleteDialog(message: "Are you sure you want to delete this test?",context: context);
           }, icon: Icon(Icons.delete,color: Colors.red,)),
         ],
       ),
@@ -315,6 +366,7 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
                             values: [timePerQuestion, 300],
                             onDragCompleted: (handlerIndex, lowerValue, upperValue)async {
                               _lowerValue = lowerValue.toDouble();
+                              timePerQuestion = _lowerValue;
                               print(_lowerValue);
                             },
                           ),
@@ -373,6 +425,7 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
                             values: [timePerQuiz, 120],
                             onDragCompleted: (handlerIndex, lowerValue, upperValue)async {
                               _lowerValue = lowerValue.toDouble();
+                              timePerQuiz = _lowerValue;
                               print(_lowerValue);
                             },
                           ),
@@ -421,14 +474,21 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
                                 onPressed: ()async{
 
                                   DatePicker.showDateTimePicker(context,
+                                      onCancel: (){
+                                        setState((){
+                                          startDateTime =  widget.groupTestData!.configurations!.startDatetime;
+                                        });
+                                      },
                                       showTitleActions: true,
                                       minTime: DateTime(2018, 3, 5),
-                                      maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                      maxTime: DateTime(2019, 6, 7),
+                                      onChanged: (date) {
                                         setState((){
                                           startDateTime = date;
                                           print('change $date');
                                         });
-                                      }, onConfirm: (date) {
+                                      },
+                                      onConfirm: (date) {
                                         setState((){
                                           startDateTime = date;
                                           print('confirm $date');
@@ -510,7 +570,13 @@ class _EditTestConfigurationsState extends State<EditTestConfigurations> {
                                   DatePicker.showDateTimePicker(context,
                                       showTitleActions: true,
                                       minTime: DateTime(2018, 3, 5),
-                                      maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                      maxTime: DateTime(2019, 6, 7),
+                                      onCancel: (){
+                                        setState((){
+                                          dueDateTime =  widget.groupTestData!.configurations!.dueDateTime;
+                                        });
+                                      },
+                                      onChanged: (date) {
                                         setState((){
                                           dueDateTime = date;
                                           print('change $date');
