@@ -338,7 +338,7 @@ class GroupManagementController{
   }
   groupDelete() async {
     try{
-      var res = await doDelete("${AppUrl.groupUnSuspend}/$groupId",);
+      var res = await doDelete("${AppUrl.groups}/$groupId",);
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
         return true;
