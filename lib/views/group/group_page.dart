@@ -2274,7 +2274,7 @@ class _GroupPageState extends State<GroupPage> {
                                                 MaterialButton(
                                                 padding: EdgeInsets.zero,
                                                 onPressed: ()async{
-                                                 var res =  await  goTo(context, EditTestConfigurations(groupTestData: listGroupTestData[i],));
+                                                 var res =  await  goTo(context, EditTestConfigurations(groupTestData: listGroupTestData[i],index: i,));
                                                  print("res:$res");
                                                   setState((){
                                                     if(res != null){
