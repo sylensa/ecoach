@@ -401,7 +401,7 @@ class GroupManagementController{
    try{
      var res = await doPut("${AppUrl.getAnnouncement}/$id", {
        "title": title,
-       // "description": description,
+       "description": description,
        // "resources": resources,
      });
      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
@@ -436,8 +436,8 @@ class GroupManagementController{
   Future<List<GroupTestData>> getGroupTest()async {
     List<GroupTestData> listGroupTestData = [];
     try{
-      var js = await doGet('${AppUrl.getAnnouncement}');
-      print("res getAnnouncement : $js");
+      var js = await doGet('${AppUrl.groupTest}');
+      print("res get group test : $js");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
         for(int i =0; i < js["data"]["data"].length; i++){
           GroupTestData groupTestData = GroupTestData.fromJson(js["data"]["data"][i]);
@@ -471,13 +471,15 @@ class GroupManagementController{
   }
   Future<GroupTestData?>  createGroupTest(Map testConfig,{String name = '',String instruction = ''}) async {
     GroupTestData? groupTestData;
+    print("groupID:$groupID");
     try{
       var res = await doPost(AppUrl.groupTest, {
         "group_id": groupId,
+        "instructions": instruction,
         "name": name,
-        "instruction": instruction,
         "configurations": testConfig,
       });
+      print("res:$res");
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
         groupTestData = GroupTestData.fromJson(res["data"]);
         toastMessage("${res["message"]}");
@@ -492,11 +494,14 @@ class GroupManagementController{
     }
   }
 
-  Future<GroupTestData?>  updateGroupTest({String name = '',String id = ''}) async {
+  Future<GroupTestData?>  updateGroupTest(Map testConfig,{String name = '',String instruction = '',String id = ''}) async {
     GroupTestData? groupTestData;
     try{
       var res = await doPut("${AppUrl.groupTest}/$id", {
+        "group_id": groupId,
+        "instructions": instruction,
         "name": name,
+        "configurations": testConfig,
       });
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
         groupTestData = GroupTestData.fromJson(res["data"]);
