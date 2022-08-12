@@ -240,6 +240,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                   onChanged: (ListNames? value){
                                     setState((){
                                       timing = value;
+                                      _lowerValue = 1;
                                       print(timing!.id);
                                     });
                                   },
@@ -299,11 +300,11 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                 ),
                                 activeDisabledTrackBarColor: Colors.blue
                             ),
-                            jump: true,
+                            jump: false,
                             max: 300,
-                            min: 1,
+                            min: 0,
 
-                            values: [1, 300],
+                            values: [_lowerValue, 300],
                             onDragCompleted: (handlerIndex, lowerValue, upperValue)async {
                               _lowerValue = lowerValue.toDouble();
                               print(_lowerValue);
@@ -361,7 +362,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                             max: 120,
                             min: 1,
 
-                            values: [1, 120],
+                            values: [_lowerValue, 120],
                             onDragCompleted: (handlerIndex, lowerValue, upperValue)async {
                               _lowerValue = lowerValue.toDouble();
                               print(_lowerValue);
