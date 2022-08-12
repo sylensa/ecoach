@@ -3,14 +3,14 @@ import 'package:country_icons/country_icons.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+class TestCreationSettings extends StatefulWidget {
+  const TestCreationSettings({Key? key}) : super(key: key);
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<TestCreationSettings> createState() => _TestCreationSettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _TestCreationSettingsState extends State<TestCreationSettings> {
   Map<String, bool> selectedSwitch = {
     'monthly': false,
     'yearly': false,
@@ -26,7 +26,7 @@ class _SettingsState extends State<Settings> {
       backgroundColor: Colors.white.withOpacity(0.90),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+          padding: EdgeInsets.symmetric(horizontal: width  * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
