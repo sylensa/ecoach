@@ -2772,7 +2772,7 @@ class _GroupPageState extends State<GroupPage> {
                               maintainState: false,
                               onExpansionChanged: (value){
                                 if(value){
-                                  goTo(context, TestCreationSettings());
+                                  goTo(context, Settings());
                                 }
                               },
 
