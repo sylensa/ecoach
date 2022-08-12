@@ -19,13 +19,13 @@ class GroupTestList {
   bool? status;
   String? code;
   String? message;
-  GroupTestDataResponse? data;
+  GroupTestListResponse? data;
 
   factory GroupTestList.fromJson(Map<String, dynamic> json) => GroupTestList(
     status: json["status"] == null ? null : json["status"],
     code: json["code"] == null ? null : json["code"],
     message: json["message"] == null ? null : json["message"],
-    data: json["data"] == null ? null : GroupTestDataResponse.fromJson(json["data"]),
+    data: json["data"] == null ? null : GroupTestListResponse.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -36,8 +36,8 @@ class GroupTestList {
   };
 }
 
-class GroupTestDataResponse {
-  GroupTestDataResponse({
+class GroupTestListResponse {
+  GroupTestListResponse({
     this.currentPage,
     this.data,
     this.firstPageUrl,
@@ -67,7 +67,7 @@ class GroupTestDataResponse {
   int? to;
   int? total;
 
-  factory GroupTestDataResponse.fromJson(Map<String, dynamic> json) => GroupTestDataResponse(
+  factory GroupTestListResponse.fromJson(Map<String, dynamic> json) => GroupTestListResponse(
     currentPage: json["current_page"] == null ? null : json["current_page"],
     data: json["data"] == null ? null : List<GroupTestData>.from(json["data"].map((x) => GroupTestData.fromJson(x))),
     firstPageUrl: json["first_page_url"] == null ? null : json["first_page_url"],
@@ -118,7 +118,7 @@ class GroupTestData {
   int? id;
   String? name;
   String? instructions;
-  String? configurations;
+  ConfigurationsClass? configurations;
   String? status;
   int? userId;
   int? groupId;
@@ -131,7 +131,7 @@ class GroupTestData {
     id: json["id"] == null ? null : json["id"],
     name: json["name"] == null ? null : json["name"],
     instructions: json["instructions"] == null ? null : json["instructions"],
-    configurations: json["configurations"] == null ? null : json["configurations"],
+    configurations:  json["configurations"] == null ? null : ConfigurationsClass.fromJson(json["configurations"]),
     status: json["status"] == null ? null : json["status"],
     userId: json["user_id"] == null ? null : json["user_id"],
     groupId: json["group_id"] == null ? null : json["group_id"],
@@ -145,7 +145,7 @@ class GroupTestData {
     "id": id == null ? null : id,
     "name": name == null ? null : name,
     "instructions": instructions == null ? null : instructions,
-    "configurations": configurations == null ? null : configurations,
+    "configurations":configurations == null ? null : configurations!.toJson(),
     "status": status == null ? null : status,
     "user_id": userId == null ? null : userId,
     "group_id": groupId == null ? null : groupId,
@@ -153,6 +153,70 @@ class GroupTestData {
     "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
     "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
     "user": user == null ? null : user!.toJson(),
+  };
+}
+
+class ConfigurationsClass {
+  ConfigurationsClass({
+    this.bundle,
+    this.course,
+    this.timing,
+    this.testId,
+    this.testType,
+    this.countDown,
+    this.showReview,
+    this.testSource,
+    this.dueDateTime,
+    this.showPassMark,
+    this.startDatetime,
+    this.showInstantResult,
+    this.type,
+  });
+
+  String? bundle;
+  String? course;
+  String? timing;
+  String? testId;
+  String? testType;
+  int? countDown;
+  bool? showReview;
+  String? testSource;
+  DateTime? dueDateTime;
+  bool? showPassMark;
+  DateTime? startDatetime;
+  bool? showInstantResult;
+  String? type;
+
+  factory ConfigurationsClass.fromJson(Map<String, dynamic> json) => ConfigurationsClass(
+    bundle: json["bundle"] == null ? null : json["bundle"],
+    course: json["course"] == null ? null : json["course"],
+    timing: json["timing"] == null ? null : json["timing"],
+    testId: json["test_id"] == null ? null : json["test_id"],
+    testType: json["test_type"] == null ? null : json["test_type"],
+    countDown: json["count_down"] == null ? null : json["count_down"],
+    showReview: json["show_review"] == null ? null : json["show_review"],
+    testSource: json["test_source"] == null ? null : json["test_source"],
+    dueDateTime: json["due_dateTime"] == null ? null : DateTime.parse(json["due_dateTime"]),
+    showPassMark: json["show_pass_mark"] == null ? null : json["show_pass_mark"],
+    startDatetime: json["start_datetime"] == null ? null : DateTime.parse(json["start_datetime"]),
+    showInstantResult: json["show_instant_result"] == null ? null : json["show_instant_result"],
+    type: json["type"] == null ? null : json["type"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "bundle": bundle == null ? null : bundle,
+    "course": course == null ? null : course,
+    "timing": timing == null ? null : timing,
+    "test_id": testId == null ? null : testId,
+    "test_type": testType == null ? null : testType,
+    "count_down": countDown == null ? null : countDown,
+    "show_review": showReview == null ? null : showReview,
+    "test_source": testSource == null ? null : testSource,
+    "due_dateTime": dueDateTime == null ? null : dueDateTime!.toIso8601String(),
+    "show_pass_mark": showPassMark == null ? null : showPassMark,
+    "start_datetime": startDatetime == null ? null : startDatetime!.toIso8601String(),
+    "show_instant_result": showInstantResult == null ? null : showInstantResult,
+    "type": type == null ? null : type,
   };
 }
 
