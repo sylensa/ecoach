@@ -491,8 +491,11 @@ class _GroupPageState extends State<GroupPage> {
                           MaterialButton(
                             padding: EdgeInsets.zero,
                             onPressed: () async {
+                              Navigator.pop(context);
+                              showLoaderDialog(context);
+                              await deleteGroup();
 
-                            },
+                              },
                             child: Container(
                               width: appWidth(context),
                               padding: EdgeInsets.symmetric(
@@ -1322,6 +1325,22 @@ class _GroupPageState extends State<GroupPage> {
     });
 
     print("listGroupTestData:$listGroupTestData");
+  }
+
+  deleteGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (isConnected) {
+      if (await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupDelete()) {
+        listGroupListData.remove(widget.groupListData);
+        Navigator.pop(context);
+        Navigator.pop(context,);
+      } else {
+        Navigator.pop(context);
+      }
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
   }
 
   @override
