@@ -23,6 +23,7 @@ class _SettingsState extends State<Settings> {
   @override
   initState() {
     super.initState();
+    selectedStatus = status[0];
     _accessController = TextEditingController();
   }
 
@@ -47,527 +48,532 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.black,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          backgroundColor: Colors.grey[100],
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'Group Settings',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+          title: Text(
+            'Group Settings',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildSizedBox(height * 0.01, width * 0),
-              sText(
-                "Access".toUpperCase(),
-                color: Color(0xFF0E0E0E),
-                size: 14,
-                family: "Poppins",
-                weight: FontWeight.w500,
-              ),
-              buildSizedBox(height * 0.01, width * 0),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.03,
-                  vertical: height * 0.01,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildSizedBox(height * 0.01, width * 0),
+                sText(
+                  "Access".toUpperCase(),
+                  color: Color(0xFF0E0E0E),
+                  size: 14,
+                  family: "Poppins",
+                  weight: FontWeight.w500,
                 ),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.025),
-                ),
-                child: Form(
-                  key: accessKey,
-                  child: Column(
-                    children: [
-                      DropdownButtonFormField(
-                        borderRadius: BorderRadius.circular(width * 0.025),
-                        value: selectedStatus,
-                        onChanged: (value) {
-                          setState(
-                            () {
-                              selectedStatus = value.toString();
-                            },
-                          );
-                        },
-                        selectedItemBuilder: (context) => status.map((item) {
-                          return DropdownMenuItem(
-                            value: item,
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                color: Color(0xFF0E0E0E),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        items: status.map(
-                          (status) {
-                            return DropdownMenuItem<String>(
-                              value: status,
+                buildSizedBox(height * 0.01, width * 0),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.03,
+                    vertical: height * 0.01,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFfFFFF),
+                    borderRadius: BorderRadius.circular(width * 0.025),
+                  ),
+                  child: Form(
+                    key: accessKey,
+                    child: Column(
+                      children: [
+                        DropdownButtonFormField(
+                          borderRadius: BorderRadius.circular(width * 0.025),
+                          value: selectedStatus,
+                          onChanged: (value) {
+                            setState(
+                              () {
+                                selectedStatus = value.toString();
+                              },
+                            );
+                          },
+                          selectedItemBuilder: (context) => status.map((item) {
+                            return DropdownMenuItem(
+                              value: item,
                               child: Text(
-                                status,
+                                item,
                                 style: TextStyle(
-                                  color: Colors.black,
+                                  color: Color(0xFF0E0E0E),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                             );
-                          },
-                        ).toList(),
+                          }).toList(),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          items: status.map(
+                            (status) {
+                              return DropdownMenuItem<String>(
+                                value: status,
+                                child: Text(
+                                  status,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            },
+                          ).toList(),
+                        ),
+                        if (selectedStatus == status[0]) buildInputField()
+                      ],
+                    ),
+                  ),
+                ),
+                buildSizedBox(height * 0.03, width * 0),
+                sText(
+                  "Subscription".toUpperCase(),
+                  color: Color(0xFF0E0E0E),
+                  size: 14,
+                  family: "Poppins",
+                  weight: FontWeight.w500,
+                ),
+                buildSizedBox(height * 0.02, width * 0),
+                Container(
+                  height: height * 0.18,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.08,
+                    vertical: height * 0.01,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFfFFFF),
+                    borderRadius: BorderRadius.circular(width * 0.025),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText(
+                              switchValue[0],
+                              color: Color(0xFF5a6775),
+                            ),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[0]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[0]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[0]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
                       ),
-                      if (selectedStatus == status[0]) buildInputField()
+                      buildSizedBox(height * 0.015, width * 0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child:
+                                sText(switchValue[1], color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[1]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[1]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[1]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
-              buildSizedBox(height * 0.03, width * 0),
-              sText(
-                "Subscription".toUpperCase(),
-                color: Color(0xFF0E0E0E),
-                size: 14,
-                family: "Poppins",
-                weight: FontWeight.w500,
-              ),
-              buildSizedBox(height * 0.02, width * 0),
-              Container(
-                height: height * 0.18,
-                padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.08,
-                  vertical: height * 0.01,
+                buildSizedBox(height * 0.03, width * 0),
+                sText(
+                  "Features".toUpperCase(),
+                  color: Color(0xFF0E0E0E),
+                  size: 14,
+                  family: "Poppins",
+                  weight: FontWeight.w500,
                 ),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.025),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText(
-                            switchValue[0],
-                            color: Color(0xFF5a6775),
+                buildSizedBox(height * 0.02, width * 0),
+                Container(
+                  height: height * 0.75,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.08,
+                    vertical: height * 0.01,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFfFFFF),
+                    borderRadius: BorderRadius.circular(width * 0.025),
+                  ),
+                  child: Column(
+                    children: [
+                      buildSizedBox(height * 0.02, width * 0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child:
+                                sText(switchValue[2], color: Color(0xFF5a6775)),
                           ),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[0]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[0]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[0]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    buildSizedBox(height * 0.015, width * 0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child:
-                              sText(switchValue[1], color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[1]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[1]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[1]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              buildSizedBox(height * 0.03, width * 0),
-              sText(
-                "Features".toUpperCase(),
-                color: Color(0xFF0E0E0E),
-                size: 14,
-                family: "Poppins",
-                weight: FontWeight.w500,
-              ),
-              buildSizedBox(height * 0.02, width * 0),
-              Container(
-                height: height * 0.75,
-                padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.08,
-                  vertical: height * 0.01,
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.025),
-                ),
-                child: Column(
-                  children: [
-                    buildSizedBox(height * 0.02, width * 0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child:
-                              sText(switchValue[2], color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[2]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[2]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[2]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Mastery", color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[3]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[3]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[3]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Improvement Rate",
-                              color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[4]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[4]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[4]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Overall Outlook",
-                              color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[5]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[5]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[5]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Total Score", color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[6]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[6]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[6]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Group Total Score",
-                              color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[7]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[7]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[7]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Pass mark", color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[8]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[8]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[8]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Instant Results",
-                              color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[9]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[9]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[9]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Summaries", color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[10]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (value) {
-                                selectedSwitch.addAll({switchValue[10]: value});
-                              } else {
-                                selectedSwitch.remove(switchValue[10]);
-                              }
-                            });
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.025),
-                          child: sText("Review", color: Color(0xFF5a6775)),
-                        ),
-                        Switch(
-                          value: selectedSwitch.keys.contains(switchValue[11]),
-                          onChanged: (value) {
-                            setState(
-                              () {
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[2]),
+                            onChanged: (value) {
+                              setState(() {
                                 if (value) {
-                                  selectedSwitch
-                                      .addAll({switchValue[11]: value});
+                                  selectedSwitch.addAll({switchValue[2]: value});
                                 } else {
-                                  selectedSwitch.remove(switchValue[11]);
+                                  selectedSwitch.remove(switchValue[2]);
                                 }
-                              },
-                            );
-                          },
-                          activeTrackColor: Colors.lightBlueAccent,
-                          activeColor: Colors.blue,
-                        )
-                      ],
-                    ),
-                  ],
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Mastery", color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[3]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[3]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[3]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Improvement Rate",
+                                color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[4]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[4]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[4]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Overall Outlook",
+                                color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[5]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[5]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[5]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Total Score", color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[6]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[6]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[6]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Group Total Score",
+                                color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[7]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[7]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[7]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Pass mark", color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[8]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[8]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[8]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Instant Results",
+                                color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[9]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[9]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[9]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Summaries", color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[10]),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  selectedSwitch.addAll({switchValue[10]: value});
+                                } else {
+                                  selectedSwitch.remove(switchValue[10]);
+                                }
+                              });
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: height * 0.025),
+                            child: sText("Review", color: Color(0xFF5a6775)),
+                          ),
+                          Switch(
+                            value: selectedSwitch.keys.contains(switchValue[11]),
+                            onChanged: (value) {
+                              setState(
+                                () {
+                                  if (value) {
+                                    selectedSwitch
+                                        .addAll({switchValue[11]: value});
+                                  } else {
+                                    selectedSwitch.remove(switchValue[11]);
+                                  }
+                                },
+                              );
+                            },
+                            activeTrackColor: Colors.lightBlueAccent,
+                            activeColor: Colors.blue,
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              buildSizedBox(height * 0.03, width * 0),
-              sText(
-                "Grading System".toUpperCase(),
-                color: Color(0xFF0E0E0E),
-                size: 14,
-                family: "Poppins",
-                weight: FontWeight.w500,
-              ),
-              buildSizedBox(height * 0.02, width * 0),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: width * 0.03,
+                buildSizedBox(height * 0.03, width * 0),
+                sText(
+                  "Grading System".toUpperCase(),
+                  color: Color(0xFF0E0E0E),
+                  size: 14,
+                  family: "Poppins",
+                  weight: FontWeight.w500,
                 ),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFfFFFF),
-                  borderRadius: BorderRadius.circular(width * 0.025),
+                buildSizedBox(height * 0.02, width * 0),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: width * 0.03,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFFfFFFF),
+                    borderRadius: BorderRadius.circular(width * 0.025),
+                  ),
+                  child: Column(
+                    children: [
+                      buildSizedBox(height * 0.06, width * 0),
+                      sText("Choose Your Preferred Grading System"),
+                      buildSizedBox(height * 0.06, width * 0),
+                      buildRadioButton(
+                        selectedRadio: selectedRadio,
+                        height: height,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRadio = value;
+                          });
+                        },
+                        text: GroupValue.values[0].name,
+                        groupValue: GroupValue.values[0],
+                      ),
+                      buildRadioButton(
+                        selectedRadio: selectedRadio,
+                        height: height,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRadio = value;
+                          });
+                        },
+                        text: GroupValue.values[1].name,
+                        groupValue: GroupValue.values[1],
+                      ),
+                      buildRadioButton(
+                        selectedRadio: selectedRadio,
+                        height: height,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRadio = value;
+                          });
+                        },
+                        text: GroupValue.values[2].name,
+                        groupValue: GroupValue.values[2],
+                      ),
+                      buildRadioButton(
+                        selectedRadio: selectedRadio,
+                        height: height,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRadio = value;
+                          });
+                        },
+                        text: GroupValue.values[3].name,
+                        groupValue: GroupValue.values[3],
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    buildSizedBox(height * 0.06, width * 0),
-                    sText("Choose Your Preferred Grading System"),
-                    buildSizedBox(height * 0.06, width * 0),
-                    buildRadioButton(
-                      selectedRadio: selectedRadio,
-                      height: height,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRadio = value;
-                        });
-                      },
-                      text: GroupValue.values[0].name,
-                      groupValue: GroupValue.values[0],
-                    ),
-                    buildRadioButton(
-                      selectedRadio: selectedRadio,
-                      height: height,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRadio = value;
-                        });
-                      },
-                      text: GroupValue.values[1].name,
-                      groupValue: GroupValue.values[1],
-                    ),
-                    buildRadioButton(
-                      selectedRadio: selectedRadio,
-                      height: height,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRadio = value;
-                        });
-                      },
-                      text: GroupValue.values[2].name,
-                      groupValue: GroupValue.values[2],
-                    ),
-                    buildRadioButton(
-                      selectedRadio: selectedRadio,
-                      height: height,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRadio = value;
-                        });
-                      },
-                      text: GroupValue.values[3].name,
-                      groupValue: GroupValue.values[3],
-                    ),
-                  ],
-                ),
-              ),
-              buildSizedBox(height * 0.06, width * 0),
-            ],
+                buildSizedBox(height * 0.06, width * 0),
+              ],
+            ),
           ),
         ),
       ),
