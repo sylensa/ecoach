@@ -108,16 +108,11 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                     left: width * 0.0,
                     bottom: height * 0.05,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image(
-                        width: width * 0.30,
-                        image: const AssetImage(
-                          "assets/images/success.png",
-                        ),
-                      ),
-                    ],
+                  child: Image(
+                    width: width * 0.30,
+                    image: const AssetImage(
+                      "assets/images/successsful.png",
+                    ),
                   ),
                 ),
                 Text(

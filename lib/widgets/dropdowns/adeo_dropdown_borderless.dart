@@ -30,7 +30,8 @@ class AdeoDropdownBorderless extends StatelessWidget {
               color: kDefaultBlack,
             ),
             onChanged: onChanged,
-            items: items.map(
+            items: items
+                .map(
                   (item) => DropdownMenuItem<SubscriptionItem>(
                     value: item,
                     child: Text(
