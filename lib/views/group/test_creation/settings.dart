@@ -1,16 +1,37 @@
 import 'package:ecoach/helper/helper.dart';
-import 'package:country_icons/country_icons.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
-class TestCreationSettings extends StatefulWidget {
-  const TestCreationSettings({Key? key}) : super(key: key);
+import 'package:intl/intl.dart';
+import 'dart:io';
+
+class Settings extends StatefulWidget {
+  const Settings({Key? key}) : super(key: key);
 
   @override
-  State<TestCreationSettings> createState() => _TestCreationSettingsState();
+  State<Settings> createState() => _SettingsState();
 }
 
-class _TestCreationSettingsState extends State<TestCreationSettings> {
+class _SettingsState extends State<Settings> {
+  final GlobalKey<FormState> accessKey = GlobalKey();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  TextEditingController _accessController = TextEditingController();
+
+  @override
+  initState() {
+    super.initState();
+    _accessController = TextEditingController();
+  }
+
+  @override
+  dispose() {
+    _accessController.dispose();
+    super.dispose();
+  }
+
   Map<String, bool> selectedSwitch = {
     'monthly': false,
     'yearly': false,
@@ -18,42 +39,44 @@ class _TestCreationSettingsState extends State<TestCreationSettings> {
 
   var selectedRadio;
 
+  String? selectedStatus;
+
+  List status = ['Paid', 'Free'];
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white.withOpacity(0.90),
+      backgroundColor: Colors.grey,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          'Group Settings',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: width  * 0.05),
+          padding: EdgeInsets.symmetric(horizontal: width * 0.05),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildSizedBox(height * 0.005, width * 0),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  buildSizedBox(width * 0.04, width * 0),
-                  Padding(
-                    padding: EdgeInsets.only(left: width * 0.08),
-                    child: sText(
-                      "Group Settings",
-                      color: Color(0xFF000000),
-                      size: width * 0.05,
-                    ),
-                  ),
-                ],
-              ),
-              buildSizedBox(height * 0.04, width * 0),
+              buildSizedBox(height * 0.01, width * 0),
               sText(
                 "Access".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -61,9 +84,8 @@ class _TestCreationSettingsState extends State<TestCreationSettings> {
                 family: "Poppins",
                 weight: FontWeight.w500,
               ),
-              buildSizedBox(height * 0.02, width * 0),
+              buildSizedBox(height * 0.01, width * 0),
               Container(
-                height: height * 0.18,
                 padding: EdgeInsets.symmetric(
                   horizontal: width * 0.03,
                   vertical: height * 0.01,
@@ -72,48 +94,60 @@ class _TestCreationSettingsState extends State<TestCreationSettings> {
                   color: Color(0xFFFfFFFF),
                   borderRadius: BorderRadius.circular(width * 0.025),
                 ),
-                child: Column(
-                  children: [
-                    buildSizedBox(height * 0.02, width * 0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        sText("Paid", color: Color(0xFF5a6775)),
-                        Icon(Icons.keyboard_arrow_down),
-                      ],
-                    ),
-                    buildSizedBox(height * 0.01, width * 0),
-                    Divider(
-                      color: Colors.black.withOpacity(0.5),
-                    ),
-                    buildSizedBox(height * 0.02, width * 0),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'icons/flags/png/gh.png',
-                          package: 'country_icons',
-                          width: width * 0.08,
+                child: Form(
+                  key: accessKey,
+                  child: Column(
+                    children: [
+                      DropdownButtonFormField(
+                        borderRadius: BorderRadius.circular(width * 0.025),
+                        value: selectedStatus,
+                        onChanged: (value) {
+                          setState(
+                            () {
+                              selectedStatus = value.toString();
+                            },
+                          );
+                        },
+                        selectedItemBuilder: (context) => status.map((item) {
+                          return DropdownMenuItem(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                color: Color(0xFF0E0E0E),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
-                        VerticalDivider(
-                          width: width * 0.02,
-                          color: Colors.black,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: height * 0.005),
-                          child: sText(
-                            "GHS 900",
-                            color: Colors.black,
-                            size: 15.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        items: status.map(
+                          (status) {
+                            return DropdownMenuItem<String>(
+                              value: status,
+                              child: Text(
+                                status,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            );
+                          },
+                        ).toList(),
+                      ),
+                      if (selectedStatus == status[0]) buildInputField()
+                    ],
+                  ),
                 ),
               ),
-              buildSizedBox(height * 0.06, width * 0),
+              buildSizedBox(height * 0.03, width * 0),
               sText(
                 "Subscription".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -190,7 +224,7 @@ class _TestCreationSettingsState extends State<TestCreationSettings> {
                   ],
                 ),
               ),
-              buildSizedBox(height * 0.06, width * 0),
+              buildSizedBox(height * 0.03, width * 0),
               sText(
                 "Features".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -463,7 +497,7 @@ class _TestCreationSettingsState extends State<TestCreationSettings> {
                   ],
                 ),
               ),
-              buildSizedBox(height * 0.06, width * 0),
+              buildSizedBox(height * 0.03, width * 0),
               sText(
                 "Grading System".toUpperCase(),
                 color: Color(0xFF0E0E0E),
@@ -545,10 +579,43 @@ class _TestCreationSettingsState extends State<TestCreationSettings> {
       height: height,
     );
   }
+
+  Widget buildInputField() {
+    double width = appWidth(context);
+    return Container(
+      child: ListTile(
+        leading: Image.asset(
+          'icons/flags/png/gh.png',
+          package: 'country_icons',
+          width: width * 0.08,
+        ),
+        title: TextFormField(
+          controller: _accessController,
+          keyboardType: TextInputType.numberWithOptions(decimal: true),
+          maxLines: 1,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(
+              RegExp('[0-9.,]+'),
+            ),
+          ],
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            filled: true,
+            fillColor: Colors.white,
+            hintText: 'GHS 900',
+            hintStyle: TextStyle(
+              color: Colors.grey.withOpacity(0.5),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class buildRadioButton extends StatelessWidget {
-  final GlobalKey<ExpansionTileCardState> expansionKey = GlobalKey();
+class buildRadioButton extends StatefulWidget {
   buildRadioButton({
     Key? key,
     required this.selectedRadio,
@@ -565,8 +632,36 @@ class buildRadioButton extends StatelessWidget {
   final GroupValue groupValue;
 
   @override
+  State<buildRadioButton> createState() => _buildRadioButtonState();
+}
+
+class _buildRadioButtonState extends State<buildRadioButton> {
+  TextEditingController gradeController = TextEditingController();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final int passMark = 80;
+
+  @override
+  void initState() {
+    gradeController = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    gradeController.dispose();
+
+    super.dispose();
+  }
+
+  final GlobalKey<ExpansionTileCardState> expansionKey = GlobalKey();
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Container(
       child: ExpansionTileCard(
         expandedTextColor: Color(0xFF0E0E0E),
@@ -576,46 +671,18 @@ class buildRadioButton extends StatelessWidget {
           activeColor: Color(
             0xFF00C9B9,
           ),
-          value: groupValue,
-          groupValue: selectedRadio,
+          value: widget.groupValue,
+          groupValue: widget.selectedRadio,
           onChanged: (value) {
-            onChanged(value);
+            widget.onChanged(value);
           },
         ),
-        title: Text(text),
+        title: Text(widget.text),
         children: [
-          ListTile(
-            trailing: Padding(
-              padding: EdgeInsets.only(left: width * 0.05),
-              child: Radio(
-                activeColor: Color(
-                  0xFF00C9B9,
-                ),
-                value: groupValue,
-                groupValue: selectedRadio,
-                onChanged: (value) {
-                  onChanged(value);
-                },
-              ),
-            ),
-            title: Padding(
-              padding: EdgeInsets.only(left: width * 0.03),
-              child: sText(
-                text,
-                size: 14,
-                weight: FontWeight.w500,
-              ),
-            ),
-            leading: Icon(
-              Icons.play_arrow_sharp,
-              size: height * 0.05,
-              color: Color(0xFF0E0E0E).withOpacity(0.5),
-            ),
-          ),
           Column(
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * 0.07),
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -627,15 +694,12 @@ class buildRadioButton extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
-                height: height * 0.0,
-              ),
               Container(
-                height: height * 0.7,
+                height: widget.height * 0.7,
                 width: width * 0.9,
                 margin: EdgeInsets.symmetric(
                   horizontal: width * 0.040,
-                  vertical: height * 0.015,
+                  vertical: widget.height * 0.015,
                 ),
                 decoration: BoxDecoration(
                   color: Color(0xFFf0f7ff),
@@ -666,9 +730,9 @@ class buildRadioButton extends StatelessWidget {
                     ),
                     Positioned(
                       bottom: 0.0,
-                      top: height * 0.6,
+                      top: widget.height * 0.6,
                       child: Container(
-                        height: height * 0.1,
+                        height: widget.height * 0.1,
                         width: width * 0.762,
                         decoration: BoxDecoration(
                           color: Color(0xFF263E4A),
@@ -690,23 +754,11 @@ class buildRadioButton extends StatelessWidget {
                                 weight: FontWeight.w500,
                                 family: "Poppins",
                               ),
-                              Row(
-                                children: [
-                                  subtractButton(),
-                                  SizedBox(
-                                    width: width * 0.0,
-                                  ),
-                                  sText(
-                                    "80",
-                                    color: Colors.white,
-                                    weight: FontWeight.w500,
-                                    family: "Poppins",
-                                  ),
-                                  SizedBox(
-                                    width: width * 0.0,
-                                  ),
-                                  addButton(),
-                                ],
+                              PassMark(
+                                width: width,
+                                height: height,
+                                add: '+',
+                                subtract: '-',
                               )
                             ],
                           ),
@@ -722,35 +774,130 @@ class buildRadioButton extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget addButton() {
-    return TextButton(
-      onPressed: () {},
-      child: sText(
-        "+",
-        color: Colors.white.withOpacity(0.5),
-        weight: FontWeight.w500,
-        family: "Poppins",
-        size: 20,
-      ),
-    );
+class PassMarkController extends GetxController {
+  final passMark = 80.obs;
+
+  void increment() {
+    passMark.value < 100 ? passMark.value++ : passMark.value = 80;
   }
 
-  Widget subtractButton() {
-    return TextButton(
-      onPressed: () {},
-      child: sText(
-        "-",
-        color: Colors.white.withOpacity(0.5),
-        weight: FontWeight.w500,
-        family: "Poppins",
-        size: 20,
-      ),
+  void decrement() {
+    passMark.value > 0 ? passMark.value-- : passMark.value = 80;
+  }
+}
+
+class PassMark extends StatefulWidget {
+  const PassMark({
+    Key? key,
+    required this.width,
+    required this.height,
+    required this.add,
+    required this.subtract,
+  }) : super(key: key);
+
+  final double width;
+  final double height;
+  final String add, subtract;
+
+  @override
+  State<PassMark> createState() => _PassMarkState();
+}
+
+class _PassMarkState extends State<PassMark> {
+  TextEditingController passMarkController = TextEditingController();
+  PassMarkController _passMarkController = PassMarkController();
+  final GlobalKey<FormState> passKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    passMarkController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    passMarkController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        TextButton(
+          onPressed: () {
+            _passMarkController.decrement();
+          },
+          child: sText(
+            "-",
+            color: Colors.white.withOpacity(0.5),
+            weight: FontWeight.w500,
+            family: "Poppins",
+            size: 20,
+          ),
+        ),
+        Obx(
+          () => Text(
+            "${_passMarkController.passMark.value}",
+            style: TextStyle(
+              fontSize: widget.height * 0.025,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        // Container(
+        //   height: widget.height * 0.035,
+        //   width: widget.width * 0.08,
+        //   child: Form(
+        //     key: passKey,
+        //     child: Padding(
+        //       padding: EdgeInsets.only(
+        //         top: widget.height * 0.040,
+        //         left: widget.width * 0.015,
+        //       ),
+        //       child: TextFormField(
+        //         controller: passMarkController,
+        //         keyboardType: TextInputType.numberWithOptions(
+        //           decimal: false,
+        //           signed: true,
+        //         ),
+        //         decoration: InputDecoration(
+        //           border: InputBorder.none,
+        //           hintText: widget.mark.toString(),
+        //           hintStyle: TextStyle(
+        //             color: Colors.white,
+        //             fontSize: widget.height * 0.025,
+        //             fontWeight: FontWeight.w500,
+        //             fontFamily: "Poppins",
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        TextButton(
+          onPressed: () {
+            _passMarkController.increment();
+
+            print(_passMarkController.passMark.value);
+          },
+          child: sText(
+            "+",
+            color: Colors.white.withOpacity(0.5),
+            weight: FontWeight.w500,
+            family: "Poppins",
+            size: 20,
+          ),
+        ),
+      ],
     );
   }
 }
 
-class GradeAndRange extends StatelessWidget {
+class GradeAndRange extends StatefulWidget {
   const GradeAndRange({
     Key? key,
     required this.width,
@@ -765,7 +912,30 @@ class GradeAndRange extends StatelessWidget {
   final String numbering, grade, add, subtract;
 
   @override
+  State<GradeAndRange> createState() => _GradeAndRangeState();
+}
+
+class _GradeAndRangeState extends State<GradeAndRange> {
+  TextEditingController gradeController = TextEditingController();
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    gradeController.text = widget.grade;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    gradeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    double height = appHeight(context);
+    double width = appWidth(context);
     return Column(
       children: [
         Row(
@@ -773,19 +943,31 @@ class GradeAndRange extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: width * 0.08,
+                horizontal: widget.width * 0.08,
               ),
-              child: sText(numbering),
+              child: sText(widget.numbering),
             ),
             Padding(
               padding: EdgeInsets.only(
-                left: width * 0.1,
+                left: widget.width * 0.1,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      int currentValue = gradeController.text.isEmpty
+                          ? 0
+                          : int.parse(gradeController.text);
+
+                      setState(
+                        () {
+                          currentValue--;
+                          gradeController.text =
+                              (currentValue > 0 ? currentValue : 80).toString();
+                        },
+                      );
+                    },
                     child: sText(
                       "-",
                       color: Colors.grey.withOpacity(0.8),
@@ -794,14 +976,58 @@ class GradeAndRange extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  sText(
-                    "80",
-                    color: Colors.black87,
-                    weight: FontWeight.w500,
-                    family: "Poppins",
+                  Container(
+                    height: height * 0.035,
+                    width: width * 0.08,
+                    child: Form(
+                      key: formKey,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: height * 0.040,
+                          left: width * 0.015,
+                        ),
+                        child: TextFormField(
+                          controller: gradeController,
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: false,
+                            signed: true,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: widget.grade.toString(),
+                            hintStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: height * 0.025,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "Poppins",
+                            ),
+                          ),
+                          // validator: (value) {
+                          //   if (value!.isEmpty) {
+                          //     return '*';
+                          //   }
+                          //   return null;
+                          // },
+                          // onChanged: (value) {
+                          //   debugPrint(value);
+                          // },
+                        ),
+                      ),
+                    ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      int currentValue = int.parse(gradeController.text);
+
+                      setState(
+                        () {
+                          currentValue++;
+                          gradeController.text =
+                              (currentValue < 100 ? currentValue : 80)
+                                  .toString();
+                        },
+                      );
+                    },
                     child: sText(
                       "+",
                       color: Colors.grey.withOpacity(0.8),
