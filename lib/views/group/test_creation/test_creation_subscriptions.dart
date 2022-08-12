@@ -1,5 +1,6 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/test_creation/test_creations_courses.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +80,7 @@ class _TestCreationSubscriptionsState extends State<TestCreationSubscriptions> {
                           MaterialButton(
                             padding: EdgeInsets.zero,
                             onPressed: (){
+                              groupTestBundle = context.read<DownloadUpdate>().plans[index].name.toString();
                               goTo(context, TestCreationCourses(subscription: context.read<DownloadUpdate>().plans[index],));
                             },
                             child: Container(

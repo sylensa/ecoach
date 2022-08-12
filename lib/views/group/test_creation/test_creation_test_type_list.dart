@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group/test_creation/test_configuration.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
   @override
  void initState(){
     getTypeList();
+    groupTestType = widget.type;
     super.initState();
   }
   @override
@@ -92,7 +94,8 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
                 return MaterialButton(
                   padding: EdgeInsets.zero,
                   onPressed: (){
-                    goTo(context, TestConfigurations());
+                    groupTestId = listTopics[index].id.toString();
+                    goTo(context, TestConfigurations(testName: listTopics[index].name,));
                   },
                   child: Container(
                     padding: appPadding(20),
