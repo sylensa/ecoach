@@ -191,7 +191,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                   controller: testDescriptionController,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please check that you\'ve entered your group description';
+                                      return 'Please check that you\'ve entered your group_management description';
                                     }
                                     return null;
                                   },

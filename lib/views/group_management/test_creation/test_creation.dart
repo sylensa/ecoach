@@ -11,11 +11,11 @@ import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/test_creation/test_configuration.dart';
-import 'package:ecoach/views/group/test_creation/test_creation_subscriptions.dart';
-import 'package:ecoach/views/group/test_creation/test_creation_test_type.dart';
-import 'package:ecoach/views/group/test_creation/test_creation_test_type_list.dart';
-import 'package:ecoach/views/group/test_creation/test_creations_courses.dart';
+import 'package:ecoach/views/group_management/test_creation/test_configuration.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation_subscriptions.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation_test_type.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation_test_type_list.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creations_courses.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

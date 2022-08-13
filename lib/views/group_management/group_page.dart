@@ -16,10 +16,10 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
-import 'package:ecoach/views/group/group_list.dart';
-import 'package:ecoach/views/group/test_creation/edit_test_configuration.dart';
-import 'package:ecoach/views/group/test_creation/settings.dart';
-import 'package:ecoach/views/group/test_creation/test_creation.dart';
+import 'package:ecoach/views/group_management/group_list.dart';
+import 'package:ecoach/views/group_management/test_creation/edit_test_configuration.dart';
+import 'package:ecoach/views/group_management/test_creation/settings.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
@@ -791,7 +791,7 @@ class _GroupPageState extends State<GroupPage> {
                                         controller: titleController,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'Please check that you\'ve entered group email';
+                                            return 'Please check that you\'ve entered group_management email';
                                           }
                                           return null;
                                         },

@@ -6,8 +6,8 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
-import 'package:ecoach/views/group/group_list.dart';
-import 'package:ecoach/views/group/not_content_editor.dart';
+import 'package:ecoach/views/group_management/group_list.dart';
+import 'package:ecoach/views/group_management/not_content_editor.dart';
 import 'package:ecoach/views/user_setup.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -253,7 +253,7 @@ class _ContentEditorState extends State<ContentEditor> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: sText(
-                    "Free editor account enables you to create only one group with a limited number of members",
+                    "Free editor account enables you to create only one group_management with a limited number of members",
                     color: kAdeoGray3,
                     weight: FontWeight.w400,
                     align: TextAlign.center),

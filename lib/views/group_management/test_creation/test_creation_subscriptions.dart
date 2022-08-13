@@ -2,7 +2,7 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/test_creation/test_creations_courses.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creations_courses.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
