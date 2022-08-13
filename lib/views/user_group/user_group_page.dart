@@ -1,6 +1,7 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/views/user_group/group_details.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -302,103 +303,109 @@ class _UserGroupPageState extends State<UserGroupPage> {
                        SizedBox(height: 10,),
                        for(int i =0; i < 10; i++)
 
-                         Container(
-                           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                           margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-                           decoration: BoxDecoration(
-                             color: Colors.grey[100],
-                             borderRadius: BorderRadius.circular(10)
-                           ),
-                           child: Row(
-                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                             children: [
-                               Container(
-                                 child: displayImage("filePath",radius: 20),
-                               ),
-                               SizedBox(width: 5,),
-                               Container(
-                                 child: Column(
-                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                   children: [
-                                     Container(
-                                       child: Row(
+                         MaterialButton(
+                           padding: EdgeInsets.zero,
+                           onPressed: (){
+                             goTo(context, GroupDetails(widget.user));
+                           },
+                           child: Container(
+                             padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                             margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+                             decoration: BoxDecoration(
+                               color: Colors.grey[100],
+                               borderRadius: BorderRadius.circular(10)
+                             ),
+                             child: Row(
+                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                               children: [
+                                 Container(
+                                   child: displayImage("filePath",radius: 20),
+                                 ),
+                                 SizedBox(width: 5,),
+                                 Container(
+                                   child: Column(
+                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                     children: [
+                                       Container(
+                                         child: Row(
+                                           children: [
+                                             Container(
+                                               child: sText("RevShady SAT",size: 14,weight: FontWeight.bold),
+                                             ),
+                                             SizedBox(width: 5,),
+                                             Container(
+                                               child: sText("by Afram Dzidefo",size: 10,weight: FontWeight.normal,color: Colors.grey),
+                                             ),
+                                           ],
+                                         ),
+                                       ),
+                                       Row(
                                          children: [
                                            Container(
-                                             child: sText("RevShady SAT",size: 14,weight: FontWeight.bold),
+                                             child: Row(
+                                               children: [
+                                                 Container(
+                                                   child: Icon(Icons.groups,color: Colors.grey,size: 14,),
+                                                 ),
+                                                 SizedBox(width: 5,),
+                                                 Container(
+                                                   child: sText("2412",size: 10,weight: FontWeight.normal,),
+                                                 ),
+                                               ],
+                                             ),
                                            ),
                                            SizedBox(width: 5,),
                                            Container(
-                                             child: sText("by Afram Dzidefo",size: 10,weight: FontWeight.normal,color: Colors.grey),
+                                             child: Row(
+                                               children: [
+                                                 Container(
+                                                   child: Icon(Icons.star,color: Colors.orange,size: 14,),
+                                                 ),
+                                                 SizedBox(width: 0,),
+                                                 Container(
+                                                   child: sText("4.0",size: 10,weight: FontWeight.w400,),
+                                                 ),
+                                                 SizedBox(width: 5,),
+                                                 Container(
+                                                   child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                           Container(
+                                             child: Row(
+                                               children: [
+                                                 Container(
+                                                   child: Icon(Icons.lock,color: Colors.red,size: 12,),
+                                                 ),
+                                                 SizedBox(width: 0,),
+                                                 Container(
+                                                   child: sText("\$99",size: 10,weight: FontWeight.normal,),
+                                                 ),
+                                               ],
+                                             ),
                                            ),
                                          ],
                                        ),
-                                     ),
-                                     Row(
-                                       children: [
-                                         Container(
-                                           child: Row(
-                                             children: [
-                                               Container(
-                                                 child: Icon(Icons.groups,color: Colors.grey,size: 14,),
-                                               ),
-                                               SizedBox(width: 5,),
-                                               Container(
-                                                 child: sText("2412",size: 10,weight: FontWeight.normal,),
-                                               ),
-                                             ],
-                                           ),
-                                         ),
-                                         SizedBox(width: 5,),
-                                         Container(
-                                           child: Row(
-                                             children: [
-                                               Container(
-                                                 child: Icon(Icons.star,color: Colors.orange,size: 14,),
-                                               ),
-                                               SizedBox(width: 0,),
-                                               Container(
-                                                 child: sText("4.0",size: 10,weight: FontWeight.w400,),
-                                               ),
-                                               SizedBox(width: 5,),
-                                               Container(
-                                                 child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
-                                               ),
-                                             ],
-                                           ),
-                                         ),
-                                         Container(
-                                           child: Row(
-                                             children: [
-                                               Container(
-                                                 child: Icon(Icons.lock,color: Colors.red,size: 12,),
-                                               ),
-                                               SizedBox(width: 0,),
-                                               Container(
-                                                 child: sText("\$99",size: 10,weight: FontWeight.normal,),
-                                               ),
-                                             ],
-                                           ),
-                                         ),
-                                       ],
-                                     ),
-                                   ],
-                                 ),
-                               ),
-                               Expanded(child: Container()),
-                               GestureDetector(
-                                 onTap: ()async{
-
-                                 },
-                                 child: Container(
-                                   padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-                                   child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
-                                   decoration: BoxDecoration(
-                                       color: Colors.orange,
-                                       borderRadius: BorderRadius.circular(10)
+                                     ],
                                    ),
                                  ),
-                               )
-                             ],
+                                 Expanded(child: Container()),
+                                 GestureDetector(
+                                   onTap: ()async{
+
+                                   },
+                                   child: Container(
+                                     padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+                                     child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
+                                     decoration: BoxDecoration(
+                                         color: Colors.orange,
+                                         borderRadius: BorderRadius.circular(10)
+                                     ),
+                                   ),
+                                 )
+                               ],
+                             ),
                            ),
                          )
                      ],
