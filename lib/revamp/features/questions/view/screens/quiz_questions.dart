@@ -32,6 +32,7 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:validators/validators.dart';
 import '../../../../core/utils/app_colors.dart';
 
 class QuizQuestion extends StatefulWidget {
@@ -246,35 +247,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
         ? testTakenSaved!.toJson().toString()
         : "null test");
 
-    if (testTaken!.totalQuestions == 5 && testTaken!.correct! <= 2) {
-      goTo(
-        context,
-        BelowPassMark(
-          widget.controller.user,
-          widget.controller.course,
-          widget.controller.type,
-          test: testTakenSaved!,
-          diagnostic: widget.diagnostic,
-          controller: widget.controller,
-          testCategory: controller.challengeType,
-        ),
-        replace: true,
-      );
-    } else if (testTaken!.totalQuestions == 10 && testTaken!.correct! < 5) {
-      goTo(
-        context,
-        BelowPassMark(
-          widget.controller.user,
-          widget.controller.course,
-          widget.controller.type,
-          test: testTakenSaved!,
-          diagnostic: widget.diagnostic,
-          controller: widget.controller,
-          testCategory: controller.challengeType,
-        ),
-        replace: true,
-      );
-    } else if (testTaken!.totalQuestions == 5 && testTaken!.correct! > 2) {
+    if (testTaken!.score! == 95) {
       goTo(
         context,
         ResultSummaryScreen(
@@ -285,10 +258,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
           diagnostic: widget.diagnostic,
           controller: widget.controller,
           testCategory: controller.challengeType,
+          message: 'Excellent',
         ),
         replace: true,
       );
-    } else if (testTaken!.totalQuestions == 10 && testTaken!.correct! >= 5) {
+    } else if (testTaken!.score! >= 80) {
       goTo(
         context,
         ResultSummaryScreen(
@@ -299,13 +273,44 @@ class _QuizQuestionState extends State<QuizQuestion> {
           diagnostic: widget.diagnostic,
           controller: widget.controller,
           testCategory: controller.challengeType,
+          message: 'Very Good',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 60) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+          message: 'Good, more room for improvement',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 40) {
+      goTo(
+        context,
+        BelowPassMark(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+          message: 'Average Performance, need improvement',
         ),
         replace: true,
       );
     } else {
       goTo(
         context,
-        ResultSummaryScreen(
+        BelowPassMark(
           widget.controller.user,
           widget.controller.course,
           widget.controller.type,
@@ -313,6 +318,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
           diagnostic: widget.diagnostic,
           controller: widget.controller,
           testCategory: controller.challengeType,
+          message: 'Poor Performance',
         ),
         replace: true,
       );
@@ -641,7 +647,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     Column(
                       children: [
                         Theme(
-                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.transparent),
                           child: ExpansionTile(
                             textColor: Colors.white,
                             iconColor: kAdeoGray3,
@@ -668,7 +675,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10),
                           width: appWidth(context),
                           decoration: BoxDecoration(
                             color: const Color(0xFF67717D),
@@ -680,7 +688,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                           child: Text(
                             "Choose the right answer to the question above",
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 13, color: Colors.white),
+                            style: const TextStyle(
+                                fontSize: 13, color: Colors.white),
                           ),
                         ),
                         Expanded(
@@ -721,11 +730,13 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           ? true
                                           : false,
                                       child: Theme(
-                                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                        data: Theme.of(context).copyWith(
+                                            dividerColor: Colors.transparent),
                                         child: ExpansionTile(
                                           textColor: Colors.white,
                                           iconColor: kAdeoGray3,
-                                          collapsedBackgroundColor: Colors.white,
+                                          collapsedBackgroundColor:
+                                              Colors.white,
                                           collapsedIconColor: kAdeoGray3,
                                           backgroundColor: Colors.white,
                                           title: Text(
@@ -741,23 +752,32 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                             Column(
                                               children: [
                                                 Container(
-                                                  margin: EdgeInsets.symmetric(horizontal: 20),
-                                                    child: Divider(color: Colors.grey,),
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Divider(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
                                                 Card(
                                                   elevation: 0,
                                                   color: Colors.white,
                                                   margin: EdgeInsets.symmetric(
-                                                      horizontal: 5, vertical: 5),
+                                                      horizontal: 5,
+                                                      vertical: 5),
                                                   child: AdeoHtmlTex(
                                                     controller.user,
-                                                    controller.questions[i].resource!
-                                                        .replaceAll("https", "http"),
+                                                    controller
+                                                        .questions[i].resource!
+                                                        .replaceAll(
+                                                            "https", "http"),
                                                     // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
                                                     useLocalImage:
-                                                    widget.diagnostic ? false : true,
+                                                        widget.diagnostic
+                                                            ? false
+                                                            : true,
                                                     textColor: Colors.grey,
-                                                    fontWeight: FontWeight.normal,
+                                                    fontWeight:
+                                                        FontWeight.normal,
                                                   ),
                                                 ),
                                               ],
@@ -765,11 +785,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           ],
                                         ),
                                       ),
-
-
                                     ),
                                   ),
-
                                   const SizedBox(
                                     height: 10,
                                   ),

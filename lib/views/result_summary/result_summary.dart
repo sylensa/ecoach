@@ -23,6 +23,7 @@ class ResultSummaryScreen extends StatefulWidget {
     this.history = false,
     this.diagnostic = false,
     Key? key,
+    required this.message,
   }) : super(key: key);
 
   TestTaken test;
@@ -33,6 +34,7 @@ class ResultSummaryScreen extends StatefulWidget {
   TestType testType;
   TestCategory testCategory;
   QuizController? controller;
+  final String message;
 
   @override
   State<ResultSummaryScreen> createState() => _ResultSummaryScreenState();
@@ -129,7 +131,8 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "That was some great performance on the test.\n Keep it up",
+                    // "That was some great performance on the test.\n Keep it up",
+                    widget.message,
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       color: Colors.white.withOpacity(0.5),

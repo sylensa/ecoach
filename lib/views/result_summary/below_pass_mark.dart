@@ -23,6 +23,7 @@ class BelowPassMark extends StatefulWidget {
     this.history = false,
     this.diagnostic = false,
     Key? key,
+    required this.message,
   }) : super(key: key);
 
   TestTaken test;
@@ -33,6 +34,7 @@ class BelowPassMark extends StatefulWidget {
   TestType testType;
   TestCategory testCategory;
   QuizController? controller;
+  final String message;
 
   @override
   State<BelowPassMark> createState() => _BelowPassMarkState();
@@ -134,7 +136,8 @@ class _BelowPassMarkState extends State<BelowPassMark> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    "Revise a bit more and give this another try. \n Yes you can!",
+                    // "Revise a bit more and give this another try. \n Yes you can!",
+                    widget.message,
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       color: Colors.white.withOpacity(0.5),
