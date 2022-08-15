@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/views/treadmill/treadmill_instructions.dart';
 //import 'package:ecoach/widgets/pin_input.dart';
@@ -9,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import '../../models/topic.dart';
 import '../../utils/constants.dart';
+import '../../utils/style_sheet.dart';
+import '../../widgets/adeo_outlined_button.dart';
 import '../../widgets/otp_widget.dart';
 import '../../widgets/toast.dart';
 
@@ -20,10 +23,12 @@ class TreadmillTime extends StatefulWidget {
     this.bankId,
     this.bankName,
     this.topic,
+    this.count,
   });
   final TreadmillController controller;
   final int? topicId;
   final int? bankId;
+  final int? count;
   final String? bankName;
   Topic? topic;
   final TreadmillMode mode;
@@ -66,8 +71,14 @@ class _TreadmillTimeState extends State<TreadmillTime> {
       backgroundColor: const Color(0xFF2D3E50),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(50.0, 50.0, 50.0, 16.0),
-        child: InkWell(
-          onTap: () async {
+        child: AdeoOutlinedButton(
+          label: 'Let\'s go',
+          fontSize: 29,
+          fontWeight: FontWeight.normal,
+          borderColor: kAdeoLightTeal,
+          color: Colors.white,
+          size: Sizes.small,
+          onPressed: () async {
             print(widget.topicId);
             if (_fieldOne.text == "0" &&
                 _fieldTwo.text == "0" &&
@@ -87,42 +98,33 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                 'Enter a valid duration',
               );
             } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InstructionPage(
+              goTo(
+                  context,
+                  InstructionPage(
                     mode: widget.mode,
                     controller: widget.controller,
                     topicId: widget.topicId,
                     bankId: widget.bankId,
                     bankName: widget.bankName,
+                    count: widget.count,
                   ),
-                ),
-              );
+                  replace: false);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //     InstructionPage(
+              //       mode: widget.mode,
+              //       controller: widget.controller,
+              //       topicId: widget.topicId,
+              //       bankId: widget.bankId,
+              //       bankName: widget.bankName,
+              //     ),
+
+              //   ),
+              // );
             }
           },
-          child: Container(
-            child: const Center(
-              child: Text(
-                'let\'s go',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30.0,
-                ),
-              ),
-            ),
-            height: 70,
-            width: 100,
-            decoration: BoxDecoration(
-              color: const Color(0xFF2D3E50),
-              border: Border.all(
-                color: const Color(0xFFFFFFFF),
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(50),
-              ),
-            ),
-          ),
         ),
       ),
       body: Stack(

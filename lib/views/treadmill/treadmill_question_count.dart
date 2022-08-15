@@ -39,7 +39,7 @@ class _TreadmillQuestionCountState extends State<TreadmillQuestionCount> {
   @override
   void initState() {
     super.initState();
-    print(widget.topicId);
+    print(widget.mode);
   }
 
   @override
@@ -117,13 +117,13 @@ class _TreadmillQuestionCountState extends State<TreadmillQuestionCount> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return TreadmillTime(
-                                  controller: widget.controller,
-                                  topic: widget.topic,
-                                  mode: widget.mode,
-                                  topicId: widget.topicId,
-                                  bankId: widget.bankId,
-                                  bankName: widget.bankName,
-                                );
+                                    controller: widget.controller,
+                                    topic: widget.topic,
+                                    mode: widget.mode,
+                                    topicId: widget.topicId,
+                                    bankId: widget.bankId,
+                                    bankName: widget.bankName,
+                                    count: widget.count);
                                 //TreadmillWelcome(
                                 // controller: controller,
                                 // mode: mode,

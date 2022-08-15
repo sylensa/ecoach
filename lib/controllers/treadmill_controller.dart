@@ -135,24 +135,27 @@ class TreadmillController {
   int get correct {
     correctCount = 0;
     questions.forEach((question) {
-      if (question.isCorrect) correctCount++;
+      if (question.isCorrect && question.status == "correct") correctCount++;
     });
+    print("correctCount:$correctCount");
     return correctCount;
   }
 
   int get wrong {
     wrongCount = 0;
     questions.forEach((question) {
-      if (question.isWrong && question.status != null) wrongCount++;
+      if (question.isWrong && question.status == "wrong") wrongCount++;
     });
+    print("wrongCount:$wrongCount");
     return wrongCount;
   }
 
   int get unattempted {
-    int unattemptedCount = 0;
+    unattemptedCount = 0;
     questions.forEach((question) {
       if (question.status == "skipped") unattemptedCount++;
     });
+    print("unattemptedCount:$unattemptedCount");
     return unattemptedCount;
   }
 
@@ -168,17 +171,20 @@ class TreadmillController {
   }
 
   double get avgTime {
-    double time = 0;
+    double times = 0;
     int length = 0;
     questions.forEach((question) {
       if (question.time != null && question.time! > 0) {
-        time += question.time!;
+        if (time == question.time! - 1) {
+          question.time = time;
+        }
+        times += question.time!;
         length++;
       }
     });
     print("Length=$length, time=$time");
     if (length == 0) length = 1;
-    return time / length;
+    return times / length;
   }
 
   double getAvgScore() {
@@ -423,10 +429,10 @@ class TreadmillController {
     // print("treadmil res:$treadmillRes");
   }
 
-  createBankTreadmill(int bankId) async {
+  createBankTreadmill(int bankId, int count) async {
     treadmill = Treadmill(
       title: name,
-      type: TreadmillType.TOPIC.toString(),
+      type: TreadmillType.BANK.toString(),
       bankId: bankId,
       courseId: course.id,
       status: TreadmillStatus.NEW.toString(),
@@ -437,7 +443,8 @@ class TreadmillController {
     int treadmillId = await TreadmillDB().insert(treadmill!);
     treadmill!.id = treadmillId;
     List<Question> quesList =
-        await QuestionDB().getTreadmillBankQuestions(bankId);
+        await TestController().getQuizQuestions(bankId, limit: count);
+    //  await QuestionDB().getTreadmillBankQuestions(bankId);
     print("question=${quesList.length}");
     for (int i = 0; i < quesList.length; i++) {
       TreadmillProgress mp = TreadmillProgress(

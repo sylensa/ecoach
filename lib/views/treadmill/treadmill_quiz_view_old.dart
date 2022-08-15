@@ -25,11 +25,13 @@ class TreadmillQuizViewOld extends StatefulWidget {
   TreadmillQuizViewOld({
     Key? key,
     required this.controller,
+    //required this.mode,
     this.themeColor = kAdeoLightTeal,
   }) : super(key: key);
 
   final TreadmillController controller;
   final Color themeColor;
+  //final TreadmillMode mode;
 
   @override
   State<TreadmillQuizViewOld> createState() => _TreadmillQuizViewState();
@@ -172,6 +174,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizViewOld>
             wrong: wrong,
             avgScore: avgScore,
             controller: controller,
+
+            mode: null,
             // avgTimeComplete: avgTimeComplete(),
           );
         },
@@ -1051,9 +1055,7 @@ class SpeedQuizEnded extends StatelessWidget {
                               context,
                               MaterialPageRoute(builder: (c) {
                                 return TreadmillIntroit(
-                                  controller.user,
-                                  controller.course,
-                                );
+                                    controller.user, controller.course, null);
                               }),
                             );
                           },
@@ -1077,9 +1079,7 @@ class SpeedQuizEnded extends StatelessWidget {
                         context,
                         MaterialPageRoute(builder: (c) {
                           return TreadmillIntroit(
-                            controller.user,
-                            controller.course,
-                          );
+                              controller.user, controller.course, null);
                         }),
                       );
                     },

@@ -194,7 +194,7 @@ class _TreadmillTimeAndInstructionState
               widget.controller.name = topic!.name!;
               break;
             case TreadmillMode.BANK:
-              await widget.controller.createBankTreadmill(widget.bankId!);
+              //  await widget.controller.createBankTreadmill(widget.bankId!);
               widget.controller.name = widget.bankName;
               break;
           }
@@ -205,7 +205,9 @@ class _TreadmillTimeAndInstructionState
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) {
-              return TreadmillQuizView(controller: widget.controller);
+              return TreadmillQuizView(
+                controller: widget.controller,
+              );
             }),
           );
         }),

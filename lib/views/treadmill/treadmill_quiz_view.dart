@@ -39,11 +39,13 @@ class TreadmillQuizView extends StatefulWidget {
   TreadmillQuizView({
     Key? key,
     required this.controller,
+    this.mode,
     this.themeColor = kAdeoLightTeal,
   }) : super(key: key);
 
   final TreadmillController controller;
   final Color themeColor;
+  final TreadmillMode? mode;
 
   @override
   State<TreadmillQuizView> createState() => _TreadmillQuizViewState();
@@ -86,6 +88,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   int countdownInSeconds = 0;
   int questionTimer = 0;
   Timer? _timer;
+  // StopW
   currentCorrectScoreState() {
     setState(() {
       if (controller.questions[controller.currentQuestion].isCorrect) {
@@ -116,10 +119,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   void startTimer() {
     setState(() {
       // countdown = countdown * 1000;
-
       _start = controller.time;
     });
     // _start = countdown;
+
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
@@ -128,8 +131,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           setState(() {
             // saveForLater();
             _start = controller.time;
-            // controller.questions[controller.currentQuestion].time =
-            //     controller.time - 1;
+
             value = 0;
           });
 
@@ -146,27 +148,27 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           // mark(position: 19);
           if (value == 1) {
             await submitAnswer();
-            testTaken = controller.getTest();
+            // testTaken = controller.getTest();
 
-            controller.duration = oneSec;
-            _timer!.cancel();
+            // controller.duration = oneSec;
+            // _timer!.cancel();
             // controller.endTreadmill();
-            controller.endTime;
+            // controller.endTime;
 
-            currentCorrectScoreState();
+            // currentCorrectScoreState();
             // completeQuiz();
 
             showDialogOk(
               message: 'Time is up. View Scores.',
               context: context,
-              // target: TreadmillCompleteCongratulations(
-              //   controller: widget.controller,
-              //   correct: correct,
-              //   wrong: wrong,
-              //   avgScore: avgScore,
-              // ),
-              target: TreadmillCompleted(
-                  widget.controller.user, widget.controller.course),
+              target: TreadmillCompleteCongratulations(
+                controller: widget.controller,
+                correct: correct,
+                wrong: wrong,
+                avgScore: avgScore,
+              ),
+              // target: TreadmillCompleted(
+              //     widget.controller.user, widget.controller.course),
               status: true,
               replace: true,
               dismiss: false,
@@ -185,7 +187,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     //print(controller.countdown);
     // controller.endTreadmill();
     pageController = PageController(initialPage: controller.currentQuestion);
-    widget.controller.startTest();
+    // widget.controller.startTest();
     var dateFormat = DateFormat('h:m:s');
     durationStart =
         dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
@@ -356,6 +358,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           wrong: wrong,
           avgScore: avgScore,
           controller: controller,
+          mode: widget.mode,
           // avgTimeComplete: avgTimeComplete(),
         ),
         replace: true);
@@ -381,6 +384,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     return WillPopScope(
       onWillPop: () async {
         // printtimerController.pause();
+        controller.pauseTimer();
+        _timer!.cancel();
         Get.bottomSheet(quitWidget());
         return false;
       },
@@ -400,6 +405,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                     IconButton(
                       onPressed: () {
                         //     NavigatortimerController.pause();
+                        _timer!.cancel();
                         Get.bottomSheet(quitWidget());
                         return;
                       },
@@ -495,6 +501,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                     IconButton(
                       onPressed: () async {
                         //  timerController.pause();
+                        _timer!.cancel();
+
                         await reportModalBottomSheet(context,
                             question: widget
                                 .controller
@@ -564,7 +572,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                       width: 6.4,
                     ),
                     Text(
-                      "${controller.getAvgTime().toStringAsFixed(2)}s",
+                      "${widget.controller.getAvgTime().toStringAsFixed(2)}s",
                       style: const TextStyle(
                         fontSize: 10,
                         color: Color(0xFF9EE4FF),
@@ -637,11 +645,15 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                           swichValue = !swichValue;
                         });
                         insertSaveTestQuestion(controller
-                            .questions[controller.currentQuestion].id!);
+                            .questions[controller.currentQuestion]
+                            .question!
+                            .id!);
                       },
                       child: SvgPicture.asset(
                         savedQuestions.contains(controller
-                                .questions[controller.currentQuestion].id)
+                                .questions[controller.currentQuestion]
+                                .question!
+                                .id)
                             ? "assets/images/on_switch.svg"
                             : "assets/images/off_switch.svg",
                       ),
@@ -649,26 +661,26 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   ],
                 ),
               ),
-              // LinearProgressIndicator(
-              //   backgroundColor: Color(0xFFFFFFFF),
-              //   value: value,
-              //   minHeight: 8,
-              //   valueColor:
-              //       const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
-              // ),
-              FAProgressBar(
-                changeColorValue: 100,
-                changeProgressColor: Colors.pink,
-                backgroundColor: Colors.white,
-                progressColor: Colors.lightBlue,
-                //progressColor: const Color(0xFF87F6FF),
-                animatedDuration: const Duration(milliseconds: 700),
-                direction: Axis.horizontal,
-                verticalDirection: VerticalDirection.up,
-                currentValue: value!,
-                maxValue: 1,
-                size: 8,
+              LinearProgressIndicator(
+                backgroundColor: Colors.grey,
+                value: value,
+                minHeight: 8,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
               ),
+              // FAProgressBar(
+              //   changeColorValue: 100,
+              //   changeProgressColor: Colors.pink,
+              //   backgroundColor: Colors.white,
+              //   progressColor: Colors.lightBlue,
+              //   //progressColor: const Color(0xFF87F6FF),
+              //   animatedDuration: const Duration(milliseconds: 300),
+              //   direction: Axis.horizontal,
+              //   verticalDirection: VerticalDirection.up,
+              //   currentValue: value!,
+              //   maxValue: 1,
+              //   size: 8,
+              // ),
 
               Expanded(
                 child: PageView(
@@ -1170,6 +1182,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                             onTap: () {
                               Navigator.pop(context);
                               // timerController.resume();
+                              _timer!.tick;
                             },
                             child: Container(
                               padding: const EdgeInsets.only(
@@ -1462,7 +1475,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
               ),
             ),
             child: Text(
-              "Yes",
+              "Save & Quit",
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,
@@ -1472,7 +1485,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           SizedBox(height: 10),
           OutlinedButton(
             onPressed: () {
-              // startTimer();
+              startTimer();
               Navigator.pop(context);
             },
             style: ButtonStyle(
@@ -1513,7 +1526,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
               ),
             ),
             child: Text(
-              "No",
+              "Cancel",
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,
@@ -2428,9 +2441,7 @@ class SpeedQuizEnded extends StatelessWidget {
                               context,
                               MaterialPageRoute(builder: (c) {
                                 return TreadmillIntroit(
-                                  controller.user,
-                                  controller.course,
-                                );
+                                    controller.user, controller.course, null);
                               }),
                             );
                           },
@@ -2454,9 +2465,7 @@ class SpeedQuizEnded extends StatelessWidget {
                         context,
                         MaterialPageRoute(builder: (c) {
                           return TreadmillIntroit(
-                            controller.user,
-                            controller.course,
-                          );
+                              controller.user, controller.course, null);
                         }),
                       );
                     },
