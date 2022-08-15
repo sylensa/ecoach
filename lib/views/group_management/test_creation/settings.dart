@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import 'package:country_list_pick/country_list_pick.dart';
+
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
@@ -381,12 +383,25 @@ class _SettingsState extends State<Settings> {
 
   Widget buildInputField() {
     double width = appWidth(context);
+    var _countryFlag;
     return Container(
       child: ListTile(
-        leading: Image.asset(
-          'icons/flags/png/gh.png',
-          package: 'country_icons',
-          width: width * 0.08,
+        // leading: Image.asset(
+        //   'icons/flags/png/gh.png',
+        //   package: 'country_icons',
+        //   width: width * 0.08,
+        // ),
+        leading: CountryListPick(
+          theme: CountryTheme(
+            isShowFlag: true,
+            isShowTitle: false,
+            isShowCode: false,
+            isDownIcon: false,
+          ),
+          initialSelection: '+233',
+          onChanged: (value) => setState(() {
+            _countryFlag = value!.flagUri;
+          }),
         ),
         title: TextFormField(
           controller: _accessController,
@@ -424,7 +439,7 @@ class buildRadioButton extends StatefulWidget {
     required this.groupValue,
   }) : super(key: key);
 
-  final selectedRadio;
+  var selectedRadio;
   final double height;
   final Function(dynamic value) onChanged;
   final String text;
@@ -467,6 +482,7 @@ class _buildRadioButtonState extends State<buildRadioButton> {
         key: expansionKey,
         elevation: 0.0,
         leading: Radio(
+          toggleable: true,
           activeColor: Color(
             0xFF00C9B9,
           ),
