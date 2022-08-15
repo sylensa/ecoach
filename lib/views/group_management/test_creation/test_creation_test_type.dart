@@ -1,7 +1,7 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/test_creation/test_creation_test_type_list.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation_test_type_list.dart';
 import 'package:flutter/material.dart';
 
 class TestCreationTestType extends StatefulWidget {

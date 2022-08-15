@@ -600,7 +600,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 6.4,
                   ),
                   Text(
-                    "$wrong",
+                    "${wrong + getUnAttempted}",
                     style: TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),

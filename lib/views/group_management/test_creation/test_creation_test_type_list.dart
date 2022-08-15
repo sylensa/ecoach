@@ -4,7 +4,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/test_creation/test_configuration.dart';
+import 'package:ecoach/views/group_management/test_creation/test_configuration.dart';
 import 'package:flutter/material.dart';
 
 class TestCreationTestTypeList extends StatefulWidget {
