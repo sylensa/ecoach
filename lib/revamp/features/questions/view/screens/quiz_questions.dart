@@ -32,6 +32,7 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:validators/validators.dart';
 import '../../../../core/utils/app_colors.dart';
 
 class QuizQuestion extends StatefulWidget {
@@ -245,23 +246,8 @@ class _QuizQuestionState extends State<QuizQuestion> {
     print(testTakenSaved != null
         ? testTakenSaved!.toJson().toString()
         : "null test");
-    if (testTakenSaved != null &&
-        (testTakenSaved?.score)! < 50 &&
-        testTakenSaved?.testType == "speed") {
-      goTo(
-        context,
-        BelowPassMark(
-          widget.controller.user,
-          widget.controller.course,
-          widget.controller.type,
-          test: testTakenSaved!,
-          diagnostic: widget.diagnostic,
-          controller: widget.controller,
-          testCategory: controller.challengeType,
-        ),
-        replace: true,
-      );
-    } else {
+
+    if (testTaken!.score! == 95) {
       goTo(
         context,
         ResultSummaryScreen(
@@ -272,23 +258,71 @@ class _QuizQuestionState extends State<QuizQuestion> {
           diagnostic: widget.diagnostic,
           controller: widget.controller,
           testCategory: controller.challengeType,
+          message: 'Excellent',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 80) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+          message: 'Very Good',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 60) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+          message: 'Good, more room for improvement',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 40) {
+      goTo(
+        context,
+        BelowPassMark(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+          message: 'Average Performance, need improvement',
+        ),
+        replace: true,
+      );
+    } else {
+      goTo(
+        context,
+        BelowPassMark(
+          widget.controller.user,
+          widget.controller.course,
+          widget.controller.type,
+          test: testTakenSaved!,
+          diagnostic: widget.diagnostic,
+          controller: widget.controller,
+          testCategory: controller.challengeType,
+          message: 'Poor Performance',
         ),
         replace: true,
       );
     }
-    // goTo(
-    //   context,
-    //   ResultSummaryScreen(
-    //     widget.controller.user,
-    //     widget.controller.course,
-    //     widget.controller.type,
-    //     test: testTakenSaved!,
-    //     diagnostic: widget.diagnostic,
-    //     controller: widget.controller,
-    //     testCategory: controller.challengeType,
-    //   ),
-    //   replace: true,
-    // );
   }
 
   insertSaveTestQuestion(int qid) async {
@@ -566,7 +600,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                     width: 6.4,
                   ),
                   Text(
-                    "$wrong",
+                    "${wrong + getUnAttempted}",
                     style: TextStyle(
                       fontSize: 10,
                       color: Color(0xFF9EE4FF),
@@ -612,12 +646,51 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   for (int i = 0; i < controller.questions.length; i++)
                     Column(
                       children: [
-                        ActualQuestion(
-                          user: controller.user,
-                          question: "${controller.questions[i].text}",
-                          diagnostic: widget.diagnostic,
-                          direction:
-                              "Choose the right answer to the question above",
+                        Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: kAdeoGray3,
+                            initiallyExpanded: true,
+                            collapsedIconColor: kAdeoGray3,
+                            backgroundColor: Color(0xFFEFEFEF),
+                            title: Text(
+                              'View Question',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                                color: kAdeoGray3,
+                              ),
+                            ),
+                            children: <Widget>[
+                              ActualQuestion(
+                                user: controller.user,
+                                question: "${controller.questions[i].text}",
+                                diagnostic: widget.diagnostic,
+                                direction: "",
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10),
+                          width: appWidth(context),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF67717D),
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0xFFC8C8C8),
+                            ),
+                          ),
+                          child: Text(
+                            "Choose the right answer to the question above",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontSize: 13, color: Colors.white),
+                          ),
                         ),
                         Expanded(
                           child: ListView(
@@ -656,20 +729,60 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                               .questions[i].resource!.isNotEmpty
                                           ? true
                                           : false,
-                                      child: Card(
-                                        elevation: 0,
-                                        color: Colors.white,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 5, vertical: 5),
-                                        child: AdeoHtmlTex(
-                                          controller.user,
-                                          controller.questions[i].resource!
-                                              .replaceAll("https", "http"),
-                                          // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
-                                          useLocalImage:
-                                              widget.diagnostic ? false : true,
-                                          textColor: Colors.grey,
-                                          fontWeight: FontWeight.normal,
+                                      child: Theme(
+                                        data: Theme.of(context).copyWith(
+                                            dividerColor: Colors.transparent),
+                                        child: ExpansionTile(
+                                          textColor: Colors.white,
+                                          iconColor: kAdeoGray3,
+                                          collapsedBackgroundColor:
+                                              Colors.white,
+                                          collapsedIconColor: kAdeoGray3,
+                                          backgroundColor: Colors.white,
+                                          title: Text(
+                                            'Resource',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.normal,
+                                              color: kAdeoGray3,
+                                            ),
+                                          ),
+                                          children: <Widget>[
+                                            Column(
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                                  child: Divider(
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                Card(
+                                                  elevation: 0,
+                                                  color: Colors.white,
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 5,
+                                                      vertical: 5),
+                                                  child: AdeoHtmlTex(
+                                                    controller.user,
+                                                    controller
+                                                        .questions[i].resource!
+                                                        .replaceAll(
+                                                            "https", "http"),
+                                                    // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                                    useLocalImage:
+                                                        widget.diagnostic
+                                                            ? false
+                                                            : true,
+                                                    textColor: Colors.grey,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),

@@ -380,6 +380,35 @@ EdgeInsets noPadding() {
 EdgeInsets appPadding(double size) {
   return EdgeInsets.all(size);
 }
+InputDecoration textDecorSuffix({Color fillColor = Colors.white,String? hint, Icon? icon, Icon? suffIcon,Color? suffIconColor, String prefix = '', String suffix = '', bool enabled = true, Color hintColor = Colors.grey, double hintSize = 16, bool showBorder = true, String label = '', double size = 40,double top = 12.0,double radius = 0}) {
+  return new InputDecoration(
+    suffixIcon:  Container(
+      child: suffIcon,
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(size)
+      ),
+    ),
+    prefixIcon: icon,
+    prefixText: prefix,
+    suffixText: suffix,
+    hintText: hint,
+    hintStyle: appStyle(size: hintSize, col: hintColor),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: appDarkText.withOpacity(0.1), width: 1),
+      borderRadius: BorderRadius.all(Radius.circular(size)),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: appDarkText.withOpacity(0.1), width: 1),
+      borderRadius:  BorderRadius.all(Radius.circular(size)),
+    ),
+    labelStyle: appStyle(size: hintSize, col: hintColor),
+    labelText: label,
+    filled: true,
+    fillColor: fillColor,
+    contentPadding: EdgeInsets.fromLTRB(20.0, top, 10.0, 12.0),
+  );
+}
 
 InputDecoration textDecor(
     {String hint = '',

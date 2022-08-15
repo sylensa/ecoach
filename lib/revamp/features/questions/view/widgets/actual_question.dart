@@ -18,7 +18,7 @@ class ActualQuestion extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFFEFEFEF),
             border: Border.all(
-              width: 1,
+              width: 0,
               color: const Color(0xFFC8C8C8),
             ),
           ),

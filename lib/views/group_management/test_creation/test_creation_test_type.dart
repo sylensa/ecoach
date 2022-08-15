@@ -1,17 +1,18 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/test_creation/test_creation_subscriptions.dart';
-import 'package:ecoach/views/group/test_creation/test_creations_courses.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation_test_type_list.dart';
 import 'package:flutter/material.dart';
 
-class TestCreation extends StatefulWidget {
-  const TestCreation({Key? key}) : super(key: key);
+class TestCreationTestType extends StatefulWidget {
+  Course? course;
+   TestCreationTestType({this.course});
 
   @override
-  State<TestCreation> createState() => _TestCreationState();
+  State<TestCreationTestType> createState() => _TestCreationTestTypeState();
 }
 
-class _TestCreationState extends State<TestCreation> {
+class _TestCreationTestTypeState extends State<TestCreationTestType> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,11 +37,11 @@ class _TestCreationState extends State<TestCreation> {
                     CircularProgressIndicator(
                       color: Colors.black,
                       strokeWidth: 2,
-                      value: 0.2,
+                      value: 0.8,
                     ),
                     Center(
                       child: Text(
-                        "1",
+                        "4",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.black,
@@ -54,74 +55,20 @@ class _TestCreationState extends State<TestCreation> {
           ),
         ],
       ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: appWidth(context),
-                child: sText("Select your source for the test",color: kAdeoGray2,align: TextAlign.center),
-              ),
-              SizedBox(height: 20,),
-              Container(
-                padding: appPadding(20),
-                margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
-                decoration: BoxDecoration(
-                  color: kAdeoGray,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    MaterialButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: (){
-                        goTo(context, TestCreationSubscriptions());
-                      },
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: sText("Subscription",size: 20,weight: FontWeight.bold),
-                                  ),
-                                  SizedBox(height: 10,),
-                                  Container(
-                                    width: appWidth(context) * 0.65,
-
-                                    child: sText("Pick a quiz from your existing subscription",size: 12,color: kAdeoGray2),
-                                  )
-
-                                ],
-                              ),
-                            ),
-                              Image.asset("assets/images/stopwatch.png")
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    Row(
-                      children: [
-                        Flexible(
-                          flex: 1,
-                            child: Container(color: Color(0XFF00C9B9),height: 5,),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Container(
-                              color: Color(0XFF0367B4),height: 5
-                          ),
-                        ),
-
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: appWidth(context),
+              child: sText("Select your source for the test",color: kAdeoGray2,align: TextAlign.center),
+            ),
+            SizedBox(height: 20,),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: (){
+                goTo(context, TestCreationTestTypeList(type: "exam",course: widget.course,));
+              },
+              child: Container(
                 padding: appPadding(20),
                 margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
                 decoration: BoxDecoration(
@@ -139,7 +86,66 @@ class _TestCreationState extends State<TestCreation> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  child: sText("Editor",size: 20,weight: FontWeight.bold),
+                                  child: sText("Exams",size: 16,weight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 10,),
+                                Container(
+                                  width: appWidth(context) * 0.65,
+
+                                  child: sText("Pick a quiz from your existing subscription",size: 12,color: kAdeoGray2),
+                                )
+
+                              ],
+                            ),
+                          ),
+                          Image.asset("assets/images/stopwatch.png",width: 30,)
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20,),
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Container(color: Color(0XFF00C9B9),height: 5,),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                              color: Color(0XFF0367B4),height: 5
+                          ),
+                        ),
+
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: (){
+                goTo(context, TestCreationTestTypeList(type: "topic",course: widget.course,));
+              },
+              child: Container(
+                padding: appPadding(20),
+                margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                decoration: BoxDecoration(
+                  color: kAdeoGray,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  child: sText("Topics",size: 16,weight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 10,),
                                 Container(
@@ -150,7 +156,7 @@ class _TestCreationState extends State<TestCreation> {
                               ],
                             ),
                           ),
-                            Image.asset("assets/images/stopwatch.png",)
+                          Image.asset("assets/images/stopwatch.png",width: 30,)
                         ],
                       ),
                     ),
@@ -159,7 +165,7 @@ class _TestCreationState extends State<TestCreation> {
                       children: [
                         Flexible(
                           flex: 1,
-                            child: Container(color: Color(0XFF00C9B9),height: 5,),
+                          child: Container(color: Color(0XFF00C9B9),height: 5,),
                         ),
                         Flexible(
                           flex: 1,
@@ -173,7 +179,13 @@ class _TestCreationState extends State<TestCreation> {
                   ],
                 ),
               ),
-              Container(
+            ),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: (){
+                goTo(context, TestCreationTestTypeList(type: "bank",course: widget.course,));
+              },
+              child: Container(
                 padding: appPadding(20),
                 margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
                 decoration: BoxDecoration(
@@ -191,7 +203,7 @@ class _TestCreationState extends State<TestCreation> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  child: sText("Testgen",size: 20,weight: FontWeight.bold),
+                                  child: sText("Banks",size: 16,weight: FontWeight.bold),
                                 ),
                                 SizedBox(height: 10,),
                                 Container(
@@ -202,7 +214,7 @@ class _TestCreationState extends State<TestCreation> {
                               ],
                             ),
                           ),
-                            Image.asset("assets/images/stopwatch.png",)
+                          Image.asset("assets/images/stopwatch.png",width: 30,)
                         ],
                       ),
                     ),
@@ -211,7 +223,7 @@ class _TestCreationState extends State<TestCreation> {
                       children: [
                         Flexible(
                           flex: 1,
-                            child: Container(color: Color(0XFF00C9B9),height: 5,),
+                          child: Container(color: Color(0XFF00C9B9),height: 5,),
                         ),
                         Flexible(
                           flex: 1,
@@ -225,9 +237,10 @@ class _TestCreationState extends State<TestCreation> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
     );
   }
 }

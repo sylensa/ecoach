@@ -4,7 +4,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/empty_group_memebers.dart';
+import 'package:ecoach/views/group_management/empty_group_memebers.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -96,7 +96,7 @@ class _CreateGroupState extends State<CreateGroup> {
                               controller: groupNameController,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please check that you\'ve entered group email';
+                                  return 'Please check that you\'ve entered group_management email';
                                 }
                                 return null;
                               },

@@ -124,7 +124,7 @@ class AnnouncementData {
   dynamic deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
-  User? user;
+  UserAnnounce? user;
   List<Resource>? resources;
 
   factory AnnouncementData.fromJson(Map<String, dynamic> json) => AnnouncementData(
@@ -137,7 +137,7 @@ class AnnouncementData {
     deletedAt: json["deleted_at"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
+    user: json["user"] == null ? null : UserAnnounce.fromJson(json["user"]),
     resources: json["resources"] == null ? null : List<Resource>.from(json["resources"].map((x) => Resource.fromJson(x))),
   );
 
@@ -180,8 +180,8 @@ class Resource {
   };
 }
 
-class User {
-  User({
+class UserAnnounce {
+  UserAnnounce({
     this.id,
     this.name,
     this.role,
@@ -195,7 +195,7 @@ class User {
   bool? isAgent;
   bool? isGroupCreator;
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory UserAnnounce.fromJson(Map<String, dynamic> json) => UserAnnounce(
     id: json["id"] == null ? null : json["id"],
     name: json["name"] == null ? null : json["name"],
     role: json["role"] == null ? null : json["role"],
