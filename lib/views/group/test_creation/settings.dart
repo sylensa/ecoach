@@ -593,25 +593,6 @@ class _buildRadioButtonState extends State<buildRadioButton> {
   }
 }
 
-// use this button to add more input fields here
-class PassMark extends StatefulWidget {
-  PassMark({
-    Key? key,
-    required this.width,
-    required this.height,
-    required this.add,
-    required this.subtract,
-  }) : super(key: key);
-
-  final double width;
-  final double height;
-  final String add;
-  final String subtract;
-
-  @override
-  State<PassMark> createState() => _PassMarkState();
-}
-
 // Work on add/subtract Form Field
 List<Widget> buildOtherInputFields() {
   List<Widget> otherTextFields = [];
