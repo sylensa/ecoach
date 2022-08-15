@@ -346,9 +346,9 @@ class _SettingsState extends State<Settings> {
   }
 
   Row buildFeatureSwitchItems(double height, int index) {
-    debugPrint(selectedSwitch.toString());
-    debugPrint(selectedSwitch[index].toString());
-    debugPrint(switchValue[index].toString());
+    // debugPrint(selectedSwitch.toString());
+    // debugPrint(selectedSwitch[index].toString());
+    // debugPrint(switchValue[index].toString());
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -439,7 +439,7 @@ class buildRadioButton extends StatefulWidget {
     required this.groupValue,
   }) : super(key: key);
 
-  var selectedRadio;
+  final selectedRadio;
   final double height;
   final Function(dynamic value) onChanged;
   final String text;
@@ -490,6 +490,36 @@ class _buildRadioButtonState extends State<buildRadioButton> {
           groupValue: widget.selectedRadio,
           onChanged: (value) {
             widget.onChanged(value);
+            debugPrint(value.toString());
+
+            if (value == widget.groupValue) {
+              expansionKey.currentState!.toggleExpansion();
+            } else {
+              expansionKey.currentState!.toggleExpansion();
+            }
+
+            if (value == GroupValue.values[0]) {
+              gradeController.text = "";
+
+              setState(() {
+                gradeController.text = "";
+              });
+            } else if (value == GroupValue.values[1]) {
+              gradeController.text = "";
+              setState(() {
+                gradeController.text = "";
+              });
+            } else if (value == GroupValue.values[2]) {
+              gradeController.text = "";
+              setState(() {
+                gradeController.text = "";
+              });
+            } else if (value == GroupValue.values[3]) {
+              gradeController.text = "";
+              setState(() {
+                gradeController.text = "";
+              });
+            }
           },
         ),
         title: Text(widget.text),
@@ -605,8 +635,6 @@ class _buildRadioButtonState extends State<buildRadioButton> {
     );
   }
 }
-
-// use this button to add more input fields here
 
 // Work on add/subtract Form Field
 List<Widget> buildOtherInputFields() {
