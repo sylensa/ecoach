@@ -109,6 +109,7 @@ dependencies:
    expandable: ^5.0.1
    currency_picker: ^2.0.11
    country_list_pick: ^1.0.1+6
+   country_currency_pickers: ^2.0.0
 
 
 flutter_icons:
