@@ -77,22 +77,21 @@ class QuestionDB {
     return question;
   }
 
-
   Future<List<Question>> getSavedTestQuestion() async {
     final db = await DBProvider.database;
     List<Question> listQuestion = [];
     // await db!.rawQuery("Delete from test_saved_questions");
-    List<Map<String, dynamic>> timelineResponse = await db!.rawQuery("Select * from test_saved_questions");
+    List<Map<String, dynamic>> timelineResponse =
+        await db!.rawQuery("Select * from test_saved_questions");
     print("timelineResponse:$timelineResponse");
-    if(timelineResponse.isNotEmpty){
-      for(int i = 0; i< timelineResponse.length; i++){
-        Question? question =  Question.fromJson(timelineResponse[i]) ;
+    if (timelineResponse.isNotEmpty) {
+      for (int i = 0; i < timelineResponse.length; i++) {
+        Question? question = Question.fromJson(timelineResponse[i]);
         if (question != null) {
           question.answers = await AnswerDB().questoinAnswers(question.id!);
         }
         listQuestion.add(question);
       }
-
     }
 
     return listQuestion;
@@ -100,8 +99,10 @@ class QuestionDB {
 
   Future<Question?> getSavedTestQuestionById(int id) async {
     final db = await DBProvider.database;
-    var result = await db!.query("test_saved_questions", where: "id = ?", whereArgs: [id]);
-    Question? question = result.isNotEmpty ? Question.fromJson(result.first) : null;
+    var result = await db!
+        .query("test_saved_questions", where: "id = ?", whereArgs: [id]);
+    Question? question =
+        result.isNotEmpty ? Question.fromJson(result.first) : null;
     if (question != null) {
       question.answers = await AnswerDB().questoinAnswers(question.id!);
     }
@@ -109,7 +110,8 @@ class QuestionDB {
     return question;
   }
 
-  Future<List<Question>> getSavedTestQuestionsByType(int courseId, {int limit = 10}) async {
+  Future<List<Question>> getSavedTestQuestionsByType(int courseId,
+      {int limit = 10}) async {
     final Database? db = await DBProvider.database;
 
     // final List<Map<String, dynamic>> maps = await db!.query('test_saved_questions',
@@ -435,10 +437,12 @@ class QuestionDB {
       whereArgs: [id],
     );
   }
+
   deleteAllQuestions() async {
     final db = await DBProvider.database;
     db!.delete('questions');
   }
+
   deleteSavedTest(int id) async {
     final db = await DBProvider.database;
     db!.delete(
@@ -447,10 +451,12 @@ class QuestionDB {
       whereArgs: [id],
     );
   }
+
   deleteAllSavedTest() async {
     final db = await DBProvider.database;
     db!.delete('test_saved_questions');
   }
+
   deleteSavedTestByCourseId(int id) async {
     final db = await DBProvider.database;
     db!.rawQuery("Delete from test_saved_questions where course_id = $id");

@@ -256,10 +256,8 @@ class Caution extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (c) {
-                      return TreadmillIntroit(
-                        controller_treadmill.user,
-                        controller_treadmill.course,
-                      );
+                      return TreadmillIntroit(controller_treadmill.user,
+                          controller_treadmill.course, null);
                     }),
                   );
                 },

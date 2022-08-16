@@ -9,8 +9,9 @@ import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
 import 'package:flutter/material.dart';
 
 class TreadmillEnded extends StatelessWidget {
-  TreadmillEnded({required this.controller});
+  TreadmillEnded({required this.controller, this.mode});
   final TreadmillController controller;
+  final TreadmillMode? mode;
 
   @override
   Widget build(BuildContext context) {
@@ -141,9 +142,7 @@ class TreadmillEnded extends StatelessWidget {
                               context,
                               MaterialPageRoute(builder: (c) {
                                 return TreadmillIntroit(
-                                  controller.user,
-                                  controller.course,
-                                );
+                                    controller.user, controller.course, mode!);
                               }),
                             );
                           },
@@ -165,9 +164,7 @@ class TreadmillEnded extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (c) {
                         return TreadmillIntroit(
-                          controller.user,
-                          controller.course,
-                        );
+                            controller.user, controller.course, mode!);
                       }));
                     },
                   ),

@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import '../../database/topics_db.dart';
 import '../../models/question.dart';
 import '../../models/topic.dart';
+import '../../utils/style_sheet.dart';
+import '../../widgets/adeo_outlined_button.dart';
 import '../../widgets/widgets.dart';
 
 class InstructionPage extends StatefulWidget {
@@ -18,12 +20,14 @@ class InstructionPage extends StatefulWidget {
     required this.controller,
     this.topicId,
     this.bankId,
+    this.count,
     required this.mode,
     this.bankName,
   });
   final TreadmillController controller;
   final int? topicId;
   final int? bankId;
+  final int? count;
   final String? bankName;
   final TreadmillMode mode;
 
@@ -73,11 +77,16 @@ class _InstructionPageState extends State<InstructionPage> {
       backgroundColor: const Color(0xFF2D3E50),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(50.0, 50.0, 50.0, 16.0),
-        child: InkWell(
-          onTap: () async {
+        child: AdeoOutlinedButton(
+          label: 'Start',
+          fontSize: 29,
+          fontWeight: FontWeight.normal,
+          borderColor: kAdeoLightTeal,
+          color: Colors.white,
+          size: Sizes.small,
+          onPressed: () async {
             showLoaderDialog(context, message: "Creating Treadmill Run");
             print(widget.mode);
-
             switch (widget.mode) {
               case TreadmillMode.MOCK:
                 await widget.controller.createTreadmill();
@@ -92,8 +101,11 @@ class _InstructionPageState extends State<InstructionPage> {
                 widget.controller.topicid = widget.topicId!;
                 break;
               case TreadmillMode.BANK:
-                await widget.controller.createBankTreadmill(widget.bankId!);
-                widget.controller.name = widget.bankName;
+                // await TestController().getQuizQuestions(widget.topicId!);
+                await widget.controller
+                    .createBankTreadmill(widget.topicId!, widget.count!);
+
+                //widget.controller.name = topic!.name;
                 break;
             }
 
@@ -106,31 +118,7 @@ class _InstructionPageState extends State<InstructionPage> {
                 return TreadmillQuizView(controller: widget.controller);
               }),
             );
-            //getQ();
-            //Get.to(() => const QuizQuestion());
           },
-          child: Container(
-            child: const Center(
-              child: Text(
-                'Start',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30.0,
-                ),
-              ),
-            ),
-            height: 70,
-            width: 100,
-            decoration: BoxDecoration(
-              color: const Color(0xFF2D3E50),
-              border: Border.all(
-                color: const Color(0xFFFFFFFF),
-              ),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(50),
-              ),
-            ),
-          ),
         ),
       ),
       body: Stack(

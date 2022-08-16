@@ -14,10 +14,11 @@ import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:flutter/material.dart';
 
 class TreadmillIntroit extends StatefulWidget {
-  TreadmillIntroit(this.user, this.course);
+  TreadmillIntroit(this.user, this.course, this.mode);
 
   final User user;
   final Course course;
+  final TreadmillMode? mode;
 
   @override
   State<TreadmillIntroit> createState() => _TreadmillIntroitState();
@@ -68,6 +69,7 @@ class _TreadmillIntroitState extends State<TreadmillIntroit> {
             widget.course,
             name: widget.course.name!,
           ),
+          // mode: widget.mode!,
         );
         // } else {
         //   print('jjjjjjjjjjjj');
