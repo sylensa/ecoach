@@ -252,93 +252,102 @@ class _GroupPageState extends State<GroupPage> {
         });
   }
 
-  inviteModalBottomSheet(context,) {
+  inviteToGroup(String email) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      try{
+        if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).inviteToGroup(email)){
+          await getGroupPageView();
+          Navigator.pop(context);
+          toastMessage("User invite sent successfully");
+        }else{
+          Navigator.pop(context);
+          toastMessage("User invite failed");
+        }
+      }catch(e){
+        Navigator.pop(context);
+        print("error:$e");
+        toastMessage("User invite failed");
+
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+
+  }
+
+  inviteModalBottomSheet(context,){
     TextEditingController emailController = TextEditingController();
     String confirmText = "Swipe to Confirm";
     bool isActivated = true;
     double sheetHeight = 300;
-    confirmFunc() {
-      setState(() {
+    confirmFunc(){
+      setState((){
         confirmText = "Confirmed";
       });
       print("$confirmText");
     }
-
     showModalBottomSheet(
         context: context,
         isDismissible: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent ,
         isScrollControlled: true,
-        builder: (BuildContext context) {
+        builder: (BuildContext context){
           return StatefulBuilder(
-            builder: (BuildContext context, StateSetter stateSetter) {
+            builder: (BuildContext context,StateSetter stateSetter){
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      )),
+                      color: Colors.white ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20,),
                       Container(
                         color: kAdeoGray,
                         height: 5,
                         width: 50,
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20,),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Center(
-                            child: sText(
-                                "Enter user's email to invite them to the group",
-                                weight: FontWeight.normal,
-                                align: TextAlign.center)),
+                        child: Center(child: sText( "Enter user's email to invite them to the group",weight: FontWeight.normal,align: TextAlign.center)),
                       ),
                       Expanded(
                         child: ListView(
                           children: [
-                            SizedBox(
-                              height: 40,
-                            ),
+                            SizedBox(height: 40,),
                             Stack(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  padding: EdgeInsets.only(left: 20,right: 20),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: TextFormField(
                                           controller: emailController,
+                                          keyboardType: TextInputType.emailAddress,
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
+                                            if (value == null || value.isEmpty) {
                                               return 'Please check that you\'ve entered email';
                                             }
                                             return null;
                                           },
-                                          onFieldSubmitted: (value) {
-                                            stateSetter(() {
+                                          onFieldSubmitted: (value){
+                                            stateSetter((){
                                               sheetHeight = 300;
                                             });
                                           },
-                                          onTap: () {
-                                            stateSetter(() {
+                                          onTap: (){
+                                            stateSetter((){
                                               sheetHeight = 650;
                                             });
                                           },
                                           textAlign: TextAlign.left,
-                                          style: appStyle(
-                                              weight: FontWeight.w400,
-                                              size: 20),
+                                          style: appStyle(weight: FontWeight.w400,size: 20),
                                           decoration: textDecorNoBorder(
                                             hintWeight: FontWeight.normal,
                                             radius: 10,
@@ -346,8 +355,7 @@ class _GroupPageState extends State<GroupPage> {
                                             hintColor: Colors.black,
                                             borderColor: Colors.grey[400]!,
                                             fill: Colors.white,
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 40),
+                                            padding: EdgeInsets.only(left: 10,right: 40),
                                           ),
                                         ),
                                       ),
@@ -359,52 +367,59 @@ class _GroupPageState extends State<GroupPage> {
                                   top: 7,
                                   child: Container(
                                     margin: topPadding(5),
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                    ),
+                                    child: Icon(Icons.check,color: Colors.white,),
                                     decoration: BoxDecoration(
                                         color: Color(0xFF00C9B9),
-                                        borderRadius: BorderRadius.circular(5)),
+                                        borderRadius: BorderRadius.circular(5)
+                                    ),
                                   ),
                                 )
                               ],
                             ),
-                            SizedBox(
-                              height: 40,
-                            ),
+                            SizedBox(height: 40,),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: ConfirmationSlider(
-                                onConfirmation: () {
-                                  stateSetter(() {
+                                onConfirmation:(){
+                                  stateSetter((){
                                     confirmText = "Confirmed";
+                                    if(emailController.text.isNotEmpty){
+                                      Navigator.pop(context);
+                                      showLoaderDialog(context);
+                                      inviteToGroup(emailController.text);
+                                    }else{
+                                      toastMessage("Enter user email");
+                                    }
+                                    // goTo(context, GroupProfilePage(groupListData:widget.groupListData));
                                   });
-                                },
+                                } ,
                                 backgroundColor: Color(0xFFE8F5FF),
                                 text: "$confirmText",
                                 textStyle: appStyle(col: Color(0xFF023F6E)),
-                                shadow: BoxShadow(
-                                  color: Colors.white,
-                                ),
+                                shadow: BoxShadow(color: Colors.white,),
                                 iconColor: Color(0xFF0367B4),
-                                sliderButtonContent: Icon(
-                                  Icons.keyboard_double_arrow_right,
-                                  color: Color(0xFF69AAEA),
-                                ),
+                                sliderButtonContent: Icon(Icons.keyboard_double_arrow_right,color: Color(0xFF69AAEA),),
                                 stickToEnd: false,
                                 foregroundColor: Color(0xFF0367B4),
-                                backgroundColorEnd: Color(0xFFE8F5FF),
+                                backgroundColorEnd:   Color(0xFFE8F5FF),
+
+
                               ),
                             ),
+
+
                           ],
                         ),
                       ),
+
                     ],
-                  ));
+                  )
+              );
             },
+
           );
-        });
+        }
+    );
   }
 
   popUpMenu({BuildContext? context}) {
@@ -539,22 +554,23 @@ class _GroupPageState extends State<GroupPage> {
                                   align: TextAlign.center),
                             ),
                           ),
-                          // MaterialButton(
-                          //   padding: EdgeInsets.zero,
-                          //   onPressed: ()async{
-                          //
-                          //   },
-                          //   child: Container(
-                          //     width: appWidth(context),
-                          //     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                          //     margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          //     decoration:BoxDecoration(
-                          //         color: Colors.white,
-                          //         borderRadius: BorderRadius.circular(10)
-                          //     ),
-                          //     child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
-                          //   ),
-                          // ),
+                          MaterialButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: ()async{
+                              Navigator.pop(context);
+                              inviteModalBottomSheet(context);
+                            },
+                            child: Container(
+                              width: appWidth(context),
+                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                              decoration:BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: sText("Invite User",color: kAdeoGray3,align: TextAlign.center),
+                            ),
+                          ),
                         ],
                       )),
                     ],
@@ -1720,6 +1736,7 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               title: Container(),
                               children: <Widget>[
+                                listGroupViewData[0].pendingInvites!.isNotEmpty ?
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
@@ -1756,19 +1773,16 @@ class _GroupPageState extends State<GroupPage> {
                                                             .start,
                                                     children: [
                                                       sText(
-                                                          listGroupViewData[0]
-                                                              .pendingInvites![
-                                                                  i]
-                                                              .email,
+                                                          listGroupViewData[0].pendingInvites![i].email,
                                                           color: Colors.black,
                                                           weight:
                                                               FontWeight.w500),
                                                       SizedBox(
                                                         height: 5,
                                                       ),
-                                                      sText("10 days ago",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
+                                                      sText("${StringExtension.displayTimeAgoFromTimestamp(listGroupViewData[0].pendingInvites![i].createdAt.toString())} ago", color: kAdeoGray3,size: 12),
+
+
                                                     ],
                                                   ),
                                                   Expanded(child: Container()),
@@ -1782,11 +1796,7 @@ class _GroupPageState extends State<GroupPage> {
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              listGroupViewData[0]
-                                                              .pendingInvites!
-                                                              .length -
-                                                          1 !=
-                                                      i
+                                              listGroupViewData[0].pendingInvites!.length - 1 != i
                                                   ? Column(
                                                       children: [
                                                         Divider(
@@ -1804,6 +1814,9 @@ class _GroupPageState extends State<GroupPage> {
                                         ),
                                     ],
                                   ),
+                                ) :
+                                Center(
+                                  child: sText("You've no pending invite"),
                                 ),
                               ],
                             ),
@@ -1836,6 +1849,7 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               title: Container(),
                               children: <Widget>[
+                                listGroupViewData[0].suspendedUser!.isNotEmpty ?
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
@@ -1848,19 +1862,19 @@ class _GroupPageState extends State<GroupPage> {
                                       for (int i = 0;
                                           i <
                                               listGroupViewData[0]
-                                                  .pendingInvites!
+                                                  .suspendedUser!
                                                   .length;
                                           i++)
                                         MaterialButton(
                                           onPressed: () {
-                                            showRevokeDialog(
-                                                context: context,
-                                                message:
-                                                    "Are you sure you want to revoke this invite",
-                                                userId: listGroupViewData[0]
-                                                    .pendingInvites![i]
-                                                    .id
-                                                    .toString());
+                                            // showRevokeDialog(
+                                            //     context: context,
+                                            //     message:
+                                            //         "Are you sure you want to revoke this invite",
+                                            //     userId: listGroupViewData[0]
+                                            //         .suspendedUser![i]
+                                            //         .id
+                                            //         .toString());
                                           },
                                           child: Column(
                                             children: [
@@ -1873,7 +1887,7 @@ class _GroupPageState extends State<GroupPage> {
                                                     children: [
                                                       sText(
                                                           listGroupViewData[0]
-                                                              .pendingInvites![
+                                                              .suspendedUser![
                                                                   i]
                                                               .email,
                                                           color: Colors.black,
@@ -1882,9 +1896,7 @@ class _GroupPageState extends State<GroupPage> {
                                                       SizedBox(
                                                         height: 5,
                                                       ),
-                                                      sText("10 days ago",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
+                                                      sText("${StringExtension.displayTimeAgoFromTimestamp(listGroupViewData[0].suspendedUser![i].createdAt.toString())} ago", color: kAdeoGray3,size: 12),
                                                     ],
                                                   ),
                                                   Expanded(child: Container()),
@@ -1899,7 +1911,7 @@ class _GroupPageState extends State<GroupPage> {
                                                 height: 10,
                                               ),
                                               listGroupViewData[0]
-                                                              .pendingInvites!
+                                                              .suspendedUser!
                                                               .length -
                                                           1 !=
                                                       i
@@ -1920,6 +1932,9 @@ class _GroupPageState extends State<GroupPage> {
                                         ),
                                     ],
                                   ),
+                                ) :
+                                Center(
+                                  child: sText("You've no suspended user"),
                                 ),
                               ],
                             ),
@@ -2198,11 +2213,16 @@ class _GroupPageState extends State<GroupPage> {
                               children: <Widget>[
                                 GestureDetector(
                                   onTap: () async{
-                                    groupID = widget.groupListData!.id.toString();
-                                    await goTo(context, TestCreation());
-                                    setState((){
+                                    if(listActivePackageData[0].maxTests == listGroupTestData.length){
+                                      toastMessage("You've reach your maximum number of groups for this package");
+                                    }else{
+                                      groupID = widget.groupListData!.id.toString();
+                                      await goTo(context, TestCreation());
+                                      setState((){
 
-                                    });
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
