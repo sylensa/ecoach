@@ -117,7 +117,7 @@ class GroupManagementController{
     }
   }
   suspendUser(String userId) async {
-    var res = await doPut(AppUrl.suspendGroupMember, {
+    var res = await doPost(AppUrl.suspendGroupMember, {
       "group_id": groupId,
       "user_id": userId,
     });
