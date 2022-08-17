@@ -17,7 +17,7 @@ class CreateGroup extends StatefulWidget {
 }
 
 class _CreateGroupState extends State<CreateGroup> {
-  List<ListNames> listLevels = [ListNames(name: "Lower Primary",id: "1"),ListNames(name: "Upper Primary",id: "2",),ListNames(name: "Junior High",id: "Senior High")];
+  List<ListNames> listLevels = [ListNames(name: "Lower Primary",id: "1"),ListNames(name: "Upper Primary",id: "2",),ListNames(name: "Junior High",id: "3"),ListNames(name: "Senior High",id: "4")];
   ListNames? level;
   TextEditingController groupNameController = TextEditingController();
   TextEditingController groupDescriptionController = TextEditingController();
