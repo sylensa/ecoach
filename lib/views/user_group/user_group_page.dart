@@ -2,6 +2,8 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_details.dart';
+import 'package:ecoach/views/user_group/no_activity.dart';
+import 'package:ecoach/views/user_group/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -24,9 +26,9 @@ class _UserGroupPageState extends State<UserGroupPage> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.only( bottom: 2.h, left: 2.h, right: 2.h),
+              padding: EdgeInsets.only( bottom: 2.h, left: 2.h,),
               decoration: BoxDecoration(
-                color: Colors.lightGreenAccent,
+                color: Color(0XFFDBF1A8),
                 borderRadius: BorderRadius.only(bottomRight: Radius.circular(20),bottomLeft: Radius.circular(20))
               ),
               child: Column(
@@ -51,29 +53,53 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             ],
                           ),
                         ),
-                        displayLocalImage("filePath"),
+                        GestureDetector(
+                          onTap: (){
+                            goTo(context, NotificationActivity(widget.user));
+                          },
+                          child: Container(
+                            child: Image.asset("assets/images/schedule_top.png"),
+                          ),
+                        )
                       ],
                     ),
                   ),
                   SizedBox(height: 20,),
                   Container(
-                    width: appWidth(context),
-                    padding: EdgeInsets.only(left: 0,right: 0,top: 0),
-                    child:  TextField(
-                      controller: searchController,
-                      decoration: textDecorSuffix(
-                          size: 15,
-                          icon: Icon(Icons.search,color: Colors.grey),
-                          suffIcon: Icon(Icons.filter_alt,color: Colors.white,),
-                          label: "Search for learning groups",
-                          enabled: true
-                      ),
+                    padding: EdgeInsets.only( right: 2.h,),
+
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.only(left: 0,right: 0,top: 0),
+                            child:  TextField(
+                              controller: searchController,
+                              decoration: textDecorSuffix(
+                                  size: 15,
+                                  icon: Icon(Icons.search,color: Colors.grey),
+                                  suffIcon: Icon(Icons.filter_alt,color: Colors.white,),
+                                  label: "Search for learning groups",
+                                  enabled: true
+                              ),
 
 
-                      onChanged:(val){
-                      } ,
+                              onChanged:(val){
+                              } ,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                        GestureDetector(
+                          onTap: (){
+                            goTo(context, NoGroupActivity(widget.user));
+                          },
+                            child: Image.asset("assets/images/schedule.png"),
+                        )
+                      ],
                     ),
-                  )
+                  ),
+
                 ],
               ),
             ),
@@ -88,11 +114,18 @@ class _UserGroupPageState extends State<UserGroupPage> {
                      children: [
                        // my groups
                        Container(
-                         child: sText("My Groups",size: 16,weight: FontWeight.bold),
+                         padding: EdgeInsets.symmetric(horizontal: 0),
+                         child: Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             sText("My Groups",size: 16,weight: FontWeight.bold),
+                             sText("See all",size: 16,color: Colors.grey[400]!),
+                           ],
+                         ),
                        ),
                        SizedBox(height: 10,),
                        Container(
-                         height: 210,
+                         height: 170,
                          child: ListView.builder(
                              itemCount: 10,
                              shrinkWrap: true,
@@ -110,69 +143,6 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                      child: Column(
                                        crossAxisAlignment: CrossAxisAlignment.start,
                                        children: [
-                                         Row(
-                                           children: [
-                                             Expanded(child: Container()),
-                                             Center(
-                                               child: SizedBox(
-                                                 height: 22,
-                                                 width: 22,
-                                                 child: Stack(
-                                                   children: [
-                                                     Container(
-                                                       decoration: BoxDecoration(
-                                                           color: Colors.green,
-                                                           shape: BoxShape.circle
-                                                       ),
-                                                     ),
-                                                     Center(
-                                                       child: Text(
-                                                         "1",
-                                                         style: TextStyle(
-                                                           fontSize: 12,
-                                                           color: Colors.white,
-                                                         ),
-                                                       ),
-                                                     ),
-                                                   ],
-                                                 ),
-                                               ),
-                                             ),
-                                           ],
-                                         ),
-                                         SizedBox(height: 10,),
-                                         Container(
-                                           child: Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Column(
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   sText("Afram's SAT",weight: FontWeight.w500,size: 20),
-                                                   SizedBox(height: 0,),
-                                                   sText("Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12),
-                                                 ],
-                                               ),
-                                               displayImage("imagePath",radius: 20)
-                                             ],
-                                           ),
-                                         ),
-                                         Container(
-                                           margin: rightPadding(40),
-                                           child: Divider(color: Colors.grey[400]!),
-                                         ),
-                                         Container(
-                                           child: Row(
-                                             children: [
-                                               Icon(Icons.person,color: Colors.grey[400]!),
-                                               SizedBox(width: 5,),
-                                               sText("1,309 members",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
-                                             ],
-                                           ),
-                                         ),
-                                         SizedBox(height: 10,),
-                                         sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
-                                         SizedBox(height: 10,),
                                          Container(
                                            padding: EdgeInsets.all(10),
                                            decoration: BoxDecoration(
@@ -190,7 +160,96 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
                                              ],
                                            ),
+                                         ),
+                                         SizedBox(height: 10,),
+                                         Container(
+                                           child: Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Column(
+                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                 children: [
+                                                   sText("Afram's SAT",weight: FontWeight.w500,size: 20),
+                                                   SizedBox(height: 0,),
+                                                   sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                 ],
+                                               ),
+
+                                               Row(
+                                                 children: [
+                                                   Center(
+                                                     child: SizedBox(
+                                                       height: 22,
+                                                       width: 22,
+                                                       child: Stack(
+                                                         children: [
+                                                           Container(
+                                                             decoration: BoxDecoration(
+                                                                 color: Color(0XFF00C9B9),
+                                                                 shape: BoxShape.circle
+                                                             ),
+                                                           ),
+                                                           Center(
+                                                             child: Text(
+                                                               "1",
+                                                               style: TextStyle(
+                                                                 fontSize: 12,
+                                                                 color: Colors.white,
+                                                                 fontWeight: FontWeight.bold
+                                                               ),
+                                                             ),
+                                                           ),
+                                                         ],
+                                                       ),
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                             ],
+                                           ),
+                                         ),
+                                         Container(
+                                           child: Row(
+                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                             children: [
+                                               Column(
+                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                 children: [
+                                                   SizedBox(height: 10,),
+                                                   Container(
+                                                     child: Row(
+                                                       children: [
+                                                         Image.asset("assets/images/user_group.png"),
+                                                         SizedBox(width: 5,),
+                                                         sText("1,309 members",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                       ],
+                                                     ),
+                                                   ),
+                                                   SizedBox(height: 10,),
+                                                   Container(
+                                                     child: Row(
+                                                       children: [
+                                                         Image.asset("assets/images/calendar.png"),
+                                                         SizedBox(width: 5,),
+                                                         sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                       ],
+                                                     ),
+                                                   ),
+                                                   SizedBox(height: 10,),
+                                                 ],
+                                               ),
+                                               Container(
+                                                 padding: EdgeInsets.all(10),
+                                                 child: Icon(Icons.arrow_forward),
+                                                 decoration: BoxDecoration(
+                                                   color: Colors.grey[200],
+                                                   borderRadius: BorderRadius.circular(10)
+                                                 ),
+                                               )
+                                             ],
+                                           ),
                                          )
+
                                        ],
                                      ),
                                    ),
@@ -214,7 +273,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                        Container(
                          height: 70,
                          child: ListView.builder(
-                             itemCount: 10,
+                             itemCount: 4,
                              padding: EdgeInsets.zero,
                              shrinkWrap: true,
                              scrollDirection: Axis.horizontal,
@@ -231,7 +290,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                        child: Row(
                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                          children: [
-                                           Icon(Icons.directions_car),
+                                          Image.asset("assets/images/lower.png"),
                                            sText("Ages 6-9",size: 16,weight: FontWeight.bold),
                                          ],
                                        )
@@ -269,9 +328,9 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                        decoration: BoxDecoration(
                                            color: Colors.white,
                                            borderRadius: BorderRadius.circular(20),
-                                           border: Border.all(color: Colors.black)
+                                           border: Border.all(color: Colors.white)
                                        ),
-                                       child: Icon(Icons.keyboard_double_arrow_up_sharp),
+                                       child: Image.asset("assets/images/up-and-down-arrow.png"),
 
                                      ),
                                      SizedBox(width: 10,),
@@ -312,14 +371,14 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
                              decoration: BoxDecoration(
-                               color: Colors.grey[100],
+                               color: Color(0XFFF5F5F5),
                                borderRadius: BorderRadius.circular(10)
                              ),
                              child: Row(
                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                children: [
                                  Container(
-                                   child: displayImage("filePath",radius: 20),
+                                   child: Image.asset("assets/images/fCvBipe.png"),
                                  ),
                                  SizedBox(width: 5,),
                                  Container(
@@ -372,15 +431,16 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                ],
                                              ),
                                            ),
+                                           SizedBox(width: 5,),
                                            Container(
                                              child: Row(
                                                children: [
                                                  Container(
-                                                   child: Icon(Icons.lock,color: Colors.red,size: 12,),
+                                                   child: Image.asset("assets/images/label.png"),
                                                  ),
-                                                 SizedBox(width: 0,),
+                                                 SizedBox(width: 5,),
                                                  Container(
-                                                   child: sText("\$99",size: 10,weight: FontWeight.normal,),
+                                                   child: sText("\$99",size: 10,weight: FontWeight.bold,),
                                                  ),
                                                ],
                                              ),
