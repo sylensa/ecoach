@@ -74,7 +74,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                         child: Row(
                           children: [
                             Container(
-                              child: Icon(Icons.groups,color: Colors.grey,size: 20,),
+                              child: Image.asset("assets/images/user_group.png"),
                             ),
                             SizedBox(width: 5,),
                             Container(
@@ -106,9 +106,9 @@ class _GroupDetailsState extends State<GroupDetails> {
                         child: Row(
                           children: [
                             Container(
-                              child: Icon(Icons.lock,color: Colors.red,size: 12,),
+                              child: Image.asset("assets/images/label.png")
                             ),
-                            SizedBox(width: 0,),
+                            SizedBox(width: 5,),
                             Container(
                               child: sText("\$99",size: 12,weight: FontWeight.bold,),
                             ),
@@ -144,7 +144,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                       children: [
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
-                          child: sText("Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade.",weight: FontWeight.normal,color: Colors.grey),
+                          child: sText("Select Your Preferred Upgrade Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only.",weight: FontWeight.normal,color: Colors.grey),
                         ),
                         Divider(color: Colors.grey,)
                       ],
@@ -225,51 +225,79 @@ class _GroupDetailsState extends State<GroupDetails> {
                     ),
                     SizedBox(height: 10,),
                     Container(
-                      height: 170,
-                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      width: appWidth(context) * 0.7 ,
+                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
 
-                      child: ListView.builder(
-                          itemCount: 10,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (BuildContext context, int index){
-                            return Row(
-                              children: [
-                                Container(
-                                  width: appWidth(context) * 0.7 ,
-                                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(color: Colors.grey[200]!)
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          displayImage("imagePath",radius: 20),
-                                          SizedBox(width: 10,),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              sText("Victor Adatsi"),
-                                              sText("2 Months",size: 12,weight: FontWeight.w600),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Container(
-                                        child: sText("Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade.  Select your preferred upgrade.  Select your preferred upgrade.  Select your preferred upgrade.",weight: FontWeight.normal,color: Colors.black,size: 14),
-                                      ),
-                                    ],
-                                  ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              displayImage("imagePath",radius: 40),
+                              SizedBox(width: 10,),
+                              Container(
+                                color: Colors.grey,
+                                width: 1,
+                                height: 80,
+                              ),
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Container(
+                                  child: sText("Rev Shaddy is an experienced ICT Teacher who has over the years trained many student in preparing for their BECE exams.",weight: FontWeight.w500,color: Colors.grey,size: 14),
                                 ),
-                                SizedBox(width: 10,),
-                              ],
-                            );
-                          }),
+                              ),
+                            ],
+
+                          ),
+
+                        ],
+                      ),
                     ),
+                    // Container(
+                    //   height: 170,
+                    //   margin: EdgeInsets.symmetric(horizontal: 20),
+                    //
+                    //   child: ListView.builder(
+                    //       itemCount: 10,
+                    //       shrinkWrap: true,
+                    //       scrollDirection: Axis.horizontal,
+                    //       itemBuilder: (BuildContext context, int index){
+                    //         return Row(
+                    //           children: [
+                    //             Container(
+                    //               width: appWidth(context) * 0.7 ,
+                    //               padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                    //               decoration: BoxDecoration(
+                    //                   color: Colors.white,
+                    //                   borderRadius: BorderRadius.circular(15),
+                    //                   border: Border.all(color: Colors.grey[200]!)
+                    //               ),
+                    //               child: Column(
+                    //                 children: [
+                    //                   Row(
+                    //                     children: [
+                    //                       displayImage("imagePath",radius: 20),
+                    //                       SizedBox(width: 10,),
+                    //                       Column(
+                    //                         crossAxisAlignment: CrossAxisAlignment.start,
+                    //                         children: [
+                    //                           sText("Victor Adatsi"),
+                    //                           sText("2 Months",size: 12,weight: FontWeight.w600),
+                    //                         ],
+                    //                       )
+                    //                     ],
+                    //                   ),
+                    //                   SizedBox(height: 10,),
+                    //                   Container(
+                    //                     child: sText("Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade.  Select your preferred upgrade.  Select your preferred upgrade.  Select your preferred upgrade.",weight: FontWeight.normal,color: Colors.black,size: 14),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //             SizedBox(width: 10,),
+                    //           ],
+                    //         );
+                    //       }),
+                    // ),
                     Divider(color: Colors.grey,)
                   ],
                 ),
