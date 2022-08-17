@@ -114,6 +114,7 @@ class GroupListData {
     this.deletedAt,
     this.discoverability,
     this.membersCount,
+    this.category,
   });
 
   int? id;
@@ -124,6 +125,7 @@ class GroupListData {
   String? type;
   DateTime? dateCreated;
   String? status;
+  String? category;
   dynamic editorId;
   dynamic deletedAt;
   bool? discoverability;
@@ -140,6 +142,7 @@ class GroupListData {
     status: json["status"] == null ? null : json["status"],
     editorId: json["editor_id"],
     deletedAt: json["deleted_at"] ?? "",
+    category: json["category"] ?? "",
     discoverability: json["discoverability"] == null ? null : json["discoverability"],
     membersCount: json["members_count"] == null ? 0 : json["members_count"],
   );
@@ -155,6 +158,7 @@ class GroupListData {
     "status": status == null ? null : status,
     "editor_id": editorId,
     "deleted_at": deletedAt,
+    "category": category,
     "discoverability": discoverability == null ? null : discoverability,
     "members_count": membersCount == null ? null : membersCount,
   };
