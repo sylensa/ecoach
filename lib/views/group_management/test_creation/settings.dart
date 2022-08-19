@@ -42,6 +42,8 @@ class _SettingsState extends State<Settings> {
   bool reviewSwitch = false;
   var _countryFlag;
   String countryCurrency = 'GH';
+  String passMark = '0';
+  TextEditingController passMarkController = TextEditingController();
   List gradingSystem = [];
   List<ListNames> listBeceGrading = [ListNames(name: "80")];
   static List<String> rangeList = [];
@@ -138,8 +140,14 @@ class _SettingsState extends State<Settings> {
 
   updateGroupSettings(){
     if(selectedStatus != status[0]){
+      _accessController.clear();
       subscriptionMonthlySwitch = false;
       subscriptionYearlySwitch = false;
+    }else{
+      if(_accessController.text.isEmpty){
+        toastMessage("Enter amount");
+        return;
+      }
     }
     print("selectedStatus:$selectedStatus");
     print("_accessController.text:${_accessController.text}");
@@ -173,8 +181,9 @@ class _SettingsState extends State<Settings> {
       gradesData = GradesDataResponse(
         id: 100,
         name: "CUSTOM",
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        passMark: passMark,
+        // createdAt: DateTime.now(),
+        // updatedAt: DateTime.now(),
         grades: listCustomGrade
       );
     }
@@ -211,6 +220,7 @@ class _SettingsState extends State<Settings> {
     super.initState();
     selectedStatus = status[0];
     _accessController = TextEditingController();
+    passMarkController.text = passMark;
     getGroupGrades();
   }
 
@@ -869,7 +879,7 @@ class _SettingsState extends State<Settings> {
                                 Container(
                                   decoration: BoxDecoration(
                                       color: Color(0xFFF0F7FF),
-                                      borderRadius: BorderRadius.circular(20)
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))
                                   ),
                                   child: Column(
                                     children: [
@@ -899,7 +909,23 @@ class _SettingsState extends State<Settings> {
                                       ),
                                     ],
                                   ),
-                                )
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 30,top: 15,right: 45,bottom: 15),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFF263E4A),
+                                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20))
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      sText("Pass Mark",align: TextAlign.center,color: Colors.white),
+                                      Container(
+                                        child: sText("80",align: TextAlign.center,color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -1381,7 +1407,7 @@ class _SettingsState extends State<Settings> {
                                                     padding: EdgeInsets.symmetric(horizontal: 8),
                                                     margin: EdgeInsets.symmetric(horizontal: 0),
                                                     child:  TextFormField(
-                                                      // textAlign: TextAlign.right,
+                                                      textAlign: TextAlign.center,
                                                       controller: textEditingController[i],
                                                       keyboardType: TextInputType.number,
                                                       maxLines: 1,
@@ -1507,39 +1533,64 @@ class _SettingsState extends State<Settings> {
                                             sText("Pass Mark",align: TextAlign.center,color: Colors.white),
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
                                               children: [
                                                 GestureDetector(
                                                   onTap: (){
                                                     setState((){
-
+                                                      if(passMark == "0"){
+                                                        toastMessage("Pass mark cannot be less than 0");
+                                                      }else{
+                                                        passMark = "${int.parse(passMark) - 1}";
+                                                        passMarkController.text = passMark;
+                                                      }
                                                     });
                                                   },
-                                                  child: Icon(Icons.horizontal_rule,color: Colors.grey),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.grey),
+                                                        borderRadius: BorderRadius.circular(5)
+                                                    ),
+                                                    child: Icon(Icons.horizontal_rule,color: Colors.white,),
+                                                  ),
                                                 ),
-                                                SizedBox(width: 20,),
+                                                // SizedBox(width: 20,),
                                                 Container(
-                                                  width: 50,
-                                                  child: TextFormField(
+                                                  width: 42,
+                                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                                  margin: EdgeInsets.symmetric(horizontal: 0),
+                                                  child:  TextFormField(
+                                                    controller: passMarkController,
+                                                    textAlign: TextAlign.center,
                                                     keyboardType: TextInputType.number,
+                                                    maxLines: 1,
                                                     onChanged: (value){
                                                       setState((){
 
                                                       });
-
                                                     },
-
-                                                    decoration: textDecor(hint: "0",label: "00",hintColor: Colors.black,padding: EdgeInsets.only(bottom: 15)),
+                                                    style: appStyle(col: Colors.white),
+                                                    decoration: textDecor(hint: passMark,hintColor: Colors.white,padding: bottomPadding(10)),
 
                                                   ),
                                                 ),
                                                 GestureDetector(
                                                   onTap: (){
                                                     setState((){
-
+                                                      if(passMark == "100"){
+                                                        toastMessage("Pass mark cannot be more than 100");
+                                                      }else{
+                                                        passMark = "${int.parse(passMark) + 1}";
+                                                        passMarkController.text = passMark;
+                                                      }
                                                     });
                                                   },
-                                                  child: Icon(Icons.add,color: Colors.grey),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.grey),
+                                                        borderRadius: BorderRadius.circular(5)
+                                                    ),
+                                                    child: Icon(Icons.add,color: Colors.white,),
+                                                  ),
                                                 ),
                                               ],
                                             )
