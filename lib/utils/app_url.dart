@@ -24,6 +24,7 @@ class AppUrl {
   static String payment_callback = baseURL + "paystack/callback";
 
   static String plans = baseURL + "plans";
+  static String grades = baseURL + "grades";
   static String agentPromoCodes = baseURL + "agent/promo/codes";
   static String groupTest = baseURL + "group/tests";
   static String groupPackages = baseURL + "group/packages";
