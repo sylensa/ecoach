@@ -2,6 +2,7 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/announcement_list_model.dart';
 import 'package:ecoach/models/get_agent_code.dart';
+import 'package:ecoach/models/group_grades_model.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
@@ -532,4 +533,45 @@ class GroupManagementController{
       return false;
     }
   }
+
+  Future<GroupTestData?>  updateGroup(Map groupSettings) async {
+    GroupTestData? groupTestData;
+    try{
+      var res = await doPut("${AppUrl.groups}/$groupId", {
+        "settings": groupSettings,
+      });
+      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+        groupTestData = GroupTestData.fromJson(res["data"]);
+        toastMessage("${res["message"]}");
+        return groupTestData;
+      }else{
+        toastMessage("${res["message"]}");
+        return null;
+      }
+    }catch(e){
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future<List<GradesDataResponse>> getGrades()async {
+    List<GradesDataResponse> listGrade = [];
+    try{
+      var js = await doGet('${AppUrl.grades}');
+      print("res grades : $js");
+      if (js["status"] && js["data"]["data"].isNotEmpty) {
+       for(int  i =0; i < js["data"]["data"].length; i++){
+         GradesDataResponse agentData = GradesDataResponse.fromJson(js["data"]["data"][i]);
+         listGrade.add(agentData);
+       }
+        toastMessage("${js["message"]}");
+        return listGrade;
+      }else{
+        return listGrade;
+      }
+    }catch(e){
+      return listGrade;
+    }
+  }
+
 }
