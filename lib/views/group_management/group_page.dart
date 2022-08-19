@@ -2792,7 +2792,7 @@ class _GroupPageState extends State<GroupPage> {
                               maintainState: false,
                               onExpansionChanged: (value){
                                 if(value){
-                                  goTo(context, Settings());
+                                  goTo(context, Settings(groupListData: widget.groupListData,));
                                 }
                               },
 
