@@ -2779,118 +2779,140 @@ class _GroupPageState extends State<GroupPage> {
                         ],
                       ),
                       // Setting
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              onExpansionChanged: (value){
-                                if(value){
-                                  goTo(context, Settings(groupListData: widget.groupListData,));
-                                }
-                              },
-
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Settings",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
+                      MaterialButton(
+                        onPressed: (){
+                          goTo(context, Settings(groupListData: widget.groupListData,));
+                        },
+                        child: Column(
+                          children: [
+                            // Theme(
+                            //   data: Theme.of(context)
+                            //       .copyWith(dividerColor: Colors.transparent),
+                            //   child: ExpansionTile(
+                            //
+                            //     textColor: Colors.white,
+                            //     iconColor: Colors.white,
+                            //     initiallyExpanded: false,
+                            //     maintainState: false,
+                            //     onExpansionChanged: (value){
+                            //       if(value){
+                            //         goTo(context, Settings(groupListData: widget.groupListData,));
+                            //       }
+                            //     },
+                            //
+                            //     backgroundColor: kHomeBackgroundColor,
+                            //     childrenPadding: EdgeInsets.zero,
+                            //     collapsedIconColor: Colors.white,
+                            //     leading: Container(
+                            //       child: sText("Settings",
+                            //           weight: FontWeight.w500, size: 16),
+                            //     ),
+                            //     trailing: Container(
+                            //       child: Icon(
+                            //         Icons.add_circle_outline,
+                            //         color: Colors.black,
+                            //       ),
+                            //     ),
+                            //     title: Container(),
+                            //     children: <Widget>[
+                            //       SizedBox(
+                            //         height: 10,
+                            //       ),
+                            //       if (listGroupViewData[0].admins!.isNotEmpty)
+                            //         Container(
+                            //           padding: EdgeInsets.symmetric(
+                            //               horizontal: 20, vertical: 10),
+                            //           margin:
+                            //               EdgeInsets.symmetric(horizontal: 20),
+                            //           decoration: BoxDecoration(
+                            //               color: Colors.white,
+                            //               borderRadius: BorderRadius.circular(5)),
+                            //           child: Column(
+                            //             children: [
+                            //               for (int i = 0;
+                            //                   i <
+                            //                       listGroupViewData[0]
+                            //                           .admins!
+                            //                           .length;
+                            //                   i++)
+                            //                 Column(
+                            //                   children: [
+                            //                     Row(
+                            //                       children: [
+                            //                         Stack(
+                            //                           children: [
+                            //                             displayLocalImage(
+                            //                                 "filePath",
+                            //                                 radius: 30),
+                            //                             Positioned(
+                            //                               bottom: 5,
+                            //                               right: 0,
+                            //                               child: Image.asset(
+                            //                                   "assets/images/tick-mark.png"),
+                            //                             )
+                            //                           ],
+                            //                         ),
+                            //                         SizedBox(
+                            //                           width: 10,
+                            //                         ),
+                            //                         Column(
+                            //                           crossAxisAlignment:
+                            //                               CrossAxisAlignment
+                            //                                   .start,
+                            //                           children: [
+                            //                             sText(
+                            //                                 listGroupViewData[0]
+                            //                                     .admins![i]
+                            //                                     .name,
+                            //                                 color: Colors.black,
+                            //                                 weight:
+                            //                                     FontWeight.w500),
+                            //                             SizedBox(
+                            //                               height: 5,
+                            //                             ),
+                            //                             sText("Admin",
+                            //                                 color: kAdeoGray3,
+                            //                                 size: 12),
+                            //                           ],
+                            //                         ),
+                            //                         Expanded(child: Container()),
+                            //                         Icon(
+                            //                           Icons.arrow_forward_ios,
+                            //                           color: kAdeoGray3,
+                            //                           size: 16,
+                            //                         )
+                            //                       ],
+                            //                     ),
+                            //                     SizedBox(
+                            //                       height: 10,
+                            //                     )
+                            //                   ],
+                            //                 ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //     ],
+                            //   ),
+                            // ),
+                            Container(
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
                                   Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
+                                        child: sText("Settings",
+                                            weight: FontWeight.w500, size: 16),
+                                      ),
+                                    Container(
+                                            child: Icon(
+                                              Icons.add_circle_outline,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
+                                    ],
+                                ),
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),
