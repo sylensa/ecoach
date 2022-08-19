@@ -430,6 +430,9 @@ InputDecoration textDecor(
     suffix: suffix,
     suffixIcon: suffixIcon,
     hintText: hint,
+    alignLabelWithHint: true,
+    isDense: true,
+
     floatingLabelBehavior: (label.isNotEmpty && hint.isNotEmpty)
         ? FloatingLabelBehavior.never
         : FloatingLabelBehavior.auto,
