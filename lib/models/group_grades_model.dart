@@ -107,10 +107,12 @@ class GradesDataResponse {
     this.grades,
     this.createdAt,
     this.updatedAt,
+    this.passMark,
   });
 
   int? id;
   String? name;
+  String? passMark;
   List<Grade>? grades;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -118,6 +120,7 @@ class GradesDataResponse {
   factory GradesDataResponse.fromJson(Map<String, dynamic> json) => GradesDataResponse(
     id: json["id"] == null ? null : json["id"],
     name: json["name"] == null ? null : json["name"],
+    passMark: json["pass_mark"] == null ? null : json["pass_mark"],
     grades: json["grades"] == null ? null : List<Grade>.from(json["grades"].map((x) => Grade.fromJson(x))),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
@@ -126,6 +129,7 @@ class GradesDataResponse {
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
     "name": name == null ? null : name,
+    "pass_mark": passMark == null ? null : passMark,
     "grades": grades == null ? null : List<dynamic>.from(grades!.map((x) => x.toJson())),
     "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
     "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
