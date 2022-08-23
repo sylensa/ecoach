@@ -534,16 +534,16 @@ class GroupManagementController{
     }
   }
 
-  Future<GroupTestData?>  updateGroup(Map groupSettings) async {
-    GroupTestData? groupTestData;
+  Future<GroupListData?>  updateGroup(Map groupSettings) async {
+    GroupListData? groupListData;
     try{
       var res = await doPut("${AppUrl.groups}/$groupId", {
         "settings": groupSettings,
       });
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
-        groupTestData = GroupTestData.fromJson(res["data"]);
+        groupListData = GroupListData.fromJson(res["data"]);
         toastMessage("${res["message"]}");
-        return groupTestData;
+        return groupListData;
       }else{
         toastMessage("${res["message"]}");
         return null;
