@@ -162,11 +162,16 @@ bool progressCode = false;
                   itemBuilder: (BuildContext context, int index){
                     return  GestureDetector(
                       onTap: ()async{
-                        await goTo(context, GroupPage(groupListData:listGroupListData[index]));
-                          setState((){
+                      var res =  await goTo(context, GroupPage(groupListData:listGroupListData[index]));
+                      if(res != null){
+                        setState((){
+                          listGroupListData[index] = res;
+                        });
+                      }else{
+                        setState((){
+                        });
+                      }
 
-                          });
-                        // goTo(context, GroupProfilePage());
                       },
                       child: Card(
                           color: Colors.white,
