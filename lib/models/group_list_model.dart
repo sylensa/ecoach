@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:ecoach/models/group_grades_model.dart';
+
 GroupListModel groupListModelFromJson(String? str) => GroupListModel.fromJson(json.decode(str!));
 
 String? groupListModelToJson(GroupListModel data) => json.encode(data.toJson());
@@ -115,6 +117,7 @@ class GroupListData {
     this.discoverability,
     this.membersCount,
     this.category,
+    this.settings,
   });
 
   int? id;
@@ -130,6 +133,7 @@ class GroupListData {
   dynamic deletedAt;
   bool? discoverability;
   int? membersCount;
+  DataSettings? settings;
 
   factory GroupListData.fromJson(Map<String, dynamic> json) => GroupListData(
     id: json["id"] == null ? null : json["id"],
@@ -145,6 +149,8 @@ class GroupListData {
     category: json["category"] ?? "",
     discoverability: json["discoverability"] == null ? null : json["discoverability"],
     membersCount: json["members_count"] == null ? 0 : json["members_count"],
+    settings: json["settings"] == null ? null : DataSettings.fromJson(json["settings"]),
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -161,6 +167,8 @@ class GroupListData {
     "category": category,
     "discoverability": discoverability == null ? null : discoverability,
     "members_count": membersCount == null ? null : membersCount,
+    "settings": settings == null ? null : settings!.toJson(),
+
   };
 }
 
@@ -185,5 +193,171 @@ class Link {
     "url": url == null ? null : url,
     "label": label == null ? null : label,
     "active": active == null ? null : active,
+  };
+}
+
+class DataSettings {
+  DataSettings({
+    this.settings,
+  });
+
+  SettingsSettings? settings;
+
+  factory DataSettings.fromJson(Map<String, dynamic> json) => DataSettings(
+    settings: json["settings"] == null ? null : SettingsSettings.fromJson(json["settings"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "settings": settings == null ? null : settings!.toJson(),
+  };
+}
+
+class SettingsSettings {
+  SettingsSettings({
+    this.access,
+    this.amount,
+    this.grading,
+    this.currency,
+    this.features,
+    this.subscriptions,
+    this.countryCode,
+  });
+
+  String?access;
+  String?amount;
+  Grading? grading;
+  String? currency;
+  String? countryCode;
+  Features? features;
+  Subscriptions? subscriptions;
+
+  factory SettingsSettings.fromJson(Map<String, dynamic> json) => SettingsSettings(
+    access: json["access"] == null ? "" : json["access"],
+    amount: json["amount"] == null ? "" : json["amount"],
+    grading: json["grading"] == null ? null : Grading.fromJson(json["grading"]),
+    currency: json["currency"] == null ? "" : json["currency"],
+    countryCode: json["country_code"] == null ? "+233" : json["country_code"],
+    features: json["features"] == null ? null : Features.fromJson(json["features"]),
+    subscriptions: json["subscriptions"] == null ? null : Subscriptions.fromJson(json["subscriptions"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "access": access == null ? null : access,
+    "amount": amount == null ? null : amount,
+    "grading": grading == null ? null : grading!.toJson(),
+    "currency": currency == null ? null : currency,
+    "country_code": countryCode == null ? "" : countryCode,
+    "features": features == null ? null : features!.toJson(),
+    "subscriptions": subscriptions == null ? null : subscriptions!.toJson(),
+  };
+}
+
+class Features {
+  Features({
+    this.speed,
+    this.review,
+    this.mastery,
+    this.passMark,
+    this.summaries,
+    this.totalScore,
+    this.averageScore,
+    this.instantResult,
+    this.overallOutlook,
+    this.improvementRate,
+  });
+
+  bool? speed;
+  bool? review;
+  bool? mastery;
+  bool? passMark;
+  bool? summaries;
+  bool? totalScore;
+  bool? averageScore;
+  bool? instantResult;
+  bool? overallOutlook;
+  bool? improvementRate;
+
+  factory Features.fromJson(Map<String, dynamic> json) => Features(
+    speed: json["speed"] == null ? null : json["speed"],
+    review: json["review"] == null ? null : json["review"],
+    mastery: json["mastery"] == null ? null : json["mastery"],
+    passMark: json["pass_mark"] == null ? null : json["pass_mark"],
+    summaries: json["summaries"] == null ? null : json["summaries"],
+    totalScore: json["total_score"] == null ? null : json["total_score"],
+    averageScore: json["average_score"] == null ? null : json["average_score"],
+    instantResult: json["instant_result"] == null ? null : json["instant_result"],
+    overallOutlook: json["overall_outlook"] == null ? null : json["overall_outlook"],
+    improvementRate: json["improvement_rate"] == null ? null : json["improvement_rate"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "speed": speed == null ? null : speed,
+    "review": review == null ? null : review,
+    "mastery": mastery == null ? null : mastery,
+    "pass_mark": passMark == null ? null : passMark,
+    "summaries": summaries == null ? null : summaries,
+    "total_score": totalScore == null ? null : totalScore,
+    "average_score": averageScore == null ? null : averageScore,
+    "instant_result": instantResult == null ? null : instantResult,
+    "overall_outlook": overallOutlook == null ? null : overallOutlook,
+    "improvement_rate": improvementRate == null ? null : improvementRate,
+  };
+}
+
+class Grading {
+  Grading({
+    this.id,
+    this.name,
+    this.grades,
+    this.passMark,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  int? id;
+  String?name;
+  List<Grade>? grades;
+  int? passMark;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+
+  factory Grading.fromJson(Map<String, dynamic> json) => Grading(
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"] == null ? null : json["name"],
+    grades: json["grades"] == null ? null : List<Grade>.from(json["grades"].map((x) => Grade.fromJson(x))),
+    passMark: json["pass_mark"] == null ? null : json["pass_mark"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "name": name == null ? null : name,
+    "grades": grades == null ? null : List<dynamic>.from(grades!.map((x) => x.toJson())),
+    "pass_mark": passMark == null ? null : passMark,
+    "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
+    "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
+  };
+}
+
+
+
+class Subscriptions {
+  Subscriptions({
+    this.yearly,
+    this.monthly,
+  });
+
+  bool? yearly;
+  bool? monthly;
+
+  factory Subscriptions.fromJson(Map<String, dynamic> json) => Subscriptions(
+    yearly: json["yearly"] == null ? null : json["yearly"],
+    monthly: json["monthly"] == null ? null : json["monthly"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "yearly": yearly == null ? null : yearly,
+    "monthly": monthly == null ? null : monthly,
   };
 }
