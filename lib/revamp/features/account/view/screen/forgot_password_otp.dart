@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
@@ -32,7 +33,6 @@ class ForgotPasswordOTP extends StatefulWidget {
 }
 
 class _ForgotPasswordOTPState extends State<ForgotPasswordOTP> {
-
   var onTapRecognizer;
 
   TextEditingController textEditingController = TextEditingController();
@@ -65,16 +65,16 @@ class _ForgotPasswordOTPState extends State<ForgotPasswordOTP> {
 
     ApiCall(AppUrl.forgotPassword, params: {'phone': widget.phone},
         create: (Map<String, dynamic> dataItem) {
-          return null;
-        }, onCallback: (data) {
-          Navigator.pop(context);
-        }, onError: (err) {
-          print(err);
-          Navigator.pop(context);
-        }, onMessage: (message) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(message)));
-        }).post(context);
+      return null;
+    }, onCallback: (data) {
+      Navigator.pop(context);
+    }, onError: (err) {
+      print(err);
+      Navigator.pop(context);
+    }, onMessage: (message) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }).post(context);
   }
 
   verifyOtpCode() async {
@@ -82,29 +82,48 @@ class _ForgotPasswordOTPState extends State<ForgotPasswordOTP> {
     ApiCall(AppUrl.forgotPasswordVerify,
         params: {'phone': widget.phone, 'pin': currentTextController.text},
         create: (Map<String, dynamic> dataItem) {
-          return null;
-        }, onCallback: (data) {
-          Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ResetForgotPassword(widget.phone);
-          }));
-        }, onError: (err) {
-          print('onError');
-          print(err);
-          Navigator.pop(context);
-        }, onMessage: (message) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(message)));
-        }).post(context).then((value) {});
+      return null;
+    }, onCallback: (data) {
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return ResetForgotPassword(widget.phone);
+      }));
+    }, onError: (err) {
+      print('onError');
+      print(err);
+      Navigator.pop(context);
+    }, onMessage: (message) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }).post(context).then((value) {});
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kHomeBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: kHomeBackgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Platform.isIOS
+              ? Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                )
+              : Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 63,
+            top: 5,
             left: 18,
             right: 18,
           ),
@@ -139,7 +158,7 @@ class _ForgotPasswordOTPState extends State<ForgotPasswordOTP> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:  [
+                children: [
                   Text(
                     "Code not received ?",
                     style: TextStyle(fontSize: 12),
@@ -148,10 +167,9 @@ class _ForgotPasswordOTPState extends State<ForgotPasswordOTP> {
                     width: 5,
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       resendPin();
                     },
-
                     child: Text(
                       "Resend",
                       style: TextStyle(
