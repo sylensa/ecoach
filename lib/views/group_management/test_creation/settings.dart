@@ -5,6 +5,7 @@ import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_grades_model.dart';
 import 'package:ecoach/models/group_list_model.dart';
+import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -42,6 +43,7 @@ class _SettingsState extends State<Settings> {
   bool reviewSwitch = false;
   var _countryFlag;
   String countryCurrency = 'GH';
+  String countryCode = '+233';
   String passMark = '0';
   TextEditingController passMarkController = TextEditingController();
   List gradingSystem = [];
@@ -53,11 +55,12 @@ class _SettingsState extends State<Settings> {
   List<GradesDataResponse> listGrade = [];
   GradesDataResponse ? gradesDataResponse;
   List<TextEditingController> textEditingController = [TextEditingController()];
+  GroupListData? groupListData;
   increaseRange(int i,){
     if(i == 0){
       if(int.parse(listBeceGrading[i].name) != 100){
         listBeceGrading[i].name =  "${int.parse(listBeceGrading[i].name) + 1}";
-        textEditingController[i].text  =  "${int.parse(listBeceGrading[i].name) + 1}";
+        textEditingController[i].text  =   listBeceGrading[i].name;
       }else{
         toastMessage("Maximum value is 100");
       }
@@ -68,7 +71,7 @@ class _SettingsState extends State<Settings> {
         toastMessage("This range cannot be bigger than previous range");
       }else if( int.parse(listBeceGrading[i].name) <= 100){
         listBeceGrading[i].name =  "${int.parse(listBeceGrading[i].name) + 1}";
-        textEditingController[i].text  =  "${int.parse(listBeceGrading[i].name) + 1}";
+        textEditingController[i].text  =  listBeceGrading[i].name;
       }
     }
 
@@ -76,12 +79,13 @@ class _SettingsState extends State<Settings> {
   }
 
   decreaseRange(int i){
+    print("listBeceGrading[i].name:${listBeceGrading[i].name}");
     if(int.parse(listBeceGrading[i].name) == 0){
       toastMessage("Can not go below 0");
       return false;
-    }else if(int.parse(listBeceGrading[i].name) != 0){
+    }else if(int.parse(listBeceGrading[i].name) > 0){
       listBeceGrading[i].name =  "${int.parse(listBeceGrading[i].name) - 1}";
-      textEditingController[i].text  =  "${int.parse(listBeceGrading[i].name) - 1}";
+      textEditingController[i].text  =   listBeceGrading[i].name;
       return true;
     }
   }
@@ -134,11 +138,11 @@ class _SettingsState extends State<Settings> {
   getGroupGrades()async{
     listGrade = await GroupManagementController(groupId: widget.groupListData!.id.toString()).getGrades();
     setState((){
-
+      print('object:${listGrade.length}');
     });
   }
 
-  updateGroupSettings(){
+  updateGroupSettings()async{
     if(selectedStatus != status[0]){
       _accessController.clear();
       subscriptionMonthlySwitch = false;
@@ -181,7 +185,7 @@ class _SettingsState extends State<Settings> {
       gradesData = GradesDataResponse(
         id: 100,
         name: "CUSTOM",
-        passMark: passMark,
+        passMark: int.parse(passMark),
         // createdAt: DateTime.now(),
         // updatedAt: DateTime.now(),
         grades: listCustomGrade
@@ -193,6 +197,7 @@ class _SettingsState extends State<Settings> {
         "access" : selectedStatus,
         "amount" : _accessController.text,
         "currency" : countryCurrency,
+        "country_code" : countryCode,
         "subscriptions" : {
           "monthly":subscriptionMonthlySwitch,
           "yearly":subscriptionYearlySwitch,
@@ -214,13 +219,63 @@ class _SettingsState extends State<Settings> {
     };
 
     print("settings:$settings");
+
+    try{
+      groupListData =  await GroupManagementController(groupId: widget.groupListData!.id.toString()).updateGroup(settings);
+      setState((){
+
+      });
+      if(groupListData != null){
+        Navigator.pop(context);
+      }else{
+        Navigator.pop(context);
+        toastMessage("Failed try again");
+      }
+    }catch(e){
+      Navigator.pop(context);
+      print(e.toString());
+    }
+
   }
   @override
   initState() {
     super.initState();
-    selectedStatus = status[0];
-    _accessController = TextEditingController();
-    passMarkController.text = passMark;
+    if(widget.groupListData!.settings != null){
+      selectedStatus =  widget.groupListData!.settings!.settings!.access;
+      _accessController.text = widget.groupListData!.settings!.settings!.amount.toString();
+      passMarkController.text = widget.groupListData!.settings!.settings!.grading!.passMark.toString();
+      _countryFlag = widget.groupListData!.settings!.settings!.currency;
+      subscriptionMonthlySwitch = widget.groupListData!.settings!.settings!.subscriptions!.monthly!;
+      subscriptionYearlySwitch = widget.groupListData!.settings!.settings!.subscriptions!.yearly!;
+      speedSwitch = widget.groupListData!.settings!.settings!.features!.speed!;
+      masterySwitch = widget.groupListData!.settings!.settings!.features!.mastery!;
+      rateSwitch = widget.groupListData!.settings!.settings!.features!.improvementRate!;
+      outlookSwitch = widget.groupListData!.settings!.settings!.features!.overallOutlook!;
+      totalScoreSwitch = widget.groupListData!.settings!.settings!.features!.totalScore!;
+      averageScoreSwitch = widget.groupListData!.settings!.settings!.features!.averageScore!;
+      passMarkSwitch = widget.groupListData!.settings!.settings!.features!.passMark!;
+      resultSwitch = widget.groupListData!.settings!.settings!.features!.instantResult!;
+      summariesSwitch = widget.groupListData!.settings!.settings!.features!.summaries!;
+      reviewSwitch = widget.groupListData!.settings!.settings!.features!.review!;
+      countryCode = widget.groupListData!.settings!.settings!.countryCode!;
+      gradingSystem.add(widget.groupListData!.settings!.settings!.grading!.name);
+      if(widget.groupListData!.settings!.settings!.grading!.name!.toLowerCase() == "custom"){
+        listBeceGrading.clear();
+        for(int i =0; i< widget.groupListData!.settings!.settings!.grading!.grades!.length; i++){
+          ListNames grade = ListNames(
+            name: widget.groupListData!.settings!.settings!.grading!.grades![i].range.toString(),
+          );
+          listBeceGrading.add(grade);
+          textEditingController.add(TextEditingController());
+          textEditingController[i].text = grade.name;
+        }
+        passMark = widget.groupListData!.settings!.settings!.grading!.passMark.toString();
+      }
+    }else{
+      selectedStatus =  status[0];
+      passMarkController.text = passMark;
+      textEditingController[0].text = "80";
+    }
     getGroupGrades();
   }
 
@@ -252,7 +307,7 @@ class _SettingsState extends State<Settings> {
               color: Colors.black,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,groupListData);
             },
           ),
           title: Text(
@@ -265,6 +320,7 @@ class _SettingsState extends State<Settings> {
           ),
           actions: [
             IconButton(onPressed: (){
+              showLoaderDialog(context);
             updateGroupSettings();
             }, icon: Icon(Icons.save_alt),color: Colors.black,)
           ],
@@ -840,7 +896,7 @@ class _SettingsState extends State<Settings> {
                             child: ExpansionTile(
                               textColor: Colors.white,
                               iconColor: Colors.grey,
-                              initiallyExpanded:gradingSystem.contains(listGrade[t].name) ? true : false,
+                              initiallyExpanded:false,
                               maintainState: false,
                               onExpansionChanged: (value){
                                 setState(() {
@@ -921,7 +977,7 @@ class _SettingsState extends State<Settings> {
                                     children: [
                                       sText("Pass Mark",align: TextAlign.center,color: Colors.white),
                                       Container(
-                                        child: sText("80",align: TextAlign.center,color: Colors.white),
+                                        child: sText("${listGrade[t].passMark}",align: TextAlign.center,color: Colors.white),
                                       ),
                                     ],
                                   ),
@@ -1630,10 +1686,11 @@ class _SettingsState extends State<Settings> {
             isShowCode: false,
             isDownIcon: false,
           ),
-          initialSelection: '+233',
+          initialSelection: countryCode,
           onChanged: (value) => setState(() {
             _countryFlag = value!.flagUri;
             countryCurrency = value.code!;
+            countryCode = value.dialCode!;
             print("countryCurrency:$countryCurrency");
 
           }),
