@@ -112,7 +112,7 @@ class GradesDataResponse {
 
   int? id;
   String? name;
-  String? passMark;
+  int? passMark;
   List<Grade>? grades;
   DateTime? createdAt;
   DateTime? updatedAt;
