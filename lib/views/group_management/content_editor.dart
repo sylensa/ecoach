@@ -279,7 +279,7 @@ class _ContentEditorState extends State<ContentEditor> {
                       color: Color(0xFF00C9B9),
                       borderRadius: BorderRadius.circular(30)),
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  child: sText("Create Group",
+                  child: sText("View Group",
                       color: Colors.white,
                       weight: FontWeight.w500,
                       align: TextAlign.center,
