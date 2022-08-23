@@ -1377,7 +1377,7 @@ class _GroupPageState extends State<GroupPage> {
         elevation: 0,
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,widget.groupListData);
             },
             icon: Icon(
               Icons.arrow_back,
@@ -2438,350 +2438,357 @@ class _GroupPageState extends State<GroupPage> {
                         ],
                       ),
                       // notes
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Notes",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: () {
-                                    goTo(context, TestCreation());
-                                  },
-                                  child: Container(
-                                    width: appWidth(context) * 0.75,
-                                    child: sText("New Note",
-                                        weight: FontWeight.w500,
-                                        size: 16,
-                                        align: TextAlign.center),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    decoration: BoxDecoration(
-                                        color: Color(0XFFF0F7FF),
-                                        border: Border.all(
-                                            color: Color(0XFF489CFF)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     Theme(
+                      //       data: Theme.of(context)
+                      //           .copyWith(dividerColor: Colors.transparent),
+                      //       child: ExpansionTile(
+                      //         textColor: Colors.white,
+                      //         iconColor: Colors.white,
+                      //         initiallyExpanded: false,
+                      //         maintainState: false,
+                      //         backgroundColor: kHomeBackgroundColor,
+                      //         childrenPadding: EdgeInsets.zero,
+                      //         collapsedIconColor: Colors.white,
+                      //         leading: Container(
+                      //           child: sText("Notes",
+                      //               weight: FontWeight.w500, size: 16),
+                      //         ),
+                      //         trailing: Container(
+                      //           child: Icon(
+                      //             Icons.add_circle_outline,
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         title: Container(),
+                      //         children: <Widget>[
+                      //           GestureDetector(
+                      //             onTap: () {
+                      //               goTo(context, TestCreation());
+                      //             },
+                      //             child: Container(
+                      //               width: appWidth(context) * 0.75,
+                      //               child: sText("New Note",
+                      //                   weight: FontWeight.w500,
+                      //                   size: 16,
+                      //                   align: TextAlign.center),
+                      //               padding: EdgeInsets.symmetric(
+                      //                   vertical: 15, horizontal: 30),
+                      //               decoration: BoxDecoration(
+                      //                   color: Color(0XFFF0F7FF),
+                      //                   border: Border.all(
+                      //                       color: Color(0XFF489CFF)),
+                      //                   borderRadius:
+                      //                       BorderRadius.circular(10)),
+                      //             ),
+                      //           ),
+                      //           SizedBox(
+                      //             height: 20,
+                      //           ),
+                      //           if (listGroupViewData[0].admins!.isNotEmpty)
+                      //             Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 20, vertical: 10),
+                      //               margin:
+                      //                   EdgeInsets.symmetric(horizontal: 20),
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(5)),
+                      //               child: Column(
+                      //                 children: [
+                      //                   for (int i = 0;
+                      //                       i <
+                      //                           listGroupViewData[0]
+                      //                               .admins!
+                      //                               .length;
+                      //                       i++)
+                      //                     Column(
+                      //                       children: [
+                      //                         Row(
+                      //                           children: [
+                      //                             Stack(
+                      //                               children: [
+                      //                                 displayLocalImage(
+                      //                                     "filePath",
+                      //                                     radius: 30),
+                      //                                 Positioned(
+                      //                                   bottom: 5,
+                      //                                   right: 0,
+                      //                                   child: Image.asset(
+                      //                                       "assets/images/tick-mark.png"),
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                             SizedBox(
+                      //                               width: 10,
+                      //                             ),
+                      //                             Column(
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .start,
+                      //                               children: [
+                      //                                 sText(
+                      //                                     listGroupViewData[0]
+                      //                                         .admins![i]
+                      //                                         .name,
+                      //                                     color: Colors.black,
+                      //                                     weight:
+                      //                                         FontWeight.w500),
+                      //                                 SizedBox(
+                      //                                   height: 5,
+                      //                                 ),
+                      //                                 sText("Admin",
+                      //                                     color: kAdeoGray3,
+                      //                                     size: 12),
+                      //                               ],
+                      //                             ),
+                      //                             Expanded(child: Container()),
+                      //                             Icon(
+                      //                               Icons.arrow_forward_ios,
+                      //                               color: kAdeoGray3,
+                      //                               size: 16,
+                      //                             )
+                      //                           ],
+                      //                         ),
+                      //                         SizedBox(
+                      //                           height: 10,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       // stats
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Stats",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      //stats
+                      // Column(
+                      //   children: [
+                      //     Theme(
+                      //       data: Theme.of(context)
+                      //           .copyWith(dividerColor: Colors.transparent),
+                      //       child: ExpansionTile(
+                      //         textColor: Colors.white,
+                      //         iconColor: Colors.white,
+                      //         initiallyExpanded: false,
+                      //         maintainState: false,
+                      //         backgroundColor: kHomeBackgroundColor,
+                      //         childrenPadding: EdgeInsets.zero,
+                      //         collapsedIconColor: Colors.white,
+                      //         leading: Container(
+                      //           child: sText("Stats",
+                      //               weight: FontWeight.w500, size: 16),
+                      //         ),
+                      //         trailing: Container(
+                      //           child: Icon(
+                      //             Icons.add_circle_outline,
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         title: Container(),
+                      //         children: <Widget>[
+                      //           SizedBox(
+                      //             height: 10,
+                      //           ),
+                      //           if (listGroupViewData[0].admins!.isNotEmpty)
+                      //             Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 20, vertical: 10),
+                      //               margin:
+                      //                   EdgeInsets.symmetric(horizontal: 20),
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(5)),
+                      //               child: Column(
+                      //                 children: [
+                      //                   for (int i = 0;
+                      //                       i <
+                      //                           listGroupViewData[0]
+                      //                               .admins!
+                      //                               .length;
+                      //                       i++)
+                      //                     Column(
+                      //                       children: [
+                      //                         Row(
+                      //                           children: [
+                      //                             Stack(
+                      //                               children: [
+                      //                                 displayLocalImage(
+                      //                                     "filePath",
+                      //                                     radius: 30),
+                      //                                 Positioned(
+                      //                                   bottom: 5,
+                      //                                   right: 0,
+                      //                                   child: Image.asset(
+                      //                                       "assets/images/tick-mark.png"),
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                             SizedBox(
+                      //                               width: 10,
+                      //                             ),
+                      //                             Column(
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .start,
+                      //                               children: [
+                      //                                 sText(
+                      //                                     listGroupViewData[0]
+                      //                                         .admins![i]
+                      //                                         .name,
+                      //                                     color: Colors.black,
+                      //                                     weight:
+                      //                                         FontWeight.w500),
+                      //                                 SizedBox(
+                      //                                   height: 5,
+                      //                                 ),
+                      //                                 sText("Admin",
+                      //                                     color: kAdeoGray3,
+                      //                                     size: 12),
+                      //                               ],
+                      //                             ),
+                      //                             Expanded(child: Container()),
+                      //                             Icon(
+                      //                               Icons.arrow_forward_ios,
+                      //                               color: kAdeoGray3,
+                      //                               size: 16,
+                      //                             )
+                      //                           ],
+                      //                         ),
+                      //                         SizedBox(
+                      //                           height: 10,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       // wallet
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Wallet",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+
+                      // Column(
+                      //   children: [
+                      //     Theme(
+                      //       data: Theme.of(context)
+                      //           .copyWith(dividerColor: Colors.transparent),
+                      //       child: ExpansionTile(
+                      //         textColor: Colors.white,
+                      //         iconColor: Colors.white,
+                      //         initiallyExpanded: false,
+                      //         maintainState: false,
+                      //         backgroundColor: kHomeBackgroundColor,
+                      //         childrenPadding: EdgeInsets.zero,
+                      //         collapsedIconColor: Colors.white,
+                      //         leading: Container(
+                      //           child: sText("Wallet",
+                      //               weight: FontWeight.w500, size: 16),
+                      //         ),
+                      //         trailing: Container(
+                      //           child: Icon(
+                      //             Icons.add_circle_outline,
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         title: Container(),
+                      //         children: <Widget>[
+                      //           SizedBox(
+                      //             height: 10,
+                      //           ),
+                      //           if (listGroupViewData[0].admins!.isNotEmpty)
+                      //             Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 20, vertical: 10),
+                      //               margin:
+                      //                   EdgeInsets.symmetric(horizontal: 20),
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(5)),
+                      //               child: Column(
+                      //                 children: [
+                      //                   for (int i = 0;
+                      //                       i <
+                      //                           listGroupViewData[0]
+                      //                               .admins!
+                      //                               .length;
+                      //                       i++)
+                      //                     Column(
+                      //                       children: [
+                      //                         Row(
+                      //                           children: [
+                      //                             Stack(
+                      //                               children: [
+                      //                                 displayLocalImage(
+                      //                                     "filePath",
+                      //                                     radius: 30),
+                      //                                 Positioned(
+                      //                                   bottom: 5,
+                      //                                   right: 0,
+                      //                                   child: Image.asset(
+                      //                                       "assets/images/tick-mark.png"),
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                             SizedBox(
+                      //                               width: 10,
+                      //                             ),
+                      //                             Column(
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .start,
+                      //                               children: [
+                      //                                 sText(
+                      //                                     listGroupViewData[0]
+                      //                                         .admins![i]
+                      //                                         .name,
+                      //                                     color: Colors.black,
+                      //                                     weight:
+                      //                                         FontWeight.w500),
+                      //                                 SizedBox(
+                      //                                   height: 5,
+                      //                                 ),
+                      //                                 sText("Admin",
+                      //                                     color: kAdeoGray3,
+                      //                                     size: 12),
+                      //                               ],
+                      //                             ),
+                      //                             Expanded(child: Container()),
+                      //                             Icon(
+                      //                               Icons.arrow_forward_ios,
+                      //                               color: kAdeoGray3,
+                      //                               size: 16,
+                      //                             )
+                      //                           ],
+                      //                         ),
+                      //                         SizedBox(
+                      //                           height: 10,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       // Setting
                       MaterialButton(
-                        onPressed: (){
-                          goTo(context, Settings(groupListData: widget.groupListData,));
+                        onPressed: ()async{
+                         var res = await  goTo(context, Settings(groupListData: widget.groupListData,));
+                        setState((){
+                          if(res != null){
+                            widget.groupListData = res;
+                          }
+                        });
                         },
                         child: Column(
                           children: [
