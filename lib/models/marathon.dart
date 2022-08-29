@@ -7,6 +7,7 @@ Marathon marathonFromJson(String str) => Marathon.fromJson(json.decode(str));
 String marathonToJson(Marathon data) => json.encode(data.toJson());
 
 enum MarathonStatus { NEW, IN_PROGRESS, PAUSED, COMPLETED }
+
 enum MarathonType { FULL, TOPIC }
 
 class Marathon {
@@ -141,7 +142,7 @@ class MarathonProgress {
   get isWrong {
     if (question == null) return false;
 
-    return question!.isWrong;
+    return status == "wrong";
   }
 
   get unattempted {

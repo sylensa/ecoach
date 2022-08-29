@@ -113,6 +113,8 @@ class MarathonController {
   int get correct {
     int score = 0;
     questions.forEach((question) {
+      print("correct___________________________");
+      print(question.toJson());
       if (question.isCorrect) score++;
     });
     return score;
@@ -121,7 +123,9 @@ class MarathonController {
   int get wrong {
     int wrong = 0;
     questions.forEach((question) {
-      if (question.isWrong && question.status != null) wrong++;
+      print("wrong___________________________");
+      print(question.toJson());
+      if (question.isWrong) wrong++;
     });
     return wrong;
   }
@@ -158,8 +162,6 @@ class MarathonController {
     if (length == 0) length = 1;
     return time / length;
   }
-
-
 
   double getAvgScore() {
     if (marathon == null) return 0;
