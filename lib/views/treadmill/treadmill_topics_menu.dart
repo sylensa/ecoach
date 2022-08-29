@@ -17,13 +17,12 @@ import '../../database/treadmill_db.dart';
 import '../../models/treadmill.dart';
 
 class TreadmillTopicsMenu extends StatefulWidget {
-  TreadmillTopicsMenu({
-    this.topics = const [],
-    required this.controller,
-  });
+  TreadmillTopicsMenu(
+      {this.topics = const [], required this.controller, required this.mode});
 
   final TreadmillController controller;
   final List<TestNameAndCount> topics;
+  final TreadmillMode mode;
 
   @override
   State<TreadmillTopicsMenu> createState() => _TreadmillTopicsMenuState();
@@ -158,8 +157,8 @@ class _TreadmillTopicsMenuState extends State<TreadmillTopicsMenu> {
                               count: controller.countQuestions,
                               topic: topic,
                               controller: controller,
-                              mode: TreadmillMode.TOPIC,
-
+                              mode: widget.mode,
+                              bankId: topicId,
                             );
                           },
                         ),

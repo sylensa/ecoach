@@ -2,8 +2,9 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/test_creation/test_configuration.dart';
+import 'package:ecoach/views/group_management/test_creation/test_configuration.dart';
 import 'package:flutter/material.dart';
 
 class TestCreationTestTypeList extends StatefulWidget {
@@ -33,6 +34,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
   @override
  void initState(){
     getTypeList();
+    groupTestType = widget.type;
     super.initState();
   }
   @override
@@ -84,6 +86,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
             child: sText("Select your source for the test",color: kAdeoGray2,align: TextAlign.center),
           ),
           SizedBox(height: 20,),
+          listTopics.isNotEmpty ?
           Expanded(
             child: ListView.builder(
               itemCount: listTopics.length,
@@ -91,7 +94,8 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
                 return MaterialButton(
                   padding: EdgeInsets.zero,
                   onPressed: (){
-                    goTo(context, TestConfigurations());
+                    groupTestId = listTopics[index].id.toString();
+                    goTo(context, TestConfigurations(testName: listTopics[index].name,));
                   },
                   child: Container(
                     padding: appPadding(20),
@@ -149,7 +153,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
                   ),
                 );
             }),
-          )
+          ) : Expanded(child: Center(child: sText("No ${properCase(widget.type)}s",weight: FontWeight.w500),))
 
         ],
       ),

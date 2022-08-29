@@ -8,13 +8,18 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/announcement_list_model.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
+import 'package:ecoach/models/group_test_model.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
-import 'package:ecoach/views/group/group_list.dart';
-import 'package:ecoach/views/group/test_creation/test_creation.dart';
+import 'package:ecoach/views/group_management/group_list.dart';
+import 'package:ecoach/views/group_management/test_creation/edit_test_configuration.dart';
+import 'package:ecoach/views/group_management/test_creation/settings.dart';
+import 'package:ecoach/views/group_management/test_creation/test_creation.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
@@ -45,6 +50,7 @@ class _GroupPageState extends State<GroupPage> {
   int _currentSlide = 0;
   List<File> listFiles = [];
   List<AnnouncementData> listAnnouncementData = [];
+
   List base64Images = [];
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
@@ -58,12 +64,7 @@ class _GroupPageState extends State<GroupPage> {
     return result;
   }
 
-  showRevokeDialog(
-      {String? message,
-      BuildContext? context,
-      Widget? target,
-      bool replace = false,
-      String? userId}) {
+  showRevokeDialog({String? message, BuildContext? context, Widget? target, bool replace = false, String? userId}) {
     // flutter defined function
     showDialog(
       context: context!,
@@ -251,95 +252,102 @@ class _GroupPageState extends State<GroupPage> {
         });
   }
 
-  inviteModalBottomSheet(
-    context,
-  ) {
+  inviteToGroup(String email) async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if(isConnected){
+      try{
+        if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).inviteToGroup(email)){
+          await getGroupPageView();
+          Navigator.pop(context);
+          toastMessage("User invite sent successfully");
+        }else{
+          Navigator.pop(context);
+          toastMessage("User invite failed");
+        }
+      }catch(e){
+        Navigator.pop(context);
+        print("error:$e");
+        toastMessage("User invite failed");
+
+      }
+    }else{
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+
+  }
+
+  inviteModalBottomSheet(context,){
     TextEditingController emailController = TextEditingController();
     String confirmText = "Swipe to Confirm";
     bool isActivated = true;
     double sheetHeight = 300;
-    confirmFunc() {
-      setState(() {
+    confirmFunc(){
+      setState((){
         confirmText = "Confirmed";
       });
       print("$confirmText");
     }
-
     showModalBottomSheet(
         context: context,
         isDismissible: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent ,
         isScrollControlled: true,
-        builder: (BuildContext context) {
+        builder: (BuildContext context){
           return StatefulBuilder(
-            builder: (BuildContext context, StateSetter stateSetter) {
+            builder: (BuildContext context,StateSetter stateSetter){
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      )),
+                      color: Colors.white ,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
+                  ),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20,),
                       Container(
                         color: kAdeoGray,
                         height: 5,
                         width: 50,
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20,),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Center(
-                            child: sText(
-                                "Enter user's email to invite them to the group",
-                                weight: FontWeight.normal,
-                                align: TextAlign.center)),
+                        child: Center(child: sText( "Enter user's email to invite them to the group",weight: FontWeight.normal,align: TextAlign.center)),
                       ),
                       Expanded(
                         child: ListView(
                           children: [
-                            SizedBox(
-                              height: 40,
-                            ),
+                            SizedBox(height: 40,),
                             Stack(
                               children: [
                                 Container(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  padding: EdgeInsets.only(left: 20,right: 20),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: TextFormField(
                                           controller: emailController,
+                                          keyboardType: TextInputType.emailAddress,
                                           validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
+                                            if (value == null || value.isEmpty) {
                                               return 'Please check that you\'ve entered email';
                                             }
                                             return null;
                                           },
-                                          onFieldSubmitted: (value) {
-                                            stateSetter(() {
+                                          onFieldSubmitted: (value){
+                                            stateSetter((){
                                               sheetHeight = 300;
                                             });
                                           },
-                                          onTap: () {
-                                            stateSetter(() {
+                                          onTap: (){
+                                            stateSetter((){
                                               sheetHeight = 650;
                                             });
                                           },
                                           textAlign: TextAlign.left,
-                                          style: appStyle(
-                                              weight: FontWeight.w400,
-                                              size: 20),
+                                          style: appStyle(weight: FontWeight.w400,size: 20),
                                           decoration: textDecorNoBorder(
                                             hintWeight: FontWeight.normal,
                                             radius: 10,
@@ -347,8 +355,7 @@ class _GroupPageState extends State<GroupPage> {
                                             hintColor: Colors.black,
                                             borderColor: Colors.grey[400]!,
                                             fill: Colors.white,
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 40),
+                                            padding: EdgeInsets.only(left: 10,right: 40),
                                           ),
                                         ),
                                       ),
@@ -360,52 +367,59 @@ class _GroupPageState extends State<GroupPage> {
                                   top: 7,
                                   child: Container(
                                     margin: topPadding(5),
-                                    child: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                    ),
+                                    child: Icon(Icons.check,color: Colors.white,),
                                     decoration: BoxDecoration(
                                         color: Color(0xFF00C9B9),
-                                        borderRadius: BorderRadius.circular(5)),
+                                        borderRadius: BorderRadius.circular(5)
+                                    ),
                                   ),
                                 )
                               ],
                             ),
-                            SizedBox(
-                              height: 40,
-                            ),
+                            SizedBox(height: 40,),
                             Container(
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               child: ConfirmationSlider(
-                                onConfirmation: () {
-                                  stateSetter(() {
+                                onConfirmation:(){
+                                  stateSetter((){
                                     confirmText = "Confirmed";
+                                    if(emailController.text.isNotEmpty){
+                                      Navigator.pop(context);
+                                      showLoaderDialog(context);
+                                      inviteToGroup(emailController.text);
+                                    }else{
+                                      toastMessage("Enter user email");
+                                    }
+                                    // goTo(context, GroupProfilePage(groupListData:widget.groupListData));
                                   });
-                                },
+                                } ,
                                 backgroundColor: Color(0xFFE8F5FF),
                                 text: "$confirmText",
                                 textStyle: appStyle(col: Color(0xFF023F6E)),
-                                shadow: BoxShadow(
-                                  color: Colors.white,
-                                ),
+                                shadow: BoxShadow(color: Colors.white,),
                                 iconColor: Color(0xFF0367B4),
-                                sliderButtonContent: Icon(
-                                  Icons.keyboard_double_arrow_right,
-                                  color: Color(0xFF69AAEA),
-                                ),
+                                sliderButtonContent: Icon(Icons.keyboard_double_arrow_right,color: Color(0xFF69AAEA),),
                                 stickToEnd: false,
                                 foregroundColor: Color(0xFF0367B4),
-                                backgroundColorEnd: Color(0xFFE8F5FF),
+                                backgroundColorEnd:   Color(0xFFE8F5FF),
+
+
                               ),
                             ),
+
+
                           ],
                         ),
                       ),
+
                     ],
-                  ));
+                  )
+              );
             },
+
           );
-        });
+        }
+    );
   }
 
   popUpMenu({BuildContext? context}) {
@@ -432,9 +446,7 @@ class _GroupPageState extends State<GroupPage> {
     );
   }
 
-  groupActionsModalBottomSheet(
-    context,
-  ) {
+  groupActionsModalBottomSheet(context,) {
     TextEditingController productKeyController = TextEditingController();
     bool isActivated = true;
     double sheetHeight = 400;
@@ -493,7 +505,12 @@ class _GroupPageState extends State<GroupPage> {
                         children: [
                           MaterialButton(
                             padding: EdgeInsets.zero,
-                            onPressed: () async {},
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              showLoaderDialog(context);
+                              await deleteGroup();
+
+                              },
                             child: Container(
                               width: appWidth(context),
                               padding: EdgeInsets.symmetric(
@@ -537,22 +554,23 @@ class _GroupPageState extends State<GroupPage> {
                                   align: TextAlign.center),
                             ),
                           ),
-                          // MaterialButton(
-                          //   padding: EdgeInsets.zero,
-                          //   onPressed: ()async{
-                          //
-                          //   },
-                          //   child: Container(
-                          //     width: appWidth(context),
-                          //     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                          //     margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                          //     decoration:BoxDecoration(
-                          //         color: Colors.white,
-                          //         borderRadius: BorderRadius.circular(10)
-                          //     ),
-                          //     child: sText("Make member an admin",color: kAdeoGray3,align: TextAlign.center),
-                          //   ),
-                          // ),
+                          MaterialButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: ()async{
+                              Navigator.pop(context);
+                              inviteModalBottomSheet(context);
+                            },
+                            child: Container(
+                              width: appWidth(context),
+                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                              decoration:BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: sText("Invite User",color: kAdeoGray3,align: TextAlign.center),
+                            ),
+                          ),
                         ],
                       )),
                     ],
@@ -720,9 +738,7 @@ class _GroupPageState extends State<GroupPage> {
     }
   }
 
-  announcementModalBottomSheet(
-    context,
-  ) {
+  announcementModalBottomSheet(context,) {
     TextEditingController titleController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
     bool isActivated = true;
@@ -791,7 +807,7 @@ class _GroupPageState extends State<GroupPage> {
                                         controller: titleController,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'Please check that you\'ve entered group email';
+                                            return 'Please check that you\'ve entered group_management email';
                                           }
                                           return null;
                                         },
@@ -886,8 +902,7 @@ class _GroupPageState extends State<GroupPage> {
         });
   }
 
-  updateAnnouncementModalBottomSheet(
-      context, AnnouncementData announcementData, int index) {
+  updateAnnouncementModalBottomSheet(context, AnnouncementData announcementData, int index) {
     TextEditingController titleController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
     titleController.text = announcementData.title!;
@@ -1047,9 +1062,9 @@ class _GroupPageState extends State<GroupPage> {
                           onTap: () {
                             Navigator.pop(context);
                             showLoaderDialog(context);
-                            createAnnouncement(
+                            updateAnnouncement(
                                 title: titleController.text,
-                                description: descriptionController.text);
+                                description: descriptionController.text,aId: announcementData.id.toString(),index: index);
                           },
                           child: Container(
                             width: appWidth(context),
@@ -1114,23 +1129,18 @@ class _GroupPageState extends State<GroupPage> {
       print(e.toString());
     }
 
-    setState(() {
-      progressCodeAnnouncement = false;
-    });
+    // setState(() {
+    //   progressCodeAnnouncement = false;
+    // });
   }
 
-  updateAnnouncement(
-      {String title = '',
-      String description = '',
-      int index = 0,
-      String aId = ''}) async {
+  updateAnnouncement({String title = '', String description = '', int index = 0, String aId = ''}) async {
     try {
       final bool isConnected = await InternetConnectionChecker().hasConnection;
       if (isConnected) {
         AnnouncementData? announcementData = await GroupManagementController(
                 groupId: widget.groupListData!.id.toString())
-            .updateAnnouncement(
-                title: title, description: description, id: aId);
+            .updateAnnouncement(base64Images,title: title, description: description, id: aId);
         if (announcementData != null) {
           listAnnouncementData.removeAt(index);
           listAnnouncementData.insert(index, announcementData);
@@ -1314,10 +1324,47 @@ class _GroupPageState extends State<GroupPage> {
     }
   }
 
+  getGroupTest() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    try {
+      if (isConnected) {
+        listGroupTestData = await GroupManagementController(groupId: widget.groupListData!.id.toString()).getGroupTest();
+      } else {
+        showNoConnectionToast(context);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setState(() {
+      progressCodeAnnouncement = false;
+    });
+
+    print("listGroupTestData:$listGroupTestData");
+  }
+
+  deleteGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (isConnected) {
+      if (await GroupManagementController(groupId: widget.groupListData!.id.toString()).groupDelete()) {
+        listGroupListData.remove(widget.groupListData);
+        Navigator.pop(context);
+        Navigator.pop(context,);
+      } else {
+        Navigator.pop(context);
+      }
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
+
   @override
   void initState() {
     getGroupPageView();
     getAnnouncement();
+    getGroupTest();
+    listGroupTestData.clear();
     super.initState();
   }
 
@@ -1330,7 +1377,7 @@ class _GroupPageState extends State<GroupPage> {
         elevation: 0,
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,widget.groupListData);
             },
             icon: Icon(
               Icons.arrow_back,
@@ -1689,6 +1736,7 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               title: Container(),
                               children: <Widget>[
+                                listGroupViewData[0].pendingInvites!.isNotEmpty ?
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
@@ -1725,19 +1773,16 @@ class _GroupPageState extends State<GroupPage> {
                                                             .start,
                                                     children: [
                                                       sText(
-                                                          listGroupViewData[0]
-                                                              .pendingInvites![
-                                                                  i]
-                                                              .email,
+                                                          listGroupViewData[0].pendingInvites![i].email,
                                                           color: Colors.black,
                                                           weight:
                                                               FontWeight.w500),
                                                       SizedBox(
                                                         height: 5,
                                                       ),
-                                                      sText("10 days ago",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
+                                                      sText("${StringExtension.displayTimeAgoFromTimestamp(listGroupViewData[0].pendingInvites![i].createdAt.toString())} ago", color: kAdeoGray3,size: 12),
+
+
                                                     ],
                                                   ),
                                                   Expanded(child: Container()),
@@ -1751,11 +1796,7 @@ class _GroupPageState extends State<GroupPage> {
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              listGroupViewData[0]
-                                                              .pendingInvites!
-                                                              .length -
-                                                          1 !=
-                                                      i
+                                              listGroupViewData[0].pendingInvites!.length - 1 != i
                                                   ? Column(
                                                       children: [
                                                         Divider(
@@ -1773,6 +1814,9 @@ class _GroupPageState extends State<GroupPage> {
                                         ),
                                     ],
                                   ),
+                                ) :
+                                Center(
+                                  child: sText("You've no pending invite"),
                                 ),
                               ],
                             ),
@@ -1805,6 +1849,7 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               title: Container(),
                               children: <Widget>[
+                                listGroupViewData[0].suspendedUser!.isNotEmpty ?
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
@@ -1817,19 +1862,19 @@ class _GroupPageState extends State<GroupPage> {
                                       for (int i = 0;
                                           i <
                                               listGroupViewData[0]
-                                                  .pendingInvites!
+                                                  .suspendedUser!
                                                   .length;
                                           i++)
                                         MaterialButton(
                                           onPressed: () {
-                                            showRevokeDialog(
-                                                context: context,
-                                                message:
-                                                    "Are you sure you want to revoke this invite",
-                                                userId: listGroupViewData[0]
-                                                    .pendingInvites![i]
-                                                    .id
-                                                    .toString());
+                                            // showRevokeDialog(
+                                            //     context: context,
+                                            //     message:
+                                            //         "Are you sure you want to revoke this invite",
+                                            //     userId: listGroupViewData[0]
+                                            //         .suspendedUser![i]
+                                            //         .id
+                                            //         .toString());
                                           },
                                           child: Column(
                                             children: [
@@ -1842,7 +1887,7 @@ class _GroupPageState extends State<GroupPage> {
                                                     children: [
                                                       sText(
                                                           listGroupViewData[0]
-                                                              .pendingInvites![
+                                                              .suspendedUser![
                                                                   i]
                                                               .email,
                                                           color: Colors.black,
@@ -1851,9 +1896,7 @@ class _GroupPageState extends State<GroupPage> {
                                                       SizedBox(
                                                         height: 5,
                                                       ),
-                                                      sText("10 days ago",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
+                                                      sText("${StringExtension.displayTimeAgoFromTimestamp(listGroupViewData[0].suspendedUser![i].createdAt.toString())} ago", color: kAdeoGray3,size: 12),
                                                     ],
                                                   ),
                                                   Expanded(child: Container()),
@@ -1868,7 +1911,7 @@ class _GroupPageState extends State<GroupPage> {
                                                 height: 10,
                                               ),
                                               listGroupViewData[0]
-                                                              .pendingInvites!
+                                                              .suspendedUser!
                                                               .length -
                                                           1 !=
                                                       i
@@ -1889,6 +1932,9 @@ class _GroupPageState extends State<GroupPage> {
                                         ),
                                     ],
                                   ),
+                                ) :
+                                Center(
+                                  child: sText("You've no suspended user"),
                                 ),
                               ],
                             ),
@@ -1925,20 +1971,30 @@ class _GroupPageState extends State<GroupPage> {
                                   onTap: () {
                                     announcementModalBottomSheet(context);
                                   },
-                                  child: Container(
-                                    width: appWidth(context) * 0.75,
-                                    child: sText("New Announcements",
-                                        weight: FontWeight.w500,
-                                        size: 16,
-                                        align: TextAlign.center),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
+                                  child:  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                    width: appWidth(context),
                                     decoration: BoxDecoration(
-                                        color: Color(0XFFF0F7FF),
-                                        border: Border.all(
-                                            color: Color(0XFF489CFF)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
+                                      color: Color(0xFFF0F7FF),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: DottedBorder(
+                                      color: const Color(0xFF489CFF),
+                                      strokeWidth: 1.2,
+                                      dashPattern: const [8, 4],
+                                      strokeCap: StrokeCap.round,
+                                      borderType: BorderType.RRect,
+                                      radius: const Radius.circular(6.0),
+                                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                      child: Center(
+                                        child: sText(
+                                          "New Announcement",
+                                          weight: FontWeight.w500,
+                                          align: TextAlign.center,
+                                          size: 20.0,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -2134,8 +2190,7 @@ class _GroupPageState extends State<GroupPage> {
                       Column(
                         children: [
                           Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                             child: ExpansionTile(
                               textColor: Colors.white,
                               iconColor: Colors.white,
@@ -2157,11 +2212,21 @@ class _GroupPageState extends State<GroupPage> {
                               title: Container(),
                               children: <Widget>[
                                 GestureDetector(
-                                  onTap: () {
-                                    goTo(context, TestCreation());
+                                  onTap: () async{
+                                    if(listActivePackageData[0].maxTests == listGroupTestData.length){
+                                      toastMessage("You've reach your maximum number of groups for this package");
+                                    }else{
+                                      groupID = widget.groupListData!.id.toString();
+                                      await goTo(context, TestCreation());
+                                      setState((){
+
+                                      });
+                                    }
+
                                   },
                                   child: Container(
-                                    margin: EdgeInsets.all(6.0),
+                                    margin: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                                    width: appWidth(context),
                                     decoration: BoxDecoration(
                                       color: Color(0xFFF0F7FF),
                                       borderRadius: BorderRadius.circular(8.0),
@@ -2170,18 +2235,12 @@ class _GroupPageState extends State<GroupPage> {
                                       color: const Color(0xFF489CFF),
                                       strokeWidth: 1.2,
                                       dashPattern: const [8, 4],
+
                                       strokeCap: StrokeCap.round,
                                       borderType: BorderType.RRect,
                                       radius: const Radius.circular(6.0),
-                                      padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            MediaQuery.of(context).size.height *
-                                                0.035,
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.340,
-                                      ),
-                                      child: ClipRRect(
+                                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                      child: Center(
                                         child: sText(
                                           "New Test",
                                           weight: FontWeight.w500,
@@ -2195,711 +2254,672 @@ class _GroupPageState extends State<GroupPage> {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        ExpansionTile(
-                                          iconColor: Color(0xFFB5B5B5),
-                                          title: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              RichText(
-                                                text: TextSpan(
-                                                  text: "Victor Adatsi",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Poppins',
-                                                    color: Color(0xFF000000),
-                                                  ),
-                                                  children: [
-                                                    TextSpan(
-                                                      text: " (group admin)",
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color:
-                                                            Color(0xFF5A6775),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 6,
-                                              ),
-                                              sText(
-                                                "10 mins ago",
-                                                size: 12,
-                                                color: Color(0xFF5A6775),
-                                              ),
-                                            ],
-                                          ),
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.symmetric(
-                                                vertical: 20,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFF8F8F8)
-                                                    .withOpacity(1),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  width: 1.5,
-                                                  color: Color(0xFF489CFF),
-                                                ),
-                                              ),
-                                              child: Column(
+                                listGroupTestData.isNotEmpty ?
+
+                                  Column(
+                                    children: [
+                                      for (int i = 0;
+                                      i < listGroupTestData.length;
+                                      i++)
+                                      Column(
+                                        children: [
+
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
+                                            margin:
+                                                EdgeInsets.symmetric(horizontal: 20),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: ExpansionTile(
+                                              iconColor: Color(0xFFB5B5B5),
+                                              title: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  ListTile(
-                                                    title: sText(
-                                                      "Test Name",
-                                                      size: 14.0,
-                                                      color: Color(0xFF5A6775),
-                                                    ),
-                                                    subtitle: sText(
-                                                      "Mid-term test 1",
-                                                      weight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  ListTile(
-                                                    title: sText(
-                                                      "Test Source",
-                                                      size: 14.0,
-                                                      color: Color(0xFF5A6775),
-                                                    ),
-                                                    subtitle: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      text: "${listGroupTestData[i].user!.name}",
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontFamily: 'Poppins',
+                                                        color: Color(0xFF000000),
+                                                      ),
                                                       children: [
-                                                        sText(
-                                                          "Subscription",
-                                                          weight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                        sText(
-                                                          "Physics - wassce 2012",
-                                                          style:
-                                                              FontStyle.italic,
+                                                        TextSpan(
+                                                          text: " (${listGroupTestData[i].user!.role})",
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                Color(0xFF5A6775),
+                                                          ),
                                                         ),
                                                       ],
                                                     ),
-                                                  ),
-                                                  ListTile(
-                                                    title: sText(
-                                                      "Timing",
-                                                      size: 14.0,
-                                                      color: Color(0xFF5A6775),
-                                                    ),
-                                                    subtitle: sText(
-                                                      "Time per Question",
-                                                      weight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                  ListTile(
-                                                    title: sText(
-                                                      "Test Period",
-                                                      size: 14.0,
-                                                      color: Color(0xFF5A6775),
-                                                    ),
-                                                    subtitle: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        sText(
-                                                          "Exact Time",
-                                                          weight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                        sText(
-                                                            "10:00 am - 22/07/22",
-                                                            style: FontStyle
-                                                                .italic),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  ListTile(
-                                                    title: sText(
-                                                      "Status",
-                                                      size: 14.0,
-                                                      color: Color(0xFF5A6775),
-                                                    ),
-                                                    subtitle: sText(
-                                                      "Active",
-                                                      weight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-
-                                        // Container(
-                                        //   padding: const EdgeInsets.symmetric(
-                                        //     vertical: 0,
-                                        //   ),
-                                        //   child: ExpansionTileCard(
-                                        //     baseColor: Colors.cyan[50],
-                                        //     expandedColor: Colors.red[50],
-                                        //     key: cardA,
-                                        //     title: Text("title"),
-                                        //     subtitle: Text("10 min ago"),
-                                        //     children: <Widget>[
-                                        //       // Divider(
-                                        //       //   thickness: 1.0,
-                                        //       //   height: 1.0,
-                                        //       // ),
-                                        //       Align(
-                                        //         alignment: Alignment.centerLeft,
-                                        //         child: Padding(
-                                        //           padding: const EdgeInsets
-                                        //               .symmetric(
-                                        //             horizontal: 16.0,
-                                        //             vertical: 8.0,
-                                        //           ),
-                                        //           child: Text(
-                                        //             "Flu globe.",
-                                        //             style: Theme.of(context)
-                                        //                 .textTheme
-                                        //                 .bodyText2!
-                                        //                 .copyWith(fontSize: 16),
-                                        //           ),
-                                        //         ),
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        // ),
-                                        /**
-                                         * 
-                                         * for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
                                                   ),
                                                   SizedBox(
-                                                    width: 10,
+                                                    height: 6,
                                                   ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
+                                                  sText(
+                                                    "${StringExtension.displayTimeAgoFromTimestamp(listGroupTestData[i].createdAt.toString())} ago",
+                                                    size: 12,
+                                                    color: Color(0xFF5A6775),
                                                   ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
                                                 ],
                                               ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
+                                              children: [
+                                                MaterialButton(
+                                                padding: EdgeInsets.zero,
+                                                onPressed: ()async{
+                                                 var res =  await  goTo(context, EditTestConfigurations(groupTestData: listGroupTestData[i],index: i,));
+                                                 print("res:$res");
+                                                  setState((){
+                                                    if(res != null){
+                                                      listGroupTestData[i] = res;
+                                                    }
+                                                  });
+                                                },
+                                                  child: Container(
+                                                    margin: EdgeInsets.symmetric(
+                                                      vertical: 20,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xFFF8F8F8)
+                                                          .withOpacity(1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(8),
+                                                      border: Border.all(
+                                                        width: 1.5,
+                                                        color: Color(0xFF489CFF),
+                                                      ),
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment.start,
+                                                      children: [
+                                                        SizedBox(height: 10,),
+                                                        ListTile(
+                                                          title: sText(
+                                                            "Test Name",
+                                                            size: 14.0,
+                                                            color: Color(0xFF5A6775),
+                                                          ),
+                                                          subtitle: sText(
+                                                            "${listGroupTestData[i].name}",
+                                                            weight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        ListTile(
+                                                          title: sText(
+                                                            "Test Source",
+                                                            size: 14.0,
+                                                            color: Color(0xFF5A6775),
+                                                          ),
+                                                          subtitle: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              sText(
+                                                                "${listGroupTestData[i].configurations!.testSource}",
+                                                                weight:
+                                                                    FontWeight.w600,
+                                                              ),
+                                                              sText(
+                                                                "${listGroupTestData[i].configurations!.bundle} - ${listGroupTestData[i].configurations!.course}",
+                                                                style:
+                                                                    FontStyle.italic,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        ListTile(
+                                                          title: sText(
+                                                            "Timing",
+                                                            size: 14.0,
+                                                            color: Color(0xFF5A6775),
+                                                          ),
+                                                          subtitle: sText(
+                                                            "${listGroupTestData[i].configurations!.timing}",
+                                                            weight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        ListTile(
+                                                          title: sText(
+                                                            "Test Period",
+                                                            size: 14.0,
+                                                            color: Color(0xFF5A6775),
+                                                          ),
+                                                          subtitle: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              sText(
+                                                                "Exact Time",
+                                                                weight:
+                                                                    FontWeight.w600,
+                                                              ),
+                                                              sText(
+                                                                  "${listGroupTestData[i].configurations!.startDatetime}",
+                                                                  style: FontStyle
+                                                                      .italic),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        ListTile(
+                                                          title: sText(
+                                                            "Status",
+                                                            size: 14.0,
+                                                            color: Color(0xFF5A6775),
+                                                          ),
+                                                          subtitle: sText(
+                                                            "${listGroupTestData[i].status}",
+                                                            weight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                         * */
-                                      ],
-                                    ),
-                                  ),
+                                          SizedBox(height: 10,)
+                                        ],
+                                      ),
+                                    ],
+                                  ) : Center(child:sText("No test")),
                               ],
                             ),
                           ),
                         ],
                       ),
                       // notes
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Notes",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                GestureDetector(
-                                  onTap: () {
-                                    goTo(context, TestCreation());
-                                  },
-                                  child: Container(
-                                    width: appWidth(context) * 0.75,
-                                    child: sText("New Note",
-                                        weight: FontWeight.w500,
-                                        size: 16,
-                                        align: TextAlign.center),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 30),
-                                    decoration: BoxDecoration(
-                                        color: Color(0XFFF0F7FF),
-                                        border: Border.all(
-                                            color: Color(0XFF489CFF)),
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     Theme(
+                      //       data: Theme.of(context)
+                      //           .copyWith(dividerColor: Colors.transparent),
+                      //       child: ExpansionTile(
+                      //         textColor: Colors.white,
+                      //         iconColor: Colors.white,
+                      //         initiallyExpanded: false,
+                      //         maintainState: false,
+                      //         backgroundColor: kHomeBackgroundColor,
+                      //         childrenPadding: EdgeInsets.zero,
+                      //         collapsedIconColor: Colors.white,
+                      //         leading: Container(
+                      //           child: sText("Notes",
+                      //               weight: FontWeight.w500, size: 16),
+                      //         ),
+                      //         trailing: Container(
+                      //           child: Icon(
+                      //             Icons.add_circle_outline,
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         title: Container(),
+                      //         children: <Widget>[
+                      //           GestureDetector(
+                      //             onTap: () {
+                      //               goTo(context, TestCreation());
+                      //             },
+                      //             child: Container(
+                      //               width: appWidth(context) * 0.75,
+                      //               child: sText("New Note",
+                      //                   weight: FontWeight.w500,
+                      //                   size: 16,
+                      //                   align: TextAlign.center),
+                      //               padding: EdgeInsets.symmetric(
+                      //                   vertical: 15, horizontal: 30),
+                      //               decoration: BoxDecoration(
+                      //                   color: Color(0XFFF0F7FF),
+                      //                   border: Border.all(
+                      //                       color: Color(0XFF489CFF)),
+                      //                   borderRadius:
+                      //                       BorderRadius.circular(10)),
+                      //             ),
+                      //           ),
+                      //           SizedBox(
+                      //             height: 20,
+                      //           ),
+                      //           if (listGroupViewData[0].admins!.isNotEmpty)
+                      //             Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 20, vertical: 10),
+                      //               margin:
+                      //                   EdgeInsets.symmetric(horizontal: 20),
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(5)),
+                      //               child: Column(
+                      //                 children: [
+                      //                   for (int i = 0;
+                      //                       i <
+                      //                           listGroupViewData[0]
+                      //                               .admins!
+                      //                               .length;
+                      //                       i++)
+                      //                     Column(
+                      //                       children: [
+                      //                         Row(
+                      //                           children: [
+                      //                             Stack(
+                      //                               children: [
+                      //                                 displayLocalImage(
+                      //                                     "filePath",
+                      //                                     radius: 30),
+                      //                                 Positioned(
+                      //                                   bottom: 5,
+                      //                                   right: 0,
+                      //                                   child: Image.asset(
+                      //                                       "assets/images/tick-mark.png"),
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                             SizedBox(
+                      //                               width: 10,
+                      //                             ),
+                      //                             Column(
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .start,
+                      //                               children: [
+                      //                                 sText(
+                      //                                     listGroupViewData[0]
+                      //                                         .admins![i]
+                      //                                         .name,
+                      //                                     color: Colors.black,
+                      //                                     weight:
+                      //                                         FontWeight.w500),
+                      //                                 SizedBox(
+                      //                                   height: 5,
+                      //                                 ),
+                      //                                 sText("Admin",
+                      //                                     color: kAdeoGray3,
+                      //                                     size: 12),
+                      //                               ],
+                      //                             ),
+                      //                             Expanded(child: Container()),
+                      //                             Icon(
+                      //                               Icons.arrow_forward_ios,
+                      //                               color: kAdeoGray3,
+                      //                               size: 16,
+                      //                             )
+                      //                           ],
+                      //                         ),
+                      //                         SizedBox(
+                      //                           height: 10,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       // stats
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Stats",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      //stats
+                      // Column(
+                      //   children: [
+                      //     Theme(
+                      //       data: Theme.of(context)
+                      //           .copyWith(dividerColor: Colors.transparent),
+                      //       child: ExpansionTile(
+                      //         textColor: Colors.white,
+                      //         iconColor: Colors.white,
+                      //         initiallyExpanded: false,
+                      //         maintainState: false,
+                      //         backgroundColor: kHomeBackgroundColor,
+                      //         childrenPadding: EdgeInsets.zero,
+                      //         collapsedIconColor: Colors.white,
+                      //         leading: Container(
+                      //           child: sText("Stats",
+                      //               weight: FontWeight.w500, size: 16),
+                      //         ),
+                      //         trailing: Container(
+                      //           child: Icon(
+                      //             Icons.add_circle_outline,
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         title: Container(),
+                      //         children: <Widget>[
+                      //           SizedBox(
+                      //             height: 10,
+                      //           ),
+                      //           if (listGroupViewData[0].admins!.isNotEmpty)
+                      //             Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 20, vertical: 10),
+                      //               margin:
+                      //                   EdgeInsets.symmetric(horizontal: 20),
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(5)),
+                      //               child: Column(
+                      //                 children: [
+                      //                   for (int i = 0;
+                      //                       i <
+                      //                           listGroupViewData[0]
+                      //                               .admins!
+                      //                               .length;
+                      //                       i++)
+                      //                     Column(
+                      //                       children: [
+                      //                         Row(
+                      //                           children: [
+                      //                             Stack(
+                      //                               children: [
+                      //                                 displayLocalImage(
+                      //                                     "filePath",
+                      //                                     radius: 30),
+                      //                                 Positioned(
+                      //                                   bottom: 5,
+                      //                                   right: 0,
+                      //                                   child: Image.asset(
+                      //                                       "assets/images/tick-mark.png"),
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                             SizedBox(
+                      //                               width: 10,
+                      //                             ),
+                      //                             Column(
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .start,
+                      //                               children: [
+                      //                                 sText(
+                      //                                     listGroupViewData[0]
+                      //                                         .admins![i]
+                      //                                         .name,
+                      //                                     color: Colors.black,
+                      //                                     weight:
+                      //                                         FontWeight.w500),
+                      //                                 SizedBox(
+                      //                                   height: 5,
+                      //                                 ),
+                      //                                 sText("Admin",
+                      //                                     color: kAdeoGray3,
+                      //                                     size: 12),
+                      //                               ],
+                      //                             ),
+                      //                             Expanded(child: Container()),
+                      //                             Icon(
+                      //                               Icons.arrow_forward_ios,
+                      //                               color: kAdeoGray3,
+                      //                               size: 16,
+                      //                             )
+                      //                           ],
+                      //                         ),
+                      //                         SizedBox(
+                      //                           height: 10,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       // wallet
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Wallet",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+
+                      // Column(
+                      //   children: [
+                      //     Theme(
+                      //       data: Theme.of(context)
+                      //           .copyWith(dividerColor: Colors.transparent),
+                      //       child: ExpansionTile(
+                      //         textColor: Colors.white,
+                      //         iconColor: Colors.white,
+                      //         initiallyExpanded: false,
+                      //         maintainState: false,
+                      //         backgroundColor: kHomeBackgroundColor,
+                      //         childrenPadding: EdgeInsets.zero,
+                      //         collapsedIconColor: Colors.white,
+                      //         leading: Container(
+                      //           child: sText("Wallet",
+                      //               weight: FontWeight.w500, size: 16),
+                      //         ),
+                      //         trailing: Container(
+                      //           child: Icon(
+                      //             Icons.add_circle_outline,
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         title: Container(),
+                      //         children: <Widget>[
+                      //           SizedBox(
+                      //             height: 10,
+                      //           ),
+                      //           if (listGroupViewData[0].admins!.isNotEmpty)
+                      //             Container(
+                      //               padding: EdgeInsets.symmetric(
+                      //                   horizontal: 20, vertical: 10),
+                      //               margin:
+                      //                   EdgeInsets.symmetric(horizontal: 20),
+                      //               decoration: BoxDecoration(
+                      //                   color: Colors.white,
+                      //                   borderRadius: BorderRadius.circular(5)),
+                      //               child: Column(
+                      //                 children: [
+                      //                   for (int i = 0;
+                      //                       i <
+                      //                           listGroupViewData[0]
+                      //                               .admins!
+                      //                               .length;
+                      //                       i++)
+                      //                     Column(
+                      //                       children: [
+                      //                         Row(
+                      //                           children: [
+                      //                             Stack(
+                      //                               children: [
+                      //                                 displayLocalImage(
+                      //                                     "filePath",
+                      //                                     radius: 30),
+                      //                                 Positioned(
+                      //                                   bottom: 5,
+                      //                                   right: 0,
+                      //                                   child: Image.asset(
+                      //                                       "assets/images/tick-mark.png"),
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                             SizedBox(
+                      //                               width: 10,
+                      //                             ),
+                      //                             Column(
+                      //                               crossAxisAlignment:
+                      //                                   CrossAxisAlignment
+                      //                                       .start,
+                      //                               children: [
+                      //                                 sText(
+                      //                                     listGroupViewData[0]
+                      //                                         .admins![i]
+                      //                                         .name,
+                      //                                     color: Colors.black,
+                      //                                     weight:
+                      //                                         FontWeight.w500),
+                      //                                 SizedBox(
+                      //                                   height: 5,
+                      //                                 ),
+                      //                                 sText("Admin",
+                      //                                     color: kAdeoGray3,
+                      //                                     size: 12),
+                      //                               ],
+                      //                             ),
+                      //                             Expanded(child: Container()),
+                      //                             Icon(
+                      //                               Icons.arrow_forward_ios,
+                      //                               color: kAdeoGray3,
+                      //                               size: 16,
+                      //                             )
+                      //                           ],
+                      //                         ),
+                      //                         SizedBox(
+                      //                           height: 10,
+                      //                         )
+                      //                       ],
+                      //                     ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       // Setting
-                      Column(
-                        children: [
-                          Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
-                            child: ExpansionTile(
-                              textColor: Colors.white,
-                              iconColor: Colors.white,
-                              initiallyExpanded: false,
-                              maintainState: false,
-                              backgroundColor: kHomeBackgroundColor,
-                              childrenPadding: EdgeInsets.zero,
-                              collapsedIconColor: Colors.white,
-                              leading: Container(
-                                child: sText("Settings",
-                                    weight: FontWeight.w500, size: 16),
-                              ),
-                              trailing: Container(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              title: Container(),
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                if (listGroupViewData[0].admins!.isNotEmpty)
+                      MaterialButton(
+                        onPressed: ()async{
+                         var res = await  goTo(context, Settings(groupListData: widget.groupListData,));
+                        setState((){
+                          if(res != null){
+                            widget.groupListData = res;
+                          }
+                        });
+                        },
+                        child: Column(
+                          children: [
+                            // Theme(
+                            //   data: Theme.of(context)
+                            //       .copyWith(dividerColor: Colors.transparent),
+                            //   child: ExpansionTile(
+                            //
+                            //     textColor: Colors.white,
+                            //     iconColor: Colors.white,
+                            //     initiallyExpanded: false,
+                            //     maintainState: false,
+                            //     onExpansionChanged: (value){
+                            //       if(value){
+                            //         goTo(context, Settings(groupListData: widget.groupListData,));
+                            //       }
+                            //     },
+                            //
+                            //     backgroundColor: kHomeBackgroundColor,
+                            //     childrenPadding: EdgeInsets.zero,
+                            //     collapsedIconColor: Colors.white,
+                            //     leading: Container(
+                            //       child: sText("Settings",
+                            //           weight: FontWeight.w500, size: 16),
+                            //     ),
+                            //     trailing: Container(
+                            //       child: Icon(
+                            //         Icons.add_circle_outline,
+                            //         color: Colors.black,
+                            //       ),
+                            //     ),
+                            //     title: Container(),
+                            //     children: <Widget>[
+                            //       SizedBox(
+                            //         height: 10,
+                            //       ),
+                            //       if (listGroupViewData[0].admins!.isNotEmpty)
+                            //         Container(
+                            //           padding: EdgeInsets.symmetric(
+                            //               horizontal: 20, vertical: 10),
+                            //           margin:
+                            //               EdgeInsets.symmetric(horizontal: 20),
+                            //           decoration: BoxDecoration(
+                            //               color: Colors.white,
+                            //               borderRadius: BorderRadius.circular(5)),
+                            //           child: Column(
+                            //             children: [
+                            //               for (int i = 0;
+                            //                   i <
+                            //                       listGroupViewData[0]
+                            //                           .admins!
+                            //                           .length;
+                            //                   i++)
+                            //                 Column(
+                            //                   children: [
+                            //                     Row(
+                            //                       children: [
+                            //                         Stack(
+                            //                           children: [
+                            //                             displayLocalImage(
+                            //                                 "filePath",
+                            //                                 radius: 30),
+                            //                             Positioned(
+                            //                               bottom: 5,
+                            //                               right: 0,
+                            //                               child: Image.asset(
+                            //                                   "assets/images/tick-mark.png"),
+                            //                             )
+                            //                           ],
+                            //                         ),
+                            //                         SizedBox(
+                            //                           width: 10,
+                            //                         ),
+                            //                         Column(
+                            //                           crossAxisAlignment:
+                            //                               CrossAxisAlignment
+                            //                                   .start,
+                            //                           children: [
+                            //                             sText(
+                            //                                 listGroupViewData[0]
+                            //                                     .admins![i]
+                            //                                     .name,
+                            //                                 color: Colors.black,
+                            //                                 weight:
+                            //                                     FontWeight.w500),
+                            //                             SizedBox(
+                            //                               height: 5,
+                            //                             ),
+                            //                             sText("Admin",
+                            //                                 color: kAdeoGray3,
+                            //                                 size: 12),
+                            //                           ],
+                            //                         ),
+                            //                         Expanded(child: Container()),
+                            //                         Icon(
+                            //                           Icons.arrow_forward_ios,
+                            //                           color: kAdeoGray3,
+                            //                           size: 16,
+                            //                         )
+                            //                       ],
+                            //                     ),
+                            //                     SizedBox(
+                            //                       height: 10,
+                            //                     )
+                            //                   ],
+                            //                 ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //     ],
+                            //   ),
+                            // ),
+                            Container(
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
                                   Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 10),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Column(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Stack(
-                                                    children: [
-                                                      displayLocalImage(
-                                                          "filePath",
-                                                          radius: 30),
-                                                      Positioned(
-                                                        bottom: 5,
-                                                        right: 0,
-                                                        child: Image.asset(
-                                                            "assets/images/tick-mark.png"),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      sText(
-                                                          listGroupViewData[0]
-                                                              .admins![i]
-                                                              .name,
-                                                          color: Colors.black,
-                                                          weight:
-                                                              FontWeight.w500),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      sText("Admin",
-                                                          color: kAdeoGray3,
-                                                          size: 12),
-                                                    ],
-                                                  ),
-                                                  Expanded(child: Container()),
-                                                  Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: kAdeoGray3,
-                                                    size: 16,
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ],
+                                        child: sText("Settings",
+                                            weight: FontWeight.w500, size: 16),
+                                      ),
+                                    Container(
+                                            child: Icon(
+                                              Icons.add_circle_outline,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
+                                    ],
+                                ),
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),

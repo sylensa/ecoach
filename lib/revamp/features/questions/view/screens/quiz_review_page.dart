@@ -384,11 +384,54 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                   for (int i = 0; i < reviewQuestionsBack.length; i++)
                     Column(
                       children: [
-                        ActualQuestion(
-                          user: widget.user!,
-                          diagnostic: widget.disgnostic,
-                          question: "${reviewQuestionsBack[questionIndex].text}",
-                          direction: "Choose the right answer to the question above",
+                        // ActualQuestion(
+                        //   user: widget.user!,
+                        //   diagnostic: widget.disgnostic,
+                        //   question: "${reviewQuestionsBack[questionIndex].text}",
+                        //   direction: "Choose the right answer to the question above",
+                        // ),
+                        Theme(
+                          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: kAdeoGray3,
+                            initiallyExpanded: true,
+                            collapsedIconColor: kAdeoGray3,
+                            backgroundColor: Color(0xFFEFEFEF),
+                            title: Text(
+                              'View Question',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                                color: kAdeoGray3,
+                              ),
+                            ),
+                            children: <Widget>[
+                              ActualQuestion(
+                                user: widget.user!,
+                                diagnostic: widget.disgnostic,
+                                question: "${reviewQuestionsBack[questionIndex].text}",
+                                direction: "",
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+                          width: appWidth(context),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF67717D),
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0xFFC8C8C8),
+                            ),
+                          ),
+                          child: Text(
+                            "Choose the right answer to the question above",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 13, color: Colors.white),
+                          ),
                         ),
                         Expanded(
                           child: ListView(
@@ -417,24 +460,79 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                           ),
                                         )),
                                   ),
-                                  if(reviewQuestionsBack[questionIndex].resource!.isNotEmpty)
-                                  Visibility(
-                                    visible: reviewQuestionsBack[questionIndex].resource!.isNotEmpty ? true : false,
-                                    child: Card(
-                                      elevation: 0,
-                                      color: Colors.white,
-                                      margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                                      child: AdeoHtmlTex(
-                                       widget.user!,
-                                        reviewQuestionsBack[questionIndex].resource!.replaceAll("https", "http"),
-                                        useLocalImage: !widget.disgnostic,
-                                        // removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
-                                        textColor: Colors.grey,
-                                        fontWeight: FontWeight.normal,
+                                  // if(reviewQuestionsBack[questionIndex].resource!.isNotEmpty)
+                                  // Visibility(
+                                  //   visible: reviewQuestionsBack[questionIndex].resource!.isNotEmpty ? true : false,
+                                  //   child: Card(
+                                  //     elevation: 0,
+                                  //     color: Colors.white,
+                                  //     margin: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                  //     child: AdeoHtmlTex(
+                                  //      widget.user!,
+                                  //       reviewQuestionsBack[questionIndex].resource!.replaceAll("https", "http"),
+                                  //       useLocalImage: !widget.disgnostic,
+                                  //       // removeTags: reviewQuestionsBack[questionIndex].resource!.contains("src") ? false : true,
+                                  //       textColor: Colors.grey,
+                                  //       fontWeight: FontWeight.normal,
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      print("object");
+                                    },
+                                    child: Visibility(
+                                      visible: reviewQuestionsBack[questionIndex].resource!.isNotEmpty
+                                          ? true
+                                          : false,
+                                      child: Theme(
+                                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                        child: ExpansionTile(
+                                          textColor: Colors.white,
+                                          iconColor: kAdeoGray3,
+                                          collapsedBackgroundColor: Colors.white,
+                                          collapsedIconColor: kAdeoGray3,
+                                          backgroundColor: Colors.white,
+                                          title: Text(
+                                            'Resource',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.normal,
+                                              color: kAdeoGray3,
+                                            ),
+                                          ),
+                                          children: <Widget>[
+                                            Column(
+                                              children: [
+                                                Container(
+                                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                                  child: Divider(color: Colors.grey,),
+                                                ),
+                                                Card(
+                                                  elevation: 0,
+                                                  color: Colors.white,
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: 5, vertical: 5),
+                                                  child: AdeoHtmlTex(
+                                                    widget.user!,
+                                                    reviewQuestionsBack[questionIndex].resource!
+                                                        .replaceAll("https", "http"),
+                                                    // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                                    useLocalImage: !widget.disgnostic,
+                                                    textColor: Colors.grey,
+                                                    fontWeight: FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
+
+
                                     ),
                                   ),
-
                                   Visibility(
                                     visible: reviewQuestionsBack[questionIndex].correctAnswer!.solution!.isNotEmpty ? true : false,
                                     child:  Container(

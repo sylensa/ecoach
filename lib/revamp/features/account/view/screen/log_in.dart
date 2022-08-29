@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -31,7 +30,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:http/http.dart' as http;
 
-
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/text_styles.dart';
 
@@ -47,61 +45,57 @@ class _LogInPageState extends State<LogInPage> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-
-  loadTryTest(User user,bool isGoogleLogin)async{
+  loadTryTest(User user, bool isGoogleLogin) async {
     ApiCall<Data>(AppUrl.new_user_data, isList: false,
         create: (Map<String, dynamic> json) {
-          return Data.fromJson(json);
-        }, onCallback: (data) async{
-          if (data != null) {
-            await LevelDB().insertAll(data!.levels!);
-            await CourseDB().insertAll(data!.courses!);
-          }
-          if (mounted) {
-            Navigator.pop(context);
-          }
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Login successfully"),
-            ));
-          }
-          if(isGoogleLogin){
-            if (user.subscriptions.length == 0) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainHomePage(user)),
-                      (Route<dynamic> route) => false);
-            } else {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainHomePage(user)),
-                      (Route<dynamic> route) => false);
-            }
-          }else{
-            if (!user.activated) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => PhoneNumberVerification(user)),
-              );
-            }
-            else if (user.subscriptions.length == 0) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainHomePage(user)),
-                      (Route<dynamic> route) => false);
-            }
-            else {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainHomePage(user)),
-                      (Route<dynamic> route) => false);
-            }
-          }
-
-
-        }, onError: (e) {
-          Navigator.pop(context);
-        }).get(context);
+      return Data.fromJson(json);
+    }, onCallback: (data) async {
+      if (data != null) {
+        await LevelDB().insertAll(data!.levels!);
+        await CourseDB().insertAll(data!.courses!);
+      }
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Login successfully"),
+        ));
+      }
+      if (isGoogleLogin) {
+        if (user.subscriptions.length == 0) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainHomePage(user)),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainHomePage(user)),
+              (Route<dynamic> route) => false);
+        }
+      } else {
+        if (!user.activated) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PhoneNumberVerification(user)),
+          );
+        } else if (user.subscriptions.length == 0) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainHomePage(user)),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainHomePage(user)),
+              (Route<dynamic> route) => false);
+        }
+      }
+    }, onError: (e) {
+      Navigator.pop(context);
+    }).get(context);
   }
 
   loginGoogleSign(context, String? idToken) async {
@@ -112,28 +106,30 @@ class _LogInPageState extends State<LogInPage> {
 
     await ApiCall<User>(AppUrl.googleLogin,
         params: {'id_token': idToken}, isList: false, create: (json) {
-          return User.fromJson(json);
-        }, onMessage: (message) {
-          print(message);
-        }, onCallback: (user) async {
-          Directory documentDirectory = await getApplicationDocumentsDirectory();
-          user.applicationDirPath = documentDirectory.path;
-          await UserPreferences().setUser(user);
-          await UserPreferences().setLoginWith(status: true);
-          await loadTryTest(user,true);
-        }, onError: (err) {
-          print(err);
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        }).post(context);
+      return User.fromJson(json);
+    }, onMessage: (message) {
+      print(message);
+    }, onCallback: (user) async {
+      Directory documentDirectory = await getApplicationDocumentsDirectory();
+      user.applicationDirPath = documentDirectory.path;
+      await UserPreferences().setUser(user);
+      await UserPreferences().setLoginWith(status: true);
+      await loadTryTest(user, true);
+    }, onError: (err) {
+      print(err);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }).post(context);
   }
+
   Future<void> _handleSignIn(context) async {
     await GoogleSignInApi().signIn((idToken) async {
       print("idToken:$idToken");
       await loginGoogleSign(context, idToken);
     });
   }
+
   void loginUser(BuildContext context) async {
     // if (_formKey.currentState!.validate() == false) return null;
     // _formKey.currentState!.save();
@@ -156,13 +152,14 @@ class _LogInPageState extends State<LogInPage> {
       print(responseData);
       if (responseData["status"] == true) {
         var user = User.fromJson(responseData["data"]);
-        if(user.activated){
+        if (user.activated) {
           print("login: token=${user.token}");
-          Directory documentDirectory = await getApplicationDocumentsDirectory();
+          Directory documentDirectory =
+              await getApplicationDocumentsDirectory();
           user.applicationDirPath = documentDirectory.path;
           UserPreferences().setUser(user);
-          await loadTryTest(user,false);
-        }else{
+          await loadTryTest(user, false);
+        } else {
           goTo(context, PhoneNumberVerification(user));
         }
       } else {
@@ -174,29 +171,29 @@ class _LogInPageState extends State<LogInPage> {
       }
     } else {
       Navigator.pop(context);
-      try{
+      try {
         Map<String, dynamic> responseData = json.decode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(responseData['message'] ?? "Server Error"),
         ));
-      }catch(e){
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Server Error"),
         ));
       }
-
 
       return;
     }
   }
 
   @override
-  void initState(){
+  void initState() {
     // PlanController().getPlan();
     UserPreferences().removeUser();
     UserPreferences().setSeenOnboard();
-     super.initState();
+    super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -262,7 +259,7 @@ class _LogInPageState extends State<LogInPage> {
               ),
               InkWell(
                 onTap: () {
-                  goTo(context,  ForgotPassword());
+                  goTo(context, ForgotPassword());
                 },
                 child: const Text(
                   'forgotten password ?',
@@ -280,12 +277,12 @@ class _LogInPageState extends State<LogInPage> {
                   borderRadius: BorderRadius.circular(20),
                   child: InkWell(
                     onTap: () {
-                      if(_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty){
+                      if (_emailController.text.isNotEmpty &&
+                          _passwordController.text.isNotEmpty) {
                         loginUser(context);
-                      }else{
+                      } else {
                         toastMessage("All fields are required");
                       }
-
                     },
                     child: const Center(
                       child: Text(
@@ -304,25 +301,25 @@ class _LogInPageState extends State<LogInPage> {
                 height: 2.h,
               ),
               if (Platform.isAndroid)
-              Column(
-                children: [
-                  Text(
-                    "or",
-                    textAlign: TextAlign.center,
-                    style: TextStyles.medium(context)
-                        .copyWith(color: Colors.black, fontSize: 16),
-                  ),
-                  SizedBox(
-                    height: 2.h,
-                  ),
-                  GestureDetector(
-                    onTap: ()async{
-                      await _handleSignIn(context);
-                    },
-                    child: GoogleButton(),
-                  ),
-                ],
-              ),
+                Column(
+                  children: [
+                    Text(
+                      "or",
+                      textAlign: TextAlign.center,
+                      style: TextStyles.medium(context)
+                          .copyWith(color: Colors.black, fontSize: 16),
+                    ),
+                    SizedBox(
+                      height: 2.h,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        await _handleSignIn(context);
+                      },
+                      child: GoogleButton(),
+                    ),
+                  ],
+                ),
               SizedBox(
                 height: 2.h,
               ),

@@ -71,13 +71,17 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
     }
   }
   getAllPlans() async{
-    futurePlanItem =   await PlanDB().getAllPlans();
+    // futurePlanItem =   await PlanDB().getAllPlans();
     if(futurePlanItem.isEmpty){
+      await PlanDB().deleteAllPlans();
+      await PlanDB().deleteAllPlanItem();
      await PlanController().getPlanOnly();
     }
     setState((){
+
     });
   }
+
 
   promoCodeModalBottomSheet(context,){
     TextEditingController productKeyController = TextEditingController();
@@ -364,21 +368,31 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
       backgroundColor: kHomeBackgroundColor,
       body: Container(
         padding: EdgeInsets.only(top: 2.h, bottom: 2.h, left: 2.h, right: 2.h),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Hello,',
-              style: TextStyle(fontSize: 12),
-            ),
-             Text(
-              '${properCase(widget.user.name!)}',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-              ),
-            ),
+           Row(
+             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             children: [
+               Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   const Text(
+                     'Hello,',
+                     style: TextStyle(fontSize: 12),
+                   ),
+                   Text(
+                     '${properCase(widget.user.name!)}',
+                     style: TextStyle(
+                       fontWeight: FontWeight.w600,
+                       fontSize: 17,
+                     ),
+                   ),
+                 ],
+               ),
+
+             ],
+           ),
             const SizedBox(height: 20),
              FreeAccessmentWidget(widget.user),
             const SizedBox(

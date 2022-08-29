@@ -77,7 +77,7 @@ class TreadmillWelcome extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TreadmillIntroit(user, course),
+                    builder: (context) => TreadmillIntroit(user, course, null),
                   ),
                 );
                 // Navigator.push(

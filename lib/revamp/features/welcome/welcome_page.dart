@@ -1,4 +1,3 @@
-
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +148,7 @@ class WelcomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Alredy a member?",
+                        "Already a member?",
                         style: TextStyle(
                             color: Colors.grey.shade300,
                             fontSize: 15,

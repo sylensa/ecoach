@@ -36,7 +36,7 @@ class _TreadmillBankMenuState extends State<TreadmillBankMenu> {
       if (bank == newBank.id)
         bank = '';
       else {
-        bank = newBank;
+        bank = newBank.id;
       }
     });
   }
@@ -75,7 +75,7 @@ class _TreadmillBankMenuState extends State<TreadmillBankMenu> {
                           isUnselected:
                               bank != '' && bank.id != widget.banks[i].id!,
                           selectedBorderColor: kAdeoLightTeal,
-                          onTap: () => {handleSelection(widget.banks[i])},
+                          onTap: (id) => {handleSelection(widget.banks[i])},
                         ),
                     ],
                   ),
@@ -99,7 +99,7 @@ class _TreadmillBankMenuState extends State<TreadmillBankMenu> {
                               bankName: bank.name,
                               count: bank.totalCount,
                               controller: controller,
-                              mode: TreadmillMode.TOPIC,
+                              mode: TreadmillMode.BANK,
                             );
                           },
                         ),

@@ -14,10 +14,11 @@ import 'package:ecoach/widgets/mode_selector.dart';
 import 'package:flutter/material.dart';
 
 class TreadmillIntroit extends StatefulWidget {
-  TreadmillIntroit(this.user, this.course);
+  TreadmillIntroit(this.user, this.course, this.mode);
 
   final User user;
   final Course course;
+  final TreadmillMode? mode;
 
   @override
   State<TreadmillIntroit> createState() => _TreadmillIntroitState();
@@ -57,32 +58,33 @@ class _TreadmillIntroitState extends State<TreadmillIntroit> {
         //     name: widget.course.name!,
         //   ),
         // );
-        Treadmill? treadmill =
-            await TestController().getCurrentTreadmill(widget.course);
+        // Treadmill? treadmill =
+        //     await TestController().getCurrentTreadmill(widget.course);
         // print(treadmill!.toJson());
 
-        if (treadmill == null) {
-          screenToNavigateTo = TreadmillPractiseMenu(
-            controller: TreadmillController(
-              widget.user,
-              widget.course,
-              name: widget.course.name!,
-            ),
-          );
-        } else {
-          print('jjjjjjjjjjjj');
-          print(treadmill.toJson());
-          print(treadmill.topicId);
+        // if (treadmill == null) {
+        screenToNavigateTo = TreadmillPractiseMenu(
+          controller: TreadmillController(
+            widget.user,
+            widget.course,
+            name: widget.course.name!,
+          ),
+          // mode: widget.mode!,
+        );
+        // } else {
+        //   print('jjjjjjjjjjjj');
+        //   print(treadmill.toJson());
+        //   print(treadmill.topicId);
 
-          screenToNavigateTo = TreadmillSaveResumptionMenu(
-            controller: TreadmillController(
-              widget.user,
-              widget.course,
-              name: widget.course.name!,
-              treadmill: treadmill,
-            ),
-          );
-        }
+        //   screenToNavigateTo = TreadmillSaveResumptionMenu(
+        //     controller: TreadmillController(
+        //       widget.user,
+        //       widget.course,
+        //       name: widget.course.name!,
+        //       treadmill: treadmill,
+        //     ),
+        //   );
+        // }
         break;
       case TestMode.COMPLETED:
         screenToNavigateTo = TreadmillCompleted(widget.user, widget.course);

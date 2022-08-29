@@ -20,9 +20,9 @@ import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/create_group.dart';
-import 'package:ecoach/views/group/group_page.dart';
-import 'package:ecoach/views/group/group_profile.dart';
+import 'package:ecoach/views/group_management/create_group.dart';
+import 'package:ecoach/views/group_management/group_page.dart';
+import 'package:ecoach/views/group_management/group_profile.dart';
 import 'package:ecoach/views/subscribe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -162,11 +162,16 @@ bool progressCode = false;
                   itemBuilder: (BuildContext context, int index){
                     return  GestureDetector(
                       onTap: ()async{
-                        await goTo(context, GroupPage(groupListData:listGroupListData[index]));
-                          setState((){
+                      var res =  await goTo(context, GroupPage(groupListData:listGroupListData[index]));
+                      if(res != null){
+                        setState((){
+                          listGroupListData[index] = res;
+                        });
+                      }else{
+                        setState((){
+                        });
+                      }
 
-                          });
-                        // goTo(context, GroupProfilePage());
                       },
                       child: Card(
                           color: Colors.white,

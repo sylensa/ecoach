@@ -1,3 +1,4 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
@@ -54,20 +55,27 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
           if (widget.variant.toUpperCase() == 'SQUARE')
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.tabs
-                    .map(
-                      (tab) => AdeoSquareTabButton(
-                        onTap: changePage,
-                        text: tab,
-                        pageNumber: widget.tabs.indexOf(tab),
-                        count: widget.tabs.length,
-                        isSelected:
-                            currentPageNumber == widget.tabs.indexOf(tab),
-                      ),
-                    )
-                    .toList(),
+              child: Container(
+                width: appWidth(context),
+                decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:  Radius.circular(20))
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: widget.tabs
+                      .map(
+                        (tab) => AdeoSquareTabButton(
+                          onTap: changePage,
+                          text: tab,
+                          pageNumber: widget.tabs.indexOf(tab),
+                          count: widget.tabs.length,
+                          isSelected:
+                              currentPageNumber == widget.tabs.indexOf(tab),
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             )
           else

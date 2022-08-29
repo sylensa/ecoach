@@ -4,7 +4,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/group/empty_group_memebers.dart';
+import 'package:ecoach/views/group_management/empty_group_memebers.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -17,6 +17,8 @@ class CreateGroup extends StatefulWidget {
 }
 
 class _CreateGroupState extends State<CreateGroup> {
+  List<ListNames> listLevels = [ListNames(name: "Lower Primary",id: "1"),ListNames(name: "Upper Primary",id: "2",),ListNames(name: "Junior High",id: "3"),ListNames(name: "Senior High",id: "4")];
+  ListNames? level;
   TextEditingController groupNameController = TextEditingController();
   TextEditingController groupDescriptionController = TextEditingController();
   bool switchOn = false;
@@ -26,7 +28,8 @@ class _CreateGroupState extends State<CreateGroup> {
       "name": groupNameController.text,
       "description": groupDescriptionController.text,
       "type": status ? "Public" : "Private",
-      "discoverability": switchOn
+      "discoverability": switchOn,
+      "category": level!.name
     });
     if (res["status"]) {
       GroupListData groupListData = GroupListData.fromJson(res["data"]);
@@ -44,6 +47,10 @@ class _CreateGroupState extends State<CreateGroup> {
     }
   }
 
+  @override
+  void initState(){
+    level = listLevels[0];
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -96,7 +103,7 @@ class _CreateGroupState extends State<CreateGroup> {
                               controller: groupNameController,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please check that you\'ve entered group email';
+                                  return 'Please check that you\'ve entered group_management email';
                                 }
                                 return null;
                               },
@@ -139,6 +146,59 @@ class _CreateGroupState extends State<CreateGroup> {
                                 borderColor: Colors.white,
                                 fill: Colors.white,
                                 padding: EdgeInsets.only(left: 10, right: 10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 20,right:20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          sText("Category",color: kAdeoGray3),
+                          SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 0),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              padding: EdgeInsets.only(left: 12, right: 20),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<ListNames>(
+                                  value: level ?? listLevels[0],
+                                  itemHeight: 60,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: kDefaultBlack,
+                                  ),
+                                  onChanged: (ListNames? value){
+                                    setState((){
+                                      level = value;
+                                    });
+                                  },
+                                  items: listLevels.map(
+                                        (item) => DropdownMenuItem<ListNames>(
+                                      value: item,
+                                      child: Text(
+                                        item.name,
+                                        style: TextStyle(
+                                          color: kDefaultBlack,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                      .toList(),
+                                ),
                               ),
                             ),
                           ),

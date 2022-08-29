@@ -43,6 +43,7 @@ class TreadmillController {
   TestType type;
   bool speedTest = false;
   int time;
+  String? treadmillType;
 
   List<TreadmillProgress> questions = [];
 
@@ -65,7 +66,7 @@ class TreadmillController {
   DateTime questionTimer = DateTime.now();
   String? topicName;
   Topic? topicData;
-  dynamic topicid;
+  int? topicid;
   int timeQ = 0;
   int timePerQuestion = 0;
   int countQuestions = 0;
@@ -85,7 +86,9 @@ class TreadmillController {
   int correctAnswer = 0;
   int wrongAnswer = 0;
   double count = 0.0;
-
+  int wrongCount = 0;
+  int correctCount = 0;
+  int unattemptedCount = 0;
   startTest() {
     speedtimerController!.start();
     startTime = DateTime.now();
@@ -130,27 +133,30 @@ class TreadmillController {
   }
 
   int get correct {
-    int score = 0;
+    correctCount = 0;
     questions.forEach((question) {
-      if (question.isCorrect) score++;
+      if (question.isCorrect && question.status == "correct") correctCount++;
     });
-    return score;
+    print("correctCount:$correctCount");
+    return correctCount;
   }
 
   int get wrong {
-    int wrong = 0;
+    wrongCount = 0;
     questions.forEach((question) {
-      if (question.isWrong && question.status != null) wrong++;
+      if (question.isWrong && question.status == "wrong") wrongCount++;
     });
-    return wrong;
+    print("wrongCount:$wrongCount");
+    return wrongCount;
   }
 
   int get unattempted {
-    int unattempted = 0;
+    unattemptedCount = 0;
     questions.forEach((question) {
-      if (question.unattempted) unattempted++;
+      if (question.status == "skipped") unattemptedCount++;
     });
-    return unattempted;
+    print("unattemptedCount:$unattemptedCount");
+    return unattemptedCount;
   }
 
   double get avgScore {
@@ -165,17 +171,20 @@ class TreadmillController {
   }
 
   double get avgTime {
-    double time = 0;
+    double times = 0;
     int length = 0;
     questions.forEach((question) {
       if (question.time != null && question.time! > 0) {
-        time += question.time!;
+        if (time == question.time! - 1) {
+          question.time = time;
+        }
+        times += question.time!;
         length++;
       }
     });
     print("Length=$length, time=$time");
     if (length == 0) length = 1;
-    return time / length;
+    return times / length;
   }
 
   double getAvgScore() {
@@ -252,7 +261,7 @@ class TreadmillController {
       totalQuestions: questions.length,
       courseId: course.id,
       testname: name,
-      testType: type.toString(),
+      testType: treadmillType.toString(),
       testTime: !speedTest
           ? duration == null
               ? -1
@@ -294,15 +303,16 @@ class TreadmillController {
   }
 
   Future<bool> scoreCurrentQuestion() async {
-    print("scoring...___________________-------------------------------------");
+    // print("scoring...___________________-------------------------------------");
     print('j');
     TreadmillProgress mp = questions[currentQuestion];
     Question question = mp.question!;
-    if (question.unattempted) {
-      return true;
-    }
+    // if (question.unattempted) {
+    //   return true;
+    // }
 
-    mp.selectedAnswerId = question.selectedAnswer!.id;
+    mp.selectedAnswerId =
+        question.selectedAnswer != null ? question.selectedAnswer!.id : 0;
     mp.time = DateTime.now().difference(questionTimer).inSeconds;
     print("time=${mp.time}");
     // print(mp.toJson());
@@ -311,17 +321,19 @@ class TreadmillController {
     } else if (question.isWrong) {
       mp.status = "wrong";
     } else {
-      mp.status = 'skipped';
+      mp.status = "skipped";
     }
+    treadmill!.title = name;
     treadmill!.avgScore = avgScore;
     treadmill!.topicId = topicid;
     treadmill!.avgTime = avgTime;
-    treadmill!.totalTime = countdown; //duration!.inSeconds;
+    treadmill!.totalTime = time; //duration!.inSeconds;
     treadmill!.totalCorrect = correct;
-    treadmill!.totalWrong = wrong;
-    treadmill!.totalQuestions = questions.length;
-    // treadmill!.totalCorrect! + treadmill!.totalWrong!;
+    treadmill!.totalWrong = wrong + unattempted;
+    treadmill!.totalQuestions =
+        treadmill!.totalCorrect! + treadmill!.totalWrong!;
     treadmill!.status = TreadmillStatus.IN_PROGRESS.toString();
+    print("scoring...___________________-------------------------------------");
 
     await TreadmillDB().update(treadmill!);
     await TreadmillDB().updateProgress(mp);
@@ -417,10 +429,10 @@ class TreadmillController {
     // print("treadmil res:$treadmillRes");
   }
 
-  createBankTreadmill(int bankId) async {
+  createBankTreadmill(int bankId, int count) async {
     treadmill = Treadmill(
       title: name,
-      type: TreadmillType.TOPIC.toString(),
+      type: TreadmillType.BANK.toString(),
       bankId: bankId,
       courseId: course.id,
       status: TreadmillStatus.NEW.toString(),
@@ -431,7 +443,8 @@ class TreadmillController {
     int treadmillId = await TreadmillDB().insert(treadmill!);
     treadmill!.id = treadmillId;
     List<Question> quesList =
-        await QuestionDB().getTreadmillBankQuestions(bankId);
+        await TestController().getQuizQuestions(bankId, limit: count);
+    //  await QuestionDB().getTreadmillBankQuestions(bankId);
     print("question=${quesList.length}");
     for (int i = 0; i < quesList.length; i++) {
       TreadmillProgress mp = TreadmillProgress(
@@ -462,18 +475,24 @@ class TreadmillController {
         Topic? topic = await TopicDB().getTopicById(topicId);
         if (topic != null) name = topic.name;
       }
+      name = treadmill!.title;
+      print("topic: $name");
+
       questions = await TreadmillDB().getProgresses(treadmill!.id!);
       int index = 0;
       for (int i = 0; i < questions.length; i++) {
         print('-----------------------------------------------------');
         if (questions[i].status == null) {
           // print(questions[i].toJson());
-          currentQuestion = index;
+          currentQuestion = treadmill!.totalQuestions!;
+          wrongCount = treadmill!.totalWrong!;
+          correctCount = treadmill!.totalCorrect!;
+          time = treadmill!.totalTime!;
           print(currentQuestion);
           print('-----------------------------------------------------');
           break;
         }
-        index++;
+        currentQuestion++;
       }
       return true;
     }
@@ -488,6 +507,9 @@ class TreadmillController {
 
     TreadmillDB().update(treadmill!);
     print(treadmill!.status);
+    print('title: ${treadmill!.title}');
+    print(name);
+    print('type:${treadmill!.type}');
     print('=============================');
     print(treadmill!.toJson());
   }
@@ -512,6 +534,7 @@ class TreadmillController {
 
     if (treadmill != null) {
       int? topicId = treadmill!.topicId;
+      time = treadmill!.totalTime!;
       await deleteTreadmill();
       if (topicId == null) {
         await createTreadmill();
