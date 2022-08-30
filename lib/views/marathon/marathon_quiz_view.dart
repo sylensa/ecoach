@@ -189,7 +189,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
         if (controller.reviewMode) {
           return showExitDialog();
         }
-        controller.pauseTimer();
         return showPauseDialog();
       },
       child: SafeArea(
