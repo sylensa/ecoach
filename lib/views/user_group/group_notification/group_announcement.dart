@@ -1,21 +1,21 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
-import 'package:ecoach/views/user_group/activities/group_activity.dart';
-import 'package:ecoach/views/user_group/group_activity.dart';
+import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
+import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class Announcement extends StatefulWidget {
+class GroupAnnouncement extends StatefulWidget {
   static const String routeName = '/user_group';
-  Announcement(this.user, {Key? key}) : super(key: key);
+  GroupAnnouncement(this.user, {Key? key}) : super(key: key);
   User user;
   @override
-  State<Announcement> createState() => _AnnouncementState();
+  State<GroupAnnouncement> createState() => _GroupAnnouncementState();
 }
 
-class _AnnouncementState extends State<Announcement> {
+class _GroupAnnouncementState extends State<GroupAnnouncement> {
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class _AnnouncementState extends State<Announcement> {
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Track all activities",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("Track all group_activities",weight: FontWeight.w500,size: 20,color: Colors.black),
                   SizedBox(height: 5,),
                   sText("Never miss deadlines",weight: FontWeight.w500,size: 20,color: Colors.black),
 
