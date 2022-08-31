@@ -9,6 +9,7 @@ class AdeoTabControl extends StatefulWidget {
     this.tabPages,
     this.onPageChange,
     this.variant = 'default',
+    this.fromGroup = false,
     Key? key,
   }) : super(key: key);
 
@@ -16,6 +17,7 @@ class AdeoTabControl extends StatefulWidget {
   final List<Widget>? tabPages;
   final String variant;
   final Function? onPageChange;
+  final bool fromGroup ;
 
   @override
   _AdeoTabControlState createState() => _AdeoTabControlState();
@@ -55,10 +57,9 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
           if (widget.variant.toUpperCase() == 'SQUARE')
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Container(
-                width: appWidth(context),
+              child:  Container(
                 decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    // color: Colors.grey[100],
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:  Radius.circular(20))
                 ),
                 child: Row(
