@@ -1,7 +1,8 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
-import 'package:ecoach/views/user_group/activities/group_activity.dart';
+import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
+import 'package:ecoach/views/user_group/group_activities/performance/performance.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -18,7 +19,7 @@ class _GroupActivityState extends State<GroupActivity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Colors.transparent,
+      backgroundColor: Colors.grey[100],
       body: Container(
         // padding: EdgeInsets.only(top: 2.h, bottom: 2.h, left: 2.h, right: 2.h),
         child: Column(
@@ -74,9 +75,7 @@ class _GroupActivityState extends State<GroupActivity> {
               ],
               tabPages: [
                 Activity(),
-               Container(
-                 color: Colors.white,
-               ),
+                GroupPerformance(),
                Container(
                  color: Colors.white,
                ),
