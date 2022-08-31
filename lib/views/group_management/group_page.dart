@@ -1449,7 +1449,7 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               title: Container(),
                               children: <Widget>[
-                                if (listGroupViewData[0].admins!.isNotEmpty)
+                               listGroupViewData[0].admins!.isNotEmpty ?
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10),
@@ -1460,81 +1460,142 @@ class _GroupPageState extends State<GroupPage> {
                                         borderRadius: BorderRadius.circular(5)),
                                     child: Column(
                                       children: [
-                                        for (int i = 0;
-                                            i <
-                                                listGroupViewData[0]
-                                                    .admins!
-                                                    .length;
-                                            i++)
-                                          MaterialButton(
-                                            padding: EdgeInsets.zero,
-                                            onPressed: () {
-                                              memberActionsModalBottomSheet(
-                                                  context,
-                                                  listGroupViewData[0]
-                                                      .admins![i]
-                                                      .id
-                                                      .toString(),
-                                                  false);
-                                            },
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Stack(
-                                                      children: [
-                                                        displayLocalImage(
-                                                            "filePath",
-                                                            radius: 30),
-                                                        Positioned(
-                                                          bottom: 5,
-                                                          right: 0,
-                                                          child: Image.asset(
-                                                              "assets/images/tick-mark.png"),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        sText(
-                                                            listGroupViewData[0]
-                                                                .admins![i]
-                                                                .name,
-                                                            color: Colors.black,
-                                                            weight: FontWeight
-                                                                .w500),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        sText("Admin",
-                                                            color: kAdeoGray3,
-                                                            size: 12),
-                                                      ],
-                                                    ),
-                                                    Expanded(
-                                                        child: Container()),
-                                                    Icon(
-                                                      Icons.arrow_forward_ios,
-                                                      color: kAdeoGray3,
-                                                      size: 16,
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                )
-                                              ],
-                                            ),
-                                          ),
+                                        for (int i = 0; i < listGroupViewData[0].admins!.length; i++)
+                                          if(listGroupViewData[0].admins![i].isGroupCreator!)
+                                            MaterialButton(
+                                              padding: EdgeInsets.zero,
+                                              onPressed: () {
+                                                // memberActionsModalBottomSheet(context, listGroupViewData[0].admins![i].id.toString(), false);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Stack(
+                                                        children: [
+                                                          displayLocalImage(
+                                                              "filePath",
+                                                              radius: 30),
+                                                          Positioned(
+                                                            bottom: 5,
+                                                            right: 0,
+                                                            child: Image.asset(
+                                                                "assets/images/tick-mark.png"),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                        children: [
+                                                          sText(
+                                                              listGroupViewData[0]
+                                                                  .admins![i]
+                                                                  .name,
+                                                              color: Colors.black,
+                                                              weight: FontWeight
+                                                                  .w500),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          sText("Owner/Admin",
+                                                              color: kAdeoGray3,
+                                                              size: 12),
+                                                        ],
+                                                      ),
+                                                      Expanded(
+                                                          child: Container()),
+                                                      Icon(
+                                                        Icons.arrow_forward_ios,
+                                                        color: kAdeoGray3,
+                                                        size: 16,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          else
+                                            MaterialButton(
+                                              padding: EdgeInsets.zero,
+                                              onPressed: () {
+                                                memberActionsModalBottomSheet(
+                                                    context,
+                                                    listGroupViewData[0]
+                                                        .admins![i]
+                                                        .id
+                                                        .toString(),
+                                                    false);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Stack(
+                                                        children: [
+                                                          displayLocalImage(
+                                                              "filePath",
+                                                              radius: 30),
+                                                          Positioned(
+                                                            bottom: 5,
+                                                            right: 0,
+                                                            child: Image.asset(
+                                                                "assets/images/tick-mark.png"),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                        children: [
+                                                          sText(
+                                                              listGroupViewData[0]
+                                                                  .admins![i]
+                                                                  .name,
+                                                              color: Colors.black,
+                                                              weight: FontWeight
+                                                                  .w500),
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          sText("Admin",
+                                                              color: kAdeoGray3,
+                                                              size: 12),
+                                                        ],
+                                                      ),
+                                                      Expanded(
+                                                          child: Container()),
+                                                      Icon(
+                                                        Icons.arrow_forward_ios,
+                                                        color: kAdeoGray3,
+                                                        size: 16,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  )
+                                                ],
+                                              ),
+                                            )
+
                                       ],
                                     ),
-                                  ),
+                                  ) : 
+                               Center(
+                                 child: sText("You've no admin"),
+                               ),
                               ],
                             ),
                           ),
@@ -1544,8 +1605,7 @@ class _GroupPageState extends State<GroupPage> {
                       Column(
                         children: [
                           Theme(
-                            data: Theme.of(context)
-                                .copyWith(dividerColor: Colors.transparent),
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                             child: ExpansionTile(
                               textColor: Colors.white,
                               iconColor: Colors.white,
@@ -1566,7 +1626,7 @@ class _GroupPageState extends State<GroupPage> {
                               ),
                               title: Container(),
                               children: <Widget>[
-                                if (listGroupViewData[0].members!.isNotEmpty)
+                                listGroupViewData[0].members!.isNotEmpty ?
                                   Container(
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10),
@@ -1579,22 +1639,12 @@ class _GroupPageState extends State<GroupPage> {
                                       children: [
                                         Column(
                                           children: [
-                                            for (int i = 0;
-                                                i <
-                                                    listGroupViewData[0]
-                                                        .members!
-                                                        .length;
-                                                i++)
+                                            for (int i = 0;i < listGroupViewData[0].members!.length; i++)
+                                              if(listGroupViewData[0].members![i].isGroupCreator!)
                                               MaterialButton(
                                                 padding: EdgeInsets.zero,
                                                 onPressed: () {
-                                                  memberActionsModalBottomSheet(
-                                                      context,
-                                                      listGroupViewData[0]
-                                                          .members![i]
-                                                          .id
-                                                          .toString(),
-                                                      true);
+                                                  // memberActionsModalBottomSheet(context, listGroupViewData[0].members![i].id.toString(), listGroupViewData[0].members![i].isGroupCreator!);
                                                 },
                                                 child: Column(
                                                   children: [
@@ -1635,7 +1685,7 @@ class _GroupPageState extends State<GroupPage> {
                                                               height: 5,
                                                             ),
                                                             sText(
-                                                                "${listGroupViewData[0].members![i].testCount} Tests",
+                                                                "Owner",
                                                                 color:
                                                                     kAdeoGray3,
                                                                 size: 12),
@@ -1643,28 +1693,7 @@ class _GroupPageState extends State<GroupPage> {
                                                         ),
                                                         Expanded(
                                                             child: Container()),
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            sText(
-                                                                "${listGroupViewData[0].members![i].testPercent}",
-                                                                color: Colors
-                                                                    .black,
-                                                                weight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                            SizedBox(
-                                                              height: 5,
-                                                            ),
-                                                            sText(
-                                                                "${listGroupViewData[0].members![i].testGrade == null ? "No Grade" : listGroupViewData[0].members![i].testGrade}",
-                                                                color:
-                                                                    kAdeoGray3,
-                                                                size: 12),
-                                                          ],
-                                                        ),
+
                                                         SizedBox(
                                                           width: 10,
                                                         ),
@@ -1699,12 +1728,130 @@ class _GroupPageState extends State<GroupPage> {
                                                         : Container(),
                                                   ],
                                                 ),
-                                              ),
+                                              )
+                                               else
+                                                MaterialButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {
+                                                    memberActionsModalBottomSheet(
+                                                        context,
+                                                        listGroupViewData[0]
+                                                            .members![i]
+                                                            .id
+                                                            .toString(),
+                                                        true);
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Stack(
+                                                            children: [
+                                                              displayLocalImage(
+                                                                  "filePath",
+                                                                  radius: 30),
+                                                              Positioned(
+                                                                bottom: 5,
+                                                                right: 0,
+                                                                child: Image.asset(
+                                                                    "assets/images/tick-mark.png"),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                            children: [
+                                                              sText(
+                                                                  listGroupViewData[
+                                                                  0]
+                                                                      .members![i]
+                                                                      .name,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  weight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              sText(
+                                                                  "${listGroupViewData[0].members![i].testCount} Tests",
+                                                                  color:
+                                                                  kAdeoGray3,
+                                                                  size: 12),
+                                                            ],
+                                                          ),
+                                                          Expanded(
+                                                              child: Container()),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                            children: [
+                                                              sText(
+                                                                  "${listGroupViewData[0].members![i].testPercent}",
+                                                                  color: Colors
+                                                                      .black,
+                                                                  weight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                              SizedBox(
+                                                                height: 5,
+                                                              ),
+                                                              sText(
+                                                                  "${listGroupViewData[0].members![i].testGrade == null ? "No Grade" : listGroupViewData[0].members![i].testGrade}",
+                                                                  color:
+                                                                  kAdeoGray3,
+                                                                  size: 12),
+                                                            ],
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Icon(
+                                                            Icons
+                                                                .arrow_forward_ios,
+                                                            color: kAdeoGray3,
+                                                            size: 16,
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      listGroupViewData[0]
+                                                          .members!
+                                                          .length -
+                                                          1 !=
+                                                          i
+                                                          ? Column(
+                                                        children: [
+                                                          Divider(
+                                                            color:
+                                                            kAdeoGray,
+                                                            height: 1,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                        ],
+                                                      )
+                                                          : Container(),
+                                                    ],
+                                                  ),
+                                                )
                                           ],
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ) :  Center(
+                                  child: sText("You've no members"),
+                                ),
                               ],
                             ),
                           ),
