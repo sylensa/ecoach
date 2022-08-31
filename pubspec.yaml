@@ -110,6 +110,7 @@ dependencies:
    currency_picker: ^2.0.11
    country_list_pick: ^1.0.1+6
    country_currency_pickers: ^2.0.0
+   syncfusion_flutter_gauges: ^20.2.46
 
 
 flutter_icons:
