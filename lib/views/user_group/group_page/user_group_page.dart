@@ -1,9 +1,9 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
-import 'package:ecoach/views/user_group/group_details.dart';
-import 'package:ecoach/views/user_group/no_activity.dart';
-import 'package:ecoach/views/user_group/notification.dart';
+import 'package:ecoach/views/user_group/group_page/group_details.dart';
+import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
+import 'package:ecoach/views/user_group/group_notification/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -55,7 +55,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         ),
                         GestureDetector(
                           onTap: (){
-                            goTo(context, NotificationActivity(widget.user));
+                            goTo(context, GroupNotificationActivity(widget.user));
                           },
                           child: Container(
                             child: Image.asset("assets/images/schedule_top.png"),
