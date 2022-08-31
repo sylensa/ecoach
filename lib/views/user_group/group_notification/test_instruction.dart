@@ -1,7 +1,7 @@
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
-import 'package:ecoach/views/user_group/group_activity.dart';
+import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
