@@ -229,6 +229,7 @@ class _SubscribePageState extends State<SubscribePage>
           SizedBox(height: 12.0),
           AdeoTabControl(
             variant: 'black',
+
             tabs: ['Visa/MoMo', 'wallet', 'link'],
             tabPages: [
               ThirdPartyPay(
