@@ -1,5 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
-import 'package:ecoach/views/user_group/test_instruction.dart';
+import 'package:ecoach/views/user_group/group_notification/test_instruction.dart';
 import 'package:flutter/material.dart';
 
 class Activity extends StatefulWidget {
@@ -13,7 +13,7 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[100],
+      // color: Colors.grey[100],
       child: Column(
         children: [
           Expanded(
