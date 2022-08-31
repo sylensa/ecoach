@@ -49,11 +49,17 @@ class _ContentEditorState extends State<ContentEditor> {
           navigationDelegate: (navigation) async {
             //Listen for callback URL
             if (navigation.url.contains('https://standard.paystack.co/close')) {
+              print("hey:");
               Navigator.of(context).pop(); //close webview
             }
             if (navigation.url.contains(AppUrl.payment_callback)) {
-              Navigator.of(context).pop(); //close webview
-              setState(() {});
+              Navigator.of(context).pop();
+              showLoaderDialog(context);
+              await getActivePackage();
+              //close webview
+              setState(() {
+                print("hello adolf:");
+              });
             }
             return NavigationDecision.navigate;
           },
@@ -188,8 +194,7 @@ class _ContentEditorState extends State<ContentEditor> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (isConnected) {
       try {
-        listActivePackageData =
-            await groupManagementController.getActivePackage();
+        listActivePackageData = await groupManagementController.getActivePackage();
         if (listActivePackageData.isNotEmpty) {
           await getGroupList();
         } else {
@@ -237,11 +242,12 @@ class _ContentEditorState extends State<ContentEditor> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          listActivePackageData[0].name!.toLowerCase()== "free" ?
           Column(
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: sText("Free Editor",
+                child: sText("${listActivePackageData[0].name!} Editor",
                     color: Color(0xFF2A9CEA),
                     weight: FontWeight.bold,
                     align: TextAlign.center,
@@ -254,6 +260,29 @@ class _ContentEditorState extends State<ContentEditor> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: sText(
                     "Free editor account enables you to create only one group_management with a limited number of members",
+                    color: kAdeoGray3,
+                    weight: FontWeight.w400,
+                    align: TextAlign.center),
+              ),
+            ],
+          ) :
+          Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: sText("${listActivePackageData[0].name} Editor",
+                    color: Color(0xFF2A9CEA),
+                    weight: FontWeight.bold,
+                    align: TextAlign.center,
+                    size: 25),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: sText(
+                    "${listActivePackageData[0].description}",
                     color: kAdeoGray3,
                     weight: FontWeight.w400,
                     align: TextAlign.center),
