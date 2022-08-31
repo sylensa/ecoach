@@ -427,6 +427,7 @@ class _MorePageState extends State<MorePage> {
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: () async {
+                      listActivePackageData.clear();
                       if (listActivePackageData.isNotEmpty) {
                         goTo(context, ContentEditor());
                       } else {
