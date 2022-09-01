@@ -4,6 +4,7 @@ import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group_management/group_list.dart';
@@ -298,9 +299,10 @@ class _ContentEditorState extends State<ContentEditor> {
               ),
               SizedBox(height: 10),
               GestureDetector(
-                onTap: () {
+                onTap: () async{
                   showLoaderDialog(context);
-                  getActivePackage();
+                  await UserPreferences().setViewGroup();
+                  await getActivePackage();
                   // getGroupList();
                 },
                 child: Container(
