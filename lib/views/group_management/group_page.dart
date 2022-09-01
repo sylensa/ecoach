@@ -2236,8 +2236,7 @@ class _GroupPageState extends State<GroupPage> {
                                                             .isNotEmpty)
                                                           Column(
                                                             children: [
-                                                              CarouselSlider
-                                                                  .builder(
+                                                              CarouselSlider.builder(
                                                                       options:
                                                                           CarouselOptions(
                                                                         height:
