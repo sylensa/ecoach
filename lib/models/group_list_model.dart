@@ -118,6 +118,8 @@ class GroupListData {
     this.membersCount,
     this.category,
     this.settings,
+    this.rating,
+    this.reviews,
   });
 
   int? id;
@@ -133,6 +135,8 @@ class GroupListData {
   dynamic deletedAt;
   bool? discoverability;
   int? membersCount;
+  dynamic rating;
+  dynamic reviews;
   DataSettings? settings;
 
   factory GroupListData.fromJson(Map<String, dynamic> json) => GroupListData(
@@ -149,6 +153,8 @@ class GroupListData {
     category: json["category"] ?? "",
     discoverability: json["discoverability"] == null ? null : json["discoverability"],
     membersCount: json["members_count"] == null ? 0 : json["members_count"],
+    rating: json["rating"] == null ? 0 : json["rating"],
+    reviews: json["reviews"] == null ? 0 : json["reviews"],
     settings: json["settings"] == null ? null : DataSettings.fromJson(json["settings"]),
 
   );
