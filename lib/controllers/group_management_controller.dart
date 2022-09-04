@@ -587,51 +587,55 @@ class GroupManagementController{
 
   Future<List<GroupListData>> getJoinGroupList()async {
     List<GroupListData> groupListDetails = [];
-    try{
+    // try{
       var js = await doGet('${AppUrl.joinedGroups}');
-      print("res groups : $js");
+      print("res groups joined : $js");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
         for(int i =0; i < js["data"]["data"].length; i++){
-          GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
-          groupListDetails.add(groupListData);
+          if(js["data"]["data"][i]["settings"] != null){
+            GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
+            groupListDetails.add(groupListData);
+          }
         }
         return groupListDetails;
       }else{
         toastMessage("${js["message"]}");
         return groupListDetails;
       }
-    }catch(e){
-      toastMessage("Failed");
-      return groupListDetails;
-    }
+    // }catch(e){
+    //   toastMessage("Failed");
+    //   return groupListDetails;
+    // }
   }
   Future<List<GroupListData>> getAllGroupList({String sort = 'popularity',String order = 'asc'})async {
     List<GroupListData> groupListDetails = [];
-    try{
+    // try{
       Map<String, dynamic> params = {
         "sort":sort,
         "order":order
       };
       String queryUrl = AppUrl.userGroups + '?' + Uri(queryParameters: params).query;
       var js = await doGet(queryUrl);
-      print("res groups : $js");
-      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
-        for(int i =0; i < js["data"]["data"].length; i++){
-          GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
-          groupListDetails.add(groupListData);
+      print("res groups category : ${js["data"]}");
+      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
+        for(int i =0; i < js["data"].length; i++){
+          if(js["data"][i]["settings"] != null){
+            GroupListData groupListData = GroupListData.fromJson(js["data"][i]);
+            groupListDetails.add(groupListData);
+          }
         }
         return groupListDetails;
       }else{
         toastMessage("${js["message"]}");
         return groupListDetails;
       }
-    }catch(e){
-      toastMessage("Failed");
-      return groupListDetails;
-    }
+    // }catch(e){
+    //   toastMessage("Failed");
+    //   return groupListDetails;
+    // }
   }
 
-  Future<List<GroupListData>> searchGroupList(String search)async {
+  Future<List<GroupListData>> searchGroupList({String search = ''})async {
     List<GroupListData> groupListDetails = [];
     try{
       Map<String, dynamic> params = {
