@@ -1,10 +1,14 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_page/group_details.dart';
 import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/notification.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class UserGroupPage extends StatefulWidget {
@@ -16,7 +20,70 @@ class UserGroupPage extends StatefulWidget {
 }
 
 class _UserGroupPageState extends State<UserGroupPage> {
-  TextEditingController searchController = TextEditingController();
+  String searchController = "";
+  bool progressCodeGroup = true;
+  bool progressCodeCategory = true;
+  List<GroupListData> myGroupList= [];
+  List<GroupListData> groupByCategory= [];
+  String categoryType = "lower_primary";
+  String orderBy = "asc";
+  String sortBy = "popularity";
+  List<ListNames> sortList = [ListNames(name: "",id: ""),ListNames(name: "Popularity",id: "popularity"),ListNames(name: "Date Created",id: "date_created"),ListNames(name: "Ratings",id: "rating"),ListNames(name: "Price",id: "amount")];
+  List<ListNames> categoryList = [ListNames(name: "Ages 6-8",id: "lower_primary"),ListNames(name: "Ages 9-11",id: "upper_primary"),ListNames(name: "12-14",id: "junior_high"),ListNames(name: "15-17",id: "senior_high")];
+  getMyGroups() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+      if (isConnected) {
+        myGroupList = await GroupManagementController().getJoinGroupList();
+      } else {
+        showNoConnectionToast(context);
+      }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+      progressCodeGroup = false;
+    });
+  }
+  getGroupsByCategories() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+      if (isConnected) {
+        groupByCategory = await GroupManagementController().getAllGroupList(sort: sortBy,order: orderBy);
+      } else {
+        showNoConnectionToast(context);
+      }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+      progressCodeCategory = false;
+    });
+  }
+  searchGroup() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    try {
+      if (isConnected) {
+        groupByCategory = await GroupManagementController().searchGroupList(search: searchController);
+      } else {
+        showNoConnectionToast(context);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setState(() {
+      progressCodeCategory = false;
+    });
+  }
+  @override
+  void initState(){
+    super.initState();
+    getMyGroups();
+    getGroupsByCategories();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +140,10 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.only(left: 0,right: 0,top: 0),
-                            child:  TextField(
-                              controller: searchController,
+                            child:  TextFormField(
+                                onChanged:(value){
+                                  searchController = value;
+                                },
                               decoration: textDecorSuffix(
                                   size: 15,
                                   icon: Icon(Icons.search,color: Colors.grey),
@@ -82,10 +151,6 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                   label: "Search for learning groups",
                                   enabled: true
                               ),
-
-
-                              onChanged:(val){
-                              } ,
                             ),
                           ),
                         ),
@@ -103,6 +168,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                 ],
               ),
             ),
+
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -124,6 +190,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                          ),
                        ),
                        SizedBox(height: 10,),
+                       myGroupList.isNotEmpty ?
                        Container(
                          height: 170,
                          child: ListView.builder(
@@ -257,7 +324,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                  ],
                                );
                              }),
-                       ),
+                       ) : !progressCodeGroup ? Center(child: sText("Empty group"),) : Center(child: progress(),),
                        // categories
                        SizedBox(height: 30,),
                        Container(
@@ -273,7 +340,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                        Container(
                          height: 70,
                          child: ListView.builder(
-                             itemCount: 4,
+                             itemCount: categoryList.length,
                              padding: EdgeInsets.zero,
                              shrinkWrap: true,
                              scrollDirection: Axis.horizontal,
@@ -288,10 +355,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                          borderRadius: BorderRadius.circular(10),
                                        ),
                                        child: Row(
-                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                         mainAxisAlignment: MainAxisAlignment.start,
                                          children: [
-                                          Image.asset("assets/images/lower.png"),
-                                           sText("Ages 6-9",size: 16,weight: FontWeight.bold),
+                                          Image.asset("assets/images/${categoryList[index].id}.png",width: 20),
+                                           SizedBox(width: 10,),
+                                           sText("${categoryList[index].name}",size: 16,weight: FontWeight.bold),
                                          ],
                                        )
                                    ),
@@ -316,7 +384,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                          height: 50,
                          child: ListView.builder(
                            padding: EdgeInsets.zero,
-                             itemCount: 5,
+                             itemCount: sortList.length,
                              shrinkWrap: true,
                              scrollDirection: Axis.horizontal,
                              itemBuilder: (BuildContext context, int index){
@@ -346,7 +414,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                          borderRadius: BorderRadius.circular(20),
                                          border: Border.all(color: Colors.black)
                                      ),
-                                     child: sText("Popularity",size: 14,weight: FontWeight.normal,align: TextAlign.center),
+                                     child: sText("${sortList[index].name}",size: 14,weight: FontWeight.normal,align: TextAlign.center),
 
                                    ),
                                    SizedBox(width: 5,),
@@ -360,8 +428,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                          height: 1,
                        ),
                        SizedBox(height: 10,),
-                       for(int i =0; i < 10; i++)
-
+                       for(int i =0; i < groupByCategory.length; i++)
                          MaterialButton(
                            padding: EdgeInsets.zero,
                            onPressed: (){
@@ -389,7 +456,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                          child: Row(
                                            children: [
                                              Container(
-                                               child: sText("RevShady SAT",size: 14,weight: FontWeight.bold),
+                                               child: sText("${groupByCategory[i].name}",size: 14,weight: FontWeight.bold),
                                              ),
                                              SizedBox(width: 5,),
                                              Container(
@@ -408,7 +475,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  ),
                                                  SizedBox(width: 5,),
                                                  Container(
-                                                   child: sText("2412",size: 10,weight: FontWeight.normal,),
+                                                   child: sText("${groupByCategory[i].settings}",size: 10,weight: FontWeight.normal,),
                                                  ),
                                                ],
                                              ),
@@ -440,7 +507,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  ),
                                                  SizedBox(width: 5,),
                                                  Container(
-                                                   child: sText("\$99",size: 10,weight: FontWeight.bold,),
+                                                   child: sText("${groupByCategory[i].settings!.settings!.currency} ${groupByCategory[i].settings!.settings!.amount}",size: 10,weight: FontWeight.bold,),
                                                  ),
                                                ],
                                              ),
@@ -451,17 +518,12 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                    ),
                                  ),
                                  Expanded(child: Container()),
-                                 GestureDetector(
-                                   onTap: ()async{
-
-                                   },
-                                   child: Container(
-                                     padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-                                     child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
-                                     decoration: BoxDecoration(
-                                         color: Colors.orange,
-                                         borderRadius: BorderRadius.circular(10)
-                                     ),
+                                 Container(
+                                   padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+                                   child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
+                                   decoration: BoxDecoration(
+                                       color: Colors.orange,
+                                       borderRadius: BorderRadius.circular(10)
                                    ),
                                  )
                                ],
