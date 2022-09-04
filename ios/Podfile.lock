@@ -1,10 +1,14 @@
 PODS:
+  - another_audio_recorder (0.5.4):
+    - Flutter
   - AppAuth (1.5.0):
     - AppAuth/Core (= 1.5.0)
     - AppAuth/ExternalUserAgent (= 1.5.0)
   - AppAuth/Core (1.5.0)
   - AppAuth/ExternalUserAgent (1.5.0):
     - AppAuth/Core
+  - custom_floating_action_button (0.0.1):
+    - Flutter
   - DKImagePickerController/Core (4.3.4):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -36,6 +40,8 @@ PODS:
   - DKPhotoGallery/Resource (0.0.17):
     - SDWebImage
     - SwiftyGif
+  - emoji_picker_flutter (0.0.1):
+    - Flutter
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
@@ -141,6 +147,9 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - another_audio_recorder (from `.symlinks/plugins/another_audio_recorder/ios`)
+  - custom_floating_action_button (from `.symlinks/plugins/custom_floating_action_button/ios`)
+  - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
@@ -180,6 +189,12 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  another_audio_recorder:
+    :path: ".symlinks/plugins/another_audio_recorder/ios"
+  custom_floating_action_button:
+    :path: ".symlinks/plugins/custom_floating_action_button/ios"
+  emoji_picker_flutter:
+    :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
@@ -218,9 +233,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  another_audio_recorder: dee1fef684a64f55beda4b16b847d264455b5de9
   AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
+  custom_floating_action_button: d1676bb7a5380db43a9510dfa05c559d265e6c96
   DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
+  emoji_picker_flutter: df19dac03a2b39ac667dc8d1da939ef3a9e21347
   file_picker: 817ab1d8cd2da9d2da412a417162deee3500fc95
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
