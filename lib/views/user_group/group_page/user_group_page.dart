@@ -23,8 +23,10 @@ class _UserGroupPageState extends State<UserGroupPage> {
   String searchController = "";
   bool progressCodeGroup = true;
   bool progressCodeCategory = true;
+  bool progressCodeSearch = false;
   List<GroupListData> myGroupList= [];
   List<GroupListData> groupByCategory= [];
+  List<GroupListData> groupBySearch= [];
   String categoryType = "lower_primary";
   String orderBy = "asc";
   String sortBy = "popularity";
@@ -66,7 +68,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     try {
       if (isConnected) {
-        groupByCategory = await GroupManagementController().searchGroupList(search: searchController);
+        groupBySearch = await GroupManagementController().searchGroupList(search: searchController);
       } else {
         showNoConnectionToast(context);
       }
@@ -75,7 +77,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
     }
 
     setState(() {
-      progressCodeCategory = false;
+      progressCodeSearch = true;
     });
   }
   @override
@@ -141,8 +143,19 @@ class _UserGroupPageState extends State<UserGroupPage> {
                           child: Container(
                             padding: EdgeInsets.only(left: 0,right: 0,top: 0),
                             child:  TextFormField(
-                                onChanged:(value){
-                                  searchController = value;
+                                onChanged:(value)async{
+                                  if(value.isNotEmpty){
+                                    setState((){
+                                      searchController = value;
+                                      progressCodeSearch = false;
+                                    });
+                                    await searchGroup();
+                                  }else{
+                                    setState((){
+                                      searchController = value;
+                                      progressCodeSearch = false;
+                                    });
+                                  }
                                 },
                               decoration: textDecorSuffix(
                                   size: 15,
@@ -169,6 +182,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
               ),
             ),
 
+            searchController.isEmpty ?
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -194,7 +208,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                        Container(
                          height: 170,
                          child: ListView.builder(
-                             itemCount: 10,
+                             itemCount: myGroupList.length,
                              shrinkWrap: true,
                              scrollDirection: Axis.horizontal,
                              itemBuilder: (BuildContext context, int index){
@@ -236,7 +250,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                Column(
                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                  children: [
-                                                   sText("Afram's SAT",weight: FontWeight.w500,size: 20),
+                                                   sText("${myGroupList[index].name}",weight: FontWeight.w500,size: 20),
                                                    SizedBox(height: 0,),
                                                    sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                  ],
@@ -288,7 +302,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                        children: [
                                                          Image.asset("assets/images/user_group.png"),
                                                          SizedBox(width: 5,),
-                                                         sText("1,309 members",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                         sText("${myGroupList[index].membersCount} members",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                        ],
                                                      ),
                                                    ),
@@ -535,7 +549,117 @@ class _UserGroupPageState extends State<UserGroupPage> {
                  )
                 ],
               ),
-            )
+            ) :
+                groupBySearch.isNotEmpty ?
+                Expanded(
+                  child: ListView.builder(
+                      itemBuilder: (BuildContext context, int index){
+                      return MaterialButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: (){
+                          goTo(context, GroupDetails(widget.user));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+                          decoration: BoxDecoration(
+                              color: Color(0XFFF5F5F5),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: Image.asset("assets/images/fCvBipe.png"),
+                              ),
+                              SizedBox(width: 5,),
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            child: sText("${groupBySearch[index].name}",size: 14,weight: FontWeight.bold),
+                                          ),
+                                          SizedBox(width: 5,),
+                                          Container(
+                                            child: sText("by Afram Dzidefo",size: 10,weight: FontWeight.normal,color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                child: Icon(Icons.groups,color: Colors.grey,size: 14,),
+                                              ),
+                                              SizedBox(width: 5,),
+                                              Container(
+                                                child: sText("${groupBySearch[index].membersCount}",size: 10,weight: FontWeight.normal,),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 5,),
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                child: Icon(Icons.star,color: Colors.orange,size: 14,),
+                                              ),
+                                              SizedBox(width: 0,),
+                                              Container(
+                                                child: sText("${groupBySearch[index].rating}",size: 10,weight: FontWeight.w400,),
+                                              ),
+                                              SizedBox(width: 5,),
+                                              Container(
+                                                child: sText("(${groupBySearch[index].reviews} reviews)",size: 10,weight: FontWeight.normal,),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 5,),
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                child: Image.asset("assets/images/label.png"),
+                                              ),
+                                              SizedBox(width: 5,),
+                                              Container(
+                                                child: sText("${groupBySearch[index].settings!.settings!.currency} ${groupBySearch[index].settings!.settings!.amount}",size: 10,weight: FontWeight.bold,),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(child: Container()),
+                              Container(
+                                padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+                                child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
+                                decoration: BoxDecoration(
+                                    color: Colors.orange,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                  }),
+                ):
+                groupBySearch.isEmpty && progressCodeSearch ?
+                Expanded(child: Center(child: sText("Empty result"),)) :
+                 Expanded(child: Center(child: progress(),))
           ],
         ),
 
