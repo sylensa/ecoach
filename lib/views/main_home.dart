@@ -69,8 +69,8 @@ class _MainHomePageState extends State<MainHomePage>
         },
         controller: mainController,
       ),
-      // GroupMainPage(widget.user),
-      UserGroupPage(widget.user),
+      GroupMainPage(widget.user),
+      // UserGroupPage(widget.user),
       CoursesPage(widget.user,mainController,planId: widget.planId,),
       AnalysisView(user: widget.user),
       // MoreView(
