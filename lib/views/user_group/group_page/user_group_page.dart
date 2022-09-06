@@ -3,9 +3,12 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/views/user_group/category/categories.dart';
+import 'package:ecoach/views/user_group/category/groups_by_category.dart';
 import 'package:ecoach/views/user_group/group_page/group_details.dart';
 import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/notification.dart';
+import 'package:ecoach/views/user_group/group_page/my_groups.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -155,6 +158,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                       searchController = value;
                                       progressCodeSearch = false;
                                     });
+
                                   }
                                 },
                               decoration: textDecorSuffix(
@@ -194,12 +198,16 @@ class _UserGroupPageState extends State<UserGroupPage> {
                      children: [
                        // my groups
                        Container(
-                         padding: EdgeInsets.symmetric(horizontal: 0),
                          child: Row(
                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                            children: [
                              sText("My Groups",size: 16,weight: FontWeight.bold),
-                             sText("See all",size: 16,color: Colors.grey[400]!),
+                             GestureDetector(
+                               onTap: (){
+                                 goTo(context, MyGroupsPage(widget.user));
+                               },
+                                 child: sText("See all",size: 16,color: Colors.grey[400]!),
+                             ),
                            ],
                          ),
                        ),
@@ -347,7 +355,12 @@ class _UserGroupPageState extends State<UserGroupPage> {
                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                            children: [
                              sText("Categories",size: 16,weight: FontWeight.bold),
-                             sText("See all",size: 16,color: Colors.grey[400]!),
+                             GestureDetector(
+                               onTap: (){
+                                 goTo(context, CategoriesPage(widget.user));
+                               },
+                                 child: sText("See all",size: 16,color: Colors.grey[400]!),
+                             ),
                            ],
                          ),
                        ),
@@ -359,26 +372,32 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              shrinkWrap: true,
                              scrollDirection: Axis.horizontal,
                              itemBuilder: (BuildContext context, int index){
-                               return Row(
-                                 children: [
-                                   Container(
-                                       width: 130 ,
-                                       padding: EdgeInsets.all(10),
-                                       decoration: BoxDecoration(
-                                         color: Colors.white,
-                                         borderRadius: BorderRadius.circular(10),
-                                       ),
-                                       child: Row(
-                                         mainAxisAlignment: MainAxisAlignment.start,
-                                         children: [
-                                          Image.asset("assets/images/${categoryList[index].id}.png",width: 20),
-                                           SizedBox(width: 10,),
-                                           sText("${categoryList[index].name}",size: 16,weight: FontWeight.bold),
-                                         ],
-                                       )
-                                   ),
-                                   SizedBox(width: 10,),
-                                 ],
+                               return MaterialButton(
+                                 padding: EdgeInsets.zero,
+                                 onPressed: (){
+                                   goTo(context, CategoryGroupsPage(widget.user));
+                                 },
+                                 child: Row(
+                                   children: [
+                                     Container(
+                                         width: 130 ,
+                                         padding: EdgeInsets.all(10),
+                                         decoration: BoxDecoration(
+                                           color: Colors.white,
+                                           borderRadius: BorderRadius.circular(10),
+                                         ),
+                                         child: Row(
+                                           mainAxisAlignment: MainAxisAlignment.start,
+                                           children: [
+                                            Image.asset("assets/images/${categoryList[index].id}.png",width: 20),
+                                             SizedBox(width: 10,),
+                                             sText("${categoryList[index].name}",size: 16,weight: FontWeight.bold),
+                                           ],
+                                         )
+                                     ),
+                                     SizedBox(width: 10,),
+                                   ],
+                                 ),
                                );
                              }),
                        ),
@@ -442,7 +461,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                          height: 1,
                        ),
                        SizedBox(height: 10,),
-                       for(int i =0; i < groupByCategory.length; i++)
+                       for(int i =0; i < 10; i++)
                          MaterialButton(
                            padding: EdgeInsets.zero,
                            onPressed: (){
@@ -470,7 +489,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                          child: Row(
                                            children: [
                                              Container(
-                                               child: sText("${groupByCategory[i].name}",size: 14,weight: FontWeight.bold),
+                                               child: sText("Adeo Group",size: 14,weight: FontWeight.bold),
                                              ),
                                              SizedBox(width: 5,),
                                              Container(
@@ -489,7 +508,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  ),
                                                  SizedBox(width: 5,),
                                                  Container(
-                                                   child: sText("${groupByCategory[i].settings}",size: 10,weight: FontWeight.normal,),
+                                                   child: sText("1,200",size: 10,weight: FontWeight.normal,),
                                                  ),
                                                ],
                                              ),
@@ -521,13 +540,14 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  ),
                                                  SizedBox(width: 5,),
                                                  Container(
-                                                   child: sText("${groupByCategory[i].settings!.settings!.currency} ${groupByCategory[i].settings!.settings!.amount}",size: 10,weight: FontWeight.bold,),
+                                                   child: sText("GHS 99",size: 10,weight: FontWeight.bold,),
                                                  ),
                                                ],
                                              ),
                                            ),
                                          ],
                                        ),
+
                                      ],
                                    ),
                                  ),
@@ -554,7 +574,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                 Expanded(
                   child: ListView.builder(
                       itemBuilder: (BuildContext context, int index){
-                      return MaterialButton(
+                      return    MaterialButton(
                         padding: EdgeInsets.zero,
                         onPressed: (){
                           goTo(context, GroupDetails(widget.user));
@@ -581,7 +601,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                       child: Row(
                                         children: [
                                           Container(
-                                            child: sText("${groupBySearch[index].name}",size: 14,weight: FontWeight.bold),
+                                            child: sText("Adeo Group",size: 14,weight: FontWeight.bold),
                                           ),
                                           SizedBox(width: 5,),
                                           Container(
@@ -600,7 +620,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                               ),
                                               SizedBox(width: 5,),
                                               Container(
-                                                child: sText("${groupBySearch[index].membersCount}",size: 10,weight: FontWeight.normal,),
+                                                child: sText("1,200",size: 10,weight: FontWeight.normal,),
                                               ),
                                             ],
                                           ),
@@ -614,11 +634,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                               ),
                                               SizedBox(width: 0,),
                                               Container(
-                                                child: sText("${groupBySearch[index].rating}",size: 10,weight: FontWeight.w400,),
+                                                child: sText("4.0",size: 10,weight: FontWeight.w400,),
                                               ),
                                               SizedBox(width: 5,),
                                               Container(
-                                                child: sText("(${groupBySearch[index].reviews} reviews)",size: 10,weight: FontWeight.normal,),
+                                                child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
                                               ),
                                             ],
                                           ),
@@ -632,13 +652,14 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                               ),
                                               SizedBox(width: 5,),
                                               Container(
-                                                child: sText("${groupBySearch[index].settings!.settings!.currency} ${groupBySearch[index].settings!.settings!.amount}",size: 10,weight: FontWeight.bold,),
+                                                child: sText("GHS 99",size: 10,weight: FontWeight.bold,),
                                               ),
                                             ],
                                           ),
                                         ),
                                       ],
                                     ),
+
                                   ],
                                 ),
                               ),
