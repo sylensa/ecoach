@@ -149,7 +149,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                             sText(widget.groupData!.name,
                                 color: kAdeoGray3),
                             sText(
-                                widget.groupData!.settings != null ?  "${widget.groupData!.settings!.settings!.currency} ${widget.groupData!.settings!.settings!.amount}" : "Free",
+                                widget.groupData!.settings != null ?  "${widget.groupData!.settings!.currency} ${widget.groupData!.settings!.amount}" : "Free",
                                 color: Colors.black,
                                 weight: FontWeight.bold),
                           ],
