@@ -1,19 +1,46 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_page/group_details.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class CategoryGroupsPage extends StatefulWidget {
   static const String routeName = '/user_group';
-  CategoryGroupsPage(this.user, {Key? key}) : super(key: key);
-  User user;
+  String categoryName;
+  CategoryGroupsPage({Key? key,this.categoryName = ''}) : super(key: key);
 
   @override
   State<CategoryGroupsPage> createState() => _CategoryGroupsPageState();
 }
 
 class _CategoryGroupsPageState extends State<CategoryGroupsPage> {
+  List<GroupListData> groupBySearch= [];
+  bool progressCodeSearch = false;
+  searchGroupByCategory() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    try {
+      if (isConnected) {
+        groupBySearch = await GroupManagementController().searchGroupList(category: properCase(widget.categoryName));
+      } else {
+        showNoConnectionToast(context);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setState(() {
+      progressCodeSearch = true;
+    });
+  }
+  @override
+  void initState(){
+    super.initState();
+    searchGroupByCategory();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +63,7 @@ class _CategoryGroupsPageState extends State<CategoryGroupsPage> {
                     return  MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: (){
-                        goTo(context, GroupDetails(widget.user));
+                        goTo(context, GroupDetails());
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
