@@ -10,7 +10,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class GroupActivity extends StatefulWidget {
   static const String routeName = '/user_group';
-  GroupActivity( {Key? key}) : super(key: key);
+  String groupId;
+  GroupActivity(this.groupId, {Key? key}) : super(key: key);
   @override
   State<GroupActivity> createState() => _GroupActivityState();
 }
