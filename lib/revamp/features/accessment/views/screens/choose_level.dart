@@ -31,14 +31,15 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
 
   List<Level> futureLevels = [];
   var futureCourses;
-  String  selectedLevel = '';
+  String selectedLevel = '';
 
-  getLevelByGroup(String levelGroup)async{
+  getLevelByGroup(String levelGroup) async {
     futureLevels = await LevelDB().levelByGroup(levelGroup);
-    for(int i =0; i< futureLevels.length; i++){
+    for (int i = 0; i < futureLevels.length; i++) {
       print("value[0].category:${futureLevels[i].id}");
     }
   }
+
   late BannerAd _bannerAd;
 
   bool _isBannerAdReady = false;
@@ -49,21 +50,18 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
     _bannerAd = BannerAd(
         size: AdSize.fullBanner,
         adUnitId: "ca-app-pub-3940256099942544/6300978111",
-        listener: BannerAdListener(
-        onAdLoaded: (_){
-          setState((){
+        listener: BannerAdListener(onAdLoaded: (_) {
+          setState(() {
             _isBannerAdReady = true;
             print("_isBannerAdReady:$_isBannerAdReady");
           });
-        },
-        onAdFailedToLoad: (ad, error){
+        }, onAdFailedToLoad: (ad, error) {
           print("Failed to load a banner Ad${error.message}");
           _isBannerAdReady = false;
           ad.dispose();
-        }
-    ),
-        request: AdRequest()
-    )..load();
+        }),
+        request: AdRequest())
+      ..load();
     super.initState();
   }
 
@@ -72,18 +70,19 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
     return Scaffold(
       backgroundColor: const Color(0xFF0367B4),
       appBar: AppBar(
-          backgroundColor: const Color(0xFF0367B4),
-          title: const Text(
-            "Assessment",
-            style: TextStyle(color: Colors.white),
-          ),
+        backgroundColor: const Color(0xFF0367B4),
+        title: const Text(
+          "Assessment",
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
-          IconButton(onPressed:(){
-            showLoaderDialog(context, message: "Refreshing Courses ...");
-            ApiCall<Data>(AppUrl.new_user_data, isList: false,
-                create: (Map<String, dynamic> json) {
+          IconButton(
+              onPressed: () {
+                showLoaderDialog(context, message: "Refreshing Courses ...");
+                ApiCall<Data>(AppUrl.new_user_data, isList: false,
+                    create: (Map<String, dynamic> json) {
                   return Data.fromJson(json);
-                }, onCallback: (data) async{
+                }, onCallback: (data) async {
                   if (data != null) {
                     await LevelDB().insertAll(data!.levels!);
                     await CourseDB().insertAll(data!.courses!);
@@ -93,7 +92,11 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                 }, onError: (e) {
                   Navigator.pop(context);
                 }).get(context);
-          }, icon: Icon(Icons.refresh,color: Colors.white,))
+              },
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.white,
+              ))
         ],
       ),
       body: Column(
@@ -125,10 +128,9 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                       title: "Lower Primary",
                       user: widget.user,
                       isSelected: selectedLevel == levels[0],
-                      onTap: () async{
+                      onTap: () async {
                         setState(() {
                           selectedLevel = levels[0];
-
                         });
                       },
                     ),
@@ -138,7 +140,7 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                       user: widget.user,
                       image: "assets/images/upper_primary.png",
                       title: "Upper Primary",
-                      onTap: () async{
+                      onTap: () async {
                         await getLevelByGroup("Primary");
                         setState(() {
                           selectedLevel = levels[1];
@@ -161,7 +163,7 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                           title: "Junior High",
                           user: widget.user,
                           isSelected: selectedLevel == levels[2],
-                          onTap: () async{
+                          onTap: () async {
                             await getLevelByGroup(levels[2]);
                             setState(() {
                               selectedLevel = levels[2];
@@ -173,7 +175,7 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                         user: widget.user,
                         image: "assets/images/sernior_high.png",
                         title: "Senior High",
-                        onTap: () async{
+                        onTap: () async {
                           await getLevelByGroup(levels[3]);
                           setState(() {
                             selectedLevel = levels[3];

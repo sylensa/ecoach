@@ -1,4 +1,3 @@
-
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/level_db.dart';
@@ -15,7 +14,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class FreeAccessmentWidget extends StatefulWidget {
   final User user;
-   FreeAccessmentWidget(this.user) ;
+  FreeAccessmentWidget(this.user);
 
   @override
   State<FreeAccessmentWidget> createState() => _FreeAccessmentWidgetState();
@@ -25,8 +24,8 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        Get.to(() =>  ChooseAccessmentLevel(widget.user));
+      onTap: () {
+        Get.to(() => ChooseAccessmentLevel(widget.user));
       },
       child: Container(
         padding: EdgeInsets.all(2.h),
@@ -78,7 +77,7 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
                       //         Navigator.pop(context);
                       //       }).get(context);
                       // });
-                      Get.to(() =>  ChooseAccessmentLevel(widget.user));
+                      Get.to(() => ChooseAccessmentLevel(widget.user));
                     },
                     child: SizedBox(
                       height: 41,
