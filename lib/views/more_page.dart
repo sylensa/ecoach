@@ -16,13 +16,16 @@ import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/commission/commission_page.dart';
 import 'package:ecoach/views/coupouns/index.dart';
 import 'package:ecoach/views/group_management/content_editor.dart';
+import 'package:ecoach/views/group_management/group_list.dart';
 import 'package:ecoach/views/group_management/not_content_editor.dart';
 import 'package:ecoach/views/points/index.dart';
 import 'package:ecoach/views/profile_page.dart';
 import 'package:ecoach/views/saved_questions/saved_bundle_questions.dart';
 import 'package:ecoach/views/subscription_page.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MorePage extends StatefulWidget {
@@ -36,6 +39,7 @@ class MorePage extends StatefulWidget {
 }
 
 class _MorePageState extends State<MorePage> {
+  bool viewedGroup = false;
   getAgentDetails() async {
     listAgentData.clear();
     try {
@@ -57,7 +61,28 @@ class _MorePageState extends State<MorePage> {
       toastMessage("Failed");
     }
   }
-
+  getGroupList() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (isConnected) {
+      listGroupListData.clear();
+      try {
+        listGroupListData = await groupManagementController.getGroupList();
+        if (listGroupListData.isNotEmpty) {
+          Navigator.pop(context);
+          goTo(context, GroupListPage());
+        } else {
+          Navigator.pop(context);
+          goTo(context, GroupListPage());
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        toastMessage("Failed");
+      }
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+  }
   getGroupPackList() async {
     listGroupPackageData.clear();
     try {
@@ -69,11 +94,11 @@ class _MorePageState extends State<MorePage> {
               GroupPackageData.fromJson(js["data"]["data"][i]);
           listGroupPackageData.add(groupPackageData);
         }
+      }
+      if(viewedGroup){
+        await getGroupList();
+      }else{
         Navigator.pop(context);
-        goTo(context, ContentEditor());
-      } else {
-        Navigator.pop(context);
-        toastMessage("${js["message"]}");
         goTo(context, ContentEditor());
       }
     } catch (e) {
@@ -84,6 +109,7 @@ class _MorePageState extends State<MorePage> {
 
   getActivePackage() async {
     listActivePackageData.clear();
+
     try {
       var js = await doGet('${AppUrl.groupActivePackage}');
       print("res groupActivePackage : $js");
@@ -94,18 +120,28 @@ class _MorePageState extends State<MorePage> {
         if (listGroupPackageData.isEmpty) {
           await getGroupPackList();
         } else {
-          Navigator.pop(context);
-          goTo(context, ContentEditor());
+          if(viewedGroup){
+            await getGroupList();
+          }else{
+            Navigator.pop(context);
+            goTo(context, ContentEditor());
+          }
         }
       } else {
         Navigator.pop(context);
         toastMessage("${js["message"]}");
+
         goTo(context, NotContentEditor());
       }
     } catch (e) {
       Navigator.pop(context);
       toastMessage("Failed");
     }
+  }
+
+  @override
+ void initState(){
+    super.initState();
   }
 
   @override
@@ -427,12 +463,13 @@ class _MorePageState extends State<MorePage> {
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: () async {
-                      if (listActivePackageData.isNotEmpty) {
-                        goTo(context, ContentEditor());
-                      } else {
+                        listActivePackageData.clear();
                         showLoaderDialog(context, message: "Loading...");
+                        viewedGroup =  await UserPreferences().getViewGroup();
+                          setState((){
+
+                          });
                         await getActivePackage();
-                      }
                     },
                     child: Container(
                       padding: EdgeInsets.only(

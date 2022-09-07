@@ -24,13 +24,19 @@ class AppUrl {
   static String payment_callback = baseURL + "paystack/callback";
 
   static String plans = baseURL + "plans";
+  static String grades = baseURL + "grades";
   static String agentPromoCodes = baseURL + "agent/promo/codes";
   static String groupTest = baseURL + "group/tests";
+  static String userGroupRating = baseURL + "user/group/rate";
   static String groupPackages = baseURL + "group/packages";
   static String getAnnouncement = baseURL + "group/announcements";
   static String groupActivePackage = baseURL + "group/packages/active";
   static String groupPackagesPaymentInitialization = baseURL + "group/package/paystack/initialize";
   static String groups = baseURL + "groups";
+  static String joinedGroups = baseURL + "user/joined/groups";
+  static String userGroups = baseURL + "user/groups";
+  static String userGroupNotification = baseURL + "user/group";
+  static String userSearchGroups = baseURL + "user/groups/search";
   static String suspendGroupMember = baseURL + "groups/member/suspend";
   static String unSuspendGroupMember = baseURL + "groups/member/unsuspend";
   static String groupRequestAccept = baseURL + "groups/request/accept";

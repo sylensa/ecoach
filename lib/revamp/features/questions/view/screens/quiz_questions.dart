@@ -247,7 +247,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
         ? testTakenSaved!.toJson().toString()
         : "null test");
 
-    if (testTaken!.score! == 95) {
+    if (testTaken!.score! >= 95) {
       goTo(
         context,
         ResultSummaryScreen(

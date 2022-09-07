@@ -33,7 +33,7 @@ import 'package:http/http.dart' as http;
 
 class PhoneNumberVerification extends StatefulWidget {
   final User user;
-   PhoneNumberVerification(this.user);
+  PhoneNumberVerification(this.user);
 
   @override
   State<PhoneNumberVerification> createState() =>
@@ -41,7 +41,6 @@ class PhoneNumberVerification extends StatefulWidget {
 }
 
 class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
-
   var onTapRecognizer;
 
   TextEditingController textEditingController = TextEditingController();
@@ -53,28 +52,28 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
 
-  loadTrtTest(User user)async{
+  loadTrtTest(User user) async {
     ApiCall<Data>(AppUrl.new_user_data, isList: false,
         create: (Map<String, dynamic> json) {
-          return Data.fromJson(json);
-        }, onCallback: (data) async{
-          if (data != null) {
-            await LevelDB().insertAll(data!.levels!);
-            await CourseDB().insertAll(data!.courses!);
-          }
-          // await getPlan(user);
-          if (mounted) {
-            Navigator.pop(context);
-          }
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainHomePage(widget.user)),
-                  (Route<dynamic> route) => false);
-
-        }, onError: (e) {
-          Navigator.pop(context);
-        }).get(context);
+      return Data.fromJson(json);
+    }, onCallback: (data) async {
+      if (data != null) {
+        await LevelDB().insertAll(data!.levels!);
+        await CourseDB().insertAll(data!.courses!);
+      }
+      // await getPlan(user);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainHomePage(widget.user)),
+          (Route<dynamic> route) => false);
+    }, onError: (e) {
+      Navigator.pop(context);
+    }).get(context);
   }
+
   @override
   void initState() {
     // PlanController().getPlan();
@@ -175,7 +174,6 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
         ));
       }
       await loadTrtTest(widget.user);
-
     } else {
       Navigator.pop(context);
       if (response.body != "") {
@@ -186,6 +184,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,7 +218,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
               const SizedBox(
                 height: 82,
               ),
-               Pinput(
+              Pinput(
                 controller: currentTextController,
                 length: 6,
               ),
@@ -228,7 +227,7 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:  [
+                children: [
                   Text(
                     "Code not received ?",
                     style: TextStyle(fontSize: 12),
@@ -237,10 +236,9 @@ class _PhoneNumberVerificationState extends State<PhoneNumberVerification> {
                     width: 5,
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       resendPin();
                     },
-
                     child: Text(
                       "Resend",
                       style: TextStyle(

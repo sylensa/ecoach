@@ -111,8 +111,6 @@ class _AdeoHtmlTexState extends State<AdeoHtmlTex> {
               if (link != null) {
                 String name = link.substring(link.lastIndexOf("/") + 1);
                 name = name.replaceAll("<br/>", "");
-                // print("Image: $name");
-                // print("link: $link");
 
                 return Image.file(
                   widget.user.getImageFile(name),

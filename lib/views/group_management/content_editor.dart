@@ -4,6 +4,7 @@ import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/commission/commission_agent_page.dart';
 import 'package:ecoach/views/group_management/group_list.dart';
@@ -49,11 +50,17 @@ class _ContentEditorState extends State<ContentEditor> {
           navigationDelegate: (navigation) async {
             //Listen for callback URL
             if (navigation.url.contains('https://standard.paystack.co/close')) {
+              print("hey:");
               Navigator.of(context).pop(); //close webview
             }
             if (navigation.url.contains(AppUrl.payment_callback)) {
-              Navigator.of(context).pop(); //close webview
-              setState(() {});
+              Navigator.of(context).pop();
+              showLoaderDialog(context);
+              await getActivePackage();
+              //close webview
+              setState(() {
+                print("hello adolf:");
+              });
             }
             return NavigationDecision.navigate;
           },
@@ -188,8 +195,7 @@ class _ContentEditorState extends State<ContentEditor> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (isConnected) {
       try {
-        listActivePackageData =
-            await groupManagementController.getActivePackage();
+        listActivePackageData = await groupManagementController.getActivePackage();
         if (listActivePackageData.isNotEmpty) {
           await getGroupList();
         } else {
@@ -237,11 +243,12 @@ class _ContentEditorState extends State<ContentEditor> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          listActivePackageData[0].name!.toLowerCase()== "free" ?
           Column(
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: sText("Free Editor",
+                child: sText("${listActivePackageData[0].name!} Editor",
                     color: Color(0xFF2A9CEA),
                     weight: FontWeight.bold,
                     align: TextAlign.center,
@@ -259,6 +266,29 @@ class _ContentEditorState extends State<ContentEditor> {
                     align: TextAlign.center),
               ),
             ],
+          ) :
+          Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: sText("${listActivePackageData[0].name} Editor",
+                    color: Color(0xFF2A9CEA),
+                    weight: FontWeight.bold,
+                    align: TextAlign.center,
+                    size: 25),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: sText(
+                    "${listActivePackageData[0].description}",
+                    color: kAdeoGray3,
+                    weight: FontWeight.w400,
+                    align: TextAlign.center),
+              ),
+            ],
           ),
           Column(
             children: [
@@ -269,9 +299,10 @@ class _ContentEditorState extends State<ContentEditor> {
               ),
               SizedBox(height: 10),
               GestureDetector(
-                onTap: () {
+                onTap: () async{
                   showLoaderDialog(context);
-                  getActivePackage();
+                  await UserPreferences().setViewGroup();
+                  await getActivePackage();
                   // getGroupList();
                 },
                 child: Container(
@@ -279,7 +310,7 @@ class _ContentEditorState extends State<ContentEditor> {
                       color: Color(0xFF00C9B9),
                       borderRadius: BorderRadius.circular(30)),
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  child: sText("Create Group",
+                  child: sText("View Group",
                       color: Colors.white,
                       weight: FontWeight.w500,
                       align: TextAlign.center,

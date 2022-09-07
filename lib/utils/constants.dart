@@ -3,6 +3,7 @@ import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/agent_transaction.dart';
 import 'package:ecoach/models/get_agent_code.dart';
+import 'package:ecoach/models/group_chat_model.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
@@ -42,4 +43,7 @@ String groupTestCourse = '';
 String groupTestType = '';
 String groupTestId = '';
 List<GroupTestData> listGroupTestData = [];
+List<Messages> groupChatBetweenList = [];
+List<Messages> chatBetweenListDate = [];
+List<Messages> groupChatBetweenListDate = [];
 

@@ -71,22 +71,17 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
     }
   }
   getAllPlans() async{
-    futurePlanItem =   await PlanDB().getAllPlans();
+    // futurePlanItem =   await PlanDB().getAllPlans();
     if(futurePlanItem.isEmpty){
+      await PlanDB().deleteAllPlans();
+      await PlanDB().deleteAllPlanItem();
      await PlanController().getPlanOnly();
     }
     setState((){
+
     });
   }
 
-  refreshBundle()async{
-    setState((){
-      futurePlanItem.clear();
-    });
-    await PlanDB().deleteAllPlans();
-    await PlanDB().deleteAllPlanItem();
-    await   getAllPlans();
-  }
 
   promoCodeModalBottomSheet(context,){
     TextEditingController productKeyController = TextEditingController();
@@ -395,9 +390,7 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
                    ),
                  ],
                ),
-               IconButton(onPressed: ()async{
-                await refreshBundle();
-               }, icon: Icon(Icons.refresh,color: Colors.blue,))
+
              ],
            ),
             const SizedBox(height: 20),

@@ -189,7 +189,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
         if (controller.reviewMode) {
           return showExitDialog();
         }
-        controller.pauseTimer();
         return showPauseDialog();
       },
       child: SafeArea(
@@ -197,7 +196,6 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
           backgroundColor: Color(0xFF2D3E50),
           body: Column(
             children: [
-              // TODO : COPY HEADER  THAT DISPLAY  QUESTION AND TIME
               Container(
                 color: widget.themeColor,
                 height: 53,
@@ -365,7 +363,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
         if (!controller.enabled) {
           return;
         }
-        controller.pauseTimer();
+        // controller.pauseTimer();
 
         // showPauseDialog();
       },
@@ -403,7 +401,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                           controller: controller.timerController,
                           begin: Duration(
                               seconds: controller.marathon!.totalTime ?? 0),
-                          end: Duration(minutes: 2),
+                          end: Duration(hours: 12),
                         ),
                       ),
                     ),
@@ -685,8 +683,8 @@ class SessionSavedPrompt extends StatelessWidget {
                 SizedBox(height: 64),
                 AdeoOutlinedButton(
                   label: 'Exit',
-                  onPressed: () {
-                    controller.scoreCurrentQuestion();
+                  onPressed: () async {
+                    await controller.scoreCurrentQuestion();
                     Navigator.popUntil(context,
                         ModalRoute.withName(CourseDetailsPage.routeName));
                   },

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:country_picker/country_picker.dart';
@@ -6,23 +5,13 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/account/view/screen/phone_number_verification.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/shared_preference.dart';
-import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/auth/forgot_password.dart';
-import 'package:ecoach/views/auth/login_view.dart';
-import 'package:ecoach/views/auth/otp_view.dart';
-import 'package:ecoach/widgets/widgets.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -30,7 +19,7 @@ class GetPhoneNumber extends StatefulWidget {
   String fullName = "";
   String email = "";
   String password = "";
-  GetPhoneNumber({this.email = "",this.fullName = '',this.password = ''}) ;
+  GetPhoneNumber({this.email = "", this.fullName = '', this.password = ''});
 
   @override
   State<GetPhoneNumber> createState() => _GetPhoneNumberState();
@@ -60,7 +49,8 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
         'name': widget.fullName,
         'gender': "----",
         'email': widget.email,
-        'phone': "${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}",
+        'phone':
+            "${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1, 10)}",
         "password": widget.password,
         "password_confirmed": widget.password
       }),
@@ -111,11 +101,13 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
       return;
     }
   }
+
   @override
- void initState(){
+  void initState() {
     print("${widget.password},${widget.email},${widget.fullName}");
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,10 +191,10 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
                           const SizedBox(
                             width: 10,
                           ),
-                           Expanded(
+                          Expanded(
                             child: TextField(
                               keyboardType: TextInputType.number,
-                              controller: phoneNumbersController ,
+                              controller: phoneNumbersController,
                               decoration: InputDecoration(
                                   focusedBorder: InputBorder.none,
                                   hintText: "Phone number",
@@ -227,19 +219,16 @@ class _GetPhoneNumberState extends State<GetPhoneNumber> {
               ),
               InkWell(
                 onTap: () {
-                  if(phoneNumbersController.text.length > 9){
-                    if(phoneNumbersController.text.substring(0,1) == "0"){
+                  if (phoneNumbersController.text.length > 9) {
+                    if (phoneNumbersController.text.substring(0, 1) == "0") {
                       // print("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
                       doRegister(context);
-                    }else{
+                    } else {
                       toastMessage("You number should start with 0");
                     }
-                  }else{
+                  } else {
                     toastMessage("Expecting 10 numbers");
                   }
-
-
-
                 },
                 child: Container(
                   height: 66,

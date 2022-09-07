@@ -52,6 +52,7 @@ class GroupViewData {
     this.admins,
     this.members,
     this.pendingInvites,
+    this.suspendedUser,
   });
 
   int? id;
@@ -68,6 +69,7 @@ class GroupViewData {
   List<Admin>? admins;
   List<Member>? members;
   List<PendingInvite>? pendingInvites;
+  List<SuspendedUser>? suspendedUser;
 
   factory GroupViewData.fromJson(Map<String, dynamic> json) => GroupViewData(
     id: json["id"] == null ? null : json["id"],
@@ -84,6 +86,7 @@ class GroupViewData {
     admins: json["admins"] == null ? [] : List<Admin>.from(json["admins"].map((x) => Admin.fromJson(x))),
     members: json["members"] == null ? [] : List<Member>.from(json["members"].map((x) => Member.fromJson(x))),
     pendingInvites: json["pending_invites"] == null ? [] : List<PendingInvite>.from(json["pending_invites"].map((x) => PendingInvite.fromJson(x))),
+    suspendedUser: json["suspended_user"] == null ? [] : List<SuspendedUser>.from(json["suspended_user"].map((x) => SuspendedUser.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +104,7 @@ class GroupViewData {
     "admins": admins == null ? null : List<dynamic>.from(admins!.map((x) => x.toJson())),
     "members": members == null ? null : List<dynamic>.from(members!.map((x) => x.toJson())),
     "pending_invites": pendingInvites == null ? null : List<dynamic>.from(pendingInvites!.map((x) => x.toJson())),
+    "suspended_user": suspendedUser == null ? null : List<dynamic>.from(suspendedUser!.map((x) => x.toJson())),
   };
 }
 
@@ -213,21 +217,56 @@ class PendingInvite {
     this.id,
     this.name,
     this.email,
+    this.createdAt,
   });
 
   int? id;
   dynamic name;
   String? email;
+  DateTime? createdAt;
 
   factory PendingInvite.fromJson(Map<String, dynamic> json) => PendingInvite(
     id: json["id"] == null ? null : json["id"],
     name: json["name"],
     email: json["email"] == null ? null : json["email"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+
   );
 
   Map<String, dynamic> toJson() => {
     "id": id == null ? null : id,
     "name": name,
     "email": email == null ? null : email,
+    "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
+
+  };
+}
+class SuspendedUser {
+  SuspendedUser({
+    this.id,
+    this.name,
+    this.email,
+    this.createdAt,
+  });
+
+  int? id;
+  dynamic name;
+  String? email;
+  DateTime? createdAt;
+
+  factory SuspendedUser.fromJson(Map<String, dynamic> json) => SuspendedUser(
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"],
+    email: json["email"] == null ? null : json["email"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "name": name,
+    "email": email == null ? null : email,
+    "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
+
   };
 }

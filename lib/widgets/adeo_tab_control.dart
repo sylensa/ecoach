@@ -1,3 +1,4 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ class AdeoTabControl extends StatefulWidget {
     this.tabPages,
     this.onPageChange,
     this.variant = 'default',
+    this.fromGroup = false,
     Key? key,
   }) : super(key: key);
 
@@ -15,6 +17,7 @@ class AdeoTabControl extends StatefulWidget {
   final List<Widget>? tabPages;
   final String variant;
   final Function? onPageChange;
+  final bool fromGroup ;
 
   @override
   _AdeoTabControlState createState() => _AdeoTabControlState();
@@ -54,20 +57,26 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
           if (widget.variant.toUpperCase() == 'SQUARE')
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: widget.tabs
-                    .map(
-                      (tab) => AdeoSquareTabButton(
-                        onTap: changePage,
-                        text: tab,
-                        pageNumber: widget.tabs.indexOf(tab),
-                        count: widget.tabs.length,
-                        isSelected:
-                            currentPageNumber == widget.tabs.indexOf(tab),
-                      ),
-                    )
-                    .toList(),
+              child:  Container(
+                decoration: BoxDecoration(
+                    // color: Colors.grey[100],
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:  Radius.circular(20))
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: widget.tabs
+                      .map(
+                        (tab) => AdeoSquareTabButton(
+                          onTap: changePage,
+                          text: tab,
+                          pageNumber: widget.tabs.indexOf(tab),
+                          count: widget.tabs.length,
+                          isSelected:
+                              currentPageNumber == widget.tabs.indexOf(tab),
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             )
           else

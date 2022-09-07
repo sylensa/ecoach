@@ -430,6 +430,9 @@ InputDecoration textDecor(
     suffix: suffix,
     suffixIcon: suffixIcon,
     hintText: hint,
+    alignLabelWithHint: true,
+    isDense: true,
+
     floatingLabelBehavior: (label.isNotEmpty && hint.isNotEmpty)
         ? FloatingLabelBehavior.never
         : FloatingLabelBehavior.auto,
@@ -948,6 +951,28 @@ generateRandom() {
   var code = rng.nextInt(900000) + 100000;
 
   return code;
+}
+
+String utf8convert(String text) {
+  List<int> bytes = text.toString().codeUnits;
+  return utf8.decode(bytes);
+}
+
+getOutDays(DateTime timestamp){
+  double days = DateTime.now().difference(timestamp).inHours/24;
+
+  if(days.round() == 0){
+    return "Today";
+  }else if(days.round() == 1){
+    return "Yesterday";
+  }else if(days.round() == 2){
+    return "2 days ago";
+  }else if(days.round() == 3){
+    return "3 days ago";
+  }else{
+    return "${DateFormat.yMMMEd().format(timestamp)}";
+  }
+
 }
 
 class ListNames {

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:country_picker/country_picker.dart';
@@ -29,7 +28,6 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class ForgotPassword extends StatefulWidget {
-
   @override
   State<ForgotPassword> createState() => _ForgotPasswordState();
 }
@@ -42,40 +40,60 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   String phone = "";
 
-
   resetPassword(BuildContext context) {
-
-
     showLoaderDialog(context, message: "Sending code...");
 
-    ApiCall(AppUrl.forgotPassword, params: {'phone': "${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}"},
-        create: (Map<String, dynamic> dataItem) {
-          return null;
-        }, onCallback: (data) {
-          Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ForgotPasswordOTP("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
-          }));
-        }, onError: (err) {
-          print(err);
-          Navigator.pop(context);
-        }, onMessage: (message) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(message)));
-        }).post(context).then((value) {});
+    ApiCall(AppUrl.forgotPassword, params: {
+      'phone':
+          "${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1, 10)}"
+    }, create: (Map<String, dynamic> dataItem) {
+      return null;
+    }, onCallback: (data) {
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return ForgotPasswordOTP(
+            "${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1, 10)}");
+      }));
+    }, onError: (err) {
+      print(err);
+      Navigator.pop(context);
+    }, onMessage: (message) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }).post(context).then((value) {});
   }
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kHomeBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: kHomeBackgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: Platform.isIOS
+              ? Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                )
+              : Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding:
-          const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 18),
+              const EdgeInsets.only(top: 5, left: 20, right: 20, bottom: 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -118,51 +136,51 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     const Divider(),
                     Expanded(
                         child: Center(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 17.0,
-                                  top: 19,
-                                  bottom: 20,
-                                ),
-                                child: Text(
-                                  "+ ${country?.phoneCode ?? 233}",
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                  ),
-                                ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 17.0,
+                              top: 19,
+                              bottom: 20,
+                            ),
+                            child: Text(
+                              "+ ${country?.phoneCode ?? 233}",
+                              style: const TextStyle(
+                                fontSize: 15,
                               ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              const SizedBox(
-                                height: 30,
-                                width: 1,
-                                child: VerticalDivider(
-                                  color: Color(0xFF707070),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  keyboardType: TextInputType.number,
-                                  controller: phoneNumbersController ,
-                                  decoration: InputDecoration(
-                                      focusedBorder: InputBorder.none,
-                                      hintText: "Phone number",
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                        fontSize: 15,
-                                      )),
-                                ),
-                              )
-                            ],
+                            ),
                           ),
-                        ))
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          const SizedBox(
+                            height: 30,
+                            width: 1,
+                            child: VerticalDivider(
+                              color: Color(0xFF707070),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              controller: phoneNumbersController,
+                              decoration: InputDecoration(
+                                  focusedBorder: InputBorder.none,
+                                  hintText: "Phone number",
+                                  border: InputBorder.none,
+                                  hintStyle: TextStyle(
+                                    fontSize: 15,
+                                  )),
+                            ),
+                          )
+                        ],
+                      ),
+                    ))
                   ],
                 ),
                 decoration: BoxDecoration(
@@ -175,18 +193,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               InkWell(
                 onTap: () {
-                  if(phoneNumbersController.text.length > 9){
-                    if(phoneNumbersController.text.substring(0,1) == "0"){
+                  if (phoneNumbersController.text.length > 9) {
+                    if (phoneNumbersController.text.substring(0, 1) == "0") {
                       // print("${country != null ? country!.phoneCode : "233"}${phoneNumbersController.text.substring(1,10)}");
                       resetPassword(context);
-                    }else{
+                    } else {
                       toastMessage("You number should start with 0");
                     }
-                  }else{
+                  } else {
                     toastMessage("Expecting 10 numbers");
                   }
-
-
                 },
                 child: Container(
                   height: 66,

@@ -18,6 +18,18 @@ class UserPreferences {
     return true;
   }
 
+  Future setViewGroup() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('viewGroup', true);
+    return true;
+  }
+
+  Future<bool> getViewGroup() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool value = prefs.getBool("viewGroup") ?? false;
+    return value;
+  }
+
   Future<bool> setUser(User? user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt("id", user!.id!);
@@ -101,6 +113,7 @@ class UserPreferences {
     int? value = prefs.getInt("id");
     return value;
   }
+
 
   Future<String?> getUserValue(args) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

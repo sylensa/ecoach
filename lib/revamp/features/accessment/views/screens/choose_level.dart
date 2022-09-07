@@ -173,7 +173,7 @@ class _ChooseAccessmentLevelState extends State<ChooseAccessmentLevel> {
                       SelectLevelContainer(
                         isSelected: selectedLevel == levels[3],
                         user: widget.user,
-                        image: "assets/images/sernior_high.png",
+                        image: "assets/images/senior_high.png",
                         title: "Senior High",
                         onTap: () async {
                           await getLevelByGroup(levels[3]);

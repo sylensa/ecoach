@@ -22,6 +22,7 @@ class _LogoutState extends State<Logout> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) async{
       futurePlanItem.clear();
+      listActivePackageData.clear();
       await PlanDB().deleteAllPlans();
       await SubscriptionDB().deleteAll();
       await SubscriptionItemDB().deleteAll();
