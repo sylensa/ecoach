@@ -7,8 +7,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class NoGroupActivity extends StatefulWidget {
   static const String routeName = '/user_group';
-  NoGroupActivity(this.user, {Key? key}) : super(key: key);
-  User user;
+  NoGroupActivity( {Key? key}) : super(key: key);
   @override
   State<NoGroupActivity> createState() => _NoGroupActivityState();
 }
@@ -87,7 +86,7 @@ class _NoGroupActivityState extends State<NoGroupActivity> {
                     ),
                     GestureDetector(
                       onTap: (){
-                        goTo(context, GroupActivity());
+                        Navigator.pop(context);
                       },
                       child: Container(
                         width: appWidth(context),
