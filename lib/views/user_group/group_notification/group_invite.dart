@@ -9,8 +9,9 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class GroupInvite extends StatefulWidget {
   static const String routeName = '/user_group';
-  GroupInvite(this.user, {Key? key}) : super(key: key);
+  GroupInvite(this.user,this.GroupId, {Key? key}) : super(key: key);
   User user;
+  String GroupId;
   @override
   State<GroupInvite> createState() => _GroupInviteState();
 }
