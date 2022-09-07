@@ -92,6 +92,23 @@ class GroupManagementController{
       return groupListDetails;
     }
   }
+  Future<GroupListData?> getGroupDetails()async {
+    GroupListData? groupListDetails;
+    try{
+      var js = await doGet('${AppUrl.groups}');
+      print("res groups : $js");
+      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
+        groupListDetails = GroupListData.fromJson(js["data"]);
+        return groupListDetails;
+      }else{
+        toastMessage("${js["message"]}");
+        return groupListDetails;
+      }
+    }catch(e){
+      toastMessage("Failed");
+      return groupListDetails;
+    }
+  }
 
   removeUser(String userId) async {
     var res = await doPost(AppUrl.removeMember, {
@@ -635,11 +652,14 @@ class GroupManagementController{
     // }
   }
 
-  Future<List<GroupListData>> searchGroupList({String search = ''})async {
+  Future<List<GroupListData>> searchGroupList({String search = '',String type = '',String name = '',String code = '',String category = ''})async {
     List<GroupListData> groupListDetails = [];
     try{
       Map<String, dynamic> params = {
-        "code":search
+        "code":code,
+        "type":type,
+        "name":search,
+        "category":category,
       };
       String queryUrl = AppUrl.userSearchGroups + '?' + Uri(queryParameters: params).query;
       var js = await doGet('${queryUrl}');
