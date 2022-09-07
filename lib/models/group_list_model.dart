@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/models/group_grades_model.dart';
+import 'package:ecoach/models/group_test_model.dart';
 
 GroupListModel groupListModelFromJson(String? str) => GroupListModel.fromJson(json.decode(str!));
 
@@ -120,6 +121,9 @@ class GroupListData {
     this.settings,
     this.rating,
     this.reviews,
+    this.owner,
+    this.currentTest,
+
   });
 
   int? id;
@@ -137,7 +141,10 @@ class GroupListData {
   int? membersCount;
   dynamic rating;
   dynamic reviews;
-  DataSettings? settings;
+  SettingsSettings? settings;
+  Owner? owner;
+  CurrentTest? currentTest;
+
 
   factory GroupListData.fromJson(Map<String, dynamic> json) => GroupListData(
     id: json["id"] == null ? null : json["id"],
@@ -155,7 +162,9 @@ class GroupListData {
     membersCount: json["members_count"] == null ? 0 : json["members_count"],
     rating: json["rating"] == null ? 0 : json["rating"],
     reviews: json["reviews"] == null ? 0 : json["reviews"],
-    settings: json["settings"] == null ? null : DataSettings.fromJson(json["settings"]),
+    settings: json["settings"] == null ? null : SettingsSettings.fromJson(json["settings"]),
+    owner: json["owner"] == null ? null : Owner.fromJson(json["owner"]),
+    currentTest: json["current_test"] == null ? null : CurrentTest.fromJson(json["current_test"]),
 
   );
 
@@ -174,7 +183,45 @@ class GroupListData {
     "discoverability": discoverability == null ? null : discoverability,
     "members_count": membersCount == null ? null : membersCount,
     "settings": settings == null ? null : settings!.toJson(),
+    "owner": owner == null ? null : owner!.toJson(),
+    "current_test": currentTest == null ? null : currentTest!.toJson(),
 
+  };
+}
+
+class Owner {
+  Owner({
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
+    this.isAgent,
+    this.isGroupCreator,
+  });
+
+  int? id;
+  String? name;
+  String? email;
+  String? phone;
+  bool? isAgent;
+  bool? isGroupCreator;
+
+  factory Owner.fromJson(Map<String, dynamic> json) => Owner(
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"] == null ? null : json["name"],
+    email: json["email"] == null ? null : json["email"],
+    phone: json["phone"] == null ? null : json["phone"],
+    isAgent: json["is_agent"] == null ? null : json["is_agent"],
+    isGroupCreator: json["is_group_creator"] == null ? null : json["is_group_creator"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "name": name == null ? null : name,
+    "email": email == null ? null : email,
+    "phone": phone == null ? null : phone,
+    "is_agent": isAgent == null ? null : isAgent,
+    "is_group_creator": isGroupCreator == null ? null : isGroupCreator,
   };
 }
 
@@ -202,21 +249,6 @@ class Link {
   };
 }
 
-class DataSettings {
-  DataSettings({
-    this.settings,
-  });
-
-  SettingsSettings? settings;
-
-  factory DataSettings.fromJson(Map<String, dynamic> json) => DataSettings(
-    settings: json["settings"] == null ? null : SettingsSettings.fromJson(json["settings"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "settings": settings == null ? null : settings!.toJson(),
-  };
-}
 
 class SettingsSettings {
   SettingsSettings({
@@ -230,7 +262,7 @@ class SettingsSettings {
   });
 
   String?access;
-  String?amount;
+  dynamic amount;
   Grading? grading;
   String? currency;
   String? countryCode;
@@ -309,7 +341,57 @@ class Features {
     "improvement_rate": improvementRate == null ? null : improvementRate,
   };
 }
+class CurrentTest {
+  CurrentTest({
+    this.id,
+    this.name,
+    this.instructions,
+    this.configurations,
+    this.status,
+    this.userId,
+    this.groupId,
+    this.deletedAt,
+    this.createdAt,
+    this.updatedAt,
+  });
 
+  int? id;
+  String? name;
+  String? instructions;
+  ConfigurationsClass? configurations;
+  String? status;
+  int? userId;
+  int? groupId;
+  dynamic deletedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+
+  factory CurrentTest.fromJson(Map<String, dynamic> json) => CurrentTest(
+    id: json["id"] == null ? null : json["id"],
+    name: json["name"] == null ? null : json["name"],
+    instructions: json["instructions"] == null ? null : json["instructions"],
+    configurations: json["configurations"] == null ? null : ConfigurationsClass.fromJson(json["configurations"]),
+    status: json["status"] == null ? null : json["status"],
+    userId: json["user_id"] == null ? null : json["user_id"],
+    groupId: json["group_id"] == null ? null : json["group_id"],
+    deletedAt: json["deleted_at"],
+    createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "name": name == null ? null : name,
+    "instructions": instructions == null ? null : instructions,
+    "configurations": configurations == null ? null : configurations!.toJson(),
+    "status": status == null ? null : status,
+    "user_id": userId == null ? null : userId,
+    "group_id": groupId == null ? null : groupId,
+    "deleted_at": deletedAt,
+    "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
+    "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
+  };
+}
 class Grading {
   Grading({
     this.id,
