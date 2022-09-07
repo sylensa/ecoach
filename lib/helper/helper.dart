@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecoach/helper/hide.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -979,4 +980,103 @@ class ListNames {
   String name;
   String id;
   ListNames({this.name = '', this.id = ''});
+}
+
+groupListWidget(GroupListData groupListData){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+    margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+    decoration: BoxDecoration(
+        color: Color(0XFFF5F5F5),
+        borderRadius: BorderRadius.circular(10)
+    ),
+    child: Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          child: Image.asset("assets/images/fCvBipe.png"),
+        ),
+        SizedBox(width: 5,),
+        Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: sText("${properCase(groupListData.name.toString())}",size: 14,weight: FontWeight.bold),
+              ),
+              SizedBox(height: 5,),
+              Container(
+                child: sText("by ${groupListData.owner != null ? properCase(groupListData.owner!.name.toString()) : ""}",size: 10,weight: FontWeight.normal,color: Colors.grey),
+              ),
+              SizedBox(height: 5,),
+              Row(
+                children: [
+                  Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(Icons.groups,color: Colors.grey,size: 14,),
+                        ),
+                        SizedBox(width: 5,),
+                        Container(
+                          child: sText("${groupListData.membersCount}",size: 10,weight: FontWeight.normal,),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Icon(Icons.star,color: Colors.orange,size: 14,),
+                        ),
+                        SizedBox(width: 0,),
+                        Container(
+                          child: sText("${groupListData.rating}",size: 10,weight: FontWeight.w400,),
+                        ),
+                        SizedBox(width: 5,),
+                        Container(
+                          child: sText("(${groupListData.reviews} reviews)",size: 10,weight: FontWeight.normal,),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 5,),
+                  Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: Image.asset("assets/images/label.png"),
+                        ),
+                        SizedBox(width: 5,),
+                        if(groupListData.settings != null)
+                          Container(
+                            child: sText("${groupListData.settings!.currency} ${groupListData.settings!.amount}",size: 10,weight: FontWeight.bold,),
+                          )
+                        else
+                          Container(
+                            child: sText("Free",size: 10,weight: FontWeight.bold,),
+                          )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+            ],
+          ),
+        ),
+        Expanded(child: Container()),
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+          child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
+          decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: BorderRadius.circular(10)
+          ),
+        )
+      ],
+    ),
+  );
 }
