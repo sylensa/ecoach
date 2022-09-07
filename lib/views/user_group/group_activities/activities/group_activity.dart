@@ -1,21 +1,57 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_notification_model.dart';
+import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/test_instruction.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class Activity extends StatefulWidget {
-  const Activity({Key? key}) : super(key: key);
+  String groupId;
+   Activity({Key? key,this.groupId = ''}) : super(key: key);
 
   @override
   State<Activity> createState() => _ActivityState();
 }
 
 class _ActivityState extends State<Activity> {
+  List<GroupNotificationData> allGroupNotificationData = [];
+  bool progressCodeAll = true;
+  getAllActivity() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      allGroupNotificationData = await GroupManagementController(groupId: widget.groupId).getGroupNotifications();
+      if(allGroupNotificationData.isEmpty){
+        goTo(context, NoGroupActivity(),replace: true);
+      }
+    } else {
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+      progressCodeAll = false;
+    });
+  }
+
+  @override
+ void initState(){
+    super.initState();
+    getAllActivity();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
       // color: Colors.grey[100],
       child: Column(
         children: [
+          progressCodeAll ?
+              Expanded(child: Center(child: progress(),)) :
+          allGroupNotificationData.isNotEmpty ?
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.zero,
@@ -193,7 +229,7 @@ class _ActivityState extends State<Activity> {
                   ],
                 );
             }),
-          )
+          ) : Expanded(child: Center(child: sText("No activity"),))
         ],
       ),
     );
