@@ -241,35 +241,35 @@ class _SettingsState extends State<Settings> {
   initState() {
     super.initState();
     if(widget.groupListData!.settings != null){
-      selectedStatus =  widget.groupListData!.settings!.settings!.access;
-      _accessController.text = widget.groupListData!.settings!.settings!.amount.toString();
-      passMarkController.text = widget.groupListData!.settings!.settings!.grading!.passMark.toString();
-      _countryFlag = widget.groupListData!.settings!.settings!.currency;
-      subscriptionMonthlySwitch = widget.groupListData!.settings!.settings!.subscriptions!.monthly!;
-      subscriptionYearlySwitch = widget.groupListData!.settings!.settings!.subscriptions!.yearly!;
-      speedSwitch = widget.groupListData!.settings!.settings!.features!.speed!;
-      masterySwitch = widget.groupListData!.settings!.settings!.features!.mastery!;
-      rateSwitch = widget.groupListData!.settings!.settings!.features!.improvementRate!;
-      outlookSwitch = widget.groupListData!.settings!.settings!.features!.overallOutlook!;
-      totalScoreSwitch = widget.groupListData!.settings!.settings!.features!.totalScore!;
-      averageScoreSwitch = widget.groupListData!.settings!.settings!.features!.averageScore!;
-      passMarkSwitch = widget.groupListData!.settings!.settings!.features!.passMark!;
-      resultSwitch = widget.groupListData!.settings!.settings!.features!.instantResult!;
-      summariesSwitch = widget.groupListData!.settings!.settings!.features!.summaries!;
-      reviewSwitch = widget.groupListData!.settings!.settings!.features!.review!;
-      countryCode = widget.groupListData!.settings!.settings!.countryCode!;
-      gradingSystem.add(widget.groupListData!.settings!.settings!.grading!.name);
-      if(widget.groupListData!.settings!.settings!.grading!.name!.toLowerCase() == "custom"){
+      selectedStatus =  widget.groupListData!.settings!.access;
+      _accessController.text = widget.groupListData!.settings!.amount.toString();
+      passMarkController.text = widget.groupListData!.settings!.grading!.passMark.toString();
+      _countryFlag = widget.groupListData!.settings!.currency;
+      subscriptionMonthlySwitch = widget.groupListData!.settings!.subscriptions!.monthly!;
+      subscriptionYearlySwitch = widget.groupListData!.settings!.subscriptions!.yearly!;
+      speedSwitch = widget.groupListData!.settings!.features!.speed!;
+      masterySwitch = widget.groupListData!.settings!.features!.mastery!;
+      rateSwitch = widget.groupListData!.settings!.features!.improvementRate!;
+      outlookSwitch = widget.groupListData!.settings!.features!.overallOutlook!;
+      totalScoreSwitch = widget.groupListData!.settings!.features!.totalScore!;
+      averageScoreSwitch = widget.groupListData!.settings!.features!.averageScore!;
+      passMarkSwitch = widget.groupListData!.settings!.features!.passMark!;
+      resultSwitch = widget.groupListData!.settings!.features!.instantResult!;
+      summariesSwitch = widget.groupListData!.settings!.features!.summaries!;
+      reviewSwitch = widget.groupListData!.settings!.features!.review!;
+      countryCode = widget.groupListData!.settings!.countryCode!;
+      gradingSystem.add(widget.groupListData!.settings!.grading!.name);
+      if(widget.groupListData!.settings!.grading!.name!.toLowerCase() == "custom"){
         listBeceGrading.clear();
-        for(int i =0; i< widget.groupListData!.settings!.settings!.grading!.grades!.length; i++){
+        for(int i =0; i< widget.groupListData!.settings!.grading!.grades!.length; i++){
           ListNames grade = ListNames(
-            name: widget.groupListData!.settings!.settings!.grading!.grades![i].range.toString(),
+            name: widget.groupListData!.settings!.grading!.grades![i].range.toString(),
           );
           listBeceGrading.add(grade);
           textEditingController.add(TextEditingController());
           textEditingController[i].text = grade.name;
         }
-        passMark = widget.groupListData!.settings!.settings!.grading!.passMark.toString();
+        passMark = widget.groupListData!.settings!.grading!.passMark.toString();
       }
     }else{
       selectedStatus =  status[0];
