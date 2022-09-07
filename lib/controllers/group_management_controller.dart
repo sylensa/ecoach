@@ -565,9 +565,7 @@ class GroupManagementController{
   Future<GroupListData?>  updateGroup(Map groupSettings) async {
     GroupListData? groupListData;
     try{
-      var res = await doPut("${AppUrl.groups}/$groupId", {
-        "settings": groupSettings,
-      });
+      var res = await doPut("${AppUrl.groups}/$groupId", groupSettings);
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
         groupListData = GroupListData.fromJson(res["data"]);
         toastMessage("${res["message"]}");
@@ -634,12 +632,10 @@ class GroupManagementController{
       String queryUrl = AppUrl.userGroups + '?' + Uri(queryParameters: params).query;
       var js = await doGet(queryUrl);
       print("res groups category : ${js["data"]}");
-      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
-        for(int i =0; i < js["data"].length; i++){
-          if(js["data"][i]["settings"] != null){
-            GroupListData groupListData = GroupListData.fromJson(js["data"][i]);
+      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
+        for(int i =0; i < js["data"]["data"].length; i++){
+            GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
             groupListDetails.add(groupListData);
-          }
         }
         return groupListDetails;
       }else{
@@ -652,7 +648,7 @@ class GroupManagementController{
     // }
   }
 
-  Future<List<GroupListData>> searchGroupList({String search = '',String type = '',String name = '',String code = '',String category = ''})async {
+  Future<List<GroupListData>> searchGroupList({String search = '',String type = '',String code = '',String category = ''})async {
     List<GroupListData> groupListDetails = [];
     try{
       Map<String, dynamic> params = {
@@ -662,7 +658,7 @@ class GroupManagementController{
         "category":category,
       };
       String queryUrl = AppUrl.userSearchGroups + '?' + Uri(queryParameters: params).query;
-      var js = await doGet('${queryUrl}');
+      var js = await doGet('${AppUrl.userSearchGroups}?code=$code&type=$type&name=$search&category=$category');
       print("res groups : $js");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
         for(int i =0; i < js["data"]["data"].length; i++){
