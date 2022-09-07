@@ -52,7 +52,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
       progressCodeGroup = false;
     });
   }
-  getGroupsByCategories() async {
+  getGroupsByCategories(String sortBy,String orderBy) async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
       if (isConnected) {
@@ -88,7 +88,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
   void initState(){
     super.initState();
     getMyGroups();
-    getGroupsByCategories();
+    getGroupsByCategories(sortBy,orderBy);
   }
   @override
   Widget build(BuildContext context) {
@@ -200,7 +200,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              sText("My Groups",size: 16,weight: FontWeight.bold),
                              GestureDetector(
                                onTap: (){
-                                 goTo(context, MyGroupsPage(widget.user));
+                                 goTo(context, MyGroupsPage(myGroupList: myGroupList,));
                                },
                                  child: sText("See all",size: 16,color: Colors.grey[400]!),
                              ),
@@ -218,9 +218,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              itemBuilder: (BuildContext context, int index){
                                return GestureDetector(
                                  onTap: (){
-                                   goTo(context, GroupDetails(groupData: myGroupList[index],));
-
-                                   // goTo(context, GroupActivity(myGroupList[index].id.toString()));
+                                   goTo(context, GroupActivity(myGroupList[index].id.toString()));
                                  },
                                  child: Row(
                                    children: [
@@ -246,7 +244,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  Icon(Icons.arrow_back_ios,color: Colors.white,),
                                                  Container(
                                                    width: 150,
-                                                   child: sText("Physics Assignment due",weight: FontWeight.w500,size: 14,maxLines: 1),
+                                                   child: sText("${myGroupList[index].currentTest != null ? myGroupList[index].currentTest!.name : "No testing available"}",weight: FontWeight.w500,size: 14,maxLines: 1),
                                                  ),
                                                  Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
                                                ],
@@ -262,7 +260,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                    children: [
                                                      sText("${myGroupList[index].name}",weight: FontWeight.w500,size: 20),
                                                      SizedBox(height: 0,),
-                                                     sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                     sText("by ${myGroupList[index].owner!.name}",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                    ],
                                                  ),
 
@@ -426,36 +424,60 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              scrollDirection: Axis.horizontal,
                              itemBuilder: (BuildContext context, int index){
                                if(index == 0){
-                                 return Row(
-                                   children: [
-                                     Container(
-                                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
-                                       decoration: BoxDecoration(
-                                           color: Colors.white,
-                                           borderRadius: BorderRadius.circular(20),
-                                           border: Border.all(color: Colors.white)
-                                       ),
-                                       child: Image.asset("assets/images/up-and-down-arrow.png"),
+                                 return GestureDetector(
+                                   onTap: ()async{
+                                     setState((){
+                                       if(orderBy == "asc"){
+                                         orderBy = "desc";
+                                       }else{
+                                         orderBy = "asc";
+                                       }
+                                       sortBy = sortList[index].id;
+                                       groupByCategory.clear();
+                                     });
+                                     await getGroupsByCategories(sortList[index].id,orderBy);
+                                   },
+                                   child: Row(
+                                     children: [
+                                       Container(
+                                         padding: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                         decoration: BoxDecoration(
+                                             color:  orderBy == "desc" ? Color(0XFF2D3E50) : Colors.white,
+                                             borderRadius: BorderRadius.circular(20),
+                                             border: Border.all(color: Colors.white)
+                                         ),
+                                         child: Image.asset("assets/images/up-and-down-arrow.png",color: orderBy == "desc" ? Colors.white : Colors.grey,),
 
-                                     ),
-                                     SizedBox(width: 10,),
-                                   ],
+                                       ),
+                                       SizedBox(width: 10,),
+                                     ],
+                                   ),
                                  );
                                }
-                               return Row(
-                                 children: [
-                                   Container(
-                                     padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                                     decoration: BoxDecoration(
-                                         color: Colors.white,
-                                         borderRadius: BorderRadius.circular(20),
-                                         border: Border.all(color: Colors.black)
-                                     ),
-                                     child: sText("${sortList[index].name}",size: 14,weight: FontWeight.normal,align: TextAlign.center),
+                               return MaterialButton(
+                                 padding: EdgeInsets.zero,
+                                 onPressed: ()async{
+                                   setState((){
+                                     sortBy = sortList[index].id;
+                                     groupByCategory.clear();
+                                   });
+                                   await getGroupsByCategories(sortList[index].id,orderBy);
+                                 },
+                                 child: Row(
+                                   children: [
+                                     Container(
+                                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                                       decoration: BoxDecoration(
+                                           color: sortBy == sortList[index].id ? Color(0XFF2D3E50)  : Colors.white,
+                                           borderRadius: BorderRadius.circular(20),
+                                           border: Border.all(color: Colors.black)
+                                       ),
+                                       child: sText("${sortList[index].name}",size: 14,weight: FontWeight.normal,align: TextAlign.center,color: sortBy == sortList[index].id ? Colors.white : Color(0XFF2D3E50)),
 
-                                   ),
-                                   SizedBox(width: 5,),
-                                 ],
+                                     ),
+                                     SizedBox(width: 5,),
+                                   ],
+                                 ),
                                );
                              }),
                        ),
@@ -465,109 +487,22 @@ class _UserGroupPageState extends State<UserGroupPage> {
                          height: 1,
                        ),
                        SizedBox(height: 10,),
-                       for(int i =0; i < 10; i++)
-                         MaterialButton(
-                           padding: EdgeInsets.zero,
-                           onPressed: (){
-                             goTo(context, GroupDetails(groupData: groupByCategory[i],));
-                           },
-                           child: Container(
-                             padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                             margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-                             decoration: BoxDecoration(
-                               color: Color(0XFFF5F5F5),
-                               borderRadius: BorderRadius.circular(10)
-                             ),
-                             child: Row(
-                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                               children: [
-                                 Container(
-                                   child: Image.asset("assets/images/fCvBipe.png"),
-                                 ),
-                                 SizedBox(width: 5,),
-                                 Container(
-                                   child: Column(
-                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                     children: [
-                                       Container(
-                                         child: Row(
-                                           children: [
-                                             Container(
-                                               child: sText("Adeo Group",size: 14,weight: FontWeight.bold),
-                                             ),
-                                             SizedBox(width: 5,),
-                                             Container(
-                                               child: sText("by Afram Dzidefo",size: 10,weight: FontWeight.normal,color: Colors.grey),
-                                             ),
-                                           ],
-                                         ),
-                                       ),
-                                       Row(
-                                         children: [
-                                           Container(
-                                             child: Row(
-                                               children: [
-                                                 Container(
-                                                   child: Icon(Icons.groups,color: Colors.grey,size: 14,),
-                                                 ),
-                                                 SizedBox(width: 5,),
-                                                 Container(
-                                                   child: sText("1,200",size: 10,weight: FontWeight.normal,),
-                                                 ),
-                                               ],
-                                             ),
-                                           ),
-                                           SizedBox(width: 5,),
-                                           Container(
-                                             child: Row(
-                                               children: [
-                                                 Container(
-                                                   child: Icon(Icons.star,color: Colors.orange,size: 14,),
-                                                 ),
-                                                 SizedBox(width: 0,),
-                                                 Container(
-                                                   child: sText("4.0",size: 10,weight: FontWeight.w400,),
-                                                 ),
-                                                 SizedBox(width: 5,),
-                                                 Container(
-                                                   child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
-                                                 ),
-                                               ],
-                                             ),
-                                           ),
-                                           SizedBox(width: 5,),
-                                           Container(
-                                             child: Row(
-                                               children: [
-                                                 Container(
-                                                   child: Image.asset("assets/images/label.png"),
-                                                 ),
-                                                 SizedBox(width: 5,),
-                                                 Container(
-                                                   child: sText("GHS 99",size: 10,weight: FontWeight.bold,),
-                                                 ),
-                                               ],
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-
-                                     ],
-                                   ),
-                                 ),
-                                 Expanded(child: Container()),
-                                 Container(
-                                   padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-                                   child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
-                                   decoration: BoxDecoration(
-                                       color: Colors.orange,
-                                       borderRadius: BorderRadius.circular(10)
-                                   ),
-                                 )
-                               ],
-                             ),
-                           ),
-                         )
+                       groupByCategory.isNotEmpty ?
+                      Column(
+                        children: [
+                          for(int i =0; i < groupByCategory.length; i++)
+                            MaterialButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: (){
+                                goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                              },
+                              child: groupListWidget(groupByCategory[i]),
+                            )
+                        ],
+                      ) : Container(
+                         height: 100,
+                           child: Center(child: progress(),),
+                       )
                      ],
                    ),
                  )
@@ -583,102 +518,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         onPressed: (){
                           goTo(context, GroupDetails(groupData: groupBySearch[index],));
                         },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Color(0XFFF5F5F5),
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                          child: Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: Image.asset("assets/images/fCvBipe.png"),
-                              ),
-                              SizedBox(width: 5,),
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            child: sText("Adeo Group",size: 14,weight: FontWeight.bold),
-                                          ),
-                                          SizedBox(width: 5,),
-                                          Container(
-                                            child: sText("by Afram Dzidefo",size: 10,weight: FontWeight.normal,color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                child: Icon(Icons.groups,color: Colors.grey,size: 14,),
-                                              ),
-                                              SizedBox(width: 5,),
-                                              Container(
-                                                child: sText("1,200",size: 10,weight: FontWeight.normal,),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 5,),
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                child: Icon(Icons.star,color: Colors.orange,size: 14,),
-                                              ),
-                                              SizedBox(width: 0,),
-                                              Container(
-                                                child: sText("4.0",size: 10,weight: FontWeight.w400,),
-                                              ),
-                                              SizedBox(width: 5,),
-                                              Container(
-                                                child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(width: 5,),
-                                        Container(
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                child: Image.asset("assets/images/label.png"),
-                                              ),
-                                              SizedBox(width: 5,),
-                                              Container(
-                                                child: sText("GHS 99",size: 10,weight: FontWeight.bold,),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                  ],
-                                ),
-                              ),
-                              Expanded(child: Container()),
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-                                child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
-                                decoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    borderRadius: BorderRadius.circular(10)
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        child:groupListWidget(groupBySearch[index]),
                       );
                   }),
                 ):
