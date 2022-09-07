@@ -12,54 +12,53 @@ import 'dart:math' as math;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AverageScoreGraph extends StatefulWidget {
-   Stat? stats;
-   String tabName;
-   String rightWidgetState;
-   bool onChangeStatus;
+  Stat? stats;
+  String tabName;
+  String rightWidgetState;
+  bool onChangeStatus;
   final Course course;
-  AverageScoreGraph({this.stats,required this.course,this.tabName = "all",this.rightWidgetState = 'average',this.onChangeStatus = false});
+  AverageScoreGraph(
+      {this.stats,
+      required this.course,
+      this.tabName = "all",
+      this.rightWidgetState = 'average',
+      this.onChangeStatus = false});
 
   @override
   State<AverageScoreGraph> createState() => _AverageScoreGraphState();
 }
 
 class _AverageScoreGraphState extends State<AverageScoreGraph> {
-List <TestTaken> testData = [];
-String dropdownValue = 'All';
-List<FlSpot> testdata = [];
-  getAverageStats(String period)async{
+  List<TestTaken> testData = [];
+  String dropdownValue = 'All';
+  List<FlSpot> testdata = [];
+  getAverageStats(String period) async {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!.toString(),period);
-    if(widget.tabName.toLowerCase() == "exam"){
+    testData = await TestTakenDB()
+        .courseTestsTakenPeriod(widget.course.id!.toString(), period);
+    if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.EXAM.toString() ||
-          element.challengeType == TestCategory.MOCK.toString() ||
-          element.challengeType == TestCategory.NONE.toString()
-      ).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "topic"){
+              element.challengeType == TestCategory.EXAM.toString() ||
+              element.challengeType == TestCategory.MOCK.toString() ||
+              element.challengeType == TestCategory.NONE.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.TOPIC.toString()).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "other"){
+              element.challengeType == TestCategory.TOPIC.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType !=
-          TestCategory.TOPIC.toString() &&
-          element.challengeType !=
-              TestCategory.EXAM.toString() &&
-          element.challengeType != TestCategory.MOCK.toString()
-          &&
-          element.challengeType != TestCategory.NONE.toString()
-      ).toList();
-    }
-    else{
+              element.challengeType != TestCategory.TOPIC.toString() &&
+              element.challengeType != TestCategory.EXAM.toString() &&
+              element.challengeType != TestCategory.MOCK.toString() &&
+              element.challengeType != TestCategory.NONE.toString())
+          .toList();
+    } else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -71,43 +70,36 @@ List<FlSpot> testdata = [];
         ),
       );
     }
-    setState((){
-
-    });
+    setState(() {});
   }
-  getPointStats(String period)async{
+
+  getPointStats(String period) async {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB().courseTestsTakenPeriodPoint(widget.course.id!.toString(),period);
-    if(widget.tabName.toLowerCase() == "exam"){
+    testData = await TestTakenDB()
+        .courseTestsTakenPeriodPoint(widget.course.id!.toString(), period);
+    if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.EXAM.toString() ||
-          element.challengeType == TestCategory.MOCK.toString() ||
-          element.challengeType == TestCategory.NONE.toString()
-      ).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "topic"){
+              element.challengeType == TestCategory.EXAM.toString() ||
+              element.challengeType == TestCategory.MOCK.toString() ||
+              element.challengeType == TestCategory.NONE.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.TOPIC.toString()).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "other"){
+              element.challengeType == TestCategory.TOPIC.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType !=
-          TestCategory.TOPIC.toString() &&
-          element.challengeType !=
-              TestCategory.EXAM.toString() &&
-          element.challengeType != TestCategory.MOCK.toString()
-          &&
-          element.challengeType != TestCategory.NONE.toString()
-      ).toList();
-    }
-    else{
+              element.challengeType != TestCategory.TOPIC.toString() &&
+              element.challengeType != TestCategory.EXAM.toString() &&
+              element.challengeType != TestCategory.MOCK.toString() &&
+              element.challengeType != TestCategory.NONE.toString())
+          .toList();
+    } else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -119,43 +111,36 @@ List<FlSpot> testdata = [];
         ),
       );
     }
-    setState((){
-
-    });
+    setState(() {});
   }
-  getSpeedStats(String period)async{
+
+  getSpeedStats(String period) async {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB().courseTestsTakenSpeedPoint(widget.course.id!.toString(),period);
-    if(widget.tabName.toLowerCase() == "exam"){
+    testData = await TestTakenDB()
+        .courseTestsTakenSpeedPoint(widget.course.id!.toString(), period);
+    if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.EXAM.toString() ||
-          element.challengeType == TestCategory.MOCK.toString() ||
-          element.challengeType == TestCategory.NONE.toString()
-      ).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "topic"){
+              element.challengeType == TestCategory.EXAM.toString() ||
+              element.challengeType == TestCategory.MOCK.toString() ||
+              element.challengeType == TestCategory.NONE.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.TOPIC.toString()).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "other"){
+              element.challengeType == TestCategory.TOPIC.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType !=
-          TestCategory.TOPIC.toString() &&
-          element.challengeType !=
-              TestCategory.EXAM.toString() &&
-          element.challengeType != TestCategory.MOCK.toString()
-          &&
-          element.challengeType != TestCategory.NONE.toString()
-      ).toList();
-    }
-    else{
+              element.challengeType != TestCategory.TOPIC.toString() &&
+              element.challengeType != TestCategory.EXAM.toString() &&
+              element.challengeType != TestCategory.MOCK.toString() &&
+              element.challengeType != TestCategory.NONE.toString())
+          .toList();
+    } else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -167,43 +152,36 @@ List<FlSpot> testdata = [];
         ),
       );
     }
-    setState((){
-
-    });
+    setState(() {});
   }
-  getStrengthStats(String period)async{
+
+  getStrengthStats(String period) async {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB().courseTestsTakenStrengthPoint(widget.course.id!.toString(),period);
-    if(widget.tabName.toLowerCase() == "exam"){
+    testData = await TestTakenDB()
+        .courseTestsTakenStrengthPoint(widget.course.id!.toString(), period);
+    if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.EXAM.toString() ||
-          element.challengeType == TestCategory.MOCK.toString() ||
-          element.challengeType == TestCategory.NONE.toString()
-      ).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "topic"){
+              element.challengeType == TestCategory.EXAM.toString() ||
+              element.challengeType == TestCategory.MOCK.toString() ||
+              element.challengeType == TestCategory.NONE.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType ==
-          TestCategory.TOPIC.toString()).toList();
-    }
-    else if(widget.tabName.toLowerCase() == "other"){
+              element.challengeType == TestCategory.TOPIC.toString())
+          .toList();
+    } else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
-      element.challengeType !=
-          TestCategory.TOPIC.toString() &&
-          element.challengeType !=
-              TestCategory.EXAM.toString() &&
-          element.challengeType != TestCategory.MOCK.toString()
-          &&
-          element.challengeType != TestCategory.NONE.toString()
-      ).toList();
-    }
-    else{
+              element.challengeType != TestCategory.TOPIC.toString() &&
+              element.challengeType != TestCategory.EXAM.toString() &&
+              element.challengeType != TestCategory.MOCK.toString() &&
+              element.challengeType != TestCategory.NONE.toString())
+          .toList();
+    } else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -215,82 +193,80 @@ List<FlSpot> testdata = [];
         ),
       );
     }
-    setState((){
-
-    });
+    setState(() {});
   }
 
-  getStat()async{
-      if(widget.rightWidgetState == "points"){
-        await getPointStats(dropdownValue);
-      } else if(widget.rightWidgetState == "speed"){
-        await getSpeedStats(dropdownValue);
-      } else if(widget.rightWidgetState == "strength"){
-        await getStrengthStats(dropdownValue);
-      }
-      else{
-        await getAverageStats(dropdownValue);
-      }
+  getStat() async {
+    if (widget.rightWidgetState == "points") {
+      await getPointStats(dropdownValue);
+    } else if (widget.rightWidgetState == "speed") {
+      await getSpeedStats(dropdownValue);
+    } else if (widget.rightWidgetState == "strength") {
+      await getStrengthStats(dropdownValue);
+    } else {
+      await getAverageStats(dropdownValue);
+    }
 
-      setState((){
-        widget.onChangeStatus = false;
-      });
+    setState(() {
+      widget.onChangeStatus = false;
+    });
   }
 
   buildDropDownButton() {
-  return DropdownButton<String>(
-    dropdownColor: Colors.blue,
-    value: dropdownValue,
-    icon: const Icon(
-      Icons.arrow_drop_down,
-      color: Colors.white,
-    ),
-    iconSize: 24,
-    elevation: 16,
-    style: const TextStyle(
-      color: Colors.white,
-    ),
-    underline: Container(
-      height: 0,
-      color: Colors.black,
-    ),
-    onChanged: (String? newValue) {
-      setState(() {
-        dropdownValue = newValue!;
-        getStat();
-        print(dropdownValue);
-      });
-    },
-    items: <String>[
-      'All',
-      'Daily',
-      'Weekly',
-      'Monthly',
-    ].map<DropdownMenuItem<String>>(
-          (String value) {
-        return DropdownMenuItem<String>(
-
-          value: value,
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        );
+    return DropdownButton<String>(
+      dropdownColor: Colors.blue,
+      value: dropdownValue,
+      icon: const Icon(
+        Icons.arrow_drop_down,
+        color: Colors.white,
+      ),
+      iconSize: 24,
+      elevation: 16,
+      style: const TextStyle(
+        color: Colors.white,
+      ),
+      underline: Container(
+        height: 0,
+        color: Colors.black,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+          getStat();
+          print(dropdownValue);
+        });
       },
-    ).toList(),
-  );
-}
+      items: <String>[
+        'All',
+        'Daily',
+        'Weekly',
+        'Monthly',
+      ].map<DropdownMenuItem<String>>(
+        (String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          );
+        },
+      ).toList(),
+    );
+  }
+
   @override
- void initState(){
+  void initState() {
     super.initState();
     print("object point:${widget.rightWidgetState}");
     getStat();
   }
+
   @override
   Widget build(BuildContext context) {
-    if(widget.onChangeStatus){
+    if (widget.onChangeStatus) {
       getStat();
     }
 
@@ -320,116 +296,110 @@ List<FlSpot> testdata = [];
               ),
             ),
             children: [
-              testdata.isNotEmpty ?
-              Stack(
-                fit: StackFit.passthrough,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 5,
-                        right: 12,
-                      ),
-                      child: Container(
-                        height: 30,
-                        width: 100,
-                        padding: EdgeInsets.only(left: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(
-                          child: buildDropDownButton(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // sfCartesianChart(),
-                  Container(
-                    padding: const EdgeInsets.only(
-                      right: 18.0,
-                      left: 12.0,
-                      top: 24,
-                      bottom: 12,
-                    ),
-                    height: 200,
-                    child: LineChart(
-                      LineChartData(
-                        minX: 1,
-                        maxY: 100.0,
-                        minY: 0,
-                        borderData: FlBorderData(
-                          show: false,
-
-                        ),
-                        gridData: FlGridData(
-                          show: false,
-                        ),
-                        titlesData: FlTitlesData(
-                          show: true,
-
-                          rightTitles: SideTitles(
-                            showTitles: false,
-                          ),
-                          topTitles: SideTitles(
-                            showTitles: false,
-                          ),
-                          bottomTitles: SideTitles(
-                            showTitles: true,
-                            getTitles: (double value) {
-                              debugPrint(value.toInt().toString());
-                              return value.toInt().toString();
-                              // return widget
-                              //     .testData![(value - 1).toInt()].testname!;
-                            },
-                            getTextStyles: (BuildContext context, value) =>
-                            const TextStyle(
-                              color: Color(0xFF67727D),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
+              testdata.isNotEmpty
+                  ? Stack(
+                      fit: StackFit.passthrough,
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                              right: 12,
                             ),
-                            margin: 8,
-                            interval: 1,
-
+                            child: Container(
+                              height: 30,
+                              width: 100,
+                              padding: EdgeInsets.only(left: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Center(
+                                child: buildDropDownButton(),
+                              ),
+                            ),
                           ),
                         ),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: testdata,
-                            isCurved: true,
-                            show: true,
-                            colors: [Colors.blue, Colors.green],
-                            barWidth: 2,
-                            isStrokeCapRound: true,
-                            dotData: FlDotData(
-                              show: true,
-
-                            ),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              colors: [
-                                Colors.blue.withOpacity(0.3),
-                                Colors.green.withOpacity(0.3),
+                        // sfCartesianChart(),
+                        Container(
+                          padding: const EdgeInsets.only(
+                            right: 18.0,
+                            left: 12.0,
+                            top: 24,
+                            bottom: 12,
+                          ),
+                          height: 200,
+                          child: LineChart(
+                            LineChartData(
+                              minX: 1,
+                              maxY: 100.0,
+                              minY: 0,
+                              borderData: FlBorderData(
+                                show: false,
+                              ),
+                              gridData: FlGridData(
+                                show: false,
+                              ),
+                              titlesData: FlTitlesData(
+                                show: true,
+                                rightTitles: SideTitles(
+                                  showTitles: false,
+                                ),
+                                topTitles: SideTitles(
+                                  showTitles: false,
+                                ),
+                                bottomTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitles: (double value) {
+                                    debugPrint(value.toInt().toString());
+                                    return value.toInt().toString();
+                                    // return widget
+                                    //     .testData![(value - 1).toInt()].testname!;
+                                  },
+                                  getTextStyles:
+                                      (BuildContext context, value) =>
+                                          const TextStyle(
+                                    color: Color(0xFF67727D),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                  margin: 8,
+                                  interval: 1,
+                                ),
+                              ),
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: testdata,
+                                  isCurved: true,
+                                  show: true,
+                                  colors: [Colors.blue, Colors.green],
+                                  barWidth: 2,
+                                  isStrokeCapRound: true,
+                                  dotData: FlDotData(
+                                    show: true,
+                                  ),
+                                  belowBarData: BarAreaData(
+                                    show: true,
+                                    colors: [
+                                      Colors.blue.withOpacity(0.3),
+                                      Colors.green.withOpacity(0.3),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ) :
-              Container(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: sText("No records for graph")
-              )
+                        )
+                      ],
+                    )
+                  : Container(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: sText("No records for graph"))
             ],
           ),
         ),
       ),
     );
   }
-
 }
-

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
