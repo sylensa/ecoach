@@ -118,7 +118,7 @@ class _TestInstructionState extends State<TestInstruction> {
                     ),
                     GestureDetector(
                       onTap: (){
-                        goTo(context, GroupActivity());
+                        // goTo(context, GroupActivity());
                       },
                       child: Container(
                         width: appWidth(context),
