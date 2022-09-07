@@ -5,6 +5,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/category/categories.dart';
 import 'package:ecoach/views/user_group/category/groups_by_category.dart';
+import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_page/group_details.dart';
 import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/notification.dart';
@@ -125,13 +126,8 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             ],
                           ),
                         ),
-                        GestureDetector(
-                          onTap: (){
-                            goTo(context, GroupNotificationActivity(widget.user));
-                          },
-                          child: Container(
-                            child: Image.asset("assets/images/schedule_top.png"),
-                          ),
+                        Container(
+                          child: Image.asset("assets/images/schedule_top.png"),
                         )
                       ],
                     ),
@@ -174,7 +170,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         SizedBox(width: 10,),
                         GestureDetector(
                           onTap: (){
-                            goTo(context, NoGroupActivity(widget.user));
+                            goTo(context, GroupNotificationActivity(widget.user,));
                           },
                             child: Image.asset("assets/images/schedule.png"),
                         )
@@ -220,130 +216,137 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              shrinkWrap: true,
                              scrollDirection: Axis.horizontal,
                              itemBuilder: (BuildContext context, int index){
-                               return Row(
-                                 children: [
-                                   Container(
-                                     width: appWidth(context) * 0.7 ,
-                                     padding: EdgeInsets.all(10),
-                                     decoration: BoxDecoration(
-                                       color: Colors.white,
-                                       borderRadius: BorderRadius.circular(10),
-                                     ),
-                                     child: Column(
-                                       crossAxisAlignment: CrossAxisAlignment.start,
-                                       children: [
-                                         Container(
-                                           padding: EdgeInsets.all(10),
-                                           decoration: BoxDecoration(
-                                               color: Colors.grey[100],
-                                               borderRadius: BorderRadius.circular(10)
-                                           ),
-                                           child: Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Icon(Icons.arrow_back_ios,color: Colors.white,),
-                                               Container(
-                                                 width: 150,
-                                                 child: sText("Physics Assignment due",weight: FontWeight.w500,size: 14,maxLines: 1),
-                                               ),
-                                               Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
-                                             ],
-                                           ),
-                                         ),
-                                         SizedBox(height: 10,),
-                                         Container(
-                                           child: Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Column(
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   sText("${myGroupList[index].name}",weight: FontWeight.w500,size: 20),
-                                                   SizedBox(height: 0,),
-                                                   sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
-                                                 ],
-                                               ),
+                               return GestureDetector(
+                                 onTap: (){
+                                   goTo(context, GroupDetails(groupData: myGroupList[index],));
 
-                                               Row(
-                                                 children: [
-                                                   Center(
-                                                     child: SizedBox(
-                                                       height: 22,
-                                                       width: 22,
-                                                       child: Stack(
-                                                         children: [
-                                                           Container(
-                                                             decoration: BoxDecoration(
-                                                                 color: Color(0XFF00C9B9),
-                                                                 shape: BoxShape.circle
-                                                             ),
-                                                           ),
-                                                           Center(
-                                                             child: Text(
-                                                               "1",
-                                                               style: TextStyle(
-                                                                 fontSize: 12,
-                                                                 color: Colors.white,
-                                                                 fontWeight: FontWeight.bold
+                                   // goTo(context, GroupActivity(myGroupList[index].id.toString()));
+                                 },
+                                 child: Row(
+                                   children: [
+                                     Container(
+                                       width: appWidth(context) * 0.7 ,
+                                       padding: EdgeInsets.all(10),
+                                       decoration: BoxDecoration(
+                                         color: Colors.white,
+                                         borderRadius: BorderRadius.circular(10),
+                                       ),
+                                       child: Column(
+                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                         children: [
+                                           Container(
+                                             padding: EdgeInsets.all(10),
+                                             decoration: BoxDecoration(
+                                                 color: Colors.grey[100],
+                                                 borderRadius: BorderRadius.circular(10)
+                                             ),
+                                             child: Row(
+                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Icon(Icons.arrow_back_ios,color: Colors.white,),
+                                                 Container(
+                                                   width: 150,
+                                                   child: sText("Physics Assignment due",weight: FontWeight.w500,size: 14,maxLines: 1),
+                                                 ),
+                                                 Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
+                                               ],
+                                             ),
+                                           ),
+                                           SizedBox(height: 10,),
+                                           Container(
+                                             child: Row(
+                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Column(
+                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                   children: [
+                                                     sText("${myGroupList[index].name}",weight: FontWeight.w500,size: 20),
+                                                     SizedBox(height: 0,),
+                                                     sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                   ],
+                                                 ),
+
+                                                 Row(
+                                                   children: [
+                                                     Center(
+                                                       child: SizedBox(
+                                                         height: 22,
+                                                         width: 22,
+                                                         child: Stack(
+                                                           children: [
+                                                             Container(
+                                                               decoration: BoxDecoration(
+                                                                   color: Color(0XFF00C9B9),
+                                                                   shape: BoxShape.circle
                                                                ),
                                                              ),
-                                                           ),
+                                                             Center(
+                                                               child: Text(
+                                                                 "1",
+                                                                 style: TextStyle(
+                                                                   fontSize: 12,
+                                                                   color: Colors.white,
+                                                                   fontWeight: FontWeight.bold
+                                                                 ),
+                                                               ),
+                                                             ),
+                                                           ],
+                                                         ),
+                                                       ),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               ],
+                                             ),
+                                           ),
+                                           Container(
+                                             child: Row(
+                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                               children: [
+                                                 Column(
+                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                   children: [
+                                                     SizedBox(height: 10,),
+                                                     Container(
+                                                       child: Row(
+                                                         children: [
+                                                           Image.asset("assets/images/user_group.png"),
+                                                           SizedBox(width: 5,),
+                                                           sText("${myGroupList[index].membersCount} members",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                          ],
                                                        ),
                                                      ),
-                                                   ),
-                                                 ],
-                                               ),
-                                             ],
-                                           ),
-                                         ),
-                                         Container(
-                                           child: Row(
-                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                             children: [
-                                               Column(
-                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                 children: [
-                                                   SizedBox(height: 10,),
-                                                   Container(
-                                                     child: Row(
-                                                       children: [
-                                                         Image.asset("assets/images/user_group.png"),
-                                                         SizedBox(width: 5,),
-                                                         sText("${myGroupList[index].membersCount} members",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
-                                                       ],
+                                                     SizedBox(height: 10,),
+                                                     Container(
+                                                       child: Row(
+                                                         children: [
+                                                           Image.asset("assets/images/calendar.png"),
+                                                           SizedBox(width: 5,),
+                                                           sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                         ],
+                                                       ),
                                                      ),
-                                                   ),
-                                                   SizedBox(height: 10,),
-                                                   Container(
-                                                     child: Row(
-                                                       children: [
-                                                         Image.asset("assets/images/calendar.png"),
-                                                         SizedBox(width: 5,),
-                                                         sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
-                                                       ],
-                                                     ),
-                                                   ),
-                                                   SizedBox(height: 10,),
-                                                 ],
-                                               ),
-                                               Container(
-                                                 padding: EdgeInsets.all(10),
-                                                 child: Icon(Icons.arrow_forward),
-                                                 decoration: BoxDecoration(
-                                                   color: Colors.grey[200],
-                                                   borderRadius: BorderRadius.circular(10)
+                                                     SizedBox(height: 10,),
+                                                   ],
                                                  ),
-                                               )
-                                             ],
-                                           ),
-                                         )
+                                                 Container(
+                                                   padding: EdgeInsets.all(10),
+                                                   child: Icon(Icons.arrow_forward),
+                                                   decoration: BoxDecoration(
+                                                     color: Colors.grey[200],
+                                                     borderRadius: BorderRadius.circular(10)
+                                                   ),
+                                                 )
+                                               ],
+                                             ),
+                                           )
 
-                                       ],
+                                         ],
+                                       ),
                                      ),
-                                   ),
-                                   SizedBox(width: 10,),
-                                 ],
+                                     SizedBox(width: 10,),
+                                   ],
+                                 ),
                                );
                              }),
                        ) : !progressCodeGroup ? Center(child: sText("Empty group"),) : Center(child: progress(),),
@@ -375,7 +378,8 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                return MaterialButton(
                                  padding: EdgeInsets.zero,
                                  onPressed: (){
-                                   goTo(context, CategoryGroupsPage(widget.user));
+                                   List cat = categoryList[index].id.split("_");
+                                   goTo(context, CategoryGroupsPage(categoryName: cat.join(" "),));
                                  },
                                  child: Row(
                                    children: [
@@ -465,7 +469,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                          MaterialButton(
                            padding: EdgeInsets.zero,
                            onPressed: (){
-                             goTo(context, GroupDetails(widget.user));
+                             goTo(context, GroupDetails(groupData: groupByCategory[i],));
                            },
                            child: Container(
                              padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
@@ -577,7 +581,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                       return    MaterialButton(
                         padding: EdgeInsets.zero,
                         onPressed: (){
-                          goTo(context, GroupDetails(widget.user));
+                          goTo(context, GroupDetails(groupData: groupBySearch[index],));
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
