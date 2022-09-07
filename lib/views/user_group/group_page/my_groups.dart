@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_page/group_details.dart';
@@ -6,8 +7,8 @@ import 'package:flutter/material.dart';
 
 class MyGroupsPage extends StatefulWidget {
   static const String routeName = '/user_group';
-  MyGroupsPage(this.user, {Key? key}) : super(key: key);
-  User user;
+  List<GroupListData>? myGroupList;
+  MyGroupsPage({Key? key,this.myGroupList}) : super(key: key);
 
   @override
   State<MyGroupsPage> createState() => _MyGroupsPageState();
@@ -32,7 +33,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: 10,
+                itemCount: widget.myGroupList!.length,
                   itemBuilder: (BuildContext context, int index){
                   return Column(
                     children: [
@@ -61,7 +62,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                                       Icon(Icons.arrow_back_ios,color: Colors.white,),
                                       Container(
                                         width: 150,
-                                        child: sText("Physics Assignment due",weight: FontWeight.w500,size: 14,maxLines: 1),
+                                        child: sText("${widget.myGroupList![index].currentTest != null ? widget.myGroupList![index].currentTest!.name : "No test available"}",weight: FontWeight.w500,size: 14,maxLines: 1),
                                       ),
                                       Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
                                     ],
@@ -75,9 +76,9 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          sText("Adeo Group",weight: FontWeight.w500,size: 20),
+                                          sText("${widget.myGroupList![index].name}",weight: FontWeight.w500,size: 20),
                                           SizedBox(height: 0,),
-                                          sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                          sText("by ${widget.myGroupList![index].membersCount}",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                         ],
                                       ),
 
