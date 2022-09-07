@@ -46,7 +46,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     return MaterialButton(
                       padding: EdgeInsets.zero,
                       onPressed: (){
-                        goTo(context, CategoryGroupsPage(widget.user));
+                        List cat = categoryList[index].id.split("_");
+                        goTo(context, CategoryGroupsPage(categoryName: cat.join(" "),));
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
