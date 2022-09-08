@@ -123,6 +123,7 @@ class GroupListData {
     this.reviews,
     this.owner,
     this.currentTest,
+    this.endDate,
 
   });
 
@@ -133,6 +134,7 @@ class GroupListData {
   String? description;
   String? type;
   DateTime? dateCreated;
+  DateTime? endDate;
   String? status;
   String? category;
   dynamic editorId;
@@ -154,6 +156,7 @@ class GroupListData {
     description: json["description"] == null ? null : json["description"],
     type: json["type"] == null ? null : json["type"],
     dateCreated: json["date_created"] == null ? null : DateTime.parse(json["date_created"]),
+    endDate: json["end_date"] == null ? null : DateTime.parse(json["end_date"]),
     status: json["status"] == null ? null : json["status"],
     editorId: json["editor_id"],
     deletedAt: json["deleted_at"] ?? "",
@@ -176,6 +179,7 @@ class GroupListData {
     "description": description == null ? null : description,
     "type": type == null ? null : type,
     "date_created": dateCreated == null ? null : dateCreated!.toIso8601String(),
+    "end_date": endDate == null ? null : endDate!.toIso8601String(),
     "status": status == null ? null : status,
     "editor_id": editorId,
     "deleted_at": deletedAt,
