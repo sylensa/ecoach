@@ -1052,7 +1052,7 @@ groupListWidget(GroupListData groupListData){
                         SizedBox(width: 5,),
                         if(groupListData.settings != null)
                           Container(
-                            child: sText("${groupListData.settings!.currency} ${groupListData.settings!.amount}",size: 10,weight: FontWeight.bold,),
+                            child: sText(groupListData.settings!.access.toString() != "free" ? "${groupListData.settings!.currency} ${groupListData.settings!.amount}" : "Free",size: 10,weight: FontWeight.bold,),
                           )
                         else
                           Container(
