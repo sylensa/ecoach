@@ -3,6 +3,7 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/user_group/category/categories.dart';
 import 'package:ecoach/views/user_group/category/groups_by_category.dart';
 import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
@@ -28,7 +29,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
   bool progressCodeGroup = true;
   bool progressCodeCategory = true;
   bool progressCodeSearch = false;
-  List<GroupListData> myGroupList= [];
+
   List<GroupListData> groupByCategory= [];
   List<GroupListData> groupBySearch= [];
   String categoryType = "lower_primary";
@@ -37,9 +38,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
   List<ListNames> sortList = [ListNames(name: "",id: ""),ListNames(name: "Popularity",id: "popularity"),ListNames(name: "Date Created",id: "date_created"),ListNames(name: "Ratings",id: "rating"),ListNames(name: "Price",id: "amount")];
   List<ListNames> categoryList = [ListNames(name: "Ages 6-8",id: "lower_primary"),ListNames(name: "Ages 9-11",id: "upper_primary"),ListNames(name: "12-14",id: "junior_high"),ListNames(name: "15-17",id: "senior_high")];
   getMyGroups() async {
+
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
       if (isConnected) {
+        myGroupList.clear();
         myGroupList = await GroupManagementController().getJoinGroupList();
       } else {
         showNoConnectionToast(context);
@@ -320,7 +323,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                          children: [
                                                            Image.asset("assets/images/calendar.png"),
                                                            SizedBox(width: 5,),
-                                                           sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                           sText(myGroupList[index].endDate != null ? "${DateTime.parse(myGroupList[index].endDate.toString()).difference(DateTime.now()).inDays.toString()} days remaining" : "No Expiration",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                          ],
                                                        ),
                                                      ),
@@ -493,8 +496,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                           for(int i =0; i < groupByCategory.length; i++)
                             MaterialButton(
                               padding: EdgeInsets.zero,
-                              onPressed: (){
-                                goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                              onPressed: ()async{
+                                await goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                                setState((){
+
+                                });
                               },
                               child: groupListWidget(groupByCategory[i]),
                             )
@@ -515,8 +521,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                       itemBuilder: (BuildContext context, int index){
                       return    MaterialButton(
                         padding: EdgeInsets.zero,
-                        onPressed: (){
-                          goTo(context, GroupDetails(groupData: groupBySearch[index],));
+                        onPressed: ()async{
+                          await goTo(context, GroupDetails(groupData: groupBySearch[index],));
+                          setState((){
+
+                          });
                         },
                         child:groupListWidget(groupBySearch[index]),
                       );
