@@ -2,8 +2,10 @@ import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/models/user_group_rating.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -22,6 +24,8 @@ class GroupDetails extends StatefulWidget {
 
 class _GroupDetailsState extends State<GroupDetails> {
   TextEditingController searchController = TextEditingController();
+  List<GroupRatingData> listGroupRatingData = [];
+  bool progressCode = true;
   getGroupDetails() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
@@ -37,8 +41,42 @@ class _GroupDetailsState extends State<GroupDetails> {
     setState(() {
     });
   }
+  getGroupReviews() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      listGroupRatingData = await GroupManagementController(groupId: widget.groupData!.id.toString()).getReviewGroup();
+    } else {
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+      progressCode = false;
+    });
+  }
   late String generatedLink = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  getMyGroups() async {
+
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      myGroupList = await GroupManagementController().getJoinGroupList();
+      Navigator.pop(context);
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+    });
+  }
   authorisePayment(BuildContext context, int groupId) async {
     var res = await doPost(AppUrl.groupSubscription, {
       "group_id": groupId,
@@ -69,7 +107,8 @@ class _GroupDetailsState extends State<GroupDetails> {
             }
             if (navigation.url.contains(AppUrl.payment_callback)) {
               Navigator.of(context).pop();
-
+              showLoaderDialog(context);
+              await getMyGroups();
               setState(() {
                 print("hello adolf:");
               });
@@ -183,10 +222,12 @@ class _GroupDetailsState extends State<GroupDetails> {
           );
         });
   }
+
+
   @override
  void initState(){
     super.initState();
-    // getGroupDetails();
+    getGroupReviews();
   }
   @override
   Widget build(BuildContext context) {
@@ -237,9 +278,9 @@ class _GroupDetailsState extends State<GroupDetails> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      sText("Afram's SAT",weight: FontWeight.w500,size: 20),
+                      sText("${widget.groupData!.name}",weight: FontWeight.w500,size: 20),
                       SizedBox(height: 0,),
-                      sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey),
+                      sText("by ${widget.groupData!.owner != null  ? widget.groupData!.owner!.name : "No Owner"}",weight: FontWeight.w500,size: 12,color: Colors.grey),
                     ],
                   ),
                   SizedBox(height: 10,),
@@ -253,7 +294,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                             ),
                             SizedBox(width: 5,),
                             Container(
-                              child: sText("2412",size: 12,weight: FontWeight.bold,),
+                              child: sText("${widget.groupData!.membersCount}",size: 12,weight: FontWeight.bold,),
                             ),
                           ],
                         ),
@@ -267,11 +308,11 @@ class _GroupDetailsState extends State<GroupDetails> {
                             ),
                             SizedBox(width: 0,),
                             Container(
-                              child: sText("4.0",size: 10,weight: FontWeight.bold,),
+                              child: sText("${widget.groupData!.rating}",size: 10,weight: FontWeight.bold,),
                             ),
                             SizedBox(width: 5,),
                             Container(
-                              child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
+                              child: sText("(${widget.groupData!.reviews} reviews)",size: 10,weight: FontWeight.normal,),
                             ),
                           ],
                         ),
@@ -284,9 +325,14 @@ class _GroupDetailsState extends State<GroupDetails> {
                               child: Image.asset("assets/images/label.png")
                             ),
                             SizedBox(width: 5,),
+                            widget.groupData!.settings != null ?
                             Container(
-                              child: sText("\$99",size: 12,weight: FontWeight.bold,),
-                            ),
+                              child: sText(widget.groupData!.settings!.access.toString() != "free" ? "${widget.groupData!.settings!.currency} ${widget.groupData!.settings!.amount}" : "Free",size: 12,weight: FontWeight.bold,),
+                            ) :
+                            Container(
+                              child: sText("Free",size: 12,weight: FontWeight.bold,),
+                            )
+                            ,
                           ],
                         ),
                       ),
@@ -312,18 +358,16 @@ class _GroupDetailsState extends State<GroupDetails> {
                            Container(
                              child: sText("Description",weight: FontWeight.bold,size: 16),
                            ),
+                           Container(
+                             padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
+                             child: sText("${ widget.groupData!.description}",weight: FontWeight.normal,color: Colors.grey,align: TextAlign.left),
+                           ),
                          ],
                        ),
                      ),
-                    Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
-                          child: sText("Select Your Preferred Upgrade Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only.",weight: FontWeight.normal,color: Colors.grey),
-                        ),
-                        Divider(color: Colors.grey,)
-                      ],
-                    ),
+
+                    Divider(color: Colors.grey,),
+
                     SizedBox(height: 10,),
                     //features
                     Container(
@@ -337,10 +381,10 @@ class _GroupDetailsState extends State<GroupDetails> {
                       ),
                     ),
                     SizedBox(height: 10,),
+                    listGroupRatingData.isEmpty ?
                     Container(
                       height: 170,
                       margin: EdgeInsets.symmetric(horizontal: 20),
-
                       child: ListView.builder(
                           itemCount: 10,
                           shrinkWrap: true,
@@ -390,9 +434,10 @@ class _GroupDetailsState extends State<GroupDetails> {
                               ],
                             );
                           }),
-                    ),
+                    ) : progressCode ? Container(height: 170,child: Center(child: progress(),),) : Container(height: 170,child: Center(child: sText("No review"),),) ,
                     Divider(color: Colors.grey,),
                     // admin
+
 
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 20),
