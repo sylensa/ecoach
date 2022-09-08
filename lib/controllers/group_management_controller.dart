@@ -699,7 +699,7 @@ class GroupManagementController{
     }
   }
 
-  Future<List<GroupRatingData>>  getReviewGroup({String rating = '',String review = ''}) async {
+  Future<List<GroupRatingData>>  getReviewGroup() async {
     List<GroupRatingData> listGroupRatingData = [];
     try{
       var res = await doGet("${AppUrl.userGroups}/$groupId}/reviews",);
