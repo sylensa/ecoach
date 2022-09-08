@@ -138,7 +138,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                                               children: [
                                                 Image.asset("assets/images/calendar.png"),
                                                 SizedBox(width: 5,),
-                                                sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
+                                                sText(widget.myGroupList![index].endDate != null ? "${DateTime.parse(widget.myGroupList![index].endDate.toString()).difference(DateTime.now()).inDays.toString()} days remaining" : "No Expiration",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                               ],
                                             ),
                                           ),
