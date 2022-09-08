@@ -46,4 +46,5 @@ List<GroupTestData> listGroupTestData = [];
 List<Messages> groupChatBetweenList = [];
 List<Messages> chatBetweenListDate = [];
 List<Messages> groupChatBetweenListDate = [];
+List<GroupListData> myGroupList= [];
 
