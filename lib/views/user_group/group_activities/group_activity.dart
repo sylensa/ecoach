@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
@@ -10,8 +11,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class GroupActivity extends StatefulWidget {
   static const String routeName = '/user_group';
-  String groupId;
-  GroupActivity(this.groupId, {Key? key}) : super(key: key);
+  GroupListData? groupData;
+  GroupActivity( {Key? key,this.groupData,}) : super(key: key);
   @override
   State<GroupActivity> createState() => _GroupActivityState();
 }
@@ -76,7 +77,7 @@ class _GroupActivityState extends State<GroupActivity> {
                 'Chat',
               ],
               tabPages: [
-                Activity(),
+                Activity(groupData: widget.groupData,),
                 GroupPerformance(),
                 GroupChatScreen()
               ],
