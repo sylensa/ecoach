@@ -47,7 +47,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
-      allGroupNotificationData = await GroupManagementController().getGroupNotifications();
+      allGroupNotificationData = await GroupManagementController().getUpcomingAllGroupNotifications();
     } else {
       showNoConnectionToast(context);
     }
@@ -257,7 +257,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                sText("ANNOUNCEMENT",),
+                                                sText("${allGroupNotificationData[i].notificationtableType}",),
                                                 SizedBox(height: 5,),
                                                 Container(
                                                   width: 150,
