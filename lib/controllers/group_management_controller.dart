@@ -647,18 +647,39 @@ class GroupManagementController{
     //   return groupListDetails;
     // }
   }
+  Future<List<GroupListData>> getGroupsByCategory({String category = ''})async {
+    List<GroupListData> groupListDetails = [];
+    // try{
+      Map<String, dynamic> params = {
+        "category":category,
+      };
+      String queryUrl = AppUrl.userGroups + '?' + Uri(queryParameters: params).query;
+      var js = await doGet(queryUrl);
+      print("res groups category : ${js["data"]}");
+      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
+        for(int i =0; i < js["data"]["data"].length; i++){
+            GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
+            groupListDetails.add(groupListData);
+        }
+        return groupListDetails;
+      }else{
+        toastMessage("${js["message"]}");
+        return groupListDetails;
+      }
+    // }catch(e){
+    //   toastMessage("Failed");
+    //   return groupListDetails;
+    // }
+  }
 
-  Future<List<GroupListData>> searchGroupList({String search = '',String type = '',String code = '',String category = ''})async {
+  Future<List<GroupListData>> searchGroupList({String search = ''})async {
     List<GroupListData> groupListDetails = [];
     try{
       Map<String, dynamic> params = {
-        "code":code,
-        "type":type,
-        "name":search,
-        "category":category,
+        "search":search,
       };
       String queryUrl = AppUrl.userSearchGroups + '?' + Uri(queryParameters: params).query;
-      var js = await doGet('${AppUrl.userSearchGroups}?code=$code&type=$type&name=$search&category=$category');
+      var js = await doGet(queryUrl);
       print("res groups : $js");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
         for(int i =0; i < js["data"]["data"].length; i++){
@@ -744,7 +765,28 @@ class GroupManagementController{
   Future<List<GroupNotificationData>>  getUpcomingGroupNotifications() async {
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
-      var res = await doGet("${AppUrl.userGroupNotification}/notifications?upcoming=true&group_id=$groupId",);
+      var res = await doGet("${AppUrl.userGroupNotification}/notifications?upcoming=true",);
+      print("res:$res");
+      if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
+        for(int i =0; i< res["data"]["data"].length; i++){
+          GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
+          listGroupNotificationData.add(groupNotificationData);
+        }
+        toastMessage("${res["message"]}");
+        return listGroupNotificationData;
+      }else{
+        toastMessage("${res["message"]}");
+        return listGroupNotificationData;
+      }
+    }catch(e){
+      print(e.toString());
+      return listGroupNotificationData;
+    }
+  }
+  Future<List<GroupNotificationData>>  getUpcomingAllGroupNotifications() async {
+    List<GroupNotificationData> listGroupNotificationData = [];
+    try{
+      var res = await doGet("${AppUrl.userGroupNotification}/notifications",);
       print("res:$res");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
