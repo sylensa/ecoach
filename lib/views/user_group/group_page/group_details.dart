@@ -381,12 +381,12 @@ class _GroupDetailsState extends State<GroupDetails> {
                       ),
                     ),
                     SizedBox(height: 10,),
-                    listGroupRatingData.isEmpty ?
+                    listGroupRatingData.isNotEmpty ?
                     Container(
                       height: 170,
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       child: ListView.builder(
-                          itemCount: 10,
+                          itemCount: listGroupRatingData.length,
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, int index){
@@ -409,23 +409,20 @@ class _GroupDetailsState extends State<GroupDetails> {
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              sText("Victor Adatsi"),
+                                              sText("${listGroupRatingData[index].member!.name}"),
                                               Row(children: [
-                                                Icon(Icons.star,color: Colors.yellow,size: 20,),
-                                                Icon(Icons.star,color: Colors.yellow,size: 20,),
-                                                Icon(Icons.star,color: Colors.yellow,size: 20,),
-                                                Icon(Icons.star,color: Colors.yellow,size: 20,),
+                                                for(int i =0; i < int.parse(listGroupRatingData[index].rating!); i++)
                                                 Icon(Icons.star,color: Colors.yellow,size: 20,),
 
                                               ],),
-                                              sText("2 Months",size: 12,weight: FontWeight.w600),
+                                              sText("${StringExtension.displayTimeAgoFromTimestamp(listGroupRatingData[index].createdAt.toString())}",size: 12,weight: FontWeight.w600),
                                             ],
                                           )
                                         ],
                                       ),
                                       SizedBox(height: 10,),
                                       Container(
-                                        child: sText("Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade. Select your preferred upgrade.  Select your preferred upgrade.  Select your preferred upgrade.  Select your preferred upgrade.",weight: FontWeight.normal,color: Colors.black,size: 14),
+                                        child: sText("${listGroupRatingData[index].review}",weight: FontWeight.normal,color: Colors.black,size: 14),
                                       ),
                                     ],
                                   ),
@@ -435,43 +432,44 @@ class _GroupDetailsState extends State<GroupDetails> {
                             );
                           }),
                     ) : progressCode ? Container(height: 170,child: Center(child: progress(),),) : Container(height: 170,child: Center(child: sText("No review"),),) ,
-                    Divider(color: Colors.grey,),
+                    // Divider(color: Colors.grey,),
                     // admin
 
 
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child:  sText("Administrators",size: 16,weight: FontWeight.bold),
-                    ),
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20),
+                    //   child:  sText("Administrators",size: 16,weight: FontWeight.bold),
+                    // ),
+                    // SizedBox(height: 10,),
+                    // Container(
+                    //   width: appWidth(context) * 0.7 ,
+                    //   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                    //
+                    //   child: Column(
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           displayImage("imagePath",radius: 40),
+                    //           SizedBox(width: 10,),
+                    //           Container(
+                    //             color: Colors.grey,
+                    //             width: 1,
+                    //             height: 80,
+                    //           ),
+                    //           SizedBox(width: 10,),
+                    //           Expanded(
+                    //             child: Container(
+                    //               child: sText("Rev Shaddy is an experienced ICT Teacher who has over the years trained many student in preparing for their BECE exams.",weight: FontWeight.w500,color: Colors.grey,size: 14),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //
+                    //       ),
+                    //
+                    //     ],
+                    //   ),
+                    // ),
                     SizedBox(height: 10,),
-                    Container(
-                      width: appWidth(context) * 0.7 ,
-                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              displayImage("imagePath",radius: 40),
-                              SizedBox(width: 10,),
-                              Container(
-                                color: Colors.grey,
-                                width: 1,
-                                height: 80,
-                              ),
-                              SizedBox(width: 10,),
-                              Expanded(
-                                child: Container(
-                                  child: sText("Rev Shaddy is an experienced ICT Teacher who has over the years trained many student in preparing for their BECE exams.",weight: FontWeight.w500,color: Colors.grey,size: 14),
-                                ),
-                              ),
-                            ],
-
-                          ),
-
-                        ],
-                      ),
-                    ),
                     // Container(
                     //   height: 170,
                     //   margin: EdgeInsets.symmetric(horizontal: 20),
