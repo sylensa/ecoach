@@ -1,5 +1,6 @@
 import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/test_instruction.dart';
@@ -8,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class Activity extends StatefulWidget {
-  String groupId;
-   Activity({Key? key,this.groupId = ''}) : super(key: key);
+  GroupListData? groupData;
+  Activity( {Key? key,this.groupData,}) : super(key: key);
 
   @override
   State<Activity> createState() => _ActivityState();
@@ -22,9 +23,9 @@ class _ActivityState extends State<Activity> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
-      allGroupNotificationData = await GroupManagementController(groupId: widget.groupId).getGroupNotifications();
+      allGroupNotificationData = await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupNotifications();
       if(allGroupNotificationData.isEmpty){
-        goTo(context, NoGroupActivity(),replace: true);
+        goTo(context, NoGroupActivity(groupData: widget.groupData,),replace: true);
       }
     } else {
       showNoConnectionToast(context);
