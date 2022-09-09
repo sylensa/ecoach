@@ -146,6 +146,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             padding: EdgeInsets.only(left: 0,right: 0,top: 0),
                             child:  TextFormField(
                                 onChanged:(value)async{
+                                  groupBySearch.clear();
                                   if(value.isNotEmpty){
                                     setState((){
                                       searchController = value;
@@ -221,7 +222,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              itemBuilder: (BuildContext context, int index){
                                return GestureDetector(
                                  onTap: (){
-                                   goTo(context, GroupActivity(myGroupList[index].id.toString()));
+                                   goTo(context, GroupActivity(groupData: myGroupList[index],));
                                  },
                                  child: Row(
                                    children: [
@@ -435,7 +436,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                        }else{
                                          orderBy = "asc";
                                        }
-                                       sortBy = sortList[index].id;
+                                       // sortBy = sortList[index].id;
                                        groupByCategory.clear();
                                      });
                                      await getGroupsByCategories(sortList[index].id,orderBy);
@@ -517,19 +518,24 @@ class _UserGroupPageState extends State<UserGroupPage> {
             ) :
                 groupBySearch.isNotEmpty ?
                 Expanded(
-                  child: ListView.builder(
-                      itemBuilder: (BuildContext context, int index){
-                      return    MaterialButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: ()async{
-                          await goTo(context, GroupDetails(groupData: groupBySearch[index],));
-                          setState((){
+                  child: Container(
+                    color: Colors.white,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: groupBySearch.length,
+                        itemBuilder: (BuildContext context, int index){
+                        return    MaterialButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: ()async{
+                            await goTo(context, GroupDetails(groupData: groupBySearch[index],));
+                            setState((){
 
-                          });
-                        },
-                        child:groupListWidget(groupBySearch[index]),
-                      );
-                  }),
+                            });
+                          },
+                          child:groupListWidget(groupBySearch[index]),
+                        );
+                    }),
+                  ),
                 ):
                 groupBySearch.isEmpty && progressCodeSearch ?
                 Expanded(child: Center(child: sText("Empty result"),)) :
