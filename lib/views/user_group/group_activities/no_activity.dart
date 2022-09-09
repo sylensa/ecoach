@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
@@ -7,7 +8,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class NoGroupActivity extends StatefulWidget {
   static const String routeName = '/user_group';
-  NoGroupActivity( {Key? key}) : super(key: key);
+  GroupListData? groupData;
+  NoGroupActivity( {Key? key,this.groupData,}) : super(key: key);
   @override
   State<NoGroupActivity> createState() => _NoGroupActivityState();
 }
@@ -42,7 +44,7 @@ class _NoGroupActivityState extends State<NoGroupActivity> {
                           child: Icon(Icons.arrow_back,color: Colors.black,),
                         ),
                         SizedBox(width: 20,),
-                        sText("Afram's SAT",weight: FontWeight.bold,size: 20),
+                        sText("${widget.groupData!.name}",weight: FontWeight.bold,size: 20),
 
                       ],
                     ),
@@ -56,11 +58,11 @@ class _NoGroupActivityState extends State<NoGroupActivity> {
                         color: Color(0XFFF7B06E),
                       ),
                       SizedBox(width: 10,),
-                      sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.black),
+                      sText(widget.groupData!.endDate != null ? "${DateTime.parse(widget.groupData!.endDate.toString()).difference(DateTime.now()).inDays.toString()} days remaining" : "No Expiration",weight: FontWeight.w500,size: 12,color: Colors.black),
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Welcome, Victor",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("${widget.groupData!.owner!.name}",weight: FontWeight.w500,size: 20,color: Colors.black),
 
                 ],
               ),
