@@ -20,13 +20,16 @@ import 'package:ecoach/views/group_management/group_list.dart';
 import 'package:ecoach/views/group_management/test_creation/edit_test_configuration.dart';
 import 'package:ecoach/views/group_management/test_creation/settings.dart';
 import 'package:ecoach/views/group_management/test_creation/test_creation.dart';
+import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class GroupPage extends StatefulWidget {
   GroupListData? groupListData;
@@ -63,7 +66,10 @@ class _GroupPageState extends State<GroupPage> {
     }
     return result;
   }
-
+  String orderBy = "asc";
+  String sortBy = "popularity";
+  List<ListNames> sortList = [ListNames(name: "",id: ""),ListNames(name: "Rank",id: "rank"),ListNames(name: "Speed",id: "speed"),ListNames(name: "Strength",id: "strength"),ListNames(name: "Passed",id: "passed")];
+  String dropdownValue = 'Courses';
   showRevokeDialog({String? message, BuildContext? context, Widget? target, bool replace = false, String? userId}) {
     // flutter defined function
     showDialog(
@@ -1358,6 +1364,60 @@ class _GroupPageState extends State<GroupPage> {
       showNoConnectionToast(context);
     }
   }
+
+  buildDropDownButton() {
+    return DropdownButton<String>(
+      dropdownColor: Colors.white,
+
+      value: dropdownValue,
+      icon: const Icon(
+        Icons.arrow_drop_down,
+        color: Colors.grey,
+      ),
+
+      isExpanded: true,
+      iconSize: 24,
+      elevation: 16,
+      style: const TextStyle(
+        color: Colors.black,
+      ),
+      underline: Container(
+        height: 1,
+        color: Colors.black,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+          print(dropdownValue);
+        });
+      },
+      items: <String>[
+        'Courses',
+        'Participants',
+        'Tests',
+        'Topics',
+        'Questions',
+      ].map<DropdownMenuItem<String>>(
+            (String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+
+            child: Container(
+              // margin: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+
+          );
+        },
+      ).toList(),
+    );
+  }
+
 
   @override
   void initState() {
@@ -2712,112 +2772,1356 @@ class _GroupPageState extends State<GroupPage> {
                       // ),
                       // stats
                       //stats
-                      // Column(
-                      //   children: [
-                      //     Theme(
-                      //       data: Theme.of(context)
-                      //           .copyWith(dividerColor: Colors.transparent),
-                      //       child: ExpansionTile(
-                      //         textColor: Colors.white,
-                      //         iconColor: Colors.white,
-                      //         initiallyExpanded: false,
-                      //         maintainState: false,
-                      //         backgroundColor: kHomeBackgroundColor,
-                      //         childrenPadding: EdgeInsets.zero,
-                      //         collapsedIconColor: Colors.white,
-                      //         leading: Container(
-                      //           child: sText("Stats",
-                      //               weight: FontWeight.w500, size: 16),
-                      //         ),
-                      //         trailing: Container(
-                      //           child: Icon(
-                      //             Icons.add_circle_outline,
-                      //             color: Colors.black,
-                      //           ),
-                      //         ),
-                      //         title: Container(),
-                      //         children: <Widget>[
-                      //           SizedBox(
-                      //             height: 10,
-                      //           ),
-                      //           if (listGroupViewData[0].admins!.isNotEmpty)
-                      //             Container(
-                      //               padding: EdgeInsets.symmetric(
-                      //                   horizontal: 20, vertical: 10),
-                      //               margin:
-                      //                   EdgeInsets.symmetric(horizontal: 20),
-                      //               decoration: BoxDecoration(
-                      //                   color: Colors.white,
-                      //                   borderRadius: BorderRadius.circular(5)),
-                      //               child: Column(
-                      //                 children: [
-                      //                   for (int i = 0;
-                      //                       i <
-                      //                           listGroupViewData[0]
-                      //                               .admins!
-                      //                               .length;
-                      //                       i++)
-                      //                     Column(
-                      //                       children: [
-                      //                         Row(
-                      //                           children: [
-                      //                             Stack(
-                      //                               children: [
-                      //                                 displayLocalImage(
-                      //                                     "filePath",
-                      //                                     radius: 30),
-                      //                                 Positioned(
-                      //                                   bottom: 5,
-                      //                                   right: 0,
-                      //                                   child: Image.asset(
-                      //                                       "assets/images/tick-mark.png"),
-                      //                                 )
-                      //                               ],
-                      //                             ),
-                      //                             SizedBox(
-                      //                               width: 10,
-                      //                             ),
-                      //                             Column(
-                      //                               crossAxisAlignment:
-                      //                                   CrossAxisAlignment
-                      //                                       .start,
-                      //                               children: [
-                      //                                 sText(
-                      //                                     listGroupViewData[0]
-                      //                                         .admins![i]
-                      //                                         .name,
-                      //                                     color: Colors.black,
-                      //                                     weight:
-                      //                                         FontWeight.w500),
-                      //                                 SizedBox(
-                      //                                   height: 5,
-                      //                                 ),
-                      //                                 sText("Admin",
-                      //                                     color: kAdeoGray3,
-                      //                                     size: 12),
-                      //                               ],
-                      //                             ),
-                      //                             Expanded(child: Container()),
-                      //                             Icon(
-                      //                               Icons.arrow_forward_ios,
-                      //                               color: kAdeoGray3,
-                      //                               size: 16,
-                      //                             )
-                      //                           ],
-                      //                         ),
-                      //                         SizedBox(
-                      //                           height: 10,
-                      //                         )
-                      //                       ],
-                      //                     ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      Column(
+                        children: [
+                          Theme(
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                            child: ExpansionTile(
+                              textColor: Colors.white,
+                              iconColor: Colors.white,
+                              initiallyExpanded: false,
+                              maintainState: false,
+                              backgroundColor: kHomeBackgroundColor,
+                              childrenPadding: EdgeInsets.zero,
+                              collapsedIconColor: Colors.white,
+                              leading: Container(
+                                child: sText("Stats",
+                                    weight: FontWeight.w500, size: 16),
+                              ),
+                              trailing: Container(
+                                child: Icon(
+                                  Icons.add_circle_outline,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              title: Container(),
+                              children: <Widget>[
+
+                               Column(
+                                   children: [
+                                     Container(
+                                       padding: EdgeInsets.symmetric(horizontal: 10),
+                                       margin: EdgeInsets.symmetric(horizontal: 10),
+                                       child:buildDropDownButton(),
+                                     ),
+                                     Container(
+                                       padding: EdgeInsets.symmetric(horizontal: 0),
+                                       height: 50,
+                                       child: ListView.builder(
+                                           padding: EdgeInsets.symmetric(horizontal: 20),
+                                           itemCount: sortList.length,
+                                           shrinkWrap: true,
+                                           scrollDirection: Axis.horizontal,
+                                           itemBuilder: (BuildContext context, int index){
+                                             if(index == 0){
+                                               return GestureDetector(
+                                                 onTap: ()async{
+                                                   setState((){
+                                                     if(orderBy == "asc"){
+                                                       orderBy = "desc";
+                                                     }else{
+                                                       orderBy = "asc";
+                                                     }
+
+                                                   });
+                                                 },
+                                                 child: Row(
+                                                   children: [
+                                                     Container(
+                                                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                                       decoration: BoxDecoration(
+                                                           color:  orderBy == "desc" ? Color(0XFF2D3E50) : Colors.white,
+                                                           borderRadius: BorderRadius.circular(20),
+                                                           border: Border.all(color: Colors.white)
+                                                       ),
+                                                       child: Image.asset("assets/images/up-and-down-arrow.png",color: orderBy == "desc" ? Colors.white : Colors.grey,),
+
+                                                     ),
+                                                     SizedBox(width: 10,),
+                                                   ],
+                                                 ),
+                                               );
+                                             }
+                                             return MaterialButton(
+                                               padding: EdgeInsets.zero,
+                                               onPressed: ()async{
+                                                 setState((){
+                                                   sortBy = sortList[index].id;
+                                                 });
+                                               },
+                                               child: Row(
+                                                 children: [
+                                                   Container(
+                                                     padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                                                     decoration: BoxDecoration(
+                                                         color: sortBy == sortList[index].id ? Color(0XFF2D3E50)  : Colors.white,
+                                                         borderRadius: BorderRadius.circular(20),
+                                                         border: Border.all(color: Colors.black)
+                                                     ),
+                                                     child: sText("${sortList[index].name}",size: 14,weight: FontWeight.normal,align: TextAlign.center,color: sortBy == sortList[index].id ? Colors.white : Color(0XFF2D3E50)),
+
+                                                   ),
+                                                   SizedBox(width: 5,),
+                                                 ],
+                                               ),
+                                             );
+                                           }),
+                                     ),
+                                     dropdownValue == "Courses" ?
+                                     Column(
+                                         children: [
+                                           CarouselSlider.builder(
+                                               options:
+                                               CarouselOptions(
+                                                 height:
+                                                 400,
+                                                 autoPlay:
+                                                 false,
+                                                 enableInfiniteScroll:
+                                                 false,
+                                                 autoPlayAnimationDuration:
+                                                 Duration(seconds: 1),
+                                                 enlargeCenterPage:
+                                                 false,
+                                                 viewportFraction:
+                                                 1,
+                                                 aspectRatio:
+                                                 2.0,
+                                                 pageSnapping:
+                                                 true,
+                                                 onPageChanged: (index, reason) {
+                                                   setState(
+                                                           () {
+                                                         _currentSlide =
+                                                             index;
+                                                       });
+                                                 },
+                                               ),
+                                               itemCount:5,
+                                               itemBuilder: (BuildContextcontext, int index, int index2) {
+                                                 return  Container(
+                                                   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                                                   child: Column(
+                                                     children: [
+                                                       Container(
+                                                         padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                                         margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                                         decoration: BoxDecoration(
+                                                             color: Color(0XFFDBF1A8),
+                                                             borderRadius: BorderRadius.circular(10)
+                                                         ),
+                                                         child: Column(
+                                                           children: [
+                                                             Row(
+                                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                               children: [
+                                                                 Row(
+                                                                   children: [
+                                                                     Icon(Icons.play_arrow),
+                                                                     sText("Physics",weight: FontWeight.bold),
+                                                                   ],
+                                                                 ),
+                                                                 Column(
+                                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                                   children: [
+                                                                     Container(
+                                                                       height: 40,
+                                                                       width: 40,
+                                                                       child: Center(child: sText("09",weight: FontWeight.bold)),
+                                                                       decoration: BoxDecoration(
+                                                                           color: Colors.white,
+                                                                           shape: BoxShape.rectangle,
+                                                                           borderRadius: BorderRadius.circular(10)
+                                                                       ),
+                                                                     ),
+                                                                     SizedBox(height: 5,),
+                                                                     sText("Passed",size: 10,weight: FontWeight.bold),
+                                                                   ],
+                                                                 )
+                                                               ],
+                                                             ),
+                                                             SizedBox(height: 10,),
+                                                             LinearProgressIndicator(
+                                                               color: Colors.red,
+                                                               value: 0.5,
+                                                               backgroundColor: Colors.grey,
+
+                                                             ),
+                                                             SizedBox(height: 10,),
+                                                             Row(
+                                                               children: [
+                                                                 Image.asset(
+                                                                   "assets/images/trophy.png",
+                                                                 ),
+                                                                 SizedBox(width: 5,),
+                                                                 sText("2nd",weight: FontWeight.bold,color: Colors.grey),
+                                                                 Expanded(child: Container()),
+                                                                 Icon(Icons.arrow_forward,color: Colors.grey,)
+                                                               ],
+                                                             ),
+                                                             SizedBox(height: 20,),
+                                                             Container(
+                                                               decoration: BoxDecoration(
+                                                                   color: Color(0XFFFAFAFA),
+                                                                   borderRadius: BorderRadius.circular(15)
+                                                               ),
+                                                               padding: bottomPadding(15),
+                                                               child: Column(
+                                                                 children: [
+                                                                   Container(
+                                                                     child: Row(
+                                                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                       children: [
+                                                                         Center(
+                                                                           child: Container(
+                                                                             // padding: EdgeInsets.only(top: 10,bottom: 10,left:10),
+
+                                                                             child: Column(
+                                                                               children: [
+                                                                                 sText("Test ",color: Colors.grey,align: TextAlign.center),
+                                                                                 SizedBox(height: 10,),
+                                                                                 sText("9",weight: FontWeight.bold,size: 25),
+                                                                               ],
+                                                                             ),
+                                                                           ),
+                                                                         ),
+                                                                         Container(
+                                                                           height: 100,
+                                                                           width: 2,
+                                                                           color: Colors.white,
+                                                                         ),
+                                                                         Container(
+                                                                           padding: EdgeInsets.only(top: 10,bottom: 10,left: 0),
+                                                                           child: Column(
+                                                                             children: [
+                                                                               sText("Participant",color: Colors.grey),
+                                                                               SizedBox(height: 10,),
+                                                                               sText("20",weight: FontWeight.bold,size: 25),
+                                                                             ],
+                                                                           ),
+                                                                         ),
+                                                                         Container(
+                                                                           height: 100,
+                                                                           width: 2,
+                                                                           color: Colors.white,
+                                                                         ),
+                                                                         Container(
+                                                                           child: Column(
+                                                                             children: [
+                                                                               sText("Grade",color: Colors.grey),
+                                                                               SizedBox(height: 10,),
+                                                                               sText("B2",weight: FontWeight.bold,size: 25),
+                                                                             ],
+                                                                           ),
+                                                                         ),
+                                                                       ],
+                                                                     ),
+                                                                   ),
+                                                                   Container(
+                                                                     height: 2,
+                                                                     color: Colors.white,
+                                                                   ),
+                                                                   Container(
+                                                                     padding: topPadding(10),
+                                                                     child: Row(
+                                                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                       children: [
+                                                                         Container(
+                                                                           child: Column(
+                                                                             children: [
+                                                                               sText("Speed",color: Colors.grey),
+                                                                               Container(
+                                                                                 width: 80,
+                                                                                 height: 80,
+                                                                                 child: SfRadialGauge(
+                                                                                     enableLoadingAnimation: true,
+
+                                                                                     axes: <RadialAxis>[
+
+                                                                                       RadialAxis(minimum: 0, maximum: 150, useRangeColorForAxis: false,ranges: <GaugeRange>[
+                                                                                         GaugeRange(
+                                                                                           startValue: 0,
+                                                                                           endValue: 50,
+                                                                                           color: Color(0xFF93E7EB),
+                                                                                           startWidth: 10,
+                                                                                           endWidth: 10,
+                                                                                           // rangeOffset: 5,
+                                                                                         ),
+
+
+                                                                                       ], pointers: <GaugePointer>[
+                                                                                         // NeedlePointer(value: 50)
+                                                                                       ], annotations: <GaugeAnnotation>[
+                                                                                         GaugeAnnotation(
+                                                                                             widget: Container(
+                                                                                                 child: const Text('5.0q/m',
+                                                                                                     style: TextStyle(
+                                                                                                         fontSize: 8, fontWeight: FontWeight.bold))),
+                                                                                             angle: 0,
+                                                                                             positionFactor: 0.1)
+                                                                                       ],
+                                                                                         // showAxisLine: false,
+                                                                                         showFirstLabel: false,
+                                                                                         showLabels: false,
+                                                                                         showLastLabel: false,
+                                                                                         showTicks: false,
+                                                                                         canScaleToFit: true,
+                                                                                         axisLabelStyle: GaugeTextStyle(
+                                                                                             color: Colors.white
+                                                                                         ),
+                                                                                         axisLineStyle: AxisLineStyle(
+                                                                                           dashArray: [1,2],
+
+                                                                                         ),
+                                                                                         majorTickStyle: MajorTickStyle(
+                                                                                             dashArray: [1,2],
+                                                                                             length: 2,
+                                                                                             thickness: 6
+                                                                                         ),
+                                                                                         minorTickStyle: MinorTickStyle(
+                                                                                             dashArray: [1,2],
+                                                                                             length: 2,
+                                                                                             thickness: 9
+                                                                                         ),
+
+                                                                                       )
+                                                                                     ]),
+                                                                               )                                      ],
+                                                                           ),
+                                                                         ),
+                                                                         Container(
+                                                                           child: Column(
+                                                                             children: [
+                                                                               sText("Mastery",color: Colors.grey),
+                                                                               SizedBox(height: 10,),
+                                                                               Center(
+                                                                                 child: SizedBox(
+                                                                                   child: Stack(
+                                                                                     children: [
+                                                                                       SizedBox(
+                                                                                         height: 60,
+                                                                                         width: 60,
+                                                                                         child: CircularProgressIndicator(
+                                                                                           color: Color(0XFF8CFFC5),
+                                                                                           strokeWidth: 5,
+
+                                                                                           value: 0.7,
+
+                                                                                         ),
+                                                                                       ),
+                                                                                       Positioned(
+                                                                                         top: 20,
+                                                                                         left: 15,
+                                                                                         child: Center(
+                                                                                           child: Column(
+                                                                                             children: [
+                                                                                               sText("85%",size: 10,weight: FontWeight.bold),
+                                                                                               sText("avg.score",size: 7,weight: FontWeight.normal),
+
+                                                                                             ],
+                                                                                           ),
+                                                                                         ),
+                                                                                       ),
+                                                                                     ],
+                                                                                   ),
+                                                                                 ),
+                                                                               ),
+                                                                             ],
+                                                                           ),
+                                                                         ),
+                                                                         Container(
+                                                                           child: Column(
+                                                                             children: [
+                                                                               sText("Strength",color: Colors.grey),
+                                                                               SizedBox(height: 30,),
+                                                                               AdeoSignalStrengthIndicator(
+                                                                                 strength: 100,
+                                                                               )
+                                                                             ],
+                                                                           ),
+                                                                         ),
+                                                                       ],
+                                                                     ),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                             ),
+
+                                                           ],
+                                                         ),
+                                                       ),
+                                                       SizedBox(height: 10,),
+                                                       Padding(
+                                                         padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                         child: Row(
+                                                           mainAxisAlignment: MainAxisAlignment.center,
+                                                           children: map<Widget>(5, (index, url) {
+                                                             return Container(
+                                                               width: 10,
+                                                               height: 10,
+                                                               margin: EdgeInsets.only(right: 5),
+                                                               decoration: BoxDecoration(
+                                                                   color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray,
+                                                                   shape: BoxShape.circle
+                                                               ),
+                                                             );
+                                                           }),
+                                                         ),
+                                                       ),
+                                                     ],
+                                                   ),
+                                                 );
+                                               }),
+                                           SizedBox(height: 10,),
+                                           Divider(color: Colors.white,height: 5,thickness: 5,),
+                                           SizedBox(height: 10,),
+                                         ],
+                                     ) :
+                                     dropdownValue == "Participants" ?
+                                     Column(
+                                       children: [
+                                         CarouselSlider.builder(
+                                             options:
+                                             CarouselOptions(
+                                               height:
+                                               530,
+                                               autoPlay:
+                                               false,
+                                               enableInfiniteScroll:
+                                               false,
+                                               autoPlayAnimationDuration:
+                                               Duration(seconds: 1),
+                                               enlargeCenterPage:
+                                               false,
+                                               viewportFraction:
+                                               1,
+                                               aspectRatio:
+                                               2.0,
+                                               pageSnapping:
+                                               true,
+                                               onPageChanged: (index, reason) {
+                                                 setState(
+                                                         () {
+                                                       _currentSlide =
+                                                           index;
+                                                     });
+                                               },
+                                             ),
+                                             itemCount:5,
+                                             itemBuilder: (BuildContextcontext, int index, int index2) {
+                                               return  Container(
+                                                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                                                 child: Column(
+                                                   children: [
+                                                     Container(
+                                                       padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                                       margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                                       decoration: BoxDecoration(
+                                                           color: Color(0XFFDBF1A8),
+                                                           borderRadius: BorderRadius.circular(10)
+                                                       ),
+                                                       child: Column(
+                                                         children: [
+                                                           Row(
+                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                             children: [
+                                                               Row(
+                                                                 children: [
+                                                                   Icon(Icons.play_arrow),
+                                                                   sText("Samuel Quaye",weight: FontWeight.bold),
+                                                                 ],
+                                                               ),
+                                                               Column(
+                                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                                 children: [
+                                                                   Container(
+                                                                     height: 40,
+                                                                     width: 40,
+                                                                     child: Center(child: sText("09",weight: FontWeight.bold)),
+                                                                     decoration: BoxDecoration(
+                                                                         color: Colors.white,
+                                                                         shape: BoxShape.rectangle,
+                                                                         borderRadius: BorderRadius.circular(10)
+                                                                     ),
+                                                                   ),
+                                                                   SizedBox(height: 5,),
+                                                                   sText("Passed",size: 10,weight: FontWeight.bold),
+                                                                 ],
+                                                               )
+                                                             ],
+                                                           ),
+                                                           SizedBox(height: 10,),
+                                                           LinearProgressIndicator(
+                                                             color: Colors.red,
+                                                             value: 0.5,
+                                                             backgroundColor: Colors.grey,
+
+                                                           ),
+                                                           SizedBox(height: 10,),
+                                                           Row(
+                                                             children: [
+                                                               Image.asset(
+                                                                 "assets/images/trophy.png",
+                                                               ),
+                                                               SizedBox(width: 5,),
+                                                               sText("2nd",weight: FontWeight.bold,color: Colors.grey),
+                                                               Expanded(child: Container()),
+                                                               Icon(Icons.arrow_forward,color: Colors.grey,)
+                                                             ],
+                                                           ),
+                                                           SizedBox(height: 20,),
+                                                           Container(
+                                                             decoration: BoxDecoration(
+                                                                 color: Color(0XFFFAFAFA),
+                                                                 borderRadius: BorderRadius.circular(15)
+                                                             ),
+                                                             padding: bottomPadding(15),
+                                                             child: Column(
+                                                               children: [
+                                                                 Container(
+                                                                   child: Row(
+                                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                     children: [
+                                                                       Center(
+                                                                         child: Container(
+                                                                           // padding: EdgeInsets.only(top: 10,bottom: 10,left:10),
+
+                                                                           child: Column(
+                                                                             children: [
+                                                                               sText("Courses ",color: Colors.grey,align: TextAlign.center),
+                                                                               SizedBox(height: 10,),
+                                                                               sText("9",weight: FontWeight.bold,size: 25),
+                                                                             ],
+                                                                           ),
+                                                                         ),
+                                                                       ),
+                                                                       Container(
+                                                                         height: 100,
+                                                                         width: 2,
+                                                                         color: Colors.white,
+                                                                       ),
+                                                                       Container(
+                                                                         padding: EdgeInsets.only(top: 10,bottom: 10,left: 0),
+                                                                         child: Column(
+                                                                           children: [
+                                                                             sText("Test",color: Colors.grey),
+                                                                             SizedBox(height: 10,),
+                                                                             sText("20",weight: FontWeight.bold,size: 25),
+                                                                           ],
+                                                                         ),
+                                                                       ),
+                                                                       Container(
+                                                                         height: 100,
+                                                                         width: 2,
+                                                                         color: Colors.white,
+                                                                       ),
+                                                                       Container(
+                                                                         child: Column(
+                                                                           children: [
+                                                                             sText("Grade",color: Colors.grey),
+                                                                             SizedBox(height: 10,),
+                                                                             sText("B2",weight: FontWeight.bold,size: 25),
+                                                                           ],
+                                                                         ),
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                                 Container(
+                                                                   height: 2,
+                                                                   color: Colors.white,
+                                                                 ),
+                                                                 Container(
+                                                                   padding: topPadding(10),
+                                                                   child: Row(
+                                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                     children: [
+                                                                       Container(
+                                                                         child: Column(
+                                                                           children: [
+                                                                             sText("Speed",color: Colors.grey),
+                                                                             Container(
+                                                                               width: 80,
+                                                                               height: 80,
+                                                                               child: SfRadialGauge(
+                                                                                   enableLoadingAnimation: true,
+
+                                                                                   axes: <RadialAxis>[
+
+                                                                                     RadialAxis(minimum: 0, maximum: 150, useRangeColorForAxis: false,ranges: <GaugeRange>[
+                                                                                       GaugeRange(
+                                                                                         startValue: 0,
+                                                                                         endValue: 50,
+                                                                                         color: Color(0xFF93E7EB),
+                                                                                         startWidth: 10,
+                                                                                         endWidth: 10,
+                                                                                         // rangeOffset: 5,
+                                                                                       ),
+
+
+                                                                                     ], pointers: <GaugePointer>[
+                                                                                       // NeedlePointer(value: 50)
+                                                                                     ], annotations: <GaugeAnnotation>[
+                                                                                       GaugeAnnotation(
+                                                                                           widget: Container(
+                                                                                               child: const Text('5.0q/m',
+                                                                                                   style: TextStyle(
+                                                                                                       fontSize: 8, fontWeight: FontWeight.bold))),
+                                                                                           angle: 0,
+                                                                                           positionFactor: 0.1)
+                                                                                     ],
+                                                                                       // showAxisLine: false,
+                                                                                       showFirstLabel: false,
+                                                                                       showLabels: false,
+                                                                                       showLastLabel: false,
+                                                                                       showTicks: false,
+                                                                                       canScaleToFit: true,
+                                                                                       axisLabelStyle: GaugeTextStyle(
+                                                                                           color: Colors.white
+                                                                                       ),
+                                                                                       axisLineStyle: AxisLineStyle(
+                                                                                         dashArray: [1,2],
+
+                                                                                       ),
+                                                                                       majorTickStyle: MajorTickStyle(
+                                                                                           dashArray: [1,2],
+                                                                                           length: 2,
+                                                                                           thickness: 6
+                                                                                       ),
+                                                                                       minorTickStyle: MinorTickStyle(
+                                                                                           dashArray: [1,2],
+                                                                                           length: 2,
+                                                                                           thickness: 9
+                                                                                       ),
+
+                                                                                     )
+                                                                                   ]),
+                                                                             )                                      ],
+                                                                         ),
+                                                                       ),
+                                                                       Container(
+                                                                         child: Column(
+                                                                           children: [
+                                                                             sText("Mastery",color: Colors.grey),
+                                                                             SizedBox(height: 10,),
+                                                                             Center(
+                                                                               child: SizedBox(
+                                                                                 child: Stack(
+                                                                                   children: [
+                                                                                     SizedBox(
+                                                                                       height: 60,
+                                                                                       width: 60,
+                                                                                       child: CircularProgressIndicator(
+                                                                                         color: Color(0XFF8CFFC5),
+                                                                                         strokeWidth: 5,
+
+                                                                                         value: 0.7,
+
+                                                                                       ),
+                                                                                     ),
+                                                                                     Positioned(
+                                                                                       top: 20,
+                                                                                       left: 15,
+                                                                                       child: Center(
+                                                                                         child: Column(
+                                                                                           children: [
+                                                                                             sText("85%",size: 10,weight: FontWeight.bold),
+                                                                                             sText("avg.score",size: 7,weight: FontWeight.normal),
+
+                                                                                           ],
+                                                                                         ),
+                                                                                       ),
+                                                                                     ),
+                                                                                   ],
+                                                                                 ),
+                                                                               ),
+                                                                             ),
+                                                                           ],
+                                                                         ),
+                                                                       ),
+                                                                       Container(
+                                                                         child: Column(
+                                                                           children: [
+                                                                             sText("Strength",color: Colors.grey),
+                                                                             SizedBox(height: 30,),
+                                                                             AdeoSignalStrengthIndicator(
+                                                                               strength: 100,
+                                                                             )
+                                                                           ],
+                                                                         ),
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                                 Container(
+                                                                   height: 2,
+                                                                   color: Colors.white,
+                                                                 ),
+                                                                 Container(
+                                                                   padding: topPadding(10),
+                                                                   child: Row(
+                                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                     children: [
+                                                                       Center(
+                                                                         child: Container(
+                                                                           padding: EdgeInsets.only(top: 0,bottom: 30,left:10),
+
+                                                                           child: Column(
+                                                                             crossAxisAlignment: CrossAxisAlignment.center,
+                                                                             children: [
+                                                                               sText("Total",color: Colors.grey,align: TextAlign.center),
+                                                                               sText("Score",color: Colors.grey,align: TextAlign.center),
+                                                                               SizedBox(height: 20,),
+                                                                               sText("9",weight: FontWeight.bold,size: 25),
+                                                                             ],
+                                                                           ),
+                                                                         ),
+                                                                       ),
+                                                                       Container(
+                                                                         height: 100,
+                                                                         width: 2,
+                                                                         color: Colors.white,
+                                                                       ),
+                                                                       Container(
+                                                                         padding: EdgeInsets.only(top: 0,bottom: 30,left: 0),
+                                                                         child: Column(
+                                                                           crossAxisAlignment: CrossAxisAlignment.center,
+                                                                           children: [
+                                                                             sText("Group",color: Colors.grey,align: TextAlign.center),
+                                                                             sText("Score",color: Colors.grey,align: TextAlign.center),
+                                                                             SizedBox(height: 20,),
+                                                                             sText("9",weight: FontWeight.bold,size: 25),
+                                                                           ],
+                                                                         ),
+                                                                       ),
+                                                                       Container(
+                                                                         height: 100,
+                                                                         width: 2,
+                                                                         color: Colors.white,
+                                                                       ),
+                                                                       Container(
+                                                                         child: Column(
+                                                                           crossAxisAlignment: CrossAxisAlignment.center,
+                                                                           children: [
+                                                                             sText("Group",color: Colors.grey),
+                                                                             sText("Mastery",color: Colors.grey),
+                                                                             SizedBox(height: 20,),
+                                                                             Center(
+                                                                               child: SizedBox(
+                                                                                 child: Stack(
+                                                                                   children: [
+                                                                                     SizedBox(
+                                                                                       height: 60,
+                                                                                       width: 60,
+                                                                                       child: CircularProgressIndicator(
+                                                                                         color: Color(0XFF8CFFC5),
+                                                                                         strokeWidth: 5,
+
+                                                                                         value: 0.7,
+
+                                                                                       ),
+                                                                                     ),
+                                                                                     Positioned(
+                                                                                       top: 20,
+                                                                                       left: 15,
+                                                                                       child: Center(
+                                                                                         child: Column(
+                                                                                           children: [
+                                                                                             sText("85%",size: 10,weight: FontWeight.bold),
+                                                                                             sText("avg.score",size: 7,weight: FontWeight.normal),
+
+                                                                                           ],
+                                                                                         ),
+                                                                                       ),
+                                                                                     ),
+                                                                                   ],
+                                                                                 ),
+                                                                               ),
+                                                                             ),
+                                                                           ],
+                                                                         ),
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                 ),
+                                                               ],
+                                                             ),
+                                                           ),
+
+                                                         ],
+                                                       ),
+                                                     ),
+                                                     SizedBox(height: 10,),
+                                                     Padding(
+                                                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                       child: Row(
+                                                         mainAxisAlignment: MainAxisAlignment.center,
+                                                         children: map<Widget>(5, (index, url) {
+                                                           return Container(
+                                                             width: 10,
+                                                             height: 10,
+                                                             margin: EdgeInsets.only(right: 5),
+                                                             decoration: BoxDecoration(
+                                                                 color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray,
+                                                                 shape: BoxShape.circle
+                                                             ),
+                                                           );
+                                                         }),
+                                                       ),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               );
+                                             }),
+                                         SizedBox(height: 10,),
+                                         Divider(color: Colors.white,height: 5,thickness: 5,),
+                                         SizedBox(height: 10,),
+                                       ],
+                                     ) :
+                                     dropdownValue == "Tests" ?
+                                     Column(
+                                       children: [
+                                         CarouselSlider.builder(
+                                             options:
+                                             CarouselOptions(
+                                               height:
+                                               530,
+                                               autoPlay:
+                                               false,
+                                               enableInfiniteScroll:
+                                               false,
+                                               autoPlayAnimationDuration:
+                                               Duration(seconds: 1),
+                                               enlargeCenterPage:
+                                               false,
+                                               viewportFraction:
+                                               1,
+                                               aspectRatio:
+                                               2.0,
+                                               pageSnapping:
+                                               true,
+                                               onPageChanged: (index, reason) {
+                                                 setState(
+                                                         () {
+                                                       _currentSlide =
+                                                           index;
+                                                     });
+                                               },
+                                             ),
+                                             itemCount:5,
+                                             itemBuilder: (BuildContextcontext, int index, int index2) {
+                                               return  Container(
+                                                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                                                 child: Column(
+                                                   children: [
+                                                     Container(
+                                                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                                                       margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                                       decoration: BoxDecoration(
+                                                           color: Colors.grey[300],
+                                                           borderRadius: BorderRadius.circular(10)
+                                                       ),
+                                                       child: Row(
+                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                         children: [
+                                                           Column(
+                                                             crossAxisAlignment: CrossAxisAlignment.start,
+                                                             children: [
+                                                               Container(
+                                                                 child: sText("Revision 1",size: 16,weight: FontWeight.bold),
+                                                               ),
+                                                               Row(
+                                                                 children: [
+                                                                   Icon(Icons.timelapse,size: 8,),
+                                                                   Container(
+                                                                     child: sText("3hrs ago",size: 8,weight: FontWeight.bold),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                               SizedBox(height: 10,),
+                                                               Container(
+                                                                 child: sText("20 participant",color: Colors.grey,weight: FontWeight.w500,size: 12),
+                                                               ),
+                                                               Container(
+                                                                 child: sText("10 questions",color: Colors.grey,weight: FontWeight.w500,size: 12),
+                                                               ),
+                                                             ],
+                                                           ),
+                                                           Column(
+                                                             crossAxisAlignment: CrossAxisAlignment.end,
+                                                             children: [
+                                                               SizedBox(height: 20,),
+                                                               Row(
+                                                                 children: [
+                                                                   Column(
+                                                                     children: [
+                                                                       Container(
+                                                                         height: 40,
+                                                                         width: 40,
+                                                                         child: Center(child: sText("09",weight: FontWeight.bold)),
+                                                                         decoration: BoxDecoration(
+                                                                             color: Colors.white,
+                                                                             shape: BoxShape.rectangle,
+                                                                             borderRadius: BorderRadius.circular(10)
+                                                                         ),
+                                                                       ),
+                                                                       SizedBox(height: 5,),
+                                                                       sText("Mastery",size: 10,weight: FontWeight.w500)
+                                                                     ],
+                                                                   ),
+                                                                   SizedBox(width: 10,),
+                                                                   Column(
+                                                                     children: [
+                                                                       Container(
+                                                                         height: 40,
+                                                                         width: 40,
+                                                                         child: Center(child: sText("2.5",weight: FontWeight.bold)),
+                                                                         decoration: BoxDecoration(
+                                                                             color: Colors.white,
+                                                                             shape: BoxShape.rectangle,
+                                                                             borderRadius: BorderRadius.circular(10)
+                                                                         ),
+                                                                       ),
+                                                                       SizedBox(height: 5,),
+                                                                       sText("Avg. Time",size: 10,weight: FontWeight.w500)
+                                                                     ],
+                                                                   ),
+                                                                   SizedBox(width: 10,),
+                                                                   Column(
+                                                                     children: [
+                                                                       Container(
+                                                                         height: 40,
+                                                                         width: 40,
+                                                                         child: Center(child: sText("09",weight: FontWeight.bold)),
+                                                                         decoration: BoxDecoration(
+                                                                             color: Colors.white,
+                                                                             shape: BoxShape.rectangle,
+                                                                             borderRadius: BorderRadius.circular(10)
+                                                                         ),
+                                                                       ),
+                                                                       SizedBox(height: 5,),
+                                                                       sText("Passed",size: 10,weight: FontWeight.w500)
+                                                                     ],
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                                Icon(Icons.arrow_forward,color: Colors.grey,)
+                                                             ],
+                                                           )
+
+                                                         ],
+                                                       ),
+                                                     ),
+                                                     SizedBox(height: 10,),
+                                                     Padding(
+                                                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                       child: Row(
+                                                         mainAxisAlignment: MainAxisAlignment.center,
+                                                         children: map<Widget>(5, (index, url) {
+                                                           return Container(
+                                                             width: 10,
+                                                             height: 10,
+                                                             margin: EdgeInsets.only(right: 5),
+                                                             decoration: BoxDecoration(
+                                                                 color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray,
+                                                                 shape: BoxShape.circle
+                                                             ),
+                                                           );
+                                                         }),
+                                                       ),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               );
+                                             }),
+                                         SizedBox(height: 10,),
+                                         Divider(color: Colors.white,height: 5,thickness: 5,),
+                                         SizedBox(height: 10,),
+                                       ],
+                                     ) :
+                                     dropdownValue == "Topics" ?
+                                     Column(
+                                       children: [
+                                         CarouselSlider.builder(
+                                             options:
+                                             CarouselOptions(
+                                               height:
+                                               530,
+                                               autoPlay:
+                                               false,
+                                               enableInfiniteScroll:
+                                               false,
+                                               autoPlayAnimationDuration:
+                                               Duration(seconds: 1),
+                                               enlargeCenterPage:
+                                               false,
+                                               viewportFraction:
+                                               1,
+                                               aspectRatio:
+                                               2.0,
+                                               pageSnapping:
+                                               true,
+                                               onPageChanged: (index, reason) {
+                                                 setState(
+                                                         () {
+                                                       _currentSlide =
+                                                           index;
+                                                     });
+                                               },
+                                             ),
+                                             itemCount:5,
+                                             itemBuilder: (BuildContextcontext, int index, int index2) {
+                                               return  Container(
+                                                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
+                                                 child: Column(
+                                                   children: [
+                                                     Container(
+                                                       padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                                                       margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                                       decoration: BoxDecoration(
+                                                           color: Colors.grey[300],
+                                                           borderRadius: BorderRadius.circular(10)
+                                                       ),
+                                                       child: Column(
+                                                         children: [
+                                                           Row(
+                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                             children: [
+                                                               Column(
+                                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                                 children: [
+                                                                   Container(
+                                                                     child: sText("Photosynthesis",size: 16,weight: FontWeight.bold),
+                                                                   ),
+                                                                   Row(
+                                                                     children: [
+                                                                       Icon(Icons.timelapse,size: 8,),
+                                                                       Container(
+                                                                         child: sText("3hrs ago",size: 8,weight: FontWeight.bold),
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                               Container(
+                                                                 padding: EdgeInsets.only(top: 0,bottom: 10),
+                                                                 child: Row(
+                                                                   children: [
+                                                                     Image.asset(
+                                                                       "assets/images/trophy.png",
+                                                                     ),
+                                                                     SizedBox(width: 5,),
+
+                                                                     sText("2nd",weight: FontWeight.bold,color: Colors.grey),
+                                                                   ],
+                                                                 ),
+                                                               ),
+                                                             ],
+                                                           ),
+                                                           Container(
+                                                             child: Column(
+                                                               crossAxisAlignment: CrossAxisAlignment.end,
+                                                               mainAxisAlignment: MainAxisAlignment.center,
+                                                               children: [
+                                                                 Row(
+                                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                                                                   children: [
+                                                                     Column(
+                                                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                                                       children: [
+                                                                         Container(
+                                                                           child: sText("20 participant",color: Colors.grey,weight: FontWeight.w500,size: 12),
+                                                                         ),
+                                                                         Container(
+                                                                           child: sText("10 questions",color: Colors.grey,weight: FontWeight.w500,size: 12),
+                                                                         ),
+                                                                       ],
+                                                                     ),
+                                                                     Row(
+                                                                       children: [
+                                                                         Column(
+                                                                           children: [
+                                                                             Container(
+                                                                               height: 40,
+                                                                               width: 40,
+                                                                               child: Center(child: sText("09",weight: FontWeight.bold)),
+                                                                               decoration: BoxDecoration(
+                                                                                   color: Colors.white,
+                                                                                   shape: BoxShape.rectangle,
+                                                                                   borderRadius: BorderRadius.circular(10)
+                                                                               ),
+                                                                             ),
+                                                                             SizedBox(height: 5,),
+                                                                             sText("Mastery",size: 10,weight: FontWeight.w500)
+                                                                           ],
+                                                                         ),
+                                                                         SizedBox(width: 10,),
+                                                                         Column(
+                                                                           children: [
+                                                                             Container(
+                                                                               height: 40,
+                                                                               width: 40,
+                                                                               child: Center(child: sText("2.5",weight: FontWeight.bold)),
+                                                                               decoration: BoxDecoration(
+                                                                                   color: Colors.white,
+                                                                                   shape: BoxShape.rectangle,
+                                                                                   borderRadius: BorderRadius.circular(10)
+                                                                               ),
+                                                                             ),
+                                                                             SizedBox(height: 5,),
+                                                                             sText("Avg. Time",size: 10,weight: FontWeight.w500)
+                                                                           ],
+                                                                         ),
+                                                                         SizedBox(width: 10,),
+                                                                         Column(
+                                                                           children: [
+                                                                             Container(
+                                                                               height: 40,
+                                                                               width: 40,
+                                                                               child: Center(child: sText("09",weight: FontWeight.bold)),
+                                                                               decoration: BoxDecoration(
+                                                                                   color: Colors.white,
+                                                                                   shape: BoxShape.rectangle,
+                                                                                   borderRadius: BorderRadius.circular(10)
+                                                                               ),
+                                                                             ),
+                                                                             SizedBox(height: 5,),
+                                                                             sText("Passed",size: 10,weight: FontWeight.w500)
+                                                                           ],
+                                                                         ),
+                                                                       ],
+                                                                     ),
+                                                                   ],
+                                                                 ),
+                                                                 Icon(Icons.arrow_forward,color: Colors.grey,)
+                                                               ],
+                                                             ),
+                                                           ),
+                                                         ],
+                                                       ),
+                                                     ),
+                                                     SizedBox(height: 10,),
+                                                     Padding(
+                                                       padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                       child: Row(
+                                                         mainAxisAlignment: MainAxisAlignment.center,
+                                                         children: map<Widget>(5, (index, url) {
+                                                           return Container(
+                                                             width: 10,
+                                                             height: 10,
+                                                             margin: EdgeInsets.only(right: 5),
+                                                             decoration: BoxDecoration(
+                                                                 color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray,
+                                                                 shape: BoxShape.circle
+                                                             ),
+                                                           );
+                                                         }),
+                                                       ),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               );
+                                             }),
+                                         SizedBox(height: 10,),
+                                         Divider(color: Colors.white,height: 5,thickness: 5,),
+                                         SizedBox(height: 10,),
+                                       ],
+                                     ) :
+                                     dropdownValue == "Questions" ?
+                                     Column(
+                                       children: [
+
+                                           Column(
+                                             children: [
+
+                                               Container(
+                                                 padding: EdgeInsets.symmetric(
+                                                     horizontal: 0, vertical: 0),
+                                                 margin:
+                                                 EdgeInsets.symmetric(horizontal: 20),
+                                                 decoration: BoxDecoration(
+                                                   color: Colors.white,
+                                                   borderRadius: BorderRadius.circular(5),
+                                                 ),
+                                                 child: Column(
+                                                   children: [
+                                                     ExpansionTile(
+                                                       iconColor: Color(0xFFB5B5B5),
+                                                       title: Column(
+                                                         crossAxisAlignment:
+                                                         CrossAxisAlignment.start,
+                                                         children: [
+                                                           Container(
+                                                              // width: 100,
+                                                               child: sText("Which of the following is a product",maxLines: 1),
+                                                           )
+                                                         ],
+                                                       ),
+                                                       children: [
+                                                         Container(
+                                                           margin: EdgeInsets.symmetric(
+                                                             vertical: 20,
+                                                           ),
+                                                           decoration: BoxDecoration(
+                                                             color: Color(0xFFF8F8F8)
+                                                                 .withOpacity(1),
+                                                             borderRadius:
+                                                             BorderRadius.circular(8),
+                                                             border: Border.all(
+                                                               width: 1.5,
+                                                               color: Color(0xFF489CFF),
+                                                             ),
+                                                           ),
+                                                           child: Column(
+                                                             crossAxisAlignment:
+                                                             CrossAxisAlignment.start,
+                                                             children: [
+                                                               SizedBox(height: 10,),
+                                                               ListTile(
+                                                                 title: sText(
+                                                                   "Test Name",
+                                                                   size: 14.0,
+                                                                   color: Color(0xFF5A6775),
+                                                                 ),
+                                                                 subtitle: sText(
+                                                                   "name",
+                                                                   weight: FontWeight.w600,
+                                                                 ),
+                                                               ),
+                                                               ListTile(
+                                                                 title: sText(
+                                                                   "Test Source",
+                                                                   size: 14.0,
+                                                                   color: Color(0xFF5A6775),
+                                                                 ),
+                                                                 subtitle: Column(
+                                                                   crossAxisAlignment:
+                                                                   CrossAxisAlignment
+                                                                       .start,
+                                                                   children: [
+                                                                     sText(
+                                                                       "score",
+                                                                       weight:
+                                                                       FontWeight.w600,
+                                                                     ),
+                                                                     sText(
+                                                                       "cours",
+                                                                       style:
+                                                                       FontStyle.italic,
+                                                                     ),
+                                                                   ],
+                                                                 ),
+                                                               ),
+                                                               ListTile(
+                                                                 title: sText(
+                                                                   "Timing",
+                                                                   size: 14.0,
+                                                                   color: Color(0xFF5A6775),
+                                                                 ),
+                                                                 subtitle: sText(
+                                                                   "timing",
+                                                                   weight: FontWeight.w600,
+                                                                 ),
+                                                               ),
+                                                               ListTile(
+                                                                 title: sText(
+                                                                   "Test Period",
+                                                                   size: 14.0,
+                                                                   color: Color(0xFF5A6775),
+                                                                 ),
+                                                                 subtitle: Column(
+                                                                   crossAxisAlignment:
+                                                                   CrossAxisAlignment
+                                                                       .start,
+                                                                   children: [
+                                                                     sText(
+                                                                       "Exact Time",
+                                                                       weight:
+                                                                       FontWeight.w600,
+                                                                     ),
+                                                                     sText(
+                                                                         "start",
+                                                                         style: FontStyle
+                                                                             .italic),
+                                                                   ],
+                                                                 ),
+                                                               ),
+                                                               ListTile(
+                                                                 title: sText(
+                                                                   "Status",
+                                                                   size: 14.0,
+                                                                   color: Color(0xFF5A6775),
+                                                                 ),
+                                                                 subtitle: sText(
+                                                                   "status",
+                                                                   weight: FontWeight.w600,
+                                                                 ),
+                                                               ),
+                                                             ],
+                                                           ),
+                                                         )
+                                                       ],
+                                                     ),
+                                                     Container(
+                                                         color: Colors.grey[200],
+                                                         height:1,
+                                                         width:appWidth(context)
+                                                     ),
+                                                     Container(
+                                                         padding: EdgeInsets.symmetric(
+                                                           horizontal: 10, vertical: 10),
+                                                       child: Row(
+                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                           children:[
+                                                             Column(
+                                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                                 children: [
+                                                                   sText("Photosynthesis",color: Colors.grey,weight: FontWeight.w500),
+                                                                   SizedBox(height:10),
+                                                                   sText("Topic",color: Colors.grey[400]!),
+                                                                 ],
+                                                             ),
+                                                             Column(
+                                                             crossAxisAlignment: CrossAxisAlignment.end,
+                                                               children: [
+                                                                 AdeoSignalStrengthIndicator(
+                                                                   strength: 100,
+                                                                 ),
+                                                                 SizedBox(height:10),
+                                                                 Row(
+                                                                   children: [
+                                                                     sText("50s",color: Colors.grey,weight: FontWeight.bold,size: 10),
+                                                                     sText("|"),
+                                                                     sText("90%",color: Colors.grey,weight: FontWeight.bold,size: 10),
+                                                                   ],
+                                                                 ),
+
+                                                               ],
+                                                             ),
+
+                                                           ]
+                                                       ),
+                                                     )
+                                                   ],
+                                                 ),
+                                               ),
+                                               SizedBox(height: 10,),
+                                              
+                                             ],
+                                           ),
+                                       ],
+                                     )  :
+                                      Container()
+                                   ],
+                               )
+
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      ),
                       // wallet
 
                       // Column(
