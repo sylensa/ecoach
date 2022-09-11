@@ -132,7 +132,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     print(controller.time);
     // startTimer();
     controller.startTest();
-    print(controller.countdown);
   }
 
   @override

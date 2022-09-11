@@ -1,11 +1,6 @@
-import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
-import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/views/treadmill/quiz_questions.dart';
-import 'package:ecoach/views/treadmill/quiz_questions_copy.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view.dart';
-import 'package:ecoach/views/treadmill/treadmill_quiz_view_old.dart';
 import 'package:flutter/material.dart';
 
 import '../../database/topics_db.dart';
@@ -41,26 +36,7 @@ class _InstructionPageState extends State<InstructionPage> {
 
   gTime() {
     if (mounted) {
-      setState(() {
-        widget.controller.m1 = widget.controller.min_1 ?? "0";
-        widget.controller.m2 = (widget.controller.min_2 ?? "0");
-        widget.controller.s1 = widget.controller.sec_1 ?? "0";
-        widget.controller.s2 = widget.controller.sec_2 ?? "0";
-        widget.controller.minutes =
-            widget.controller.m1! + widget.controller.m2!;
-        widget.controller.seconds =
-            widget.controller.s1! + widget.controller.s2!;
-        widget.controller.countdown_min =
-            int.parse(widget.controller.minutes!) * 60;
-        widget.controller.countdown_sec = int.parse(widget.controller.seconds!);
-        widget.controller.countdown += (widget.controller.countdown_min! +
-            widget.controller.countdown_sec!);
-        print(
-            'mim: ${widget.controller.minutes}, ${widget.controller.countdown_min}');
-        print(
-            'mim: ${widget.controller.seconds}, ${widget.controller.countdown_sec}');
-        print('countdown: ${widget.controller.countdown}');
-      });
+      setState(() {});
     }
   }
 
@@ -108,8 +84,6 @@ class _InstructionPageState extends State<InstructionPage> {
                 //widget.controller.name = topic!.name;
                 break;
             }
-
-            widget.controller.time = widget.controller.countdown;
 
             Navigator.pop(context);
             Navigator.push(

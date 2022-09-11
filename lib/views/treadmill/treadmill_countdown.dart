@@ -1,8 +1,6 @@
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/treadmill/quiz_questions_copy.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view.dart';
-import 'package:ecoach/views/treadmill/treadmill_quiz_view_old.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
