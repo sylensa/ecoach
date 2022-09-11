@@ -441,7 +441,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizViewOld>
                       ),
                       child: AdeoTimer(
                           controller: controller.speedtimerController!,
-                          startDuration: controller.speedDuration!,
+                          startDuration: controller.duration!,
                           callbackWidget: (time) {
                             Duration remaining =
                                 Duration(seconds: time.toInt());

@@ -28,8 +28,8 @@ class TreadmillController {
     this.treadmill,
     this.time = 30,
   }) {
-    speedDuration = Duration(seconds: time);
-    speedResetDuration = Duration(seconds: time);
+    duration = Duration(seconds: time);
+    resetDuration = Duration(seconds: time);
     startingDuration = duration;
     timerController = CustomTimerController();
     speedtimerController = TimerController();
@@ -58,7 +58,6 @@ class TreadmillController {
   DateTime? startTime;
   Duration? duration, resetDuration, startingDuration;
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 30;
-  Duration? speedDuration, speedResetDuration, speedStartingDuration;
   int speedEndTime = 0;
   CustomTimerController? timerController;
   TimerController? speedtimerController;
@@ -105,9 +104,28 @@ class TreadmillController {
     timerController!.start();
   }
 
+  resetTimer() {
+    print("reset timer");
+    speedtimerController!.reset();
+    duration = resetDuration;
+  }
+
   nextQuestion() {
     currentQuestion++;
     questionTimer = DateTime.now();
+    resetTimer();
+  }
+
+  double timerProgress() {
+    int progress = resetDuration!.inSeconds - duration!.inSeconds;
+    print("progress $progress");
+    return progress.toDouble();
+  }
+
+  double timerPercentage() {
+    int progress = resetDuration!.inSeconds - duration!.inSeconds;
+    print("progress ${progress / resetDuration!.inSeconds}");
+    return progress / resetDuration!.inSeconds;
   }
 
   int get nextLevel {
@@ -262,13 +280,7 @@ class TreadmillController {
       courseId: course.id,
       testname: name,
       testType: treadmillType.toString(),
-      testTime: !speedTest
-          ? duration == null
-              ? -1
-              : duration!.inSeconds
-          : speedDuration == null
-              ? -1
-              : speedDuration!.inSeconds,
+      testTime: duration == null ? -1 : duration!.inSeconds,
       usedTime: DateTime.now().difference(startTime!).inSeconds,
       responses: responses,
       score: score,
