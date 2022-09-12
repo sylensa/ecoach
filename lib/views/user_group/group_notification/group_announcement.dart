@@ -1,4 +1,5 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
@@ -9,7 +10,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class GroupAnnouncement extends StatefulWidget {
   static const String routeName = '/user_group';
-  GroupAnnouncement(this.user, {Key? key}) : super(key: key);
+  GroupAnnouncement(this.user, {Key? key,this.groupNotificationData}) : super(key: key);
+  GroupNotificationData? groupNotificationData;
   User user;
   @override
   State<GroupAnnouncement> createState() => _GroupAnnouncementState();
