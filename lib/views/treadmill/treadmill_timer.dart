@@ -46,6 +46,11 @@ class _TreadmillTimeState extends State<TreadmillTime> {
   final _fieldThree = TextEditingController();
   final _fieldFour = TextEditingController();
 
+  int min1 = 0;
+  int min2 = 0;
+  int sec1 = 0;
+  int sec2 = 0;
+
   String? time;
   @override
   void initState() {
@@ -88,8 +93,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                 context,
                 'Enter a valid duration',
               );
-            }
-            if (_fieldOne.text.isEmpty &&
+            } else if (_fieldOne.text.isEmpty &&
                 _fieldTwo.text.isEmpty &&
                 _fieldThree.text.isEmpty &&
                 _fieldFour.text.isEmpty) {
@@ -98,6 +102,9 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                 'Enter a valid duration',
               );
             } else {
+              Duration duration = parseDuration("$min1$min2:$sec1$sec2");
+              print(duration);
+              widget.controller.resetDuration = duration;
               goTo(
                   context,
                   InstructionPage(
@@ -109,20 +116,6 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                     count: widget.count,
                   ),
                   replace: false);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) =>
-              //     InstructionPage(
-              //       mode: widget.mode,
-              //       controller: widget.controller,
-              //       topicId: widget.topicId,
-              //       bankId: widget.bankId,
-              //       bankName: widget.bankName,
-              //     ),
-
-              //   ),
-              // );
             }
           },
         ),
@@ -202,8 +195,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                         onChanged: (value) {
                           if (value.length == 1) {
                             setState(() {
-                              widget.controller.min_1 = _fieldOne.text;
-                              print("1st ${widget.controller.min_1}");
+                              min1 = int.parse(_fieldOne.text);
                             });
                             FocusScope.of(context).nextFocus();
                           }
@@ -245,8 +237,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                         onChanged: (value) {
                           if (value.length == 1) {
                             setState(() {
-                              widget.controller.min_2 = _fieldTwo.text;
-                              print("2nd ${widget.controller.min_2}");
+                              min2 = int.parse(_fieldTwo.text);
                             });
                             FocusScope.of(context).nextFocus();
                           }
@@ -303,8 +294,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                         onChanged: (value) {
                           if (value.length == 1) {
                             setState(() {
-                              widget.controller.sec_1 = _fieldThree.text;
-                              print("1st ${widget.controller.sec_1}");
+                              sec1 = int.parse(_fieldThree.text);
                             });
                             FocusScope.of(context).nextFocus();
                           }
@@ -346,8 +336,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
                         onChanged: (value) {
                           if (value.length == 1) {
                             setState(() {
-                              widget.controller.sec_2 = _fieldFour.text;
-                              print("2nd ${widget.controller.sec_2}");
+                              sec2 = int.parse(_fieldFour.text);
                             });
                             FocusScope.of(context).nextFocus();
                           }
@@ -389,4 +378,19 @@ class _TreadmillTimeState extends State<TreadmillTime> {
       ),
     );
   }
+}
+
+Duration parseDuration(String s) {
+  int hours = 0;
+  int minutes = 0;
+  int seconds;
+  List<String> parts = s.split(':');
+  if (parts.length > 2) {
+    hours = int.parse(parts[parts.length - 3]);
+  }
+  if (parts.length > 1) {
+    minutes = int.parse(parts[parts.length - 2]);
+  }
+  seconds = int.parse(parts[parts.length - 1]);
+  return Duration(hours: hours, minutes: minutes, seconds: seconds);
 }

@@ -115,7 +115,7 @@ class _CompletedState extends State<Completed> {
                         ),
                       ),
                       Text(
-                        '${widget.controller.minutes} min : $widget.controller.seconds sec',
+                        '${widget.controller.resetDuration!.inMinutes} min : ${widget.controller.resetDuration!.inSeconds} sec',
                         style: const TextStyle(
                           fontSize: 15,
                           color: Colors.white,

@@ -3,7 +3,13 @@ import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
 class AdeoTimer extends StatefulWidget {
-  const AdeoTimer({ Key? key, required this.controller, required this.startDuration, required this.callbackWidget, required this.onFinish }) : super(key: key);
+  const AdeoTimer(
+      {Key? key,
+      required this.controller,
+      required this.startDuration,
+      required this.callbackWidget,
+      required this.onFinish})
+      : super(key: key);
 
   final TimerController controller;
   final Duration startDuration;
@@ -15,11 +21,11 @@ class AdeoTimer extends StatefulWidget {
 }
 
 class _AdeoTimerState extends State<AdeoTimer> {
-  final CountdownController controller = new CountdownController(autoStart: true);
+  final CountdownController controller =
+      new CountdownController(autoStart: true);
 
-      @override
+  @override
   void initState() {
-    
     super.initState();
   }
 
@@ -30,7 +36,7 @@ class _AdeoTimerState extends State<AdeoTimer> {
       seconds: widget.startDuration.inSeconds,
       build: (BuildContext context, double time) {
         return widget.callbackWidget(time);
-        },
+      },
       onFinished: () {
         print('Timer is done!');
         widget.onFinish();
@@ -39,28 +45,29 @@ class _AdeoTimerState extends State<AdeoTimer> {
   }
 }
 
-class TimerController{
-  final CountdownController _controller = new CountdownController(autoStart: true);
+class TimerController {
+  final CountdownController _controller =
+      new CountdownController(autoStart: true);
 
-      TimerController(){}
+  TimerController() {}
 
-      CountdownController getController(){
-        return _controller;
-      }
+  CountdownController getController() {
+    return _controller;
+  }
 
-      start(){
-        _controller.start();
-      }
+  start() {
+    _controller.start();
+  }
 
-      pause(){
-        _controller.pause();
-      }
+  pause() {
+    _controller.pause();
+  }
 
-      reset(){
-        _controller.restart();
-      }
+  reset() {
+    _controller.restart();
+  }
 
-      resume(){
-        _controller.resume();
-      }
+  resume() {
+    _controller.resume();
+  }
 }

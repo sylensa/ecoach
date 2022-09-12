@@ -115,70 +115,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     return controller.count.toStringAsFixed(2);
   }
 
-  TimerStyle _timerStyle = TimerStyle.expanding_segment;
-  void startTimer() {
-    setState(() {
-      // countdown = countdown * 1000;
-      _start = controller.time;
-    });
-    // _start = countdown;
-
-    const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(
-      oneSec,
-      (Timer timer) async {
-        if (_start == 0) {
-          setState(() {
-            // saveForLater();
-            _start = controller.time;
-
-            value = 0;
-          });
-
-          await submitAnswer();
-        } else {
-          setState(() {
-            values = (_start - 1) / controller.time;
-            value = 1.0 - values;
-            _start--;
-          });
-        }
-        if (controller.currentQuestion ==
-            widget.controller.questions.length - 1) {
-          // mark(position: 19);
-          if (value == 1) {
-            await submitAnswer();
-            // testTaken = controller.getTest();
-
-            // controller.duration = oneSec;
-            // _timer!.cancel();
-            // controller.endTreadmill();
-            // controller.endTime;
-
-            // currentCorrectScoreState();
-            // completeQuiz();
-
-            showDialogOk(
-              message: 'Time is up. View Scores.',
-              context: context,
-              target: TreadmillCompleteCongratulations(
-                controller: widget.controller,
-                correct: correct,
-                wrong: wrong,
-                avgScore: avgScore,
-              ),
-              // target: TreadmillCompleted(
-              //     widget.controller.user, widget.controller.course),
-              status: true,
-              replace: true,
-              dismiss: false,
-            );
-          }
-        }
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -194,9 +130,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     print("No of Questions = ${controller.questions.length}");
     print("CURRENT QUESTION ================= ${controller.currentQuestion}");
     print(controller.time);
-    startTimer();
+    // startTimer();
     controller.startTest();
-    print(controller.countdown);
   }
 
   @override
@@ -230,7 +165,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
       showNext = false;
       controller.reviewMode = false;
       controller.nextQuestion();
-      controller.resumeTimer();
+      controller.resetTimer();
       pageController.nextPage(
         duration: Duration(milliseconds: 1),
         curve: Curves.ease,
@@ -307,7 +242,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   }
 
   submitAnswer() async {
-    bool success = await controller.scoreCurrentQuestion();
+    controller.pauseTimer();
+    await controller.scoreCurrentQuestion();
     double newScore = controller.treadmill!.avgScore!;
     if (mounted) {
       setState(() {
@@ -325,26 +261,18 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     print("curent = ${controller.currentQuestion}");
 
     if (controller.lastQuestion) {
-      _timer!.cancel();
+      // _timer!.cancel();
       testTaken = controller.getTest();
 
       completeQuiz();
       // controller.endTreadmill();
       // viewResults();
     } else {
-      if (success) {
-        setState(() {
-          controller.nextQuestion();
-          pageController.nextPage(
-              duration: Duration(milliseconds: 1), curve: Curves.ease);
-        });
-      } else {
-        setState(() {
-          showNext = true;
-          controller.reviewMode = true;
-          controller.pauseTimer();
-        });
-      }
+      setState(() {
+        controller.nextQuestion();
+        pageController.nextPage(
+            duration: Duration(milliseconds: 1), curve: Curves.ease);
+      });
     }
   }
 
@@ -411,93 +339,32 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                       },
                       icon: const Icon(Icons.arrow_back),
                     ),
-                    !controller.speedTest
-                        ? Container(
-                            width: 250,
-                            child: Text(
-                              controller.name!,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          )
-                        : Container(
-                            width: 250,
-                            child: Text(
-                              controller.name!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13.sp,
-                                fontFamily: 'Cocon',
-                              ),
-                            ),
-                          ),
                     Expanded(
-                      child: Container(),
+                      child: Container(
+                        width: 250,
+                        child: Text(
+                          controller.name!,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ),
-                    !controller.speedTest
-                        ?
-                        //for treadmill
-                        // CircularPercentIndicator(
-                        //     radius: 25,
-                        //     lineWidth: 3,
-                        //     progressColor: Color(0xFF222E3B),
-                        //     backgroundColor: Colors.transparent,
-                        //     percent: controller.percentageCompleted,
-                        //     center: Text(
-                        //       "${controller.currentQuestion + 1}",
-                        //       style: TextStyle(
-                        //         fontSize: 14,
-                        //         color: Color(0xFF222E3B),
-                        //       ),
-                        //     ),
-                        //   )
-                        Center(
-                            child: SizedBox(
-                              height: 22,
-                              width: 22,
-                              child: Stack(
-                                children: [
-                                  CircularProgressIndicator(
-                                    color: Colors.black,
-                                    strokeWidth: 2,
-                                    value: controller.currentQuestion ==
-                                            controller.questions.length - 1
-                                        ? 1
-                                        : controller.currentQuestion /
-                                            (controller.questions.length - 1),
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      "${controller.currentQuestion + 1}",
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color:
-                                            Color.fromARGB(255, 160, 125, 125),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : CircularPercentIndicator(
-                            radius: 20,
-                            lineWidth: 3,
-                            progressColor: Colors.white,
-                            backgroundColor: Colors.transparent,
-                            percent: controller.percentageCompleted,
-                            center: Text(
-                              "${controller.currentQuestion + 1}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontFamily: 'Cocon',
-                              ),
-                            ),
-                          ),
-                    // getTimerWidget(),
+                    CircularPercentIndicator(
+                      radius: 20,
+                      lineWidth: 3,
+                      progressColor: Colors.black,
+                      backgroundColor: Colors.transparent,
+                      percent: controller.percentageCompleted,
+                      center: Text(
+                        "${controller.currentQuestion + 1}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13,
+                          fontFamily: 'Cocon',
+                        ),
+                      ),
+                    ),
                     IconButton(
                       onPressed: () async {
                         //  timerController.pause();
@@ -518,167 +385,25 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                 ),
               ),
 
-              Container(
-                color: const Color(0xFF2D3E50),
-                height: 47,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Treadmill',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF9EE4FF),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 7,
-                    ),
-                    const SizedBox(
-                      height: 16,
-                      child: VerticalDivider(
-                        color: Color(0xFF9EE4FF),
-                        width: 1,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    isCorrect
-                        ? Image.asset(
-                            "assets/images/un_fav.png",
-                            color: Colors.green,
-                          )
-                        : SvgPicture.asset(
-                            "assets/images/fav.svg",
-                          ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      "${controller.getAvgScore().toStringAsFixed(2)}%",
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF9EE4FF),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 18.2,
-                    ),
-                    SvgPicture.asset(
-                      "assets/images/speed.svg",
-                    ),
-                    const SizedBox(
-                      width: 6.4,
-                    ),
-                    Text(
-                      "${widget.controller.getAvgTime().toStringAsFixed(2)}s",
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF9EE4FF),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 17.6,
-                    ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      controller.getTotalCorrect().toString(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF9EE4FF),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 17,
-                    ),
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.cancel,
-                        color: Colors.red,
-                        size: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 6.4,
-                    ),
-                    Text(
-                      controller.getTotalWrong().toString(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Color(0xFF9EE4FF),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 4.2,
-                    ),
-                    const SizedBox(
-                      height: 16,
-                      child: VerticalDivider(
-                        color: Color(0xFF9EE4FF),
-                        width: 1,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 6.2,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        setState(() {
-                          swichValue = !swichValue;
-                        });
-                        insertSaveTestQuestion(controller
-                            .questions[controller.currentQuestion]
-                            .question!
-                            .id!);
-                      },
-                      child: SvgPicture.asset(
-                        savedQuestions.contains(controller
-                                .questions[controller.currentQuestion]
-                                .question!
-                                .id)
-                            ? "assets/images/on_switch.svg"
-                            : "assets/images/off_switch.svg",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              LinearProgressIndicator(
-                backgroundColor: Colors.grey,
-                value: value,
-                minHeight: 8,
-                valueColor:
-                    const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
-              ),
+              getQuestionStats(),
+              // LinearProgressIndicator(
+              //   backgroundColor: Colors.grey,
+              //   value: value,
+              //   minHeight: 8,
+              //   valueColor:
+              //       const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
+              // ),
+              getTimerWidget(),
               // FAProgressBar(
               //   changeColorValue: 100,
-              //   changeProgressColor: Colors.pink,
+              //   changeProgressColor: Color(0xFF87F6FF),
               //   backgroundColor: Colors.white,
-              //   progressColor: Colors.lightBlue,
-              //   //progressColor: const Color(0xFF87F6FF),
-              //   animatedDuration: const Duration(milliseconds: 300),
+              //   progressColor: Color(0xFF87F6FF),
+              //   animatedDuration: controller.duration!,
               //   direction: Axis.horizontal,
               //   verticalDirection: VerticalDirection.up,
-              //   currentValue: value!,
-              //   maxValue: 1,
+              //   currentValue: controller.timerProgress().toDouble(),
+              //   maxValue: controller.resetDuration!.inSeconds.toDouble(),
               //   size: 8,
               // ),
 
@@ -797,10 +522,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                       return GestureDetector(
                                         onTap: () async {
                                           setState(() {
-                                            //avgTimeComplete();
-                                            // controller.scoreCurrentQuestion();
-                                            // print(
-                                            //     "countdownInSeconds:$countdownInSeconds");
                                             widget
                                                     .controller
                                                     .questions[controller
@@ -832,9 +553,9 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                                     .format(DateTime.now()));
 
                                             // widget.controller.endTreadmill();
-                                            _timer!.cancel();
-                                            _start = controller.time;
-                                            startTimer();
+                                            // _timer!.cancel();
+                                            // _start = controller.time;
+                                            // startTimer();
                                           });
 
                                           await submitAnswer();
@@ -849,17 +570,14 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                               Expanded(
                                                 child: AdeoHtmlTex(
                                                   controller.user,
-                                                  widget
-                                                      .controller
+                                                  controller
                                                       .questions[controller
                                                           .currentQuestion]
                                                       .question!
                                                       .answers![index]
-                                                      .text!
-                                                      .replaceAll(
-                                                          "https", "http"),
+                                                      .text!,
                                                   // removeTags:  widget.controller.questions[i].question!.answers![index].text!.contains("src") ? false : true,
-                                                  useLocalImage: false,
+                                                  useLocalImage: true,
                                                   textColor: widget
                                                               .controller
                                                               .questions[controller
@@ -984,55 +702,11 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                 widget.controller.questions.length - 1) {
                               return;
                             }
-                            setState(() {
-                              //avgTimeComplete();
-                              // controller.scoreCurrentQuestion();
-                              // print(
-                              //     "countdownInSeconds:$countdownInSeconds");
-
-                              // var dateFormat = DateFormat('h:m:s');
-                              // DateTime durationEnd = dateFormat.parse(
-                              //     DateFormat('hh:mm:ss').format(DateTime.now()));
-                              // timeSpent =
-                              //     durationEnd.difference(durationStart).inSeconds;
-                              // widget
-                              //     .controller
-                              //     .questions[controller.currentQuestion]
-                              //     .question!
-                              //     .time = timeSpent;
-                              // durationStart = dateFormat.parse(
-                              //     DateFormat('hh:mm:ss').format(DateTime.now()));
-
-                              // widget.controller.endTreadmill();
-                              // widget.controller.unattempted;
-                            });
+                            setState(() {});
 
                             await submitAnswer();
-                            _timer!.cancel();
-                            startTimer();
-
-                            // setState(() {
-                            //   // _timer!.cancel();
-                            //   // startTimer();
-                            //   // currentCorrectScoreState();
-                            //   // controller.currentQuestion++;
-                            //   // // getUnAttempted++;
-                            //   // avgTimeComplete();
-                            //   // pageController.nextPage(
-                            //   //     duration: Duration(milliseconds: 1),
-                            //   //     curve: Curves.ease);
-
-                            //   // numberingController.scrollTo(
-                            //   //     index: currentQuestion,
-                            //   //     duration: Duration(seconds: 1),
-                            //   //     curve: Curves.easeInOutCubic);
-
-                            //   // if (controller.speedTest && enabled) {
-                            //   //   _timer!.cancel();
-                            //   //   startTimer();
-                            //   // }
-                            //   submitAnswer();
-                            // });
+                            // _timer!.cancel();
+                            // startTimer();
                           },
                           child: Container(
                             color: kAccessmentButtonColor,
@@ -1058,17 +732,11 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                       Expanded(
                         child: InkWell(
                           onTap: () async {
-                            setState(() {
-                              //    getUnAttempted++;
-                            });
+                            setState(() {});
 
-                            // widget.controller.endTreadmill();
-                            // controller.endTreadmill();
-                            // submitAnswer();
-                            //   _timer!.cancel();
                             await submitAnswer();
-                            _timer!.cancel();
-                            startTimer();
+                            // _timer!.cancel();
+                            // startTimer();
                           },
                           child: Container(
                             color: kAccessmentButtonColor,
@@ -1088,64 +756,151 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   ],
                 ),
               ),
-
-              // Container(
-              //   child: IntrinsicHeight(
-              //     child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //         children: [
-              //           if (showNextButton())
-              //             Expanded(
-              //               flex: 2,
-              //               child: AdeoTextButton(
-              //                 label: "Next",
-              //                 background: kAdeoBlue,
-              //                 color: Colors.white,
-              //                 onPressed: nextButton,
-              //               ),
-              //             ),
-              //           if (showSubmit && !controller.reviewMode)
-              //             VerticalDivider(width: 2, color: Colors.white),
-              //           if (showSubmit && !controller.reviewMode)
-              //             Expanded(
-              //               flex: 2,
-              //               child: AdeoTextButton(
-              //                 label: "Submit",
-              //                 background: kAdeoBlue,
-              //                 color: Colors.white,
-              //                 onPressed: () {
-              //                   submitAnswer();
-              //                 },
-              //               ),
-              //             ),
-              //           if (controller.savedTest)
-              //             VerticalDivider(width: 2, color: Colors.white),
-              //           if (controller.savedTest)
-              //             Expanded(
-              //               flex: 1,
-              //               child: TextButton(
-              //                 onPressed: () {
-              //                   viewResults();
-              //                 },
-              //                 child: RichText(
-              //                   softWrap: false,
-              //                   overflow: TextOverflow.clip,
-              //                   text: TextSpan(
-              //                     text: "Results",
-              //                     style: TextStyle(
-              //                       color: Color(0xFFFFFFFF),
-              //                       fontSize: 21,
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //         ]),
-              //   ),
-              // ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  getQuestionStats() {
+    return Container(
+      color: const Color(0xFF2D3E50),
+      height: 47,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Treadmill',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF9EE4FF),
+            ),
+          ),
+          const SizedBox(
+            width: 7,
+          ),
+          const SizedBox(
+            height: 16,
+            child: VerticalDivider(
+              color: Color(0xFF9EE4FF),
+              width: 1,
+            ),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          isCorrect
+              ? Image.asset(
+                  "assets/images/un_fav.png",
+                  color: Colors.green,
+                )
+              : SvgPicture.asset(
+                  "assets/images/fav.svg",
+                ),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(
+            "${controller.getAvgScore().toStringAsFixed(2)}%",
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF9EE4FF),
+            ),
+          ),
+          const SizedBox(
+            width: 18.2,
+          ),
+          SvgPicture.asset(
+            "assets/images/speed.svg",
+          ),
+          const SizedBox(
+            width: 6.4,
+          ),
+          Text(
+            "${widget.controller.getAvgTime().toStringAsFixed(2)}s",
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF9EE4FF),
+            ),
+          ),
+          const SizedBox(
+            width: 17.6,
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.check,
+              color: Colors.white,
+              size: 16,
+            ),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+          Text(
+            controller.getTotalCorrect().toString(),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF9EE4FF),
+            ),
+          ),
+          const SizedBox(
+            width: 17,
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.cancel,
+              color: Colors.red,
+              size: 16,
+            ),
+          ),
+          const SizedBox(
+            width: 6.4,
+          ),
+          Text(
+            controller.getTotalWrong().toString(),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Color(0xFF9EE4FF),
+            ),
+          ),
+          const SizedBox(
+            width: 4.2,
+          ),
+          const SizedBox(
+            height: 16,
+            child: VerticalDivider(
+              color: Color(0xFF9EE4FF),
+              width: 1,
+            ),
+          ),
+          const SizedBox(
+            width: 6.2,
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                swichValue = !swichValue;
+              });
+              insertSaveTestQuestion(controller
+                  .questions[controller.currentQuestion].question!.id!);
+            },
+            child: SvgPicture.asset(
+              savedQuestions.contains(controller
+                      .questions[controller.currentQuestion].question!.id)
+                  ? "assets/images/on_switch.svg"
+                  : "assets/images/off_switch.svg",
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1485,7 +1240,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           SizedBox(height: 10),
           OutlinedButton(
             onPressed: () {
-              startTimer();
+              controller.resumeTimer();
               Navigator.pop(context);
             },
             style: ButtonStyle(
@@ -1602,110 +1357,69 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   }
 
   Widget getTimerWidget() {
-    return GestureDetector(
-      onTap: () {
-        if (!controller.enabled) {
-          return;
-        }
-        controller.pauseTimer();
+    return AdeoTimer(
+        controller: controller.speedtimerController!,
+        startDuration: controller.duration!,
+        callbackWidget: (time) {
+          print("duration=${controller.duration!.inSeconds}, time= ${time}");
+          Duration remaining = Duration(seconds: time.toInt());
+          controller.duration = remaining;
+          countdownInSeconds = remaining.inSeconds;
 
-        // showPauseDialog();
-      },
-      child: controller.enabled
-          ? !controller.speedTest
-              ? Row(
-                  children: [
-                    Image(image: AssetImage('assets/images/watch.png')),
-                    SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: Feedback.wrapForTap(() {
-                        showPauseDialog();
-                      }, context),
-                      child: Container(
-                        padding: EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: Color(0xFF222E3B),
-                            width: 1,
-                          ),
-                        ),
-                        child: CustomTimer(
-                          builder: (CustomTimerRemainingTime remaining) {
-                            controller.duration = remaining.duration;
-
-                            return Text(
-                              "${remaining.hours}:${remaining.minutes}:${remaining.seconds}",
-                              style: TextStyle(
-                                color: Color(0xFF222E3B),
-                                fontSize: 14,
-                              ),
-                            );
-                          },
-                          controller: controller.timerController,
-                          begin: Duration(
-                              seconds: controller.treadmill!.totalTime ?? 0),
-                          end: Duration(minutes: 2),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    Image(image: AssetImage('assets/images/watch.png')),
-                    SizedBox(width: 4),
-                    Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 1,
-                        ),
-                      ),
-                      child: AdeoTimer(
-                          controller: controller.speedtimerController!,
-                          startDuration: controller.speedDuration!,
-                          callbackWidget: (time) {
-                            Duration remaining =
-                                Duration(seconds: time.toInt());
-                            controller.duration = remaining;
-                            countdownInSeconds = remaining.inSeconds;
-                            if (remaining.inSeconds == 0) {
-                              return Text(
-                                "Time Up",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              );
-                            }
-
-                            return Text(
-                              "${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                          },
-                          onFinish: () {
-                            onEnd();
-                          }),
-                    )
-                  ],
-                )
-          : Text(
-              "Time Up",
-              style: TextStyle(
-                color: Color(0xFF969696),
-                fontSize: 18,
+          print("remaining time: ${remaining.inMilliseconds}");
+          if (remaining.inSeconds == 0) {
+            submitAnswer();
+            return FAProgressBar(
+              changeColorValue: 100,
+              changeProgressColor: Color(0xFF87F6FF),
+              backgroundColor: Colors.white,
+              progressColor: Color(0xFF87F6FF),
+              animatedDuration: controller.duration!,
+              direction: Axis.horizontal,
+              verticalDirection: VerticalDirection.up,
+              currentValue: controller.timerProgress().toDouble(),
+              maxValue: controller.resetDuration!.inSeconds.toDouble(),
+              size: 8,
+            );
+          }
+          if (controller.currentQuestion ==
+              widget.controller.questions.length - 1) {
+            submitAnswer();
+            showDialogOk(
+              message: 'Time is up. View Scores.',
+              context: context,
+              target: TreadmillCompleteCongratulations(
+                controller: widget.controller,
+                correct: correct,
+                wrong: wrong,
+                avgScore: avgScore,
               ),
+              // target: TreadmillCompleted(
+              //     widget.controller.user, widget.controller.course),
+              status: true,
+              replace: true,
+              dismiss: false,
+            );
+          }
+          return TweenAnimationBuilder<double>(
+            duration: const Duration(seconds: 1),
+            curve: Curves.linear,
+            tween: Tween<double>(
+              begin: 0,
+              end: controller.timerPercentage(),
             ),
-    );
+            builder: (context, value, _) => LinearProgressIndicator(
+              backgroundColor: Colors.grey,
+              value: value,
+              minHeight: 8,
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
+            ),
+          );
+        },
+        onFinish: () {
+          print("Finished"); // onEnd();
+        });
   }
 
   successModalBottomSheet(context, {Question? question}) {
