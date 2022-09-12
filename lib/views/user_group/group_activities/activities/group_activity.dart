@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_notification_model.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/user_group/group_activities/no_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/test_instruction.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -10,8 +11,8 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class Activity extends StatefulWidget {
   GroupListData? groupData;
-  Activity( {Key? key,this.groupData,}) : super(key: key);
-
+  Activity(this.user, {Key? key,this.groupData,}) : super(key: key);
+  User user;
   @override
   State<Activity> createState() => _ActivityState();
 }
@@ -60,8 +61,8 @@ class _ActivityState extends State<Activity> {
                 itemBuilder: (BuildContext context, int index){
                 if(index == 0){
                   return GestureDetector(
-                    onTap: (){
-                      goTo(context, TestInstruction());
+                    onTap: ()async{
+                      goTo(context, TestInstruction(widget.user));
                     },
                     child: Column(
                       children: [
