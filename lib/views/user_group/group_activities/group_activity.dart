@@ -12,7 +12,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class GroupActivity extends StatefulWidget {
   static const String routeName = '/user_group';
   GroupListData? groupData;
-  GroupActivity( {Key? key,this.groupData,}) : super(key: key);
+  GroupActivity(this.user, {Key? key,this.groupData,}) : super(key: key);
+  User user;
   @override
   State<GroupActivity> createState() => _GroupActivityState();
 }
@@ -77,9 +78,9 @@ class _GroupActivityState extends State<GroupActivity> {
                 'Chat',
               ],
               tabPages: [
-                Activity(groupData: widget.groupData,),
-                GroupPerformance(),
-                GroupChatScreen()
+                Activity(widget.user,groupData: widget.groupData,),
+                GroupPerformance(widget.user,),
+                GroupChatScreen(widget.user,)
               ],
             ),
 
