@@ -222,7 +222,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              itemBuilder: (BuildContext context, int index){
                                return GestureDetector(
                                  onTap: (){
-                                   goTo(context, GroupActivity(groupData: myGroupList[index],));
+                                   goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
                                  },
                                  child: Row(
                                    children: [

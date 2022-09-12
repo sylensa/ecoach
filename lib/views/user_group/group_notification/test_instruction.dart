@@ -1,13 +1,21 @@
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
+import 'package:ecoach/views/user_group/group_quiz/group_quiz_question.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TestInstruction extends StatefulWidget {
   static const String routeName = '/user_group';
-  TestInstruction({Key? key}) : super(key: key);
+  TestInstruction(this.user,{Key? key,this.groupNotificationData}) : super(key: key);
+  User user;
+  GroupNotificationData? groupNotificationData;
   @override
   State<TestInstruction> createState() => _TestInstructionState();
 }
@@ -117,8 +125,25 @@ class _TestInstructionState extends State<TestInstruction> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: (){
-                        // goTo(context, GroupActivity());
+                      onTap: ()async{
+                        Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
+                        if(course != null){
+                          goTo(context, GroupQuizQuestion(
+                            controller: QuizController(
+                              widget.user,
+                              course!,
+                              questions: [],
+                              name: widget.groupNotificationData!.notificationtable!.name!,
+                              time: widget.groupNotificationData!.notificationtable!.configurations!.countDown!,
+                              type: TestType.KNOWLEDGE,
+                              challengeType: TestCategory.TOPIC,
+                            ),
+                            diagnostic: true,
+                          ),);
+                        }else{
+                          showDialogOk(context: context,message: "Course does not exist");
+                        }
+
                       },
                       child: Container(
                         width: appWidth(context),
