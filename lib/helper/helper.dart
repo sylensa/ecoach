@@ -625,6 +625,26 @@ Future<bool> clearPrefs() async {
   sp.clear();
   return true;
 }
+getInDays(DateTime timestamp){
+  double days = timestamp.difference(DateTime.now()).inHours/24;
+
+  if(days.round() == 0){
+    return "Today";
+  }else if(days.round() == 1){
+    return "Tomorrow";
+  }else if(days.round() == 2){
+    return "In 2days";
+  }else if(days.round() == 3){
+    return "In 3days";
+  }else if(days.round() == 4){
+    return "In 4days";
+  }else{
+    return "${DateFormat.yMMMEd().format(timestamp)}";
+  }
+
+
+
+}
 
 Future<bool> setPref(key, value, {type = 'string'}) async {
   var sp = await SharedPreferences.getInstance();
