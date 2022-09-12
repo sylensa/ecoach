@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,8 +8,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class GroupPerformance extends StatefulWidget {
-  const GroupPerformance({Key? key}) : super(key: key);
-
+   GroupPerformance(this.user,{Key? key}) : super(key: key);
+  User user;
   @override
   State<GroupPerformance> createState() => _GroupPerformanceState();
 }
