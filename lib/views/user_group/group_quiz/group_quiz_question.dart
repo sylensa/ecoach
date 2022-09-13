@@ -119,7 +119,10 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
   }
 
   nextButton() async {
-
+    if(controller.timing == "Time per Question"){
+      timerController.restart();
+      controller.duration =  Duration(seconds: controller.time);
+    }
     if (currentQuestion == controller.questions.length - 1) {
       return;
     }
@@ -793,35 +796,15 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
                                             setState(() {
                                               print(
                                                   "countdownInSeconds:$countdownInSeconds");
-                                              controller
-                                                  .questions[i].selectedAnswer =
-                                              controller
-                                                  .questions[i].answers![index];
+                                              controller.questions[i].selectedAnswer = controller.questions[i].answers![index];
                                               var dateFormat = DateFormat('h:m:s');
-                                              DateTime durationEnd = dateFormat
-                                                  .parse(DateFormat('hh:mm:ss')
-                                                  .format(DateTime.now()));
-                                              timeSpent = durationEnd
-                                                  .difference(durationStart)
-                                                  .inSeconds;
-                                              controller.questions[i].time =
-                                                  timeSpent;
-                                              durationStart = dateFormat.parse(
-                                                  DateFormat('hh:mm:ss')
-                                                      .format(DateTime.now()));
-                                              if (!savedTest &&
-                                                  currentQuestion ==
-                                                      controller.questions
-                                                          .length -
-                                                          1 ||
-                                                  (enabled &&
-                                                      controller.speedTest &&
-                                                      currentQuestion ==
-                                                          finalQuestion)) {
+                                              DateTime durationEnd = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
+                                              timeSpent = durationEnd.difference(durationStart).inSeconds;
+                                              controller.questions[i].time = timeSpent;
+                                              durationStart = dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
+                                              if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion)) {
                                                 completeQuiz();
                                               } else {
-                                                timerController.restart();
-                                                controller.duration =  Duration(seconds: controller.time);
                                                 nextButton();
                                               }
                                             });
@@ -1659,76 +1642,35 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
   //   );
   // }
   getTimerWidget() {
-    return controller.speedTest
-        ? Row(
-      children: [
-        Image(image: AssetImage('assets/images/watch.png')),
-        SizedBox(width: 4),
-        GestureDetector(
-          onTap: Feedback.wrapForTap(() {
-            showPauseDialog();
-          }, context),
-          child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: Color(0xFF222E3B),
-                  width: 1,
-                ),
-              ),
-              child: AdeoTimer(
-                  controller: timerController,
-                  startDuration: controller.duration!,
-                  callbackWidget: (time) {
-                    if (controller.disableTime) {
-                      return Image(
-                          image:
-                          AssetImage("assets/images/infinite.png"));
-                    }
+    return Container(
+          child:
+          controller.timing != "Untimed" ?
+          AdeoTimer(
+          controller: timerController,
+          startDuration: controller.duration!,
+          callbackWidget: (time) {
+            if (controller.disableTime) {
+              return Image(image: AssetImage("assets/images/infinite.png"));
+            }
+            Duration remaining = Duration(seconds: time.toInt());
+            controller.duration = remaining;
+            countdownInSeconds = remaining.inSeconds;
 
-                    Duration remaining = Duration(seconds: time.toInt());
-                    controller.duration = remaining;
-                    countdownInSeconds = remaining.inSeconds;
-                    if (remaining.inSeconds == 0) {
-                      return Text("Time Up",
-                          style: TextStyle(
-                              color: backgroundColor, fontSize: 12));
-                    }
+            if (remaining.inSeconds == 0) {
+              return Text("Time Up", style: TextStyle(color: backgroundColor, fontSize: 14));
+            }
 
-                    return Text(
-                        "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                        style: TextStyle(
-                            color: backgroundColor, fontSize: 12));
-                  },
-                  onFinish: () {
-                    onEnd();
-                  })),
-        ),
-      ],
-    )
-        : AdeoTimer(
-        controller: timerController,
-        startDuration: controller.duration!,
-        callbackWidget: (time) {
-          if (controller.disableTime) {
-            return Image(image: AssetImage("assets/images/infinite.png"));
-          }
-          Duration remaining = Duration(seconds: time.toInt());
-          controller.duration = remaining;
-          countdownInSeconds = remaining.inSeconds;
-
-          if (remaining.inSeconds == 0) {
-            return Text("Time Up", style: TextStyle(color: backgroundColor, fontSize: 14));
-          }
-
-          return Text(
-              "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-              style: TextStyle(color: backgroundColor, fontSize: 14));
-        },
-        onFinish: () {
-          onEnd();
-        });
+            return Text(
+                "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                style: TextStyle(color: backgroundColor, fontSize: 14));
+          },
+          onFinish: () {
+            onEnd();
+          }) :
+          Text("Untimed Quiz",
+              style: TextStyle(
+                  color: backgroundColor, fontSize: 12))
+        );
   }
 
   Future<bool> showPauseDialog() async {
