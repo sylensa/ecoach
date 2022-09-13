@@ -12,6 +12,10 @@ import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_quiz/group_quiz_question.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TestInstruction extends StatefulWidget {
@@ -25,6 +29,43 @@ class TestInstruction extends StatefulWidget {
 
 class _TestInstructionState extends State<TestInstruction> {
   TextEditingController searchController = TextEditingController();
+  CountdownTimerController? controller;
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 3;
+
+  getTimerWidget(String duration,{bool isStartTime = true}){
+    var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
+    var _lastConso = DateTime.now().subtract(lastConsoString3);
+    var diff = DateTime.now().difference(_lastConso);
+    print( diff.inSeconds);
+    endTime = DateTime.now().millisecondsSinceEpoch + 1000 *  diff.inSeconds;
+    controller = CountdownTimerController(endTime: endTime, onEnd: _onEnd);
+
+
+    return  CountdownTimer(
+      controller: controller,
+      onEnd: _onEnd,
+      endTime: endTime,
+      widgetBuilder: (_, CurrentRemainingTime? time) {
+        if (time == null) {
+          return Text(isStartTime ? "Test in progress" : "Test Completed");
+        }
+        return Column(
+          children: [
+            Text('${time.days != null ? time.days : "00"}:${time.hours != null ? time.hours : "00"}:${time.min != null ? time.min : "00"} : ${time.sec}'),
+            sText(isStartTime? "Time remaining to start" : "Time remaining to complete",weight: FontWeight.normal,size: 10),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onEnd() {
+    print('onEnd');
+  }
+  @override
+ void initState(){
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,13 +110,11 @@ class _TestInstructionState extends State<TestInstruction> {
                         color: Color(0XFFF7B06E),
                       ),
                       SizedBox(width: 20,),
-                      sText("09:30 - 10:30 am",weight: FontWeight.w500,size: 12,color: Colors.black),
-                      Expanded(child: Container()),
-                      sText("03:59",weight: FontWeight.w500,size: 18,color: Color(0XFF8ED4EB)),
+                      sText("${widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.toString().split(".").first} - ${widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: Colors.black),
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Maths Assessment",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("${widget.groupNotificationData!.notificationtable!.name}",weight: FontWeight.w500,size: 20,color: Colors.black),
                   SizedBox(height: 5,),
                   Container(
                     child: Row(
@@ -85,7 +124,7 @@ class _TestInstructionState extends State<TestInstruction> {
                             children: [
                               Image.asset("assets/images/question-mark.png"),
                               SizedBox(width: 5,),
-                              sText("30Q",weight: FontWeight.w500,size: 12,color: Colors.black),
+                              sText("10Q",weight: FontWeight.w500,size: 12,color: Colors.black),
                             ],
                           ),
                         ),
@@ -95,10 +134,20 @@ class _TestInstructionState extends State<TestInstruction> {
                             children: [
                               Image.asset("assets/images/clock.png"),
                               SizedBox(width: 5,),
-                              sText("1 hour",weight: FontWeight.w500,size: 12,color: Colors.black),
+                              sText("${widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question" ? "${widget.groupNotificationData!.notificationtable!.configurations!.countDown!}secs per question" : widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Quiz" ? "Complete quiz in ${widget.groupNotificationData!.notificationtable!.configurations!.countDown!} minutes " : "Untimed Quiz"}",weight: FontWeight.w500,size: 12,color: Colors.black),
                             ],
                           ),
                         ),
+                        Expanded(child: Container()),
+                        if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
+                          getTimerWidget(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true)
+
+                      else if(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
+                      getTimerWidget(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false)
+
+                      else
+                         sText("Test Completed",weight: FontWeight.normal,size: 10, color: Color(0XFF00C9B9),),
+
                       ],
                     ),
                   )
@@ -129,47 +178,55 @@ class _TestInstructionState extends State<TestInstruction> {
                     ),
                     GestureDetector(
                       onTap: ()async{
-                        showLoaderDialog(context);
-                        List<Question> questions = [];
-                        List<int> topicIds = [];
-                        topicIds.add(int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
-                        switch (widget.groupNotificationData!.notificationtable!.configurations!.testType) {
-                          case "bank":
-                          case "exam":
-                          case "essay":
-                            questions = await TestController().getQuizQuestions(
-                              topicIds[0],
-                              limit: 10,
-                            );
-                            break;
-                          case "topic":
-                            questions = await TestController().getTopicQuestions(
-                              topicIds,
-                              limit: 10,
-                            );
-                            break;
-                          default:
-                            questions = await TestController().getMockQuestions(0);
-                        }
-                        Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
-                        if(course != null && questions.isNotEmpty){
-                          Navigator.pop(context);
-                          goTo(context, GroupQuizQuestion(
-                            controller: QuizController(
-                              widget.user,
-                              course,
-                              questions: questions,
-                              name: widget.groupNotificationData!.notificationtable!.name!,
-                              time: widget.groupNotificationData!.notificationtable!.configurations!.countDown!,
-                              type: TestType.KNOWLEDGE,
-                              challengeType: TestCategory.TOPIC,
-                            ),
-                            diagnostic: true,
-                          ),);
+                        if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0){
+                          toastMessage("Test not started yet");
+                        }else if(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0){
+                          showLoaderDialog(context);
+                          List<Question> questions = [];
+                          List<int> topicIds = [];
+                          topicIds.add(int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
+                          switch (widget.groupNotificationData!.notificationtable!.configurations!.testType) {
+                            case "bank":
+                            case "exam":
+                            case "essay":
+                              questions = await TestController().getQuizQuestions(
+                                topicIds[0],
+                                limit: 10,
+                              );
+                              break;
+                            case "topic":
+                              questions = await TestController().getTopicQuestions(
+                                topicIds,
+                                limit: 10,
+                              );
+                              break;
+                            default:
+                              questions = await TestController().getMockQuestions(0);
+                          }
+                          Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
+                          if(course != null && questions.isNotEmpty){
+                            Navigator.pop(context);
+                            goTo(context, GroupQuizQuestion(
+                              controller: QuizController(
+                                widget.user,
+                                course,
+                                timing: widget.groupNotificationData!.notificationtable!.configurations!.timing!,
+                                questions: questions,
+                                name: widget.groupNotificationData!.notificationtable!.name!,
+                                time: widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question" ? widget.groupNotificationData!.notificationtable!.configurations!.countDown! : 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! ,
+                                type: TestType.KNOWLEDGE,
+                                challengeType: TestCategory.TOPIC,
+                              ),
+                              diagnostic: true,
+                            ),);
+                          }else{
+                            Navigator.pop(context);
+                            showDialogOk(context: context,message: "Course does not exist or questions are empty");
+                          }
                         }else{
-                          Navigator.pop(context);
-                          showDialogOk(context: context,message: "Course does not exist or questions are empty");
+                          toastMessage("Test Completed");
                         }
+
 
                       },
                       child: Container(
