@@ -95,9 +95,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
   Duration remainingTimeQuestion = Duration(seconds: 0);
 
   startTimer() {
-    if (!controller.disableTime) {
       timerController.start();
-    }
   }
 
   resetTimer() {
@@ -117,6 +115,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
   }
 
   nextButton() async {
+
     if (currentQuestion == controller.questions.length - 1) {
       return;
     }
@@ -126,17 +125,9 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
       currentCorrectScoreState();
       currentQuestion++;
 
-      pageController.nextPage(
-          duration: Duration(milliseconds: 1), curve: Curves.ease);
+      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
 
-      // numberingController.scrollTo(
-      //     index: currentQuestion,
-      //     duration: Duration(seconds: 1),
-      //     curve: Curves.easeInOutCubic);
 
-      if (controller.speedTest && enabled) {
-        resetTimer();
-      }
     });
   }
 
@@ -413,7 +404,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
     numberingController = ItemScrollController();
     timerController = TimerController();
     controller.startTest();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 0), () {
       startTimer();
     });
     super.initState();
@@ -794,7 +785,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
                                       controller.questions[i].answers!.length,
                                           (index) {
                                         return GestureDetector(
-                                          onTap: () {
+                                          onTap: () async{
                                             setState(() {
                                               print(
                                                   "countdownInSeconds:$countdownInSeconds");
@@ -825,9 +816,12 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
                                                           finalQuestion)) {
                                                 completeQuiz();
                                               } else {
+                                                timerController.restart();
+                                                controller.duration =  Duration(seconds: controller.time);
                                                 nextButton();
                                               }
                                             });
+
                                           },
                                           child: Container(
                                             margin: const EdgeInsets.only(
