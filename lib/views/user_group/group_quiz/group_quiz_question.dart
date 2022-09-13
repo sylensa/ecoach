@@ -98,6 +98,10 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
       timerController.start();
   }
 
+  restartTimer() {
+    timerController.restart();
+  }
+
   resetTimer() {
     print("reset timer");
     timerController.reset();
