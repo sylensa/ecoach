@@ -493,7 +493,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   Future<bool> showPauseDialog() async {
-    if (!showSubmit) return false;
+    // if (!showSubmit) return false;
     controller.pauseTimer();
     return (await showDialog<bool>(
             barrierDismissible: false,
