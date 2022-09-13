@@ -6,6 +6,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/group_announcement.dart';
 import 'package:ecoach/views/user_group/group_notification/group_invite.dart';
+import 'package:ecoach/views/user_group/group_notification/test_instruction.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/toast.dart';
@@ -319,7 +320,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
-        await goTo(context, GroupInvite(widget.user,groupNotificationData.id.toString()));
+        await goTo(context, TestInstruction(widget.user,groupNotificationData: groupNotificationData,));
         setState((){
 
         });
