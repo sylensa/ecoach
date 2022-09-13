@@ -1,13 +1,16 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/group_notification_model.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_quiz/group_quiz_question.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -117,22 +120,45 @@ class _TestInstructionState extends State<TestInstruction> {
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
                         sText("Instruction",weight: FontWeight.bold,size: 16,align: TextAlign.left),
-                        sText("This test is your final assessment before your actual exam. Ensure to answer every question. Any wrongly answered question attracts a mark of -1 Any unanswered question attracts a mark of -1 The test comprises of 30 questions.Your pass mark for the test is 60%. Good luck candidates."),
+                        SizedBox(height: 20,),
+                        sText("${widget.groupNotificationData!.notificationtable!.instructions}"),
 
                       ],
                     ),
                     GestureDetector(
                       onTap: ()async{
+                        showLoaderDialog(context);
+                        List<Question> questions = [];
+                        List<int> topicIds = [];
+                        topicIds.add(int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
+                        switch (widget.groupNotificationData!.notificationtable!.configurations!.testType) {
+                          case "bank":
+                          case "exam":
+                          case "essay":
+                            questions = await TestController().getQuizQuestions(
+                              topicIds[0],
+                              limit: 10,
+                            );
+                            break;
+                          case "topic":
+                            questions = await TestController().getTopicQuestions(
+                              topicIds,
+                              limit: 10,
+                            );
+                            break;
+                          default:
+                            questions = await TestController().getMockQuestions(0);
+                        }
                         Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
-                        if(course != null){
+                        if(course != null && questions.isNotEmpty){
+                          Navigator.pop(context);
                           goTo(context, GroupQuizQuestion(
                             controller: QuizController(
                               widget.user,
-                              course!,
-                              questions: [],
+                              course,
+                              questions: questions,
                               name: widget.groupNotificationData!.notificationtable!.name!,
                               time: widget.groupNotificationData!.notificationtable!.configurations!.countDown!,
                               type: TestType.KNOWLEDGE,
@@ -141,7 +167,8 @@ class _TestInstructionState extends State<TestInstruction> {
                             diagnostic: true,
                           ),);
                         }else{
-                          showDialogOk(context: context,message: "Course does not exist");
+                          Navigator.pop(context);
+                          showDialogOk(context: context,message: "Course does not exist or questions are empty");
                         }
 
                       },
