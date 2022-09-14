@@ -60,12 +60,12 @@ class _GroupAnnouncementState extends State<GroupAnnouncement> {
                         color: Color(0XFFF7B06E),
                       ),
                       SizedBox(width: 10,),
-                      sText("3 days ago",weight: FontWeight.w500,color: Colors.black),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(widget.groupNotificationData!.notificationtable!.createdAt.toString())}",weight: FontWeight.w500,color: Colors.black),
 
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Track all group_activities",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("Track all group activities",weight: FontWeight.w500,size: 20,color: Colors.black),
                   SizedBox(height: 5,),
                   sText("Never miss deadlines",weight: FontWeight.w500,size: 20,color: Colors.black),
 
@@ -89,10 +89,9 @@ class _GroupAnnouncementState extends State<GroupAnnouncement> {
                       crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-                        sText("Instruction",weight: FontWeight.bold,size: 16,align: TextAlign.left),
+                        sText("Announcement",weight: FontWeight.bold,size: 16,align: TextAlign.left),
                         SizedBox(height: 20,),
-                        sText("This test is your final assessment before your actual exam. Ensure to answer every question. Any wrongly answered question attracts a mark of -1 Any unanswered question attracts a mark of -1 The test comprises of 30 questions.Your pass mark for the test is 60%. Good luck candidates."),
-
+                        sText("${widget.groupNotificationData!.message}"),
                       ],
                     ),
                    Image.asset("assets/images/announcement.png")
