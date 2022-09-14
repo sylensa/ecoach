@@ -1343,21 +1343,21 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           if (controller.currentQuestion ==
               widget.controller.questions.length - 1) {
             submitAnswer();
-            showDialogOk(
-              message: 'Time is up. View Scores.',
-              context: context,
-              target: TreadmillCompleteCongratulations(
-                controller: widget.controller,
-                correct: correct,
-                wrong: wrong,
-                avgScore: avgScore,
-              ),
-              // target: TreadmillCompleted(
-              //     widget.controller.user, widget.controller.course),
-              status: true,
-              replace: true,
-              dismiss: false,
-            );
+            // showDialogOk(
+            //   message: 'Time is up. View Scores.',
+            //   context: context,
+            //   target: TreadmillCompleteCongratulations(
+            //     controller: widget.controller,
+            //     correct: correct,
+            //     wrong: wrong,
+            //     avgScore: avgScore,
+            //   ),
+            //   // target: TreadmillCompleted(
+            //   //     widget.controller.user, widget.controller.course),
+            //   status: true,
+            //   replace: true,
+            //   dismiss: false,
+            // );
           }
           return TweenAnimationBuilder<double>(
             duration: const Duration(seconds: 1),
