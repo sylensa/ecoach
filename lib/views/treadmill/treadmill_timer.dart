@@ -103,8 +103,7 @@ class _TreadmillTimeState extends State<TreadmillTime> {
               );
             } else {
               Duration duration = parseDuration("$min1$min2:$sec1$sec2");
-              print(duration);
-              widget.controller.resetDuration = duration;
+              widget.controller.setTimerDuration(duration);
               goTo(
                   context,
                   InstructionPage(

@@ -26,6 +26,7 @@ class Treadmill {
     this.startTime,
     this.endTime,
     this.status,
+    this.questionDuration = 30,
   });
 
   int? id;
@@ -44,6 +45,7 @@ class Treadmill {
   DateTime? startTime;
   DateTime? endTime;
   String? status;
+  int? questionDuration;
 
   String get date {
     if (endTime == null) return "";
@@ -78,6 +80,7 @@ class Treadmill {
         endTime:
             json["end_time"] == null ? null : DateTime.parse(json["end_time"]),
         status: json["status"],
+        questionDuration: json['duration'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -97,6 +100,7 @@ class Treadmill {
         "start_time": startTime!.toIso8601String(),
         "end_time": endTime == null ? null : endTime!.toIso8601String(),
         "status": status,
+        "duration": questionDuration,
       };
 }
 

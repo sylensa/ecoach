@@ -98,7 +98,9 @@ class WebsocketCall {
     print("subscribing  to channel $channel");
     var data =
         "{\"event\":\"SubscriptionPurchasedNotification\",\"channel\":\"$channel\",\"data\":${jsonEncode(user!.id)}-subscription}";
-    _channel!.sink.add(data);
+    if (_channel != null) {
+      _channel!.sink.add(data);
+    }
   }
 
   sendMessage(String message) {
