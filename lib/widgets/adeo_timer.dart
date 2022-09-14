@@ -70,4 +70,8 @@ class TimerController {
   resume() {
     _controller.resume();
   }
+
+  restart() {
+    _controller.restart();
+  }
 }

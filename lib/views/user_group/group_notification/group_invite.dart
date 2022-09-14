@@ -1,26 +1,35 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
+import 'package:ecoach/widgets/toast.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class GroupInvite extends StatefulWidget {
   static const String routeName = '/user_group';
-  GroupInvite(this.user,this.GroupId, {Key? key,this.groupNotificationData}) : super(key: key);
+  GroupInvite(this.user, {Key? key,this.groupNotificationData}) : super(key: key);
   User user;
   GroupNotificationData? groupNotificationData;
-  String GroupId;
   @override
   State<GroupInvite> createState() => _GroupInviteState();
 }
 
 class _GroupInviteState extends State<GroupInvite> {
   TextEditingController searchController = TextEditingController();
-  showRevokeDialog({String? message, BuildContext? context,}) {
+  late String generatedLink = '';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  showRevokeDialog({String? message, BuildContext? context,String type = "join"}) {
     // flutter defined function
     showDialog(
       context: context!,
@@ -48,6 +57,16 @@ class _GroupInviteState extends State<GroupInvite> {
             GestureDetector(
               onTap: () async {
                 Navigator.pop(context);
+                if(type == "join"){
+                  showLoaderDialog(context);
+                  await acceptGroupInvite();
+                }else if(type == "pay"){
+                  showLoaderDialog(context);
+                  authorisePayment(context,widget.groupNotificationData!.groupId!);
+                }else if(type == "reject"){
+                  showLoaderDialog(context);
+                 await  rejectGroupInvite();
+                }
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
@@ -63,9 +82,211 @@ class _GroupInviteState extends State<GroupInvite> {
     );
   }
 
+  authorisePayment(BuildContext context, int groupId) async {
+    var res = await doPost(AppUrl.groupSubscription, {
+      "group_id": groupId,
+    });
+    print("res:$res");
+    if (res["status"]) {
+      Navigator.pop(_scaffoldKey.currentContext!);
+      generatedLink = res["data"]["authorization_url"];
+      paymentPage(generatedLink);
+    } else {
+      Navigator.pop(_scaffoldKey.currentContext!);
+      toastMessage(res["message"]);
+    }
+  }
+
+  paymentPage(String authorizationUrl) {
+    showDialog(
+      context: _scaffoldKey.currentContext!,
+      builder: (context) {
+        return WebView(
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: authorizationUrl,
+          navigationDelegate: (navigation) async {
+            //Listen for callback URL
+            if (navigation.url.contains('https://standard.paystack.co/close')) {
+              print("hey:");
+              Navigator.of(context).pop(); //close webview
+            }
+            if (navigation.url.contains(AppUrl.payment_callback)) {
+              Navigator.of(context).pop();
+              showLoaderDialog(context);
+             await acceptGroupInvite();
+
+              setState(() {
+                print("hello adolf:");
+              });
+            }
+            return NavigationDecision.navigate;
+          },
+        );
+      },
+    );
+  }
+
+  upgradePackageModalBottomSheet(context,) {
+    double sheetHeight = 300;
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: kAdeoGray,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Center(
+                            child: sText("group description",
+                                weight: FontWeight.bold,
+                                size: 20,
+                                align: TextAlign.center)),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: sText("Join Group",
+                            color: kAdeoGray3,
+                            weight: FontWeight.w400,
+                            align: TextAlign.center),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                            BorderRadius.circular(10)),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            sText("group name",
+                                color: kAdeoGray3),
+                            sText(
+                                'widget.groupData!.settings != null ?  "widget.groupData!.settings!.currency} widget.groupData!.settings!.amount}" : "Free"',
+                                color: Colors.black,
+                                weight: FontWeight.bold),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      MaterialButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          showLoaderDialog(context);
+                          authorisePayment(context,1);
+                        },
+                        child: Container(
+                          width: appWidth(context),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.orange,
+                              borderRadius:
+                              BorderRadius.circular(10)),
+                          child: sText("Join Now",color: Colors.white,weight: FontWeight.bold,align: TextAlign.center),
+                        ),
+                      ),
+                    ],
+                  ));
+            },
+          );
+        });
+  }
+
+  getMyGroups() async {
+
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      myGroupList = await GroupManagementController().getJoinGroupList();
+      Navigator.pop(context);
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+    });
+  }
+  acceptGroupInvite() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      myGroupList = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).groupInviteAccept();
+      await getMyGroups();
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+    });
+  }
+  rejectGroupInvite() async {
+
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      myGroupList = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).groupInviteReject();
+      Navigator.pop(context);
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
         color: Color(0XFFFDE4CE),
         child: Column(
@@ -104,7 +325,7 @@ class _GroupInviteState extends State<GroupInvite> {
                         color: Color(0XFFF7B06E),
                       ),
                       SizedBox(width: 10,),
-                      sText("3 days ago",weight: FontWeight.w500,color: Colors.black),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(widget.groupNotificationData!.notificationtable!.createdAt.toString())}",weight: FontWeight.w500,color: Colors.black),
                     ],
                   ),
                   Row(
@@ -209,7 +430,7 @@ class _GroupInviteState extends State<GroupInvite> {
                       children: [
                         GestureDetector(
                           onTap: (){
-                            showRevokeDialog(context: context,message: "Accept");
+                            showRevokeDialog(context: context,message: "Pay & join",type: "pay");
                           },
                           child: Container(
                             width: appWidth(context),
@@ -226,7 +447,7 @@ class _GroupInviteState extends State<GroupInvite> {
 
                         GestureDetector(
                           onTap: (){
-                            showRevokeDialog(context: context,message: "Accept");
+                            showRevokeDialog(context: context,message: "Accept",type:"join");
                           },
                           child: Container(
                             width: appWidth(context),
@@ -242,7 +463,7 @@ class _GroupInviteState extends State<GroupInvite> {
                         SizedBox(height: 20,),
                         GestureDetector(
                           onTap: (){
-                            showRevokeDialog(context: context,message: "decline");
+                            showRevokeDialog(context: context,message: "decline",type: "reject");
                           },
                           child: Container(
                             width: appWidth(context),
