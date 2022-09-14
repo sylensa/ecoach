@@ -115,17 +115,25 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
 
   onEnd() {
     print("timer ended");
-    completeQuiz();
+    if(controller.timing == "Time per Quiz"){
+      completeQuiz();
+    }else if(controller.timing == "Time per Question"){
+      nextButton();
+    }
+
   }
 
   nextButton() async {
+    if (currentQuestion == controller.questions.length - 1) {
+      completeQuiz();
+      return;
+    }
+
     if(controller.timing == "Time per Question"){
       timerController.restart();
       controller.duration =  Duration(seconds: controller.time);
     }
-    if (currentQuestion == controller.questions.length - 1) {
-      return;
-    }
+
     await Future.delayed(Duration(milliseconds: 200));
 
     setState(() {
