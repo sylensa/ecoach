@@ -481,7 +481,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       padding: EdgeInsets.zero,
 
       onPressed: (){
-        goTo(context, GroupAnnouncement(widget.user));
+        goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
       },
       child: Column(
         children: [
@@ -540,7 +540,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       padding: EdgeInsets.zero,
 
       onPressed: (){
-        goTo(context, GroupAnnouncement(widget.user));
+        goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
       },
       child: Column(
         children: [
