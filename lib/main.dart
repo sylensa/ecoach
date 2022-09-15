@@ -41,6 +41,7 @@ import 'views/auth/login_view.dart';
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 bool? seenOnboard;
 List<String> testDeviceIds = ['B23C05CA86653B5B363BFEB03DCC3406'];
+
 void main() async {
   print("object:inti");
   LicenseRegistry.addLicense(() async* {

@@ -7,6 +7,7 @@ import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
@@ -164,6 +165,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                               settings:
                                   RouteSettings(name: LearnMode.routeName),
                               builder: (context) {
+                                // return WelcomeToLearnMode();
                                 return LearnMode(widget.user, widget.courseInfo.course);
                               },
                             ),

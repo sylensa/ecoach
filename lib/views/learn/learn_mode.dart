@@ -287,23 +287,25 @@ class _LearnModeState extends State<LearnMode> {
     Color selectedColor,
   ) {
     return Expanded(
-        child: TextButton(
-            style: ButtonStyle(
-                minimumSize: studyType == selected
-                    ? MaterialStateProperty.all(Size(310, 102))
-                    : MaterialStateProperty.all(Size(267, 88)),
-                backgroundColor: MaterialStateProperty.all(
-                    studyType == selected ? selectedColor : Color(0xFFFAFAFA)),
-                foregroundColor: MaterialStateProperty.all(
-                    studyType == selected ? Colors.white : Color(0xFFBEC7DB))),
-            onPressed: () {
-              setState(() {
-                studyType = selected;
-              });
-            },
-            child: Text(
-              selectionText,
-              style: TextStyle(fontSize: studyType == selected ? 25 : 20),
-            )));
+      child: TextButton(
+        style: ButtonStyle(
+            minimumSize: studyType == selected
+                ? MaterialStateProperty.all(Size(310, 102))
+                : MaterialStateProperty.all(Size(267, 88)),
+            backgroundColor: MaterialStateProperty.all(
+                studyType == selected ? selectedColor : Color(0xFFFAFAFA)),
+            foregroundColor: MaterialStateProperty.all(
+                studyType == selected ? Colors.white : Color(0xFFBEC7DB))),
+        onPressed: () {
+          setState(() {
+            studyType = selected;
+          });
+        },
+        child: Text(
+          selectionText,
+          style: TextStyle(fontSize: studyType == selected ? 25 : 20),
+        ),
+      ),
+    );
   }
 }

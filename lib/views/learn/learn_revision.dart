@@ -104,11 +104,13 @@ class _LearnRevisionState extends State<LearnRevision> {
                           builder: (context) {
                             return LearningWidget(
                               controller: RevisionController(
-                                  widget.user, widget.course,
-                                  name: widget.progress.name ??
-                                      widget.course.name!,
-                                  questions: questions,
-                                  progress: widget.progress),
+                                widget.user,
+                                widget.course,
+                                name:
+                                    widget.progress.name ?? widget.course.name!,
+                                questions: questions,
+                                progress: widget.progress,
+                              ),
                             );
                           },
                         ),
