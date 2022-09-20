@@ -1,7 +1,9 @@
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/main.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/user_group/group_notification/notification.dart';
 import 'package:ecoach/views/user_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -46,6 +48,13 @@ class NotificationService {
                     index: 4,
                   )),
           (Route<dynamic> route) => false);
+    }else{
+      User? user = await UserPreferences().getUser();
+      navigatorKey.currentState!.push(
+          MaterialPageRoute(
+              builder: (context) => GroupNotificationActivity(user!,)
+          ),
+      );
     }
   }
 
