@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
 
 GroupNotificationModel groupNotificationModelFromJson(String? str) => GroupNotificationModel.fromJson(json.decode(str!));
@@ -112,6 +113,8 @@ class GroupNotificationData {
     this.createdAt,
     this.updatedAt,
     this.notificationtable,
+    this.group,
+
   });
 
   int? id;
@@ -122,6 +125,7 @@ class GroupNotificationData {
   DateTime? createdAt;
   DateTime? updatedAt;
   Notificationtable? notificationtable;
+  GroupListData? group;
 
   factory GroupNotificationData.fromJson(Map<String, dynamic> json) => GroupNotificationData(
     id: json["id"] == null ? null : json["id"],
@@ -132,6 +136,8 @@ class GroupNotificationData {
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
     notificationtable: json["notificationtable"] == null ? null : Notificationtable.fromJson(json["notificationtable"]),
+    group: json["group"] == null ? null : GroupListData.fromJson(json["group"]),
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -143,6 +149,8 @@ class GroupNotificationData {
     "created_at": createdAt == null ? null : createdAt!.toIso8601String(),
     "updated_at": updatedAt == null ? null : updatedAt!.toIso8601String(),
     "notificationtable": notificationtable == null ? null : notificationtable!.toJson(),
+    "group": group == null ? null : group!.toJson(),
+
   };
 }
 

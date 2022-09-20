@@ -366,9 +366,9 @@ class _GroupInviteState extends State<GroupInvite> {
                       children: [
                         Row(
                           children: [
-                            sText("Adeo Group",weight: FontWeight.w500,size: 20),
+                            sText("${widget.groupNotificationData!.group!.name}",weight: FontWeight.w500,size: 20),
                             SizedBox(width: 5,),
-                            sText("by Mr. Afram Dzidefo",weight: FontWeight.w500,size: 12,color: Colors.grey),
+                            sText("by ${widget.groupNotificationData!.group!.owner!.name}",weight: FontWeight.w500,size: 12,color: Colors.grey),
                           ],
                         ),
                         SizedBox(height: 10,),
@@ -382,7 +382,7 @@ class _GroupInviteState extends State<GroupInvite> {
                                   ),
                                   SizedBox(width: 5,),
                                   Container(
-                                    child: sText("2412",size: 12,weight: FontWeight.bold,),
+                                    child: sText("${widget.groupNotificationData!.group!.membersCount}",size: 12,weight: FontWeight.bold,),
                                   ),
                                 ],
                               ),
@@ -396,11 +396,11 @@ class _GroupInviteState extends State<GroupInvite> {
                                   ),
                                   SizedBox(width: 0,),
                                   Container(
-                                    child: sText("4.0",size: 10,weight: FontWeight.bold,),
+                                    child: sText("${widget.groupNotificationData!.group!.rating}",size: 10,weight: FontWeight.bold,),
                                   ),
                                   SizedBox(width: 5,),
                                   Container(
-                                    child: sText("(200 reviews)",size: 10,weight: FontWeight.normal,),
+                                    child: sText("(${widget.groupNotificationData!.group!.reviews} reviews)",size: 10,weight: FontWeight.normal,),
                                   ),
                                 ],
                               ),
@@ -414,7 +414,7 @@ class _GroupInviteState extends State<GroupInvite> {
                                   ),
                                   SizedBox(width: 5,),
                                   Container(
-                                    child: sText("\$99",size: 12,weight: FontWeight.bold,),
+                                    child: sText(widget.groupNotificationData!.group!.settings != null ? widget.groupNotificationData!.group!.settings!.access!.toLowerCase() != "free" ?"${widget.groupNotificationData!.group!.settings!.currency}${widget.groupNotificationData!.group!.settings!.amount}" : "Free" : "Free",size: 12,weight: FontWeight.bold,),
                                   ),
                                 ],
                               ),
@@ -422,12 +422,14 @@ class _GroupInviteState extends State<GroupInvite> {
                           ],
                         ),
                         SizedBox(height: 20,),
-                        sText("This test is your final assessment before your actual exam. Ensure to answer every question. Any wrongly answered question attracts a mark of -1 Any unanswered question attracts a mark of -1 The test comprises of 30 questions.Your pass mark for the test is 60%. Good luck candidates.",lHeight: 2),
+                        sText("${widget.groupNotificationData!.message}",lHeight: 2),
 
                       ],
                     ),
                     Column(
                       children: [
+                        if(widget.groupNotificationData!.group!.settings != null)
+                          if(widget.groupNotificationData!.group!.settings!.access!.toLowerCase() != "free")
                         GestureDetector(
                           onTap: (){
                             showRevokeDialog(context: context,message: "Pay & join",type: "pay");
@@ -442,9 +444,24 @@ class _GroupInviteState extends State<GroupInvite> {
                             ),
                             child: Center(child: sText("Pay & Join",color: Colors.white,weight: FontWeight.w500)),
                           ),
-                        ),
-                        SizedBox(height: 20,),
+                        ) else  GestureDetector(
+                            onTap: (){
+                              showRevokeDialog(context: context,message: "Accept",type:"join");
+                            },
+                            child: Container(
+                              width: appWidth(context),
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                              decoration: BoxDecoration(
+                                  color: Colors.orange,
+                                  borderRadius: BorderRadius.circular(15)
+                              ),
+                              child: Center(child: sText("Accept",color: Colors.white,weight: FontWeight.w500)),
+                            ),
+                          ),
 
+                        SizedBox(height: 20,),
+                        if(widget.groupNotificationData!.group!.settings == null)
                         GestureDetector(
                           onTap: (){
                             showRevokeDialog(context: context,message: "Accept",type:"join");
