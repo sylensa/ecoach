@@ -120,7 +120,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             children: [
                               Row(
                                 children: [
-                                  sText("Hi, Victor",size: 20,weight: FontWeight.bold),
+                                  sText("Hi, ${widget.user.name}",size: 20,weight: FontWeight.bold),
                                   SizedBox(width: 5,),
                                   Icon(Icons.hide_image,color: Colors.yellow,)
                                 ],
@@ -204,7 +204,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              sText("My Groups",size: 16,weight: FontWeight.bold),
                              GestureDetector(
                                onTap: (){
-                                 goTo(context, MyGroupsPage(myGroupList: myGroupList,));
+                                 goTo(context, MyGroupsPage(widget.user,myGroupList: myGroupList,));
                                },
                                  child: sText("See all",size: 16,color: Colors.grey[400]!),
                              ),
