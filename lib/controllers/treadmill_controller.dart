@@ -329,11 +329,12 @@ class TreadmillController {
     } else {
       mp.status = "skipped";
     }
+    int totalTime = treadmill!.totalTime ?? 0;
     treadmill!.title = name;
     treadmill!.avgScore = avgScore;
     treadmill!.topicId = topicid;
     treadmill!.avgTime = avgTime;
-    treadmill!.totalTime = time; //duration!.inSeconds;
+    treadmill!.totalTime = totalTime + mp.time!; //duration!.inSeconds;
     treadmill!.totalCorrect = correct;
     treadmill!.totalWrong = wrong + unattempted;
     treadmill!.totalQuestions =
