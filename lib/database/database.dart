@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 29, onOpen: (db) {},
+    return await openDatabase(path, version: 30, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -264,6 +264,7 @@ class DBProvider {
       await db.execute("""CREATE TABLE 'tests_taken' (
         'id' INTEGER PRIMARY KEY,
         'user_id' int NOT NULL,
+        'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,
         'course_id' int NOT NULL,
         'test_name' varchar(255) DEFAULT NULL,
@@ -503,6 +504,13 @@ class DBProvider {
     }, onUpgrade: (db, oldVersion, newVersion) async {
       if (oldVersion < newVersion) {
         // you can execute drop table and create table
+
+        try {
+          await db.execute("""ALTER TABLE 'tests_taken' ADD COLUMN group_id int DEFAULT NULL """);
+        } catch (e) {
+        }
+
+
         try {
           await db.execute("""DROP TABLE 'test_saved_questions'""");
           await db.execute("""CREATE TABLE 'test_saved_questions' (

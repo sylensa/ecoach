@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/notification_service.dart';
 import 'package:ecoach/websocket/event_data.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -53,6 +54,9 @@ class WebsocketCall {
             listener.eventHandler(pushObject);
           });
         }
+        // else{
+        //   NotificationService().showNotification('Notification', 'Group Notifications', "group");
+        // }
       }, onError: (error) {
         print("Websocket is on error");
         print(error);

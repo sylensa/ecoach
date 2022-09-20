@@ -147,9 +147,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         });
         _start();
       } else {
-        Scaffold.of(context).showSnackBar(
-            new SnackBar(content: new Text("You must accept permissions"))
-        );
+       toastMessage("You must accept permissions");
       }
     } catch (e) {
       print(e);
@@ -422,7 +420,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                child: FlatButton(onPressed: _currentStatus != RecordingStatus.Unset ? _stop : null, child: sText("Stop",color: Colors.white)),
+                child: MaterialButton(onPressed: _currentStatus != RecordingStatus.Unset ? _stop : null, child: sText("Stop",color: Colors.white)),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(30),bottomLeft: Radius.circular(30)),
                     color: appMainDarkGrey
@@ -477,7 +475,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 ),
               ),
               Container(
-                child: FlatButton(onPressed: ()async{
+                child: MaterialButton(onPressed: ()async{
                   await  _stop();
                   if(_current != null){
                   }

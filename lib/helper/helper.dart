@@ -521,7 +521,7 @@ showDialogOk(
         title: new Text("$title"),
         content: new Text(message!),
         actions: <Widget>[
-          new FlatButton(
+          new MaterialButton(
             child: new Text("Ok"),
             onPressed: () {
               if (status!) {
@@ -549,7 +549,7 @@ showSuccessfulDialog(
         title: new Text("Alert"),
         content: new Text(message!),
         actions: <Widget>[
-          new FlatButton(
+          new MaterialButton(
             child: new Text("Ok"),
             onPressed: () {
               if (status!) {
@@ -581,13 +581,13 @@ showDialogYesNo(
         content: Text(message!),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
-          FlatButton(
+          MaterialButton(
             child: Text("No"),
             onPressed: () {
               Navigator.pop(context);
             },
           ),
-          FlatButton(
+          MaterialButton(
             child: new Text("Yes"),
             onPressed: () {
               print("hey");
