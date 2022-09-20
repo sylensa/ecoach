@@ -137,7 +137,7 @@ class QuizController {
     return jsonEncode(responses);
   }
 
-  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback) async {
+  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback,{int groupId = 0}) async {
     TestTaken testTaken = TestTaken(
         id :user.id,
         userId: user.id,
@@ -153,6 +153,7 @@ class QuizController {
         score: score,
         correct: correct,
         wrong: wrong,
+        groupId: groupId,
         unattempted: unattempted,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
