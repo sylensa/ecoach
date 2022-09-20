@@ -1184,7 +1184,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           SizedBox(height: 10),
           OutlinedButton(
             onPressed: () {
-              controller.resumeTimer();
+              setState(() {
+                controller.resumeTimer();
+              });
+
               Navigator.pop(context);
             },
             style: ButtonStyle(
