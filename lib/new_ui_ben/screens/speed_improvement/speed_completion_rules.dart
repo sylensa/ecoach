@@ -1,4 +1,3 @@
-
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/level_two.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,9 +5,11 @@ import '../../utils/revision_utils.dart';
 import '../../utils/speed_completion_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
 import '../level_start_screen.dart';
+import 'level_container.dart';
 
 class SpeedCompletionRules extends StatelessWidget {
-  const SpeedCompletionRules({Key? key}) : super(key: key);
+  final Function letGo;
+  const SpeedCompletionRules({required this.letGo, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,10 @@ class SpeedCompletionRules extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() =>  LevelTwo());
+          letGo();
+          // Get.to(
+          //   () => SpeedImprovementLevelContainer(),
+          // );
         },
         child: Container(
           color: const Color(0xFF00C9B9),
@@ -64,7 +68,7 @@ class SpeedCompletionRules extends StatelessWidget {
                       color: Color(0xFF00C9B9),
                     ),
                   ),
-                  Image.asset('assets/images/shadow.png')
+                  Image.asset('assets/images/learn_mode2/shadow.png')
                 ],
               ),
               const SizedBox(
@@ -88,7 +92,6 @@ class SpeedCompletionRules extends StatelessWidget {
                 height: 20,
               ),
               BulletRulesContainer(
-                
                 rules: speedCompletionRulesList,
               )
             ],

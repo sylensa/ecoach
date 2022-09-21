@@ -6,7 +6,8 @@ import '../../widgets/bullet_rules_container.dart';
 import '../revision/chose_revision_mode.dart';
 
 class CourseCompletion extends StatelessWidget {
-  const CourseCompletion({Key? key}) : super(key: key);
+  final Function proceed;
+  const CourseCompletion({required this.proceed, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +25,15 @@ class CourseCompletion extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() =>  ChoseRevisionMode());
+          // Get.to(() =>  ChoseRevisionMode());
+          proceed();
         },
         child: Container(
           color: const Color(0xFF00C9B9),
           height: 60,
           alignment: Alignment.center,
           child: const Text(
-            'Start Revision',
+            'Start Studies',
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
           ),
@@ -69,7 +71,7 @@ class CourseCompletion extends StatelessWidget {
                       color: Color(0xFF00C9B9),
                     ),
                   ),
-                  Image.asset('assets/images/shadow.png')
+                  Image.asset('assets/images/learn_mode2/shadow.png')
                 ],
               ),
               const SizedBox(

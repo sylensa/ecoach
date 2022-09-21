@@ -12,6 +12,8 @@ import 'package:ecoach/views/learn/learning_widget.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:flutter/material.dart';
 
+import '../../new_ui_ben/screens/course_completion/course_completion.dart';
+
 Color themeColor = Color(0xFF00ABE0);
 
 class LearnCourseCompletion extends StatefulWidget {
@@ -50,7 +52,31 @@ class TopicCover extends StatefulWidget {
 class _TopicCoverState extends State<TopicCover> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return CourseCompletion(
+      proceed: () async {
+        int topicId = widget.progress.topicId!;
+        Topic? topic = await TopicDB().getTopicById(topicId);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            settings: RouteSettings(name: LearnCourseCompletion.routeName),
+            builder: (context) {
+              return StudyNoteView(
+                topic!,
+                controller: CourseCompletionController(
+                  widget.user,
+                  widget.course,
+                  name: topic.name!,
+                  progress: widget.progress,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(

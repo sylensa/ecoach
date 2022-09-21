@@ -80,6 +80,7 @@ class LevelContainer extends StatelessWidget {
             ),
             SliderButton(
               action: onSwipe,
+              shimmer: true,
               label: const Text(
                 'Swipe to start',
                 style: TextStyle(
@@ -89,12 +90,11 @@ class LevelContainer extends StatelessWidget {
                     fontWeight: FontWeight.w500),
               ),
               buttonColor: const Color(0xFF0367B4),
-              icon: Image.asset('assets/images/arrows.png'),
+              icon: Image.asset('assets/images/learn_mode2/arrows.png'),
               backgroundColor: const Color.fromRGBO(232, 245, 255, 0.3),
               width: double.infinity,
               height: 60,
-              shimmer: false,
-              dismissible: false,
+              dismissible: true,
               alignLabel: const Alignment(0, 0),
               buttonSize: 50,
               boxShadow: const BoxShadow(

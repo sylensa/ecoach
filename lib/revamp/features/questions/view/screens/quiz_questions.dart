@@ -441,6 +441,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
               SizedBox(
                 height: 30,
               ),
+            // ***********************
+            // top bar
+            // ************
             Container(
               child: Row(
                 children: [
@@ -504,6 +507,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                 ],
               ),
             ),
+
+            // ***********************
+            // top bar ends
+            // ************
+
+            // ***********************
+            // performance and timer bar begins
+            // ************************
             Container(
               color: const Color(0xFF2D3E50),
               height: 47,
@@ -638,6 +649,14 @@ class _QuizQuestionState extends State<QuizQuestion> {
                 ],
               ),
             ),
+
+            // ***********************
+            // performance and timer bar ends
+            // ************************
+
+            // ***********************
+            // questions page view begins
+            // ************************
             Expanded(
               child: PageView(
                 controller: pageController,
@@ -646,6 +665,10 @@ class _QuizQuestionState extends State<QuizQuestion> {
                   for (int i = 0; i < controller.questions.length; i++)
                     Column(
                       children: [
+                        // ***********************
+                        // actual question begins
+                        // ************************
+
                         Theme(
                           data: Theme.of(context)
                               .copyWith(dividerColor: Colors.transparent),
@@ -674,6 +697,15 @@ class _QuizQuestionState extends State<QuizQuestion> {
                             ],
                           ),
                         ),
+
+                        // ***********************
+                        // actual question ends
+                        // ************************
+
+                        // ***********************
+                        // choose answer begins
+                        // ************************
+
                         Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 10),
@@ -692,6 +724,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                 fontSize: 13, color: Colors.white),
                           ),
                         ),
+
+                        // ***********************
+                        // choose answer ends
+                        // ************************
+
                         Expanded(
                           child: ListView(
                             padding: EdgeInsets.zero,
@@ -699,6 +736,10 @@ class _QuizQuestionState extends State<QuizQuestion> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
+                                  // ***********************
+                                  // instructions begin
+                                  // ************************
+
                                   Visibility(
                                     visible: controller.questions[i]
                                             .instructions!.isNotEmpty
@@ -720,6 +761,15 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           textColor: Colors.black,
                                         )),
                                   ),
+
+                                  // ***********************
+                                  // instructions ends
+                                  // ************************
+
+                                  // ***********************
+                                  // Resource begin
+                                  // ************************
+
                                   GestureDetector(
                                     onTap: () {
                                       print("object");
@@ -787,9 +837,18 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                       ),
                                     ),
                                   ),
+
+                                  // ***********************
+                                  // Resource ends
+                                  // ************************
+
                                   const SizedBox(
                                     height: 10,
                                   ),
+
+                                  // ***********************
+                                  // answers begin
+                                  // ************************
                                   ...List.generate(
                                       controller.questions[i].answers!.length,
                                       (index) {
@@ -902,6 +961,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                       ),
                                     );
                                   })
+                                  // ***********************
+                                  // answers end
+                                  // ************************
                                 ],
                               )
                             ],
@@ -913,6 +975,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
               ),
             ),
 
+            // ***********************
+            // skip or complete test begins
+            // ************************
             Container(
               // margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
               child: Row(
@@ -995,6 +1060,11 @@ class _QuizQuestionState extends State<QuizQuestion> {
                 ],
               ),
             ),
+
+            // ***********************
+            // skip or complete test ends
+            // ************************
+
             // Container(
             //   margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
             //   child: Row(

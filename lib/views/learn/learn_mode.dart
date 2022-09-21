@@ -6,14 +6,13 @@ import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/views/course_details.dart';
-import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
+
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mastery_topic.dart';
 import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
-import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
 
 class LearnMode extends StatefulWidget {
@@ -87,175 +86,244 @@ class _LearnModeState extends State<LearnMode> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: introView
-            ? LearnPeripheralWidget(
-                heroText: 'welcome',
-                subText:
-                    'We saved your previous session so you can continue where you left off',
-                heroImageURL: 'assets/images/learn_module/welcome.png',
-                mainActionLabel: 'continue',
-                mainActionBackground: Color(0xFFF0F0F2),
-                mainActionOnPressed: () {
-                  setState(() {
-                    introView = false;
-                  });
-                },
-                topActionLabel: 'switch mode',
-                topActionOnPressed: () {},
-              )
-            : Container(
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                color: Color(0xFFFFFFFF),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.popUntil(context,
-                                  ModalRoute.withName(CoursesPage.routeName));
-                            },
-                            child: Text(
-                              'exit',
-                              style: TextStyle(
-                                  color: Color(0xFFFB7B76), fontSize: 11),
-                            )),
-                        SizedBox(
-                          width: 30,
-                        )
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Welcome to the Learn Mode",
-                              style: TextStyle(
-                                  color: Color(0xFFACACAC), fontSize: 18),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              "What is your current goal?",
-                              style: TextStyle(
-                                  color: Color(0xFFD3D3D3),
-                                  fontSize: 14,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                            SizedBox(
-                              height: 22,
-                            ),
-                            IntrinsicHeight(
-                              child: Column(
-                                children: [
-                                  getSelectButton(StudyType.REVISION,
-                                      "Revision", Color(0xFF00C664)),
-                                  getSelectButton(StudyType.COURSE_COMPLETION,
-                                      "Course Completion", Color(0xFF00ABE0)),
-                                  getSelectButton(StudyType.SPEED_ENHANCEMENT,
-                                      "Speed Enhancement", Color(0xFFFB7B76)),
-                                  getSelectButton(StudyType.MASTERY_IMPROVEMENT,
-                                      "Mastery Improvement", Color(0xFFFFB444)),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                          ]),
-                    ),
-                    if (studyType != StudyType.NONE)
-                      SizedBox(
-                        width: 150,
-                        height: 44,
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.all(
-                                getButtonColor(studyType)),
-                            side: MaterialStateProperty.all(BorderSide(
-                                color: getButtonColor(studyType),
-                                width: 1,
-                                style: BorderStyle.solid)),
-                          ),
-                          onPressed: () async {
-                            Widget? view = null;
-                            switch (studyType) {
-                              case StudyType.REVISION:
-                                StudyProgress? progress =
-                                    await getStudyProgress(StudyType.REVISION);
-                                print(progress);
-                                if (progress == null) {
-                                  return;
-                                }
-                                view = LearnRevision(
-                                    widget.user, widget.course, progress);
-                                break;
+          body:
+          //  introView
+              // ? LearnPeripheralWidget(
+              //     heroText: 'welcome',
+              //     subText:
+              //         'We saved your previous session so you can continue where you left off',
+              //     heroImageURL: 'assets/images/learn_module/welcome.png',
+              //     mainActionLabel: 'continue',
+              //     mainActionBackground: Color(0xFFF0F0F2),
+              //     mainActionOnPressed: () {
+              //       setState(() {
+              //         introView = false;
+              //       });
+              //     },
+              //     topActionLabel: 'switch mode',
+              //     topActionOnPressed: () {},
+              //   )
+              // : 
+              
+              WelcomeToLearnMode(
+                  course: widget.course,
+                  startLearning: (StudyType study) async {
+                    Widget? view = null;
+                    switch (study) {
+                      case StudyType.REVISION:
+                        StudyProgress? progress =
+                            await getStudyProgress(StudyType.REVISION);
+                        print("this is the progress of revision $progress");
+                        if (progress == null) {
+                          return;
+                        }
+                        view =
+                            LearnRevision(widget.user, widget.course, progress);
+                        break;
 
-                              case StudyType.COURSE_COMPLETION:
-                                StudyProgress? progress =
-                                    await getStudyProgress(
-                                        StudyType.COURSE_COMPLETION);
-                                print(progress);
-                                if (progress == null) {
-                                  return;
-                                }
-                                view = LearnCourseCompletion(
-                                    widget.user, widget.course, progress);
-                                break;
-                              case StudyType.SPEED_ENHANCEMENT:
-                                StudyProgress? progress =
-                                    await getStudyProgress(
-                                        StudyType.SPEED_ENHANCEMENT);
-                                print(progress);
-                                if (progress == null) {
-                                  return;
-                                }
-                                view = LearnSpeed(
-                                    widget.user, widget.course, progress);
-                                break;
-                              case StudyType.MASTERY_IMPROVEMENT:
-                                StudyProgress? progress =
-                                    await getStudyProgress(
-                                        StudyType.MASTERY_IMPROVEMENT);
-                                print(progress);
-                                if (progress == null) {
-                                  return;
-                                }
-                                List<MasteryCourse> mcs =
-                                    await MasteryCourseDB()
-                                        .getMasteryTopics(progress.studyId!);
-                                if (progress.level == 1 || mcs.length == 0) {
-                                  view = LearnMastery(
-                                      widget.user, widget.course, progress);
-                                } else {
-                                  view = LearnMasteryTopic(
-                                      widget.user, widget.course, progress,
-                                      topics: mcs);
-                                }
+                      case StudyType.COURSE_COMPLETION:
+                        StudyProgress? progress =
+                            await getStudyProgress(StudyType.COURSE_COMPLETION);
+                        print(progress);
+                        if (progress == null) {
+                          return;
+                        }
+                        view = LearnCourseCompletion(
+                            widget.user, widget.course, progress);
+                        break;
+                      case StudyType.SPEED_ENHANCEMENT:
+                        StudyProgress? progress =
+                            await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
+                        print(progress);
+                        if (progress == null) {
+                          return;
+                        }
+                        view = LearnSpeed(widget.user, widget.course, progress);
+                        break;
+                      case StudyType.MASTERY_IMPROVEMENT:
+                        StudyProgress? progress = await getStudyProgress(
+                            StudyType.MASTERY_IMPROVEMENT);
+                        print(progress);
+                        if (progress == null) {
+                          return;
+                        }
+                        List<MasteryCourse> mcs = await MasteryCourseDB()
+                            .getMasteryTopics(progress.studyId!);
+                        if (progress.level == 1 || mcs.length == 0) {
+                          view = LearnMastery(
+                              widget.user, widget.course, progress);
+                        } else {
+                          view = LearnMasteryTopic(
+                              widget.user, widget.course, progress,
+                              topics: mcs);
+                        }
 
-                                break;
-                              case StudyType.NONE:
-                                break;
-                            }
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return view!;
-                            }));
-                          },
-                          child: Text(
-                            "Let's go",
-                          ),
-                        ),
-                      ),
-                    SizedBox(height: 24.0),
-                  ],
-                ),
-              ),
-      ),
+                        break;
+                      case StudyType.NONE:
+                        break;
+                    }
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return view!;
+                    }));
+                  },
+                )
+
+          // Container(
+          //     padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+          //     color: Color(0xFFFFFFFF),
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.center,
+          //       children: [
+          //         Row(
+          //           mainAxisAlignment: MainAxisAlignment.end,
+          //           children: [
+          //             TextButton(
+          //                 onPressed: () {
+          //                   Navigator.popUntil(context,
+          //                       ModalRoute.withName(CoursesPage.routeName));
+          //                 },
+          //                 child: Text(
+          //                   'exit',
+          //                   style: TextStyle(
+          //                       color: Color(0xFFFB7B76), fontSize: 11),
+          //                 )),
+          //             SizedBox(
+          //               width: 30,
+          //             )
+          //           ],
+          //         ),
+          //         Expanded(
+          //           child: Column(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               children: [
+          //                 Text(
+          //                   "Welcome to the Learn Mode",
+          //                   style: TextStyle(
+          //                       color: Color(0xFFACACAC), fontSize: 18),
+          //                 ),
+          //                 SizedBox(
+          //                   height: 20,
+          //                 ),
+          //                 Text(
+          //                   "What is your current goal?",
+          //                   style: TextStyle(
+          //                       color: Color(0xFFD3D3D3),
+          //                       fontSize: 14,
+          //                       fontStyle: FontStyle.italic),
+          //                 ),
+          //                 SizedBox(
+          //                   height: 22,
+          //                 ),
+          //                 IntrinsicHeight(
+          //                   child: Column(
+          //                     children: [
+          //                       getSelectButton(StudyType.REVISION,
+          //                           "Revision", Color(0xFF00C664)),
+          //                       getSelectButton(StudyType.COURSE_COMPLETION,
+          //                           "Course Completion", Color(0xFF00ABE0)),
+          //                       getSelectButton(StudyType.SPEED_ENHANCEMENT,
+          //                           "Speed Enhancement", Color(0xFFFB7B76)),
+          //                       getSelectButton(StudyType.MASTERY_IMPROVEMENT,
+          //                           "Mastery Improvement", Color(0xFFFFB444)),
+          //                     ],
+          //                   ),
+          //                 ),
+          //                 SizedBox(
+          //                   height: 50,
+          //                 ),
+          //               ]),
+          //         ),
+          //         if (studyType != StudyType.NONE)
+          //           SizedBox(
+          //             width: 150,
+          //             height: 44,
+          //             child: OutlinedButton(
+          //               style: ButtonStyle(
+          //                 foregroundColor: MaterialStateProperty.all(
+          //                     getButtonColor(studyType)),
+          //                 side: MaterialStateProperty.all(BorderSide(
+          //                     color: getButtonColor(studyType),
+          //                     width: 1,
+          //                     style: BorderStyle.solid)),
+          // ),
+          // onPressed: () async {
+          //   Widget? view = null;
+          //   switch (studyType) {
+          //     case StudyType.REVISION:
+          //       StudyProgress? progress =
+          //           await getStudyProgress(StudyType.REVISION);
+          //       print("this is the progress of revision $progress");
+          //       if (progress == null) {
+          //         return;
+          //       }
+          //       view = LearnRevision(
+          //           widget.user, widget.course, progress);
+          //       break;
+
+          //     case StudyType.COURSE_COMPLETION:
+          //       StudyProgress? progress =
+          //           await getStudyProgress(
+          //               StudyType.COURSE_COMPLETION);
+          //       print(progress);
+          //       if (progress == null) {
+          //         return;
+          //       }
+          //       view = LearnCourseCompletion(
+          //           widget.user, widget.course, progress);
+          //       break;
+          //     case StudyType.SPEED_ENHANCEMENT:
+          //       StudyProgress? progress =
+          //           await getStudyProgress(
+          //               StudyType.SPEED_ENHANCEMENT);
+          //       print(progress);
+          //       if (progress == null) {
+          //         return;
+          //       }
+          //       view = LearnSpeed(
+          //           widget.user, widget.course, progress);
+          //       break;
+          //     case StudyType.MASTERY_IMPROVEMENT:
+          //       StudyProgress? progress =
+          //           await getStudyProgress(
+          //               StudyType.MASTERY_IMPROVEMENT);
+          //       print(progress);
+          //       if (progress == null) {
+          //         return;
+          //       }
+          //       List<MasteryCourse> mcs =
+          //           await MasteryCourseDB()
+          //               .getMasteryTopics(progress.studyId!);
+          //       if (progress.level == 1 || mcs.length == 0) {
+          //         view = LearnMastery(
+          //             widget.user, widget.course, progress);
+          //       } else {
+          //         view = LearnMasteryTopic(
+          //             widget.user, widget.course, progress,
+          //             topics: mcs);
+          //       }
+
+          //       break;
+          //     case StudyType.NONE:
+          //       break;
+          //   }
+          //   Navigator.push(context,
+          //       MaterialPageRoute(builder: (context) {
+          //     return view!;
+          //   }));
+
+          // },
+          //               child: Text(
+          //                 "Let's go",
+          //               ),
+          //             ),
+          //           ),
+          //         SizedBox(height: 24.0),
+          //       ],
+          //     ),
+          //   ),
+
+          ),
     );
   }
 

@@ -6,7 +6,8 @@ import '../../widgets/steps_rules_container.dart';
 import 'speed_completion_rules.dart';
 
 class SpeedCompletion extends StatelessWidget {
-  const SpeedCompletion({Key? key}) : super(key: key);
+  final Function start;
+  const SpeedCompletion({ required this.start, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,8 @@ class SpeedCompletion extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() => const SpeedCompletionRules());
+          start();
+          // Get.to(() => const SpeedCompletionRules());
         },
         child: Container(
           color: const Color(0xFF00C9B9),

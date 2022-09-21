@@ -59,7 +59,7 @@ class SuccessfulRevision extends StatelessWidget {
               height: 15,
             ),
             Image.asset(
-              "assets/images/congrats2.png",
+              "assets/images/learn_mode2/congrats2.png",
               height: 290,
               width: double.infinity,
               fit: BoxFit.cover,

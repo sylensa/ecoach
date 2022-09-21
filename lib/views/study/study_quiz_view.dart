@@ -22,7 +22,13 @@ import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+
+import '../../helper/helper.dart';
+import '../../revamp/core/utils/app_colors.dart';
+import '../../revamp/features/questions/view/widgets/actual_question.dart';
+import '../../utils/style_sheet.dart';
 
 class StudyQuizView extends StatefulWidget {
   const StudyQuizView({
@@ -47,6 +53,39 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   bool showNext = false;
   bool showComplete = false;
   List<bool> isAnsweredQuestions = [];
+  int correctAnswered = 0;
+  int wrong = 0;
+  int totalQuestionsAnswered = 0;
+  double avgScore = 0.0;
+
+  calAvgScore() {
+    double totalAverage = 0.0;
+    // print("avg scoring current question= $unattempted");
+    int totalQuestions = correctAnswered + wrong;
+
+    int correctAnswers = correctAnswered;
+    if (totalQuestions == 0) {
+      avgScore = 0;
+    }
+    totalAverage = (correctAnswers / totalQuestions) * 100;
+    avgScore = double.parse(totalAverage.toInt().toString());
+  }
+
+  //  avgTimeComplete() {
+  //   double count = 0.0;
+  //   for (int i = 0; i < controller.questions.length; i++) {
+  //     count += controller.questions[i].time!;
+  //   }
+
+  //   if (count == 0 && controller.currentQuestion == 0) {
+  //     count = 0;
+  //   } else {
+  //     count = count / controller.currentQuestion;
+  //   }
+
+  //   print("count:$count");
+  //   return count.toStringAsFixed(2);
+  // }
 
   @override
   void initState() {
@@ -235,46 +274,241 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             body: Container(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+              Container(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CircularPercentIndicator(
-                      radius: 25,
-                      lineWidth: 3,
-                      progressColor: Color(0xFF707070),
-                      backgroundColor: Colors.transparent,
-                      percent: controller.percentageCompleted,
-                      center: Text(
-                        "${controller.currentQuestion + 1}",
-                        style:
-                            TextStyle(fontSize: 14, color: Color(0xFF969696)),
+                    IconButton(
+                        onPressed: () {
+                          // timerController.pause();
+                          // Get.bottomSheet(quitWidget());
+                          // return;
+                        },
+                        icon: Icon(Icons.arrow_back)),
+                    Container(
+                      width: 250,
+                      child: Text(
+                        controller.name,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14),
                       ),
                     ),
                     Expanded(
-                      child: Text(controller.name,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Color(0xFF15CA70),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500)),
+                      child: Container(),
                     ),
-                    if (controller.type == StudyType.REVISION ||
-                        controller.type == StudyType.MASTERY_IMPROVEMENT)
-                      OutlinedButton(
-                          onPressed: () {
-                            showPauseDialog();
-                          },
-                          child: Text("Exit")),
-                    if (controller.type == StudyType.COURSE_COMPLETION ||
-                        controller.type == StudyType.SPEED_ENHANCEMENT)
-                      getTimerWidget(),
+                    Center(
+                      child: SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: Stack(
+                          children: [
+                            CircularProgressIndicator(
+                              color: Colors.black,
+                              strokeWidth: 2,
+                              value: controller.percentageCompleted,
+                            ),
+                            Center(
+                              child: Text(
+                                "${controller.currentQuestion + 1}",
+                                style: TextStyle(
+                                    fontSize: 14, color: Color(0xFF969696)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () async {
+                          // timerController.pause();
+                          // await reportModalBottomSheet(context,
+                          //     question: controller.questions[currentQuestion]);
+                        },
+                        icon: Icon(
+                          Icons.more_vert,
+                          color: Colors.black,
+                        )),
                   ],
                 ),
               ),
+              Container(
+                color: const Color(0xFF2D3E50),
+                height: 47,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (controller.type == StudyType.COURSE_COMPLETION ||
+                        controller.type == StudyType.SPEED_ENHANCEMENT)
+                      getTimerWidget(),
+                    const SizedBox(
+                      width: 7,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                      child: VerticalDivider(
+                        color: Color(0xFF9EE4FF),
+                        width: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    !answeredWrong
+                        ? Image.asset(
+                            "assets/images/un_fav.png",
+                            color: Colors.green,
+                          )
+                        : SvgPicture.asset(
+                            "assets/images/fav.svg",
+                          ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "${avgScore}%",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF9EE4FF),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 18.2,
+                    ),
+                    // SvgPicture.asset(
+                    //   "assets/images/speed.svg",
+                    // ),
+                    // const SizedBox(
+                    //   width: 6.4,
+                    // ),
+                    // Text(
+                    //   "${avgTimeComplete()}s",
+                    //   style: TextStyle(
+                    //     fontSize: 10,
+                    //     color: Color(0xFF9EE4FF),
+                    //   ),
+                    // ),
+                    const SizedBox(
+                      width: 17.6,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      "$correctAnswered",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF9EE4FF),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 17,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6.4,
+                    ),
+                    Text(
+                      "${wrong}",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF9EE4FF),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4.2,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                      child: VerticalDivider(
+                        color: Color(0xFF9EE4FF),
+                        width: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6.2,
+                    ),
+                    // if (!widget.diagnostic)
+                    //   InkWell(
+                    //     onTap: () {
+                    //       setState(() {
+                    //         swichValue = !swichValue;
+                    //       });
+                    //       insertSaveTestQuestion(
+                    //           controller.questions[currentQuestion].id!);
+                    //     },
+                    //     child: SvgPicture.asset(
+                    //       savedQuestions.contains(
+                    //               controller.questions[currentQuestion].id)
+                    //           ? "assets/images/on_switch.svg"
+                    //           : "assets/images/off_switch.svg",
+                    //     ),
+                    //   ),
+                  ],
+                ),
+              ),
+
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       CircularPercentIndicator(
+              //         radius: 25,
+              //         lineWidth: 3,
+              //         progressColor: Color(0xFF707070),
+              //         backgroundColor: Colors.transparent,
+              //         percent: controller.percentageCompleted,
+              //         center: Text(
+              //           "${controller.currentQuestion + 1}",
+              //           style:
+              //               TextStyle(fontSize: 14, color: Color(0xFF969696)),
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: Text(controller.name,
+              //             softWrap: true,
+              //             overflow: TextOverflow.ellipsis,
+              //             textAlign: TextAlign.center,
+              //             style: TextStyle(
+              //                 color: Color(0xFF15CA70),
+              //                 fontSize: 18,
+              //                 fontWeight: FontWeight.w500)),
+              //       ),
+              //       if (controller.type == StudyType.REVISION ||
+              //           controller.type == StudyType.MASTERY_IMPROVEMENT)
+              //         OutlinedButton(
+              //             onPressed: () {
+              //               showPauseDialog();
+              //             },
+              //             child: Text("Exit")),
+              // if (controller.type == StudyType.COURSE_COMPLETION ||
+              //     controller.type == StudyType.SPEED_ENHANCEMENT)
+              //   getTimerWidget(),
+              //     ],
+              //   ),
+              // ),
+
               Expanded(
                 child: Container(
                   child: PageView(
@@ -292,13 +526,18 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           callback: (Answer answer, correct) async {
                             setState(() {
                               showSubmit = true;
+                              // increase total number of question
+                              // totalQuestionsAnswered++;
                               if (controller.type == StudyType.REVISION ||
                                   controller.type ==
                                       StudyType.SPEED_ENHANCEMENT) {
-                                if (correct)
+                                if (correct) {
                                   answeredWrong = false;
-                                else
+                                  // correctAnswered++;
+                                } else {
+                                  // wrong++;
                                   answeredWrong = true;
+                                }
                               } else if (controller.type ==
                                   StudyType.MASTERY_IMPROVEMENT) {
                                 showNext = true;
@@ -350,6 +589,15 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 setState(() {
                                   showSubmit = false;
                                   showNext = true;
+
+                                  if (answeredWrong) {
+                                    wrong++;
+                                  } else {
+                                    correctAnswered++;
+                                  }
+
+                                  calAvgScore();
+
                                   if (controller.type == StudyType.REVISION ||
                                       controller.type ==
                                           StudyType.SPEED_ENHANCEMENT) {
@@ -396,8 +644,10 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 ),
                               ),
                               style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Color(0xFFF6F6F6))),
+                                backgroundColor: MaterialStateProperty.all(
+                                  Color(0xFFF6F6F6),
+                                ),
+                              ),
                             ),
                           ),
                         if (showNextButton())
@@ -511,44 +761,45 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       child: controller.enabled
           ? Row(
               children: [
-                Image(image: AssetImage('assets/images/watch.png')),
+                // Image(image: AssetImage('assets/images/watch.png')),
                 SizedBox(
                   width: 2,
                 ),
-                Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(
-                        color: Color(0xFF969696),
-                        width: 1,
-                      )),
-                  child: AdeoTimer(
-                    callbackWidget: (time) {
-                      Duration remaining = Duration(seconds: time.toInt());
-                      controller.duration = remaining;
-                      controller.countdownInSeconds = remaining.inSeconds;
+                // Container(
+                //   padding: EdgeInsets.all(4),
+                //   decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(5),
+                //       border: Border.all(
+                //         color: Color(0xFF969696),
+                //         width: 1,
+                //       )),
+                //   child:
+                AdeoTimer(
+                  callbackWidget: (time) {
+                    Duration remaining = Duration(seconds: time.toInt());
+                    controller.duration = remaining;
+                    controller.countdownInSeconds = remaining.inSeconds;
 
-                      if (remaining.inSeconds == 0) {
-                        return Text("Time Up",
-                            style: TextStyle(
-                                color: Color(0xFF969696), fontSize: 14));
-                      }
-
-                      return Text(
-                          "${remaining.inHours.remainder(24)}:${remaining.inMinutes.remainder(60)}:${remaining.inSeconds.remainder(60)}",
+                    if (remaining.inSeconds == 0) {
+                      return Text("Time Up",
                           style: TextStyle(
                               color: Color(0xFF969696), fontSize: 14));
-                    },
-                    onFinish: () {
-                      Future.delayed(Duration.zero, () async {
-                        endSpeedSession();
-                      });
-                    },
-                    controller: controller.timerController!,
-                    startDuration: controller.duration!,
-                  ),
+                    }
+
+                    return Text(
+                        "${remaining.inHours.remainder(24)}:${remaining.inMinutes.remainder(60)}:${remaining.inSeconds.remainder(60)}",
+                        style:
+                            TextStyle(color: Color(0xFF969696), fontSize: 14));
+                  },
+                  onFinish: () {
+                    Future.delayed(Duration.zero, () async {
+                      endSpeedSession();
+                    });
+                  },
+                  controller: controller.timerController!,
+                  startDuration: controller.duration!,
                 ),
+                // ),
               ],
             )
           : Text("Time Up",
@@ -885,56 +1136,209 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
           child: Container(
         color: Colors.white,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              width: double.infinity,
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
-              margin: EdgeInsets.only(bottom: 2),
-              color: Color(0xFFF6F6F6),
-              child: Text(
-                widget.question.instructions!,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: textColor),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+              // padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
               color: Color(0xFFF6F6F6),
               constraints: BoxConstraints(minHeight: 135),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AdeoHtmlTex(
-                    widget.user,
-                    widget.question.text!,
-                    fontSize: 18,
-                    textColor: textColor,
+                  Theme(
+                    data: Theme.of(context)
+                        .copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      textColor: Colors.white,
+                      iconColor: kAdeoGray3,
+                      initiallyExpanded: true,
+                      collapsedIconColor: kAdeoGray3,
+                      backgroundColor: Color(0xFFEFEFEF),
+                      title: Text(
+                        'View Question',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal,
+                          color: kAdeoGray3,
+                        ),
+                      ),
+                      children: <Widget>[
+                        ActualQuestion(
+                          user: widget.user,
+                          question: widget.question.text!,
+                          // diagnostic: widget.diagnostic,
+                          direction: "",
+                        ),
+                      ],
+                    ),
                   ),
-                  if (widget.question.resource != null &&
-                      widget.question.resource != "")
-                    Container(
-                      padding: EdgeInsets.fromLTRB(2, 12, 2, 4),
-                      decoration: BoxDecoration(
-                          color: Color(0xFF444444),
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        children: [
-                          Text(
-                            "Resource",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          AdeoHtmlTex(
-                            widget.user,
-                            widget.question.resource!,
-                            textColor: Colors.white,
-                          ),
-                        ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10),
+                    width: appWidth(context),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF67717D),
+                      border: Border.all(
+                        width: 1,
+                        color: const Color(0xFFC8C8C8),
                       ),
                     ),
+                    child: Text(
+                      "Choose the right answer to the question above",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 13, color: Colors.white),
+                    ),
+                  ),
+
+                  // AdeoHtmlTex(
+                  //   widget.user,
+                  //   widget.question.text!,
+                  //   fontSize: 18,
+                  //   textColor: textColor,
+                  // ),
+
+                  if (widget.question.resource != null &&
+                      widget.question.resource != "")
+                    GestureDetector(
+                      onTap: () {
+                        print("object");
+                      },
+                      child: Visibility(
+                        visible:
+                            widget.question.resource!.isNotEmpty ? true : false,
+                        child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            textColor: Colors.white,
+                            iconColor: kAdeoGray3,
+                            collapsedBackgroundColor: Colors.white,
+                            collapsedIconColor: kAdeoGray3,
+                            backgroundColor: Colors.white,
+                            title: Text(
+                              'Resource',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                                color: kAdeoGray3,
+                              ),
+                            ),
+                            children: <Widget>[
+                              Column(
+                                children: [
+                                  Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    child: Divider(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Card(
+                                    elevation: 0,
+                                    color: Colors.white,
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 5),
+                                    child: AdeoHtmlTex(
+                                      widget.user,
+                                      widget.question.resource!
+                                          .replaceAll("https", "http"),
+                                      // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
+                                      useLocalImage: false,
+                                      textColor: Colors.grey,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // Container(
+                  //   padding: EdgeInsets.fromLTRB(2, 12, 2, 4),
+                  //   decoration: BoxDecoration(
+                  //       color: Color(0xFF444444),
+                  //       borderRadius: BorderRadius.circular(20)),
+                  //   child: Column(
+                  //     children: [
+                  //       Text(
+                  //         "Resource",
+                  //         textAlign: TextAlign.center,
+                  //         style: TextStyle(fontSize: 12),
+                  //       ),
+                  //       AdeoHtmlTex(
+                  //         widget.user,
+                  //         widget.question.resource!,
+                  //         textColor: Colors.white,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
+
+            //
+            Card(
+                elevation: 0,
+                color: Colors.white,
+                margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                child: AdeoHtmlTex(
+                  widget.user,
+                  widget.question.instructions!.replaceAll("https", "http"),
+                  // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                  useLocalImage: false,
+                  fontWeight: FontWeight.normal,
+                  textColor: Colors.black,
+                )),
+
+            // Container(
+            //   width: double.infinity,
+
+            //   padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+            //   margin: EdgeInsets.only(bottom: 2),
+            //   color: Color(0xFFF6F6F6),
+            //   child: Text(
+            //     widget.question.instructions!,
+            //     textAlign: TextAlign.center,
+            //     style: TextStyle(color: textColor),
+            //   ),
+            // ),
+
+            // Theme(
+            //   data:
+            //       Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            //   child: ExpansionTile(
+            //     textColor: Colors.white,
+            //     iconColor: kAdeoGray3,
+            //     initiallyExpanded: true,
+            //     collapsedIconColor: kAdeoGray3,
+            //     backgroundColor: Color(0xFFEFEFEF),
+            //     title: Text(
+            //       'View Question',
+            //       textAlign: TextAlign.center,
+            //       style: TextStyle(
+            //         fontSize: 18,
+            //         fontWeight: FontWeight.normal,
+            //         color: kAdeoGray3,
+            //       ),
+            //     ),
+            //     children: <Widget>[
+            //       ActualQuestion(
+            //         user: widget.user,
+            //         question: widget.question.text!,
+            //         // diagnostic: widget.diagnostic,
+            //         direction: "",
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
             if (!widget.enabled &&
                 selectedAnswer != null &&
                 selectedAnswer!.solution != null &&
@@ -983,12 +1387,71 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    selectAnswerWidget(answers![i], Color(0xFF00C664), (
-                      answerSelected,
-                    ) {
-                      widget.callback!(
-                          answerSelected, answerSelected == correctAnswer);
-                    }),
+                    GestureDetector(
+                      onTap: () {
+                        if (!widget.enabled) {
+                          return;
+                        }
+                        setState(() {
+                          selectedAnswer =
+                              widget.question.selectedAnswer = answers![i];
+                          widget.callback!(
+                              selectedAnswer!, selectedAnswer == correctAnswer);
+                          // callback!(answer);
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                            bottom: 10, right: 20, left: 20),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: AdeoHtmlTex(
+                                widget.user,
+                                answers![i].text!.replaceAll("https", "http"),
+                                // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                                useLocalImage: true,
+                                textColor: selectedAnswer == answers![i]
+                                    ? Colors.white
+                                    : kSecondaryTextColor,
+                                fontSize:
+                                    selectedAnswer == answers![i] ? 25 : 16,
+                                textAlign: TextAlign.left,
+                                fontWeight: FontWeight.bold,
+                                removeBr: true,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              Icons.radio_button_off,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 5),
+                        decoration: BoxDecoration(
+                          color: selectedAnswer == answers![i]
+                              ? Color(0xFF0367B4)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            width: selectedAnswer == answers![i] ? 1 : 1,
+                            color: selectedAnswer == answers![i]
+                                ? Colors.transparent
+                                : Color(0xFFC8C8C8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  // selectAnswerWidget(answers![i], Color(0xFF00C664), (
+                  //   answerSelected,
+                  // ) {
+                  //   widget.callback!(
+                  //       answerSelected, answerSelected == correctAnswer);
+                  // }),
                 ],
               ),
             ),

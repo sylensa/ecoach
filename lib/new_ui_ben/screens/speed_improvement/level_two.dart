@@ -7,13 +7,14 @@ class LevelTwo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return  Scaffold(
       body: LevelStartScreen(
-        bgImage: "assets/images/level2bg.png",
+        bgImage: "assets/images/learn_mode2/level2bg.png",
         label: "natural pace",
         level: "level 2",
-        levelImage: "assets/images/level2img.png",
+        levelImage: "assets/images/learn_mode2/level2img.png",
         timer: "90",
+        onSwipe: (){},
       ),
     );
   }

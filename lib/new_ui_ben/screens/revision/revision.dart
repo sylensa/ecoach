@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../models/topic.dart';
 import '../../utils/revision_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
 import 'chose_revision_mode.dart';
 import 'ongoing_revision.dart';
 
 class Revision extends StatelessWidget {
-  const Revision({Key? key}) : super(key: key);
+  final List<Topic>? topics;
+  final Function onTap;
+  const Revision({ required this.onTap, this.topics, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,8 @@ class Revision extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() =>  ChoseRevisionMode());
+          // Get.to(() =>  ChoseRevisionMode());
+          onTap();
         },
         child: Container(
           color: const Color(0xFF00C9B9),
@@ -54,8 +58,8 @@ class Revision extends StatelessWidget {
               Stack(
                 alignment: AlignmentDirectional.bottomCenter,
                 children: [
-                  const Text(
-                    '10',
+                   Text(
+                    '${10}',
                     style: TextStyle(
                       fontFamily: 'Cocon',
                       fontSize: 95,

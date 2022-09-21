@@ -6,6 +6,7 @@ import 'package:ecoach/flavor_settings.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:ecoach/revamp/features/account/view/screen/phone_number_verification.dart';
 import 'package:ecoach/test/test.dart';
@@ -140,24 +141,30 @@ class _MyAppState extends State<MyApp> {
         builder: (context, widget) {
           return FlavorBanner(
             child: ResponsiveSizer(
-              builder: (_, __, ___) => GetMaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Adeo',
-                theme: ThemeData(
-                  primarySwatch: Colors.green,
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                  fontFamily: 'Poppins',
-                  scaffoldBackgroundColor: Colors.white,
-                  textTheme: Theme.of(context).textTheme.apply(
-                        // bodyColor: Colors.white,
-                        // displayColor: Colors.white,
-                        fontFamily: 'Poppins',
-                      ),
+              builder: (_, __, ___) => MultiProvider(
+                providers: [
+                  ChangeNotifierProvider<SpeedEnhancementProvider>(
+                      create: (context) => SpeedEnhancementProvider())
+                ],
+                child: GetMaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Adeo',
+                  theme: ThemeData(
+                    primarySwatch: Colors.green,
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                    fontFamily: 'Poppins',
+                    scaffoldBackgroundColor: Colors.white,
+                    textTheme: Theme.of(context).textTheme.apply(
+                          // bodyColor: Colors.white,
+                          // displayColor: Colors.white,
+                          fontFamily: 'Poppins',
+                        ),
+                  ),
+                  // home: MyTestApp(),
+                  home: seenOnboard == true ? myFuture : Onboarding(),
+                  // home: Settings(),
+                  routes: routes,
                 ),
-                // home: MyTestApp(),
-                home: seenOnboard == true ? myFuture : Onboarding(),
-                // home: Settings(),
-                routes: routes,
               ),
             ),
           );

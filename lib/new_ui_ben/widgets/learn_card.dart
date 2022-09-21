@@ -60,6 +60,7 @@ class LearnCard extends StatelessWidget {
                         style: const TextStyle(
                           fontStyle: FontStyle.italic,
                           color: Colors.white70,
+                          fontSize: 10
                         ),
                       )
                     ],

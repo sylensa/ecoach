@@ -37,7 +37,7 @@ class MasteryImprovement extends StatelessWidget {
                 title: 'Ongoing',
                 desc: 'Do a quick revision for an upcoming exam',
                 value: 20,
-                icon: 'assets/images/hourglass.png',
+                icon: 'assets/images/learn_mode2/hourglass.png',
                 onTap: () {},
               ),
               const SizedBox(
@@ -47,7 +47,7 @@ class MasteryImprovement extends StatelessWidget {
                 title: 'New',
                 desc: 'Discard old revision and start a new one',
                 value: 0,
-                icon: 'assets/images/stopwatch.png',
+                icon: 'assets/images/learn_mode2/stopwatch.png',
                 onTap: () {},
               ),
               const SizedBox(
@@ -59,7 +59,7 @@ class MasteryImprovement extends StatelessWidget {
                 title: 'Completed',
                 desc: 'View stats on completed revision rounds',
                 value: 100,
-                icon: 'assets/images/completed.png',
+                icon: 'assets/images/learn_mode2/completed.png',
                 onTap: () {},
               ),
             ],

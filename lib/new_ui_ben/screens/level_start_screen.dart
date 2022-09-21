@@ -8,9 +8,11 @@ class LevelStartScreen extends StatelessWidget {
   final String level;
   final String timer;
   final String label;
+  final Function onSwipe;
 
   const LevelStartScreen({
     Key? key,
+    required this.onSwipe,
     required this.bgImage,
     required this.levelImage,
     required this.label,
@@ -36,7 +38,9 @@ class LevelStartScreen extends StatelessWidget {
             label: label,
             level: level,
             time: "$timer seconds",
-            onSwipe: () {},
+            onSwipe: () {
+              onSwipe();
+            },
           )
         ],
       ),

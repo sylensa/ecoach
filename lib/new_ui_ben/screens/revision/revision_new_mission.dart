@@ -53,7 +53,7 @@ class RevisionNewMission extends StatelessWidget {
               height: 54,
             ),
             Image.asset(
-              "assets/images/next_mission.png",
+              "assets/images/learn_mode2/next_mission.png",
               height: 309,
               fit: BoxFit.cover,
             ),

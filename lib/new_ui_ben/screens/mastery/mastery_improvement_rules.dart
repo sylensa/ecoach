@@ -6,7 +6,8 @@ import '../../widgets/steps_rules_container.dart';
 import 'mastery_improvement.dart';
 
 class MasteryImprovementRules extends StatelessWidget {
-  const MasteryImprovementRules({Key? key}) : super(key: key);
+  final Function onTap;
+  const MasteryImprovementRules({ required this.onTap, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,8 @@ class MasteryImprovementRules extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() => const MasteryImprovement());
+          // Get.to(() => const MasteryImprovement());
+          onTap();
         },
         child: Container(
           color: const Color(0xFF00C9B9),
@@ -91,7 +93,7 @@ class MasteryImprovementRules extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Image.asset('assets/images/Archery-pana.png'),
+                  Image.asset('assets/images/learn_mode2/Archery-pana.png'),
                 ],
               )
             ],

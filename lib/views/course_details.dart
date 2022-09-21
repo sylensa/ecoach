@@ -7,6 +7,7 @@ import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -19,6 +20,9 @@ import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ecoach/utils/manip.dart';
+import 'package:provider/provider.dart';
+
+import '../models/ui/course_info.dart';
 
 class CourseDetailsPage extends StatefulWidget {
   CourseDetailsPage(this.user, {this.courseInfo, course});
@@ -130,26 +134,24 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       body: SafeArea(
         child: Column(
           children: [
-           Container(
-             margin: EdgeInsets.only(left: 20,right: 20),
-             child: Row(
-               mainAxisAlignment: MainAxisAlignment.spaceAround,
-               children: [
-                 GestureDetector(
-                   onTap: (){
-                     Navigator.pop(context);
-                   },
-                   child: Container(
-                     child: Icon(Icons.arrow_back_ios)
-                   ),
-                 ),
-                 PageHeader(
-                   pageHeading: widget.courseInfo.title,
-                 ),
-                 Container()
-               ],
-             ),
-           ),
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(child: Icon(Icons.arrow_back_ios)),
+                  ),
+                  PageHeader(
+                    pageHeading: widget.courseInfo.title,
+                  ),
+                  Container()
+                ],
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -159,14 +161,28 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[0],
                         onTap: () {
+                          // set the current course
+                          final speedEnhancementProvider =
+                              Provider.of<SpeedEnhancementProvider>(context,
+                                  listen: false);
+
+                          speedEnhancementProvider
+                              .setCurrentCourse(widget.courseInfo.course);
+
+                          // get current level
+                          // speedEnhancementProvider.getCurrentLevel();
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               settings:
                                   RouteSettings(name: LearnMode.routeName),
                               builder: (context) {
-                                // return WelcomeToLearnMode();
-                                return LearnMode(widget.user, widget.courseInfo.course);
+                                // return WelcomeToLearnMode(
+                                //   course: widget.courseInfo.course,
+                                // );
+                                return LearnMode(
+                                    widget.user, widget.courseInfo.course);
                               },
                             ),
                           );
@@ -207,7 +223,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                 return TestTypeView(
                                   widget.user,
                                   widget.courseInfo.course,
-
                                 );
                               },
                             ),
