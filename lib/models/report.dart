@@ -44,6 +44,7 @@ class CourseStat {
     this.updatedAt,
     this.speed,
     this.rank,
+    this.name,
   });
 
   int? id;
@@ -62,6 +63,7 @@ class CourseStat {
   DateTime? createdAt;
   DateTime? updatedAt;
   String? speed;
+  String? name;
   int? rank;
 
   factory CourseStat.fromJson(Map<String, dynamic> json) => CourseStat(
@@ -82,6 +84,7 @@ class CourseStat {
         updatedAt: DateTime.parse(json["updated_at"]),
         speed: json['speed'],
         rank: json['rank'],
+        name: json['name'],
       );
 }
 
