@@ -7,10 +7,14 @@ import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
+import 'package:ecoach/models/group_performance_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
+import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/user_group_rating.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+
+import '../views/user_group/group_activities/performance/performance.dart';
 
 class GroupManagementController{
   String? groupId;
@@ -803,6 +807,30 @@ class GroupManagementController{
       print(e.toString());
       return listGroupNotificationData;
     }
+  }
+
+  Future<List<CourseStat>>  getGroupPerformance() async {
+    List<CourseStat> listReport = [] ;
+    // try{
+      var res = await doGet("${AppUrl.userGroup}/performance?group_id=$groupId",);
+      print("performance:${res["data"].length}");
+      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+          for(int i =0; i < res["data"].length; i++){
+           for(int t =0; t < res["data"][i]["course_stats"].length; t++){
+             CourseStat  report = CourseStat.fromJson(res["data"][i]["course_stats"][t]);
+             listReport.add(report);
+           }
+          }
+         toastMessage("${res["message"]}");
+        return listReport;
+      }else{
+        toastMessage("${res["message"]}");
+        return listReport;
+      }
+    // }catch(e){
+    //   print(e.toString());
+    //   return listGroupPerformanceData;
+    // }
   }
 
 
