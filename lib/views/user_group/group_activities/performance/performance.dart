@@ -1,20 +1,30 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
+import 'package:ecoach/models/group_performance_model.dart';
+import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
+import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class GroupPerformance extends StatefulWidget {
-   GroupPerformance(this.user,{Key? key}) : super(key: key);
+  GroupListData? groupData;
+  GroupPerformance(this.user, {Key? key,this.groupData,}) : super(key: key);
   User user;
   @override
   State<GroupPerformance> createState() => _GroupPerformanceState();
 }
 
 class _GroupPerformanceState extends State<GroupPerformance> {
+  int _currentSlide = 0;
+  bool progressCodeAll = true;
+  List<CourseStat> report = [] ;
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
     for (var i = 0; i < listLength; i++) {
@@ -26,17 +36,41 @@ class _GroupPerformanceState extends State<GroupPerformance> {
     }
     return result;
   }
-  int _currentSlide = 0;
+
+  getAllActivity() async {
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      report = await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupPerformance();
+      print("listGroupPerformanceData:${report}");
+    } else {
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+      progressCodeAll = false;
+    });
+  }
+
+  @override
+  void initState(){
+    getAllActivity();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
 
       child: Column(
         children: [
+            report.isNotEmpty ?
          Expanded(
            child: ListView.builder(
               padding: EdgeInsets.zero,
-                itemCount: 10,
+                itemCount: 1,
                itemBuilder: (BuildContext context, int index){
                 return    Column(
                   children: [
@@ -48,7 +82,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                           autoPlay:
                           false,
                           enableInfiniteScroll:
-                          false,
+                          true,
                           autoPlayAnimationDuration:
                           Duration(seconds: 1),
                           enlargeCenterPage:
@@ -67,8 +101,8 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                 });
                           },
                         ),
-                        itemCount:5,
-                        itemBuilder: (BuildContextcontext, int index, int index2) {
+                        itemCount:report.length,
+                        itemBuilder: (BuildContext context, int indexReport, int index2) {
                           return  Container(
                             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
                             child: Column(
@@ -99,7 +133,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                 SizedBox(height: 5,),
                                                 Container(
                                                   width: 150,
-                                                  child: sText("JHS Mathematics",weight: FontWeight.bold,size: 10),
+                                                  child: sText("${report[indexReport].name}",weight: FontWeight.bold,size: 10),
                                                 ),
                                                 SizedBox(height: 5,),
                                                 Image.asset("assets/images/pencil.png")
@@ -162,7 +196,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                           sText("Total ",color: Colors.grey,align: TextAlign.center),
                                                           sText("Score",color: Colors.grey,align: TextAlign.center),
                                                           SizedBox(height: 10,),
-                                                          sText("609",weight: FontWeight.bold,size: 25),
+                                                          sText("${report[indexReport].totalCorrectQuestions}",weight: FontWeight.bold,size: 25),
                                                         ],
                                                       ),
                                                     ),
@@ -178,7 +212,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                       children: [
                                                         sText("Test",color: Colors.grey),
                                                         SizedBox(height: 10,),
-                                                        sText("20",weight: FontWeight.bold,size: 25),
+                                                        sText("${report[indexReport].totalTests}",weight: FontWeight.bold,size: 25),
                                                       ],
                                                     ),
                                                   ),
@@ -236,7 +270,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                                 ], annotations: <GaugeAnnotation>[
                                                                   GaugeAnnotation(
                                                                       widget: Container(
-                                                                          child: const Text('5.0q/m',
+                                                                          child:  Text('${report[indexReport].totalTimeTaken}q/m',
                                                                               style: TextStyle(
                                                                                   fontSize: 8, fontWeight: FontWeight.bold))),
                                                                       angle: 0,
@@ -297,7 +331,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                                   child: Center(
                                                                     child: Column(
                                                                       children: [
-                                                                        sText("85%",size: 10,weight: FontWeight.bold),
+                                                                        sText("${report[indexReport].avgScore}%",size: 10,weight: FontWeight.bold),
                                                                         sText("avg.score",size: 7,weight: FontWeight.normal),
 
                                                                       ],
@@ -337,7 +371,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: map<Widget>(5, (index, url) {
+                                    children: map<Widget>(report.length, (index, url) {
                                       return Container(
                                         width: 10,
                                         height: 10,
@@ -360,7 +394,8 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                   ],
                 );
            }),
-         )
+         )  : progressCodeAll ? Expanded(child: Center(child: progress(),)) : Expanded(child: Center(child: sText("No records found"),))
+
         ],
       ),
     );
