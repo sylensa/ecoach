@@ -24,13 +24,20 @@ class Activity extends StatefulWidget {
 }
 
 class _ActivityState extends State<Activity> {
+  List<GroupNotificationData> upComingGroupNotificationData = [];
+  List<GroupNotificationData> allGroupNotificationData = [];
+  bool progressCodeUpComing = true;
+  bool progressCodeAll = true;
+  CountdownTimerController? controller;
+  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 3;
+
   getAllActivity() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
       allGroupNotificationData = await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupNotifications();
       if(allGroupNotificationData.isEmpty){
-        goTo(context, NoGroupActivity(groupData: widget.groupData,),replace: true);
+        // goTo(context, NoGroupActivity(groupData: widget.groupData,),replace: true);
       }
     } else {
       showNoConnectionToast(context);
@@ -43,12 +50,6 @@ class _ActivityState extends State<Activity> {
       progressCodeAll = false;
     });
   }
-  List<GroupNotificationData> upComingGroupNotificationData = [];
-  List<GroupNotificationData> allGroupNotificationData = [];
-  bool progressCodeUpComing = true;
-  bool progressCodeAll = true;
-  CountdownTimerController? controller;
-  int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 3;
 
   getUpcomingActivity() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
