@@ -171,6 +171,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                           welcomeProvider
                               .getTotalTopics(widget.courseInfo.course);
 
+                          welcomeProvider
+                              .setCurrentCourse(widget.courseInfo.course);
+
                           // welcomeProvider.setCourseAndUser(
                           //     widget.courseInfo.course, widget.user);
 

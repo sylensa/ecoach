@@ -1,5 +1,7 @@
+import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_completion.dart';
@@ -32,8 +34,28 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     // return topics;
   }
 
-  getStudyProgress(){
-    Provider.of<WelcomeScreenProvider>(context, listen: false).setCCRemaining();
+  int revisionLevel = 0;
+
+  getStudyProgress() async {
+    // Provider.of<WelcomeScreenProvider>(context, listen: false).setCCRemaining();
+    RevisionStudyProgress? revisionStudyProgress =
+        await StudyDB().getCurrentRevisionProgressByCourse(widget.course.id!);
+
+    // print("course progress: ${revisionStudyProgress!.toMap()}");
+    if (revisionStudyProgress != null) {
+      print("course progress: ${revisionStudyProgress.toMap()}");
+      setState(() {
+        revisionLevel = revisionStudyProgress.level!;
+      });
+    } else {
+      print("revision is null");
+      setState(() {
+        revisionLevel = 1;
+      });
+    }
+
+    Provider.of<WelcomeScreenProvider>(context, listen: false)
+        .setCurrentRevisionProgressLevel(revisionLevel);
   }
 
   @override
@@ -46,7 +68,7 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
   @override
   Widget build(BuildContext context) {
     // getStudyProgress();
-    Provider.of<SpeedEnhancementProvider>(context, listen: false).level;
+    // Provider.of<SpeedEnhancementProvider>(context, listen: false).level;
     return Scaffold(
       backgroundColor: const Color(0xFF0367B4),
       appBar: AppBar(
@@ -65,8 +87,8 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
         child: SingleChildScrollView(
           child: Consumer<WelcomeScreenProvider>(
             builder: (_, welcome, __) {
-              welcome.setRevisionRemaining();
-              welcome.setCCRemaining();
+              // welcome.setRevisionRemaining();
+              // welcome.setCCRemaining();
               // Provider.of<WelcomeScreenProvider>(context, listen: false).setRevisionRemaining();
               return Column(
                 children: [
@@ -81,11 +103,10 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   ),
                   LearnCard(
                     title: 'Revision',
-                    desc: 'Do a quick revision for an upcoming exam ${welcome.totalRevision}',
+                    desc:
+                        'Do a quick revision for an upcoming exam $revisionLevel',
                     value: welcome.progress != null
-                        ? (((welcome.totalTopics - welcome.totalRevision) ) /
-                                welcome.totalTopics) *
-                            100
+                        ? (((revisionLevel - 1)) / welcome.totalTopics) * 100
                         : 0,
                     icon: 'assets/images/learn_mode2/stopwatch.png',
                     onTap: () async {
@@ -97,7 +118,7 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   ),
                   LearnCard(
                     title: 'Course Completion',
-                    desc: 'Do a quick revision for an upcoming exam ${welcome.totalCC}',
+                    desc: 'Do a quick revision for an upcoming exam',
                     value: welcome.progress != null
                         ? (((welcome.totalTopics - welcome.totalCC)) /
                                 welcome.totalTopics) *
@@ -129,7 +150,9 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                     title: 'Speed Enhancement',
                     desc: 'Do a quick revision for an upcoming exam',
                     isLevel: true,
-                    value: welcome.progress != null ?  welcome.progress!.level!.toDouble() : 0,
+                    value: welcome.progress != null
+                        ? welcome.progress!.level!.toDouble()
+                        : 0,
                     icon: 'assets/images/learn_mode2/speedometer.png',
                     onTap: () {
                       // Get.to(() => const SpeedCompletion());

@@ -1,14 +1,20 @@
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learning_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../database/topics_db.dart';
+import '../../models/topic.dart';
+import '../../new_ui_ben/providers/welcome_screen_provider.dart';
 import '../../new_ui_ben/screens/revision/revision.dart';
 
 class LearnRevision extends StatefulWidget {
@@ -30,20 +36,50 @@ class _LearnRevisionState extends State<LearnRevision> {
       progress: widget.progress,
       onTap: () async {
         int topicId = widget.progress.topicId!;
+
+        // getQuestionByRevisionLevel() async {
+        int currentRevisionLevel =
+            Provider.of<WelcomeScreenProvider>(context, listen: false)
+                .currentRevisionProgressLevel;
+
+        Topic? topic = await TopicDB()
+            .getLevelTopic(widget.course.id!, currentRevisionLevel);
+
+        // }
+
         List<Question> questions =
-            await QuestionDB().getTopicQuestions([topicId], 10);
+            await QuestionDB().getTopicQuestions([topic!.id!], 10);
+
+        // Create revision study progress object
+        // RevisionStudyProgress revisionStudyProgress = RevisionStudyProgress(
+        //   courseId: widget.course.id,
+        //   studyId: widget.progress.studyId,
+        //   topicId: widget.progress.topicId,
+        //   level: 1,
+        //   createdAt: DateTime.now(),
+        //   updatedAt: DateTime.now(),
+        // );
+
+        // await StudyDB().insertRevisionProgress(revisionStudyProgress).then((value){
+        //   print("revision progress inserted successfully");
+        // }).catchError((e){
+        //   print('there was an error $e');
+        // });
+
+        RevisionStudyProgress? studyProgress =
+            await StudyDB().getCurrentRevisionProgressByCourse(widget.course.id!);
+        print("this is the progress of revision: ${studyProgress}");
 
         Navigator.push(
           context,
           MaterialPageRoute(
             settings: RouteSettings(name: LearnRevision.routeName),
             builder: (context) {
-              return  
-              LearningWidget(
+              return LearningWidget(
                 controller: RevisionController(
                   widget.user,
                   widget.course,
-                  name: widget.progress.name ?? widget.course.name!,
+                  name: topic.name ?? widget.course.name!,
                   questions: questions,
                   progress: widget.progress,
                 ),
@@ -53,7 +89,6 @@ class _LearnRevisionState extends State<LearnRevision> {
         );
       },
     );
-
 
     // SafeArea(
     //   child: Scaffold(
@@ -165,7 +200,5 @@ class _LearnRevisionState extends State<LearnRevision> {
     //     ),
     //   ),
     // );
-  
-  
   }
 }

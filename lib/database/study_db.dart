@@ -7,6 +7,9 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/course_completion_study_progress.dart';
+import '../models/revision_study_progress.dart';
+
 class StudyDB {
   Future<void> insert(Study study) async {
     // print(study.toJson());
@@ -187,4 +190,94 @@ class StudyDB {
       whereArgs: [id],
     );
   }
+
+  // revision progress
+  Future<void> insertRevisionProgress(RevisionStudyProgress revision)async{
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("revision_study_progress", revision.toMap());
+    }).then((value) {
+      print("revision was added");
+    }).catchError((e){
+      print("this is the error $e");
+    });
+  }
+
+
+
+ Future<void> updateRevisionProgress(RevisionStudyProgress revision) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'revision_study_progress',
+      revision.toMap(),
+      where: "id = ?",
+      whereArgs: [revision.id],
+    );
+  }
+
+ Future<RevisionStudyProgress?> getCurrentRevisionProgress() async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('revision_study_progress',
+        orderBy: "created_at DESC",
+        // where: "study_id = ?",
+        // whereArgs: [revisionId],
+        limit: 1);
+
+    RevisionStudyProgress? progress =
+        result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+ Future<RevisionStudyProgress?> getCurrentRevisionProgressByCourse(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('revision_study_progress',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],
+        limit: 1);
+
+    RevisionStudyProgress? progress =
+        result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+
+   // revision progress
+  Future<void> insertCourseCompletionProgress(CourseCompletionStudyProgress revision)async{
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("course_completion_study_progress", revision.toMap());
+    });
+  }
+
+ Future<void> updateCourseCompletionProgress(CourseCompletionStudyProgress revision) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'course_completion_study_progress',
+      revision.toMap(),
+      where: "id = ?",
+      whereArgs: [revision.id],
+    );
+  }
+
+ Future<RevisionStudyProgress?> getCurrentCourseCompletionProgress(int revisionId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('revision_study_progress',
+        orderBy: "created_at DESC",
+        // where: "study_id = ?",
+        // whereArgs: [revisionId],
+        limit: 1);
+
+    RevisionStudyProgress? progress =
+        result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  
 }

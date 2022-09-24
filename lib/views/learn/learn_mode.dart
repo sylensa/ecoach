@@ -1,8 +1,10 @@
+import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
+import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
@@ -91,8 +93,7 @@ class _LearnModeState extends State<LearnMode> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-          body:
+      child: Scaffold(body:
               //  introView
               // ? LearnPeripheralWidget(
               //     heroText: 'welcome',
@@ -113,67 +114,83 @@ class _LearnModeState extends State<LearnMode> {
 
               Consumer<WelcomeScreenProvider>(
         builder: (_, welcome, __) {
-         
           return WelcomeToLearnMode(
-          course: widget.course,
-          startLearning: (StudyType study) async {
-            Widget? view = null;
-            switch (study) {
-              case StudyType.REVISION:
-                StudyProgress? progress =
-                    await getStudyProgress(StudyType.REVISION);
-                // print("this is the progress of revision ${progress!.toJson()}");
-        
-                if (progress == null) {
-                  return;
-                }
-                view = LearnRevision(widget.user, widget.course, progress);
-                break;
-        
-              case StudyType.COURSE_COMPLETION:
-                StudyProgress? progress =
-                    await getStudyProgress(StudyType.COURSE_COMPLETION);
-                print(progress);
-                if (progress == null) {
-                  return;
-                }
-                view =
-                    LearnCourseCompletion(widget.user, widget.course, progress);
-                break;
-              case StudyType.SPEED_ENHANCEMENT:
-                StudyProgress? progress =
-                    await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
-                print(progress);
-                if (progress == null) {
-                  return;
-                }
-                view = LearnSpeed(widget.user, widget.course, progress);
-                break;
-              case StudyType.MASTERY_IMPROVEMENT:
-                StudyProgress? progress =
-                    await getStudyProgress(StudyType.MASTERY_IMPROVEMENT);
-                print(progress);
-                if (progress == null) {
-                  return;
-                }
-                List<MasteryCourse> mcs =
-                    await MasteryCourseDB().getMasteryTopics(progress.studyId!);
-                if (progress.level == 1 || mcs.length == 0) {
-                  view = LearnMastery(widget.user, widget.course, progress);
-                } else {
-                  view = LearnMasteryTopic(widget.user, widget.course, progress,
-                      topics: mcs);
-                }
-        
-                break;
-              case StudyType.NONE:
-                break;
-            }
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return view!;
-            }));
-          },
-        );
+            course: widget.course,
+            startLearning: (StudyType study) async {
+              Widget? view = null;
+              Provider.of<WelcomeScreenProvider>(context, listen: false)
+                  .setCurrentStudyType(study);
+              switch (study) {
+                case StudyType.REVISION:
+                  StudyProgress? progress =
+                      await getStudyProgress(StudyType.REVISION);
+
+                  // create a revision progress object and add it to the revision progress database
+                  // if the current course is starting for the first time
+                  RevisionStudyProgress revisionStudyProgress =
+                      RevisionStudyProgress(
+                    courseId: widget.course.id,
+                    topicId: progress!.topicId,
+                    studyId: progress.studyId,
+                    level: 1,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                  );
+
+                  RevisionProgressController()
+                      .createInitialCourseRevision(revisionStudyProgress);
+
+                  if (progress == null) {
+                    return;
+                  }
+                  view = LearnRevision(widget.user, widget.course, progress);
+                  break;
+
+                case StudyType.COURSE_COMPLETION:
+                  StudyProgress? progress =
+                      await getStudyProgress(StudyType.COURSE_COMPLETION);
+                  print(progress);
+                  if (progress == null) {
+                    return;
+                  }
+                  view = LearnCourseCompletion(
+                      widget.user, widget.course, progress);
+                  break;
+                case StudyType.SPEED_ENHANCEMENT:
+                  StudyProgress? progress =
+                      await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
+                  print(progress);
+                  if (progress == null) {
+                    return;
+                  }
+                  view = LearnSpeed(widget.user, widget.course, progress);
+                  break;
+                case StudyType.MASTERY_IMPROVEMENT:
+                  StudyProgress? progress =
+                      await getStudyProgress(StudyType.MASTERY_IMPROVEMENT);
+                  print(progress);
+                  if (progress == null) {
+                    return;
+                  }
+                  List<MasteryCourse> mcs = await MasteryCourseDB()
+                      .getMasteryTopics(progress.studyId!);
+                  if (progress.level == 1 || mcs.length == 0) {
+                    view = LearnMastery(widget.user, widget.course, progress);
+                  } else {
+                    view = LearnMasteryTopic(
+                        widget.user, widget.course, progress,
+                        topics: mcs);
+                  }
+
+                  break;
+                case StudyType.NONE:
+                  break;
+              }
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return view!;
+              }));
+            },
+          );
         },
       )
 

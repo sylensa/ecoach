@@ -8,6 +8,7 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/views/learn/learn_image_screens.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
@@ -24,8 +25,12 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
+import '../../database/study_db.dart';
 import '../../helper/helper.dart';
+import '../../models/course.dart';
+import '../../models/revision_study_progress.dart';
 import '../../revamp/core/utils/app_colors.dart';
 import '../../revamp/features/questions/view/widgets/actual_question.dart';
 import '../../utils/style_sheet.dart';
@@ -120,7 +125,15 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   notesButton() async {
-    Topic? topic = await TopicDB().getTopicById(controller.progress.topicId!);
+    Course course = Provider.of<WelcomeScreenProvider>(context, listen: false)
+        .currentCourse!;
+
+    RevisionStudyProgress? revisionStudyProgress =
+        await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
+
+    Topic? topic =
+        await TopicDB().getTopicById(revisionStudyProgress!.topicId!);
+
     controller.saveTest(context, (test, success) async {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return StudyNoteView(topic!, controller: controller);
@@ -156,6 +169,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           controller.enabled = false;
         });
         await controller.updateProgress(test!);
+
         progressCompleteView();
       }
     });
@@ -525,6 +539,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           type: controller.type,
                           // useTex: useTex,
                           callback: (Answer answer, correct) async {
+                            print(
+                                "last question ${controller.questions[i].text}");
                             setState(() {
                               showSubmit = true;
                               // increase total number of question

@@ -348,7 +348,59 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
-  
+      await db.execute("""CREATE TABLE 'revision_study_progress' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'course_completion_study_progress' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'speed_study_level' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'revision_progress_attempts' (
+        id INTEGER PRIMARY KEY, 
+        "revision_progress_id" int NOT NULL,
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'topic_name' varchar(255) DEFAULT NULL,
+        'score' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'course_completion_progress_attempts' (
+        id INTEGER PRIMARY KEY, 
+        "cc_progress_id" int NOT NULL,
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'topic_name' varchar(255) DEFAULT NULL,
+        'score' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
 
       await db.execute("""CREATE TABLE 'marathons' (
         id INTEGER PRIMARY KEY, 
@@ -692,9 +744,9 @@ class DBProvider {
         'status' varchar(255)  NULL
       ) """);
         }
-          try{
-            await db.execute("""DROP TABLE 'plan_items'""");
-            await db.execute("""CREATE TABLE 'plan_items' (
+        try {
+          await db.execute("""DROP TABLE 'plan_items'""");
+          await db.execute("""CREATE TABLE 'plan_items' (
           'id' INTEGER PRIMARY KEY,
           'tag' varchar(255) NOT NULL,
           'plan_id' int unsigned NOT NULL,
@@ -710,8 +762,8 @@ class DBProvider {
           'created_at' timestamp NULL DEFAULT NULL,
           'updated_at' timestamp NULL DEFAULT NULL
         ) """);
-          }catch(e){
-            await db.execute("""CREATE TABLE 'plan_items' (
+        } catch (e) {
+          await db.execute("""CREATE TABLE 'plan_items' (
           'id' INTEGER PRIMARY KEY,
           'tag' varchar(255) NOT NULL,
           'plan_id' int unsigned NOT NULL,
@@ -727,11 +779,11 @@ class DBProvider {
           'created_at' timestamp NULL DEFAULT NULL,
           'updated_at' timestamp NULL DEFAULT NULL
         ) """);
-          }
+        }
 
-          try{
-            await db.execute("""DROP TABLE 'plans'""");
-            await db.execute("""CREATE TABLE 'plans' (
+        try {
+          await db.execute("""DROP TABLE 'plans'""");
+          await db.execute("""CREATE TABLE 'plans' (
           'id' INTEGER PRIMARY KEY,
           'tag' varchar(255)  NOT NULL,
           'name' varchar(255)  NOT NULL,
@@ -749,8 +801,8 @@ class DBProvider {
           'created_at' timestamp NULL DEFAULT NULL,
           'updated_at' timestamp NULL DEFAULT NULL
         ) """);
-          }catch(e){
-            await db.execute("""CREATE TABLE 'plans' (
+        } catch (e) {
+          await db.execute("""CREATE TABLE 'plans' (
           'id' INTEGER PRIMARY KEY,
           'tag' varchar(255)  NOT NULL,
           'name' varchar(255)  NOT NULL,
@@ -768,11 +820,11 @@ class DBProvider {
           'created_at' timestamp NULL DEFAULT NULL,
           'updated_at' timestamp NULL DEFAULT NULL
         ) """);
-          }
+        }
 
-          try{
-            await db.execute("""DROP TABLE 'subscription_items'""");
-            await db.execute("""CREATE TABLE 'subscription_items' (
+        try {
+          await db.execute("""DROP TABLE 'subscription_items'""");
+          await db.execute("""CREATE TABLE 'subscription_items' (
           'id' INTEGER PRIMARY KEY,
           'tag' varchar(255) NOT NULL,
           'plan_id' int unsigned NOT NULL,
@@ -788,8 +840,8 @@ class DBProvider {
           'created_at' timestamp NULL DEFAULT NULL,
           'updated_at' timestamp NULL DEFAULT NULL
         ) """);
-          }catch(e){
-            await db.execute("""CREATE TABLE 'subscription_items' (
+        } catch (e) {
+          await db.execute("""CREATE TABLE 'subscription_items' (
           'id' INTEGER PRIMARY KEY,
           'tag' varchar(255) NOT NULL,
           'plan_id' int unsigned NOT NULL,
@@ -805,10 +857,10 @@ class DBProvider {
           'created_at' timestamp NULL DEFAULT NULL,
           'updated_at' timestamp NULL DEFAULT NULL
         ) """);
-          }
-          try{
-            await db.execute("""DROP TABLE 'questions'""");
-            await db.execute("""CREATE TABLE 'questions' (
+        }
+        try {
+          await db.execute("""DROP TABLE 'questions'""");
+          await db.execute("""CREATE TABLE 'questions' (
           'id' INTEGER PRIMARY KEY,
           'course_id' int NOT NULL,
           'topic_id' int NOT NULL,
@@ -828,8 +880,8 @@ class DBProvider {
           'flagged' int NOT NULL DEFAULT '0',
           'deleted' int NOT NULL DEFAULT '0'
         ) """);
-          }catch(e){
-            await db.execute("""CREATE TABLE 'questions' (
+        } catch (e) {
+          await db.execute("""CREATE TABLE 'questions' (
           'id' INTEGER PRIMARY KEY,
           'course_id' int NOT NULL,
           'topic_id' int NOT NULL,
@@ -849,7 +901,7 @@ class DBProvider {
           'flagged' int NOT NULL DEFAULT '0',
           'deleted' int NOT NULL DEFAULT '0'
         ) """);
-          }
+        }
       }
     });
   }

@@ -180,10 +180,11 @@ class StudyQuizCover extends StatelessWidget {
                                                 width: 1,
                                                 style: BorderStyle.solid)),
                                         shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        30.0))),
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30.0),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ]),

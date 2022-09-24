@@ -5,6 +5,7 @@ import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
@@ -133,7 +134,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                   if (controller.type == StudyType.REVISION) {
                                     questions = await QuestionDB()
                                         .getTopicQuestions(
-                                            [controller.progress.topicId!], 10);
+                                            [widget.topic.id!], 10);
                                   }
                                   if (controller.type ==
                                       StudyType.COURSE_COMPLETION) {
@@ -151,12 +152,12 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                     switch (controller.type) {
                                       case StudyType.REVISION:
                                         return StudyQuizCover(
-                                          topicName: controller.progress.name!,
+                                          topicName: widget.topic.name!,
                                           controller: RevisionController(
                                               controller.user,
                                               controller.course,
                                               questions: questions!,
-                                              name: controller.progress.name!,
+                                              name: widget.topic.name!,
                                               progress: controller.progress),
                                         );
                                       case StudyType.COURSE_COMPLETION:

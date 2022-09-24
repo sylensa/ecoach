@@ -4,6 +4,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../models/revision_study_progress.dart';
 import '../../models/study.dart';
 
 class WelcomeScreenProvider with ChangeNotifier {
@@ -23,6 +24,29 @@ class WelcomeScreenProvider with ChangeNotifier {
 
   // create study progress to monitor studies
   StudyProgress? progress;
+
+  RevisionStudyProgress? revisionStudyProgress;
+
+  StudyType? currentStudyType;
+
+  Course? currentCourse;
+
+  int currentRevisionProgressLevel = 1;
+
+  setCurrentRevisionProgressLevel(int level){
+    currentRevisionProgressLevel = level;
+    notifyListeners();
+  }
+
+  setCurrentCourse(Course course){
+    currentCourse = course;
+    notifyListeners();
+  }
+
+  setCurrentStudyType(StudyType studyType){
+    currentStudyType = studyType;
+    notifyListeners();
+  }
 
   /// get all topics in a particular course
   /// Assign the total number of topics to [totalTopics]

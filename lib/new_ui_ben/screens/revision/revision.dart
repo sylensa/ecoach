@@ -64,7 +64,7 @@ class Revision extends StatelessWidget {
                 children: [
                    Consumer<WelcomeScreenProvider>(
                      builder: (_, welcome, __) => Text(
-                      '${welcome.totalRevision}',
+                      '${ welcome.totalTopics - (welcome.currentRevisionProgressLevel-1)}',
                       style: TextStyle(
                         fontFamily: 'Cocon',
                         fontSize: 95,
