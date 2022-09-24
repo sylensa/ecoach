@@ -348,6 +348,8 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
+  
+
       await db.execute("""CREATE TABLE 'marathons' (
         id INTEGER PRIMARY KEY, 
         'user_id' int NOT NULL,

@@ -8,6 +8,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -84,6 +85,8 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
           lastStudyTopic = "----";
         } else
           StudyDB().getCurrentProgress(value.id!).then((value) {
+            Provider.of<WelcomeScreenProvider>(context, listen: false)
+                .setCurrentProgress(value!);
             if (value == null) {
               lastStudyTopic = "----";
             } else {
@@ -161,16 +164,18 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[0],
                         onTap: () {
-                          // set the current course
-                          final speedEnhancementProvider =
-                              Provider.of<SpeedEnhancementProvider>(context,
+                          final welcomeProvider =
+                              Provider.of<WelcomeScreenProvider>(context,
                                   listen: false);
 
-                          speedEnhancementProvider
-                              .setCurrentCourse(widget.courseInfo.course);
+                          welcomeProvider
+                              .getTotalTopics(widget.courseInfo.course);
 
-                          // get current level
-                          // speedEnhancementProvider.getCurrentLevel();
+                          // welcomeProvider.setCourseAndUser(
+                          //     widget.courseInfo.course, widget.user);
+
+                          // welcomeProvider.setCCRemaining();
+                          // welcomeProvider.setRevisionRemaining();
 
                           Navigator.push(
                             context,
@@ -181,6 +186,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                 // return WelcomeToLearnMode(
                                 //   course: widget.courseInfo.course,
                                 // );
+
                                 return LearnMode(
                                     widget.user, widget.courseInfo.course);
                               },

@@ -1,5 +1,8 @@
+import 'package:ecoach/models/study.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import '../../../models/topic.dart';
 import '../../utils/revision_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
@@ -9,7 +12,8 @@ import 'ongoing_revision.dart';
 class Revision extends StatelessWidget {
   final List<Topic>? topics;
   final Function onTap;
-  const Revision({ required this.onTap, this.topics, Key? key}) : super(key: key);
+  final StudyProgress? progress;
+  const Revision({ this.progress, required this.onTap, this.topics, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +62,16 @@ class Revision extends StatelessWidget {
               Stack(
                 alignment: AlignmentDirectional.bottomCenter,
                 children: [
-                   Text(
-                    '${10}',
-                    style: TextStyle(
-                      fontFamily: 'Cocon',
-                      fontSize: 95,
-                      color: Color(0xFF00C9B9),
-                    ),
-                  ),
+                   Consumer<WelcomeScreenProvider>(
+                     builder: (_, welcome, __) => Text(
+                      '${welcome.totalRevision}',
+                      style: TextStyle(
+                        fontFamily: 'Cocon',
+                        fontSize: 95,
+                        color: Color(0xFF00C9B9),
+                      ),
+                                     ),
+                   ),
                   Image.asset('assets/images/learn_mode2/shadow.png')
                 ],
               ),

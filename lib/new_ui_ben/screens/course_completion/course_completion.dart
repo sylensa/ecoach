@@ -1,5 +1,7 @@
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import '../../utils/course_completion_utils.dart';
 import '../../utils/revision_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
@@ -39,65 +41,67 @@ class CourseCompletion extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Text(
-                "Go through the entire course one topic at a time",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Color.fromRGBO(
-                    255,
-                    255,
-                    255,
-                    0.5,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Stack(
-                alignment: AlignmentDirectional.bottomCenter,
-                children: [
-                  const Text(
-                    '10',
-                    style: TextStyle(
-                      fontFamily: 'Cocon',
-                      fontSize: 95,
-                      color: Color(0xFF00C9B9),
+      body: Consumer<WelcomeScreenProvider>(
+        builder: (_, welcome, __)=> Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Text(
+                  "Go through the entire course one topic at a time",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color.fromRGBO(
+                      255,
+                      255,
+                      255,
+                      0.5,
                     ),
                   ),
-                  Image.asset('assets/images/learn_mode2/shadow.png')
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                "topics to be revised",
-                style: TextStyle(
-                    fontSize: 15,
-                    fontStyle: FontStyle.italic,
-                    color: Color.fromRGBO(255, 255, 255, 0.5)),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              const Text(
-                'Rules',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BulletRulesContainer(
-                rules: courseCompletionRulesList,
-              )
-            ],
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: [
+                     Text(
+                      '${welcome.totalCC}',
+                      style: TextStyle(
+                        fontFamily: 'Cocon',
+                        fontSize: 95,
+                        color: Color(0xFF00C9B9),
+                      ),
+                    ),
+                    Image.asset('assets/images/learn_mode2/shadow.png')
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  "topics to be revised",
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: Color.fromRGBO(255, 255, 255, 0.5)),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                const Text(
+                  'Rules',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                BulletRulesContainer(
+                  rules: courseCompletionRulesList,
+                )
+              ],
+            ),
           ),
         ),
       ),

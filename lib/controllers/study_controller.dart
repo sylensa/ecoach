@@ -172,6 +172,8 @@ abstract class StudyController {
     progress.passed = score >= 70 ? true : false;
     progress.updatedAt = DateTime.now();
 
+    print("progress after complete ${progress.toJson()}");
+
     await StudyDB().updateProgress(progress);
 
     return progress;

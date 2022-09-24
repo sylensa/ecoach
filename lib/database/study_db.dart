@@ -1,7 +1,10 @@
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/study.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StudyDB {
@@ -171,6 +174,9 @@ class StudyDB {
       where: "id = ?",
       whereArgs: [progress.id],
     );
+
+    Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+        .setCurrentProgress(progress);
   }
 
   delete(int id) async {

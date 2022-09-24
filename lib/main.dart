@@ -7,6 +7,7 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:ecoach/revamp/features/account/view/screen/phone_number_verification.dart';
 import 'package:ecoach/test/test.dart';
@@ -144,7 +145,11 @@ class _MyAppState extends State<MyApp> {
               builder: (_, __, ___) => MultiProvider(
                 providers: [
                   ChangeNotifierProvider<SpeedEnhancementProvider>(
-                      create: (context) => SpeedEnhancementProvider())
+                    create: (context) => SpeedEnhancementProvider(),
+                  ),
+                  ChangeNotifierProvider<WelcomeScreenProvider>(
+                    create: (context) => WelcomeScreenProvider(),
+                  )
                 ],
                 child: GetMaterialApp(
                   debugShowCheckedModeBanner: false,

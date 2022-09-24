@@ -27,6 +27,7 @@ class _LearnRevisionState extends State<LearnRevision> {
   @override
   Widget build(BuildContext context) {
     return Revision(
+      progress: widget.progress,
       onTap: () async {
         int topicId = widget.progress.topicId!;
         List<Question> questions =

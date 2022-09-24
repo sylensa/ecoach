@@ -50,6 +50,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   TestTaken? testTakenSaved;
   bool showSubmit = false;
   bool answeredWrong = false;
+  bool wasWrong = false;
   bool showNext = false;
   bool showComplete = false;
   List<bool> isAnsweredQuestions = [];
@@ -353,7 +354,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     const SizedBox(
                       width: 5,
                     ),
-                    !answeredWrong
+                    !wasWrong
                         ? Image.asset(
                             "assets/images/un_fav.png",
                             color: Colors.green,
@@ -584,69 +585,77 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         if (showSubmitButton())
                           Expanded(
                             flex: 2,
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  showSubmit = false;
-                                  showNext = true;
-
-                                  if (answeredWrong) {
-                                    wrong++;
-                                  } else {
-                                    correctAnswered++;
-                                  }
-
-                                  calAvgScore();
-
-                                  if (controller.type == StudyType.REVISION ||
-                                      controller.type ==
-                                          StudyType.SPEED_ENHANCEMENT) {
-                                    controller.enabled = false;
-                                  }
-
-                                  if (!controller.savedTest &&
-                                          controller.currentQuestion ==
-                                              controller.questions.length - 1 ||
-                                      (controller.enabled &&
-                                          controller.type ==
-                                              StudyType.SPEED_ENHANCEMENT &&
-                                          controller.currentQuestion ==
-                                              controller.finalQuestion)) {
-                                    showComplete = true;
-                                    showNext = false;
-                                  }
-
-                                  if (answeredWrong &&
-                                      controller.type == StudyType.REVISION) {
+                            child: Container(
+                              color: kAccessmentButtonColor,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    showSubmit = false;
                                     showNext = true;
-                                    showComplete = false;
-                                  }
 
-                                  if (answeredWrong &&
-                                      controller.type ==
-                                          StudyType.SPEED_ENHANCEMENT) {
-                                    int section =
-                                        controller.progress.section ?? 1;
-                                    controller
-                                        .updateProgressSection(section + 1);
-                                    if (section >= 3) {
+                                    if (answeredWrong) {
+                                      wrong++;
+                                      wasWrong = true;
+                                    } else {
+                                      correctAnswered++;
+                                      wasWrong = false;
+                                    }
+
+                                    calAvgScore();
+
+                                    if (controller.type == StudyType.REVISION ||
+                                        controller.type ==
+                                            StudyType.SPEED_ENHANCEMENT) {
+                                      controller.enabled = false;
+                                    }
+
+                                    if (!controller.savedTest &&
+                                            controller.currentQuestion ==
+                                                controller.questions.length -
+                                                    1 ||
+                                        (controller.enabled &&
+                                            controller.type ==
+                                                StudyType.SPEED_ENHANCEMENT &&
+                                            controller.currentQuestion ==
+                                                controller.finalQuestion)) {
                                       showComplete = true;
                                       showNext = false;
                                     }
-                                  }
-                                });
-                              },
-                              child: Text(
-                                "Submit",
-                                style: TextStyle(
-                                  color: Color(0xFFA2A2A2),
-                                  fontSize: 21,
+
+                                    if (answeredWrong &&
+                                        controller.type == StudyType.REVISION) {
+                                      showNext = true;
+                                      showComplete = false;
+                                    }
+
+                                    if (answeredWrong &&
+                                        controller.type ==
+                                            StudyType.SPEED_ENHANCEMENT) {
+                                      int section =
+                                          controller.progress.section ?? 1;
+                                      controller
+                                          .updateProgressSection(section + 1);
+                                      if (section >= 3) {
+                                        showComplete = true;
+                                        showNext = false;
+                                      }
+                                    }
+                                  });
+                                },
+                                child: Text(
+                                  "Submit",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFFFFFFFF),
+                                    fontSize: 21,
+                                  ),
                                 ),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  Color(0xFFF6F6F6),
-                                ),
+                                // style: ButtonStyle(
+                                //   backgroundColor: MaterialStateProperty.all(
+                                //     Color(0xFFF6F6F6),
+                                //   ),
+                                // ),
                               ),
                             ),
                           ),
@@ -655,20 +664,25 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         if (showNextButton())
                           Expanded(
                             flex: 2,
-                            child: TextButton(
-                              onPressed: answeredWrong
-                                  ? wrongAnswerAction()
-                                  : nextButton,
-                              child: Text(
-                                answeredWrong ? getWrongAnswerText() : "Next",
-                                style: TextStyle(
-                                  color: Color(0xFFA2A2A2),
-                                  fontSize: 21,
+                            child: Container(
+                              color: kAccessmentButtonColor,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: InkWell(
+                                onTap: answeredWrong
+                                    ? wrongAnswerAction()
+                                    : nextButton,
+                                child: Text(
+                                  answeredWrong ? getWrongAnswerText() : "Next",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFFFFFFFF),
+                                    fontSize: 21,
+                                  ),
                                 ),
+                                // style: ButtonStyle(
+                                //     backgroundColor: MaterialStateProperty.all(
+                                //         Color(0xFFF6F6F6))),
                               ),
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Color(0xFFF6F6F6))),
                             ),
                           ),
                         if (showCompleteButton())
@@ -676,20 +690,27 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         if (showCompleteButton())
                           Expanded(
                             flex: 2,
-                            child: TextButton(
-                              onPressed: () {
-                                completeQuiz();
-                              },
-                              child: Text(
-                                "Complete",
-                                style: TextStyle(
-                                  color: Color(0xFFA2A2A2),
-                                  fontSize: 21,
+                            child: Container(
+                              color: kAccessmentButtonColor,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: InkWell(
+                                onTap: () {
+                                  completeQuiz();
+                                },
+                                child: Text(
+                                  "Complete",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Color(0xFFFFFFFF),
+                                    fontSize: 21,
+                                  ),
                                 ),
+                                // style: ButtonStyle(
+                                //   backgroundColor: MaterialStateProperty.all(
+                                //     Color(0xFFF6F6F6),
+                                //   ),
+                                // ),
                               ),
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Color(0xFFF6F6F6))),
                             ),
                           ),
                         if (showResultButton())

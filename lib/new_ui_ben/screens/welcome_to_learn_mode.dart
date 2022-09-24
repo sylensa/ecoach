@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/topic.dart';
+import '../providers/welcome_screen_provider.dart';
 import '../widgets/learn_card.dart';
 import 'course_completion/course_completion.dart';
 import 'mastery/mastery_improvement_rules.dart';
@@ -17,7 +18,9 @@ import 'revision/revision.dart';
 class WelcomeToLearnMode extends StatefulWidget {
   final Course course;
   final Function(StudyType) startLearning;
-  const WelcomeToLearnMode({ required this.startLearning, required this.course, Key? key}) : super(key: key);
+  const WelcomeToLearnMode(
+      {required this.startLearning, required this.course, Key? key})
+      : super(key: key);
 
   @override
   State<WelcomeToLearnMode> createState() => _WelcomeToLearnModeState();
@@ -29,14 +32,20 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     // return topics;
   }
 
+  getStudyProgress(){
+    Provider.of<WelcomeScreenProvider>(context, listen: false).setCCRemaining();
+  }
+
   @override
   void initState() {
     super.initState();
+    getStudyProgress();
     print("this is the course ${widget.course.toJson()}");
   }
 
   @override
   Widget build(BuildContext context) {
+    // getStudyProgress();
     Provider.of<SpeedEnhancementProvider>(context, listen: false).level;
     return Scaffold(
       backgroundColor: const Color(0xFF0367B4),
@@ -54,68 +63,82 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         width: double.infinity,
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Text(
-                "What's your goal for today?",
-                style: TextStyle(
-                    fontSize: 20, color: Color.fromRGBO(255, 255, 255, 0.5)),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              LearnCard(
-                title: 'Revision',
-                desc:
-                    'Do a quick revision for an upcoming exam',
-                value: 20,
-                icon: 'assets/images/learn_mode2/stopwatch.png',
-                onTap: () async {
-                  widget.startLearning(StudyType.REVISION);
-                
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              LearnCard(
-                title: 'Course Completion',
-                desc: 'Do a quick revision for an upcoming exam',
-                value: 100,
-                icon: 'assets/images/learn_mode2/books.png',
-                onTap: () {
-                  // Get.to(() => const CourseCompletion());
-                   widget.startLearning(StudyType.COURSE_COMPLETION);
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              LearnCard(
-                title: 'Mastery Improvement',
-                desc: 'Do a quick revision for an upcoming exam',
-                value: 0,
-                icon: 'assets/images/learn_mode2/target.png',
-                onTap: () {
-                  // Get.to(() => const MasteryImprovementRules());
-                  widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              LearnCard(
-                title: 'Speed Enhancement',
-                desc: 'Do a quick revision for an upcoming exam',
-                isLevel: true,
-                value: 5,
-                icon: 'assets/images/learn_mode2/speedometer.png',
-                onTap: () {
-                  // Get.to(() => const SpeedCompletion());
-                  widget.startLearning(StudyType.SPEED_ENHANCEMENT);
-                },
-              )
-            ],
+          child: Consumer<WelcomeScreenProvider>(
+            builder: (_, welcome, __) {
+              welcome.setRevisionRemaining();
+              welcome.setCCRemaining();
+              // Provider.of<WelcomeScreenProvider>(context, listen: false).setRevisionRemaining();
+              return Column(
+                children: [
+                  const Text(
+                    "What's your goal for today?",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Color.fromRGBO(255, 255, 255, 0.5)),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  LearnCard(
+                    title: 'Revision',
+                    desc: 'Do a quick revision for an upcoming exam ${welcome.totalRevision}',
+                    value: welcome.progress != null
+                        ? (((welcome.totalTopics - welcome.totalRevision) ) /
+                                welcome.totalTopics) *
+                            100
+                        : 0,
+                    icon: 'assets/images/learn_mode2/stopwatch.png',
+                    onTap: () async {
+                      widget.startLearning(StudyType.REVISION);
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  LearnCard(
+                    title: 'Course Completion',
+                    desc: 'Do a quick revision for an upcoming exam ${welcome.totalCC}',
+                    value: welcome.progress != null
+                        ? (((welcome.totalTopics - welcome.totalCC)) /
+                                welcome.totalTopics) *
+                            100
+                        : 0,
+                    icon: 'assets/images/learn_mode2/books.png',
+                    onTap: () {
+                      // Get.to(() => const CourseCompletion());
+                      widget.startLearning(StudyType.COURSE_COMPLETION);
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  LearnCard(
+                    title: 'Mastery Improvement',
+                    desc: 'Do a quick revision for an upcoming exam',
+                    value: 0,
+                    icon: 'assets/images/learn_mode2/target.png',
+                    onTap: () {
+                      // Get.to(() => const MasteryImprovementRules());
+                      widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  LearnCard(
+                    title: 'Speed Enhancement',
+                    desc: 'Do a quick revision for an upcoming exam',
+                    isLevel: true,
+                    value: welcome.progress != null ?  welcome.progress!.level!.toDouble() : 0,
+                    icon: 'assets/images/learn_mode2/speedometer.png',
+                    onTap: () {
+                      // Get.to(() => const SpeedCompletion());
+                      widget.startLearning(StudyType.SPEED_ENHANCEMENT);
+                    },
+                  )
+                ],
+              );
+            },
           ),
         ),
       ),

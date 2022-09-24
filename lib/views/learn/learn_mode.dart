@@ -6,6 +6,7 @@ import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
 
 import 'package:ecoach/views/learn/learn_course_completion.dart';
@@ -14,6 +15,7 @@ import 'package:ecoach/views/learn/learn_mastery_topic.dart';
 import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LearnMode extends StatefulWidget {
   static const String routeName = '/learning/mode';
@@ -54,20 +56,21 @@ class _LearnModeState extends State<LearnMode> {
         await StudyDB().insert(study);
 
         progress = StudyProgress(
-            id: topic.id,
-            studyId: study.id,
-            level: 1,
-            section: 1,
-            name: type == StudyType.SPEED_ENHANCEMENT ||
-                    type == StudyType.MASTERY_IMPROVEMENT
-                ? widget.course.name
-                : topic.name,
-            topicId: type == StudyType.SPEED_ENHANCEMENT ||
-                    type == StudyType.MASTERY_IMPROVEMENT
-                ? null
-                : topic.id,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now());
+          id: topic.id,
+          studyId: study.id,
+          level: 1,
+          section: 1,
+          name: type == StudyType.SPEED_ENHANCEMENT ||
+                  type == StudyType.MASTERY_IMPROVEMENT
+              ? widget.course.name
+              : topic.name,
+          topicId: type == StudyType.SPEED_ENHANCEMENT ||
+                  type == StudyType.MASTERY_IMPROVEMENT
+              ? null
+              : topic.id,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
         await StudyDB().insertProgress(progress);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -79,6 +82,9 @@ class _LearnModeState extends State<LearnMode> {
       progress = await StudyDB().getCurrentProgress(study.id!);
     }
 
+    Provider.of<WelcomeScreenProvider>(context, listen: false)
+        .setCurrentProgress(progress!);
+
     return progress;
   }
 
@@ -87,7 +93,7 @@ class _LearnModeState extends State<LearnMode> {
     return SafeArea(
       child: Scaffold(
           body:
-          //  introView
+              //  introView
               // ? LearnPeripheralWidget(
               //     heroText: 'welcome',
               //     subText:
@@ -103,71 +109,73 @@ class _LearnModeState extends State<LearnMode> {
               //     topActionLabel: 'switch mode',
               //     topActionOnPressed: () {},
               //   )
-              // : 
-              
-              WelcomeToLearnMode(
-                  course: widget.course,
-                  startLearning: (StudyType study) async {
-                    Widget? view = null;
-                    switch (study) {
-                      case StudyType.REVISION:
-                        StudyProgress? progress =
-                            await getStudyProgress(StudyType.REVISION);
-                        print("this is the progress of revision $progress");
-                        if (progress == null) {
-                          return;
-                        }
-                        view =
-                            LearnRevision(widget.user, widget.course, progress);
-                        break;
+              // :
 
-                      case StudyType.COURSE_COMPLETION:
-                        StudyProgress? progress =
-                            await getStudyProgress(StudyType.COURSE_COMPLETION);
-                        print(progress);
-                        if (progress == null) {
-                          return;
-                        }
-                        view = LearnCourseCompletion(
-                            widget.user, widget.course, progress);
-                        break;
-                      case StudyType.SPEED_ENHANCEMENT:
-                        StudyProgress? progress =
-                            await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
-                        print(progress);
-                        if (progress == null) {
-                          return;
-                        }
-                        view = LearnSpeed(widget.user, widget.course, progress);
-                        break;
-                      case StudyType.MASTERY_IMPROVEMENT:
-                        StudyProgress? progress = await getStudyProgress(
-                            StudyType.MASTERY_IMPROVEMENT);
-                        print(progress);
-                        if (progress == null) {
-                          return;
-                        }
-                        List<MasteryCourse> mcs = await MasteryCourseDB()
-                            .getMasteryTopics(progress.studyId!);
-                        if (progress.level == 1 || mcs.length == 0) {
-                          view = LearnMastery(
-                              widget.user, widget.course, progress);
-                        } else {
-                          view = LearnMasteryTopic(
-                              widget.user, widget.course, progress,
-                              topics: mcs);
-                        }
-
-                        break;
-                      case StudyType.NONE:
-                        break;
-                    }
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return view!;
-                    }));
-                  },
-                )
+              Consumer<WelcomeScreenProvider>(
+        builder: (_, welcome, __) {
+         
+          return WelcomeToLearnMode(
+          course: widget.course,
+          startLearning: (StudyType study) async {
+            Widget? view = null;
+            switch (study) {
+              case StudyType.REVISION:
+                StudyProgress? progress =
+                    await getStudyProgress(StudyType.REVISION);
+                // print("this is the progress of revision ${progress!.toJson()}");
+        
+                if (progress == null) {
+                  return;
+                }
+                view = LearnRevision(widget.user, widget.course, progress);
+                break;
+        
+              case StudyType.COURSE_COMPLETION:
+                StudyProgress? progress =
+                    await getStudyProgress(StudyType.COURSE_COMPLETION);
+                print(progress);
+                if (progress == null) {
+                  return;
+                }
+                view =
+                    LearnCourseCompletion(widget.user, widget.course, progress);
+                break;
+              case StudyType.SPEED_ENHANCEMENT:
+                StudyProgress? progress =
+                    await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
+                print(progress);
+                if (progress == null) {
+                  return;
+                }
+                view = LearnSpeed(widget.user, widget.course, progress);
+                break;
+              case StudyType.MASTERY_IMPROVEMENT:
+                StudyProgress? progress =
+                    await getStudyProgress(StudyType.MASTERY_IMPROVEMENT);
+                print(progress);
+                if (progress == null) {
+                  return;
+                }
+                List<MasteryCourse> mcs =
+                    await MasteryCourseDB().getMasteryTopics(progress.studyId!);
+                if (progress.level == 1 || mcs.length == 0) {
+                  view = LearnMastery(widget.user, widget.course, progress);
+                } else {
+                  view = LearnMasteryTopic(widget.user, widget.course, progress,
+                      topics: mcs);
+                }
+        
+                break;
+              case StudyType.NONE:
+                break;
+            }
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return view!;
+            }));
+          },
+        );
+        },
+      )
 
           // Container(
           //     padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
