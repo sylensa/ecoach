@@ -1,11 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/average_score_graph.dart';
 import 'package:ecoach/controllers/group_management_controller.dart';
+import 'package:ecoach/controllers/performance_gragh.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/grade.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_performance_model.dart';
 import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
+import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,6 +29,7 @@ class GroupPerformance extends StatefulWidget {
 class _GroupPerformanceState extends State<GroupPerformance> {
   int _currentSlide = 0;
   bool progressCodeAll = true;
+  bool showGraph = false;
   List<CourseStat> report = [] ;
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
@@ -54,7 +60,31 @@ class _GroupPerformanceState extends State<GroupPerformance> {
       progressCodeAll = false;
     });
   }
+  String getPositionPostfix(int position) {
+    List<String> stringifiedPosition = position.toString().split('');
+    int len = stringifiedPosition.length;
+    dynamic penultimateChar = len >= 2 ? stringifiedPosition[len - 2] : null;
+    String lastChar = stringifiedPosition[len - 1];
 
+    if (lastChar == '1') {
+      if (len >= 2 && penultimateChar == '1')
+        return 'th';
+      else
+        return 'st';
+    } else if (lastChar == '2') {
+      if (len >= 2 && penultimateChar == '1')
+        return 'th';
+      else
+        return 'nd';
+    } else if (lastChar == '3') {
+      if (len >= 2 && penultimateChar == '1')
+        return 'th';
+      else
+        return 'rd';
+    }
+
+    return 'th';
+  }
   @override
   void initState(){
     getAllActivity();
@@ -77,8 +107,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                     CarouselSlider.builder(
                         options:
                         CarouselOptions(
-                          height:
-                          365,
+                          height: showGraph ? 340 : 365,
                           autoPlay:
                           false,
                           enableInfiniteScroll:
@@ -136,7 +165,19 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                   child: sText("${report[indexReport].name}",weight: FontWeight.bold,size: 10),
                                                 ),
                                                 SizedBox(height: 5,),
-                                                Image.asset("assets/images/pencil.png")
+                                                GestureDetector(
+                                                    onTap: (){
+                                                      setState(() {
+                                                        if(showGraph){
+                                                          showGraph = false;
+                                                        }else{
+                                                          showGraph = true;
+                                                        }
+                                                        print(!showGraph);
+                                                      });
+                                                    },
+                                                    child: Image.asset("assets/images/pencil.png"),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -153,7 +194,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                     ),
                                                     SizedBox(width: 5,),
 
-                                                    sText("2nd",weight: FontWeight.bold,color: Colors.grey),
+                                                    sText("${report[indexReport].rank}${getPositionPostfix(report[indexReport].rank!)}",weight: FontWeight.bold,color: Colors.grey),
                                                   ],
                                                 ),
                                                 SizedBox(height: 5,),
@@ -162,7 +203,11 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                     SvgPicture.asset(
                                                       "assets/images/fav.svg",
                                                     ),
-                                                    sText("85%",weight: FontWeight.bold),
+                                                    PercentageSnippet(
+                                                      correctlyAnswered: report[indexReport].totalCorrectQuestions,
+                                                      totalQuestions: report[indexReport].totalQuestions,
+                                                      isSelected: false,
+                                                    )
 
                                                   ],
                                                 ),
@@ -175,6 +220,9 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                       ),
 
                                       SizedBox(height: 20,),
+                                      if(showGraph)
+                                        PerformanceGraph(course:Course(id: 171) ,tabName: "all",rightWidgetState: "average",onChangeStatus: true,)
+                                      else
                                       Container(
                                         decoration: BoxDecoration(
                                             color: Color(0XFFFAFAFA),
@@ -226,7 +274,10 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                       children: [
                                                         sText("Grade",color: Colors.grey),
                                                         SizedBox(height: 10,),
-                                                        sText("B2",weight: FontWeight.bold,size: 25),
+                                                        sText(GradingSystem(
+                                                          score: double.parse(report[indexReport].avgScore!),
+                                                          level: "SHS",
+                                                        ).grade,weight: FontWeight.bold,size: 25),
                                                       ],
                                                     ),
                                                   ),
@@ -254,10 +305,10 @@ class _GroupPerformanceState extends State<GroupPerformance> {
 
                                                               axes: <RadialAxis>[
 
-                                                                RadialAxis(minimum: 0, maximum: 150, useRangeColorForAxis: false,ranges: <GaugeRange>[
+                                                                RadialAxis(minimum: 0, maximum: 1, useRangeColorForAxis: false,ranges: <GaugeRange>[
                                                                   GaugeRange(
                                                                     startValue: 0,
-                                                                    endValue: 50,
+                                                                    endValue: double.parse(report[indexReport].avgTime!),
                                                                     color: Color(0xFF93E7EB),
                                                                     startWidth: 10,
                                                                     endWidth: 10,
@@ -270,7 +321,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                                 ], annotations: <GaugeAnnotation>[
                                                                   GaugeAnnotation(
                                                                       widget: Container(
-                                                                          child:  Text('${report[indexReport].totalTimeTaken}q/m',
+                                                                          child:  Text('${report[indexReport].avgTime}q/m',
                                                                               style: TextStyle(
                                                                                   fontSize: 8, fontWeight: FontWeight.bold))),
                                                                       angle: 0,
@@ -318,10 +369,10 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                                   height: 60,
                                                                   width: 60,
                                                                   child: CircularProgressIndicator(
-                                                                    color: Color(0XFF8CFFC5),
+                                                                    color: report[indexReport].avgScore == "0.00" ? Colors.grey[200] : Color(0XFF8CFFC5),
                                                                     strokeWidth: 5,
 
-                                                                    value: 0.7,
+                                                                    value: report[indexReport].avgScore == "0.00" ? 1 : double.parse(report[indexReport].avgScore!)/100,
 
                                                                   ),
                                                                 ),
@@ -331,7 +382,11 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                                   child: Center(
                                                                     child: Column(
                                                                       children: [
-                                                                        sText("${report[indexReport].avgScore}%",size: 10,weight: FontWeight.bold),
+                                                                        PercentageSnippet(
+                                                                          correctlyAnswered: report[indexReport].totalCorrectQuestions,
+                                                                          totalQuestions: report[indexReport].totalQuestions,
+                                                                          isSelected: false,
+                                                                        ),
                                                                         sText("avg.score",size: 7,weight: FontWeight.normal),
 
                                                                       ],
@@ -351,7 +406,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                         sText("Strength",color: Colors.grey),
                                                         SizedBox(height: 30,),
                                                         AdeoSignalStrengthIndicator(
-                                                          strength: 100,
+                                                          strength: double.parse(report[indexReport].avgScore!),
                                                         )
                                                       ],
                                                     ),
@@ -367,6 +422,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                   ),
                                 ),
                                 SizedBox(height: 10,),
+                                if(!showGraph)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 20),
                                   child: Row(
