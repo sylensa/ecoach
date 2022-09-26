@@ -107,6 +107,9 @@ class TopicStat {
     this.updatedAt,
     this.speed,
     this.rank,
+    this.topicName,
+    this.courseName,
+    this.testSource,
   });
 
   int? id;
@@ -118,6 +121,9 @@ class TopicStat {
   int? totalTests;
   int? totalTimeTaken;
   String? rankPoints;
+  String? topicName;
+  String? courseName;
+  String? testSource;
   String? avgScore;
   String? avgTime;
   String? exposure;
@@ -137,6 +143,9 @@ class TopicStat {
         totalTests: json['total_tests'],
         totalTimeTaken: json['total_time_taken'],
         rankPoints: json['rank_points'],
+        topicName: json['topic_name'] ?? "Topic Name",
+        courseName: json['course_name'] ?? "Course Name",
+        testSource: json['test_source'] ?? "Subscription",
         avgScore: json['avg_score'],
         avgTime: json['avg_time'],
         exposure: json['exposure'],
@@ -144,6 +153,6 @@ class TopicStat {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         speed: json['speed'],
-        rank: json['rank'],
+        rank: json['rank'] ?? 0,
       );
 }
