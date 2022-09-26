@@ -809,15 +809,16 @@ class GroupManagementController{
     }
   }
 
-  Future<List<CourseStat>>  getGroupPerformance() async {
-    List<CourseStat> listReport = [] ;
+  Future<List<TopicStat>>  getGroupPerformance() async {
+    List<TopicStat> listReport = [] ;
     // try{
       var res = await doGet("${AppUrl.userGroup}/performance?group_id=$groupId",);
       print("performance:${res["data"].length}");
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
           for(int i =0; i < res["data"].length; i++){
-           for(int t =0; t < res["data"][i]["course_stats"].length; t++){
-             CourseStat  report = CourseStat.fromJson(res["data"][i]["course_stats"][t]);
+           for(int t =0; t < res["data"][i]["topics_stats"].length; t++){
+             print("topic stats:${res["data"][i]["topics_stats"]}");
+             TopicStat  report = TopicStat.fromJson(res["data"][i]["topics_stats"][t]);
              listReport.add(report);
            }
           }
