@@ -34,7 +34,7 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     // return topics;
   }
 
-  int revisionLevel = 0;
+  int revisionLevel = 1;
 
   getStudyProgress() async {
     // Provider.of<WelcomeScreenProvider>(context, listen: false).setCCRemaining();
@@ -104,10 +104,10 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   LearnCard(
                     title: 'Revision',
                     desc:
-                        'Do a quick revision for an upcoming exam $revisionLevel',
-                    value: welcome.progress != null
-                        ? (((revisionLevel - 1)) / welcome.totalTopics) * 100
-                        : 0,
+                        'Do a quick revision for an upcoming exam',
+                    value: welcome.currentRevisionStudyProgress != null
+                        ? (((welcome.currentRevisionStudyProgress!.level! - 1)) / welcome.totalTopics) * 100
+                        : (((revisionLevel - 1)) / welcome.totalTopics) * 100,
                     icon: 'assets/images/learn_mode2/stopwatch.png',
                     onTap: () async {
                       widget.startLearning(StudyType.REVISION);

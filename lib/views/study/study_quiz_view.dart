@@ -77,22 +77,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     avgScore = double.parse(totalAverage.toInt().toString());
   }
 
-  //  avgTimeComplete() {
-  //   double count = 0.0;
-  //   for (int i = 0; i < controller.questions.length; i++) {
-  //     count += controller.questions[i].time!;
-  //   }
-
-  //   if (count == 0 && controller.currentQuestion == 0) {
-  //     count = 0;
-  //   } else {
-  //     count = count / controller.currentQuestion;
-  //   }
-
-  //   print("count:$count");
-  //   return count.toStringAsFixed(2);
-  // }
-
   @override
   void initState() {
     controller = widget.controller;

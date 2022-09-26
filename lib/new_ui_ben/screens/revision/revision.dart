@@ -31,8 +31,8 @@ class Revision extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          // Get.to(() =>  ChoseRevisionMode());
-          onTap();
+          Get.to(() =>  ChoseRevisionMode(continueOngoing: onTap,));
+          // onTap();
         },
         child: Container(
           color: const Color(0xFF00C9B9),
@@ -64,7 +64,7 @@ class Revision extends StatelessWidget {
                 children: [
                    Consumer<WelcomeScreenProvider>(
                      builder: (_, welcome, __) => Text(
-                      '${ welcome.totalTopics - (welcome.currentRevisionProgressLevel-1)}',
+                      '${ welcome.totalTopics - (welcome.currentRevisionStudyProgress!.level! -1)}',
                       style: TextStyle(
                         fontFamily: 'Cocon',
                         fontSize: 95,

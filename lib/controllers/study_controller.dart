@@ -190,25 +190,24 @@ abstract class StudyController {
             await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
 
         if (revision == null) {
-          
           RevisionStudyProgress newRevision = RevisionStudyProgress(
-            studyId: progress.studyId,
-            level: 1,
-            topicId: progress.topicId,
-            courseId: course.id,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now()
-          );
+              studyId: progress.studyId,
+              level: 1,
+              topicId: progress.topicId,
+              courseId: course.id,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now());
 
           StudyDB().insertRevisionProgress(newRevision);
 
           print("new revision: ${newRevision.toMap()}");
-
         } else {
           revision.level = revision.level! + 1;
           revision.updatedAt = DateTime.now();
           print("revision update => ${revision.toMap()}");
           await StudyDB().updateRevisionProgress(revision);
+          Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+              .setCurrentRevisionStudyProgress(revision);
         }
 
         break;

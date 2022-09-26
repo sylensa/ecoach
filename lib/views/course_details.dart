@@ -1,7 +1,9 @@
+import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/notes_read.dart';
+import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
@@ -174,11 +176,9 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                           welcomeProvider
                               .setCurrentCourse(widget.courseInfo.course);
 
-                          // welcomeProvider.setCourseAndUser(
-                          //     widget.courseInfo.course, widget.user);
+                           welcomeProvider.setCurrentRevisionStudyProgress(null);
 
-                          // welcomeProvider.setCCRemaining();
-                          // welcomeProvider.setRevisionRemaining();
+                           welcomeProvider.setCurrentUser(widget.user);
 
                           Navigator.push(
                             context,

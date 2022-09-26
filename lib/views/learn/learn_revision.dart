@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
@@ -37,56 +38,7 @@ class _LearnRevisionState extends State<LearnRevision> {
       onTap: () async {
         int topicId = widget.progress.topicId!;
 
-        // getQuestionByRevisionLevel() async {
-        int currentRevisionLevel =
-            Provider.of<WelcomeScreenProvider>(context, listen: false)
-                .currentRevisionProgressLevel;
-
-        Topic? topic = await TopicDB()
-            .getLevelTopic(widget.course.id!, currentRevisionLevel);
-
-        // }
-
-        List<Question> questions =
-            await QuestionDB().getTopicQuestions([topic!.id!], 10);
-
-        // Create revision study progress object
-        // RevisionStudyProgress revisionStudyProgress = RevisionStudyProgress(
-        //   courseId: widget.course.id,
-        //   studyId: widget.progress.studyId,
-        //   topicId: widget.progress.topicId,
-        //   level: 1,
-        //   createdAt: DateTime.now(),
-        //   updatedAt: DateTime.now(),
-        // );
-
-        // await StudyDB().insertRevisionProgress(revisionStudyProgress).then((value){
-        //   print("revision progress inserted successfully");
-        // }).catchError((e){
-        //   print('there was an error $e');
-        // });
-
-        RevisionStudyProgress? studyProgress =
-            await StudyDB().getCurrentRevisionProgressByCourse(widget.course.id!);
-        print("this is the progress of revision: ${studyProgress}");
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            settings: RouteSettings(name: LearnRevision.routeName),
-            builder: (context) {
-              return LearningWidget(
-                controller: RevisionController(
-                  widget.user,
-                  widget.course,
-                  name: topic.name ?? widget.course.name!,
-                  questions: questions,
-                  progress: widget.progress,
-                ),
-              );
-            },
-          ),
-        );
+        RevisionProgressController().getRevisionQuestion();
       },
     );
 

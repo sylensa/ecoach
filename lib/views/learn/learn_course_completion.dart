@@ -76,110 +76,112 @@ class _TopicCoverState extends State<TopicCover> {
       },
     );
 
-    SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            color: Colors.white,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "return",
-                          style: TextStyle(color: Color(0xFF9C9C9C)),
-                        )),
-                    SizedBox(
-                      width: 50,
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Text(
-                        "Course Completion",
-                        style: TextStyle(
-                            color: themeColor,
-                            fontSize: 29,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: 232,
-                        child: Text(
-                          "Let's help you complete this entire course ,\none topic at a time.\nRead notes and take tests to make steady progress.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontStyle: FontStyle.italic,
-                              color: Color(0xFFA39A9A)),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      Image(
-                        image: AssetImage('assets/images/cc_topic.png'),
-                        width: 282,
-                        height: 282,
-                      ),
-                      // Spacer(),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      int topicId = widget.progress.topicId!;
-                      Topic? topic = await TopicDB().getTopicById(topicId);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              settings: RouteSettings(
-                                  name: LearnCourseCompletion.routeName),
-                              builder: (context) {
-                                return StudyNoteView(
-                                  topic!,
-                                  controller: CourseCompletionController(
-                                    widget.user,
-                                    widget.course,
-                                    name: topic.name!,
-                                    progress: widget.progress,
-                                  ),
-                                );
-                              }));
-                    },
-                    child: Text("Enter"),
-                    style: ButtonStyle(
-                      fixedSize: MaterialStateProperty.all(Size(150, 44)),
-                      foregroundColor: MaterialStateProperty.all(themeColor),
-                      side: MaterialStateProperty.all(BorderSide(
-                          color: themeColor,
-                          width: 1,
-                          style: BorderStyle.solid)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    // SafeArea(
+    //   child: Scaffold(
+    //     body: SingleChildScrollView(
+    //       child: Container(
+    //         height: MediaQuery.of(context).size.height,
+    //         color: Colors.white,
+    //         child: Column(
+    //           children: [
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.end,
+    //               children: [
+    //                 OutlinedButton(
+    //                     onPressed: () {
+    //                       Navigator.pop(context);
+    //                     },
+    //                     child: Text(
+    //                       "return",
+    //                       style: TextStyle(color: Color(0xFF9C9C9C)),
+    //                     )),
+    //                 SizedBox(
+    //                   width: 50,
+    //                 )
+    //               ],
+    //             ),
+    //             Expanded(
+    //               child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: [
+    //                   SizedBox(
+    //                     height: 30,
+    //                   ),
+    //                   Text(
+    //                     "Course Completion",
+    //                     style: TextStyle(
+    //                         color: themeColor,
+    //                         fontSize: 29,
+    //                         fontWeight: FontWeight.w600),
+    //                   ),
+    //                   SizedBox(
+    //                     height: 20,
+    //                   ),
+    //                   SizedBox(
+    //                     width: 232,
+    //                     child: Text(
+    //                       "Let's help you complete this entire course ,\none topic at a time.\nRead notes and take tests to make steady progress.",
+    //                       textAlign: TextAlign.center,
+    //                       style: TextStyle(
+    //                           fontSize: 12,
+    //                           fontStyle: FontStyle.italic,
+    //                           color: Color(0xFFA39A9A)),
+    //                     ),
+    //                   ),
+    //                   SizedBox(
+    //                     height: 40,
+    //                   ),
+    //                   Image(
+    //                     image: AssetImage('assets/images/cc_topic.png'),
+    //                     width: 282,
+    //                     height: 282,
+    //                   ),
+    //                   // Spacer(),
+    //                 ],
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
+    //               child: OutlinedButton(
+    //                 onPressed: () async {
+    //                   int topicId = widget.progress.topicId!;
+    //                   Topic? topic = await TopicDB().getTopicById(topicId);
+    //                   Navigator.push(
+    //                       context,
+    //                       MaterialPageRoute(
+    //                           settings: RouteSettings(
+    //                               name: LearnCourseCompletion.routeName),
+    //                           builder: (context) {
+    //                             return StudyNoteView(
+    //                               topic!,
+    //                               controller: CourseCompletionController(
+    //                                 widget.user,
+    //                                 widget.course,
+    //                                 name: topic.name!,
+    //                                 progress: widget.progress,
+    //                               ),
+    //                             );
+    //                           }));
+    //                 },
+    //                 child: Text("Enter"),
+    //                 style: ButtonStyle(
+    //                   fixedSize: MaterialStateProperty.all(Size(150, 44)),
+    //                   foregroundColor: MaterialStateProperty.all(themeColor),
+    //                   side: MaterialStateProperty.all(BorderSide(
+    //                       color: themeColor,
+    //                       width: 1,
+    //                       style: BorderStyle.solid)),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
+  
+  
   }
 }
 
