@@ -30,7 +30,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
   int _currentSlide = 0;
   bool progressCodeAll = true;
   bool showGraph = false;
-  List<CourseStat> report = [] ;
+  List<TopicStat> report = [] ;
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
     for (var i = 0; i < listLength; i++) {
@@ -85,6 +85,25 @@ class _GroupPerformanceState extends State<GroupPerformance> {
 
     return 'th';
   }
+
+  getGrade(String grade){
+    print("grade:$grade");
+    if(widget.groupData!.settings != null){
+      for(int i =0; i < widget.groupData!.settings!.grading!.grades!.length; i++){
+        if(double.parse(grade) >= double.parse(widget.groupData!.settings!.grading!.grades![i].range!.toStringAsFixed(2))){
+          print("object:${widget.groupData!.settings!.grading!.grades![i].grade}");
+          return "${widget.groupData!.settings!.grading!.grades![i].grade}";
+        }
+      }
+
+      return "${widget.groupData!.settings!.grading!.grades![widget.groupData!.settings!.grading!.grades!.length -1].grade}";
+
+    }else{
+      return "No";
+    }
+
+  }
+
   @override
   void initState(){
     getAllActivity();
@@ -162,7 +181,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                 SizedBox(height: 5,),
                                                 Container(
                                                   width: 150,
-                                                  child: sText("${report[indexReport].name}",weight: FontWeight.bold,size: 10),
+                                                  child: sText("${report[indexReport].courseName}",weight: FontWeight.bold,size: 10),
                                                 ),
                                                 SizedBox(height: 5,),
                                                 GestureDetector(
@@ -274,10 +293,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                       children: [
                                                         sText("Grade",color: Colors.grey),
                                                         SizedBox(height: 10,),
-                                                        sText(GradingSystem(
-                                                          score: double.parse(report[indexReport].avgScore!),
-                                                          level: "SHS",
-                                                        ).grade,weight: FontWeight.bold,size: 25),
+                                                        sText(getGrade(report[indexReport].avgScore!),weight: FontWeight.bold,size: 25),
                                                       ],
                                                     ),
                                                   ),
@@ -423,22 +439,22 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                 ),
                                 SizedBox(height: 10,),
                                 if(!showGraph)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: map<Widget>(report.length, (index, url) {
-                                      return Container(
-                                        width: 10,
-                                        height: 10,
-                                        margin: EdgeInsets.only(right: 5),
-                                        decoration: BoxDecoration(
-                                            color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray,
-                                            shape: BoxShape.circle
-                                        ),
-                                      );
-                                    }),
-                                  ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.only(left: 0,right: 0),
+                                      itemCount: report.length,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (BuildContext context, int index){
+                                        return Container(
+                                          width: 10,
+                                          height: 10,
+                                          margin: EdgeInsets.only(right: 5),
+                                          decoration: BoxDecoration(
+                                              color: _currentSlide == index ?  Color(0xFF2A9CEA) : sGray,
+                                              shape: BoxShape.circle
+                                          ),
+                                        );
+                                  }),
                                 ),
                               ],
                             ),
