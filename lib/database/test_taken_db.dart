@@ -128,11 +128,11 @@ class TestTakenDB {
     }
     return tests;
   }
-  Future<List<TestTaken>> courseTestsTakenPeriod(String courseId,String period) async {
+  Future<List<TestTaken>> courseTestsTakenPeriod(String courseId,String period,{int? groupId = null}) async {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"'");
+    maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and group_id = $groupId");
     }else if(period.toLowerCase() == 'daily'){
       maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"'  GROUP by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){

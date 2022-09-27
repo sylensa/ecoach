@@ -246,7 +246,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
         });
         viewResults();
       }
-    },groupId: widget.groupId!);
+    },groupId: widget.groupId);
   }
 
   viewResults() {

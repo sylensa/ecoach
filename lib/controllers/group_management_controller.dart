@@ -1,3 +1,5 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/announcement_list_model.dart';
@@ -7,10 +9,15 @@ import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
+import 'package:ecoach/models/group_performance_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
+import 'package:ecoach/models/report.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user_group_rating.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+
+import '../views/user_group/group_activities/performance/performance.dart';
 
 class GroupManagementController{
   String? groupId;
@@ -803,6 +810,54 @@ class GroupManagementController{
       print(e.toString());
       return listGroupNotificationData;
     }
+  }
+
+  Future<List<TopicStat>>  getGroupPerformance() async {
+    List<TopicStat> listReport = [] ;
+    // try{
+      var res = await doGet("${AppUrl.userGroup}/performance?group_id=8",);
+      print("performance:${res["data"].length}");
+      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+          for(int i =0; i < res["data"].length; i++){
+           for(int t =0; t < res["data"][i]["topics_stats"].length; t++){
+             print("topic stats:${res["data"][i]["topics_stats"]}");
+             TopicStat  report = TopicStat.fromJson(res["data"][i]["topics_stats"][t]);
+             listReport.add(report);
+           }
+          }
+          await getGroupTestTaken();
+         toastMessage("${res["message"]}");
+        return listReport;
+      }else{
+        toastMessage("${res["message"]}");
+        return listReport;
+      }
+    // }catch(e){
+    //   print(e.toString());
+    //   return listGroupPerformanceData;
+    // }
+  }
+
+    getGroupTestTaken() async {
+    List<TestTaken> listTestTaken = [] ;
+    // try{
+    var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=8",);
+    print("performance:${res["data"].length}");
+    if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
+      for(int i =0; i < res["data"]["data"].length; i++){
+        TestTaken  testTaken = TestTaken.fromJson(res["data"]["data"][i]);
+        listTestTaken.add(testTaken);
+        print("group_id:${testTaken.groupId}");
+       await  TestTakenDB().delete(testTaken.id!);
+      }
+
+      TestTakenDB().insertAll(listTestTaken);
+    }else{
+      toastMessage("${res["message"]}");
+    }
+    // }catch(e){
+    //   print(e.toString());
+    // }
   }
 
 

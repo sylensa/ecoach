@@ -1,3 +1,6 @@
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/topic.dart';
+
 class Report {
   Report({
     this.courseStats,
@@ -44,6 +47,7 @@ class CourseStat {
     this.updatedAt,
     this.speed,
     this.rank,
+    this.name,
   });
 
   int? id;
@@ -62,6 +66,7 @@ class CourseStat {
   DateTime? createdAt;
   DateTime? updatedAt;
   String? speed;
+  String? name;
   int? rank;
 
   factory CourseStat.fromJson(Map<String, dynamic> json) => CourseStat(
@@ -82,6 +87,7 @@ class CourseStat {
         updatedAt: DateTime.parse(json["updated_at"]),
         speed: json['speed'],
         rank: json['rank'],
+        name: json['name'],
       );
 }
 
@@ -104,6 +110,9 @@ class TopicStat {
     this.updatedAt,
     this.speed,
     this.rank,
+    this.topic,
+    this.course,
+    this.testSource,
   });
 
   int? id;
@@ -115,6 +124,9 @@ class TopicStat {
   int? totalTests;
   int? totalTimeTaken;
   String? rankPoints;
+  Topic? topic;
+  Course? course;
+  String? testSource;
   String? avgScore;
   String? avgTime;
   String? exposure;
@@ -134,6 +146,9 @@ class TopicStat {
         totalTests: json['total_tests'],
         totalTimeTaken: json['total_time_taken'],
         rankPoints: json['rank_points'],
+        course: json["course"] == null ? null : Course.fromJson(json["course"]),
+        topic: json["topic"] == null ? null : Topic.fromJson(json["topic"]),
+        testSource: json['test_source'] ?? "Subscription",
         avgScore: json['avg_score'],
         avgTime: json['avg_time'],
         exposure: json['exposure'],
@@ -141,6 +156,6 @@ class TopicStat {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         speed: json['speed'],
-        rank: json['rank'],
+        rank: json['rank'] ?? 0,
       );
 }

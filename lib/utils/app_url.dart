@@ -36,6 +36,7 @@ class AppUrl {
   static String groups = baseURL + "groups";
   static String joinedGroups = baseURL + "user/joined/groups";
   static String userGroups = baseURL + "user/groups";
+  static String userGroup = baseURL + "user/group";
   static String userGroupNotification = baseURL + "user/group";
   static String userSearchGroups = baseURL + "user/groups/search";
   static String suspendGroupMember = baseURL + "groups/member/suspend";
