@@ -14,12 +14,14 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 class PerformanceGraph extends StatefulWidget {
   Stat? stats;
   String tabName;
+  int groupId;
   String rightWidgetState;
   bool onChangeStatus;
   final Course course;
   PerformanceGraph(
       {this.stats,
         required this.course,
+        required this.groupId,
         this.tabName = "all",
         this.rightWidgetState = 'average',
         this.onChangeStatus = false});
@@ -36,7 +38,7 @@ class _PerformanceGraphState extends State<PerformanceGraph> {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!.toString(), period);
+    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!.toString(), period,groupId: widget.groupId);
     print("course id:${widget.course.id}");
 
     if (widget.tabName.toLowerCase() == "exam") {
@@ -266,9 +268,6 @@ class _PerformanceGraphState extends State<PerformanceGraph> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.onChangeStatus) {
-      getStat();
-    }
 
     return Container(
 
