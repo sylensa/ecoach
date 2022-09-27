@@ -181,7 +181,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                 SizedBox(height: 5,),
                                                 Container(
                                                   width: 150,
-                                                  child: sText("${report[indexReport].courseName}",weight: FontWeight.bold,size: 10),
+                                                  child: sText("${report[indexReport].course!.name}",weight: FontWeight.bold,size: 10),
                                                 ),
                                                 SizedBox(height: 5,),
                                                 GestureDetector(
@@ -192,7 +192,6 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                         }else{
                                                           showGraph = true;
                                                         }
-                                                        print(!showGraph);
                                                       });
                                                     },
                                                     child: Image.asset("assets/images/pencil.png"),
@@ -240,7 +239,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
 
                                       SizedBox(height: 20,),
                                       if(showGraph)
-                                        PerformanceGraph(course:Course(id: 171) ,tabName: "all",rightWidgetState: "average",onChangeStatus: true,)
+                                        PerformanceGraph(course:Course(id: report[indexReport].courseId) ,tabName: "all",rightWidgetState: "average",onChangeStatus: false,groupId: 8,)
                                       else
                                       Container(
                                         decoration: BoxDecoration(
@@ -388,7 +387,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                                     color: report[indexReport].avgScore == "0.00" ? Colors.grey[200] : Color(0XFF8CFFC5),
                                                                     strokeWidth: 5,
 
-                                                                    value: report[indexReport].avgScore == "0.00" ? 1 : double.parse(report[indexReport].avgScore!)/100,
+                                                                    value: report[indexReport].avgScore == "0.00" ? 1 : double.parse(report[indexReport].avgScore!),
 
                                                                   ),
                                                                 ),
@@ -442,6 +441,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                 Expanded(
                                   child: ListView.builder(
                                     padding: EdgeInsets.only(left: 0,right: 0),
+                                      shrinkWrap: true,
                                       itemCount: report.length,
                                       scrollDirection: Axis.horizontal,
                                       itemBuilder: (BuildContext context, int index){
