@@ -1,3 +1,6 @@
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/topic.dart';
+
 class Report {
   Report({
     this.courseStats,
@@ -107,8 +110,8 @@ class TopicStat {
     this.updatedAt,
     this.speed,
     this.rank,
-    this.topicName,
-    this.courseName,
+    this.topic,
+    this.course,
     this.testSource,
   });
 
@@ -121,8 +124,8 @@ class TopicStat {
   int? totalTests;
   int? totalTimeTaken;
   String? rankPoints;
-  String? topicName;
-  String? courseName;
+  Topic? topic;
+  Course? course;
   String? testSource;
   String? avgScore;
   String? avgTime;
@@ -143,8 +146,8 @@ class TopicStat {
         totalTests: json['total_tests'],
         totalTimeTaken: json['total_time_taken'],
         rankPoints: json['rank_points'],
-        topicName: json['topic_name'] ?? "Topic Name",
-        courseName: json['course_name'] ?? "Course Name",
+        course: json["course"] == null ? null : Course.fromJson(json["course"]),
+        topic: json["topic"] == null ? null : Topic.fromJson(json["topic"]),
         testSource: json['test_source'] ?? "Subscription",
         avgScore: json['avg_score'],
         avgTime: json['avg_time'],
