@@ -1,7 +1,9 @@
+import 'package:ecoach/controllers/course_completion_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/models/course_completion_progress_attempt.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
@@ -54,7 +56,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                     width: 20,
                   ),
                   Expanded(
-                    child: Text(controller.name,
+                    child: Text(widget.topic.name!,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: Color(0xFF15CA70),
@@ -138,7 +140,8 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                   }
                                   if (controller.type ==
                                       StudyType.COURSE_COMPLETION) {
-                                    await controller.updateProgressSection(2);
+                                    // await controller.updateProgressSection(2);
+                                    CourseCompletionStudyController().getCourseCompletionQuestion();
                                   }
                                   if (controller.type ==
                                       StudyType.MASTERY_IMPROVEMENT) {
@@ -147,45 +150,48 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                         .getMasteryTopicQuestions(
                                             controller.progress.topicId!, 5);
                                   }
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    switch (controller.type) {
-                                      case StudyType.REVISION:
-                                        return StudyQuizCover(
-                                          topicName: widget.topic.name!,
-                                          controller: RevisionController(
-                                              controller.user,
-                                              controller.course,
-                                              questions: questions!,
-                                              name: widget.topic.name!,
-                                              progress: controller.progress),
-                                        );
-                                      case StudyType.COURSE_COMPLETION:
-                                        return LearnCourseCompletion(
-                                            controller.user,
-                                            controller.course,
-                                            controller.progress);
-                                      case StudyType.SPEED_ENHANCEMENT:
-                                        return LearnSpeed(
-                                            controller.user,
-                                            controller.course,
-                                            controller.progress);
-                                      case StudyType.MASTERY_IMPROVEMENT:
-                                        return StudyQuizCover(
-                                            topicName:
-                                                controller.progress.name!,
-                                            controller: MasteryController(
-                                                controller.user,
-                                                controller.course,
-                                                questions: questions!,
-                                                name: controller.progress.name!,
-                                                progress: controller.progress));
-                                      case StudyType.NONE:
-                                        return Container(
-                                          child: Text("Study type is none"),
-                                        );
-                                    }
-                                  }));
+                                
+                                  // Navigator.push(context,
+                                  //     MaterialPageRoute(builder: (context) {
+                                  //   switch (controller.type) {
+                                  //     case StudyType.REVISION:
+                                  //       return StudyQuizCover(
+                                  //         topicName: widget.topic.name!,
+                                  //         controller: RevisionController(
+                                  //             controller.user,
+                                  //             controller.course,
+                                  //             questions: questions!,
+                                  //             name: widget.topic.name!,
+                                  //             progress: controller.progress),
+                                  //       );
+                                  //     case StudyType.COURSE_COMPLETION:
+                                  //       return LearnCourseCompletion(
+                                  //           controller.user,
+                                  //           controller.course,
+                                  //           controller.progress);
+                                  //     case StudyType.SPEED_ENHANCEMENT:
+                                  //       return LearnSpeed(
+                                  //           controller.user,
+                                  //           controller.course,
+                                  //           controller.progress);
+                                  //     case StudyType.MASTERY_IMPROVEMENT:
+                                  //       return StudyQuizCover(
+                                  //           topicName:
+                                  //               controller.progress.name!,
+                                  //           controller: MasteryController(
+                                  //               controller.user,
+                                  //               controller.course,
+                                  //               questions: questions!,
+                                  //               name: controller.progress.name!,
+                                  //               progress: controller.progress));
+                                  //     case StudyType.NONE:
+                                  //       return Container(
+                                  //         child: Text("Study type is none"),
+                                  //       );
+                                  //   }
+                                  // }));
+                                
+                                
                                 },
                                 style: ButtonStyle(
                                   side: MaterialStateProperty.all(BorderSide(

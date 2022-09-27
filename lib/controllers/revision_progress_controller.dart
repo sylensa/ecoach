@@ -6,7 +6,6 @@ import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-
 import '../database/questions_db.dart';
 import '../database/topics_db.dart';
 import '../models/course.dart';

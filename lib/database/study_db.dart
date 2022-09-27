@@ -192,20 +192,18 @@ class StudyDB {
   }
 
   // revision progress
-  Future<void> insertRevisionProgress(RevisionStudyProgress revision)async{
+  Future<void> insertRevisionProgress(RevisionStudyProgress revision) async {
     final db = await DBProvider.database;
     db!.transaction((txn) async {
       txn.insert("revision_study_progress", revision.toMap());
     }).then((value) {
       print("revision was added");
-    }).catchError((e){
+    }).catchError((e) {
       print("this is the error $e");
     });
   }
 
-
-
- Future<void> updateRevisionProgress(RevisionStudyProgress revision) async {
+  Future<void> updateRevisionProgress(RevisionStudyProgress revision) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;
 
@@ -217,7 +215,7 @@ class StudyDB {
     );
   }
 
- Future<RevisionStudyProgress?> getCurrentRevisionProgress() async {
+  Future<RevisionStudyProgress?> getCurrentRevisionProgress() async {
     final Database? db = await DBProvider.database;
 
     var result = await db!.query('revision_study_progress',
@@ -230,7 +228,9 @@ class StudyDB {
         result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
     return progress;
   }
- Future<RevisionStudyProgress?> getCurrentRevisionProgressByCourse(int courseId) async {
+
+  Future<RevisionStudyProgress?> getCurrentRevisionProgressByCourse(
+      int courseId) async {
     final Database? db = await DBProvider.database;
 
     var result = await db!.query('revision_study_progress',
@@ -244,16 +244,17 @@ class StudyDB {
     return progress;
   }
 
-
-   // revision progress
-  Future<void> insertCourseCompletionProgress(CourseCompletionStudyProgress revision)async{
+  // revision progress
+  Future<void> insertCourseCompletionProgress(
+      CourseCompletionStudyProgress revision) async {
     final db = await DBProvider.database;
     db!.transaction((txn) async {
       txn.insert("course_completion_study_progress", revision.toMap());
     });
   }
 
- Future<void> updateCourseCompletionProgress(CourseCompletionStudyProgress revision) async {
+  Future<void> updateCourseCompletionProgress(
+      CourseCompletionStudyProgress revision) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;
 
@@ -265,10 +266,11 @@ class StudyDB {
     );
   }
 
- Future<RevisionStudyProgress?> getCurrentCourseCompletionProgress(int revisionId) async {
+  Future<RevisionStudyProgress?> getCurrentCourseCompletionProgress(
+      int revisionId) async {
     final Database? db = await DBProvider.database;
 
-    var result = await db!.query('revision_study_progress',
+    var result = await db!.query('course_completion_study_progress',
         orderBy: "created_at DESC",
         // where: "study_id = ?",
         // whereArgs: [revisionId],
@@ -279,5 +281,18 @@ class StudyDB {
     return progress;
   }
 
-  
+   Future<CourseCompletionStudyProgress?> getCurrentCourseCompletionProgressByCourse(
+      int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('course_completion_study_progress',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],
+        limit: 1);
+
+    CourseCompletionStudyProgress? progress =
+        result.isNotEmpty ? CourseCompletionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
 }

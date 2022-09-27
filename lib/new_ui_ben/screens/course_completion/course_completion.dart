@@ -1,4 +1,5 @@
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_ui_ben/screens/course_completion/choose_cc_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +28,9 @@ class CourseCompletion extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          // Get.to(() =>  ChoseRevisionMode());
-          proceed();
+          Get.to(() => ChoseCourseCompletionMode(
+                continueOngoing: proceed,
+              ));
         },
         child: Container(
           color: const Color(0xFF00C9B9),
@@ -42,7 +44,7 @@ class CourseCompletion extends StatelessWidget {
         ),
       ),
       body: Consumer<WelcomeScreenProvider>(
-        builder: (_, welcome, __)=> Container(
+        builder: (_, welcome, __) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           width: double.infinity,
           child: SingleChildScrollView(
@@ -66,8 +68,8 @@ class CourseCompletion extends StatelessWidget {
                 Stack(
                   alignment: AlignmentDirectional.bottomCenter,
                   children: [
-                     Text(
-                      '${welcome.totalCC}',
+                    Text(
+                      '${welcome.totalTopics - (welcome.currentCourseCompletion!.level! - 1)}',
                       style: TextStyle(
                         fontFamily: 'Cocon',
                         fontSize: 95,

@@ -1,6 +1,7 @@
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_completion_study_progress.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:flutter/foundation.dart';
 
@@ -28,6 +29,8 @@ class WelcomeScreenProvider with ChangeNotifier {
 
   RevisionStudyProgress? currentRevisionStudyProgress;
 
+  CourseCompletionStudyProgress? currentCourseCompletion;
+
   StudyType? currentStudyType;
 
   Course? currentCourse;
@@ -49,6 +52,12 @@ class WelcomeScreenProvider with ChangeNotifier {
   setCurrentRevisionStudyProgress(
       RevisionStudyProgress? revisionStudyProgress) {
     currentRevisionStudyProgress = revisionStudyProgress;
+    notifyListeners();
+  }
+
+  setCurrentCourseCompletionStudyProgress(
+      CourseCompletionStudyProgress? courseCompletionStudyProgress) {
+    currentCourseCompletion = courseCompletionStudyProgress;
     notifyListeners();
   }
 

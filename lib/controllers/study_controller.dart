@@ -6,6 +6,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_completion_study_progress.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
@@ -184,33 +185,30 @@ abstract class StudyController {
             .currentStudyType;
     print("current study type $studyType");
 
-    switch (studyType) {
-      case StudyType.REVISION:
-        RevisionStudyProgress? revision =
-            await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
+    if (studyType == StudyType.REVISION) {
+      RevisionStudyProgress? revision =
+          await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
 
-        if (revision == null) {
-          RevisionStudyProgress newRevision = RevisionStudyProgress(
-              studyId: progress.studyId,
-              level: 1,
-              topicId: progress.topicId,
-              courseId: course.id,
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now());
+      if (revision == null) {
+        RevisionStudyProgress newRevision = RevisionStudyProgress(
+            studyId: progress.studyId,
+            level: 1,
+            topicId: progress.topicId,
+            courseId: course.id,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now());
 
-          StudyDB().insertRevisionProgress(newRevision);
+        StudyDB().insertRevisionProgress(newRevision);
 
-          print("new revision: ${newRevision.toMap()}");
-        } else {
-          revision.level = revision.level! + 1;
-          revision.updatedAt = DateTime.now();
-          print("revision update => ${revision.toMap()}");
-          await StudyDB().updateRevisionProgress(revision);
-          Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
-              .setCurrentRevisionStudyProgress(revision);
-        }
-
-        break;
+        print("new revision: ${newRevision.toMap()}");
+      } else {
+        revision.level = revision.level! + 1;
+        revision.updatedAt = DateTime.now();
+        print("revision update => ${revision.toMap()}");
+        await StudyDB().updateRevisionProgress(revision);
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+            .setCurrentRevisionStudyProgress(revision);
+      }
     }
 
     // await StudyDB().getCurrentRevisionProgress();

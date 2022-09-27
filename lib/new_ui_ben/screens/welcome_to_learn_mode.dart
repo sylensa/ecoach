@@ -1,6 +1,7 @@
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_completion_study_progress.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
@@ -35,13 +36,12 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
   }
 
   int revisionLevel = 1;
+  int courseCompletionLevel = 1;
 
   getStudyProgress() async {
-    // Provider.of<WelcomeScreenProvider>(context, listen: false).setCCRemaining();
     RevisionStudyProgress? revisionStudyProgress =
         await StudyDB().getCurrentRevisionProgressByCourse(widget.course.id!);
 
-    // print("course progress: ${revisionStudyProgress!.toMap()}");
     if (revisionStudyProgress != null) {
       print("course progress: ${revisionStudyProgress.toMap()}");
       setState(() {
@@ -57,11 +57,31 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     Provider.of<WelcomeScreenProvider>(context, listen: false)
         .setCurrentRevisionProgressLevel(revisionLevel);
   }
+  getCompletionProgress() async {
+    CourseCompletionStudyProgress? revisionStudyProgress =
+        await StudyDB().getCurrentCourseCompletionProgressByCourse(widget.course.id!);
+
+    if (revisionStudyProgress != null) {
+      print("course progress: ${revisionStudyProgress.toMap()}");
+      setState(() {
+        courseCompletionLevel = revisionStudyProgress.level!;
+      });
+    } else {
+      print("revision is null");
+      setState(() {
+        courseCompletionLevel = 1;
+      });
+    }
+
+    // Provider.of<WelcomeScreenProvider>(context, listen: false)
+    //     .setCurrentRevisionProgressLevel(revisionLevel);
+  }
 
   @override
   void initState() {
     super.initState();
     getStudyProgress();
+    getCompletionProgress();
     print("this is the course ${widget.course.toJson()}");
   }
 
@@ -103,10 +123,12 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   ),
                   LearnCard(
                     title: 'Revision',
-                    desc:
-                        'Do a quick revision for an upcoming exam',
+                    desc: 'Do a quick revision for an upcoming exam',
                     value: welcome.currentRevisionStudyProgress != null
-                        ? (((welcome.currentRevisionStudyProgress!.level! - 1)) / welcome.totalTopics) * 100
+                        ? (((welcome.currentRevisionStudyProgress!.level! -
+                                    1)) /
+                                welcome.totalTopics) *
+                            100
                         : (((revisionLevel - 1)) / welcome.totalTopics) * 100,
                     icon: 'assets/images/learn_mode2/stopwatch.png',
                     onTap: () async {
@@ -119,11 +141,11 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   LearnCard(
                     title: 'Course Completion',
                     desc: 'Do a quick revision for an upcoming exam',
-                    value: welcome.progress != null
-                        ? (((welcome.totalTopics - welcome.totalCC)) /
+                    value: welcome.currentCourseCompletion != null
+                        ? (((welcome.currentCourseCompletion!.level! - 1)) /
                                 welcome.totalTopics) *
                             100
-                        : 0,
+                        : (((courseCompletionLevel - 1)) / welcome.totalTopics) * 100,
                     icon: 'assets/images/learn_mode2/books.png',
                     onTap: () {
                       // Get.to(() => const CourseCompletion());
