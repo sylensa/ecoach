@@ -92,10 +92,13 @@ class TreadmillController {
 
   pauseTimer() {
     speedtimerController!.pause();
+    int time = DateTime.now().difference(questionTimer).inSeconds;
+    questions[currentQuestion].addTime(time);
   }
 
   resumeTimer() {
     speedtimerController!.start();
+    questionTimer = DateTime.now();
   }
 
   resetTimer() {
@@ -319,7 +322,8 @@ class TreadmillController {
 
     mp.selectedAnswerId =
         question.selectedAnswer != null ? question.selectedAnswer!.id : 0;
-    mp.time = DateTime.now().difference(questionTimer).inSeconds;
+    int time = DateTime.now().difference(questionTimer).inSeconds;
+    mp.addTime(time);
     print("time=${mp.time}");
     // print(mp.toJson());
     if (question.isCorrect) {
