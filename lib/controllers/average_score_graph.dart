@@ -36,8 +36,7 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB()
-        .courseTestsTakenPeriod(widget.course.id!.toString(), period);
+    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!.toString(), period);
     if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
