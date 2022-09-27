@@ -1,3 +1,5 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/announcement_list_model.dart';
@@ -10,6 +12,7 @@ import 'package:ecoach/models/group_page_view_model.dart';
 import 'package:ecoach/models/group_performance_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/models/report.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user_group_rating.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -812,7 +815,7 @@ class GroupManagementController{
   Future<List<TopicStat>>  getGroupPerformance() async {
     List<TopicStat> listReport = [] ;
     // try{
-      var res = await doGet("${AppUrl.userGroup}/performance?group_id=$groupId",);
+      var res = await doGet("${AppUrl.userGroup}/performance?group_id=8",);
       print("performance:${res["data"].length}");
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
           for(int i =0; i < res["data"].length; i++){
@@ -822,6 +825,7 @@ class GroupManagementController{
              listReport.add(report);
            }
           }
+          await getGroupTestTaken();
          toastMessage("${res["message"]}");
         return listReport;
       }else{
@@ -831,6 +835,28 @@ class GroupManagementController{
     // }catch(e){
     //   print(e.toString());
     //   return listGroupPerformanceData;
+    // }
+  }
+
+    getGroupTestTaken() async {
+    List<TestTaken> listTestTaken = [] ;
+    // try{
+    var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=8",);
+    print("performance:${res["data"].length}");
+    if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
+      for(int i =0; i < res["data"]["data"].length; i++){
+        TestTaken  testTaken = TestTaken.fromJson(res["data"]["data"][i]);
+        listTestTaken.add(testTaken);
+        print("group_id:${testTaken.groupId}");
+       await  TestTakenDB().delete(testTaken.id!);
+      }
+
+      TestTakenDB().insertAll(listTestTaken);
+    }else{
+      toastMessage("${res["message"]}");
+    }
+    // }catch(e){
+    //   print(e.toString());
     // }
   }
 
