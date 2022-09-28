@@ -178,54 +178,100 @@ class _TestInstructionState extends State<TestInstruction> {
                     ),
                     GestureDetector(
                       onTap: ()async{
-                        if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0){
-                          toastMessage("Test not started yet");
-                        }else if(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0){
-                          showLoaderDialog(context);
-                          List<Question> questions = [];
-                          List<int> topicIds = [];
-                          topicIds.add(int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
-                          switch (widget.groupNotificationData!.notificationtable!.configurations!.testType) {
-                            case "bank":
-                            case "exam":
-                            case "essay":
-                              questions = await TestController().getQuizQuestions(
-                                topicIds[0],
-                                limit: 10,
-                              );
-                              break;
-                            case "topic":
-                              questions = await TestController().getTopicQuestions(
-                                topicIds,
-                                limit: 10,
-                              );
-                              break;
-                            default:
-                              questions = await TestController().getMockQuestions(0);
-                          }
-                          Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
-                          if(course != null && questions.isNotEmpty){
-                            Navigator.pop(context);
-                            goTo(context, GroupQuizQuestion(
-                              controller: QuizController(
-                                widget.user,
-                                course,
-                                timing: widget.groupNotificationData!.notificationtable!.configurations!.timing!,
-                                questions: questions,
-                                name: widget.groupNotificationData!.notificationtable!.name!,
-                                time: widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question" ? widget.groupNotificationData!.notificationtable!.configurations!.countDown! : 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! ,
-                                type: TestType.KNOWLEDGE,
-                                challengeType: TestCategory.TOPIC,
-                              ),
-                              diagnostic: true,
-                            ),);
-                          }else{
-                            Navigator.pop(context);
-                            showDialogOk(context: context,message: "Course does not exist or questions are empty");
-                          }
-                        }else{
-                          toastMessage("Test Completed");
+                        showLoaderDialog(context);
+                        List<Question> questions = [];
+                        List<int> topicIds = [];
+                        topicIds.add(int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
+                        switch (widget.groupNotificationData!.notificationtable!.configurations!.testType) {
+                          case "bank":
+                          case "exam":
+                          case "essay":
+                            questions = await TestController().getQuizQuestions(
+                              topicIds[0],
+                              limit: 10,
+                            );
+                            break;
+                          case "topic":
+                            questions = await TestController().getTopicQuestions(
+                              topicIds,
+                              limit: 10,
+                            );
+                            break;
+                          default:
+                            questions = await TestController().getMockQuestions(0);
                         }
+                        Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
+                        if(course != null && questions.isNotEmpty){
+                          Navigator.pop(context);
+                          goTo(context, GroupQuizQuestion(
+                            controller: QuizController(
+                              widget.user,
+                              course,
+                              timing: widget.groupNotificationData!.notificationtable!.configurations!.timing!,
+                              questions: questions,
+                              name: widget.groupNotificationData!.notificationtable!.name!,
+                              time: widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question" ? widget.groupNotificationData!.notificationtable!.configurations!.countDown! : 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! ,
+                              type: TestType.KNOWLEDGE,
+                              challengeType: TestCategory.TOPIC,
+                            ),
+                            diagnostic: true,
+                            groupId: widget.groupNotificationData!.groupId!,
+                          ),);
+                        }else{
+                          Navigator.pop(context);
+                          showDialogOk(context: context,message: "Course does not exist or questions are empty");
+                        }
+                        // if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0){
+                        //   toastMessage("Test not started yet");
+                        // }
+                        // else if(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0){
+                        //
+                        //   showLoaderDialog(context);
+                        //   List<Question> questions = [];
+                        //   List<int> topicIds = [];
+                        //   topicIds.add(int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
+                        //   switch (widget.groupNotificationData!.notificationtable!.configurations!.testType) {
+                        //     case "bank":
+                        //     case "exam":
+                        //     case "essay":
+                        //       questions = await TestController().getQuizQuestions(
+                        //         topicIds[0],
+                        //         limit: 10,
+                        //       );
+                        //       break;
+                        //     case "topic":
+                        //       questions = await TestController().getTopicQuestions(
+                        //         topicIds,
+                        //         limit: 10,
+                        //       );
+                        //       break;
+                        //     default:
+                        //       questions = await TestController().getMockQuestions(0);
+                        //   }
+                        //   Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
+                        //   if(course != null && questions.isNotEmpty){
+                        //     Navigator.pop(context);
+                        //     goTo(context, GroupQuizQuestion(
+                        //       controller: QuizController(
+                        //         widget.user,
+                        //         course,
+                        //         timing: widget.groupNotificationData!.notificationtable!.configurations!.timing!,
+                        //         questions: questions,
+                        //         name: widget.groupNotificationData!.notificationtable!.name!,
+                        //         time: widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question" ? widget.groupNotificationData!.notificationtable!.configurations!.countDown! : 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! ,
+                        //         type: TestType.KNOWLEDGE,
+                        //         challengeType: TestCategory.TOPIC,
+                        //       ),
+                        //       diagnostic: true,
+                        //       groupId: widget.groupNotificationData!.groupId!,
+                        //     ),);
+                        //   }else{
+                        //     Navigator.pop(context);
+                        //     showDialogOk(context: context,message: "Course does not exist or questions are empty");
+                        //   }
+                        // }else{
+                        //   toastMessage("Test Completed");
+                        // }
 
 
                       },
