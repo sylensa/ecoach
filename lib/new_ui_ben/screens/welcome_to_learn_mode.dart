@@ -3,6 +3,7 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_completion_study_progress.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
+import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_completion.dart';
@@ -37,6 +38,7 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
 
   int revisionLevel = 1;
   int courseCompletionLevel = 1;
+  int speedProgressLevel = 1;
 
   getStudyProgress() async {
     RevisionStudyProgress? revisionStudyProgress =
@@ -76,12 +78,32 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     // Provider.of<WelcomeScreenProvider>(context, listen: false)
     //     .setCurrentRevisionProgressLevel(revisionLevel);
   }
+  getSpeedProgress() async {
+    SpeedStudyProgress? revisionStudyProgress =
+        await StudyDB().getCurrentSpeedProgressLevelByCourse(widget.course.id!);
+
+    if (revisionStudyProgress != null) {
+      print("course progress: ${revisionStudyProgress.toMap()}");
+      setState(() {
+        speedProgressLevel = revisionStudyProgress.level!;
+      });
+    } else {
+      print("revision is null");
+      setState(() {
+        speedProgressLevel = 1;
+      });
+    }
+
+    // Provider.of<WelcomeScreenProvider>(context, listen: false)
+    //     .setCurrentRevisionProgressLevel(revisionLevel);
+  }
 
   @override
   void initState() {
     super.initState();
     getStudyProgress();
     getCompletionProgress();
+    getSpeedProgress();
     print("this is the course ${widget.course.toJson()}");
   }
 
@@ -172,9 +194,9 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                     title: 'Speed Enhancement',
                     desc: 'Do a quick revision for an upcoming exam',
                     isLevel: true,
-                    value: welcome.progress != null
-                        ? welcome.progress!.level!.toDouble()
-                        : 0,
+                    value:welcome.currentSpeedStudyProgress != null
+                        ? welcome.currentSpeedStudyProgress!.level!.toDouble()
+                        : speedProgressLevel.toDouble(),
                     icon: 'assets/images/learn_mode2/speedometer.png',
                     onTap: () {
                       // Get.to(() => const SpeedCompletion());

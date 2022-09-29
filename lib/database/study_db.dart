@@ -9,6 +9,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/course_completion_study_progress.dart';
 import '../models/revision_study_progress.dart';
+import '../models/speed_enhancement_progress_model.dart';
 
 class StudyDB {
   Future<void> insert(Study study) async {
@@ -241,6 +242,58 @@ class StudyDB {
 
     RevisionStudyProgress? progress =
         result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+  // speed progress level db functions
+  Future<void> insertSpeedProgressLevel(SpeedStudyProgress revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("speed_study_level", revision.toMap());
+    }).then((value) {
+      print("revision was added");
+    }).catchError((e) {
+      print("this is the error $e");
+    });
+  }
+
+  Future<void> updateSpeedProgressLevel(SpeedStudyProgress revision) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'speed_study_level',
+      revision.toMap(),
+      where: "id = ?",
+      whereArgs: [revision.id],
+    );
+  }
+
+  Future<SpeedStudyProgress?> getCurrentSpeedProgressLevel() async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('speed_study_level',
+        orderBy: "created_at DESC",
+        // where: "study_id = ?",
+        // whereArgs: [revisionId],
+        limit: 1);
+
+    SpeedStudyProgress? progress =
+        result.isNotEmpty ? SpeedStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  Future<SpeedStudyProgress?> getCurrentSpeedProgressLevelByCourse(
+      int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('speed_study_level',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],
+        limit: 1);
+
+    SpeedStudyProgress? progress =
+        result.isNotEmpty ? SpeedStudyProgress.fromMap(result.first) : null;
     return progress;
   }
 

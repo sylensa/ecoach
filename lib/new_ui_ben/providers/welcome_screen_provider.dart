@@ -2,6 +2,7 @@ import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_completion_study_progress.dart';
+import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:flutter/foundation.dart';
 
@@ -31,6 +32,8 @@ class WelcomeScreenProvider with ChangeNotifier {
 
   CourseCompletionStudyProgress? currentCourseCompletion;
 
+  SpeedStudyProgress? currentSpeedStudyProgress;
+
   StudyType? currentStudyType;
 
   Course? currentCourse;
@@ -58,6 +61,11 @@ class WelcomeScreenProvider with ChangeNotifier {
   setCurrentCourseCompletionStudyProgress(
       CourseCompletionStudyProgress? courseCompletionStudyProgress) {
     currentCourseCompletion = courseCompletionStudyProgress;
+    notifyListeners();
+  }
+
+  setCurrentSpeedProgress(SpeedStudyProgress? speedStudyProgress) {
+    currentSpeedStudyProgress = speedStudyProgress;
     notifyListeners();
   }
 

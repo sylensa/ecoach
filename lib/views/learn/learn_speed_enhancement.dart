@@ -6,6 +6,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/level_container.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -18,6 +19,7 @@ import 'package:ecoach/widgets/layouts/speed_enhancement_introit.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:another_xlider/another_xlider.dart';
+import 'package:provider/provider.dart';
 
 import '../../new_ui_ben/screens/speed_improvement/speed_completion.dart';
 import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
@@ -45,12 +47,14 @@ class _LearnSpeedState extends State<LearnSpeed> {
     return Scaffold(
       body: CarouselSlider(
         items: [
-          SpeedCompletion(
-            start: () {
+        
+          SpeedCompletionRules(
+            letGo: () {
               controller.nextPage();
             },
           ),
 
+        
           // SpeedEnhancementIntroit(
           //   heroText: 'Speed Enhancement',
           //   subText:
@@ -70,24 +74,26 @@ class _LearnSpeedState extends State<LearnSpeed> {
             progress: widget.progress,
           ),
 
-          SpeedCompletionRules(
-            letGo: () async {
-              List<Question> questions =
-                  await QuestionDB().getRandomQuestions(widget.course.id!, 10);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return StudyQuizView(
-                        controller: SpeedController(widget.user, widget.course,
-                            questions: questions,
-                            name: widget.progress.name!,
-                            progress: widget.progress));
-                  },
-                ),
-              );
-            },
-          ),
+          // SpeedCompletionRules(
+          //   letGo: () async {
+
+          //     List<Question> questions =
+          //         await QuestionDB().getRandomQuestions(widget.course.id!, 10);
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) {
+          //           return StudyQuizView(
+          //               controller: SpeedController(widget.user, widget.course,
+          //                   questions: questions,
+          //                   name: widget.progress.name!,
+          //                   progress: widget.progress));
+          //         },
+          //       ),
+          //     );
+
+          //   },
+          // ),
 
           // SpeedEnhancementIntroit(
           //   heroText: 'Speed Test',
@@ -145,11 +151,33 @@ class SecondComponent extends StatelessWidget {
     debugPrint("this is the progress ${progress.toJson()}");
     debugPrint("************");
 
-    return SpeedImprovementLevelContainer(
-      level: progress.level ?? 1,
-      proceed: () {
-        controller.nextPage();
-      },
+    return Consumer<WelcomeScreenProvider>(
+      builder: (_, welcome, __) => SpeedImprovementLevelContainer(
+        level: welcome.currentSpeedStudyProgress!.level ?? 1,
+        proceed: () async {
+          // controller.nextPage();
+          // WelcomeScreenProvider welcomeProvider =
+          //     Provider.of<WelcomeScreenProvider>(context, listen: false);
+          List<Question> questions = await QuestionDB()
+              .getRandomQuestions(welcome.currentCourse!.id!, 10);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return StudyQuizView(
+                  controller: SpeedController(
+                    welcome.currentUser!,
+                    welcome.currentCourse!,
+                    questions: questions,
+                    name: progress.name!,
+                    progress: progress,
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
 
     // Column(

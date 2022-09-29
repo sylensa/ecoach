@@ -1,4 +1,5 @@
 import 'package:custom_timer/custom_timer.dart';
+import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
@@ -24,6 +25,7 @@ import 'package:ecoach/widgets/select_text.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -179,6 +181,10 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         if (StudyType.SPEED_ENHANCEMENT == controller.type) {
           bool moveUp = controller.progress.section == null ||
               controller.progress.section! <= 3;
+
+          // TODO: call function to upgrade level
+          SpeedStudyProgressController().updateCCLevel(moveUp);
+
           if (moveUp) {
             moveUp = controller.progress.passed!;
           }
@@ -280,7 +286,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         onPressed: () {
                           // timerController.pause();
                           // Get.bottomSheet(quitWidget());
-                          // return;
+                          return;
                         },
                         icon: Icon(Icons.arrow_back)),
                     Container(
@@ -562,20 +568,24 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         if (showPreviousButton())
                           Expanded(
                             flex: 2,
-                            child: TextButton(
-                              onPressed: () {
-                                pageController.previousPage(
-                                    duration: Duration(milliseconds: 1),
-                                    curve: Curves.ease);
-                                setState(() {
-                                  controller.currentQuestion--;
-                                });
-                              },
-                              child: Text(
-                                "Previous",
-                                style: TextStyle(
-                                  color: Color(0xFFA2A2A2),
-                                  fontSize: 21,
+                            child: Container(
+                              color: kAccessmentButtonColor,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: InkWell(
+                                onTap: () {
+                                  pageController.previousPage(
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.ease);
+                                  setState(() {
+                                    controller.currentQuestion--;
+                                  });
+                                },
+                                child: Text(
+                                  "Previous",
+                                  style: TextStyle(
+                                    color: Color(0xFFA2A2A2),
+                                    fontSize: 21,
+                                  ),
                                 ),
                               ),
                             ),

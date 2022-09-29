@@ -1,5 +1,6 @@
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/level_start_screen.dart';
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/utils/speed_enhancement_utils.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,12 @@ class _SpeedImprovementLevelContainerState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<SpeedEnhancementProvider>(
-        builder: (_, speed, __) {
-          SpeedEnhancementLevel level = speedEnhancementLevels[speed.level - 1];
+      body: Consumer<WelcomeScreenProvider>(
+        builder: (_, welcome, __) {
+        //  WelcomeScreenProvider welcomeProvider = Provider.of(context, listen: false);
+         int progressLevel = welcome.currentSpeedStudyProgress!.level!;
+         SpeedEnhancementLevel level = speedEnhancementLevels[progressLevel - 1];
+         print("current speed level: ${level.level} progress level: $progressLevel");
           return LevelStartScreen(
             bgImage: level.backgroundImage,
             levelImage: level.levelImage,

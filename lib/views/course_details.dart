@@ -176,9 +176,14 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                           welcomeProvider
                               .setCurrentCourse(widget.courseInfo.course);
 
-                           welcomeProvider.setCurrentRevisionStudyProgress(null);
+                          welcomeProvider.setCurrentRevisionStudyProgress(null);
 
-                           welcomeProvider.setCurrentUser(widget.user);
+                          welcomeProvider
+                              .setCurrentCourseCompletionStudyProgress(null);
+
+                              welcomeProvider.setCurrentSpeedProgress(null);
+
+                          welcomeProvider.setCurrentUser(widget.user);
 
                           Navigator.push(
                             context,
@@ -203,19 +208,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[1],
                         onTap: () async {
-                          final welcomeProvider =
-                              Provider.of<WelcomeScreenProvider>(context,
-                                  listen: false);
-
-                          welcomeProvider
-                              .getTotalTopics(widget.courseInfo.course);
-
-                          welcomeProvider
-                              .setCurrentCourse(widget.courseInfo.course);
-
-                           welcomeProvider.setCurrentCourseCompletionStudyProgress(null);
-
-                           welcomeProvider.setCurrentUser(widget.user);
                           List<Topic> topics = await TestController()
                               .getTopicsAndNotes(widget.courseInfo.course);
                           Navigator.push(

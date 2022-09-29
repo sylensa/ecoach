@@ -23,6 +23,8 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
+import '../models/speed_enhancement_progress_model.dart';
+
 abstract class StudyController {
   StudyController(this.user, this.course,
       {this.questions = const [],
@@ -178,6 +180,12 @@ abstract class StudyController {
 
     print("progress after complete ${progress.toJson()}");
 
+    if (score >= 70) {
+      print("test progress: passed");
+    } else {
+      print("test progress: failed");
+    }
+
     await StudyDB().updateProgress(progress);
 
     StudyType? studyType =
@@ -209,7 +217,36 @@ abstract class StudyController {
         Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
             .setCurrentRevisionStudyProgress(revision);
       }
-    }
+    } 
+    // else if (studyType == StudyType.SPEED_ENHANCEMENT) {
+    //   SpeedStudyProgress? revision =
+    //       await StudyDB().getCurrentSpeedProgressLevelByCourse(course.id!);
+
+    //   if (revision == null) {
+    //     RevisionStudyProgress newRevision = RevisionStudyProgress(
+    //         studyId: progress.studyId,
+    //         level: 1,
+    //         topicId: progress.topicId,
+    //         courseId: course.id,
+    //         createdAt: DateTime.now(),
+    //         updatedAt: DateTime.now());
+
+    //     StudyDB().insertRevisionProgress(newRevision);
+
+    //     print("new revision: ${newRevision.toMap()}");
+    //   } else {
+    //     revision.level = progress.passed!
+    //         ? revision.level! + 1
+    //         : revision.level! > 1
+    //             ? revision.level! - 1
+    //             : revision.level;
+    //     revision.updatedAt = DateTime.now();
+    //     print("revision update => ${revision.toMap()}");
+    //     await StudyDB().updateSpeedProgressLevel(revision);
+    //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+    //         .setCurrentSpeedProgress(revision);
+    //   }
+    // }
 
     // await StudyDB().getCurrentRevisionProgress();
 

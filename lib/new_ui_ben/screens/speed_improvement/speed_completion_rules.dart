@@ -1,6 +1,8 @@
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/level_two.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import '../../providers/welcome_screen_provider.dart';
 import '../../utils/revision_utils.dart';
 import '../../utils/speed_completion_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
@@ -43,58 +45,60 @@ class SpeedCompletionRules extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Text(
-                "A quick way to prep for your exam",
-                style: TextStyle(
-                    fontSize: 20, color: Color.fromRGBO(255, 255, 255, 0.5)),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Stack(
-                alignment: AlignmentDirectional.bottomCenter,
-                children: [
-                  const Text(
-                    '6',
-                    style: TextStyle(
-                      fontFamily: 'Cocon',
-                      fontSize: 95,
-                      color: Color(0xFF00C9B9),
+      body: Consumer<WelcomeScreenProvider>(
+        builder: (context, welcome, child) =>  Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Text(
+                  "A quick way to prep for your exam",
+                  style: TextStyle(
+                      fontSize: 20, color: Color.fromRGBO(255, 255, 255, 0.5)),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: [
+                    const Text(
+                      '6',
+                      style: TextStyle(
+                        fontFamily: 'Cocon',
+                        fontSize: 95,
+                        color: Color(0xFF00C9B9),
+                      ),
                     ),
-                  ),
-                  Image.asset('assets/images/learn_mode2/shadow.png')
-                ],
-              ),
-              const SizedBox(
-                height: 11,
-              ),
-              const Text(
-                "levels",
-                style: TextStyle(
-                    fontSize: 29,
-                    fontStyle: FontStyle.italic,
-                    color: Color.fromRGBO(255, 255, 255, 0.5)),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              const Text(
-                'Rules',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              BulletRulesContainer(
-                rules: speedCompletionRulesList,
-              )
-            ],
+                    Image.asset('assets/images/learn_mode2/shadow.png')
+                  ],
+                ),
+                const SizedBox(
+                  height: 11,
+                ),
+                const Text(
+                  "levels",
+                  style: TextStyle(
+                      fontSize: 29,
+                      fontStyle: FontStyle.italic,
+                      color: Color.fromRGBO(255, 255, 255, 0.5)),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                const Text(
+                  'Rules',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                BulletRulesContainer(
+                  rules: speedCompletionRulesList,
+                )
+              ],
+            ),
           ),
         ),
       ),
