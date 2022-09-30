@@ -11,7 +11,7 @@ import 'package:ecoach/widgets/layouts/speed_enhancement_introit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-
+import 'package:animate_do/animate_do.dart';
 import '../../models/topic.dart';
 import '../providers/welcome_screen_provider.dart';
 import '../widgets/learn_card.dart';
@@ -143,65 +143,77 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   const SizedBox(
                     height: 40,
                   ),
-                  LearnCard(
-                    title: 'Revision',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    value: welcome.currentRevisionStudyProgress != null
-                        ? (((welcome.currentRevisionStudyProgress!.level! -
-                                    1)) /
-                                welcome.totalTopics) *
-                            100
-                        : (((revisionLevel - 1)) / welcome.totalTopics) * 100,
-                    icon: 'assets/images/learn_mode2/stopwatch.png',
-                    onTap: () async {
-                      widget.startLearning(StudyType.REVISION);
-                    },
+                  FadeInLeft(
+                    duration: Duration(milliseconds: 600),
+                    child: LearnCard(
+                      title: 'Revision',
+                      desc: 'Do a quick revision for an upcoming exam',
+                      value: welcome.currentRevisionStudyProgress != null
+                          ? (((welcome.currentRevisionStudyProgress!.level! -
+                                      1)) /
+                                  welcome.totalTopics) *
+                              100
+                          : (((revisionLevel - 1)) / welcome.totalTopics) * 100,
+                      icon: 'assets/images/learn_mode2/stopwatch.png',
+                      onTap: () async {
+                        widget.startLearning(StudyType.REVISION);
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  LearnCard(
-                    title: 'Course Completion',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    value: welcome.currentCourseCompletion != null
-                        ? (((welcome.currentCourseCompletion!.level! - 1)) /
-                                welcome.totalTopics) *
-                            100
-                        : (((courseCompletionLevel - 1)) / welcome.totalTopics) * 100,
-                    icon: 'assets/images/learn_mode2/books.png',
-                    onTap: () {
-                      // Get.to(() => const CourseCompletion());
-                      widget.startLearning(StudyType.COURSE_COMPLETION);
-                    },
+                  FadeInRight(
+                    duration: Duration(milliseconds: 600),
+                    child: LearnCard(
+                      title: 'Course Completion',
+                      desc: 'Do a quick revision for an upcoming exam',
+                      value: welcome.currentCourseCompletion != null
+                          ? (((welcome.currentCourseCompletion!.level! - 1)) /
+                                  welcome.totalTopics) *
+                              100
+                          : (((courseCompletionLevel - 1)) / welcome.totalTopics) * 100,
+                      icon: 'assets/images/learn_mode2/books.png',
+                      onTap: () {
+                        // Get.to(() => const CourseCompletion());
+                        widget.startLearning(StudyType.COURSE_COMPLETION);
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  LearnCard(
-                    title: 'Mastery Improvement',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    value: 0,
-                    icon: 'assets/images/learn_mode2/target.png',
-                    onTap: () {
-                      // Get.to(() => const MasteryImprovementRules());
-                      widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
-                    },
+                  FadeInDown(
+                    duration: Duration(milliseconds: 600),
+                    child: LearnCard(
+                      title: 'Mastery Improvement',
+                      desc: 'Do a quick revision for an upcoming exam',
+                      value: 0,
+                      icon: 'assets/images/learn_mode2/target.png',
+                      onTap: () {
+                        // Get.to(() => const MasteryImprovementRules());
+                        widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
+                      },
+                    ),
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  LearnCard(
-                    title: 'Speed Enhancement',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    isLevel: true,
-                    value:welcome.currentSpeedStudyProgress != null
-                        ? welcome.currentSpeedStudyProgress!.level!.toDouble()
-                        : speedProgressLevel.toDouble(),
-                    icon: 'assets/images/learn_mode2/speedometer.png',
-                    onTap: () {
-                      // Get.to(() => const SpeedCompletion());
-                      widget.startLearning(StudyType.SPEED_ENHANCEMENT);
-                    },
+                  FadeInUp(
+                    duration: Duration(milliseconds: 600),
+                    child: LearnCard(
+                      title: 'Speed Enhancement',
+                      desc: 'Do a quick revision for an upcoming exam',
+                      isLevel: true,
+                      value:welcome.currentSpeedStudyProgress != null
+                          ? welcome.currentSpeedStudyProgress!.level!.toDouble()
+                          : speedProgressLevel.toDouble(),
+                      icon: 'assets/images/learn_mode2/speedometer.png',
+                      onTap: () {
+                        // Get.to(() => const SpeedCompletion());
+                        widget.startLearning(StudyType.SPEED_ENHANCEMENT);
+                      },
+                    ),
                   )
                 ],
               );

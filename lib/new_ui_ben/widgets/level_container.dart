@@ -1,7 +1,8 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:slider_button/slider_button.dart';
-
+import 'package:animate_do/animate_do.dart';
 
 class LevelContainer extends StatelessWidget {
   final String level;
@@ -50,33 +51,59 @@ class LevelContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              level,
-              style: const TextStyle(
-                  fontFamily: 'Alba', fontSize: 80, color: Colors.white),
+            FadeInLeft(
+              duration: Duration(milliseconds: 1000),
+              child: Text(
+                level,
+                style: const TextStyle(
+                    fontFamily: 'Alba', fontSize: 80, color: Colors.white),
+              ),
             ),
-            Text(
-              label,
-              style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 22,
-                  fontFamily: 'Poppins',
-                  fontStyle: FontStyle.italic),
+            FadeInRight(
+              duration: Duration(milliseconds: 1000),
+              child: Text(
+                label,
+                style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 18,
+                    fontFamily: 'Poppins',
+                    fontStyle: FontStyle.italic),
+              ),
             ),
             const SizedBox(
               height: 20,
             ),
-            Image.asset(image),
+            BounceInUp(child: Image.asset(image)),
             const SizedBox(
               height: 20,
             ),
-            Text(
-              time,
-              style: const TextStyle(
-                  fontFamily: 'Helvetica', color: Colors.black26, fontSize: 25),
+            AnimatedTextKit(
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  time,
+                  textStyle: const TextStyle(
+                    fontFamily: 'Helvetica',
+                    color: Colors.black26,
+                    fontSize: 25),
+                  speed: const Duration(milliseconds: 100),
+                ),
+              ],
+              totalRepeatCount: 1,
+              pause: const Duration(milliseconds: 10),
+              displayFullTextOnTap: true,
+              stopPauseOnTap: true,
             ),
+            // Animated(
+            //   child: Text(
+            //     time,
+            //     style: const TextStyle(
+            //         fontFamily: 'Helvetica',
+            //         color: Colors.black26,
+            //         fontSize: 25),
+            //   ),
+            // ),
             const SizedBox(
-              height: 40,
+              height: 48,
             ),
             SliderButton(
               action: onSwipe,

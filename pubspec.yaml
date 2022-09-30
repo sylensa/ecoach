@@ -119,6 +119,9 @@ dependencies:
    sleek_circular_slider: ^2.0.1
    simple_circular_progress_bar: ^1.0.2
    flutter_glow: ^0.2.0
+   animate_do: ^2.1.0
+   animated_text_kit: ^4.2.2
+   countup: ^0.1.4
 
 flutter_icons:
    image_path: "assets/images/adeo_app_icon.png"
@@ -187,6 +190,10 @@ flutter:
       - family: "Cocon"
         fonts:
            - asset: assets/fonts/COCON-BOLD-FONT.OTF
+      - family: "Alba"
+        fonts:
+            - asset: assets/fonts/ALBA.TTF
+
       #      - asset: assets/fonts/COCON-REGULARTR.TTF
       # - family: "Helvetica"
       #   fonts:

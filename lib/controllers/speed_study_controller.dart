@@ -34,6 +34,9 @@ class SpeedStudyProgressController {
     if (nextLevel < 1) {
       nextLevel = 1;
     }
+    if(nextLevel == 6){
+      return 6;
+    }
 
     // update level of current course speed
     speed.level = nextLevel;

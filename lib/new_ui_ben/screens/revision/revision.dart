@@ -1,3 +1,4 @@
+import 'package:countup/countup.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,8 @@ class Revision extends StatelessWidget {
   final List<Topic>? topics;
   final Function onTap;
   final StudyProgress? progress;
-  const Revision({ this.progress, required this.onTap, this.topics, Key? key}) : super(key: key);
+  const Revision({this.progress, required this.onTap, this.topics, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,9 @@ class Revision extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() =>  ChoseRevisionMode(continueOngoing: onTap,));
+          Get.to(() => ChoseRevisionMode(
+                continueOngoing: onTap,
+              ));
           // onTap();
         },
         child: Container(
@@ -62,16 +66,22 @@ class Revision extends StatelessWidget {
               Stack(
                 alignment: AlignmentDirectional.bottomCenter,
                 children: [
-                   Consumer<WelcomeScreenProvider>(
-                     builder: (_, welcome, __) => Text(
-                      '${ welcome.totalTopics - (welcome.currentRevisionStudyProgress!.level! -1)}',
+                  Consumer<WelcomeScreenProvider>(
+                    builder: (_, welcome, __) => Countup(
+                      duration: Duration(milliseconds: 700),
+                      begin: 0,
+                      end: welcome.currentRevisionStudyProgress == null
+                          ? 0
+                          : welcome.totalTopics -
+                              (welcome.currentRevisionStudyProgress!.level! -
+                                  1),
                       style: TextStyle(
                         fontFamily: 'Cocon',
                         fontSize: 95,
                         color: Color(0xFF00C9B9),
                       ),
-                                     ),
-                   ),
+                    ),
+                  ),
                   Image.asset('assets/images/learn_mode2/shadow.png')
                 ],
               ),

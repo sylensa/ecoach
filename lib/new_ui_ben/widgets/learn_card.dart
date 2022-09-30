@@ -1,6 +1,7 @@
 
 import 'package:ecoach/new_ui_ben/widgets/progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
 
 class LearnCard extends StatelessWidget {
   final String title;
@@ -47,12 +48,15 @@ class LearnCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                          fontSize: 20,
+                      FadeIn(
+                        duration: Duration(seconds: 2),
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                       Text(
@@ -66,7 +70,7 @@ class LearnCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Image.asset(icon)
+                Bounce(child: Image.asset(icon))
               ],
             ),
             const SizedBox(

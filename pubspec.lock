@@ -8,6 +8,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  animate_do:
+    dependency: "direct main"
+    description:
+      name: animate_do
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
+  animated_text_kit:
+    dependency: "direct main"
+    description:
+      name: animated_text_kit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.2"
   another_audio_recorder:
     dependency: "direct main"
     description:
@@ -176,6 +190,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.15"
+  countup:
+    dependency: "direct main"
+    description:
+      name: countup
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   cross_file:
     dependency: transitive
     description:
