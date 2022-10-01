@@ -77,10 +77,13 @@ class MarathonController {
 
   pauseTimer() {
     timerController!.pause();
+    int time = DateTime.now().difference(questionTimer).inSeconds;
+    questions[currentQuestion].addTime(time);
   }
 
   resumeTimer() {
     timerController!.start();
+    questionTimer = DateTime.now();
   }
 
   nextQuestion() {
@@ -284,7 +287,8 @@ class MarathonController {
     }
 
     mp.selectedAnswerId = question.selectedAnswer!.id;
-    mp.time = DateTime.now().difference(questionTimer).inSeconds;
+    int time = DateTime.now().difference(questionTimer).inSeconds;
+    mp.addTime(time);
     print("time=${mp.time}");
     print(mp.toJson());
     if (question.isCorrect) {

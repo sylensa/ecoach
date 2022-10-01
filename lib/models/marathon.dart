@@ -130,6 +130,8 @@ class MarathonProgress {
   int? topicId;
   String? topicName;
   int? time;
+  List<int> questionTimes = [];
+
   String? status;
   Question? question;
 
@@ -155,6 +157,23 @@ class MarathonProgress {
     if (question == null) return null;
 
     return question!.selectedAnswer;
+  }
+
+  int get times {
+    int total = 0;
+    for (int i = 0; i < questionTimes.length; i++) {
+      total += questionTimes[i];
+    }
+    return total;
+  }
+
+  void set times(int t) {
+    time = t;
+  }
+
+  void addTime(int t) {
+    questionTimes.add(t);
+    time = times;
   }
 
   factory MarathonProgress.fromJson(Map<String, dynamic> json) =>
