@@ -31,6 +31,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
   bool progressCodeAll = true;
   bool showGraph = false;
   List<TopicStat> report = [] ;
+  List listReportData = [true];
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
     for (var i = 0; i < listLength; i++) {
@@ -119,14 +120,14 @@ class _GroupPerformanceState extends State<GroupPerformance> {
          Expanded(
            child: ListView.builder(
               padding: EdgeInsets.zero,
-                itemCount: 1,
+                itemCount: listReportData.length,
                itemBuilder: (BuildContext context, int index){
                 return    Column(
                   children: [
                     CarouselSlider.builder(
                         options:
                         CarouselOptions(
-                          height: showGraph ? 340 : 365,
+                          height:  !listReportData[index] ? 130 : showGraph ? 340 : 365,
                           autoPlay:
                           false,
                           enableInfiniteScroll:
@@ -230,7 +231,18 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                                   ],
                                                 ),
                                                 SizedBox(height: 5,),
-                                                Icon(Icons.keyboard_double_arrow_down),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    setState(() {
+                                                      if(listReportData[index]){
+                                                        listReportData[index] = false;
+                                                      }else{
+                                                        listReportData[index] = true;
+                                                      }
+                                                    });
+                                                  },
+                                                    child: Icon( listReportData[index] ? Icons.keyboard_double_arrow_down : Icons.keyboard_double_arrow_up),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -238,6 +250,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                       ),
 
                                       SizedBox(height: 20,),
+                                      if(listReportData[index])
                                       if(showGraph)
                                         PerformanceGraph(course:Course(id: report[indexReport].courseId) ,tabName: "all",rightWidgetState: "average",onChangeStatus: false,groupId: 8,)
                                       else
@@ -437,6 +450,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                   ),
                                 ),
                                 SizedBox(height: 10,),
+                                if(!listReportData[index])
                                 if(!showGraph)
                                 Expanded(
                                   child: ListView.builder(

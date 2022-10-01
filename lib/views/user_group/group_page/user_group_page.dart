@@ -47,6 +47,8 @@ class _UserGroupPageState extends State<UserGroupPage> {
       } else {
         showNoConnectionToast(context);
       }
+
+      print("myGroupList:${myGroupList.length}");
     // } catch (e) {
     //   print(e.toString());
     // }
@@ -90,6 +92,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
   @override
   void initState(){
     super.initState();
+    myGroupList.clear();
     getMyGroups();
     getGroupsByCategories(sortBy,orderBy);
   }

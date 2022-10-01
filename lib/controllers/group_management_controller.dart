@@ -614,10 +614,8 @@ class GroupManagementController{
       print("res groups joined : $js");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
         for(int i =0; i < js["data"]["data"].length; i++){
-          if(js["data"]["data"][i]["settings"] != null){
             GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
             groupListDetails.add(groupListData);
-          }
         }
         return groupListDetails;
       }else{
@@ -751,7 +749,7 @@ class GroupManagementController{
   Future<List<GroupNotificationData>>  getGroupNotifications() async {
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
-      var res = await doGet("${AppUrl.userGroupNotification}/notifications?group_id=$groupId",);
+      var res = await doGet("${AppUrl.userGroupNotification}/notifications?group_id=8",);
       print("res:$res");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
@@ -815,7 +813,7 @@ class GroupManagementController{
   Future<List<TopicStat>>  getGroupPerformance() async {
     List<TopicStat> listReport = [] ;
     // try{
-      var res = await doGet("${AppUrl.userGroup}/performance?group_id=$groupId",);
+      var res = await doGet("${AppUrl.userGroup}/performance?group_id=8",);
       print("performance:${res["data"].length}");
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
           for(int i =0; i < res["data"].length; i++){
@@ -841,7 +839,7 @@ class GroupManagementController{
     getGroupTestTaken() async {
     List<TestTaken> listTestTaken = [] ;
     // try{
-    var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=$groupId",);
+    var res = await doGet("${AppUrl.userGroup}/tests/taken?group_id=8",);
     print("performance:${res["data"].length}");
     if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
       for(int i =0; i < res["data"]["data"].length; i++){
@@ -858,6 +856,21 @@ class GroupManagementController{
     // }catch(e){
     //   print(e.toString());
     // }
+  }
+    getUserGroupTestTaken({int? testId}) async {
+    try{
+    var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=$groupId&test_id=$testId",);
+    print("performance:${res["data"].length}");
+    if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+      return true;
+    }else{
+      toastMessage("${res["message"]}");
+      return false;
+    }
+    }catch(e){
+      print(e.toString());
+      return false;
+    }
   }
 
 
