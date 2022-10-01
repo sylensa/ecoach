@@ -44,6 +44,9 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     RevisionStudyProgress? revisionStudyProgress =
         await StudyDB().getCurrentRevisionProgressByCourse(widget.course.id!);
 
+    print(widget.course.id);
+    print("revision from database: $revisionStudyProgress");
+
     if (revisionStudyProgress != null) {
       print("course progress: ${revisionStudyProgress.toMap()}");
       setState(() {
@@ -59,9 +62,10 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     Provider.of<WelcomeScreenProvider>(context, listen: false)
         .setCurrentRevisionProgressLevel(revisionLevel);
   }
+
   getCompletionProgress() async {
-    CourseCompletionStudyProgress? revisionStudyProgress =
-        await StudyDB().getCurrentCourseCompletionProgressByCourse(widget.course.id!);
+    CourseCompletionStudyProgress? revisionStudyProgress = await StudyDB()
+        .getCurrentCourseCompletionProgressByCourse(widget.course.id!);
 
     if (revisionStudyProgress != null) {
       print("course progress: ${revisionStudyProgress.toMap()}");
@@ -78,6 +82,7 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     // Provider.of<WelcomeScreenProvider>(context, listen: false)
     //     .setCurrentRevisionProgressLevel(revisionLevel);
   }
+
   getSpeedProgress() async {
     SpeedStudyProgress? revisionStudyProgress =
         await StudyDB().getCurrentSpeedProgressLevelByCourse(widget.course.id!);
@@ -104,6 +109,7 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
     getStudyProgress();
     getCompletionProgress();
     getSpeedProgress();
+    print("revision: $revisionLevel");
     print("this is the course ${widget.course.toJson()}");
   }
 
@@ -129,6 +135,8 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
         child: SingleChildScrollView(
           child: Consumer<WelcomeScreenProvider>(
             builder: (_, welcome, __) {
+              print(
+                  'revision status:  ${welcome.currentRevisionStudyProgress != null ? (((welcome.currentRevisionStudyProgress!.level! - 1)) / welcome.totalTopics) * 100 : (((revisionLevel - 1)) / welcome.totalTopics) * 100}');
               // welcome.setRevisionRemaining();
               // welcome.setCCRemaining();
               // Provider.of<WelcomeScreenProvider>(context, listen: false).setRevisionRemaining();
@@ -148,12 +156,16 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                     child: LearnCard(
                       title: 'Revision',
                       desc: 'Do a quick revision for an upcoming exam',
-                      value: welcome.currentRevisionStudyProgress != null
-                          ? (((welcome.currentRevisionStudyProgress!.level! -
-                                      1)) /
-                                  welcome.totalTopics) *
-                              100
-                          : (((revisionLevel - 1)) / welcome.totalTopics) * 100,
+                      value: welcome.totalTopics != 0
+                          ? welcome.currentRevisionStudyProgress != null
+                              ? (((welcome.currentRevisionStudyProgress!
+                                              .level! -
+                                          1)) /
+                                      welcome.totalTopics) *
+                                  100
+                              : (((revisionLevel - 1)) / welcome.totalTopics) *
+                                  100
+                          : 0,
                       icon: 'assets/images/learn_mode2/stopwatch.png',
                       onTap: () async {
                         widget.startLearning(StudyType.REVISION);
@@ -168,14 +180,18 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                     child: LearnCard(
                       title: 'Course Completion',
                       desc: 'Do a quick revision for an upcoming exam',
-                      value: welcome.currentCourseCompletion != null
-                          ? (((welcome.currentCourseCompletion!.level! - 1)) /
-                                  welcome.totalTopics) *
-                              100
-                          : (((courseCompletionLevel - 1)) / welcome.totalTopics) * 100,
+                      value: welcome.totalTopics != 0
+                          ? welcome.currentCourseCompletion != null
+                              ? (((welcome.currentCourseCompletion!.level! -
+                                          1)) /
+                                      welcome.totalTopics) *
+                                  100
+                              : (((courseCompletionLevel - 1)) /
+                                      welcome.totalTopics) *
+                                  100
+                          : 0,
                       icon: 'assets/images/learn_mode2/books.png',
                       onTap: () {
-                        // Get.to(() => const CourseCompletion());
                         widget.startLearning(StudyType.COURSE_COMPLETION);
                       },
                     ),
@@ -205,9 +221,12 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                       title: 'Speed Enhancement',
                       desc: 'Do a quick revision for an upcoming exam',
                       isLevel: true,
-                      value:welcome.currentSpeedStudyProgress != null
-                          ? welcome.currentSpeedStudyProgress!.level!.toDouble()
-                          : speedProgressLevel.toDouble(),
+                      value: welcome.totalTopics == 0
+                          ? 0
+                          : welcome.currentSpeedStudyProgress != null
+                              ? welcome.currentSpeedStudyProgress!.level!
+                                  .toDouble()
+                              : speedProgressLevel.toDouble(),
                       icon: 'assets/images/learn_mode2/speedometer.png',
                       onTap: () {
                         // Get.to(() => const SpeedCompletion());
