@@ -9,8 +9,7 @@ import 'ongoing_revision.dart';
 
 class ChoseRevisionMode extends StatelessWidget {
 
-  final Function continueOngoing;
-  ChoseRevisionMode({required this.continueOngoing});
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,7 @@ class ChoseRevisionMode extends StatelessWidget {
                         100,
                     icon: 'assets/images/learn_mode2/hourglass.png',
                     onTap: () {
-                      continueOngoing();
+                      RevisionProgressController().getRevisionQuestion();
                     },
                   ),
                 ),

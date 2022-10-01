@@ -6,6 +6,7 @@ import 'package:ecoach/flavor_settings.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/new_ui_ben/providers/revision_attempts_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
@@ -149,6 +150,9 @@ class _MyAppState extends State<MyApp> {
                   ),
                   ChangeNotifierProvider<WelcomeScreenProvider>(
                     create: (context) => WelcomeScreenProvider(),
+                  ),
+                  ChangeNotifierProvider<RevisionAttemptProvider>(
+                    create: (context) => RevisionAttemptProvider(),
                   )
                 ],
                 child: GetMaterialApp(

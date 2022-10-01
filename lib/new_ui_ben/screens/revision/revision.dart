@@ -33,9 +33,7 @@ class Revision extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          Get.to(() => ChoseRevisionMode(
-                continueOngoing: onTap,
-              ));
+          Get.to(() => ChoseRevisionMode());
           // onTap();
         },
         child: Container(

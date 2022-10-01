@@ -48,3 +48,11 @@ class RevisionProgressAttempt {
 
 
 }
+
+class RevisionAttemptSummery{
+  final String topicName;
+  final int attempts;
+  final double score;
+
+  RevisionAttemptSummery({required this.topicName, required this.attempts, required this.score});
+}

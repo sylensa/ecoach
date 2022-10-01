@@ -51,11 +51,6 @@ class LearnImageScreens extends StatelessWidget {
                     revisionStudyProgress.courseId!,
                     revisionStudyProgress.level!);
 
-                    print("provider data revision progress ${revisionStudyProgress.toMap()}");
-                    print("provider data study type ${revisionStudyProgress.toMap()}");
-
-                  print("topic at this level: ${topic!.toJson()}");
-
                 if (topic != null) {
                   List<Question> questions =
                       await QuestionDB().getTopicQuestions([topic.id!], 10);

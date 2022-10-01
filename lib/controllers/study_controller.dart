@@ -193,31 +193,31 @@ abstract class StudyController {
             .currentStudyType;
     print("current study type $studyType");
 
-    if (studyType == StudyType.REVISION) {
-      RevisionStudyProgress? revision =
-          await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
+    // if (studyType == StudyType.REVISION) {
+    //   RevisionStudyProgress? revision =
+    //       await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
 
-      if (revision == null) {
-        RevisionStudyProgress newRevision = RevisionStudyProgress(
-            studyId: progress.studyId,
-            level: 1,
-            topicId: progress.topicId,
-            courseId: course.id,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now());
+    //   if (revision == null) {
+    //     RevisionStudyProgress newRevision = RevisionStudyProgress(
+    //         studyId: progress.studyId,
+    //         level: 1,
+    //         topicId: progress.topicId,
+    //         courseId: course.id,
+    //         createdAt: DateTime.now(),
+    //         updatedAt: DateTime.now());
 
-        StudyDB().insertRevisionProgress(newRevision);
+    //     StudyDB().insertRevisionProgress(newRevision);
 
-        print("new revision: ${newRevision.toMap()}");
-      } else {
-        revision.level = revision.level! + 1;
-        revision.updatedAt = DateTime.now();
-        print("revision update => ${revision.toMap()}");
-        await StudyDB().updateRevisionProgress(revision);
-        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
-            .setCurrentRevisionStudyProgress(revision);
-      }
-    } 
+    //     print("new revision: ${newRevision.toMap()}");
+    //   } else {
+    //     revision.level = revision.level! + 1;
+    //     revision.updatedAt = DateTime.now();
+    //     print("revision update => ${revision.toMap()}");
+    //     await StudyDB().updateRevisionProgress(revision);
+    //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+    //         .setCurrentRevisionStudyProgress(revision);
+    //   }
+    // } 
     // else if (studyType == StudyType.SPEED_ENHANCEMENT) {
     //   SpeedStudyProgress? revision =
     //       await StudyDB().getCurrentSpeedProgressLevelByCourse(course.id!);

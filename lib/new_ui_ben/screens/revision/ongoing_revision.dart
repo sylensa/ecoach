@@ -104,7 +104,7 @@ class OngoingRevision extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Get.to(() =>  SuccessfulRevision());
+                      // Get.to(() =>  SuccessfulRevision());
                     },
                     child: const Text(
                       'Take Test',

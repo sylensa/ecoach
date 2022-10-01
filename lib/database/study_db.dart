@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/course_completion_study_progress.dart';
+import '../models/revision_progress_attempts.dart';
 import '../models/revision_study_progress.dart';
 import '../models/speed_enhancement_progress_model.dart';
 
@@ -244,6 +245,7 @@ class StudyDB {
         result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
     return progress;
   }
+
   // speed progress level db functions
   Future<void> insertSpeedProgressLevel(SpeedStudyProgress revision) async {
     final db = await DBProvider.database;
@@ -334,8 +336,8 @@ class StudyDB {
     return progress;
   }
 
-   Future<CourseCompletionStudyProgress?> getCurrentCourseCompletionProgressByCourse(
-      int courseId) async {
+  Future<CourseCompletionStudyProgress?>
+      getCurrentCourseCompletionProgressByCourse(int courseId) async {
     final Database? db = await DBProvider.database;
 
     var result = await db!.query('course_completion_study_progress',
@@ -344,8 +346,35 @@ class StudyDB {
         whereArgs: [courseId],
         limit: 1);
 
-    CourseCompletionStudyProgress? progress =
-        result.isNotEmpty ? CourseCompletionStudyProgress.fromMap(result.first) : null;
+    CourseCompletionStudyProgress? progress = result.isNotEmpty
+        ? CourseCompletionStudyProgress.fromMap(result.first)
+        : null;
     return progress;
+  }
+
+  // insert revision attempt
+  Future<void> insertRevisionAttempt(RevisionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("revision_progress_attempts", revision.toMap());
+    });
+  }
+
+  Future<List<RevisionProgressAttempt>> getRevisionAttemptByTopicAndProgress(
+      RevisionStudyProgress progress) async {
+    final db = await DBProvider.database;
+
+    List<RevisionProgressAttempt> attempts = [];
+
+   List progressAttempts = await db!.query("revision_progress_attempts",
+        where: 'revision_progress_id = ? and topic_id = ?',
+        whereArgs: [progress.id, progress.topicId]);
+
+    for(var progress in progressAttempts){
+      RevisionProgressAttempt attempt = RevisionProgressAttempt.fromMap(progress);
+      attempts.add(attempt);
+    }
+
+    return attempts;
   }
 }

@@ -9,7 +9,9 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/new_ui_ben/providers/revision_attempts_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_ui_ben/screens/revision/successful_revision.dart';
 import 'package:ecoach/views/learn/learn_image_screens.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
@@ -65,6 +67,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   int wrong = 0;
   int totalQuestionsAnswered = 0;
   double avgScore = 0.0;
+  late DateTime revisionStartTime;
 
   calAvgScore() {
     double totalAverage = 0.0;
@@ -79,11 +82,17 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     avgScore = double.parse(totalAverage.toInt().toString());
   }
 
+  setRevisionTime() {
+    Provider.of<RevisionAttemptProvider>(context, listen: false)
+        .setTime(DateTime.now());
+  }
+
   @override
   void initState() {
     controller = widget.controller;
     pageController = PageController(initialPage: controller.currentQuestion);
-
+    revisionStartTime = DateTime.now();
+    setRevisionTime();
     controller.startTest();
     super.initState();
   }
@@ -165,12 +174,35 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     print("viewing results");
     print(testTakenSaved!.toJson().toString());
 
+    Provider.of<RevisionAttemptProvider>(context, listen: false)
+        .setQuestionCountAndAvgScore(
+            questionsLength: correctAnswered + wrong, score: avgScore);
     int pageIndex = 0;
     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
       int nextLevel = controller.nextLevel;
       Topic? topic =
           await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
       if (topic == null) pageIndex = 1;
+    }
+
+    if (StudyType.REVISION == controller.type) {
+      RevisionStudyProgress? revision = await StudyDB()
+          .getCurrentRevisionProgressByCourse(controller.course.id!);
+
+      if (revision != null) {
+        int revisionLevel =
+            avgScore >= 70 ? revision.level! + 1 : revision.level!;
+
+        revision.level = revisionLevel;
+        revision.updatedAt = DateTime.now();
+        print("revision update => ${revision.toMap()}");
+        await StudyDB().updateRevisionProgress(revision);
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+            .setCurrentRevisionStudyProgress(revision);
+      }
+
+      Get.off(() => SuccessfulRevision());
+      return;
     }
 
     Navigator.push<void>(
@@ -214,10 +246,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
               topic: controller.progress.name!,
               controller: controller as MasteryController);
         }
-        return LearnImageScreens(
-          studyController: controller,
-          pageIndex: pageIndex,
-        );
+        return SuccessfulRevision();
       }),
     ).then((value) {
       setState(() {
@@ -678,11 +707,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                               color: kAccessmentButtonColor,
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: InkWell(
-                                onTap: answeredWrong
-                                    ? wrongAnswerAction()
-                                    : nextButton,
+                                onTap: nextButton,
                                 child: Text(
-                                  answeredWrong ? getWrongAnswerText() : "Next",
+                                  "Next",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Color(0xFFFFFFFF),
