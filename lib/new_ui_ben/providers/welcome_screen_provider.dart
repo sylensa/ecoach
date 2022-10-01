@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
@@ -41,6 +42,13 @@ class WelcomeScreenProvider with ChangeNotifier {
   int currentRevisionProgressLevel = 1;
 
   User? currentUser;
+
+  StudyController? currentStudyController;
+
+  setCurrentStudyController(StudyController controller){
+    currentStudyController = controller;
+    notifyListeners();
+  }
 
   setCurrentUser(User user) {
     currentUser = user;

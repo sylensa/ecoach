@@ -44,7 +44,9 @@ class SuccessfulRevision extends StatelessWidget {
               child: TextButton(
                 onPressed: () {
                   // Get.to(() => ChoseRevisionMode());
-                  RevisionProgressController().getRevisionQuestion();
+                  attempt.avgScore >= 70
+                      ? RevisionProgressController().getRevisionQuestion()
+                      : RevisionProgressController().openStudyView();
                 },
                 child: Text(
                   attempt.avgScore >= 70 ? 'Continue' : "revise",

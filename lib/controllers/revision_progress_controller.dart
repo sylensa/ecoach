@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
@@ -14,6 +15,7 @@ import '../models/topic.dart';
 import '../models/user.dart';
 import '../views/learn/learn_revision.dart';
 import '../views/learn/learning_widget.dart';
+import '../views/study/study_notes_view.dart';
 
 class RevisionProgressController {
   final welcomeProvider =
@@ -85,7 +87,7 @@ class RevisionProgressController {
     int currentRevisionLevel =
         welcomeProvider.currentRevisionStudyProgress!.level!;
 
-      Course course = welcomeProvider.currentCourse!;
+    Course course = welcomeProvider.currentCourse!;
 
     Topic? topic =
         await TopicDB().getLevelTopic(course.id!, currentRevisionLevel);
@@ -114,5 +116,25 @@ class RevisionProgressController {
         },
       ),
     );
+  }
+
+  openStudyView() async {
+    Course course =
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+            .currentCourse!;
+
+    RevisionStudyProgress? revisionStudyProgress =
+        await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
+
+    StudyController controller = welcomeProvider.currentStudyController!;
+
+    Topic? topic =
+        await TopicDB().getTopicById(revisionStudyProgress!.topicId!);
+
+    controller.saveTest(Get.context!, (test, success) async {
+      Navigator.push(Get.context!, MaterialPageRoute(builder: (context) {
+        return StudyNoteView(topic!, controller: controller);
+      }));
+    });
   }
 }

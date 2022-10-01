@@ -87,12 +87,18 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         .setTime(DateTime.now());
   }
 
+  setStudyController() {
+    Provider.of<WelcomeScreenProvider>(context, listen: false)
+        .setCurrentStudyController(controller);
+  }
+
   @override
   void initState() {
     controller = widget.controller;
     pageController = PageController(initialPage: controller.currentQuestion);
     revisionStartTime = DateTime.now();
     setRevisionTime();
+    setStudyController();
     controller.startTest();
     super.initState();
   }
