@@ -813,7 +813,7 @@ class GroupManagementController{
   Future<List<TopicStat>>  getGroupPerformance() async {
     List<TopicStat> listReport = [] ;
     // try{
-      var res = await doGet("${AppUrl.userGroup}/performance?group_id=8",);
+      var res = await doGet("${AppUrl.userGroup}/performance?group_id=$groupId",);
       print("performance:${res["data"].length}");
       if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
           for(int i =0; i < res["data"].length; i++){
@@ -839,7 +839,7 @@ class GroupManagementController{
     getGroupTestTaken() async {
     List<TestTaken> listTestTaken = [] ;
     // try{
-    var res = await doGet("${AppUrl.userGroup}/tests/taken?group_id=8",);
+    var res = await doGet("${AppUrl.userGroup}/tests/taken?group_id=$groupId",);
     print("performance:${res["data"].length}");
     if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
       for(int i =0; i < res["data"]["data"].length; i++){
