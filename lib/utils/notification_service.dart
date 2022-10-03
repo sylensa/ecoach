@@ -38,9 +38,9 @@ class NotificationService {
   }
 
   Future<dynamic> selectNotification(String? payload) async {
+    User? user = await UserPreferences().getUser();
     if (payload == "download") {
       // print("Notification printout $payload");
-      User? user = await UserPreferences().getUser();
       navigatorKey.currentState!.pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => MainHomePage(
@@ -49,7 +49,7 @@ class NotificationService {
                   )),
           (Route<dynamic> route) => false);
     }else{
-      User? user = await UserPreferences().getUser();
+      print("Notification printout $payload");
       navigatorKey.currentState!.push(
           MaterialPageRoute(
               builder: (context) => GroupNotificationActivity(user!,)

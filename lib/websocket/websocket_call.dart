@@ -38,14 +38,12 @@ class WebsocketCall {
         print(event);
         var pushObject = eventDataFromJson(event);
         print(pushObject.event);
-
         if (pushObject.event == CONNECTION_ESTABLISHED) {
           if (user != null) {
             subscribe(channel);
           }
         } else if (pushObject.channel == channel) {
           print("channel is good");
-
           listeners.forEach((listener) {
             listener.eventHandler(pushObject);
           });
@@ -53,10 +51,9 @@ class WebsocketCall {
           listeners.forEach((listener) {
             listener.eventHandler(pushObject);
           });
+        } else{
+          NotificationService().showNotification('Notification', 'Group Notifications', "group");
         }
-        // else{
-        //   NotificationService().showNotification('Notification', 'Group Notifications', "group");
-        // }
       }, onError: (error) {
         print("Websocket is on error");
         print(error);
