@@ -1,11 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
 
-import 'package:custom_timer/custom_timer.dart';
-import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
-import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/level.dart';
@@ -13,9 +8,6 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -47,11 +39,12 @@ class QuizView extends StatefulWidget {
 }
 
 class _QuizViewState extends State<QuizView> {
-
-  _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
+
   late final PageController pageController;
   int currentQuestion = 0;
   List<QuestionWidget> questionWidgets = [];
@@ -71,7 +64,12 @@ class _QuizViewState extends State<QuizView> {
   int finalQuestion = 0;
   late Color backgroundColor, backgroundColor2;
   late QuizController controller;
-  List<ListNames> listReportsTypes = [ListNames(name: "Select Error Type",id: "0"),ListNames(name: "Typographical Mistake",id: "1"),ListNames(name: "Wrong Answer",id: "2"),ListNames(name: "Problem With The Question",id: "3")];
+  List<ListNames> listReportsTypes = [
+    ListNames(name: "Select Error Type", id: "0"),
+    ListNames(name: "Typographical Mistake", id: "1"),
+    ListNames(name: "Wrong Answer", id: "2"),
+    ListNames(name: "Problem With The Question", id: "3")
+  ];
   ListNames? reportTypes;
   TextEditingController descriptionController = TextEditingController();
   final FocusNode descriptionNode = FocusNode();
@@ -401,12 +399,16 @@ class _QuizViewState extends State<QuizView> {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          if (currentQuestion > 0 && (!controller.speedTest || controller.speedTest && !enabled))
+                          if (currentQuestion > 0 &&
+                              (!controller.speedTest ||
+                                  controller.speedTest && !enabled))
                             Expanded(
                               flex: 2,
                               child: TextButton(
                                 onPressed: () {
-                                  pageController.previousPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
+                                  pageController.previousPage(
+                                      duration: Duration(milliseconds: 1),
+                                      curve: Curves.ease);
                                   setState(() {
                                     currentQuestion--;
                                     numberingController.scrollTo(
@@ -426,7 +428,11 @@ class _QuizViewState extends State<QuizView> {
                             ),
                           if (currentQuestion < controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
-                          if (currentQuestion < controller.questions.length - 1 && !(!enabled && controller.speedTest && currentQuestion == finalQuestion))
+                          if (currentQuestion <
+                                  controller.questions.length - 1 &&
+                              !(!enabled &&
+                                  controller.speedTest &&
+                                  currentQuestion == finalQuestion))
                             Expanded(
                               flex: 2,
                               child: TextButton(
@@ -440,9 +446,16 @@ class _QuizViewState extends State<QuizView> {
                                 ),
                               ),
                             ),
-                          if (!savedTest && currentQuestion == controller.questions.length - 1)
+                          if (!savedTest &&
+                              currentQuestion ==
+                                  controller.questions.length - 1)
                             VerticalDivider(width: 2, color: Colors.white),
-                          if (!savedTest && currentQuestion == controller.questions.length - 1 || (enabled && controller.speedTest && currentQuestion == finalQuestion))
+                          if (!savedTest &&
+                                  currentQuestion ==
+                                      controller.questions.length - 1 ||
+                              (enabled &&
+                                  controller.speedTest &&
+                                  currentQuestion == finalQuestion))
                             Expanded(
                               flex: 2,
                               child: TextButton(
@@ -488,11 +501,16 @@ class _QuizViewState extends State<QuizView> {
                 right: 0,
                 top: 130,
                 child: Container(
-                  child: IconButton(onPressed: ()async{
-                    timerController.pause();
-                   await reportModalBottomSheet(context,question: controller.questions[currentQuestion]);
-
-                  }, icon: Icon(Icons.more_horiz,color: Colors.white,)),
+                  child: IconButton(
+                      onPressed: () async {
+                        timerController.pause();
+                        await reportModalBottomSheet(context,
+                            question: controller.questions[currentQuestion]);
+                      },
+                      icon: Icon(
+                        Icons.more_horiz,
+                        color: Colors.white,
+                      )),
                 ),
               )
             ]),
@@ -502,73 +520,92 @@ class _QuizViewState extends State<QuizView> {
     );
   }
 
-  reportModalBottomSheet(context,{Question? question}) async{
+  reportModalBottomSheet(context, {Question? question}) async {
     double sheetHeight = 440.00;
     bool isSubmit = true;
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent ,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
+            builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
                   child: Column(
                     children: [
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(),
-
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               timerController.resume();
                             },
                             child: Container(
-                              padding: EdgeInsets.only(right: 20,),
-                              child: Icon(Icons.clear,color: Colors.black,),
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Container(
-                        child: Icon(Icons.warning,color: Colors.orange,size: 50,),
+                        child: Icon(
+                          Icons.warning,
+                          color: Colors.orange,
+                          size: 50,
+                        ),
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey[200]
-                        ),
+                            shape: BoxShape.circle, color: Colors.grey[200]),
                       ),
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Container(
-                        child: sText("Error Reporting",weight: FontWeight.bold,size: 20),
+                        child: sText("Error Reporting",
+                            weight: FontWeight.bold, size: 20),
                       ),
                       Expanded(
                         child: ListView(
                           children: [
-                            SizedBox(height: 40,),
+                            SizedBox(
+                              height: 40,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
                               child: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     border: Border.all(color: Colors.black),
-                                    borderRadius: BorderRadius.circular(10)
-                                ),
+                                    borderRadius: BorderRadius.circular(10)),
                                 padding: EdgeInsets.only(left: 12, right: 4),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<ListNames>(
-                                    value: reportTypes == null ? listReportsTypes[0] : reportTypes,
+                                    value: reportTypes == null
+                                        ? listReportsTypes[0]
+                                        : reportTypes,
                                     itemHeight: 48,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -580,35 +617,40 @@ class _QuizViewState extends State<QuizView> {
                                     //   });
                                     // },
 
-                                    onChanged: (ListNames? value){
-                                      stateSetter((){
+                                    onChanged: (ListNames? value) {
+                                      stateSetter(() {
                                         reportTypes = value;
                                         sheetHeight = 700;
-                                        FocusScope.of(context).requestFocus(descriptionNode);
+                                        FocusScope.of(context)
+                                            .requestFocus(descriptionNode);
                                       });
                                     },
-                                    items: listReportsTypes.map(
+                                    items: listReportsTypes
+                                        .map(
                                           (item) => DropdownMenuItem<ListNames>(
-                                        value: item,
-                                        child: Text(
-                                          item.name,
-                                          style: TextStyle(
-                                            color: kDefaultBlack,
-                                            fontSize: 16,
+                                            value: item,
+                                            child: Text(
+                                              item.name,
+                                              style: TextStyle(
+                                                color: kDefaultBlack,
+                                                fontSize: 16,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    )
+                                        )
                                         .toList(),
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 40,),
+                            SizedBox(
+                              height: 40,
+                            ),
                             Container(
-                              padding: EdgeInsets.only(left: 20,right: 20),
+                              padding: EdgeInsets.only(left: 20, right: 20),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: TextFormField(
@@ -621,13 +663,13 @@ class _QuizViewState extends State<QuizView> {
                                         }
                                         return null;
                                       },
-                                      onFieldSubmitted: (value){
-                                        stateSetter((){
+                                      onFieldSubmitted: (value) {
+                                        stateSetter(() {
                                           sheetHeight = 440;
                                         });
                                       },
-                                      onTap: (){
-                                        stateSetter((){
+                                      onTap: () {
+                                        stateSetter(() {
                                           sheetHeight = 700;
                                         });
                                       },
@@ -637,209 +679,249 @@ class _QuizViewState extends State<QuizView> {
                                         labelText: "Description",
                                         hintColor: Colors.black,
                                         fill: Colors.white,
-                                        padding: EdgeInsets.only(left: 10,right: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 10, right: 10),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(height: 40,),
-
-
-
+                            SizedBox(
+                              height: 40,
+                            ),
                           ],
                         ),
                       ),
                       GestureDetector(
-                        onTap: ()async{
+                        onTap: () async {
                           print("${reportTypes}");
-                          if(descriptionController.text.isNotEmpty){
-                            if( reportTypes != null){
-                              stateSetter((){
+                          if (descriptionController.text.isNotEmpty) {
+                            if (reportTypes != null) {
+                              stateSetter(() {
                                 isSubmit = false;
                               });
-                              try{
-                                FlagData flagData = FlagData(reason: descriptionController.text,type:reportTypes!.name,questionId:question!.id );
-                                var res = await QuizController(controller.user,controller.course,name: "").saveFlagQuestion(context, flagData,question.id!);
+                              try {
+                                FlagData flagData = FlagData(
+                                    reason: descriptionController.text,
+                                    type: reportTypes!.name,
+                                    questionId: question!.id);
+                                var res = await QuizController(
+                                        controller.user, controller.course,
+                                        name: "")
+                                    .saveFlagQuestion(
+                                        context, flagData, question.id!);
                                 print("final res:$res");
-                                if(res){
-                                  stateSetter((){
+                                if (res) {
+                                  stateSetter(() {
                                     descriptionController.clear();
                                   });
                                   Navigator.pop(context);
                                   successModalBottomSheet(context);
-                                }else{
+                                } else {
                                   Navigator.pop(context);
                                   failedModalBottomSheet(context);
                                   print("object res: $res");
                                 }
-                              }catch(e){
-                                stateSetter((){
+                              } catch (e) {
+                                stateSetter(() {
                                   isSubmit = true;
                                 });
                                 print("error: $e");
                               }
-                            }else{
+                            } else {
                               toastMessage("Select error type");
                             }
-                          }
-                          else{
+                          } else {
                             toastMessage("Description is required");
                           }
                         },
                         child: Container(
                           padding: appPadding(20),
                           width: appWidth(context),
-                          color: isSubmit ?  Colors.blue : Colors.grey,
+                          color: isSubmit ? Colors.blue : Colors.grey,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              sText("Submit",align: TextAlign.center,weight: FontWeight.bold,color: isSubmit ? Colors.white : Colors.black,size: 25),
-                              SizedBox(width: 10,),
+                              sText("Submit",
+                                  align: TextAlign.center,
+                                  weight: FontWeight.bold,
+                                  color: isSubmit ? Colors.white : Colors.black,
+                                  size: 25),
+                              SizedBox(
+                                width: 10,
+                              ),
                               isSubmit ? Container() : progress()
                             ],
                           ),
-
                         ),
                       )
                     ],
-                  )
-              );
+                  ));
             },
-
           );
-        }
-    );
+        });
   }
 
-  successModalBottomSheet(context,{Question? question}){
+  successModalBottomSheet(context, {Question? question}) {
     double sheetHeight = 350.00;
     bool isSubmit = true;
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent ,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
+            builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(),
-
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               timerController.resume();
                             },
                             child: Container(
-                              padding: EdgeInsets.only(right: 20,),
-                              child: Icon(Icons.clear,color: Colors.black,),
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: Colors.green,width: 15),
-                              shape: BoxShape.circle
-                          ),
-                          child: Icon(Icons.check,color: Colors.green,size: 100,)
+                              border:
+                                  Border.all(color: Colors.green, width: 15),
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.green,
+                            size: 100,
+                          )),
+                      SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(height: 20,),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                        child: sText("Error report successfully submitted",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        child: sText("Error report successfully submitted",
+                            weight: FontWeight.bold,
+                            size: 20,
+                            align: TextAlign.center),
                       )
                     ],
-                  )
-              );
+                  ));
             },
-
           );
-        }
-    );
+        });
   }
-  failedModalBottomSheet(context,{Question? question}){
+
+  failedModalBottomSheet(context, {Question? question}) {
     double sheetHeight = 330.00;
     bool isSubmit = true;
     showModalBottomSheet(
         context: context,
-        backgroundColor: Colors.transparent ,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         isDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return StatefulBuilder(
-            builder: (BuildContext context,StateSetter stateSetter){
+            builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
                   height: sheetHeight,
                   decoration: BoxDecoration(
-                      color: Colors.white ,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(30),topRight: Radius.circular(30),)
-                  ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(),
-
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                               timerController.resume();
                             },
                             child: Container(
-                              padding: EdgeInsets.only(right: 20,),
-                              child: Icon(Icons.clear,color: Colors.black,),
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 0,),
+                      SizedBox(
+                        height: 0,
+                      ),
                       Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: Colors.red,width: 15),
-                              shape: BoxShape.circle
-                          ),
-                          child: Icon(Icons.close,color: Colors.red,size: 100,)
+                              border: Border.all(color: Colors.red, width: 15),
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 100,
+                          )),
+                      SizedBox(
+                        height: 20,
                       ),
-                      SizedBox(height: 20,),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                        child: sText("Error report failed try again",weight: FontWeight.bold,size: 20,align: TextAlign.center),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        child: sText("Error report failed try again",
+                            weight: FontWeight.bold,
+                            size: 20,
+                            align: TextAlign.center),
                       )
                     ],
-                  )
-              );
+                  ));
             },
-
           );
-        }
-    );
+        });
   }
 
   getTimerWidget() {
@@ -1106,7 +1188,7 @@ class QuestionWidget extends StatefulWidget {
       this.position,
       this.enabled = true,
       this.diagnostic = false,
-        this.answerValue = 0,
+      this.answerValue = 0,
       this.theme = QuizTheme.GREEN,
       this.callback})
       : super(key: key);
@@ -1285,7 +1367,28 @@ class _QuestionWidgetState extends State<QuestionWidget> {
                 children: [
                   for (int i = 0; i < answers!.length; i++)
                     Stack(children: [
-                      SelectAnswerWidget(widget.user, answers![i].text!, widget.question.selectedAnswer == answers![i], normalSize: 15, selectedSize: widget.enabled ? 38 : 24, imposedSize: widget.enabled || (widget.enabled && selectedAnswer == null) || selectedAnswer != answers![i] && answers![i].value == 0 ? null : selectedAnswer == answers![i] && selectedAnswer!.value == 0 ? 24 : 38, imposedColor: widget.enabled || (widget.enabled && selectedAnswer == null) || selectedAnswer != answers![i] && answers![i].value == 0 ? null : selectedAnswer == answers![i] && selectedAnswer!.value == 0 ? Colors.red.shade400 : Colors.green.shade600, select: () {
+                      SelectAnswerWidget(widget.user, answers![i].text!,
+                          widget.question.selectedAnswer == answers![i],
+                          normalSize: 15,
+                          selectedSize: widget.enabled ? 38 : 24,
+                          imposedSize: widget.enabled ||
+                                  (widget.enabled && selectedAnswer == null) ||
+                                  selectedAnswer != answers![i] &&
+                                      answers![i].value == 0
+                              ? null
+                              : selectedAnswer == answers![i] &&
+                                      selectedAnswer!.value == 0
+                                  ? 24
+                                  : 38,
+                          imposedColor: widget.enabled ||
+                                  (widget.enabled && selectedAnswer == null) ||
+                                  selectedAnswer != answers![i] &&
+                                      answers![i].value == 0
+                              ? null
+                              : selectedAnswer == answers![i] &&
+                                      selectedAnswer!.value == 0
+                                  ? Colors.red.shade400
+                                  : Colors.green.shade600, select: () {
                         if (!widget.enabled) {
                           return;
                         }
@@ -1324,4 +1427,3 @@ class _QuestionWidgetState extends State<QuestionWidget> {
     return Positioned(child: Container());
   }
 }
-
