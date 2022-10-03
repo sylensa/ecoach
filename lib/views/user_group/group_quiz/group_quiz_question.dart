@@ -41,6 +41,7 @@ class GroupQuizQuestion extends StatefulWidget {
         required this.controller,
         this.theme = QuizTheme.GREEN,
         this.groupId = 0,
+        this.testId = 0,
         this.diagnostic = false})
       : super(key: key);
 
@@ -48,6 +49,7 @@ class GroupQuizQuestion extends StatefulWidget {
   bool diagnostic;
   QuizTheme theme;
   int groupId;
+  int testId;
 
   @override
   State<GroupQuizQuestion> createState() => _GroupQuizQuestionState();
@@ -246,7 +248,9 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
         });
         viewResults();
       }
-    },groupId: widget.groupId);
+    },groupId: widget.groupId,
+      testId: widget.testId
+    );
   }
 
   viewResults() {
