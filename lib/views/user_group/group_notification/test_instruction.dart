@@ -180,7 +180,7 @@ class _TestInstructionState extends State<TestInstruction> {
                     GestureDetector(
                       onTap: ()async{
                         showLoaderDialog(context);
-                       var res = await GroupManagementController().getUserGroupTestTaken(testId: int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
+                       var res = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).getUserGroupTestTaken(testId: int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
                         if(res){
                           Navigator.pop(context);
                           showDialogOk(context: context,message: "You have already taken this test");

@@ -749,7 +749,7 @@ class GroupManagementController{
   Future<List<GroupNotificationData>>  getGroupNotifications() async {
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
-      var res = await doGet("${AppUrl.userGroupNotification}/notifications?group_id=8",);
+      var res = await doGet("${AppUrl.userGroupNotification}/notifications?group_id=$groupId",);
       print("res:$res");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
@@ -860,16 +860,16 @@ class GroupManagementController{
     getUserGroupTestTaken({int? testId}) async {
     try{
     var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=$groupId&test_id=$testId",);
-    print("performance:${res["data"].length}");
-    if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
-      return true;
+    print("performance:${res["data"]}");
+    if (res["code"].toString() == "200" && res["data"] == null) {
+      return false;
     }else{
       toastMessage("${res["message"]}");
-      return false;
+      return true;
     }
     }catch(e){
       print(e.toString());
-      return false;
+      return true;
     }
   }
 
