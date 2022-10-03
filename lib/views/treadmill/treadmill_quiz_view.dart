@@ -297,7 +297,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     return WillPopScope(
       onWillPop: () async {
         // printtimerController.pause();
-        controller.pauseTimer();
+        setState(() {
+          controller.pauseTimer();
+        });
+
         Get.bottomSheet(quitWidget());
         return false;
       },
@@ -316,7 +319,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   children: [
                     IconButton(
                       onPressed: () {
-                        controller.pauseTimer();
+                        setState(() {
+                          controller.pauseTimer();
+                        });
+
                         Get.bottomSheet(quitWidget());
                         return;
                       },
