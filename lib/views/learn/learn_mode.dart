@@ -17,11 +17,11 @@ import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mastery_topic.dart';
 import 'package:ecoach/views/learn/learn_revision.dart';
-import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/speed_enhancement_progress_model.dart';
+import 'learn_speed_enhancement.dart';
 
 class LearnMode extends StatefulWidget {
   static const String routeName = '/learning/mode';
@@ -196,7 +196,7 @@ class _LearnModeState extends State<LearnMode> {
                   if (progress == null) {
                     return;
                   }
-                  view = SpeedCom(widget.user, widget.course, progress);
+                  view = LearnSpeed(widget.user, widget.course, progress);
                   break;
                 case StudyType.MASTERY_IMPROVEMENT:
                   StudyProgress? progress =

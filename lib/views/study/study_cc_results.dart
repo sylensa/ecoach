@@ -20,7 +20,6 @@ import 'package:provider/provider.dart';
 
 import '../../models/course_completion_study_progress.dart';
 import '../../new_ui_ben/providers/welcome_screen_provider.dart';
-import '../main_home.dart';
 
 class StudyCCResults extends StatefulWidget {
   const StudyCCResults({
@@ -190,15 +189,17 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                             await StudyDB().insertProgress(progress);
 
                             Course? course = Provider.of<WelcomeScreenProvider>(
-                              context, listen: false
-                            ).currentCourse;
+                                    context,
+                                    listen: false)
+                                .currentCourse;
 
-                            CourseCompletionStudyProgress? completionStudyProgress =
-                                await StudyDB()
+                            CourseCompletionStudyProgress?
+                                completionStudyProgress = await StudyDB()
                                     .getCurrentCourseCompletionProgressByCourse(
                                         course!.id!);
-                            
-                            CourseCompletionStudyController().updateInsertProgress(completionStudyProgress!);
+
+                            CourseCompletionStudyController()
+                                .updateInsertProgress(completionStudyProgress!);
 
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(builder: (context) {

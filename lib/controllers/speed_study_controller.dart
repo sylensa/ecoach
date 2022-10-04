@@ -24,8 +24,8 @@ class SpeedStudyProgressController {
   }
 
   updateCCLevel(bool moveUp) async {
-
-    WelcomeScreenProvider welcome = Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
+    WelcomeScreenProvider welcome =
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
 
     SpeedStudyProgress? speed = await StudyDB()
         .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!);
@@ -34,12 +34,26 @@ class SpeedStudyProgressController {
     if (nextLevel < 1) {
       nextLevel = 1;
     }
-    if(nextLevel == 6){
+    if (nextLevel == 6) {
       return 6;
     }
-
     // update level of current course speed
     speed.level = nextLevel;
+    speed.updatedAt = DateTime.now();
+    await StudyDB().updateSpeedProgressLevel(speed);
+
+    // update the provider
+    welcome.setCurrentSpeedProgress(speed);
+  }
+
+  restartCCLevel() async {
+    WelcomeScreenProvider welcome =
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
+
+    SpeedStudyProgress? speed = await StudyDB()
+        .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!);
+
+    speed!.level = 1;
     speed.updatedAt = DateTime.now();
     await StudyDB().updateSpeedProgressLevel(speed);
 

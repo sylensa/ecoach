@@ -1,5 +1,4 @@
 import 'package:ecoach/controllers/revision_progress_controller.dart';
-import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
@@ -15,7 +14,6 @@ import 'package:ecoach/new_ui_ben/screens/revision/successful_revision.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
-import 'package:ecoach/views/learn/learn_speed_enhancement_completion.dart';
 import 'package:ecoach/views/study/study_cc_results.dart';
 import 'package:ecoach/views/study/study_mastery_results.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
@@ -97,10 +95,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     setRevisionTime();
     setStudyController();
     controller.startTest();
+    print("Controller details: ${controller.type}");
     super.initState();
   }
 
   nextButton() {
+    print("Controller details: ${controller.type}");
     if (controller.currentQuestion == controller.questions.length - 1) {
       return;
     }
@@ -175,19 +175,22 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   progressCompleteView() async {
     print("viewing results");
+
     print(testTakenSaved!.toJson().toString());
 
     Provider.of<RevisionAttemptProvider>(context, listen: false)
         .setQuestionCountAndAvgScore(
             questionsLength: correctAnswered + wrong, score: avgScore);
 
-    int pageIndex = 0;
-    if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-      int nextLevel = controller.nextLevel;
-      Topic? topic =
-          await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
-      if (topic == null) pageIndex = 1;
-    }
+    // int pageIndex = 0;
+    // if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+    //   int nextLevel = controller.nextLevel;
+    //   Topic? topic =
+    //       await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
+    //   if (topic == null) pageIndex = 1;
+    // }
+
+    print("Controller details: ${controller.type}");
 
     if (StudyType.REVISION == controller.type) {
       RevisionStudyProgress? revision = await StudyDB()
@@ -211,56 +214,83 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       return;
     }
 
-    Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(builder: (BuildContext context) {
-        if (StudyType.COURSE_COMPLETION == controller.type)
-          return StudyCCResults(test: testTakenSaved!, controller: controller);
-        if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-          bool moveUp = controller.progress.section == null ||
-              controller.progress.section! <= 3;
+    if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+      // bool moveUp = controller.progress.section == null ||
+      //     controller.progress.section! <= 3;
 
-          // TODO: call function to upgrade level
+      // TODO: call function to upgrade level
 
-          if (moveUp) {
-            moveUp = controller.progress.passed!;
-            SpeedStudyProgressController().updateCCLevel(moveUp);
-          }
-          return LearnSpeedEnhancementCompletion(
-              controller: controller as SpeedController,
-              moveUp: moveUp,
-              level: {
-                'level':
-                    moveUp ? controller.nextLevel : controller.progress.level,
-                'duration': controller.resetDuration!.inSeconds,
-                'questions': 1
-              });
-        }
-        if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
-          int level = controller.progress.level!;
-          controller.updateProgressSection(2);
-          print("level $level");
-          if (level == 1) {
-            return StudyMasteryResults(
-              test: testTakenSaved!,
-              controller: controller as MasteryController,
-            );
-          }
+      // bool moveUp = true;
+      //
+      // if (moveUp) {
+      //   moveUp = controller.progress.passed!;
+      //   SpeedStudyProgressController().updateCCLevel(moveUp);
+      // }
+      // Get.to(
+      //   () => LearnSpeedEnhancementCompletion(
+      //     controller: controller as SpeedController,
+      //     moveUp: moveUp,
+      //     level: {
+      //       'level': moveUp ? controller.nextLevel : controller.progress.level,
+      //       'duration': controller.resetDuration!.inSeconds,
+      //       'questions': 1
+      //     },
+      //   ),
+      // );
 
-          return LearnMasteryFeedback(
-              passed: controller.progress.passed!,
-              topic: controller.progress.name!,
-              controller: controller as MasteryController);
-        }
-        return SuccessfulRevision();
-      }),
-    ).then((value) {
-      setState(() {
-        controller.currentQuestion = 0;
-        controller.reviewMode = true;
-        pageController.jumpToPage(controller.currentQuestion);
-      });
-    });
+      return;
+    }
+
+    // Navigator.push<void>(
+    //   context,
+    //   MaterialPageRoute<void>(builder: (BuildContext context) {
+    //     if (StudyType.COURSE_COMPLETION == controller.type)
+    //       return StudyCCResults(test: testTakenSaved!, controller: controller);
+    //     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+    //       bool moveUp = controller.progress.section == null ||
+    //           controller.progress.section! <= 3;
+    //
+    //       // TODO: call function to upgrade level
+    //
+    //       if (moveUp) {
+    //         moveUp = controller.progress.passed!;
+    //         SpeedStudyProgressController().updateCCLevel(moveUp);
+    //       }
+    //       return LearnSpeedEnhancementCompletion(
+    //           controller: controller as SpeedController,
+    //           moveUp: moveUp,
+    //           level: {
+    //             'level':
+    //                 moveUp ? controller.nextLevel : controller.progress.level,
+    //             'duration': controller.resetDuration!.inSeconds,
+    //             'questions': 1
+    //           });
+    //     }
+    //     if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
+    //       int level = controller.progress.level!;
+    //       controller.updateProgressSection(2);
+    //       print("level $level");
+    //       if (level == 1) {
+    //         return StudyMasteryResults(
+    //           test: testTakenSaved!,
+    //           controller: controller as MasteryController,
+    //         );
+    //       }
+    //
+    //       return LearnMasteryFeedback(
+    //           passed: controller.progress.passed!,
+    //           topic: controller.progress.name!,
+    //           controller: controller as MasteryController);
+    //     }
+    //     return SuccessfulRevision();
+    //   }),
+    // ).then((value) {
+    //   setState(() {
+    //     controller.currentQuestion = 0;
+    //     controller.reviewMode = true;
+    //     pageController.jumpToPage(controller.currentQuestion);
+    //   });
+    // });
   }
 
   viewResults() {
@@ -300,6 +330,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   @override
   Widget build(BuildContext context) {
+    print("progress type : ${controller.type}");
     return WillPopScope(
       onWillPop: () async {
         if (!controller.enabled && !showNext) {
@@ -951,6 +982,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.COURSE_COMPLETION:
         break;
       case StudyType.SPEED_ENHANCEMENT:
+        false;
         break;
       case StudyType.MASTERY_IMPROVEMENT:
         break;
@@ -1052,6 +1084,7 @@ class _PauseDialogState extends State<PauseDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // print("event type ${controller.}");
     return Scaffold(
       body: Center(
         child: Container(

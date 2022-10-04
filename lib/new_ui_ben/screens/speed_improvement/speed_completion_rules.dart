@@ -1,6 +1,4 @@
-import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/welcome_screen_provider.dart';
@@ -27,8 +25,8 @@ class SpeedCompletionRules extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          // letGo();
-          Get.to(() => ChooseSpeedMode());
+          letGo();
+          // Get.to(() => ChooseSpeedMode());
         },
         child: Container(
           color: const Color(0xFF00C9B9),

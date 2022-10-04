@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
+import '../../new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
 
 class LearnSpeed extends StatefulWidget {
   static const String routeName = '/learning/speed';
@@ -40,6 +42,15 @@ class _LearnSpeedState extends State<LearnSpeed> {
         items: [
           SpeedCompletionRules(
             letGo: () {
+              controller.nextPage();
+            },
+          ),
+          ChooseSpeedMode(
+            onGoing: () {
+              controller.nextPage();
+            },
+            newLearning: () {
+              SpeedStudyProgressController().restartCCLevel();
               controller.nextPage();
             },
           ),

@@ -1,29 +1,24 @@
 import 'dart:convert';
-import 'package:custom_timer/custom_timer.dart';
+
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
+import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/course_completion_study_progress.dart';
-import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
-import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
-import '../models/speed_enhancement_progress_model.dart';
+import '../views/learn/learn_speed_enhancement_completion.dart';
 
 abstract class StudyController {
   StudyController(this.user, this.course,
@@ -193,6 +188,27 @@ abstract class StudyController {
             .currentStudyType;
     print("current study type $studyType");
 
+    if (studyType == StudyType.SPEED_ENHANCEMENT) {
+      bool moveUp = true;
+
+      if (moveUp) {
+        moveUp = score > 70;
+        SpeedStudyProgressController().updateCCLevel(moveUp);
+      }
+      Get.off(
+        () => LearnSpeedEnhancementCompletion(
+          // controller: controller as SpeedController,
+          progress: progress,
+          moveUp: moveUp,
+          level: {
+            'level': 1,
+            'duration': resetDuration!.inSeconds,
+            'questions': 1
+          },
+        ),
+      );
+    }
+
     // if (studyType == StudyType.REVISION) {
     //   RevisionStudyProgress? revision =
     //       await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
@@ -217,7 +233,7 @@ abstract class StudyController {
     //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
     //         .setCurrentRevisionStudyProgress(revision);
     //   }
-    // } 
+    // }
     // else if (studyType == StudyType.SPEED_ENHANCEMENT) {
     //   SpeedStudyProgress? revision =
     //       await StudyDB().getCurrentSpeedProgressLevelByCourse(course.id!);

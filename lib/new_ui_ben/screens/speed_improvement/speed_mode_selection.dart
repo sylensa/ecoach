@@ -1,4 +1,3 @@
-import 'package:ecoach/controllers/revision_progress_controller.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
@@ -6,10 +5,12 @@ import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/learn_card.dart';
 
 class ChooseSpeedMode extends StatelessWidget {
+  final Function onGoing, newLearning;
+
+  ChooseSpeedMode({required this.onGoing, required this.newLearning});
+
   @override
   Widget build(BuildContext context) {
-    RevisionProgressController controller = RevisionProgressController();
-
     return Scaffold(
       backgroundColor: const Color(0xFF0367B4),
       appBar: AppBar(
@@ -46,11 +47,11 @@ class ChooseSpeedMode extends StatelessWidget {
                     title: 'Ongoing',
                     desc: 'Do a quick revision for an upcoming exam',
                     isLevel: true,
-                    value: (((welcome.currentSpeedStudyProgress!.level! - 1)) /
-                            welcome.totalTopics) *
-                        100,
+                    value: welcome.currentSpeedStudyProgress!.level!.toDouble(),
                     icon: 'assets/images/learn_mode2/hourglass.png',
-                    onTap: () async {},
+                    onTap: () async {
+                      onGoing();
+                    },
                   ),
                 ),
                 const SizedBox(
@@ -61,7 +62,9 @@ class ChooseSpeedMode extends StatelessWidget {
                   desc: 'Discard old revision and start a new one',
                   value: 0,
                   icon: 'assets/images/learn_mode2/stopwatch.png',
-                  onTap: () {},
+                  onTap: () {
+                    newLearning();
+                  },
                 ),
               ],
             ),

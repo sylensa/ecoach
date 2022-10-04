@@ -3,10 +3,9 @@ import 'package:ecoach/new_ui_ben/screens/course_completion/choose_cc_mode.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+
 import '../../utils/course_completion_utils.dart';
-import '../../utils/revision_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
-import '../revision/chose_revision_mode.dart';
 
 class CourseCompletion extends StatelessWidget {
   final Function proceed;
@@ -69,7 +68,7 @@ class CourseCompletion extends StatelessWidget {
                   alignment: AlignmentDirectional.bottomCenter,
                   children: [
                     Text(
-                      '${welcome.totalTopics - (welcome.currentCourseCompletion!.level! - 1)}',
+                      '${welcome.currentRevisionStudyProgress == null ? welcome.totalTopics.toDouble() : welcome.totalTopics - (welcome.currentCourseCompletion!.level! - 1)}',
                       style: TextStyle(
                         fontFamily: 'Cocon',
                         fontSize: 95,

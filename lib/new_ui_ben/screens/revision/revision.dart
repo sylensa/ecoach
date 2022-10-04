@@ -53,7 +53,7 @@ class Revision extends StatelessWidget {
           future: TopicDB().courseTopics(welcome.currentCourse!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator.adaptive();
+              return Center(child: CircularProgressIndicator.adaptive());
             }
             print("total course from database ${snapshot.data!.length}");
             return Container(
@@ -79,7 +79,7 @@ class Revision extends StatelessWidget {
                             duration: Duration(milliseconds: 700),
                             begin: 0,
                             end: welcome.currentRevisionStudyProgress == null
-                                ? 0
+                                ? welcome.totalTopics.toDouble()
                                 : welcome.totalTopics -
                                     (welcome.currentRevisionStudyProgress!
                                             .level! -
