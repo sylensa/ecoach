@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/chose_revision_mode.dart';
-import 'package:ecoach/new_ui_ben/screens/revision/revision_new_mission.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/revision_review.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/widget/score_header.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +44,7 @@ class SuccessfulRevision extends StatelessWidget {
                 onPressed: () {
                   // Get.to(() => ChoseRevisionMode());
                   attempt.avgScore >= 70
-                      ? RevisionProgressController().getRevisionQuestion()
+                      ? Get.to(() => ChoseRevisionMode())
                       : RevisionProgressController().openStudyView();
                 },
                 child: Text(

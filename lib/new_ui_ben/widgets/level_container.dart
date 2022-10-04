@@ -1,8 +1,8 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:slider_button/slider_button.dart';
-import 'package:animate_do/animate_do.dart';
 
 class LevelContainer extends StatelessWidget {
   final String level;
@@ -46,92 +46,94 @@ class LevelContainer extends StatelessWidget {
       border: 0,
       blur: 20,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FadeInLeft(
-              duration: Duration(milliseconds: 1000),
-              child: Text(
-                level,
-                style: const TextStyle(
-                    fontFamily: 'Alba', fontSize: 80, color: Colors.white),
-              ),
-            ),
-            FadeInRight(
-              duration: Duration(milliseconds: 1000),
-              child: Text(
-                label,
-                style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 18,
-                    fontFamily: 'Poppins',
-                    fontStyle: FontStyle.italic),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            BounceInUp(child: Image.asset(image)),
-            const SizedBox(
-              height: 20,
-            ),
-            AnimatedTextKit(
-              animatedTexts: [
-                TypewriterAnimatedText(
-                  time,
-                  textStyle: const TextStyle(
-                    fontFamily: 'Helvetica',
-                    color: Colors.black26,
-                    fontSize: 25),
-                  speed: const Duration(milliseconds: 100),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FadeInLeft(
+                duration: Duration(milliseconds: 1000),
+                child: Text(
+                  level,
+                  style: const TextStyle(
+                      fontFamily: 'Alba', fontSize: 80, color: Colors.white),
                 ),
-              ],
-              totalRepeatCount: 1,
-              pause: const Duration(milliseconds: 10),
-              displayFullTextOnTap: true,
-              stopPauseOnTap: true,
-            ),
-            // Animated(
-            //   child: Text(
-            //     time,
-            //     style: const TextStyle(
-            //         fontFamily: 'Helvetica',
-            //         color: Colors.black26,
-            //         fontSize: 25),
-            //   ),
-            // ),
-            const SizedBox(
-              height: 48,
-            ),
-            SliderButton(
-              action: onSwipe,
-              shimmer: true,
-              label: const Text(
-                'Swipe to start',
-                style: TextStyle(
-                    color: Color(0xFF023F6E),
-                    fontSize: 20,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500),
               ),
-              buttonColor: const Color(0xFF0367B4),
-              icon: Image.asset('assets/images/learn_mode2/arrows.png'),
-              backgroundColor: const Color.fromRGBO(232, 245, 255, 0.3),
-              width: double.infinity,
-              height: 60,
-              dismissible: true,
-              alignLabel: const Alignment(0, 0),
-              buttonSize: 50,
-              boxShadow: const BoxShadow(
-                color: Color.fromRGBO(56, 63, 131, 0.4),
-                blurRadius: 15,
-                spreadRadius: 1,
-                offset: Offset(2, 5),
+              FadeInRight(
+                duration: Duration(milliseconds: 1000),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 18,
+                      fontFamily: 'Poppins',
+                      fontStyle: FontStyle.italic),
+                ),
               ),
-            )
-          ],
+              const SizedBox(
+                height: 20,
+              ),
+              BounceInUp(child: Image.asset(image)),
+              const SizedBox(
+                height: 20,
+              ),
+              AnimatedTextKit(
+                animatedTexts: [
+                  TypewriterAnimatedText(
+                    time,
+                    textStyle: const TextStyle(
+                        fontFamily: 'Helvetica',
+                        color: Colors.black26,
+                        fontSize: 25),
+                    speed: const Duration(milliseconds: 100),
+                  ),
+                ],
+                totalRepeatCount: 1,
+                pause: const Duration(milliseconds: 10),
+                displayFullTextOnTap: true,
+                stopPauseOnTap: true,
+              ),
+              // Animated(
+              //   child: Text(
+              //     time,
+              //     style: const TextStyle(
+              //         fontFamily: 'Helvetica',
+              //         color: Colors.black26,
+              //         fontSize: 25),
+              //   ),
+              // ),
+              const SizedBox(
+                height: 30,
+              ),
+              SliderButton(
+                action: onSwipe,
+                shimmer: true,
+                label: const Text(
+                  'Swipe to start',
+                  style: TextStyle(
+                      color: Color(0xFF023F6E),
+                      fontSize: 20,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500),
+                ),
+                buttonColor: const Color(0xFF0367B4),
+                icon: Image.asset('assets/images/learn_mode2/arrows.png'),
+                backgroundColor: const Color.fromRGBO(232, 245, 255, 0.3),
+                width: double.infinity,
+                height: 60,
+                dismissible: true,
+                alignLabel: const Alignment(0, 0),
+                buttonSize: 50,
+                boxShadow: const BoxShadow(
+                  color: Color.fromRGBO(56, 63, 131, 0.4),
+                  blurRadius: 15,
+                  spreadRadius: 1,
+                  offset: Offset(2, 5),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

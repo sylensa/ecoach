@@ -1,7 +1,6 @@
 import 'package:ecoach/controllers/course_completion_controller.dart';
 import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/speed_study_controller.dart';
-import 'package:ecoach/controllers/study_cc_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -14,7 +13,6 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
-
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mastery_topic.dart';
@@ -182,8 +180,7 @@ class _LearnModeState extends State<LearnMode> {
                   StudyProgress? progress =
                       await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
 
-                  SpeedStudyProgress revisionStudyProgress =
-                      SpeedStudyProgress(
+                  SpeedStudyProgress revisionStudyProgress = SpeedStudyProgress(
                     courseId: widget.course.id,
                     topicId: progress!.topicId,
                     studyId: progress.studyId,
@@ -199,7 +196,7 @@ class _LearnModeState extends State<LearnMode> {
                   if (progress == null) {
                     return;
                   }
-                  view = LearnSpeed(widget.user, widget.course, progress);
+                  view = SpeedCom(widget.user, widget.course, progress);
                   break;
                 case StudyType.MASTERY_IMPROVEMENT:
                   StudyProgress? progress =

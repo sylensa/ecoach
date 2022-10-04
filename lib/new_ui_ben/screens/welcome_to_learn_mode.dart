@@ -207,7 +207,6 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                       value: 0,
                       icon: 'assets/images/learn_mode2/target.png',
                       onTap: () {
-                        // Get.to(() => const MasteryImprovementRules());
                         widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
                       },
                     ),

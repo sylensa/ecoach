@@ -1,13 +1,11 @@
 import 'package:ecoach/controllers/revision_progress_controller.dart';
-import 'package:ecoach/new_ui_ben/screens/revision/revision_review.dart';
 import "package:flutter/material.dart";
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/learn_card.dart';
 
-class ChoseRevisionMode extends StatelessWidget {
+class ChooseSpeedMode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     RevisionProgressController controller = RevisionProgressController();
@@ -43,19 +41,16 @@ class ChoseRevisionMode extends StatelessWidget {
                   height: 67,
                 ),
                 Visibility(
-                  visible: welcome.currentRevisionStudyProgress!.level != 1,
+                  visible: welcome.currentSpeedStudyProgress!.level != 0,
                   child: LearnCard(
                     title: 'Ongoing',
                     desc: 'Do a quick revision for an upcoming exam',
-                    value:
-                        (((welcome.currentRevisionStudyProgress!.level! - 1)) /
-                                welcome.totalTopics) *
-                            100,
+                    isLevel: true,
+                    value: (((welcome.currentSpeedStudyProgress!.level! - 1)) /
+                            welcome.totalTopics) *
+                        100,
                     icon: 'assets/images/learn_mode2/hourglass.png',
-                    onTap: () async {
-                      controller.getRevisionQuestion();
-                      // controller.recordAttempts();
-                    },
+                    onTap: () async {},
                   ),
                 ),
                 const SizedBox(
@@ -66,24 +61,7 @@ class ChoseRevisionMode extends StatelessWidget {
                   desc: 'Discard old revision and start a new one',
                   value: 0,
                   icon: 'assets/images/learn_mode2/stopwatch.png',
-                  onTap: () {
-                    controller.restartRevenue();
-                    // controller.recordAttempts();
-                  },
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                LearnCard(
-                  subTitle: 'view',
-                  secondarySubTitle: "10x",
-                  title: 'Completed',
-                  desc: 'View stats on completed revision rounds',
-                  value: 100,
-                  icon: 'assets/images/learn_mode2/completed.png',
-                  onTap: () {
-                    Get.to(() => RevisionReview());
-                  },
+                  onTap: () {},
                 ),
               ],
             ),

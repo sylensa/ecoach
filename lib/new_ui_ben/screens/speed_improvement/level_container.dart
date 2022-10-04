@@ -1,4 +1,5 @@
 import 'package:ecoach/database/study_db.dart';
+import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/level_start_screen.dart';
@@ -9,8 +10,10 @@ import 'package:provider/provider.dart';
 class SpeedImprovementLevelContainer extends StatefulWidget {
   // final SpeedEnhancementLevel enhancementLevel;
   final int level;
-  final Function proceed; 
-  const SpeedImprovementLevelContainer({required this.proceed, required this.level, Key? key}) : super(key: key);
+  final Function proceed;
+  const SpeedImprovementLevelContainer(
+      {required this.proceed, required this.level, Key? key})
+      : super(key: key);
 
   @override
   State<SpeedImprovementLevelContainer> createState() =>
@@ -24,20 +27,32 @@ class _SpeedImprovementLevelContainerState
     return Scaffold(
       body: Consumer<WelcomeScreenProvider>(
         builder: (_, welcome, __) {
-        //  WelcomeScreenProvider welcomeProvider = Provider.of(context, listen: false);
-         int progressLevel = welcome.currentSpeedStudyProgress!.level!;
-         SpeedEnhancementLevel level = speedEnhancementLevels[progressLevel - 1];
-         print("current speed level: ${level.level} progress level: $progressLevel");
-          return LevelStartScreen(
-            bgImage: level.backgroundImage,
-            levelImage: level.levelImage,
-            label: level.label,
-            level: level.level,
-            timer: level.timer,
-            onSwipe: (){
-              widget.proceed();
-            },
-          );
+          return FutureBuilder<SpeedStudyProgress?>(
+              future: StudyDB().getCurrentSpeedProgressLevelByCourse(
+                  welcome.currentCourse!.id!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+
+                if (snapshot.data == null) {
+                  return Center(child: Text("No Value Found"));
+                }
+
+                SpeedEnhancementLevel level =
+                    speedEnhancementLevels[snapshot.data!.level! - 1];
+
+                return LevelStartScreen(
+                  bgImage: level.backgroundImage,
+                  levelImage: level.levelImage,
+                  label: level.label,
+                  level: level.level,
+                  timer: level.timer,
+                  onSwipe: () {
+                    widget.proceed();
+                  },
+                );
+              });
         },
       ),
     );

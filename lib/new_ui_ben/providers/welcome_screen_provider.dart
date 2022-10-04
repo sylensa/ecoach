@@ -47,7 +47,7 @@ class WelcomeScreenProvider with ChangeNotifier {
 
   setCurrentStudyController(StudyController controller){
     currentStudyController = controller;
-    notifyListeners();
+    // notifyListeners();
   }
 
   setCurrentUser(User user) {

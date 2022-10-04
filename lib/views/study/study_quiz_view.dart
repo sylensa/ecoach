@@ -1,4 +1,4 @@
-import 'package:custom_timer/custom_timer.dart';
+import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
@@ -12,14 +12,12 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/new_ui_ben/providers/revision_attempts_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/successful_revision.dart';
-import 'package:ecoach/views/learn/learn_image_screens.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement_completion.dart';
 import 'package:ecoach/views/study/study_cc_results.dart';
 import 'package:ecoach/views/study/study_mastery_results.dart';
-import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
@@ -28,7 +26,6 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/study_db.dart';
@@ -183,6 +180,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     Provider.of<RevisionAttemptProvider>(context, listen: false)
         .setQuestionCountAndAvgScore(
             questionsLength: correctAnswered + wrong, score: avgScore);
+
     int pageIndex = 0;
     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
       int nextLevel = controller.nextLevel;
@@ -194,6 +192,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     if (StudyType.REVISION == controller.type) {
       RevisionStudyProgress? revision = await StudyDB()
           .getCurrentRevisionProgressByCourse(controller.course.id!);
+
+      RevisionProgressController().recordAttempts(correctAnswered.toDouble());
 
       if (revision != null) {
         int revisionLevel =
@@ -221,10 +221,10 @@ class _StudyQuizViewState extends State<StudyQuizView> {
               controller.progress.section! <= 3;
 
           // TODO: call function to upgrade level
-          SpeedStudyProgressController().updateCCLevel(moveUp);
 
           if (moveUp) {
             moveUp = controller.progress.passed!;
+            SpeedStudyProgressController().updateCCLevel(moveUp);
           }
           return LearnSpeedEnhancementCompletion(
               controller: controller as SpeedController,
@@ -617,8 +617,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 },
                                 child: Text(
                                   "Previous",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Color(0xFFA2A2A2),
+                                    color: Color(0xFFFFFFFF),
                                     fontSize: 21,
                                   ),
                                 ),

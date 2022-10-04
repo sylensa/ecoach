@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../widgets/rule_step.dart';
 import '../../widgets/steps_rules_container.dart';
-import 'speed_completion_rules.dart';
 
 class SpeedCompletion extends StatelessWidget {
   final Function start;
-  const SpeedCompletion({ required this.start, Key? key}) : super(key: key);
+  const SpeedCompletion({required this.start, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +31,7 @@ class SpeedCompletion extends StatelessWidget {
           height: 60,
           alignment: Alignment.center,
           child: const Text(
-            'Start Assesment',
+            'Start Assessment',
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
           ),

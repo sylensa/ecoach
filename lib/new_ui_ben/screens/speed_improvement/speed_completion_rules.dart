@@ -1,13 +1,11 @@
-import 'package:ecoach/new_ui_ben/screens/speed_improvement/level_two.dart';
+import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/welcome_screen_provider.dart';
-import '../../utils/revision_utils.dart';
 import '../../utils/speed_completion_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
-import '../level_start_screen.dart';
-import 'level_container.dart';
 
 class SpeedCompletionRules extends StatelessWidget {
   final Function letGo;
@@ -29,10 +27,8 @@ class SpeedCompletionRules extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          letGo();
-          // Get.to(
-          //   () => SpeedImprovementLevelContainer(),
-          // );
+          // letGo();
+          Get.to(() => ChooseSpeedMode());
         },
         child: Container(
           color: const Color(0xFF00C9B9),
@@ -46,7 +42,7 @@ class SpeedCompletionRules extends StatelessWidget {
         ),
       ),
       body: Consumer<WelcomeScreenProvider>(
-        builder: (context, welcome, child) =>  Container(
+        builder: (context, welcome, child) => Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           width: double.infinity,
           child: SingleChildScrollView(

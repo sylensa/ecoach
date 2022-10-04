@@ -2,7 +2,6 @@ import 'package:ecoach/database/database.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
-import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -246,6 +245,27 @@ class StudyDB {
     return progress;
   }
 
+  Future<List<RevisionStudyProgress?>> getRevisionProgressByCourse(
+      int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query(
+      'revision_study_progress',
+      orderBy: "created_at DESC",
+      where: "course_id = ?",
+      whereArgs: [courseId],
+    );
+
+    List<RevisionStudyProgress?> progressAttempts = [];
+
+    result.forEach((element) {
+      RevisionStudyProgress? progress = RevisionStudyProgress.fromMap(element);
+      progressAttempts.add(progress);
+    });
+
+    return progressAttempts;
+  }
+
   // speed progress level db functions
   Future<void> insertSpeedProgressLevel(SpeedStudyProgress revision) async {
     final db = await DBProvider.database;
@@ -366,15 +386,48 @@ class StudyDB {
 
     List<RevisionProgressAttempt> attempts = [];
 
-   List progressAttempts = await db!.query("revision_progress_attempts",
-        where: 'revision_progress_id = ? and topic_id = ?',
-        whereArgs: [progress.id, progress.topicId]);
+    List progressAttempts = await db!.query("revision_progress_attempts",
+        where: 'revision_progress_id = ?', whereArgs: [progress.id]);
 
-    for(var progress in progressAttempts){
-      RevisionProgressAttempt attempt = RevisionProgressAttempt.fromMap(progress);
+    for (var progress in progressAttempts) {
+      RevisionProgressAttempt attempt =
+          RevisionProgressAttempt.fromMap(progress);
       attempts.add(attempt);
     }
 
     return attempts;
+  }
+
+  Future<RevisionProgressAttempt> getSingleRevisionAttemptByProgress(
+      RevisionStudyProgress revision) async {
+    final db = await DBProvider.database;
+
+    final data = await db!.query(
+      "revision_progress_attempts",
+      where: "revision_progress_id = ?",
+      orderBy: "created_at DESC ",
+      whereArgs: [revision.id],
+      limit: 1,
+    );
+
+    return RevisionProgressAttempt.fromMap(data.first);
+  }
+
+  Future<void> updateRevisionAttempt(RevisionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+
+    db!.update("revision_progress_attempts", revision.toMap(),
+        where: 'id=?', whereArgs: [revision.id]);
+  }
+
+  Future<dynamic> getRevisionAttemptSumByProgress(
+      RevisionStudyProgress revision) async {
+    final db = await DBProvider.database;
+    final result = await db!.rawQuery(
+        "select SUM(score) from revision_progress_attempts where revision_progress_id=?",
+        [revision.id]);
+    // print("total score result: ${result[0]["SUM"]}");
+    final score = result[0]["SUM(score)"] ?? 0;
+    return score;
   }
 }

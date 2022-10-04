@@ -18,7 +18,7 @@ class LinearPercentIndicatorWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LinearPercentIndicator(
-      percent: percent,
+      percent: 0.3,
       lineHeight: 16.0,
       progressColor: progressColor,
       backgroundColor: backgroundColor,
