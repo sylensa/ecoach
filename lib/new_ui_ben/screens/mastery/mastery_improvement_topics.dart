@@ -32,7 +32,7 @@ class MasteryImprovementTopics extends StatelessWidget {
               const Text(
                 "Spot weaknesses and improve upon them",
                 style: TextStyle(
-                    fontSize: 20, color: Color.fromRGBO(0, 0, 0, 0.5)),
+                    fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.5)),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 30),
@@ -40,7 +40,8 @@ class MasteryImprovementTopics extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                 child: Column(
                   children: [
                     Row(
@@ -48,11 +49,14 @@ class MasteryImprovementTopics extends StatelessWidget {
                         IconButton(
                             onPressed: () {},
                             icon: Image.asset(
-                                'assets/images/up-and-down-arrow.png')),
+                              'assets/images/learn_mode2/up-and-down-arrow.png',
+                              height: 21,
+                              width: 21,
+                            )),
                         const Text(
                           'Topic',
                           style: TextStyle(
-                              fontWeight: FontWeight.w700, fontSize: 18),
+                              fontWeight: FontWeight.w600, fontSize: 14),
                         ),
                         const Expanded(
                             child: SizedBox(
@@ -61,7 +65,7 @@ class MasteryImprovementTopics extends StatelessWidget {
                         const Text(
                           'Strength',
                           style: TextStyle(
-                              fontWeight: FontWeight.w700, fontSize: 18),
+                              fontWeight: FontWeight.w600, fontSize: 14),
                         ),
                         const SizedBox(
                           width: 10,
@@ -71,17 +75,20 @@ class MasteryImprovementTopics extends StatelessWidget {
                     HighlightedTopicsContainer(
                       topics: [
                         HighlightedTopic(
-                          barsWidget: Image.asset('assets/images/bars1.png'),
+                          barsWidget: Image.asset(
+                              'assets/images/learn_mode2/bars1.png'),
                           number: '01',
                           topic: 'Photosynthesis',
                         ),
                         HighlightedTopic(
-                          barsWidget: Image.asset('assets/images/bars1.png'),
+                          barsWidget: Image.asset(
+                              'assets/images/learn_mode2/bars1.png'),
                           number: '02',
                           topic: 'Matter',
                         ),
                         HighlightedTopic(
-                          barsWidget: Image.asset('assets/images/bars1.png'),
+                          barsWidget: Image.asset(
+                              'assets/images/learn_mode2/bars1.png'),
                           number: '03',
                           topic: 'Light',
                         ),
@@ -90,12 +97,14 @@ class MasteryImprovementTopics extends StatelessWidget {
                     UnhighlightedTopicsContainer(
                       topics: [
                         UnhighlightedTopic(
-                          barsWidget: Image.asset('assets/images/bars2.png'),
+                          barsWidget: Image.asset(
+                              'assets/images/learn_mode2/bars2.png'),
                           number: '04',
                           topic: 'Flowering Plants',
                         ),
                         UnhighlightedTopic(
-                          barsWidget: Image.asset('assets/images/bars4.png'),
+                          barsWidget: Image.asset(
+                              'assets/images/learn_mode2/bars4.png'),
                           number: '05',
                           topic: 'Osmosis & Diffusion',
                         ),
@@ -119,11 +128,10 @@ class MasteryImprovementTopics extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 80,),
-              GreenPillButton(
-                onTap: () {},
-                text: 'Start Mastery Run'
-              )
+              const SizedBox(
+                height: 80,
+              ),
+              GreenPillButton(onTap: () {}, text: 'Start Mastery Run')
             ],
           ),
         ),

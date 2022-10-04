@@ -68,7 +68,7 @@ class CourseCompletion extends StatelessWidget {
                   alignment: AlignmentDirectional.bottomCenter,
                   children: [
                     Text(
-                      '${welcome.currentRevisionStudyProgress == null ? welcome.totalTopics.toDouble() : welcome.totalTopics - (welcome.currentCourseCompletion!.level! - 1)}',
+                      '${welcome.currentCourseCompletion == null ? welcome.totalTopics : welcome.totalTopics - (welcome.currentCourseCompletion!.level! - 1)}',
                       style: TextStyle(
                         fontFamily: 'Cocon',
                         fontSize: 95,

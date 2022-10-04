@@ -1,5 +1,6 @@
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_completion_progress_attempt.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -422,6 +423,67 @@ class StudyDB {
     final db = await DBProvider.database;
     final result = await db!.rawQuery(
         "select SUM(score) from revision_progress_attempts where revision_progress_id=?",
+        [revision.id]);
+    // print("total score result: ${result[0]["SUM"]}");
+    final score = result[0]["SUM(score)"] ?? 0;
+    return score;
+  }
+
+  // insert revision attempt
+  Future<void> insertCCAttempt(CourseCompletionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("course_completion_progress_attempts", revision.toMap());
+    });
+  }
+
+  Future<List<CourseCompletionProgressAttempt>> getCCAttemptByTopicAndProgress(
+      RevisionStudyProgress progress) async {
+    final db = await DBProvider.database;
+
+    List<CourseCompletionProgressAttempt> attempts = [];
+
+    List progressAttempts = await db!.query(
+        "course_completion_progress_attempts",
+        where: 'cc_progress_id = ?',
+        whereArgs: [progress.id]);
+
+    for (var progress in progressAttempts) {
+      CourseCompletionProgressAttempt attempt =
+          CourseCompletionProgressAttempt.fromMap(progress);
+      attempts.add(attempt);
+    }
+
+    return attempts;
+  }
+
+  Future<CourseCompletionProgressAttempt> getSingleCCAttemptByProgress(
+      CourseCompletionStudyProgress revision) async {
+    final db = await DBProvider.database;
+
+    final data = await db!.query(
+      "course_completion_progress_attempts",
+      where: "cc_progress_id = ?",
+      orderBy: "created_at DESC ",
+      whereArgs: [revision.id],
+      limit: 1,
+    );
+
+    return CourseCompletionProgressAttempt.fromMap(data.first);
+  }
+
+  Future<void> updateCCAttempt(CourseCompletionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+
+    db!.update("course_completion_progress_attempts", revision.toMap(),
+        where: 'id=?', whereArgs: [revision.id]);
+  }
+
+  Future<dynamic> getCCAttemptSumByProgress(
+      CourseCompletionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+    final result = await db!.rawQuery(
+        "select SUM(score) from course_completion_progress_attempts where cc_progress_id=?",
         [revision.id]);
     // print("total score result: ${result[0]["SUM"]}");
     final score = result[0]["SUM(score)"] ?? 0;

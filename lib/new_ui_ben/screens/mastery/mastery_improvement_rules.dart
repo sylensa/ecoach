@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../widgets/rule_step.dart';
 import '../../widgets/steps_rules_container.dart';
-import 'mastery_improvement.dart';
 
 class MasteryImprovementRules extends StatelessWidget {
   final Function onTap;
-  const MasteryImprovementRules({ required this.onTap, Key? key}) : super(key: key);
+  const MasteryImprovementRules({required this.onTap, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class MasteryImprovementRules extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          // Get.to(() => const MasteryImprovement());
+          // Get.to(() => const MasteryImprovementTopics());
           onTap();
         },
         child: Container(

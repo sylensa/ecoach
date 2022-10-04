@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/course_completion_controller.dart';
 import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
@@ -26,6 +27,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../controllers/speed_study_controller.dart';
 import '../../database/study_db.dart';
 import '../../helper/helper.dart';
 import '../../models/course.dart';
@@ -33,6 +35,7 @@ import '../../models/revision_study_progress.dart';
 import '../../revamp/core/utils/app_colors.dart';
 import '../../revamp/features/questions/view/widgets/actual_question.dart';
 import '../../utils/style_sheet.dart';
+import '../learn/learn_speed_enhancement_completion.dart';
 
 class StudyQuizView extends StatefulWidget {
   const StudyQuizView({
@@ -241,56 +244,58 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       return;
     }
 
-    // Navigator.push<void>(
-    //   context,
-    //   MaterialPageRoute<void>(builder: (BuildContext context) {
-    //     if (StudyType.COURSE_COMPLETION == controller.type)
-    //       return StudyCCResults(test: testTakenSaved!, controller: controller);
-    //     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-    //       bool moveUp = controller.progress.section == null ||
-    //           controller.progress.section! <= 3;
-    //
-    //       // TODO: call function to upgrade level
-    //
-    //       if (moveUp) {
-    //         moveUp = controller.progress.passed!;
-    //         SpeedStudyProgressController().updateCCLevel(moveUp);
-    //       }
-    //       return LearnSpeedEnhancementCompletion(
-    //           controller: controller as SpeedController,
-    //           moveUp: moveUp,
-    //           level: {
-    //             'level':
-    //                 moveUp ? controller.nextLevel : controller.progress.level,
-    //             'duration': controller.resetDuration!.inSeconds,
-    //             'questions': 1
-    //           });
-    //     }
-    //     if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
-    //       int level = controller.progress.level!;
-    //       controller.updateProgressSection(2);
-    //       print("level $level");
-    //       if (level == 1) {
-    //         return StudyMasteryResults(
-    //           test: testTakenSaved!,
-    //           controller: controller as MasteryController,
-    //         );
-    //       }
-    //
-    //       return LearnMasteryFeedback(
-    //           passed: controller.progress.passed!,
-    //           topic: controller.progress.name!,
-    //           controller: controller as MasteryController);
-    //     }
-    //     return SuccessfulRevision();
-    //   }),
-    // ).then((value) {
-    //   setState(() {
-    //     controller.currentQuestion = 0;
-    //     controller.reviewMode = true;
-    //     pageController.jumpToPage(controller.currentQuestion);
-    //   });
-    // });
+    Navigator.push<void>(
+      context,
+      MaterialPageRoute<void>(builder: (BuildContext context) {
+        if (StudyType.COURSE_COMPLETION == controller.type) {
+          CourseCompletionStudyController()
+              .recordAttempts(controller.progress.score!);
+          return StudyCCResults(test: testTakenSaved!, controller: controller);
+        }
+
+        if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+          bool moveUp = controller.progress.section == null ||
+              controller.progress.section! <= 3;
+
+          if (moveUp) {
+            moveUp = controller.progress.passed!;
+            SpeedStudyProgressController().updateCCLevel(moveUp);
+          }
+          return LearnSpeedEnhancementCompletion(
+              progress: controller.progress,
+              moveUp: moveUp,
+              level: {
+                'level':
+                    moveUp ? controller.nextLevel : controller.progress.level,
+                'duration': controller.resetDuration!.inSeconds,
+                'questions': 1
+              });
+        }
+        if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
+          int level = controller.progress.level!;
+          controller.updateProgressSection(2);
+          print("level $level");
+          if (level == 1) {
+            return StudyMasteryResults(
+              test: testTakenSaved!,
+              controller: controller as MasteryController,
+            );
+          }
+
+          return LearnMasteryFeedback(
+              passed: controller.progress.passed!,
+              topic: controller.progress.name!,
+              controller: controller as MasteryController);
+        }
+        return SuccessfulRevision();
+      }),
+    ).then((value) {
+      setState(() {
+        controller.currentQuestion = 0;
+        controller.reviewMode = true;
+        pageController.jumpToPage(controller.currentQuestion);
+      });
+    });
   }
 
   viewResults() {
@@ -793,18 +798,23 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         if (showResultButton())
                           Expanded(
                             flex: 1,
-                            child: TextButton(
-                              onPressed: () {
-                                viewResults();
-                              },
-                              child: RichText(
-                                softWrap: false,
-                                overflow: TextOverflow.clip,
-                                text: TextSpan(
-                                  text: "Results",
-                                  style: TextStyle(
-                                    color: Color(0xFFA2A2A2),
-                                    fontSize: 21,
+                            child: Container(
+                              color: kAccessmentButtonColor,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: InkWell(
+                                onTap: () {
+                                  viewResults();
+                                },
+                                child: RichText(
+                                  softWrap: false,
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.clip,
+                                  text: TextSpan(
+                                    text: "Results",
+                                    style: TextStyle(
+                                      color: Color(0xFFFFFFFF),
+                                      fontSize: 21,
+                                    ),
                                   ),
                                 ),
                               ),
