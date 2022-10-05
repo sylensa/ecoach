@@ -17,3 +17,15 @@ String getRevisionDuration(Duration duration) {
     return '${duration.inMinutes} sec';
   }
 }
+
+String getBarPercentage(double) {
+  if (double >= 90) {
+    return "assets/images/learn_mode2/bars4.png";
+  } else if (double >= 70) {
+    return "assets/images/learn_mode2/bars3.png";
+  } else if (double >= 45) {
+    return "assets/images/learn_mode2/bars2.png";
+  } else {
+    return "assets/images/learn_mode2/bars1.png";
+  }
+}

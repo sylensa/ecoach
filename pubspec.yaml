@@ -123,6 +123,7 @@ dependencies:
    animated_text_kit: ^4.2.2
    countup: ^0.1.4
    swipeable_button_view: ^0.0.2
+   quiver: ^3.1.0
 
 flutter_icons:
    image_path: "assets/images/adeo_app_icon.png"

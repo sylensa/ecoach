@@ -16,7 +16,6 @@ import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/views/study/study_cc_results.dart';
-import 'package:ecoach/views/study/study_mastery_results.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
@@ -32,6 +31,7 @@ import '../../database/study_db.dart';
 import '../../helper/helper.dart';
 import '../../models/course.dart';
 import '../../models/revision_study_progress.dart';
+import '../../new_ui_ben/screens/mastery/mastery_improvement_topics.dart';
 import '../../revamp/core/utils/app_colors.dart';
 import '../../revamp/features/questions/view/widgets/actual_question.dart';
 import '../../utils/style_sheet.dart';
@@ -276,7 +276,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           controller.updateProgressSection(2);
           print("level $level");
           if (level == 1) {
-            return StudyMasteryResults(
+            return MasteryImprovementTopics(
               test: testTakenSaved!,
               controller: controller as MasteryController,
             );
@@ -307,7 +307,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         builder: (BuildContext context) {
           if (controller.type == StudyType.MASTERY_IMPROVEMENT) {
             if (controller.progress.level == 1)
-              return StudyMasteryResults(
+              return MasteryImprovementTopics(
                   test: testTakenSaved!,
                   controller: controller as MasteryController);
             if (controller.progress.level == 2)
