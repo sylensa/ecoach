@@ -1,6 +1,8 @@
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_ui_ben/utils/helper_utils.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,16 @@ class RevisionReview extends StatefulWidget {
 }
 
 class _RevisionReviewState extends State<RevisionReview> {
+  getProgressTotal(RevisionStudyProgress progress) {
+    double total = 0;
+
+    StudyDB().getRevisionAttemptSumByProgress(progress).then((value) {
+      total = value;
+    });
+
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,8 +43,7 @@ class _RevisionReviewState extends State<RevisionReview> {
       body: FutureBuilder<List<RevisionStudyProgress?>>(
         future: StudyDB().getRevisionProgressByCourse(
             Provider.of<WelcomeScreenProvider>(context, listen: false)
-                .currentCourse!
-                .id!),
+                .currentCourse!),
         builder: (context, snapshot) {
           print("snapshot data: ${snapshot.data}");
           if (snapshot.data == null) {
@@ -41,41 +52,95 @@ class _RevisionReviewState extends State<RevisionReview> {
             );
           }
 
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            width: double.infinity,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const Text(
-                    "A quick way to prep for your exam",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Color.fromRGBO(255, 255, 255, 0.5)),
+          return snapshot.data!.isEmpty
+              ? Center(
+                  child: Text(
+                    "No Revision Recorded",
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
-                  const SizedBox(
-                    height: 40,
+                )
+              : Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const Text(
+                          "A quick way to prep for your exam",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Color.fromRGBO(255, 255, 255, 0.5)),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        // Container(
+                        //   height: 200,
+                        //   padding: EdgeInsets.all(10),
+                        //   decoration: BoxDecoration(
+                        //       color: Color(0xFF005CA5),
+                        //       borderRadius: BorderRadius.circular(20)),
+                        //   child: LineChart(
+                        //     LineChartData(
+                        //       minY: 0,
+                        //       minX: 0,
+                        //       maxX: snapshot.data!.length.toDouble(),
+                        //       maxY: 10,
+                        //       titlesData: FlTitlesData(show: false),
+                        //       gridData: FlGridData(show: false),
+                        //       axisTitleData: FlAxisTitleData(show: false),
+                        //       borderData: FlBorderData(
+                        //           show: false,
+                        //           border: Border.all(
+                        //               color: Colors.transparent, width: 0)),
+                        //       lineBarsData: [
+                        //         LineChartBarData(
+                        //           spots: [
+                        //             ...List.generate(snapshot.data!.length,
+                        //                 (index) {
+                        //               RevisionStudyProgress? progress =
+                        //                   snapshot.data![index];
+                        //
+                        //               final totalScore = StudyDB()
+                        //                   .getRevisionAttemptSumByProgress(
+                        //                       progress!);
+                        //
+                        //               return FlSpot(index.toDouble(),
+                        //                   progress.level!.toDouble());
+                        //             }).reversed.toList()
+                        //           ],
+                        //           belowBarData: BarAreaData(
+                        //               show: true,
+                        //               colors: [Colors.teal, Colors.green]
+                        //                   .map((e) => e.withOpacity(0.3))
+                        //                   .toList()),
+                        //           dotData: FlDotData(show: false),
+                        //           isCurved: true,
+                        //           colors: [Colors.teal, Colors.green],
+                        //           barWidth: 2,
+                        //         )
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        ...List.generate(snapshot.data!.length, (index) {
+                          RevisionStudyProgress? progress =
+                              snapshot.data![index];
+                          int totalScore = 0;
+
+                          return SingleRevisionWidget(
+                            progress: progress,
+                            totalScore: totalScore,
+                            index: snapshot.data!.length - index,
+                          );
+                        })
+                      ],
+                    ),
                   ),
-                  ...List.generate(snapshot.data!.length, (index) {
-                    RevisionStudyProgress? progress = snapshot.data![index];
-                    int totalScore = 0;
-                    // StudyDB()
-                    //     .getRevisionAttemptSumByProgress(progress!)
-                    //     .then((value) {
-                    //   setState(() {
-                    //     totalScore = value;
-                    //   });
-                    // });
-                    return SingleRevisionWidget(
-                      progress: progress,
-                      totalScore: totalScore,
-                      index: index,
-                    );
-                  })
-                ],
-              ),
-            ),
-          );
+                );
         },
       ),
     );
@@ -128,7 +193,8 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
     return GestureDetector(
       onTap: () {
         Get.bottomSheet(
-          RevisionStudyAttempts(progress: widget.progress!),
+          RevisionStudyAttempts(
+              progress: widget.progress!, title: "Revision ${widget.index}"),
           isScrollControlled: true,
         );
       },
@@ -153,7 +219,7 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
                         height: 31,
                       ),
                       Text(
-                        "Revision ${widget.index + 1}",
+                        "Revision ${widget.index}",
                         style: TextStyle(
                           fontFamily: 'Helvetica',
                           fontSize: 20,
@@ -164,7 +230,7 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
                       Text(
                         "${widget.progress!.updatedAt!.difference(
                               widget.progress!.createdAt!,
-                            ).inMinutes}\n1.25 x",
+                            ).inMinutes} mins \n${attempts.length} x",
                         style: TextStyle(
                             color: Colors.white.withOpacity(0.7),
                             fontSize: 12,
@@ -203,7 +269,8 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
                       SizedBox(
                         height: 27,
                       ),
-                      Image.asset("assets/images/learn_mode2/rating_bar.png")
+                      Image.asset(getBarPercentage(
+                          (totalScore / (attempts.length * 10)) * 100))
                     ],
                   ),
                 ),
@@ -256,8 +323,8 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
                       ),
                     ],
                   ),
-                  const Text(
-                    "79%",
+                  Text(
+                    "${(attempts.length == 0 ? 0 : (totalScore / (attempts.length * 10)) * 100).toStringAsFixed(1)}%",
                     style: TextStyle(
                       fontFamily: 'Helvetica',
                       fontWeight: FontWeight.bold,

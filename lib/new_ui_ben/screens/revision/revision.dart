@@ -1,4 +1,3 @@
-import 'package:countup/countup.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
@@ -75,15 +74,8 @@ class Revision extends StatelessWidget {
                       alignment: AlignmentDirectional.bottomCenter,
                       children: [
                         Consumer<WelcomeScreenProvider>(
-                          builder: (_, welcome, __) => Countup(
-                            duration: Duration(milliseconds: 700),
-                            begin: 0,
-                            end: welcome.currentRevisionStudyProgress == null
-                                ? welcome.totalTopics.toDouble()
-                                : welcome.totalTopics -
-                                    (welcome.currentRevisionStudyProgress!
-                                            .level! -
-                                        1),
+                          builder: (_, welcome, __) => Text(
+                            "${welcome.currentRevisionStudyProgress == null ? welcome.totalTopics.toDouble() : welcome.totalTopics - (welcome.currentRevisionStudyProgress!.level! - 1)}",
                             style: TextStyle(
                               fontFamily: 'Cocon',
                               fontSize: 95,

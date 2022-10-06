@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/chose_revision_mode.dart';
-import 'package:ecoach/new_ui_ben/screens/revision/revision_review.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/widget/score_header.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,20 +24,6 @@ class SuccessfulRevision extends StatelessWidget {
           color: Color(0xFFF6F6F6),
           height: 47,
           child: Row(children: [
-            Expanded(
-              child: TextButton(
-                onPressed: () {
-                  Get.to(() => RevisionReview());
-                },
-                child: const Text(
-                  'review',
-                  style: TextStyle(fontSize: 20, color: Color(0xFFA2A2A2)),
-                ),
-              ),
-            ),
-            const VerticalDivider(
-              color: Color(0xFF707070),
-            ),
             Expanded(
               child: TextButton(
                 onPressed: () {

@@ -1,10 +1,11 @@
 import 'dart:io';
+
 import 'package:ecoach/utils/shared_preference.dart';
+// ignore: unused_import
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-// ignore: unused_import
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DBProvider {
   DBProvider._();
@@ -25,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 28, onOpen: (db) {},
+    return await openDatabase(path, version: 29, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"

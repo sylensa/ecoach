@@ -108,6 +108,21 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       return;
     }
     setState(() {
+      if (controller.type == StudyType.COURSE_COMPLETION ||
+          controller.type == StudyType.MASTERY_IMPROVEMENT) {
+        setState(() {
+          if (answeredWrong) {
+            wrong++;
+            wasWrong = true;
+          } else {
+            correctAnswered++;
+            wasWrong = false;
+          }
+
+          calAvgScore();
+        });
+      }
+
       controller.currentQuestion++;
       showNext = false;
       if (controller.type == StudyType.REVISION ||
@@ -357,6 +372,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                         onPressed: () {
                           // timerController.pause();
                           // Get.bottomSheet(quitWidget());
+                          showExitDialog();
                           return;
                         },
                         icon: Icon(Icons.arrow_back)),
@@ -604,6 +620,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 "last question ${controller.questions[i].text}");
                             setState(() {
                               showSubmit = true;
+                              if (correct) {
+                                answeredWrong = false;
+                                // correctAnswered++;
+                              } else {
+                                // wrong++;
+                                answeredWrong = true;
+                              }
                               // increase total number of question
                               // totalQuestionsAnswered++;
                               if (controller.type == StudyType.REVISION ||
@@ -709,6 +732,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                         controller.type == StudyType.REVISION) {
                                       showNext = true;
                                       showComplete = false;
+                                    }
+
+                                    if (controller.type == StudyType.REVISION &&
+                                        controller.currentQuestion ==
+                                            controller.questions.length - 1) {
+                                      showNext = false;
+                                      showComplete = true;
                                     }
 
                                     if (answeredWrong &&

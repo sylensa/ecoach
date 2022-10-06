@@ -15,7 +15,7 @@ class ChooseSpeedMode extends StatelessWidget {
       backgroundColor: const Color(0xFF0367B4),
       appBar: AppBar(
         title: const Text(
-          'Revision',
+          'Speed Completion',
           style: TextStyle(
             fontFamily: 'Cocon',
             fontWeight: FontWeight.w700,

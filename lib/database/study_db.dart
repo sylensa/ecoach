@@ -1,4 +1,5 @@
 import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_completion_progress_attempt.dart';
 import 'package:ecoach/models/study.dart';
@@ -244,14 +245,16 @@ class StudyDB {
   }
 
   Future<List<RevisionStudyProgress?>> getRevisionProgressByCourse(
-      int courseId) async {
+      Course course) async {
     final Database? db = await DBProvider.database;
+
+    final topics = await TopicDB().courseTopics(course);
 
     var result = await db!.query(
       'revision_study_progress',
       orderBy: "created_at DESC",
-      where: "course_id = ?",
-      whereArgs: [courseId],
+      where: "course_id = ? and level = ?",
+      whereArgs: [course.id, topics.length],
     );
 
     List<RevisionStudyProgress?> progressAttempts = [];

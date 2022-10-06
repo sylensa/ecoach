@@ -1,7 +1,5 @@
-
 import 'package:ecoach/new_ui_ben/widgets/progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:animate_do/animate_do.dart';
 
 class LearnCard extends StatelessWidget {
   final String title;
@@ -19,8 +17,8 @@ class LearnCard extends StatelessWidget {
       required this.value,
       required this.icon,
       required this.onTap,
-       this.subTitle,
-       this.secondarySubTitle,
+      this.subTitle,
+      this.secondarySubTitle,
       this.isLevel = false})
       : super(key: key);
 
@@ -28,7 +26,7 @@ class LearnCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-       onTap();
+        onTap();
       },
       child: Container(
         padding:
@@ -48,29 +46,25 @@ class LearnCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FadeIn(
-                        duration: Duration(seconds: 2),
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          fontSize: 20,
                         ),
                       ),
                       Text(
                         desc,
                         style: const TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white70,
-                          fontSize: 10
-                        ),
+                            fontStyle: FontStyle.italic,
+                            color: Colors.white70,
+                            fontSize: 10),
                       )
                     ],
                   ),
                 ),
-                Bounce(child: Image.asset(icon))
+                Image.asset(icon)
               ],
             ),
             const SizedBox(

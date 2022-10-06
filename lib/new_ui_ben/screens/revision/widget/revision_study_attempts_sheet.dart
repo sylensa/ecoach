@@ -5,7 +5,9 @@ import '../../../../controllers/revision_progress_controller.dart';
 
 class RevisionStudyAttempts extends StatefulWidget {
   final RevisionStudyProgress progress;
-  const RevisionStudyAttempts({Key? key, required this.progress})
+  final String title;
+  const RevisionStudyAttempts(
+      {Key? key, required this.progress, required this.title})
       : super(key: key);
 
   @override
@@ -14,6 +16,21 @@ class RevisionStudyAttempts extends StatefulWidget {
 
 class _RevisionStudyAttemptsState extends State<RevisionStudyAttempts> {
   List<Map<String, dynamic>> attempts = [];
+  bool isSorted = false;
+
+  sortByOutcome() {
+    if (!isSorted) {
+      attempts.sort((a, b) => a["avgScore"].compareTo(b["avgScore"]));
+      setState(() {
+        isSorted = !isSorted;
+      });
+    } else {
+      attempts.sort((a, b) => b["avgScore"].compareTo(a["avgScore"]));
+      setState(() {
+        isSorted = !isSorted;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -58,7 +75,7 @@ class _RevisionStudyAttemptsState extends State<RevisionStudyAttempts> {
               height: 30,
             ),
             Text(
-              "Revision 1",
+              widget.title,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 23,
@@ -70,9 +87,14 @@ class _RevisionStudyAttemptsState extends State<RevisionStudyAttempts> {
             ),
             Row(
               children: [
-                Icon(
-                  Icons.swap_vert,
-                  color: Colors.black,
+                IconButton(
+                  onPressed: () {
+                    sortByOutcome();
+                  },
+                  icon: Icon(
+                    Icons.swap_vert,
+                    color: Colors.black,
+                  ),
                 ),
                 SizedBox(
                   width: 23,
