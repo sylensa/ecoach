@@ -68,7 +68,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
     // } catch (e) {
     //   print(e.toString());
     // }
-
+    if(mounted)
     setState(() {
       progressCodeCategory = false;
     });

@@ -77,6 +77,8 @@ class _HomePageAnnexState extends State<HomePageAnnex> {
       await PlanDB().deleteAllPlanItem();
      await PlanController().getPlanOnly();
     }
+
+    if(mounted)
     setState((){
 
     });
