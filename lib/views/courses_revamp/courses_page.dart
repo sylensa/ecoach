@@ -98,7 +98,7 @@ class _CoursesPageState extends State<CoursesPage> {
                             trialInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
                             trialPeriod: 1,
                           );
-                          showDialogOk(context: context,message: "Download course for this bundle",target: BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,));
+                          showDialogYesNo(context: context,message: "Download course for this bundle",target: BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,));
                         }
 
                       },
