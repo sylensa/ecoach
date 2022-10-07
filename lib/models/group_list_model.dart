@@ -108,6 +108,7 @@ class GroupListData {
     this.id,
     this.uid,
     this.ownerId,
+    this.isMember,
     this.name,
     this.description,
     this.type,
@@ -140,6 +141,7 @@ class GroupListData {
   dynamic editorId;
   dynamic deletedAt;
   bool? discoverability;
+  int? isMember;
   int? membersCount;
   dynamic rating;
   dynamic reviews;
@@ -152,6 +154,7 @@ class GroupListData {
     id: json["id"] == null ? null : json["id"],
     uid: json["uid"] == null ? null : json["uid"],
     ownerId: json["owner_id"] == null ? null : json["owner_id"],
+    isMember: json["is_member"] == null ? 0 : json["is_member"],
     name: json["name"] == null ? null : json["name"],
     description: json["description"] == null ? null : json["description"],
     type: json["type"] == null ? null : json["type"],
@@ -175,6 +178,7 @@ class GroupListData {
     "id": id == null ? null : id,
     "uid": uid == null ? null : uid,
     "owner_id": ownerId == null ? null : ownerId,
+    "is_member": isMember == null ? 0 : isMember,
     "name": name == null ? null : name,
     "description": description == null ? null : description,
     "type": type == null ? null : type,
