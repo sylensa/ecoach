@@ -287,7 +287,7 @@ getActivePackage() async {
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 5),
-                        child: sText(listActivePackageData[0].endAt != null ? "${DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays > 365 ? "365" : DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays.toString()} days" : "No Expiration",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
+                        child: sText(listActivePackageData[0].endAt != null ? "${DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays.toString()} days" : "No Expiration",color: kAdeoGray3,weight: FontWeight.w400,align: TextAlign.center),
                       ),
                     ],
                   ),
@@ -376,7 +376,7 @@ getActivePackage() async {
                             child: ListTile(
                               title:  Container(
                                 width: 100,
-                                child: sText( listActivePackageData[0].endAt != null ? "${DateTime.parse(listActivePackageData[0].endAt!).difference(listGroupListData[index].dateCreated!).inDays > 365 ? "365" : DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays.toString()} days" : "No Expiration",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
+                                child: sText( listActivePackageData[0].endAt != null ? "${DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays > 365 ? "365" : DateTime.parse(listActivePackageData[0].endAt!).difference(DateTime.now()).inDays.toString()} days" : "No Expiration",color: Colors.black,weight: FontWeight.w600,align: TextAlign.center),
 
                               ),
                               leading: Container(
@@ -387,13 +387,16 @@ getActivePackage() async {
                                 width: 100,
                                 child: Row(
                                   children: [
-                                    Text(
-                                      "${listGroupListData[index].membersCount} members",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        color:  Color(0XFF2D3E50),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
+                                    Container(
+                                      width: 80,
+                                      child: Text(
+                                        "${listGroupListData[index].membersCount} members",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          color:  Color(0XFF2D3E50),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                     Icon(Icons.arrow_forward_ios,size: 15,)
@@ -506,11 +509,14 @@ getActivePackage() async {
       ),
       options:  [
         GestureDetector(
-          onTap: (){
+          onTap: ()async{
             if(listActivePackageData[0].maxGroups! == listGroupListData.length){
               showDialogOk(message: "You have reached your limit, to create more groups upgrade your package",context: context);
             }else{
-              goTo(context, CreateGroup());
+              await goTo(context, CreateGroup());
+              setState(() {
+
+              });
             }
           },
           child: Image.asset("assets/images/add.png"),
