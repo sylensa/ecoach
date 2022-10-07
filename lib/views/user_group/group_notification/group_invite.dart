@@ -113,7 +113,8 @@ class _GroupInviteState extends State<GroupInvite> {
             if (navigation.url.contains(AppUrl.payment_callback)) {
               Navigator.of(context).pop();
               showLoaderDialog(context);
-             await acceptGroupInvite();
+              await getMyGroups();
+             // await acceptGroupInvite();
 
               setState(() {
                 print("hello adolf:");
@@ -236,6 +237,7 @@ class _GroupInviteState extends State<GroupInvite> {
     if (isConnected) {
       myGroupList = await GroupManagementController().getJoinGroupList();
       Navigator.pop(context);
+      showDialogOk(context: context,message: "You've successfully join the group");
     } else {
       Navigator.pop(context);
       showNoConnectionToast(context);
@@ -251,8 +253,16 @@ class _GroupInviteState extends State<GroupInvite> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
-      myGroupList = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).groupInviteAccept();
-      await getMyGroups();
+      var res = await GroupManagementController(groupId: widget.groupNotificationData!.group!.uid.toString()).groupInviteAccept();
+      setState(() {
+
+      });
+      if(res){
+        await getMyGroups();
+      }else{
+        Navigator.pop(context);
+        showDialogOk(context: context,message: errorMessage);
+      }
     } else {
       Navigator.pop(context);
       showNoConnectionToast(context);
@@ -269,7 +279,7 @@ class _GroupInviteState extends State<GroupInvite> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
-      myGroupList = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).groupInviteReject();
+      var res = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).groupInviteReject();
       Navigator.pop(context);
     } else {
       Navigator.pop(context);

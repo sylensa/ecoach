@@ -896,38 +896,13 @@ extension StringExtension on String {
       if (diffInHours < 1) {
         final diffInMinutes = DateTime.now().difference(videoDate).inMinutes;
         timeValue = diffInMinutes;
-        timeUnit = 'm';
+        timeUnit = 'min';
       } else if (diffInHours < 24) {
         timeValue = diffInHours;
-        timeUnit = 'h';
+        timeUnit = 'hr';
       } else if (diffInHours >= 24 && diffInHours < 24 * 7) {
         timeValue = (diffInHours / 24).floor();
-        timeUnit = 'd';
-      } else if (diffInHours >= 24 * 7 && diffInHours < 24 * 30) {
-        timeValue = (diffInHours / (24 * 7)).floor();
-        timeUnit = 'w';
-      } else if (diffInHours >= 24 * 30 && diffInHours < 24 * 12 * 30) {
-        timeValue = (diffInHours / (24 * 30)).floor();
-        timeUnit = 'm';
-      } else {
-        timeValue = (diffInHours / (24 * 365)).floor();
-        timeUnit = 'y';
-      }
-      timeAgo = timeValue.toString() + ' ' + timeUnit;
-      timeAgo += timeValue > 1 ? '' : '';
-
-      return 'in ' + timeAgo;
-    } else {
-      if (diffInHours < 1) {
-        final diffInMinutes = DateTime.now().difference(videoDate).inMinutes;
-        timeValue = diffInMinutes;
-        timeUnit = 'm';
-      } else if (diffInHours < 24) {
-        timeValue = diffInHours;
-        timeUnit = 'h';
-      } else if (diffInHours >= 24 && diffInHours < 24 * 7) {
-        timeValue = (diffInHours / 24).floor();
-        timeUnit = 'd';
+        timeUnit = 'day';
       } else if (diffInHours >= 24 * 7 && diffInHours < 24 * 30) {
         timeValue = (diffInHours / (24 * 7)).floor();
         timeUnit = 'wk';
@@ -938,7 +913,32 @@ extension StringExtension on String {
         timeValue = (diffInHours / (24 * 365)).floor();
         timeUnit = 'yr';
       }
-      timeAgo = timeValue.toString() + timeUnit;
+      timeAgo = timeValue.toString() + ' ' + timeUnit;
+      timeAgo += timeValue > 1 ? '' : '';
+
+      return 'in ' + timeAgo;
+    } else {
+      if (diffInHours < 1) {
+        final diffInMinutes = DateTime.now().difference(videoDate).inMinutes;
+        timeValue = diffInMinutes;
+        timeUnit = 'min';
+      } else if (diffInHours < 24) {
+        timeValue = diffInHours;
+        timeUnit = 'hr';
+      } else if (diffInHours >= 24 && diffInHours < 24 * 7) {
+        timeValue = (diffInHours / 24).floor();
+        timeUnit = 'day';
+      } else if (diffInHours >= 24 * 7 && diffInHours < 24 * 30) {
+        timeValue = (diffInHours / (24 * 7)).floor();
+        timeUnit = 'wk';
+      } else if (diffInHours >= 24 * 30 && diffInHours < 24 * 12 * 30) {
+        timeValue = (diffInHours / (24 * 30)).floor();
+        timeUnit = 'mon';
+      } else {
+        timeValue = (diffInHours / (24 * 365)).floor();
+        timeUnit = 'yr';
+      }
+      timeAgo = timeValue.toString() + ' ' + timeUnit;
       timeAgo += timeValue > 1 ? '' : '';
 
       return timeAgo;
@@ -1090,9 +1090,9 @@ groupListWidget(GroupListData groupListData){
         Expanded(child: Container()),
         Container(
           padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-          child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
+          child: sText(groupListData.isMember! == 1 ? "JOINED" : groupListData.isMember! == 2 ? "REQUEST SENT" :"JOIN",color: groupListData.isMember! == 0 ? Colors.white : Colors.white,weight: FontWeight.bold),
           decoration: BoxDecoration(
-              color: Colors.orange,
+              color: groupListData.isMember! == 0 ? Colors.orange : Colors.grey,
               borderRadius: BorderRadius.circular(10)
           ),
         )

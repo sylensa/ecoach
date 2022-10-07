@@ -176,8 +176,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         ),
                         SizedBox(width: 10,),
                         GestureDetector(
-                          onTap: (){
-                            goTo(context, GroupNotificationActivity(widget.user,));
+                          onTap: ()async{
+                            await goTo(context, GroupNotificationActivity(widget.user,));
+                            setState(() {
+
+                            });
                           },
                             child: Image.asset("assets/images/schedule.png"),
                         )
@@ -384,7 +387,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                  padding: EdgeInsets.zero,
                                  onPressed: (){
                                    List cat = categoryList[index].id.split("_");
-                                   goTo(context, CategoryGroupsPage(categoryName: cat.join(" "),));
+                                   goTo(context, CategoryGroupsPage(widget.user,categoryName: cat.join(" "),));
                                  },
                                  child: Row(
                                    children: [
@@ -501,7 +504,12 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             MaterialButton(
                               padding: EdgeInsets.zero,
                               onPressed: ()async{
-                                await goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                                if(groupByCategory[i].isMember! == 1){
+                                  goTo(context, GroupActivity(widget.user,groupData: groupByCategory[i]));
+                                }else{
+                                  GroupListData groupList =  await goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                                  groupByCategory[i] = groupList;
+                                }
                                 setState((){
 
                                 });
@@ -530,9 +538,13 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         return    MaterialButton(
                           padding: EdgeInsets.zero,
                           onPressed: ()async{
-                            await goTo(context, GroupDetails(groupData: groupBySearch[index],));
+                            if(groupBySearch[index].isMember! == 1){
+                              goTo(context, GroupActivity(widget.user,groupData: groupBySearch[index]));
+                            }else{
+                            GroupListData groupList =  await goTo(context, GroupDetails(groupData: groupBySearch[index],));
+                            groupBySearch[index] = groupList;
+                            }
                             setState((){
-
                             });
                           },
                           child:groupListWidget(groupBySearch[index]),

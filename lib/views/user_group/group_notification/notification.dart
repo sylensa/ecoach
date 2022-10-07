@@ -6,6 +6,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_notification/group_announcement.dart';
 import 'package:ecoach/views/user_group/group_notification/group_invite.dart';
+import 'package:ecoach/views/user_group/group_notification/group_request.dart';
 import 'package:ecoach/views/user_group/group_notification/test_instruction.dart';
 import 'package:ecoach/widgets/adeo_tab_control.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
@@ -186,69 +187,8 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         Column(
                           children: [
                             for(int i =0; i < upComingGroupNotificationData.length; i++)
-                              GestureDetector(
-                                onTap: (){
-                                  goTo(context, GroupAnnouncement(widget.user));
-                                },
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                      margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
-                                      decoration: BoxDecoration(
-                                          color: Color(0XFFE2EFF3),
-                                          borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            color: Colors.red,
-                                            width: 5,
-                                            height: 60,
-                                          ),
-                                          Container(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                sText("ANNOUNCEMENT",),
-                                                SizedBox(height: 5,),
-                                                Container(
-                                                  width: 150,
-                                                  child: sText("Prepare for your upcoming group test",weight: FontWeight.bold,size: 10),
-                                                ),
-                                                SizedBox(height: 10,),
-                                                sText("RevShady SAT",weight: FontWeight.normal,size: 12),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                sText("03 : 59",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
-                                                sText("remaining",weight: FontWeight.normal,size: 10),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                sText("10h",weight: FontWeight.normal),
-                                                SizedBox(height: 20,),
-                                                Icon(Icons.arrow_forward),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              notificationType(upComingGroupNotificationData[i])
+
                           ],
                         )
                         else
@@ -309,8 +249,12 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       return  groupAnnouncement(groupNotificationData);
       case "group_invitation" :
         return  groupInvitation(groupNotificationData);
-      // default:
-      // return  groupTest(groupNotificationData);
+      case "group_invite" :
+        return  groupInvitation(groupNotificationData);
+      case "group_request" :
+        return  groupRequest(groupNotificationData);
+      default:
+      return  groupTest(groupNotificationData);
 
 
     }
@@ -353,7 +297,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         child: sText("${groupNotificationData.notificationtable!.name}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("RevShady SAT",weight: FontWeight.normal,size: 12),
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
                     ],
                   ),
                 ),
@@ -442,7 +386,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         child: sText("${groupNotificationData.notificationtable!.name}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("RevShady SAT",weight: FontWeight.normal,size: 12),
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
                     ],
                   ),
                 ),
@@ -511,7 +455,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         child: sText("${groupNotificationData.message}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("RevShady SAT",weight: FontWeight.normal,size: 12),
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
                     ],
                   ),
                 ),
@@ -521,7 +465,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.createdAt.toString())}",weight: FontWeight.normal),
                       SizedBox(height: 20,),
                       Icon(Icons.arrow_forward),
                     ],
@@ -570,7 +514,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         child: sText("${groupNotificationData.message}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("RevShady SAT",weight: FontWeight.normal,size: 12),
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
                     ],
                   ),
                 ),
@@ -580,7 +524,65 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.group!.dateCreated.toString())}",weight: FontWeight.normal),
+                      SizedBox(height: 20,),
+                      Icon(Icons.arrow_forward),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    )    ;
+  }
+  groupRequest(GroupNotificationData groupNotificationData){
+    return  MaterialButton(
+      padding: EdgeInsets.zero,
+
+      onPressed: (){
+        goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+            margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+            decoration: BoxDecoration(
+                color: Color(0XFFE2EFF3),
+                borderRadius: BorderRadius.circular(10)
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  color: Colors.red,
+                  width: 5,
+                  height: 60,
+                ),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      sText("GROUP REQUEST",),
+                      SizedBox(height: 5,),
+                      Container(
+                        width: 250,
+                        child: sText("${groupNotificationData.message}",weight: FontWeight.bold,size: 10),
+                      ),
+                      SizedBox(height: 10,),
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
+                    ],
+                  ),
+                ),
+
+                Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.createdAt.toString())}",weight: FontWeight.normal),
                       SizedBox(height: 20,),
                       Icon(Icons.arrow_forward),
                     ],
