@@ -259,8 +259,7 @@ class _CourseViewState extends State<CourseView> {
   String subName = ""; //FIXME temp;
   bool progressCode = true;
   getSubscriptionCourse() async {
-    futureItems = await SubscriptionItemDB()
-        .subscriptionCourses(widget.subscription.planId!);
+    futureItems = await SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
     if (futureItems.isEmpty) {
       ApiCall<Data>(AppUrl.new_user_data, isList: false,
               create: (Map<String, dynamic> json) {

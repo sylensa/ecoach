@@ -1,14 +1,17 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CoursesDetailsPage extends StatefulWidget {
-  const CoursesDetailsPage({Key? key}) : super(key: key);
-
+   CoursesDetailsPage({Key? key, required this.courses}) : super(key: key);
+  List<Course> courses;
   @override
 
   State<CoursesDetailsPage> createState() => _CoursesDetailsPageState();
@@ -17,6 +20,7 @@ class CoursesDetailsPage extends StatefulWidget {
 class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   List<CourseDetail> listCourseDetails = [];
   int _currentPage = 0;
+  Course? course;
   Map<String, Widget> getPage() {
     switch (_currentPage) {
       case 0:
@@ -115,14 +119,74 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
       iconURL: 'assets/icons/courses/learn.png',
     ),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listCourseDetails.add(courseDetails[0]);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kHomeBackgroundColor,
       body: Container(
-        padding: EdgeInsets.only(top: 5.h, bottom: 2.h, left: 2.h,),
+        padding: EdgeInsets.only(top: 5.h, bottom: 2.h,),
       child: Column(
           children: [
+            Row(
+              children: [
+               IconButton(onPressed: (){
+                Navigator.pop(context);
+               }, icon: Icon(Icons.arrow_back,color: Colors.black,),),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.white),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      margin: EdgeInsets.only(right: 20),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<Course>(
+                          value: widget.courses[0],
+                          itemHeight: 60,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: kDefaultBlack,
+                          ),
+                          onChanged: (Course? value){
+                            setState((){
+                              course = value;
+                            });
+                          },
+                          items: widget.courses.map(
+                                (item) => DropdownMenuItem<Course>(
+                              value: item,
+                              child: Container(
+                                width: appWidth(context) * 0.70,
+                                child: sText(
+                                  "${item.name}",
+                                 color: kAdeoGray3,
+                                  size: 20,
+                                  align: TextAlign.center
+                                ),
+                              ),
+                            ),
+                          )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 40,),
             Container(
               height: 80,
               child: ListView.builder(
@@ -179,7 +243,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   );
               }),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 40,),
             getPage().values.first
           ],
         ),
