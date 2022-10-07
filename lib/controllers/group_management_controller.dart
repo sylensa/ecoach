@@ -175,9 +175,11 @@ class GroupManagementController{
       "user_id": userId,
     });
     if(res["status"]){
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }else{
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }
@@ -188,9 +190,11 @@ class GroupManagementController{
       "user_id": userId,
     });
     if(res["status"]){
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }else{
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }
@@ -253,18 +257,19 @@ class GroupManagementController{
     try{
       var res = await doPost(AppUrl.groupInviteAccept,
           {
-            "group_id": groupId,
+            "group_code": groupId,
           });
       if(res["status"] && res["code"].toString() == "200"){
-        toastMessage(res["message"]);
+        errorMessage = res["message"];
         return true;
       }else{
-        toastMessage(res["message"]);
+        errorMessage = res["message"] ;
         return false;
 
       }
     }catch(e){
       print("error:$e");
+      errorMessage = "Accepting group invite failed, try again";
       return false;
     }
   }
@@ -291,7 +296,7 @@ class GroupManagementController{
     try{
       var res = await doPost(AppUrl.groupInviteReject,
           {
-            "group_id": groupId,
+            "group_code": groupId,
           });
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
@@ -310,8 +315,9 @@ class GroupManagementController{
     try{
       var res = await doPost(AppUrl.groupRequestJoin,
           {
-            "group_id": groupId,
+            "group_code": groupId,
           });
+      print("groupRequestJoin:$res");
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
         return true;
@@ -792,12 +798,14 @@ class GroupManagementController{
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
       var res = await doGet("${AppUrl.userGroupNotification}/notifications",);
-      print("res:$res");
+      print("res notifications:$res");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
+          print("groupNotificationData:${groupNotificationData.toJson()}");
           listGroupNotificationData.add(groupNotificationData);
         }
+        print("listGroupNotificationData:${listGroupNotificationData.length}");
         toastMessage("${res["message"]}");
         return listGroupNotificationData;
       }else{
