@@ -176,8 +176,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[1],
                         onTap: () async {
-                          List<Topic> topics = await TestController()
-                              .getTopicsAndNotes(widget.courseInfo.course);
+                          List<Topic> topics = await TestController().getTopicsAndNotes(widget.courseInfo.course);
                           Navigator.push(
                               context,
                               MaterialPageRoute(

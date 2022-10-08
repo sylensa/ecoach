@@ -70,34 +70,35 @@ class _CoursesPageState extends State<CoursesPage> {
                         print("object");
                         showLoaderDialog(context,message: "Loading courses");
                         List<Course> courses = await SubscriptionItemDB().subscriptionCourses( context.read<DownloadUpdate>().plans[index].planId!);
+                        Plan newPlan = Plan(
+                          id: context.read<DownloadUpdate>().plans[index].planId,
+                          updatedAt: context.read<DownloadUpdate>().plans[index].updatedAt,
+                          name: context.read<DownloadUpdate>().plans[index].name,
+                          createdAt: context.read<DownloadUpdate>().plans[index].createdAt,
+                          currency: context.read<DownloadUpdate>().plans[index].currency,
+                          description: context.read<DownloadUpdate>().plans[index].description,
+                          invoiceInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
+                          invoicePeriod: context.read<DownloadUpdate>().plans[index].invoicePeriod,
+                          isActive: true,
+                          price: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
+                          signupFee: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
+                          tag: context.read<DownloadUpdate>().plans[index].tag,
+                          tier: context.read<DownloadUpdate>().plans[index].tier,
+                          trialInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
+                          trialPeriod: 1,
+                        );
                         Navigator.pop(context);
                         if(courses.isNotEmpty){
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return CoursesDetailsPage(courses:courses,);
+                                return CoursesDetailsPage(courses:courses,user: widget.user,subscription: newPlan,controller: widget.controller,);
                               },
                             ),
                           );
                         }else{
-                          Plan newPlan = Plan(
-                            id: context.read<DownloadUpdate>().plans[index].planId,
-                            updatedAt: context.read<DownloadUpdate>().plans[index].updatedAt,
-                            name: context.read<DownloadUpdate>().plans[index].name,
-                            createdAt: context.read<DownloadUpdate>().plans[index].createdAt,
-                            currency: context.read<DownloadUpdate>().plans[index].currency,
-                            description: context.read<DownloadUpdate>().plans[index].description,
-                            invoiceInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
-                            invoicePeriod: context.read<DownloadUpdate>().plans[index].invoicePeriod,
-                            isActive: true,
-                            price: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
-                            signupFee: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
-                            tag: context.read<DownloadUpdate>().plans[index].tag,
-                            tier: context.read<DownloadUpdate>().plans[index].tier,
-                            trialInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
-                            trialPeriod: 1,
-                          );
+
                           showDialogYesNo(context: context,message: "Download course for this bundle",target: BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,));
                         }
 

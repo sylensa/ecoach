@@ -1,17 +1,30 @@
+import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
+import 'package:ecoach/views/notes/notes_topics.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CoursesDetailsPage extends StatefulWidget {
-   CoursesDetailsPage({Key? key, required this.courses}) : super(key: key);
+   CoursesDetailsPage({Key? key, required this.courses,required this.user,required this.subscription,required this.controller,}) : super(key: key);
   List<Course> courses;
+   Plan subscription;
+  User user;
+   final MainController controller;
+   static const String routeName = '/courses/details';
   @override
 
   State<CoursesDetailsPage> createState() => _CoursesDetailsPageState();
@@ -21,6 +34,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   List<CourseDetail> listCourseDetails = [];
   int _currentPage = 0;
   Course? course;
+  List<Topic> topics = [];
+  bool topicsProgressCode = true;
+  PageController pageController = PageController();
   Map<String, Widget> getPage() {
     switch (_currentPage) {
       case 0:
@@ -38,7 +54,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
         return {'': learnModeWidget()};
 
       case 5:
-        return {'': learnModeWidget()};
+        return {'': progressWidget()};
 
     }
     return {'': Container()};
@@ -119,11 +135,18 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
       iconURL: 'assets/icons/courses/learn.png',
     ),
   ];
-
+    getNotesTopics(Course course)async{
+      topics = await TestController().getTopicsAndNotes(course);
+      setState(() {
+        topicsProgressCode = false;
+          print("topics:${topics.length}");
+      });
+    }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getNotesTopics(widget.courses[0]);
     listCourseDetails.add(courseDetails[0]);
   }
   @override
@@ -153,16 +176,19 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                       margin: EdgeInsets.only(right: 20),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<Course>(
-                          value: widget.courses[0],
+                          value:course == null ? widget.courses[0] : course,
                           itemHeight: 60,
                           style: TextStyle(
                             fontSize: 16,
                             color: kDefaultBlack,
                           ),
-                          onChanged: (Course? value){
+                          onChanged: (Course? value)async{
                             setState((){
+                              topics.clear();
+                              topicsProgressCode = true;
                               course = value;
                             });
+                           await getNotesTopics(course!);
                           },
                           items: widget.courses.map(
                                 (item) => DropdownMenuItem<Course>(
@@ -190,58 +216,67 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
             Container(
               height: 80,
               child: ListView.builder(
-                padding: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
+                  controller: pageController,
                   itemBuilder: (BuildContext context, int index){
-                  return    MaterialButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: (){
-                      setState(() {
-                        _currentPage = index;
-                        if(!listCourseDetails.contains(courseDetails[index])){
-                          listCourseDetails.clear();
-                          listCourseDetails.add(courseDetails[index]);
+                    return    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: (){
+                        if(index >= _currentPage){
+                          pageController.nextPage(duration: const Duration(microseconds: 1), curve: Curves.easeIn);
+                          pageController.jumpToPage(index);
+                        }else{
+                          pageController.previousPage(duration: const Duration(microseconds: 1), curve: Curves.easeIn);
                         }
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 2.0,
-                                  color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF00C663) : Colors.transparent,
-                                ),
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.all(7.0),
-                                height: 50,
-                                width: 50,
+                        setState(() {
+                          _currentPage = index;
+                          if(!listCourseDetails.contains(courseDetails[index])){
+                            listCourseDetails.clear();
+                            listCourseDetails.add(courseDetails[index]);
+                          }
+
+
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(2),
                                 decoration: BoxDecoration(
-                                  color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFFCEFFE7) : Colors.transparent,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     width: 2.0,
-                                    color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFFFFFFF) : Colors.transparent,
+                                    color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF00C663) : Colors.transparent,
                                   ),
                                 ),
-                                child:Image.asset("${courseDetails[index].iconURL}")
+                                child: Container(
+                                    padding: EdgeInsets.all(7.0),
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFFCEFFE7) : Colors.transparent,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        width: 2.0,
+                                        color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFFFFFFF) : Colors.transparent,
+                                      ),
+                                    ),
+                                    child:Image.asset("${courseDetails[index].iconURL}")
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 5,),
-                            sText("${courseDetails[index].title}",color: listCourseDetails.contains(courseDetails[index]) ? Colors.blue : Colors.grey,weight: FontWeight.w500,size: 12)
-                          ],
-                        ),
-                        SizedBox(width: 0,),
-                      ],
-                    ),
-                  );
-              }),
+                              SizedBox(height: 5,),
+                              sText("${courseDetails[index].title}",color: listCourseDetails.contains(courseDetails[index]) ? Colors.blue : Colors.grey,weight: FontWeight.w500,size: 12)
+                            ],
+                          ),
+                          SizedBox(width: 0,),
+                        ],
+                      ),
+                    );
+                  }),
             ),
             SizedBox(height: 40,),
             getPage().values.first
@@ -298,54 +333,100 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     );
   }
   noteWidget(){
-    return  Expanded(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: noteDetails[0],
-                onTap: () {
+    return
+      topics.isNotEmpty ?
+      Expanded(
+      child: ListView.builder(
+          itemCount: topics.length,
+          itemBuilder: (BuildContext context, int index){
+            return Column(
+              children: [
+                MaterialButton(
+                  onPressed: (){
+
                   },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: noteDetails[1],
-                onTap: () async {
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: appWidth(context) * 0.70,
+                              child: sText("${topics[index].name}"),
+                            ),
+                          ],
+                        ),
 
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: noteDetails[2],
-                onTap: () {
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset('assets/icons/courses/learn.png',width: 35,height: 35,),
+                            SizedBox(height: 10,),
+                            Container(
+                              child: Icon(Icons.check,color: Colors.white,),
+                              decoration: BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15,),
+              ],
+            );
+      })
+      ) :
+          topicsProgressCode ?
+      Center(child: progress()) :
+          MaterialButton(
+            onPressed: ()async{
+             await goTo(context, BuyBundlePage(widget.user, controller: widget.controller, bundle: widget.subscription,));
+             setState(() {
+               topics.clear();
+               topicsProgressCode = true;
+                getNotesTopics(course!);
+             });
 
-                },
-              ),
+            },
+            child: Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                  width: appWidth(context),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        sText(""),
+                        Container(
+                          width: appWidth(context) * 0.70,
+                            child: sText("DOWNLOAD ${course != null ? course!.name : widget.courses[0].name}  TOPICS",color: kAdeoGray3,weight: FontWeight.bold,size: 16,align: TextAlign.left),
+                        ),
+                        SizedBox(width: 10,),
+                        Icon(Icons.arrow_forward_ios)
+                      ],
+                    ),
+                ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: noteDetails[3],
-                onTap: () {
-                },
-              ),
-            ),
-
-          ],
-        ),
-      ),
-    );
+          ) ;
   }
   testTypeWidget(){
     return   Expanded(
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.symmetric(horizontal: 20),
         children: [
           MultiPurposeCourseCard(
             title: 'Speed',
@@ -422,5 +503,50 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
         ],
       ),
     );
+  }
+
+  progressWidget(){
+      return  Column(
+        children: [
+          MaterialButton(
+            onPressed: ()async{
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return AnalysisView(
+                      user: widget.user,
+                      course: course,
+                    );
+                  },
+                ),
+              );
+
+            },
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                width: appWidth(context),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    sText(""),
+                    Container(
+                      width: appWidth(context) * 0.70,
+                      child: sText("CHECK ${course != null ? course!.name : widget.courses[0].name}  STATS",color: kAdeoGray3,weight: FontWeight.bold,size: 16,align: TextAlign.center),
+                    ),
+                    SizedBox(width: 10,),
+                    Icon(Icons.arrow_forward_ios)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
   }
 }
