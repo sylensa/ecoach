@@ -1,5 +1,4 @@
 import 'package:ecoach/controllers/course_completion_controller.dart';
-import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
@@ -7,7 +6,6 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_completion_study_progress.dart';
 import 'package:ecoach/models/mastery_course.dart';
-import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
@@ -131,18 +129,18 @@ class _LearnModeState extends State<LearnMode> {
 
                   // create a revision progress object and add it to the revision progress database
                   // if the current course is starting for the first time
-                  RevisionStudyProgress revisionStudyProgress =
-                      RevisionStudyProgress(
-                    courseId: widget.course.id,
-                    topicId: progress!.topicId,
-                    studyId: progress.studyId,
-                    level: 1,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-
-                  RevisionProgressController()
-                      .createInitialCourseRevision(revisionStudyProgress);
+                  // RevisionStudyProgress revisionStudyProgress =
+                  //     RevisionStudyProgress(
+                  //   courseId: widget.course.id,
+                  //   topicId: progress!.topicId,
+                  //   studyId: progress.studyId,
+                  //   level: 1,
+                  //   createdAt: DateTime.now(),
+                  //   updatedAt: DateTime.now(),
+                  // );
+                  //
+                  // RevisionProgressController()
+                  //     .createInitialCourseRevision(revisionStudyProgress);
 
                   if (progress == null) {
                     return;

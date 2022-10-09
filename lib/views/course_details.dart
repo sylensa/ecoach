@@ -1,31 +1,22 @@
-import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/study_db.dart';
-import 'package:ecoach/models/notes_read.dart';
-import 'package:ecoach/models/revision_study_progress.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/database/notes_read_db.dart';
-import 'package:ecoach/database/test_taken_db.dart';
-import 'package:ecoach/new_ui_ben/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
-import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
-import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/notes/notes_topics.dart';
 import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
-import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
+import 'package:ecoach/widgets/page_header.dart';
 import 'package:flutter/material.dart';
-import 'package:ecoach/utils/manip.dart';
 import 'package:provider/provider.dart';
-
-import '../models/ui/course_info.dart';
 
 class CourseDetailsPage extends StatefulWidget {
   CourseDetailsPage(this.user, {this.courseInfo, course});
@@ -181,7 +172,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                           welcomeProvider
                               .setCurrentCourseCompletionStudyProgress(null);
 
-                              welcomeProvider.setCurrentSpeedProgress(null);
+                          welcomeProvider.setCurrentSpeedProgress(null);
 
                           welcomeProvider.setCurrentUser(widget.user);
 
@@ -191,10 +182,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                               settings:
                                   RouteSettings(name: LearnMode.routeName),
                               builder: (context) {
-                                // return WelcomeToLearnMode(
-                                //   course: widget.courseInfo.course,
-                                // );
-
                                 return LearnMode(
                                     widget.user, widget.courseInfo.course);
                               },

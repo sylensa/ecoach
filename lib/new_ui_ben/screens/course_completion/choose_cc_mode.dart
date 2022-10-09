@@ -1,15 +1,11 @@
 import 'package:ecoach/controllers/course_completion_controller.dart';
-import 'package:ecoach/controllers/revision_progress_controller.dart';
 import "package:flutter/material.dart";
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/learn_card.dart';
 
-
 class ChoseCourseCompletionMode extends StatelessWidget {
-
   final Function continueOngoing;
   ChoseCourseCompletionMode({required this.continueOngoing});
 
@@ -49,8 +45,7 @@ class ChoseCourseCompletionMode extends StatelessWidget {
                   visible: welcome.currentCourseCompletion!.level != 1,
                   child: LearnCard(
                     title: 'Ongoing',
-                    desc:
-                        'Do a quick revision for an upcoming exam',
+                    desc: 'Do a quick revision for an upcoming exam',
                     value: (((welcome.currentCourseCompletion!.level! - 1)) /
                             welcome.totalTopics) *
                         100,
@@ -69,7 +64,8 @@ class ChoseCourseCompletionMode extends StatelessWidget {
                   value: 0,
                   icon: 'assets/images/learn_mode2/stopwatch.png',
                   onTap: () {
-                    CourseCompletionStudyController().restartCourseCompletionProgress();
+                    CourseCompletionStudyController()
+                        .restartCourseCompletionProgress();
                   },
                 ),
                 const SizedBox(

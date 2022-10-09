@@ -245,16 +245,17 @@ class StudyDB {
   }
 
   Future<List<RevisionStudyProgress?>> getRevisionProgressByCourse(
-      Course course) async {
+      Course course,
+      {bool isDesc = true}) async {
     final Database? db = await DBProvider.database;
 
     final topics = await TopicDB().courseTopics(course);
 
     var result = await db!.query(
       'revision_study_progress',
-      orderBy: "created_at DESC",
-      where: "course_id = ? and level = ?",
-      whereArgs: [course.id, topics.length],
+      orderBy: "created_at ${isDesc ? "DESC" : "ASC"}",
+      where: "course_id = ?",
+      whereArgs: [course.id],
     );
 
     List<RevisionStudyProgress?> progressAttempts = [];

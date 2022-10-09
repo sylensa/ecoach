@@ -4,6 +4,8 @@ import "package:flutter/material.dart";
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../database/study_db.dart';
+import '../../../models/revision_study_progress.dart';
 import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/learn_card.dart';
 
@@ -32,61 +34,94 @@ class ChoseRevisionMode extends StatelessWidget {
         width: double.infinity,
         child: Consumer<WelcomeScreenProvider>(
           builder: (_, welcome, __) => SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text(
-                  "A quick way to prep for your exam",
-                  style: TextStyle(
-                      fontSize: 20, color: Color.fromRGBO(255, 255, 255, 0.5)),
-                ),
-                const SizedBox(
-                  height: 67,
-                ),
-                Visibility(
-                  visible: welcome.currentRevisionStudyProgress!.level != 1,
-                  child: LearnCard(
-                    title: 'Ongoing',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    value:
-                        (((welcome.currentRevisionStudyProgress!.level! - 1)) /
-                                welcome.totalTopics) *
-                            100,
-                    icon: 'assets/images/learn_mode2/hourglass.png',
-                    onTap: () async {
-                      controller.getRevisionQuestion();
-                      // controller.recordAttempts();
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                LearnCard(
-                  title: 'New',
-                  desc: 'Discard old revision and start a new one',
-                  value: 0,
-                  icon: 'assets/images/learn_mode2/stopwatch.png',
-                  onTap: () {
-                    controller.restartRevenue();
-                    // controller.recordAttempts();
-                  },
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                LearnCard(
-                  subTitle: 'view',
-                  secondarySubTitle: "10x",
-                  title: 'Completed',
-                  desc: 'View stats on completed revision rounds',
-                  value: 100,
-                  icon: 'assets/images/learn_mode2/completed.png',
-                  onTap: () {
-                    Get.to(() => RevisionReview());
-                  },
-                ),
-              ],
-            ),
+            child: FutureBuilder<List<RevisionStudyProgress?>>(
+                future: StudyDB()
+                    .getRevisionProgressByCourse(welcome.currentCourse!),
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    return Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    );
+                  }
+
+                  print("revision ${snapshot.data}");
+
+                  return Column(
+                    children: [
+                      const Text(
+                        "A quick way to prep for your exam",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromRGBO(255, 255, 255, 0.5)),
+                      ),
+                      const SizedBox(
+                        height: 67,
+                      ),
+                      Visibility(
+                        visible: snapshot.data!.isNotEmpty,
+                        child: LearnCard(
+                          title: 'Ongoing',
+                          desc: 'Do a quick revision for an upcoming exam',
+                          value: welcome.currentRevisionStudyProgress == null
+                              ? 0
+                              : (((welcome.currentRevisionStudyProgress!
+                                              .level! -
+                                          1)) /
+                                      welcome.totalTopics) *
+                                  100,
+                          icon: 'assets/images/learn_mode2/hourglass.png',
+                          onTap: () async {
+                            controller.getRevisionQuestion();
+                            // controller.recordAttempts();
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      LearnCard(
+                        title: 'New',
+                        desc: 'Discard old revision and start a new one',
+                        value: 0,
+                        icon: 'assets/images/learn_mode2/stopwatch.png',
+                        onTap: () {
+                          print("new revision");
+                          controller.restartRevenue();
+                          // controller.recordAttempts();
+                        },
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      FutureBuilder<List<RevisionStudyProgress?>>(
+                          future: StudyDB().getRevisionProgressByCourse(
+                              Provider.of<WelcomeScreenProvider>(context,
+                                      listen: false)
+                                  .currentCourse!),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator.adaptive(),
+                              );
+                            }
+                            return LearnCard(
+                              subTitle: 'view',
+                              secondarySubTitle: snapshot.data == null
+                                  ? "0x"
+                                  : "${snapshot.data!.length}x",
+                              title: 'Completed',
+                              desc: 'View stats on completed revision rounds',
+                              value: 100,
+                              icon: 'assets/images/learn_mode2/completed.png',
+                              onTap: () {
+                                Get.to(() => RevisionReview());
+                              },
+                            );
+                          }),
+                    ],
+                  );
+                }),
           ),
         ),
       ),

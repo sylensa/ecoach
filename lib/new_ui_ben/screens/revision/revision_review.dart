@@ -1,8 +1,8 @@
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_ui_ben/screens/revision/widget/revision_chart.dart';
 import 'package:ecoach/new_ui_ben/utils/helper_utils.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -16,14 +16,35 @@ class RevisionReview extends StatefulWidget {
 }
 
 class _RevisionReviewState extends State<RevisionReview> {
-  getProgressTotal(RevisionStudyProgress progress) {
-    double total = 0;
+  List<double> revisionScores = [];
+  List<RevisionData> chartData = [];
 
-    StudyDB().getRevisionAttemptSumByProgress(progress).then((value) {
-      total = value;
+  getProgressTotal() async {
+    List<RevisionStudyProgress?> revisions = await StudyDB()
+        .getRevisionProgressByCourse(
+            Provider.of<WelcomeScreenProvider>(context, listen: false)
+                .currentCourse!,
+            isDesc: false);
+
+    revisions.forEach((progress) async {
+      int total = await StudyDB().getRevisionAttemptSumByProgress(progress!);
+      revisionScores.add(total.toDouble());
+      print(revisionScores);
+      print("revise revision scores ${revisionScores.reversed.toList()}");
+      RevisionData newData = RevisionData(revisions.indexOf(progress), total);
+      chartData.add(newData);
+
+      // print("chartData ${chartData}");
+      // print("reverved chartData ${chartData.reversed.toList()}");
     });
 
-    return total;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getProgressTotal();
   }
 
   @override
@@ -74,58 +95,17 @@ class _RevisionReviewState extends State<RevisionReview> {
                         const SizedBox(
                           height: 40,
                         ),
-                        // Container(
-                        //   height: 200,
-                        //   padding: EdgeInsets.all(10),
-                        //   decoration: BoxDecoration(
-                        //       color: Color(0xFF005CA5),
-                        //       borderRadius: BorderRadius.circular(20)),
-                        //   child: LineChart(
-                        //     LineChartData(
-                        //       minY: 0,
-                        //       minX: 0,
-                        //       maxX: snapshot.data!.length.toDouble(),
-                        //       maxY: 10,
-                        //       titlesData: FlTitlesData(show: false),
-                        //       gridData: FlGridData(show: false),
-                        //       axisTitleData: FlAxisTitleData(show: false),
-                        //       borderData: FlBorderData(
-                        //           show: false,
-                        //           border: Border.all(
-                        //               color: Colors.transparent, width: 0)),
-                        //       lineBarsData: [
-                        //         LineChartBarData(
-                        //           spots: [
-                        //             ...List.generate(snapshot.data!.length,
-                        //                 (index) {
-                        //               RevisionStudyProgress? progress =
-                        //                   snapshot.data![index];
-                        //
-                        //               final totalScore = StudyDB()
-                        //                   .getRevisionAttemptSumByProgress(
-                        //                       progress!);
-                        //
-                        //               return FlSpot(index.toDouble(),
-                        //                   progress.level!.toDouble());
-                        //             }).reversed.toList()
-                        //           ],
-                        //           belowBarData: BarAreaData(
-                        //               show: true,
-                        //               colors: [Colors.teal, Colors.green]
-                        //                   .map((e) => e.withOpacity(0.3))
-                        //                   .toList()),
-                        //           dotData: FlDotData(show: false),
-                        //           isCurved: true,
-                        //           colors: [Colors.teal, Colors.green],
-                        //           barWidth: 2,
-                        //         )
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
+                        Container(
+                          height: 200,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: RevisionChart.withSampleData(chartData),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         ...List.generate(snapshot.data!.length, (index) {
                           RevisionStudyProgress? progress =
                               snapshot.data![index];

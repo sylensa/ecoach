@@ -32,6 +32,8 @@ import '../../helper/helper.dart';
 import '../../models/course.dart';
 import '../../models/revision_study_progress.dart';
 import '../../new_ui_ben/screens/mastery/mastery_improvement_topics.dart';
+import '../../new_ui_ben/widgets/answers_widget.dart';
+import '../../new_ui_ben/widgets/save_question_widget.dart';
 import '../../revamp/core/utils/app_colors.dart';
 import '../../revamp/features/questions/view/widgets/actual_question.dart';
 import '../../utils/style_sheet.dart';
@@ -176,6 +178,32 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     await Future.delayed(Duration(seconds: 1));
 
+    if (StudyType.REVISION == controller.type) {
+      Provider.of<RevisionAttemptProvider>(context, listen: false)
+          .setQuestionCountAndAvgScore(
+              questionsLength: correctAnswered + wrong, score: avgScore);
+
+      RevisionStudyProgress? revision = await StudyDB()
+          .getCurrentRevisionProgressByCourse(controller.course.id!);
+
+      RevisionProgressController().recordAttempts(correctAnswered.toDouble());
+
+      if (revision != null) {
+        int revisionLevel =
+            avgScore >= 70 ? revision.level! + 1 : revision.level!;
+
+        revision.level = revisionLevel;
+        revision.updatedAt = DateTime.now();
+        print("revision update => ${revision.toMap()}");
+        await StudyDB().updateRevisionProgress(revision);
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+            .setCurrentRevisionStudyProgress(revision);
+      }
+
+      Get.off(() => SuccessfulRevision());
+      return;
+    }
+
     controller.saveTest(context, (test, success) async {
       Navigator.pop(context);
       if (success) {
@@ -210,27 +238,27 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     print("Controller details: ${controller.type}");
 
-    if (StudyType.REVISION == controller.type) {
-      RevisionStudyProgress? revision = await StudyDB()
-          .getCurrentRevisionProgressByCourse(controller.course.id!);
-
-      RevisionProgressController().recordAttempts(correctAnswered.toDouble());
-
-      if (revision != null) {
-        int revisionLevel =
-            avgScore >= 70 ? revision.level! + 1 : revision.level!;
-
-        revision.level = revisionLevel;
-        revision.updatedAt = DateTime.now();
-        print("revision update => ${revision.toMap()}");
-        await StudyDB().updateRevisionProgress(revision);
-        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
-            .setCurrentRevisionStudyProgress(revision);
-      }
-
-      Get.off(() => SuccessfulRevision());
-      return;
-    }
+    // if (StudyType.REVISION == controller.type) {
+    //   RevisionStudyProgress? revision = await StudyDB()
+    //       .getCurrentRevisionProgressByCourse(controller.course.id!);
+    //
+    //   RevisionProgressController().recordAttempts(correctAnswered.toDouble());
+    //
+    //   if (revision != null) {
+    //     int revisionLevel =
+    //         avgScore >= 70 ? revision.level! + 1 : revision.level!;
+    //
+    //     revision.level = revisionLevel;
+    //     revision.updatedAt = DateTime.now();
+    //     print("revision update => ${revision.toMap()}");
+    //     await StudyDB().updateRevisionProgress(revision);
+    //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+    //         .setCurrentRevisionStudyProgress(revision);
+    //   }
+    //
+    //   Get.off(() => SuccessfulRevision());
+    //   return;
+    // }
 
     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
       // bool moveUp = controller.progress.section == null ||
@@ -540,22 +568,10 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     const SizedBox(
                       width: 6.2,
                     ),
-                    // if (!widget.diagnostic)
-                    //   InkWell(
-                    //     onTap: () {
-                    //       setState(() {
-                    //         swichValue = !swichValue;
-                    //       });
-                    //       insertSaveTestQuestion(
-                    //           controller.questions[currentQuestion].id!);
-                    //     },
-                    //     child: SvgPicture.asset(
-                    //       savedQuestions.contains(
-                    //               controller.questions[currentQuestion].id)
-                    //           ? "assets/images/on_switch.svg"
-                    //           : "assets/images/off_switch.svg",
-                    //     ),
-                    //   ),
+                    SavedQuestionWidget(
+                      question:
+                          controller.questions[controller.currentQuestion],
+                    )
                   ],
                 ),
               ),
@@ -1284,6 +1300,9 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  //**************
+                  // question
+                  //*************
                   Theme(
                     data: Theme.of(context)
                         .copyWith(dividerColor: Colors.transparent),
@@ -1312,6 +1331,8 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                       ],
                     ),
                   ),
+
+                  // choose answer
                   Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 10),
@@ -1337,6 +1358,9 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                   //   textColor: textColor,
                   // ),
 
+                  //*********
+                  // resoucres
+                  //*******
                   if (widget.question.resource != null &&
                       widget.question.resource != "")
                     GestureDetector(
@@ -1352,6 +1376,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                           child: ExpansionTile(
                             textColor: Colors.white,
                             iconColor: kAdeoGray3,
+                            initiallyExpanded: true,
                             collapsedBackgroundColor: Colors.white,
                             collapsedIconColor: kAdeoGray3,
                             backgroundColor: Colors.white,
@@ -1520,76 +1545,80 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                   ],
                 ),
               ),
+            // ***********
+            // answers
+            // ***********
             Container(
               margin: EdgeInsets.only(top: 20),
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    GestureDetector(
-                      onTap: () {
-                        if (!widget.enabled) {
-                          return;
-                        }
-                        setState(() {
-                          selectedAnswer =
-                              widget.question.selectedAnswer = answers![i];
-                          widget.callback!(
-                              selectedAnswer!, selectedAnswer == correctAnswer);
-                          // callback!(answer);
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                            bottom: 10, right: 20, left: 20),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: AdeoHtmlTex(
-                                widget.user,
-                                answers![i].text!.replaceAll("https", "http"),
-                                // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
-                                useLocalImage: true,
-                                textColor: selectedAnswer == answers![i]
-                                    ? Colors.white
-                                    : kSecondaryTextColor,
-                                fontSize:
-                                    selectedAnswer == answers![i] ? 25 : 16,
-                                textAlign: TextAlign.left,
-                                fontWeight: FontWeight.bold,
-                                removeBr: true,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Icon(
-                              Icons.radio_button_off,
-                              color: Colors.white,
-                            )
-                          ],
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 5),
-                        decoration: BoxDecoration(
-                          color: selectedAnswer == answers![i]
-                              ? Color(0xFF0367B4)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            width: selectedAnswer == answers![i] ? 1 : 1,
-                            color: selectedAnswer == answers![i]
-                                ? Colors.transparent
-                                : Color(0xFFC8C8C8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  // selectAnswerWidget(answers![i], Color(0xFF00C664), (
-                  //   answerSelected,
-                  // ) {
-                  //   widget.callback!(
-                  //       answerSelected, answerSelected == correctAnswer);
-                  // }),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     if (!widget.enabled) {
+                    //       return;
+                    //     }
+                    //     setState(() {
+                    //       selectedAnswer =
+                    //           widget.question.selectedAnswer = answers![i];
+                    //       widget.callback!(
+                    //           selectedAnswer!, selectedAnswer == correctAnswer);
+                    //       // callback!(answer);
+                    //     });
+                    //   },
+                    //   child: Container(
+                    //     margin: const EdgeInsets.only(
+                    //         bottom: 10, right: 20, left: 20),
+                    //     child: Row(
+                    //       children: [
+                    //         Expanded(
+                    //           child: AdeoHtmlTex(
+                    //             widget.user,
+                    //             answers![i].text!.replaceAll("https", "http"),
+                    //             // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                    //             useLocalImage: true,
+                    //             textColor: selectedAnswer == answers![i]
+                    //                 ? Colors.white
+                    //                 : kSecondaryTextColor,
+                    //             fontSize:
+                    //                 selectedAnswer == answers![i] ? 25 : 16,
+                    //             textAlign: TextAlign.left,
+                    //             fontWeight: FontWeight.bold,
+                    //             removeBr: true,
+                    //           ),
+                    //         ),
+                    //         const SizedBox(
+                    //           width: 10,
+                    //         ),
+                    //         Icon(
+                    //           Icons.radio_button_off,
+                    //           color: Colors.white,
+                    //         )
+                    //       ],
+                    //     ),
+                    //     padding: const EdgeInsets.symmetric(
+                    //         vertical: 10, horizontal: 5),
+                    //     decoration: BoxDecoration(
+                    //       color: selectedAnswer == answers![i]
+                    //           ? Color(0xFF0367B4)
+                    //           : Colors.white,
+                    //       borderRadius: BorderRadius.circular(14),
+                    //       border: Border.all(
+                    //         width: selectedAnswer == answers![i] ? 1 : 1,
+                    //         color: selectedAnswer == answers![i]
+                    //             ? Colors.transparent
+                    //             : Color(0xFFC8C8C8),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    newSelectedAnswer(answers![i], Color(0xFF00C664), (
+                      answerSelected,
+                    ) {
+                      widget.callback!(
+                          answerSelected, answerSelected == correctAnswer);
+                    }),
+                  // newSelectedAnswer(answers![i])
                 ],
               ),
             ),
@@ -1606,10 +1635,17 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
       child: Stack(children: [
         TextButton(
           style: ButtonStyle(
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
                   borderRadius: BorderRadius.zero,
                   side: BorderSide(
-                      color: getOutlineColor(answer, selectedColor)))),
+                    color: getOutlineColor(
+                      answer,
+                      selectedColor,
+                    ),
+                  ),
+                ),
+              ),
               minimumSize: MaterialStateProperty.all(getWidgetSize(answer)),
               backgroundColor: MaterialStateProperty.all(
                 getBackgroundColor(answer, selectedColor),
@@ -1713,5 +1749,37 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
       return Colors.white;
     }
     return Color(0xFFBAC4D9);
+  }
+
+  Widget newSelectedAnswer(Answer answer, Color selectedColor,
+      Function(Answer selectedAnswer)? callback) {
+    return GestureDetector(
+      onTap: () {
+        if (!widget.enabled) {
+          return;
+        }
+        setState(() {
+          selectedAnswer = widget.question.selectedAnswer = answer;
+          callback!(answer);
+        });
+      },
+      child: getAnswerStatus(answer),
+    );
+  }
+
+  getAnswerStatus(Answer answer) {
+    if (selectedAnswer == answer && widget.enabled) {
+      return newSelectedAnswerWidget(answer, widget.user);
+    }
+    if (!widget.enabled && answer == correctAnswer) {
+      return missedAnswer(answer, widget.user);
+    }
+    if (!widget.enabled &&
+        answer != correctAnswer &&
+        answer == selectedAnswer) {
+      return wrongAnswer(answer, widget.user);
+    } else {
+      return newAnswerWidget(answer, widget.user);
+    }
   }
 }

@@ -69,19 +69,21 @@ class RevisionProgressController {
     final welcomeProvider =
         Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
 
-    RevisionStudyProgress? progress =
-        welcomeProvider.currentRevisionStudyProgress;
+    print(welcomeProvider.currentCourse!.id);
 
-    RevisionStudyProgress? revisionStudyProgress =
-        await StudyDB().getCurrentRevisionProgressByCourse(progress!.courseId!);
+    // RevisionStudyProgress? progress =
+    //     welcomeProvider.currentRevisionStudyProgress;
+
+    // RevisionStudyProgress? revisionStudyProgress = await StudyDB()
+    //     .getCurrentRevisionProgressByCourse(welcomeProvider.currentCourse!.id!);
 
     RevisionStudyProgress newRevisionStudyProgress = RevisionStudyProgress(
-      courseId: revisionStudyProgress!.courseId,
+      courseId: welcomeProvider.currentCourse!.id!,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       level: 1,
-      studyId: revisionStudyProgress.studyId,
-      topicId: revisionStudyProgress.topicId,
+      studyId: welcomeProvider.progress!.studyId,
+      topicId: welcomeProvider.progress!.topicId,
     );
 
     await StudyDB()
@@ -98,17 +100,18 @@ class RevisionProgressController {
   }
 
   getRevisionQuestion() async {
-    int currentRevisionLevel =
-        welcomeProvider.currentRevisionStudyProgress!.level!;
+    print("revision clicked");
+    // int currentRevisionLevel =
+    //     welcomeProvider.currentRevisionStudyProgress!.level!;
 
     Course course = welcomeProvider.currentCourse!;
 
     RevisionStudyProgress? progress =
         await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
 
-    print("get question from this progress: ${progress!.toMap()}");
+    print("get question from this progress: ${progress}");
 
-    Topic? topic = await TopicDB().getLevelTopic(course.id!, progress.level!);
+    Topic? topic = await TopicDB().getLevelTopic(course.id!, progress!.level!);
 
     List<Question> questions =
         await QuestionDB().getTopicQuestions([topic!.id!], 10);
@@ -146,8 +149,8 @@ class RevisionProgressController {
 
     StudyController controller = welcomeProvider.currentStudyController!;
 
-    Topic? topic =
-        await TopicDB().getTopicById(revisionStudyProgress!.topicId!);
+    Topic? topic = await TopicDB()
+        .getLevelTopic(course.id!, revisionStudyProgress!.level!);
 
     controller.saveTest(Get.context!, (test, success) async {
       Navigator.push(Get.context!, MaterialPageRoute(builder: (context) {
@@ -244,9 +247,8 @@ class RevisionProgressController {
         "attempts": topicAttempts.length,
         "avgScore": topicAttempts.isEmpty
             ? 0
-            : score.fold(0,
-                    (num previousValue, element) => previousValue + element) /
-                topicAttempts.length
+            : score.fold(
+                0, (num previousValue, element) => previousValue + element)
       };
 
       topicsAttemptsMapList.add(topicMap);

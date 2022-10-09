@@ -134,7 +134,7 @@ class _RevisionStudyAttemptsState extends State<RevisionStudyAttempts> {
                       ),
                     ),
                     Text(
-                      "${attempts[index]['attempts']} x",
+                      "${attempts[index]['attempts']}x",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -144,7 +144,7 @@ class _RevisionStudyAttemptsState extends State<RevisionStudyAttempts> {
                       width: 35,
                     ),
                     Text(
-                      "${attempts[index]["avgScore"].floor()}/10",
+                      "${attempts[index]["avgScore"].floor()}/${10 * attempts[index]["attempts"]}",
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

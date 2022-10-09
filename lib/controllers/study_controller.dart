@@ -192,7 +192,7 @@ abstract class StudyController {
       bool moveUp = true;
 
       if (moveUp) {
-        moveUp = score > 70;
+        moveUp = score >= 70;
         SpeedStudyProgressController().updateCCLevel(moveUp);
       }
       Get.off(

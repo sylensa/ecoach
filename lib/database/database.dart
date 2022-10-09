@@ -22,11 +22,11 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.122.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.123.db" : "ecoach63.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 29, onOpen: (db) {},
+    return await openDatabase(path, version: 28, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
