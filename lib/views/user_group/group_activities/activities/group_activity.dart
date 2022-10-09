@@ -37,9 +37,7 @@ class _ActivityState extends State<Activity> {
     // try {
     if (isConnected) {
       allGroupNotificationData = await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupNotifications();
-      if(allGroupNotificationData.isEmpty){
-        // goTo(context, NoGroupActivity(groupData: widget.groupData,),replace: true);
-      }
+
     } else {
       showNoConnectionToast(context);
     }
@@ -52,22 +50,6 @@ class _ActivityState extends State<Activity> {
     });
   }
 
-  getUpcomingActivity() async {
-    final bool isConnected = await InternetConnectionChecker().hasConnection;
-    // try {
-    if (isConnected) {
-      upComingGroupNotificationData = await GroupManagementController().getUpcomingGroupNotifications();
-    } else {
-      showNoConnectionToast(context);
-    }
-    // } catch (e) {
-    //   print(e.toString());
-    // }
-
-    setState(() {
-      progressCodeUpComing = false;
-    });
-  }
   getTimerWidget(String duration,{bool isStartTime = true}){
     var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
     var _lastConso = DateTime.now().subtract(lastConsoString3);
@@ -101,7 +83,6 @@ class _ActivityState extends State<Activity> {
 
   @override
   void initState(){
-    getUpcomingActivity();
     getAllActivity();
     super.initState();
   }
@@ -123,7 +104,7 @@ class _ActivityState extends State<Activity> {
               padding: EdgeInsets.zero,
                 itemCount: allGroupNotificationData.length,
                 itemBuilder: (BuildContext context, int index){
-                  return   notificationType(allGroupNotificationData[index]);
+                  return   notificationType(allGroupNotificationData[index],index,);
                 }),
           ) :
           Expanded(
@@ -143,35 +124,38 @@ class _ActivityState extends State<Activity> {
     );
   }
 
-  notificationType(GroupNotificationData groupNotificationData){
+
+
+
+  notificationType(GroupNotificationData groupNotificationData,int index){
     switch(groupNotificationData.notificationtableType){
       case "group_test" :
-        return  groupTest(groupNotificationData);
+        return  groupTest(groupNotificationData,index);
       case "group_test_result" :
-        return  groupTestResult(groupNotificationData);
+        return  groupTestResult(groupNotificationData,index);
       case "group_announcement" :
-        return  groupAnnouncement(groupNotificationData);
+        return  groupAnnouncement(groupNotificationData,index);
       case "group_invitation" :
-        return  groupInvitation(groupNotificationData);
+        return  groupInvitation(groupNotificationData,index);
       case "group_invite" :
-        return  groupInvitation(groupNotificationData);
+        return  groupInvitation(groupNotificationData,index);
       case "group_request" :
-        return  groupRequest(groupNotificationData);
-    default:
-    return  Container(
-      child: sText("${groupNotificationData.notificationtableType}"),
-    );
+        return  groupRequest(groupNotificationData,index);
+      default:
+        return  groupTest(groupNotificationData,index);
 
 
     }
   }
 
-  groupTest(GroupNotificationData groupNotificationData){
+  groupTest(GroupNotificationData groupNotificationData,int index){
     return MaterialButton(
+      padding: EdgeInsets.zero,
       onPressed: ()async{
         await goTo(context, TestInstruction(widget.user,groupNotificationData: groupNotificationData,));
         setState((){
-
+            allGroupNotificationData[index].viewed = true;
+            groupNotificationData = allGroupNotificationData[index];
         });
       },
       child: Column(
@@ -180,7 +164,7 @@ class _ActivityState extends State<Activity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -254,11 +238,14 @@ class _ActivityState extends State<Activity> {
 
   }
 
-  groupTestResult(GroupNotificationData groupNotificationData){
+  groupTestResult(GroupNotificationData groupNotificationData,int index){
     return MaterialButton(
+      padding: EdgeInsets.zero,
       onPressed: ()async{
         // await goTo(context, GroupInvite(widget.user,groupNotificationData.id.toString()));
         setState((){
+          allGroupNotificationData[index].viewed = true;
+          groupNotificationData = allGroupNotificationData[index];
 
         });
       },
@@ -268,7 +255,7 @@ class _ActivityState extends State<Activity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color:  groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -324,11 +311,16 @@ class _ActivityState extends State<Activity> {
     );
   }
 
-  groupAnnouncement(GroupNotificationData groupNotificationData){
+  groupAnnouncement(GroupNotificationData groupNotificationData,int index){
     return  MaterialButton(
+      padding: EdgeInsets.zero,
 
-      onPressed: (){
-        goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
+      onPressed: ()async{
+        await  goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
+        setState((){
+          allGroupNotificationData[index].viewed = true;
+          groupNotificationData = allGroupNotificationData[index];
+        });
       },
       child: Column(
         children: [
@@ -336,7 +328,7 @@ class _ActivityState extends State<Activity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Color(0XFFE2EFF3),
+                color:  groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -368,7 +360,7 @@ class _ActivityState extends State<Activity> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.createdAt.toString())}",weight: FontWeight.normal),
                       SizedBox(height: 20,),
                       Icon(Icons.arrow_forward),
                     ],
@@ -382,11 +374,17 @@ class _ActivityState extends State<Activity> {
     )    ;
   }
 
-  groupInvitation(GroupNotificationData groupNotificationData){
+  groupInvitation(GroupNotificationData groupNotificationData,int index,){
     return  MaterialButton(
+      padding: EdgeInsets.zero,
 
-      onPressed: (){
-        goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
+      onPressed: ()async{
+        await  goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
+        setState((){
+          allGroupNotificationData[index].viewed = true;
+          groupNotificationData = allGroupNotificationData[index];
+
+        });
       },
       child: Column(
         children: [
@@ -394,7 +392,7 @@ class _ActivityState extends State<Activity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Color(0XFFE2EFF3),
+                color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -426,7 +424,7 @@ class _ActivityState extends State<Activity> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.createdAt.toString())}",weight: FontWeight.normal),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.group!.dateCreated.toString())}",weight: FontWeight.normal),
                       SizedBox(height: 20,),
                       Icon(Icons.arrow_forward),
                     ],
@@ -439,13 +437,17 @@ class _ActivityState extends State<Activity> {
       ),
     )    ;
   }
-
-  groupRequest(GroupNotificationData groupNotificationData){
+  groupRequest(GroupNotificationData groupNotificationData,int index,){
     return  MaterialButton(
       padding: EdgeInsets.zero,
 
-      onPressed: (){
-        goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
+      onPressed: ()async{
+        await goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
+        setState((){
+          allGroupNotificationData[index].viewed = true;
+          groupNotificationData = allGroupNotificationData[index];
+
+        });
       },
       child: Column(
         children: [
@@ -453,7 +455,7 @@ class _ActivityState extends State<Activity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Color(0XFFE2EFF3),
+                color:  groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(

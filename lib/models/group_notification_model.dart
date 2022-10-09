@@ -115,6 +115,7 @@ class GroupNotificationData {
     this.updatedAt,
     this.notificationtable,
     this.group,
+    this.viewed,
 
   });
 
@@ -124,6 +125,7 @@ class GroupNotificationData {
   String? notificationtableType;
   int? groupId;
   int? userId;
+  bool? viewed;
   DateTime? createdAt;
   DateTime? updatedAt;
   Notificationtable? notificationtable;
@@ -135,6 +137,7 @@ class GroupNotificationData {
     notificationtableId: json["notificationtable_id"] == null ? null : json["notificationtable_id"],
     notificationtableType: json["notificationtable_type"] == null ? null : json["notificationtable_type"],
     groupId: json["group_id"] == null ? null : json["group_id"],
+    viewed: json["viewed"] == null ? true : json["viewed"],
     userId: json["user_id"] == null ? 0 : json["user_id"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),

@@ -187,7 +187,8 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         Column(
                           children: [
                             for(int i =0; i < upComingGroupNotificationData.length; i++)
-                              notificationType(upComingGroupNotificationData[i])
+                              // if(!upComingGroupNotificationData[i].viewed!)
+                              notificationType(upComingGroupNotificationData[i],i,true)
 
                           ],
                         )
@@ -211,7 +212,8 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         Column(
                           children: [
                             for(int i =0; i < allGroupNotificationData.length; i++)
-                              notificationType(allGroupNotificationData[i])
+                              if(allGroupNotificationData[i].viewed!)
+                              notificationType(allGroupNotificationData[i],i,false)
 
                           ],
                         )
@@ -239,34 +241,42 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     );
   }
 
-  notificationType(GroupNotificationData groupNotificationData){
+  notificationType(GroupNotificationData groupNotificationData,int index,bool isUpcoming ){
     switch(groupNotificationData.notificationtableType){
       case "group_test" :
-      return  groupTest(groupNotificationData);
+      return  groupTest(groupNotificationData,index,isUpcoming);
       case "group_test_result" :
-        return  groupTestResult(groupNotificationData);
+        return  groupTestResult(groupNotificationData,index,isUpcoming);
       case "group_announcement" :
-      return  groupAnnouncement(groupNotificationData);
+      return  groupAnnouncement(groupNotificationData,index,isUpcoming);
       case "group_invitation" :
-        return  groupInvitation(groupNotificationData);
+        return  groupInvitation(groupNotificationData,index,isUpcoming);
       case "group_invite" :
-        return  groupInvitation(groupNotificationData);
+        return  groupInvitation(groupNotificationData,index,isUpcoming);
       case "group_request" :
-        return  groupRequest(groupNotificationData);
+        return  groupRequest(groupNotificationData,index,isUpcoming);
       default:
-      return  groupTest(groupNotificationData);
+      return  groupTest(groupNotificationData,index,isUpcoming);
 
 
     }
   }
 
-  groupTest(GroupNotificationData groupNotificationData){
+  groupTest(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
         await goTo(context, TestInstruction(widget.user,groupNotificationData: groupNotificationData,));
         setState((){
-
+          if(isUpcoming){
+            List<GroupNotificationData> listGroupNotificationData = [];
+            listGroupNotificationData.add(groupNotificationData);
+            allGroupNotificationData.insertAll(0, listGroupNotificationData);
+            upComingGroupNotificationData.removeAt(index);
+          }else{
+            allGroupNotificationData[index].viewed = true;
+          }
+          groupNotificationData =  allGroupNotificationData[index];
         });
       },
       child: Column(
@@ -275,7 +285,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -349,13 +359,21 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
 
   }
 
-  groupTestResult(GroupNotificationData groupNotificationData){
+  groupTestResult(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
         // await goTo(context, GroupInvite(widget.user,groupNotificationData.id.toString()));
         setState((){
-
+          if(isUpcoming){
+            List<GroupNotificationData> listGroupNotificationData = [];
+            listGroupNotificationData.add(groupNotificationData);
+            allGroupNotificationData.insertAll(0, listGroupNotificationData);
+            upComingGroupNotificationData.removeAt(index);
+          }else{
+            allGroupNotificationData[index].viewed = true;
+          }
+          groupNotificationData =  allGroupNotificationData[index];
         });
       },
       child: Column(
@@ -364,7 +382,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -420,12 +438,23 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     );
   }
 
-  groupAnnouncement(GroupNotificationData groupNotificationData){
+  groupAnnouncement(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     return  MaterialButton(
       padding: EdgeInsets.zero,
 
-      onPressed: (){
-        goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
+      onPressed: ()async{
+       await  goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
+       setState((){
+         if(isUpcoming){
+           List<GroupNotificationData> listGroupNotificationData = [];
+           listGroupNotificationData.add(groupNotificationData);
+           allGroupNotificationData.insertAll(0, listGroupNotificationData);
+           upComingGroupNotificationData.removeAt(index);
+         }else{
+           allGroupNotificationData[index].viewed = true;
+         }
+         groupNotificationData = allGroupNotificationData[index];
+       });
       },
       child: Column(
         children: [
@@ -433,7 +462,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Color(0XFFE2EFF3),
+                color:  groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -479,12 +508,25 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     )    ;
   }
 
-  groupInvitation(GroupNotificationData groupNotificationData){
+  groupInvitation(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     return  MaterialButton(
       padding: EdgeInsets.zero,
 
-      onPressed: (){
-        goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
+      onPressed: ()async{
+       await  goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
+       setState((){
+         if(isUpcoming){
+           List<GroupNotificationData> listGroupNotificationData = [];
+           listGroupNotificationData.add(groupNotificationData);
+           allGroupNotificationData.insertAll(0,listGroupNotificationData);
+           upComingGroupNotificationData.removeAt(index);
+         }else{
+           allGroupNotificationData[index].viewed = true;
+           print("object2");
+         }
+         groupNotificationData = allGroupNotificationData[index];
+
+       });
       },
       child: Column(
         children: [
@@ -492,7 +534,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Color(0XFFE2EFF3),
+                color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(
@@ -537,12 +579,23 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       ),
     )    ;
   }
-  groupRequest(GroupNotificationData groupNotificationData){
+  groupRequest(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     return  MaterialButton(
       padding: EdgeInsets.zero,
 
-      onPressed: (){
-        goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
+      onPressed: ()async{
+        await goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
+        setState((){
+          if(isUpcoming){
+            List<GroupNotificationData> listGroupNotificationData = [];
+            listGroupNotificationData.add(groupNotificationData);
+            allGroupNotificationData.insertAll(0, listGroupNotificationData);
+            upComingGroupNotificationData.removeAt(index);
+          }else{
+            allGroupNotificationData[index].viewed = true;
+          }
+          groupNotificationData =  allGroupNotificationData[index];
+        });
       },
       child: Column(
         children: [
@@ -550,7 +603,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
             decoration: BoxDecoration(
-                color: Color(0XFFE2EFF3),
+                color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
             ),
             child: Row(

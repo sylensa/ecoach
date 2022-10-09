@@ -1,3 +1,4 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/user.dart';
@@ -19,6 +20,14 @@ class GroupAnnouncement extends StatefulWidget {
 
 class _GroupAnnouncementState extends State<GroupAnnouncement> {
   TextEditingController searchController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(!widget.groupNotificationData!.viewed!){
+      GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).viewedNotification(notificationId: widget.groupNotificationData!.id);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

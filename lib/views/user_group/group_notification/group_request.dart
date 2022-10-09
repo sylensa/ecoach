@@ -119,7 +119,14 @@ class _GroupRequestState extends State<GroupRequest> {
     setState(() {
     });
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(!widget.groupNotificationData!.viewed!){
+      GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).viewedNotification(notificationId: widget.groupNotificationData!.id);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

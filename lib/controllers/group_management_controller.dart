@@ -781,7 +781,9 @@ class GroupManagementController{
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
-          listGroupNotificationData.add(groupNotificationData);
+          if(!groupNotificationData.viewed!){
+            listGroupNotificationData.add(groupNotificationData);
+          }
         }
         toastMessage("${res["message"]}");
         return listGroupNotificationData;
@@ -802,8 +804,9 @@ class GroupManagementController{
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
-          print("groupNotificationData:${groupNotificationData.toJson()}");
-          listGroupNotificationData.add(groupNotificationData);
+          if(groupNotificationData.viewed!){
+            listGroupNotificationData.add(groupNotificationData);
+          }
         }
         print("listGroupNotificationData:${listGroupNotificationData.length}");
         toastMessage("${res["message"]}");
@@ -869,6 +872,21 @@ class GroupManagementController{
     try{
     var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=$groupId&test_id=$testId",);
     print("performance:${res["data"]}");
+    if (res["code"].toString() == "200" && res["data"] == null) {
+      return false;
+    }else{
+      toastMessage("${res["message"]}");
+      return true;
+    }
+    }catch(e){
+      print(e.toString());
+      return true;
+    }
+  }
+    viewedNotification({int? notificationId}) async {
+    try{
+    var res = await doGet("${AppUrl.userGroup}/notifications/$notificationId/view",);
+    print("notifications viewed:$res");
     if (res["code"].toString() == "200" && res["data"] == null) {
       return false;
     }else{
