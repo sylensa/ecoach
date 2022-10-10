@@ -218,20 +218,19 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
             SizedBox(height: 40,),
             Container(
               height: 80,
-              child: ListView.builder(
+              padding: EdgeInsets.only(left: 2.h,),
+              child:  ListView.builder(
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
                   controller: pageController,
                   itemBuilder: (BuildContext context, int index){
-                    return    MaterialButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: (){
+                    return    GestureDetector(
+                      onTap: (){
                         if(index >= _currentPage){
-                          pageController.nextPage(duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
-                          pageController.jumpToPage(index);
+                          pageController.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
                         }else{
-                          pageController.previousPage(duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
+                          pageController.jumpTo(0.0);
                         }
                         setState(() {
                           _currentPage = index;
@@ -253,7 +252,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     width: 2.0,
-                                    color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF00C663) : Colors.transparent,
+                                    color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF2692E4) : Colors.transparent,
                                   ),
                                 ),
                                 child: Container(
@@ -261,7 +260,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                     height: 50,
                                     width: 50,
                                     decoration: BoxDecoration(
-                                      color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFFCEFFE7) : Colors.transparent,
+                                      color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF2692E4) : Colors.transparent,
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         width: 2.0,
@@ -275,7 +274,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                               sText("${courseDetails[index].title}",color: listCourseDetails.contains(courseDetails[index]) ? Colors.blue : Colors.grey,weight: FontWeight.w500,size: 12)
                             ],
                           ),
-                          SizedBox(width: 0,),
+                          SizedBox(width: 10,),
                         ],
                       ),
                     );
