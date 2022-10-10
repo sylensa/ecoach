@@ -70,7 +70,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                                         Icon(Icons.arrow_back_ios,color: Colors.white,),
                                         Container(
                                           width: 150,
-                                          child: sText("${widget.myGroupList![index].currentTest != null ? widget.myGroupList![index].currentTest!.name : "No test available"}",weight: FontWeight.w500,size: 14,maxLines: 1),
+                                          child: sText("${widget.myGroupList![index].currentTest != null ? widget.myGroupList![index].currentTest!.name : "No test available".toUpperCase()}",weight: FontWeight.w500,size: 14,maxLines: 1),
                                         ),
                                         Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
                                       ],
@@ -89,7 +89,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                                             sText("by ${widget.myGroupList![index].membersCount}",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                           ],
                                         ),
-
+                                        widget.myGroupList![index].owner!.id == widget.user.id ?
                                         Row(
                                           children: [
                                             Center(
@@ -119,7 +119,7 @@ class _MyGroupsPageState extends State<MyGroupsPage> {
                                               ),
                                             ),
                                           ],
-                                        ),
+                                        ) : Container(),
                                       ],
                                     ),
                                   ),

@@ -254,7 +254,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  Icon(Icons.arrow_back_ios,color: Colors.white,),
                                                  Container(
                                                    width: 150,
-                                                   child: sText("${myGroupList[index].currentTest != null ? myGroupList[index].currentTest!.name : "No testing available"}",weight: FontWeight.w500,size: 14,maxLines: 1),
+                                                   child: sText("${myGroupList[index].currentTest != null ? myGroupList[index].currentTest!.name : "No test available".toUpperCase()}",weight: FontWeight.w500,size: 14,maxLines: 1),
                                                  ),
                                                  Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
                                                ],
@@ -273,7 +273,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                      sText("by ${myGroupList[index].owner!.name}",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                    ],
                                                  ),
-
+                                                 myGroupList[index].owner!.id == widget.user.id ?
                                                  Row(
                                                    children: [
                                                      Center(
@@ -303,7 +303,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                        ),
                                                      ),
                                                    ],
-                                                 ),
+                                                 ) : Container()
                                                ],
                                              ),
                                            ),
