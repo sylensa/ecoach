@@ -155,7 +155,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kHomeBackgroundColor,
+      backgroundColor:kAdeoGray,
       body: Container(
         padding: EdgeInsets.only(top: 5.h, bottom: 2.h,),
       child: Column(
@@ -171,8 +171,8 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.white),
+                          color: kHomeBackgroundColor,
+                          border: Border.all(color: kHomeBackgroundColor),
                           borderRadius: BorderRadius.circular(10)
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -180,7 +180,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<Course>(
                           value:course == null ? widget.courses[0] : course,
-                          itemHeight: 60,
+                          itemHeight: 50,
                           style: TextStyle(
                             fontSize: 16,
                             color: kDefaultBlack,
@@ -197,11 +197,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                 (item) => DropdownMenuItem<Course>(
                               value: item,
                               child: Container(
-                                width: appWidth(context) * 0.70,
+                                width: appWidth(context) * 0.54,
                                 child: sText(
                                   "${item.name}",
                                  color: kAdeoGray3,
-                                  size: 20,
+                                  size: 18,
                                   align: TextAlign.center
                                 ),
                               ),
@@ -213,12 +213,30 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     ),
                   ),
                 ),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                    margin: rightPadding(20),
+                    height: 50,
+                    child: Icon(Icons.school,color: kAdeoGray3,),
+                    decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(10),
+                      color: kHomeBackgroundColor
+                    ),
+                  ),
+                )
               ],
             ),
-            SizedBox(height: 40,),
+            SizedBox(height:20,),
             Container(
-              height: 80,
-              padding: EdgeInsets.only(left: 2.h,),
+              height: 120,
+              padding: EdgeInsets.only(left: 2.h,top: 2.h,bottom: 2.h),
+
+              color: kHomeBackgroundColor,
               child:  ListView.builder(
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
@@ -280,7 +298,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     );
                   }),
             ),
-            SizedBox(height: 40,),
+            SizedBox(height: 20,),
             getPage().values.first
           ],
         ),

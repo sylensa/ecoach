@@ -14,6 +14,7 @@ import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CoursesPage extends StatefulWidget {
   static const String routeName = '/courses';
@@ -29,7 +30,7 @@ class CoursesPage extends StatefulWidget {
 
 class _CoursesPageState extends State<CoursesPage> {
   bool progressCode = true;
-
+  List<Subscription> selectedSubscription = [];
   getUserSubscriptions()async{
     context.read<DownloadUpdate>().plans = await widget.controller.makeSubscriptionsCall();
     setState(() {
@@ -48,26 +49,44 @@ class _CoursesPageState extends State<CoursesPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: sText("Select Your Subscription",weight: FontWeight.bold,size: 20,color: kAdeoGray3),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+    return Container(
+      padding: EdgeInsets.only(left: 2.h,right: 2.h,top: 10.h,bottom: 5.h),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors:[Color(0xFF1182D8), Color(0xFF54B5FF)],
+          )
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: appShadow(Colors.blue, 8, 8, 8),
+
+        ),
         child: Column(
           children: [
+            SizedBox(height: 20,),
+            sText("Select Your Subscription",weight: FontWeight.w600,size: 20,color: kAdeoGray3),
+            SizedBox(height: 20,),
+
             context.read<DownloadUpdate>().plans.isNotEmpty ?
             Expanded(
               child: ListView.builder(
+                padding: EdgeInsets.zero,
                   itemCount:  context.read<DownloadUpdate>().plans.length,
                   scrollDirection: Axis.vertical,
                   itemBuilder: (BuildContext context, int index){
                     return MaterialButton(
                       onPressed: ()async{
+                        setState(() {
+                          selectedSubscription.clear();
+                          selectedSubscription.add( context.read<DownloadUpdate>().plans[index]);
+                        });
                         print("object");
+
                         showLoaderDialog(context,message: "Loading courses");
                         List<Course> courses = await SubscriptionItemDB().subscriptionCourses( context.read<DownloadUpdate>().plans[index].planId!);
                         Plan newPlan = Plan(
@@ -98,7 +117,6 @@ class _CoursesPageState extends State<CoursesPage> {
                             ),
                           );
                         }else{
-
                           showDialogYesNo(context: context,message: "Download course for this bundle",target: BuyBundlePage(widget.user, controller: widget.controller, bundle: newPlan,));
                         }
 
@@ -108,18 +126,22 @@ class _CoursesPageState extends State<CoursesPage> {
                           Container(
                             width: appWidth(context),
                             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-
                             decoration: BoxDecoration(
-                              color: Colors.grey[50],
-                              borderRadius: BorderRadius.circular(10),
+                                color: selectedSubscription.contains(context.read<DownloadUpdate>().plans[index]) ? Colors.white : Colors.grey[50],
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: selectedSubscription.contains(context.read<DownloadUpdate>().plans[index]) ? [Color(0xFF54B5FF), Color(0xFF1182D8)] : [kAdeoGray,kAdeoGray],
+                                )
                             ),
-                            child: sText("${ context.read<DownloadUpdate>().plans[index].name}",weight: FontWeight.bold,size: 20,color: kAdeoGray3,align: TextAlign.center),
+                            child: sText("${ context.read<DownloadUpdate>().plans[index].name}",weight: FontWeight.w600,size: 20,color: selectedSubscription.contains(context.read<DownloadUpdate>().plans[index]) ? Colors.white :  kAdeoGray3,align: TextAlign.center),
                           ),
                           SizedBox(height: 15,)
                         ],
                       ),
                     );
-              }),
+                  }),
             ) :
             context.read<DownloadUpdate>().plans.isEmpty && progressCode ?
             Expanded(child: Center(child: progress(),)) :
