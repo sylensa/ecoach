@@ -11,7 +11,6 @@ import '../database/topics_db.dart';
 import '../models/course.dart';
 import '../models/course_completion_study_progress.dart';
 import '../models/question.dart';
-import '../models/revision_study_progress.dart';
 import '../models/topic.dart';
 import '../views/learn/learn_course_completion.dart';
 import '../views/learn/learning_widget.dart';
@@ -74,17 +73,17 @@ class CourseCompletionStudyController {
     final welcomeProvider =
         Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
 
-    CourseCompletionStudyProgress? progress =
-        welcomeProvider.currentCourseCompletion;
+    // CourseCompletionStudyProgress? progress =
+    //     welcomeProvider.currentCourseCompletion;
 
-    CourseCompletionStudyProgress? completionStudyProgress = await StudyDB()
-        .getCurrentCourseCompletionProgressByCourse(progress!.courseId!);
+    // CourseCompletionStudyProgress? completionStudyProgress = await StudyDB()
+    //     .getCurrentCourseCompletionProgressByCourse(progress!.courseId!);
 
     CourseCompletionStudyProgress newCC = CourseCompletionStudyProgress(
-      courseId: completionStudyProgress!.courseId,
+      courseId: welcomeProvider.currentCourse!.id,
       level: 1,
-      studyId: completionStudyProgress.studyId,
-      topicId: completionStudyProgress.topicId,
+      studyId: welcomeProvider.progress!.studyId,
+      topicId: welcomeProvider.progress!.topicId,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -194,8 +193,8 @@ class CourseCompletionStudyController {
     StudyDB().updateCCAttempt(revisionProgressAttempt);
   }
 
-  Future<List<Map<String, dynamic>>> getAllRevisionAttemptsByProgress(
-      RevisionStudyProgress revision) async {
+  Future<List<Map<String, dynamic>>> getAllCourseCompletionAttemptsByProgress(
+      CourseCompletionStudyProgress revision) async {
     List<CourseCompletionProgressAttempt> attempts =
         await StudyDB().getCCAttemptByTopicAndProgress(revision);
 

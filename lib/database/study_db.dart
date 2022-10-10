@@ -374,6 +374,31 @@ class StudyDB {
     return progress;
   }
 
+  Future<List<CourseCompletionStudyProgress?>>
+      getCouseCompletionProgressByCourse(Course course,
+          {bool isDesc = true}) async {
+    final Database? db = await DBProvider.database;
+
+    final topics = await TopicDB().courseTopics(course);
+
+    var result = await db!.query(
+      'course_completion_study_progress',
+      orderBy: "created_at ${isDesc ? "DESC" : "ASC"}",
+      where: "course_id = ?",
+      whereArgs: [course.id],
+    );
+
+    List<CourseCompletionStudyProgress?> progressAttempts = [];
+
+    result.forEach((element) {
+      CourseCompletionStudyProgress? progress =
+          CourseCompletionStudyProgress.fromMap(element);
+      progressAttempts.add(progress);
+    });
+
+    return progressAttempts;
+  }
+
   // insert revision attempt
   Future<void> insertRevisionAttempt(RevisionProgressAttempt revision) async {
     final db = await DBProvider.database;
@@ -442,7 +467,7 @@ class StudyDB {
   }
 
   Future<List<CourseCompletionProgressAttempt>> getCCAttemptByTopicAndProgress(
-      RevisionStudyProgress progress) async {
+      CourseCompletionStudyProgress progress) async {
     final db = await DBProvider.database;
 
     List<CourseCompletionProgressAttempt> attempts = [];
@@ -484,7 +509,7 @@ class StudyDB {
   }
 
   Future<dynamic> getCCAttemptSumByProgress(
-      CourseCompletionProgressAttempt revision) async {
+      CourseCompletionStudyProgress revision) async {
     final db = await DBProvider.database;
     final result = await db!.rawQuery(
         "select SUM(score) from course_completion_progress_attempts where cc_progress_id=?",
