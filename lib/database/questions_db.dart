@@ -233,6 +233,33 @@ class QuestionDB {
 
     return questions;
   }
+  Future<List<Question>> getQuestionsByQuestionsIDs(List<int> questionIds, bool isNotIn) async {
+    final Database? db = await DBProvider.database;
+
+    String amps = "";
+    for (int i = 0; i < questionIds.length; i++) {
+      amps += "${questionIds[i]}";
+      if (i < questionIds.length - 1) {
+        amps += ",";
+      }
+    }
+    final List<Map<String, dynamic>> maps;
+    if(isNotIn){
+      maps = await db!.rawQuery("SELECT * FROM questions WHERE qtype = 'SINGLE' AND id NOT IN ($amps) ORDER BY RANDOM() limit 5");
+    }else{
+      maps = await db!.rawQuery("SELECT * FROM questions WHERE qtype = 'SINGLE' AND id IN ($amps) ORDER BY RANDOM()");
+
+    }
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
 
   Future<List<Question>> getRandomQuestions(int courseId, int limit) async {
     final Database? db = await DBProvider.database;
@@ -394,6 +421,26 @@ class QuestionDB {
         where: "course_id = ? AND qtype = ?",
         whereArgs: [courseId, type],
         limit: limit);
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+
+  Future<List<Question>> getQuestionsByCourseId(
+      int courseId,
+      ) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query('questions',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],);
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {
