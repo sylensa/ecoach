@@ -1,5 +1,6 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/database/answers.dart';
+import 'package:ecoach/database/conquest_test_taken_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/treadmill_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -125,7 +126,9 @@ class TestController {
   saveTestTaken(TestTaken test) {
     TestTakenDB().insert(test);
   }
-
+  saveConquestTestTaken(TestTaken test) {
+    ConquestTestTakenDB().conquestInsert(test);
+  }
   Future<List<Question>> getQuizQuestions(int quizId, {int? limit = 40}) {
     return QuizDB().getQuestions(quizId, limit!);
   }
@@ -333,8 +336,7 @@ class TestController {
     return testNames;
   }
 
-  Future<int> getTopicAnsweredCount(int courseId, int topicId,
-      {bool onlyAttempted = false, bool onlyCorrect = false}) async {
+  Future<int> getTopicAnsweredCount(int courseId, int topicId, {bool onlyAttempted = false, bool onlyCorrect = false}) async {
     List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
@@ -360,6 +362,52 @@ class TestController {
     });
 
     return topicIds.length;
+  }
+
+   getQuestionsByCourse(int courseId,{bool wrong = false, bool unAttempted = false,}) async {
+    List<Question> listQuestions = [];
+    List<TestTaken> tests = await ConquestTestTakenDB().conquestCourseTestsTaken(courseId);
+    Map<String, dynamic> responses = Map();
+    tests.forEach((test) {
+      responses.addAll(jsonDecode(test.responses));
+    });
+
+    List<Map<String, dynamic>> testAnswers = [];
+    // print(responses.toString());
+    responses.forEach((key, value) {
+      testAnswers.add(value);
+    });
+
+    List<int> questionIds = [];
+    testAnswers.forEach((answer) async{
+      int qId = answer['question_id'];
+      if(wrong){
+        if (answer['status'] == 'wrong'){
+          questionIds.add(qId);
+        }
+      }
+      else if(unAttempted){
+        if (answer['status'] == 'unattempted'){
+          questionIds.add(qId);
+        }
+      }
+      else{
+        questionIds.add(qId);
+      }
+
+    });
+    if(wrong){
+      listQuestions = await  QuestionDB().getQuestionsByQuestionsIDs(questionIds.toSet().toList(),false);
+    }
+    else if(unAttempted){
+      listQuestions = await  QuestionDB().getQuestionsByQuestionsIDs(questionIds.toSet().toList(),false);
+    }
+    else{
+      listQuestions = await  QuestionDB().getQuestionsByQuestionsIDs(questionIds.toSet().toList(),true);
+    }
+
+    print("listQuestions:${listQuestions.length}");
+    return listQuestions;
   }
 
   Future<double> getTopicAnsweredAverageScore(
