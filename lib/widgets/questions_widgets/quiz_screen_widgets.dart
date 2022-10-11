@@ -96,7 +96,7 @@ class DetailedInstruction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return details.isNotEmpty ? Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
           horizontal: 16,
@@ -108,7 +108,7 @@ class DetailedInstruction extends StatelessWidget {
           fontSize: 15,
           textColor: Colors.white,
           fontStyle: FontStyle.italic,
-        ));
+        )): SizedBox.shrink();
   }
 }
 
