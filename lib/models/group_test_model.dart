@@ -196,9 +196,9 @@ class ConfigurationsClass {
     countDown: json["count_down"] == null ? null : json["count_down"],
     showReview: json["show_review"] == null ? null : json["show_review"],
     testSource: json["test_source"] == null ? null : json["test_source"],
-    dueDateTime: json["due_dateTime"] == null ? null : DateTime.parse(json["due_dateTime"]),
+    dueDateTime: json["due_dateTime"] == null ? null :json["due_dateTime"].toString() == "null" ? null :  DateTime.parse(json["due_dateTime"]),
     showPassMark: json["show_pass_mark"] == null ? null : json["show_pass_mark"],
-    startDatetime: json["start_datetime"] == null ? null : DateTime.parse(json["start_datetime"]),
+    startDatetime: json["start_datetime"] == null ? null :json["start_datetime"].toString() == "null" ? null :  DateTime.parse(json["start_datetime"]),
     showInstantResult: json["show_instant_result"] == null ? null : json["show_instant_result"],
     type: json["type"] == null ? null : json["type"],
   );

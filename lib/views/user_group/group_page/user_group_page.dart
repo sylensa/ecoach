@@ -228,7 +228,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              itemBuilder: (BuildContext context, int index){
                                return GestureDetector(
                                  onTap: (){
-                                   goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
+                                   if(myGroupList[index].owner!.id != widget.user.id){
+                                     goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
+                                   }else{
+                                     toastMessage("You're the owner of this group");
+                                   }
                                  },
                                  child: Row(
                                    children: [

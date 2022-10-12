@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/conquest_controller.dart';
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -45,6 +46,7 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
   List<MarathonQuestionWidget> questionWidgets = [];
   bool showSubmit = false;
   TestTaken? testTaken;
+  TestTaken? testTakenSaved;
   bool changeUp = false;
   bool showNext = false;
   double avgScore = 0;
@@ -134,15 +136,13 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
     print("curent = ${controller.currentQuestion}");
 
     if (controller.lastQuestion) {
-      testTaken = controller.getTest();
       controller.endMarathon();
       viewResults();
     } else {
       if (success) {
         setState(() {
           controller.nextQuestion();
-          pageController.nextPage(
-              duration: Duration(milliseconds: 1), curve: Curves.ease);
+          pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
         });
       } else {
         setState(() {
@@ -156,23 +156,33 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
 
   viewResults() {
     print("viewing results");
-
-    Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return ConquestCompleteCongratulations(
-            controller: controller,
-          );
-        },
-      ),
-    ).then((value) {
-      setState(() {
-        controller.currentQuestion = 0;
-        controller.reviewMode = true;
-        pageController.jumpToPage(controller.currentQuestion);
-      });
+    controller.saveTest(context, (test, success) {
+      Navigator.pop(context);
+      if (success) {
+        testTakenSaved = test;
+        setState(() {
+          print('setState');
+          testTaken = testTakenSaved;
+        });
+        Navigator.push<void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return ConquestCompleteCongratulations(
+                controller: controller,
+              );
+            },
+          ),
+        ).then((value) {
+          setState(() {
+            controller.currentQuestion = 0;
+            controller.reviewMode = true;
+            pageController.jumpToPage(controller.currentQuestion);
+          });
+        });
+      }
     });
+
   }
 
   bool showPreviousButton() {
@@ -187,9 +197,9 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (controller.reviewMode) {
-          return showExitDialog();
-        }
+        // if (controller.reviewMode) {
+        //   return showExitDialog();
+        // }
         return showPauseDialog();
       },
       child: Scaffold(
@@ -223,10 +233,10 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
                     ),
                     GestureDetector(
                       onTap: (){
-                        if (controller.reviewMode) {
-                           showExitDialog();
-                        }
-                         showPauseDialog();
+                        // if (controller.reviewMode) {
+                        //    showExitDialog();
+                        // }
+                        //  showPauseDialog();
                       },
                       child: Expanded(
                         child: Padding(
@@ -531,7 +541,48 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
       selected = id;
     });
   }
+  viewResults() {
+    print("viewing results");
+    controller.saveTest(context, (test, success) {
+      Navigator.pop(context);
+      if (success) {
+        setState(() {
+          print('setState:${test!.toJson()}');
+        });
+        Navigator.push<void>(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return ConquestCompleteCongratulations(
+                controller: controller,
+              );
+            },
+          ),
+        ).then((value) {
+          setState(() {
+            controller.currentQuestion = 0;
+            controller.reviewMode = true;
+          });
+        });
+      }
+    });
 
+  }
+  saveResult() {
+    print("viewing results");
+    showLoaderDialog(context,message: "Saving");
+    controller.saveTest(context, (test, success) {
+      Navigator.pop(context);
+      if (success) {
+        setState(() {
+          print('setState:${test!.toJson()}');
+        });
+        Navigator.pop(context);
+        showPopup(context, TestPausedPrompt());
+      }
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -592,17 +643,21 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
                   onPressed: () {
                     switch (selected) {
                       case 5:
-                        showPopup(context, SessionSavedPrompt(controller: controller));
+                        // showPopup(context, SessionSavedPrompt(controller: controller));
+                        viewResults();
                         break;
                       case 6:
                         controller.endMarathon();
-                        Navigator.push(context, MaterialPageRoute(builder: (c) {
-                          return ConquestEnded(controller: controller);
-                        }));
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        // Navigator.push(context, MaterialPageRoute(builder: (c) {
+                        //   return ConquestEnded(controller: controller);
+                        // }));
                         break;
                       case 7:
                         controller.scoreCurrentQuestion();
-                        showPopup(context, TestPausedPrompt());
+                        saveResult();
+
                         break;
                       case 8:
                         controller.resumeTimer();
@@ -695,10 +750,11 @@ class TestPausedPrompt extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Test Paused',
+                'Test Saved and Paused',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 52,
-                  fontFamily: 'Hamelin',
+                  fontFamily: 'Poppins',
                   color: kAdeoBlue,
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/conquest_controller.dart';
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/conquest/conquest_complete_congratulations.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -45,10 +46,10 @@ class ConquestEnded extends StatelessWidget {
             ),
             SizedBox(height: 33),
             Text(
-              'Marathon Ended',
+              'Conquest Ended',
               style: TextStyle(
                 fontSize: 41,
-                fontFamily: 'Hamelin',
+                fontFamily: 'Poppins',
                 color: kAdeoBlue,
               ),
             ),
@@ -69,7 +70,7 @@ class ConquestEnded extends StatelessWidget {
                     ),
                     SizedBox(height: 32),
                     Text(
-                      'Net Score: ${controller.conquestModel!.totalCorrect! - controller.conquestModel!.totalWrong!}',
+                      'Net Score: ${controller.getTotalCorrect() - controller.getTotalWrong()!}',
                       style: TextStyle(
                         fontSize: 15,
                         color: kAdeoBlueAccent,
@@ -77,7 +78,7 @@ class ConquestEnded extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      '${Duration(seconds: controller.conquestModel!.totalTime!).inHours} hrs : ${Duration(seconds: controller.conquestModel!.totalTime!).inMinutes % 60} min : ${Duration(seconds: controller.conquestModel!.totalTime!).inSeconds % 60} sec',
+                      '${Duration(seconds: controller.avgToTalTime).inHours} hrs : ${Duration(seconds: controller.avgToTalTime).inMinutes % 60} min : ${Duration(seconds: controller.avgToTalTime).inSeconds % 60} sec',
                       style: TextStyle(
                         fontSize: 15,
                         color: kAdeoBlueAccent,
@@ -85,7 +86,7 @@ class ConquestEnded extends StatelessWidget {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      '${controller.questions.length} Questions',
+                      '${controller.currentQuestion + 1} Questions',
                       style: TextStyle(
                         fontSize: 15,
                         color: kAdeoBlueAccent,
@@ -122,7 +123,9 @@ class ConquestEnded extends StatelessWidget {
                             fontSize: 20,
                             color: Colors.white,
                             background: kAdeoBlue,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
                           ),
                         ),
                         Container(
@@ -144,8 +147,7 @@ class ConquestEnded extends StatelessWidget {
                             onPressed: () {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (c) {
-                                    return MarathonIntroit(
-                                        controller.user, controller.course);
+                                    return ConquestCompleteCongratulations(controller: controller,);
                                   }));
                             },
                           ),
@@ -164,10 +166,8 @@ class ConquestEnded extends StatelessWidget {
                       color: Colors.white,
                       background: kAdeoBlue,
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (c) {
-                          return MarathonIntroit(
-                              controller.user, controller.course);
-                        }));
+                        Navigator.popUntil(context,
+                            ModalRoute.withName(CourseDetailsPage.routeName));
                       },
                     ),
                   ),

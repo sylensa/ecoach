@@ -231,8 +231,7 @@ class ConquestController {
             ? "correct"
             : question.isWrong
             ? "wrong"
-            : question.unattempted
-             ? "unattempted" : "",
+            : "unattempted" ,
       };
       print("answer:${answer}");
       responses["Q$i"] = answer;

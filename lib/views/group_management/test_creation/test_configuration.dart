@@ -381,8 +381,189 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                         ),
                       ],
                     ) : Container(),
-
                     SizedBox(height: 20,),
+                    Container(
+                      padding: leftPadding(20),
+                      child:  sText("Select Period",color: kAdeoGray3),
+                    ),
+                    SizedBox(height: 20,),
+                    if(startDateTime == null && dueDateTime == null)
+                    Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
+
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15)
+                          ),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                            child: Container(
+                              child: ExpansionTile(
+                                textColor: kAdeoGray3,
+                                iconColor: kAdeoGray3,
+                                initiallyExpanded: false,
+                                maintainState: false,
+                                backgroundColor: Colors.white,
+                                childrenPadding: EdgeInsets.zero,
+                                collapsedIconColor: kAdeoGray3,
+                                leading: Container(
+                                  child: sText("Exact Time",weight: FontWeight.w500,size: 16),
+                                ) ,
+                                title: Container()  ,
+                                children: <Widget>[
+                                  Divider(color: Colors.grey,),
+                                  MaterialButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: ()async{
+
+                                      DatePicker.showDateTimePicker(context,
+                                          showTitleActions: true,
+                                          minTime: DateTime(2018, 3, 5),
+                                          maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                            setState((){
+                                              startDateTime = date;
+                                              dueDateTime = null;
+                                              print('change $date');
+                                            });
+                                          }, onConfirm: (date) {
+                                            setState((){
+                                              startDateTime = date;
+                                              dueDateTime = null;
+                                              print('confirm $date');
+                                            });
+                                          }, currentTime: DateTime.now(), locale: LocaleType.en);
+
+                                      setState(() {
+                                        if(startDateTime != null){
+                                          print(startDateTime);
+                                          print("${startDateTime!.year}-${startDateTime!.month}-${startDateTime!.day}");
+                                        }
+
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: 20,right: 20,top: 10),
+
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(15)
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  sText("Start Date and Time",weight: FontWeight.w500,size: 16),
+                                                  Expanded(child: Container()),
+                                                  Icon(Icons.calendar_today_outlined,color: kAdeoGray3,size: 16,)
+                                                ],
+                                              ),
+                                              SizedBox(height: 10,),
+                                              if(startDateTime != null)
+                                                sText("${startDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20,),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
+
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15)
+                          ),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                            child: Container(
+                              child: ExpansionTile(
+                                textColor: kAdeoGray3,
+                                iconColor: kAdeoGray3,
+                                initiallyExpanded: false,
+                                maintainState: false,
+                                backgroundColor: Colors.white,
+                                childrenPadding: EdgeInsets.zero,
+                                collapsedIconColor: kAdeoGray3,
+                                leading: Container(
+                                  child: sText("Define Period",weight: FontWeight.w500,size: 16),
+                                ) ,
+                                title: Container()  ,
+                                children: <Widget>[
+                                  Divider(color: Colors.grey,),
+                                  MaterialButton(
+                                    padding: EdgeInsets.zero,
+                                    onPressed: (){
+                                      DatePicker.showDateTimePicker(context,
+                                          showTitleActions: true,
+                                          minTime: DateTime(2018, 3, 5),
+                                          maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                            setState((){
+                                              dueDateTime = date;
+                                              startDateTime = null;
+                                              print('change $date');
+                                            });
+                                          }, onConfirm: (date) {
+                                            setState((){
+                                              dueDateTime = date;
+                                              startDateTime = null;
+                                              print('confirm $date');
+                                            });
+                                          }, currentTime: DateTime.now(), locale: LocaleType.en);
+
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.only(left: 20,right: 20,top: 10),
+
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(15)
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  sText("Expiry Date and Time",weight: FontWeight.w500,size: 16),
+                                                  Expanded(child: Container()),
+                                                  Icon(Icons.calendar_today_outlined,color: kAdeoGray3,size: 16,)
+                                                ],
+                                              ),
+                                              SizedBox(height: 10,),
+                                              if(dueDateTime != null)
+                                                sText("${dueDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if(startDateTime != null)
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
@@ -418,14 +599,17 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                         maxTime: DateTime(2019, 6, 7), onChanged: (date) {
                                           setState((){
                                             startDateTime = date;
+                                            dueDateTime = null;
                                             print('change $date');
                                           });
                                         }, onConfirm: (date) {
                                           setState((){
                                             startDateTime = date;
+                                            dueDateTime = null;
                                             print('confirm $date');
                                           });
-                                        }, currentTime: DateTime.now(), locale: LocaleType.en);
+                                        },
+                                        currentTime: DateTime.now(), locale: LocaleType.en);
 
                                     setState(() {
                                       if(startDateTime != null){
@@ -455,8 +639,22 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                                 ],
                                               ),
                                               SizedBox(height: 10,),
+
                                               if(startDateTime != null)
-                                              sText("${startDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                              Row(
+                                                children: [
+                                                  sText("${startDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                                  Expanded(child: Container()),
+                                                  GestureDetector(
+                                                      onTap: (){
+                                                       setState(() {
+                                                         startDateTime = null;
+                                                       });
+                                                      },
+                                                      child: Icon(Icons.clear,color: Colors.red,size: 20,),
+                                                  )
+                                                ],
+                                              ),
 
                                             ],
                                           ),
@@ -471,6 +669,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                       ),
                     ),
                     SizedBox(height: 20,),
+                    if(dueDateTime != null)
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
@@ -505,11 +704,13 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                       maxTime: DateTime(2019, 6, 7), onChanged: (date) {
                                         setState((){
                                           dueDateTime = date;
+                                          startDateTime = null;
                                           print('change $date');
                                         });
                                       }, onConfirm: (date) {
                                         setState((){
                                           dueDateTime = date;
+                                          startDateTime = null;
                                           print('confirm $date');
                                         });
                                       }, currentTime: DateTime.now(), locale: LocaleType.en);
@@ -536,8 +737,20 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                           ),
                                           SizedBox(height: 10,),
                                           if(dueDateTime != null)
-                                          sText("${dueDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
-
+                                            Row(
+                                              children: [
+                                                sText("${dueDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                                Expanded(child: Container()),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    setState(() {
+                                                      dueDateTime = null;
+                                                    });
+                                                  },
+                                                  child: Icon(Icons.clear,color: Colors.red,size: 20,),
+                                                )
+                                              ],
+                                            ),
                                         ],
                                       ),
 
@@ -652,8 +865,12 @@ class _TestConfigurationsState extends State<TestConfigurations> {
               ),
              GestureDetector(
                onTap: ()async{
-                 showLoaderDialog(context);
-                 await createGroupTest();
+                 if(startDateTime == null && dueDateTime == null){
+                   toastMessage("Select Period");
+                 }else{
+                   showLoaderDialog(context);
+                   await createGroupTest();
+                 }
                },
                child: Container(
                  width: appWidth(context),

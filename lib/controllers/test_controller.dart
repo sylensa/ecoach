@@ -367,13 +367,16 @@ class TestController {
    getQuestionsByCourse(int courseId,{bool wrong = false, bool unAttempted = false,}) async {
     List<Question> listQuestions = [];
     List<TestTaken> tests = await ConquestTestTakenDB().conquestCourseTestsTaken(courseId);
+    print("list tests:${tests}");
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
       responses.addAll(jsonDecode(test.responses));
+      print("response tests:${test.responses}");
+
     });
 
     List<Map<String, dynamic>> testAnswers = [];
-    // print(responses.toString());
+    print(responses.toString());
     responses.forEach((key, value) {
       testAnswers.add(value);
     });

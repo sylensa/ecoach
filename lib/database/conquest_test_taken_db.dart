@@ -26,6 +26,7 @@ class ConquestTestTakenDB {
     final List<Map<String, dynamic>> maps = await db!.query('conquest_tests_taken',
         orderBy: "created_at DESC",
         where: "course_id = ?",
+        limit: 1,
         whereArgs: [courseId]);
 
     List<TestTaken> tests = [];
