@@ -17,8 +17,8 @@ class ConquestCompleteCongratulations extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+        // Navigator.popUntil(context, ModalRoute.withName(CourseDetailsPage.routeName));
+        Navigator.pop(context);
         return true;
       },
       child: Scaffold(
@@ -36,8 +36,9 @@ class ConquestCompleteCongratulations extends StatelessWidget {
                   borderRadius: 5,
                   fontSize: 14,
                   onPressed: () {
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                    Navigator.pop(context);
+                    // Navigator.popUntil(context,
+                    //     ModalRoute.withName(CourseDetailsPage.routeName));
                   },
                 ),
                 SizedBox(width: 10),
@@ -132,8 +133,9 @@ class ConquestCompleteCongratulations extends StatelessWidget {
                       color: Colors.white,
                       background: kAdeoBlue,
                       onPressed: () {
-                        Navigator.popUntil(context,
-                            ModalRoute.withName(CourseDetailsPage.routeName));
+                        Navigator.pop(context);
+                        // Navigator.popUntil(context,
+                        //     ModalRoute.withName(CourseDetailsPage.routeName));
                         // Navigator.push(context, MaterialPageRoute(builder: (c) {
                         //   return MarathonIntroit(
                         //       controller.user, controller.course);

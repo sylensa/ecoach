@@ -164,7 +164,7 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
           print('setState');
           testTaken = testTakenSaved;
         });
-        Navigator.push<void>(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute<void>(
             builder: (BuildContext context) {
@@ -208,54 +208,59 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
           padding: EdgeInsets.only(top: 30.h),
           child: Column(
             children: [
-              Container(
-                color: Color(0xFFCC4E4E),
-                height: 53,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CircularPercentIndicator(
-                      radius: 20,
-                      lineWidth: 3,
-                      progressColor: Colors.white,
+              GestureDetector(
+                onTap: (){
+                   showPauseDialog();
+                },
+                child: Container(
+                  color: Color(0xFFCC4E4E),
+                  height: 53,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CircularPercentIndicator(
+                        radius: 20,
+                        lineWidth: 3,
+                        progressColor: Colors.white,
 
-                      backgroundColor: Colors.transparent,
-                      percent: controller.percentageCompleted,
-                      center: Text(
-                        "${controller.currentQuestion + 1}",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                          fontFamily: 'Poppins',
+                        backgroundColor: Colors.transparent,
+                        percent: controller.percentageCompleted,
+                        center: Text(
+                          "${controller.currentQuestion + 1}",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.sp,
+                            fontFamily: 'Poppins',
+                          ),
                         ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: (){
-                        // if (controller.reviewMode) {
-                        //    showExitDialog();
-                        // }
-                        //  showPauseDialog();
-                      },
-                      child: Expanded(
-                        child: Padding(
-                          padding:
-                          const EdgeInsets.only(left: 31, right: 4.0),
-                          child: Text(
-                            controller.name!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                              fontFamily: 'Cocon',
+                      GestureDetector(
+                        onTap: (){
+                          // if (controller.reviewMode) {
+                          //    showExitDialog();
+                          // }
+                          //  showPauseDialog();
+                        },
+                        child: Expanded(
+                          child: Padding(
+                            padding:
+                            const EdgeInsets.only(left: 31, right: 4.0),
+                            child: Text(
+                              controller.name!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontFamily: 'Cocon',
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    getTimerWidget(),
-                  ],
+                      getTimerWidget(),
+                    ],
+                  ),
                 ),
               ),
               // TODO : COPY HEADER  THAT DISPLAYS  COLLOR FULL FEATURES
@@ -549,7 +554,7 @@ class _PauseMenuDialogState extends State<PauseMenuDialog> {
         setState(() {
           print('setState:${test!.toJson()}');
         });
-        Navigator.push<void>(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute<void>(
             builder: (BuildContext context) {
