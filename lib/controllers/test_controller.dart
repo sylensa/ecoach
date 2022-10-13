@@ -364,54 +364,7 @@ class TestController {
     return topicIds.length;
   }
 
-   getQuestionsByCourse(int courseId,{bool wrong = false, bool unAttempted = false,}) async {
-    List<Question> listQuestions = [];
-    List<TestTaken> tests = await ConquestTestTakenDB().conquestCourseTestsTaken(courseId);
-    print("list tests:${tests}");
-    Map<String, dynamic> responses = Map();
-    tests.forEach((test) {
-      responses.addAll(jsonDecode(test.responses));
-      print("response tests:${test.responses}");
 
-    });
-
-    List<Map<String, dynamic>> testAnswers = [];
-    print(responses.toString());
-    responses.forEach((key, value) {
-      testAnswers.add(value);
-    });
-
-    List<int> questionIds = [];
-    testAnswers.forEach((answer) async{
-      int qId = answer['question_id'];
-      if(wrong){
-        if (answer['status'] == 'wrong'){
-          questionIds.add(qId);
-        }
-      }
-      else if(unAttempted){
-        if (answer['status'] == 'unattempted'){
-          questionIds.add(qId);
-        }
-      }
-      else{
-        questionIds.add(qId);
-      }
-
-    });
-    if(wrong){
-      listQuestions = await  QuestionDB().getQuestionsByQuestionsIDs(questionIds.toSet().toList(),false);
-    }
-    else if(unAttempted){
-      listQuestions = await  QuestionDB().getQuestionsByQuestionsIDs(questionIds.toSet().toList(),false);
-    }
-    else{
-      listQuestions = await  QuestionDB().getQuestionsByQuestionsIDs(questionIds.toSet().toList(),true);
-    }
-
-    print("listQuestions:${listQuestions.length}");
-    return listQuestions;
-  }
 
   Future<double> getTopicAnsweredAverageScore(
     int courseId,

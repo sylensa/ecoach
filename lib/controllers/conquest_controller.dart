@@ -293,6 +293,14 @@ class ConquestController {
     // Question mp = questions[currentQuestion];
     Question question = questions[currentQuestion];
     if (question.unattempted) {
+      question.confirmed = 0;
+      print("questions[currentQuestion]:${question.unattempted}");
+      Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
+      if(questions == null){
+        await QuestionDB().insertConquestQuestion(question);
+      }else{
+        await QuestionDB().updateConquest(question);
+      }
       return true;
     }
 
@@ -308,8 +316,28 @@ class ConquestController {
 
 
     if (question.isWrong) {
+      print("selected answer:${question.selectedAnswer}");
+      question.confirmed = 1;
+      Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
+      if(questions == null){
+       await QuestionDB().insertConquestQuestion(question);
+      }else{
+        await QuestionDB().updateConquest(question);
+      }
       return false;
     }
+
+    if (question.isCorrect) {
+      question.confirmed = 2;
+      Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
+      if(questions == null){
+        await QuestionDB().insertConquestQuestion(question);
+      }else{
+        await QuestionDB().updateConquest(question);
+      }
+    }
+
+
     return true;
   }
 

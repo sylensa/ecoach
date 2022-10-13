@@ -111,9 +111,14 @@ class _ReviewOnBoardingeState extends State<ConquestOnBoarding> {
           ),
           GestureDetector(
             onTap: (){
+              if(widget.listQuestions.isNotEmpty){
                 setState(() {
                   _currentPage++;
                 });
+              }else{
+                toastMessage("You have no ${widget.testType.toString().split(".").last} questions");
+              }
+
             },
             child: Container(
               width: 200,

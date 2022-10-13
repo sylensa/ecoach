@@ -1,7 +1,9 @@
+import 'package:ecoach/database/conquest_test_taken_db.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -387,30 +389,29 @@ class _TestTypeViewState extends State<TestTypeView> {
                               itemBuilder: (BuildContext context, int index) {
                                 return MaterialButton(
                                   onPressed: () async{
+                                    // await ConquestTestTakenDB().conquestDeleteAll();
+                                    // await QuestionDB().deleteAllConquestTest();
                                     List<Question> listQuestions = [];
                                       if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
                                         testType = TestType.UNSEEN;
-                                        listQuestions =  await TestController().getQuestionsByCourse(widget.course.id!,wrong: false,unAttempted: false);
-                                        print("$testType:$listQuestions");
+                                        listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
                                         if(listQuestions.isEmpty){
                                           listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                                          print("testType:$listQuestions");
+                                          print("$testType:$listQuestions");
                                         }
                                       }else if(conquestTypes[index].name.toUpperCase() == "UNANSWERED"){
                                         testType = TestType.UNANSWERED;
-                                        listQuestions = await TestController().getQuestionsByCourse(widget.course.id!,wrong: false,unAttempted: true);
+                                        listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,);
                                         print("$testType:$listQuestions");
                                       }else{
                                         testType = TestType.WRONGLYANSWERED;
-                                        listQuestions = await TestController().getQuestionsByCourse(widget.course.id!,wrong: true,unAttempted: false);
+                                        listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 1);
                                         print("$testType:$listQuestions");
 
                                       }
-
                                     stateSetter(() {
                                      selectedConquestType = conquestTypes[index].name;
                                      });
-                                      if(listQuestions.isNotEmpty){
                                         goTo(
                                             context,
                                             ConquestOnBoarding(
@@ -419,7 +420,7 @@ class _TestTypeViewState extends State<TestTypeView> {
                                               testType: testType,
                                               listQuestions: listQuestions,
                                             ));
-                                      }
+
 
                                   },
                                   child: Container(
