@@ -25,7 +25,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 31, onOpen: (db) {},
+    return await openDatabase(path, version: 32, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -56,6 +56,26 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'time' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+      ) """);
+      await db.execute("""CREATE TABLE 'conquest_questions' (
         'id' INTEGER PRIMARY KEY,
         'course_id' int NOT NULL,
         'topic_id' int NOT NULL,
@@ -912,6 +932,50 @@ class DBProvider {
           'flagged' int NOT NULL DEFAULT '0',
           'deleted' int NOT NULL DEFAULT '0'
         ) """);
+        }
+        try {
+          await db.execute("""DROP TABLE 'conquest_questions'""");
+          await db.execute("""CREATE TABLE 'conquest_questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'time' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+      ) """);
+        } catch (e) {
+          await db.execute("""CREATE TABLE 'conquest_questions' (
+        'id' INTEGER PRIMARY KEY,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' text NULL,
+        'qid' varchar(50) NOT NULL,
+        'text' text NOT NULL,
+        'instructions' text NOT NULL,
+        'resource' text NOT NULL,
+        'options' text NOT NULL,
+        'position' int NOT NULL,
+        'time' int NOT NULL,
+        'created_at' datetime NOT NULL,
+        'updated_at' datetime NOT NULL,
+        'qtype' varchar(10) DEFAULT 'SINGLE',
+        'confirmed' int NOT NULL DEFAULT '0',
+        'public' int NOT NULL DEFAULT '0',
+        'flagged' int NOT NULL DEFAULT '0',
+        'deleted' int NOT NULL DEFAULT '0'
+      ) """);
         }
       }
     });
