@@ -481,7 +481,6 @@ class QuestionDB {
     final List<Map<String, dynamic>> maps = await db!.query('questions',
         orderBy: "created_at DESC",
         where: "course_id = ?",
-        limit: 5,
         whereArgs: [courseId],);
 
     List<Question> questions = [];

@@ -99,6 +99,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                     if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
                                       testType = TestType.UNSEEN;
                                       listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
+                                     print("listQuestions:${listQuestions.length}");
                                       if(listQuestions.isEmpty){
                                         listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
                                         print("$testType:$listQuestions");
