@@ -37,8 +37,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class GroupListPage extends StatefulWidget {
 
-
-
   @override
   State<GroupListPage> createState() => _GroupListPageState();
 }

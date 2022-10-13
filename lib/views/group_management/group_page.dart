@@ -1425,6 +1425,7 @@ class _GroupPageState extends State<GroupPage> {
     getAnnouncement();
     getGroupTest();
     listGroupTestData.clear();
+
     super.initState();
   }
 

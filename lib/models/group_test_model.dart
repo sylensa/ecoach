@@ -125,7 +125,7 @@ class GroupTestData {
   dynamic deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
-  User? user;
+  UserOwner? user;
 
   factory GroupTestData.fromJson(Map<String, dynamic> json) => GroupTestData(
     id: json["id"] == null ? null : json["id"],
@@ -138,7 +138,7 @@ class GroupTestData {
     deletedAt: json["deleted_at"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
+    user: json["user"] == null ? null : UserOwner.fromJson(json["user"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -220,8 +220,8 @@ class ConfigurationsClass {
   };
 }
 
-class User {
-  User({
+class UserOwner {
+  UserOwner({
     this.id,
     this.name,
     this.role,
@@ -235,7 +235,7 @@ class User {
   bool? isAgent;
   bool? isGroupCreator;
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory UserOwner.fromJson(Map<String, dynamic> json) => UserOwner(
     id: json["id"] == null ? null : json["id"],
     name: json["name"] == null ? null : json["name"],
     role: json["role"] == null ? null : json["role"],

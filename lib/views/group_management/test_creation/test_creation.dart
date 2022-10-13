@@ -1,4 +1,5 @@
 import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/level_db.dart';
@@ -6,22 +7,23 @@ import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/models/new_user_data.dart';
+import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/group_management/test_creation/test_configuration.dart';
-import 'package:ecoach/views/group_management/test_creation/test_creation_subscriptions.dart';
-import 'package:ecoach/views/group_management/test_creation/test_creation_test_type.dart';
-import 'package:ecoach/views/group_management/test_creation/test_creation_test_type_list.dart';
-import 'package:ecoach/views/group_management/test_creation/test_creations_courses.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TestCreation extends StatefulWidget {
-  const TestCreation({Key? key}) : super(key: key);
-
+   TestCreation({Key? key}) : super(key: key);
   @override
   State<TestCreation> createState() => _TestCreationState();
 }
@@ -32,6 +34,9 @@ class _TestCreationState extends State<TestCreation> {
   bool progressCode = true;
   List<TestNameAndCount> listTopics = [];
   Course? course;
+  Plan? plan;
+  late MainController mainController;
+  User? user;
   getTypeList(String type,)async{
     if(type == "exam"){
       listTopics = await TestController().getExamTests(course!);
@@ -40,11 +45,22 @@ class _TestCreationState extends State<TestCreation> {
     }else if(type == "bank"){
       listTopics = await TestController().getBankTest(course!);
     }
-    setState((){
-      print("listTopics:$listTopics");
-      groupTestType = type;
-      _currentPage++;
-    });
+    mainController = MainController(
+      context,
+      context.read<DownloadUpdate>(),
+      user!,
+    );
+
+    if(listTopics.isEmpty){
+      showDialogYesNo(context: context,message: "Download exam for this bundle",target:BuyBundlePage(user!, controller: mainController, bundle: plan!,) );
+    }else{
+      setState(() {
+        print("listTopics:$listTopics");
+        _currentPage++;
+        groupTestType = type;
+      });
+    }
+
   }
   getSubscriptionCourse(int planId )async{
     futureItems = await SubscriptionItemDB().subscriptionCourses(planId);
@@ -69,6 +85,7 @@ class _TestCreationState extends State<TestCreation> {
 
 
   }
+
   Map<String, Widget> getPage() {
     switch (_currentPage) {
       case 0:
@@ -83,6 +100,12 @@ class _TestCreationState extends State<TestCreation> {
         return {'': getTestTypeList()};
     }
     return {'': Container()};
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -394,9 +417,39 @@ class _TestCreationState extends State<TestCreation> {
                           MaterialButton(
                             padding: EdgeInsets.zero,
                             onPressed: ()async{
-                              groupTestBundle = context.read<DownloadUpdate>().plans[index].name.toString();
-                             await  getSubscriptionCourse(context.read<DownloadUpdate>().plans[index].planId!);
-                              // goTo(context, TestCreationCourses(subscription: context.read<DownloadUpdate>().plans[index],));
+                              user = await UserPreferences().getUser();
+                              mainController = MainController(
+                                context,
+                                context.read<DownloadUpdate>(),
+                                user!,
+                              );
+                              showLoaderDialog(context,message: "Loading courses");
+                              futureItems = await SubscriptionItemDB().subscriptionCourses( context.read<DownloadUpdate>().plans[index].planId!);
+                               plan = Plan(
+                                id: context.read<DownloadUpdate>().plans[index].planId,
+                                updatedAt: context.read<DownloadUpdate>().plans[index].updatedAt,
+                                name: context.read<DownloadUpdate>().plans[index].name,
+                                createdAt: context.read<DownloadUpdate>().plans[index].createdAt,
+                                currency: context.read<DownloadUpdate>().plans[index].currency,
+                                description: context.read<DownloadUpdate>().plans[index].description,
+                                invoiceInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
+                                invoicePeriod: context.read<DownloadUpdate>().plans[index].invoicePeriod,
+                                isActive: true,
+                                price: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
+                                signupFee: context.read<DownloadUpdate>().plans[index].price!.toDouble(),
+                                tag: context.read<DownloadUpdate>().plans[index].tag,
+                                tier: context.read<DownloadUpdate>().plans[index].tier,
+                                trialInterval: context.read<DownloadUpdate>().plans[index].invoiceInterval,
+                                trialPeriod: 1,
+                              );
+                              Navigator.pop(context);
+                              if(futureItems.isNotEmpty){
+                                setState(() {
+                                  _currentPage++;
+                                });
+                              }else{
+                                showDialogYesNo(context: context,message: "Download course for this bundle",target: BuyBundlePage(user!, controller: mainController, bundle: plan!,));
+                              }
                             },
                             child: Container(
                               child: Row(
@@ -640,8 +693,8 @@ class _TestCreationState extends State<TestCreation> {
             MaterialButton(
               padding: EdgeInsets.zero,
               onPressed: ()async{
+                await  getTypeList("exam");
 
-               await  getTypeList("exam");
               },
               child: Container(
                 padding: appPadding(20),
