@@ -74,6 +74,7 @@ class QuestionDB {
   Future<List<Question>> getConquestQuestionByCorrectUnAttempted(int courseId,{int confirm = 0,bool unseen = false}) async {
     final Database? db = await DBProvider.database;
     final List<Map<String, dynamic>> maps;
+    List<int> questionIds = [];
     if(unseen){
       maps = await db!.rawQuery("SELECT * FROM conquest_questions WHERE course_id = $courseId ORDER BY RANDOM()");
     }else{
@@ -84,6 +85,11 @@ class QuestionDB {
       Question question = Question.fromJson(maps[i]);
       question.answers = await AnswerDB().questoinAnswers(question.id!);
       questions.add(question);
+      questionIds.add(question.id!);
+    }
+    if(unseen){
+      questions.clear();
+      questions = await getQuestionsByQuestionIds(questionIds,courseId);
     }
     return questions;
   }
@@ -263,6 +269,29 @@ class QuestionDB {
 
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
         "SELECT * FROM questions WHERE qtype = 'SINGLE' AND topic_id IN ($amps) ORDER BY RANDOM() LIMIT $limit");
+
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+
+    return questions;
+  }
+  Future<List<Question>> getQuestionsByQuestionIds(List<int> questionIds,int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    String amps = "";
+    for (int i = 0; i < questionIds.length; i++) {
+      amps += "${questionIds[i]}";
+      if (i < questionIds.length - 1) {
+        amps += ",";
+      }
+    }
+
+    final List<Map<String, dynamic>> maps = await db!.rawQuery(
+        "SELECT * FROM questions WHERE qtype = 'SINGLE' AND id NOT IN ($amps) AND course_id = $courseId ORDER BY RANDOM()");
 
     List<Question> questions = [];
     for (int i = 0; i < maps.length; i++) {

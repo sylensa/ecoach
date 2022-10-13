@@ -21,6 +21,7 @@ import 'package:ecoach/views/treadmill/treadmill_save_resumption_menu.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class TestTypeWidget extends StatefulWidget {
@@ -95,6 +96,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                   onPressed: () async{
                                     // await ConquestTestTakenDB().conquestDeleteAll();
                                     // await QuestionDB().deleteAllConquestTest();
+                                    showLoaderDialog(context);
                                     List<Question> listQuestions = [];
                                     if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
                                       testType = TestType.UNSEEN;
@@ -117,6 +119,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                     stateSetter(() {
                                       selectedConquestType = conquestTypes[index].name;
                                     });
+                                    Navigator.pop(context);
                                     goTo(
                                         context,
                                         ConquestOnBoarding(

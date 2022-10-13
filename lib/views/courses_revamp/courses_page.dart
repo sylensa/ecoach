@@ -41,8 +41,6 @@ class _CoursesPageState extends State<CoursesPage> {
     setState(() {
       progressCode = false;
     });
-
-
   }
   @override
   void initState() {

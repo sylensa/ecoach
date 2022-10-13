@@ -95,8 +95,7 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
       controller.reviewMode = false;
       controller.nextQuestion();
       controller.resumeTimer();
-      pageController.nextPage(
-          duration: Duration(milliseconds: 1), curve: Curves.ease);
+      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
     });
   }
 
@@ -141,8 +140,9 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
     } else {
       if (success) {
         setState(() {
+          pageController.nextPage(duration: Duration(microseconds: 1), curve: Curves.ease);
+
           controller.nextQuestion();
-          pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
         });
       } else {
         setState(() {
@@ -242,18 +242,16 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
                           // }
                           //  showPauseDialog();
                         },
-                        child: Expanded(
-                          child: Padding(
-                            padding:
-                            const EdgeInsets.only(left: 31, right: 4.0),
-                            child: Text(
-                              controller.name!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13.sp,
-                                fontFamily: 'Cocon',
-                              ),
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.only(left: 31, right: 4.0),
+                          child: Text(
+                            controller.name!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13.sp,
+                              fontFamily: 'Cocon',
                             ),
                           ),
                         ),
