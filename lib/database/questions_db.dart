@@ -48,6 +48,46 @@ class QuestionDB {
     });
   }
 
+  Future<void> insertConquestQuestion(Question question) async {
+    final Database? db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert(
+        'conquest_questions',
+        question.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    });
+  }
+
+  Future<Question?> getConquestQuestionById(int id) async {
+    final db = await DBProvider.database;
+    var result = await db!.query("conquest_questions", where: "id = ?", whereArgs: [id]);
+    Question? question =
+    result.isNotEmpty ? Question.fromJson(result.first) : null;
+    if (question != null) {
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+    }
+
+    return question;
+  }
+
+  Future<List<Question>> getConquestQuestionByCorrectUnAttempted(int courseId,{int confirm = 0,bool unseen = false}) async {
+    final Database? db = await DBProvider.database;
+    final List<Map<String, dynamic>> maps;
+    if(unseen){
+      maps = await db!.rawQuery("SELECT * FROM conquest_questions WHERE course_id = $courseId ORDER BY RANDOM()");
+    }else{
+       maps = await db!.rawQuery("SELECT * FROM conquest_questions WHERE course_id = $courseId and confirmed = $confirm ORDER BY RANDOM()");
+    }
+    List<Question> questions = [];
+    for (int i = 0; i < maps.length; i++) {
+      Question question = Question.fromJson(maps[i]);
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+      questions.add(question);
+    }
+    return questions;
+  }
+
   Future<void> batchInsert(Batch batch, Question question) async {
     if (question == null) {
       return;
@@ -243,6 +283,7 @@ class QuestionDB {
         amps += ",";
       }
     }
+    print("amps:$amps");
     final List<Map<String, dynamic>> maps;
     if(isNotIn){
       maps = await db!.rawQuery("SELECT * FROM questions WHERE qtype = 'SINGLE' AND id NOT IN ($amps) ORDER BY RANDOM() limit 5");
@@ -440,6 +481,7 @@ class QuestionDB {
     final List<Map<String, dynamic>> maps = await db!.query('questions',
         orderBy: "created_at DESC",
         where: "course_id = ?",
+        limit: 5,
         whereArgs: [courseId],);
 
     List<Question> questions = [];
@@ -476,6 +518,18 @@ class QuestionDB {
     );
   }
 
+  Future<void> updateConquest(Question question) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'conquest_questions',
+      question.toJson(),
+      where: "id = ?",
+      whereArgs: [question.id],
+    );
+  }
+
   delete(int id) async {
     final db = await DBProvider.database;
     db!.delete(
@@ -502,6 +556,10 @@ class QuestionDB {
   deleteAllSavedTest() async {
     final db = await DBProvider.database;
     db!.delete('test_saved_questions');
+  }
+  deleteAllConquestTest() async {
+    final db = await DBProvider.database;
+    db!.delete('conquest_questions');
   }
 
   deleteSavedTestByCourseId(int id) async {
