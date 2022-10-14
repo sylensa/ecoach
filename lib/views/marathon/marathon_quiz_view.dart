@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -117,6 +118,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   sumbitAnswer() async {
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.marathon!.avgScore!;
 

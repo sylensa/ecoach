@@ -89,7 +89,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   int countdownInSeconds = 0;
   int questionTimer = 0;
   // StopW
-  currentCorrectScoreState() {
+  currentCorrectScoreState() async{
     setState(() {
       if (controller.questions[controller.currentQuestion].isCorrect) {
         isCorrect = true;
@@ -97,6 +97,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
         isCorrect = false;
       }
     });
+
   }
 
   avgTimeComplete() {
@@ -234,6 +235,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   submitAnswer() async {
     answered = true;
     controller.pauseTimer();
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
     await controller.scoreCurrentQuestion();
     double newScore = controller.treadmill!.avgScore!;
     if (mounted) {

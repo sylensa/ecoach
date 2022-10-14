@@ -1,6 +1,7 @@
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/customized_controller.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -49,7 +50,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
     super.initState();
   }
 
-  nextButton() {
+  nextButton() async{
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion]);
+
     if (controller.lastQuestion) {
       setState(() {
         controller.pauseTimer();
@@ -71,6 +74,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
   }
 
   completeQuiz() async {
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion]);
     setState(() {
       controller.enabled = false;
     });

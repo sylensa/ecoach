@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -72,7 +73,8 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     });
   }
 
-  next() {
+  next() async{
+
     setState(() {
       showSubmit = true;
     });
@@ -86,7 +88,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     }
   }
 
-  nextButton() {
+  nextButton() async{
     setState(() {
       showNext = false;
       controller.reviewMode = false;
@@ -110,9 +112,9 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
   }
 
   sumbitAnswer() async {
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.currentTopic!.avgScore!;
-
     setState(() {
       showSubmit = false;
       if (newScore != avgScore) {

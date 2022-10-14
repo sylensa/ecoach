@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
+import 'package:ecoach/database/conquest_test_taken_db.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
