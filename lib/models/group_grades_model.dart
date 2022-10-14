@@ -142,7 +142,7 @@ class Grade {
     this.range,
   });
 
-  int? grade;
+  dynamic grade;
   int? range;
 
   factory Grade.fromJson(Map<String, dynamic> json) => Grade(

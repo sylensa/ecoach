@@ -2424,7 +2424,7 @@ class _GroupPageState extends State<GroupPage> {
                                       toastMessage("You've reach your maximum number of test for this package");
                                     }else{
                                       groupID = widget.groupListData!.id.toString();
-                                      await goTo(context, TestCreation());
+                                      await goTo(context, TestCreation(groupListData: widget.groupListData!,));
                                       setState((){});
                                     }
 

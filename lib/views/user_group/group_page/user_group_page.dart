@@ -542,14 +542,12 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         return    MaterialButton(
                           padding: EdgeInsets.zero,
                           onPressed: ()async{
-                            if(groupBySearch[index].isMember! == 1){
-                              goTo(context, GroupActivity(widget.user,groupData: groupBySearch[index]));
+                            if(groupBySearch[index].owner!.id != widget.user.id){
+                              goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
                             }else{
-                            GroupListData groupList =  await goTo(context, GroupDetails(groupData: groupBySearch[index],));
-                            groupBySearch[index] = groupList;
+                              toastMessage("You're the owner of this group");
                             }
-                            setState((){
-                            });
+
                           },
                           child:groupListWidget(groupBySearch[index]),
                         );

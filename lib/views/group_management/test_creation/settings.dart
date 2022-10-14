@@ -31,23 +31,23 @@ class _SettingsState extends State<Settings> {
   TextEditingController _accessController = TextEditingController();
   bool subscriptionMonthlySwitch = true;
   bool subscriptionYearlySwitch = false;
-  bool speedSwitch = false;
-  bool masterySwitch = false;
-  bool rateSwitch = false;
-  bool outlookSwitch = false;
-  bool totalScoreSwitch = false;
-  bool averageScoreSwitch = false;
+  bool speedSwitch = true;
+  bool masterySwitch = true;
+  bool rateSwitch = true;
+  bool outlookSwitch = true;
+  bool totalScoreSwitch = true;
+  bool averageScoreSwitch = true;
   bool passMarkSwitch = false;
-  bool resultSwitch = false;
-  bool summariesSwitch = false;
-  bool reviewSwitch = false;
+  bool resultSwitch = true;
+  bool summariesSwitch = true;
+  bool reviewSwitch = true;
   var _countryFlag;
   String countryCurrency = 'GH';
   String countryCode = '+233';
-  String passMark = '0';
+  String passMark = '';
   TextEditingController passMarkController = TextEditingController();
   List gradingSystem = [];
-  List<ListNames> listBeceGrading = [ListNames(name: "80")];
+  List<ListNames> listBeceGrading = [ListNames(name: "80",id: "A")];
   static List<String> rangeList = [];
   var selectedRadio;
   String? selectedStatus;
@@ -55,6 +55,7 @@ class _SettingsState extends State<Settings> {
   List<GradesDataResponse> listGrade = [];
   GradesDataResponse ? gradesDataResponse;
   List<TextEditingController> textEditingController = [TextEditingController()];
+  List<TextEditingController> textGradeController = [TextEditingController()];
   GroupListData? groupListData;
   increaseRange(int i,){
     if(i == 0){
@@ -109,13 +110,16 @@ class _SettingsState extends State<Settings> {
     if(listBeceGrading.length != 1){
       if(addNewRangeCheck(listBeceGrading.length -1)){
         if(int.parse(listBeceGrading.last.name) != 0){
-          ListNames beceGrading = ListNames(name: "0",);
+          ListNames beceGrading = ListNames(name: "0",id: "A1");
           listBeceGrading.add(beceGrading);
           textEditingController.clear();
+          textGradeController.clear();
 
           for(int t =0; t < listBeceGrading.length; t++){
             textEditingController.add(TextEditingController());
+            textGradeController.add(TextEditingController());
             textEditingController[t].text = listBeceGrading[t].name;
+            textGradeController[t].text = listBeceGrading[t].id;
           }
         }
       }
@@ -123,12 +127,15 @@ class _SettingsState extends State<Settings> {
       if(int.parse(listBeceGrading.last.name) == 100){
         toastMessage("Can not exceed 100");
       }else{
-        ListNames beceGrading = ListNames(name: "0",);
+        ListNames beceGrading = ListNames(name: "0",id: "A1");
         listBeceGrading.add(beceGrading);
         textEditingController.clear();
+        textGradeController.clear();
         for(int t =0; t < listBeceGrading.length; t++){
           textEditingController.add(TextEditingController());
+          textGradeController.add(TextEditingController());
           textEditingController[t].text = listBeceGrading[t].name;
+          textGradeController[t].text = listBeceGrading[t].id;
         }
       }
     }
@@ -150,6 +157,12 @@ class _SettingsState extends State<Settings> {
     }else{
       if(_accessController.text.isEmpty){
         toastMessage("Enter amount");
+        return;
+      }
+    }
+    if(passMarkSwitch){
+      if(passMark.isEmpty){
+        toastMessage("Enter Pass mark");
         return;
       }
     }
@@ -175,7 +188,7 @@ class _SettingsState extends State<Settings> {
       List<Grade> listCustomGrade = [];
       for(int i =0; i< listBeceGrading.length; i++){
         Grade grade = Grade(
-          grade: i +1,
+          grade: listBeceGrading[i].id,
           range: int.parse(listBeceGrading[i].name)
         );
         listCustomGrade.add(grade);
@@ -275,6 +288,7 @@ class _SettingsState extends State<Settings> {
       selectedStatus =  status[0];
       passMarkController.text = passMark;
       textEditingController[0].text = "80";
+      textGradeController[0].text = "A1";
     }
     getGroupGrades();
   }
@@ -756,6 +770,9 @@ class _SettingsState extends State<Settings> {
                                 onToggle: (val) {
                                   setState(() {
                                     passMarkSwitch = val;
+                                    if(!passMarkSwitch){
+                                      passMark = '0';
+                                    }
                                   });
                                 },
                               ),
@@ -867,6 +884,50 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 SizedBox(height: 20,),
+                if(passMarkSwitch)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    sText(
+                      "Pass mark".toUpperCase(),
+                      color: Color(0xFF0E0E0E),
+                      size: 14,
+                      family: "Poppins",
+                      weight: FontWeight.w500,
+                    ),
+                    SizedBox(height: 20,),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              // autofocus: true,
+                              controller: passMarkController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please check that you\'ve entered group_management email';
+                                }
+                                return null;
+                              },
+                              onChanged: (value){
+                                passMark = value;
+                              },
+                              decoration: textDecorNoBorder(
+                                radius: 10,
+                                hintColor: Color(0xFFB9B9B9),
+                                borderColor: Colors.white,
+                                fill: Colors.white,
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20,),
+                  ],
+                ),
                 sText(
                   "Grading System".toUpperCase(),
                   color: Color(0xFF0E0E0E),
@@ -1435,11 +1496,31 @@ class _SettingsState extends State<Settings> {
                                       ),
                                       for(int i =0; i < listBeceGrading.length; i++)
                                         Container(
-                                          padding: EdgeInsets.only(left: 50,top: 0,right: 20),
+                                          padding: EdgeInsets.only(left: 30,top: 0,right: 20),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              sText("${i +1}",align: TextAlign.center),
+                                              Container(
+                                                width: 42,
+                                                margin: EdgeInsets.symmetric(horizontal: 0),
+                                                child:  TextFormField(
+                                                  textAlign: TextAlign.left,
+                                                  controller: textGradeController[i],
+                                                  keyboardType: TextInputType.number,
+                                                  maxLines: 1,
+                                                  onChanged: (value){
+                                                    setState((){
+                                                      if(value.isNotEmpty){
+                                                        listBeceGrading[i].id = value;
+                                                      }else{
+                                                        listBeceGrading[i].id = "1";
+                                                      }
+                                                    });
+                                                  },
+                                                  decoration: textDecor(hint: textGradeController[i].text,hintColor: Colors.black,padding: bottomPadding(10)),
+
+                                                ),
+                                              ),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
@@ -1469,43 +1550,11 @@ class _SettingsState extends State<Settings> {
                                                       maxLines: 1,
                                                       onChanged: (value){
                                                         setState((){
-                                                          // if(value.isNotEmpty){
-                                                          //   if(i == 0 && int.parse(value) == 0){
-                                                          //     toastMessage("Can not go below 0");
-                                                          //   }
-                                                          //   else if(i == 0 && int.parse(value) != 0){
-                                                          //     listBeceGrading[i].name =  value;
-                                                          //   }
-                                                          //   else if( int.parse(value) == 0){
-                                                          //     toastMessage("Can not go below 0");
-                                                          //   }
-                                                          //   else if(int.parse(value) > int.parse(listBeceGrading[i -1].name) -1){
-                                                          //     toastMessage("Can not exceed the top value");
-                                                          //     listBeceGrading[i].name ="0";
-                                                          //   }
-                                                          //   else{
-                                                          //     if(i == 0 && int.parse(value) == 100){
-                                                          //       toastMessage("Can not exceed 100");
-                                                          //     }else if(i == 0 && int.parse(value) != 100){
-                                                          //       listBeceGrading[i].name =  value;
-                                                          //     }else if(int.parse(value) < int.parse(listBeceGrading[i -1].name) -1){
-                                                          //       listBeceGrading[i].name =  value;
-                                                          //     }else{
-                                                          //       listBeceGrading[i].name =  value;
-                                                          //     }
-                                                          //   }
-                                                          // }else{
-                                                          //   listBeceGrading[i].name = "0";
-                                                          // }
                                                           if(value.isNotEmpty){
                                                             listBeceGrading[i].name = value;
-                                                            // textEditingController[i].text = value;
                                                           }else{
-
                                                             listBeceGrading[i].name = "0";
-                                                            // textEditingController[i].text = "";
                                                           }
-
                                                         });
                                                         print("object:${ listBeceGrading[i].name }");
 
@@ -1563,6 +1612,7 @@ class _SettingsState extends State<Settings> {
                                                   if(listBeceGrading.length != 1){
                                                     textEditingController.removeLast();
                                                     listBeceGrading.removeLast();
+                                                    textGradeController.removeLast();
                                                   }
                                                 });
                                               },

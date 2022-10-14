@@ -7,6 +7,7 @@ import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/models/new_user_data.dart';
 import 'package:ecoach/models/plan.dart';
@@ -23,7 +24,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class TestCreation extends StatefulWidget {
-   TestCreation({Key? key}) : super(key: key);
+   TestCreation({Key? key, required this.groupListData}) : super(key: key);
+   GroupListData groupListData;
   @override
   State<TestCreation> createState() => _TestCreationState();
 }
@@ -931,7 +933,7 @@ class _TestCreationState extends State<TestCreation> {
                     padding: EdgeInsets.zero,
                     onPressed: (){
                       groupTestId = listTopics[index].id.toString();
-                      goTo(context, TestConfigurations(testName: listTopics[index].name,));
+                      goTo(context, TestConfigurations(testName: listTopics[index].name,groupListData: widget.groupListData,));
                     },
                     child: Container(
                       padding: appPadding(20),

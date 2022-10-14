@@ -233,6 +233,9 @@ class _CreateGroupState extends State<CreateGroup> {
                             onToggle: (val) {
                               setState(() {
                                 switchOn = val;
+                                if(switchOn){
+                                  status = false;
+                                }
                               });
                             },
                           ),
@@ -250,6 +253,7 @@ class _CreateGroupState extends State<CreateGroup> {
                     SizedBox(
                       height: 20,
                     ),
+                    if(!switchOn)
                     MaterialButton(
                       onPressed: () {
                         setState(() {
