@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/hide.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/question.dart';
@@ -1099,4 +1100,45 @@ groupListWidget(GroupListData groupListData){
       ],
     ),
   );
+}
+
+Future<bool> scoreCurrentQuestion(Question question) async {
+  print("scoring...");
+  // Question mp = questions[currentQuestion];
+  if (question.unattempted) {
+    question.confirmed = 0;
+    print("questions[currentQuestion]:${question.unattempted}");
+    Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
+    if(questions == null){
+      await QuestionDB().insertConquestQuestion(question);
+    }else{
+      await QuestionDB().updateConquest(question);
+    }
+    return true;
+  }
+
+  if (question.isWrong) {
+    print("selected answer:${question.selectedAnswer}");
+    question.confirmed = 1;
+    Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
+    if(questions == null){
+      await QuestionDB().insertConquestQuestion(question);
+    }else{
+      await QuestionDB().updateConquest(question);
+    }
+    return false;
+  }
+
+  if (question.isCorrect) {
+    question.confirmed = 2;
+    Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
+    if(questions == null){
+      await QuestionDB().insertConquestQuestion(question);
+    }else{
+      await QuestionDB().updateConquest(question);
+    }
+  }
+
+
+  return true;
 }
