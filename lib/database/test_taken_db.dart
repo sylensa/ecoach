@@ -132,13 +132,17 @@ class TestTakenDB {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and group_id = $groupId");
+      if(groupId != null){
+        maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and group_id = $groupId and challenge_type IS NOT NULL");
+      }else{
+        maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL");
+      }
     }else if(period.toLowerCase() == 'daily'){
-      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"'  GROUP by Date(created_at)");
+      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL  GROUP by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){
-    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
+    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
     }else if(period.toLowerCase() == 'monthly'){
-      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
     }
     print("object maps:$maps");
     List<TestTaken> tests = [];
@@ -220,6 +224,8 @@ class TestTakenDB {
     }
     return tests;
   }
+
+
 
   Future<TestTaken?> courseLastTest(int courseId) async {
     final Database? db = await DBProvider.database;

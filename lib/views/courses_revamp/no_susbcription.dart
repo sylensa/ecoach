@@ -14,6 +14,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/courses_revamp/available_bundles.dart';
 import 'package:ecoach/views/courses_revamp/widgets/games_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/learn_mode_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/live_widget.dart';
@@ -257,11 +258,17 @@ class _NoSubscriptionsPageState extends State<NoSubscriptionsPage> {
             SizedBox(height: 20,),
             getPage().values.first,
             SizedBox(height: 20,),
-            Container(
-              child: sText("Buy Full Access",align: TextAlign.center,color: Colors.white,weight: FontWeight.w600,size: 20),
-              color: Color(0xFF2692E4),
-              padding: EdgeInsets.symmetric(vertical: 20),
-              width: appWidth(context),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: ()async{
+               await goTo(context, AvailableBundles(widget.user,controller: widget.controller,));
+              },
+              child: Container(
+                child: sText("Buy Full Access",align: TextAlign.center,color: Colors.white,weight: FontWeight.w600,size: 20),
+                color: Color(0xFF2692E4),
+                padding: EdgeInsets.symmetric(vertical: 20),
+                width: appWidth(context),
+              ),
             ),
 
           ],
