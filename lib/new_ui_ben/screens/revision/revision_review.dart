@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
@@ -7,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../api/api_call.dart';
+import '../../../models/report.dart';
 import '../../../models/revision_progress_attempts.dart';
+import '../../../utils/app_url.dart';
 import 'widget/revision_study_attempts_sheet.dart';
 
 class RevisionReview extends StatefulWidget {
@@ -145,6 +150,8 @@ class SingleRevisionWidget extends StatefulWidget {
 class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
   int totalScore = 0;
   int totalAttempts = 0;
+  int rank = 0;
+  bool loadingRank = false;
   List<RevisionProgressAttempt> attempts = [];
 
   setTotalRevisionScore() async {
@@ -161,11 +168,38 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
     setState(() {});
   }
 
+  getCourseStats(int courseId) async {
+    return await ApiCall<Report>(
+      AppUrl.report,
+      user: Provider.of<WelcomeScreenProvider>(context, listen: false)
+          .currentUser,
+      params: {'course_id': jsonEncode(courseId)},
+      isList: false,
+      create: (data) {
+        setState(() {});
+        return Report.fromJson(data);
+      },
+    ).get(context);
+  }
+
+  getReportRank() async {
+    setState(() {
+      loadingRank = true;
+    });
+    Report stat = await getCourseStats(widget.progress!.courseId!);
+    CourseStat courseStat = stat.courseStats!.first;
+    print("course stats: ${courseStat.rank}");
+    rank = courseStat.rank ?? 0;
+    loadingRank = false;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     setTotalRevisionScore();
     getAttemptsByRevision();
+    getReportRank();
   }
 
   @override
@@ -228,7 +262,7 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
+                        children: [
                           Icon(
                             Icons.emoji_events,
                             color: Color(0xFF0367B4),
@@ -236,14 +270,19 @@ class _SingleRevisionWidgetState extends State<SingleRevisionWidget> {
                           SizedBox(
                             width: 10,
                           ),
-                          Text(
-                            '2nd',
-                            style: TextStyle(
-                                color: Color(0xFFC2C2C2),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Helvetica"),
-                          )
+                          loadingRank
+                              ? SizedBox(
+                                  height: 25,
+                                  width: 25,
+                                  child: CircularProgressIndicator())
+                              : Text(
+                                  '${rank} ${courseRankPosition(rank.toString())}',
+                                  style: TextStyle(
+                                      color: Color(0xFFC2C2C2),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Helvetica"),
+                                )
                         ],
                       ),
                       SizedBox(

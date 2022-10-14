@@ -178,32 +178,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     await Future.delayed(Duration(seconds: 1));
 
-    if (StudyType.REVISION == controller.type) {
-      Provider.of<RevisionAttemptProvider>(context, listen: false)
-          .setQuestionCountAndAvgScore(
-              questionsLength: correctAnswered + wrong, score: avgScore);
-
-      RevisionStudyProgress? revision = await StudyDB()
-          .getCurrentRevisionProgressByCourse(controller.course.id!);
-
-      RevisionProgressController().recordAttempts(correctAnswered.toDouble());
-
-      if (revision != null) {
-        int revisionLevel =
-            avgScore >= 70 ? revision.level! + 1 : revision.level!;
-
-        revision.level = revisionLevel;
-        revision.updatedAt = DateTime.now();
-        print("revision update => ${revision.toMap()}");
-        await StudyDB().updateRevisionProgress(revision);
-        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
-            .setCurrentRevisionStudyProgress(revision);
-      }
-
-      Get.off(() => SuccessfulRevision());
-      return;
-    }
-
     controller.saveTest(context, (test, success) async {
       Navigator.pop(context);
       if (success) {
@@ -238,27 +212,27 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     print("Controller details: ${controller.type}");
 
-    // if (StudyType.REVISION == controller.type) {
-    //   RevisionStudyProgress? revision = await StudyDB()
-    //       .getCurrentRevisionProgressByCourse(controller.course.id!);
-    //
-    //   RevisionProgressController().recordAttempts(correctAnswered.toDouble());
-    //
-    //   if (revision != null) {
-    //     int revisionLevel =
-    //         avgScore >= 70 ? revision.level! + 1 : revision.level!;
-    //
-    //     revision.level = revisionLevel;
-    //     revision.updatedAt = DateTime.now();
-    //     print("revision update => ${revision.toMap()}");
-    //     await StudyDB().updateRevisionProgress(revision);
-    //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
-    //         .setCurrentRevisionStudyProgress(revision);
-    //   }
-    //
-    //   Get.off(() => SuccessfulRevision());
-    //   return;
-    // }
+    if (StudyType.REVISION == controller.type) {
+      RevisionStudyProgress? revision = await StudyDB()
+          .getCurrentRevisionProgressByCourse(controller.course.id!);
+
+      RevisionProgressController().recordAttempts(correctAnswered.toDouble());
+
+      if (revision != null) {
+        int revisionLevel =
+            avgScore >= 70 ? revision.level! + 1 : revision.level!;
+
+        revision.level = revisionLevel;
+        revision.updatedAt = DateTime.now();
+        print("revision update => ${revision.toMap()}");
+        await StudyDB().updateRevisionProgress(revision);
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+            .setCurrentRevisionStudyProgress(revision);
+      }
+
+      Get.off(() => SuccessfulRevision());
+      return;
+    }
 
     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
       // bool moveUp = controller.progress.section == null ||
@@ -1504,8 +1478,8 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
 
             if (!widget.enabled &&
                 selectedAnswer != null &&
-                selectedAnswer!.solution != null &&
-                selectedAnswer!.solution != "")
+                correctAnswer!.solution != null &&
+                correctAnswer!.solution != "")
               Container(
                 child: Column(
                   children: [
@@ -1525,8 +1499,8 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                       ),
                     ),
                     if (selectedAnswer != null &&
-                        selectedAnswer!.solution != null &&
-                        selectedAnswer!.solution != "")
+                        correctAnswer!.solution != null &&
+                        correctAnswer!.solution != "")
                       Container(
                         color: Color(0xFFF6F6F6),
                         child: Center(

@@ -29,3 +29,15 @@ String getBarPercentage(double) {
     return "assets/images/learn_mode2/bars1.png";
   }
 }
+
+String courseRankPosition(String position){
+  if(position.endsWith("1") && position != "11"){
+    return "st";
+  }else if (position.endsWith("2") && position != "12"){
+    return "nd";
+  }else if (position.endsWith("3") && position != "13"){
+    return "rd";
+  }else{
+    return "th";
+  }
+}

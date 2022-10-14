@@ -98,12 +98,14 @@ class CourseCompletionStudyController {
   }
 
   getCourseCompletionQuestion() async {
-    int currentRevisionLevel = welcomeProvider.currentCourseCompletion!.level!;
+    // int currentRevisionLevel = welcomeProvider.currentCourseCompletion!.level!;
 
     Course course = welcomeProvider.currentCourse!;
 
-    Topic? topic =
-        await TopicDB().getLevelTopic(course.id!, currentRevisionLevel);
+    CourseCompletionStudyProgress? progress =
+        await StudyDB().getCurrentCourseCompletionProgressByCourse(course.id!);
+
+    Topic? topic = await TopicDB().getLevelTopic(course.id!, progress!.level!);
 
     List<Question> questions =
         await QuestionDB().getTopicQuestions([topic!.id!], 10);
