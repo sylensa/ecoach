@@ -266,18 +266,13 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
-        await goTo(context, TestInstruction(widget.user,groupNotificationData: groupNotificationData,));
-        setState((){
-          if(isUpcoming){
-            List<GroupNotificationData> listGroupNotificationData = [];
-            listGroupNotificationData.add(groupNotificationData);
-            allGroupNotificationData.insertAll(0, listGroupNotificationData);
-            upComingGroupNotificationData.removeAt(index);
-          }else{
-            allGroupNotificationData[index].viewed = true;
-          }
-          groupNotificationData =  allGroupNotificationData[index];
-        });
+        if(groupNotificationData.group != null){
+          await goTo(context, TestInstruction(widget.user,groupNotificationData: groupNotificationData,));
+          readNotification(isUpcoming,groupNotificationData,index);
+        }else{
+          toastMessage("Group deleted or suspended");
+        }
+
       },
       child: Column(
         children: [
@@ -307,49 +302,59 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         child: sText("${groupNotificationData.notificationtable!.name}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
+                     groupNotificationData.group != null ?
+                        sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+                     sText("Group deleted or suspended",weight: FontWeight.normal,size: 12)  ,
                     ],
                   ),
                 ),
-                if(groupNotificationData.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
-                  Container(
-                    // width: 100,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
-                        // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
-                        getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
-                        sText("remaining",weight: FontWeight.normal,size: 10),
-                      ],
+                if( groupNotificationData.group != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if(groupNotificationData.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
+                      Container(
+                        // width: 100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
+                            // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
+                            getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
+                            sText("remaining",weight: FontWeight.normal,size: 10),
+                          ],
+                        ),
+                      )
+                    else if(groupNotificationData.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
+                      Container(
+                        // width: 100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
+                            // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
+                            getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false),
+                            sText("Test ongoing",weight: FontWeight.normal,size: 10),
+                          ],
+                        ),
+                      )
+                    else
+                      sText("Test Completed",weight: FontWeight.normal,size: 10),
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
+                          SizedBox(height: 20,),
+                          Icon(Icons.arrow_forward),
+                        ],
+                      ),
                     ),
-                  ) else if(groupNotificationData.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
-                  Container(
-                    // width: 100,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
-                        // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
-                        getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false),
-                        sText("Test ongoing",weight: FontWeight.normal,size: 10),
-                      ],
-                    ),
-                  ) else
-                  sText("Test Completed",weight: FontWeight.normal,size: 10),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
-                      SizedBox(height: 20,),
-                      Icon(Icons.arrow_forward),
-                    ],
-                  ),
-                ),
+                  ],
+                )
               ],
             ),
           ),
@@ -364,17 +369,12 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       padding: EdgeInsets.zero,
       onPressed: ()async{
         // await goTo(context, GroupInvite(widget.user,groupNotificationData.id.toString()));
-        setState((){
-          if(isUpcoming){
-            List<GroupNotificationData> listGroupNotificationData = [];
-            listGroupNotificationData.add(groupNotificationData);
-            allGroupNotificationData.insertAll(0, listGroupNotificationData);
-            upComingGroupNotificationData.removeAt(index);
-          }else{
-            allGroupNotificationData[index].viewed = true;
-          }
-          groupNotificationData =  allGroupNotificationData[index];
-        });
+        if(groupNotificationData.group != null){
+          readNotification(isUpcoming,groupNotificationData,index);
+        }else{
+          toastMessage("Group deleted or suspended");
+        }
+
       },
       child: Column(
         children: [
@@ -393,6 +393,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                   width: 5,
                   height: 60,
                 ),
+                SizedBox(width: 5,),
                 Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,14 +401,17 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                       sText("GROUP TEST",),
                       SizedBox(height: 5,),
                       Container(
-                        width: 150,
+                        width: appWidth(context) * 0.60,
                         child: sText("${groupNotificationData.notificationtable!.name}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
+                      groupNotificationData.group != null ?
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+                      sText("Group deleted or suspended",weight: FontWeight.normal,size: 12) ,
                     ],
                   ),
                 ),
+                  if(groupNotificationData.group != null)
                   Container(
                     // width: 100,
                     child: Column(
@@ -419,7 +423,8 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                       ],
                     ),
                   ),
-                Container(
+                if(groupNotificationData.group != null)
+                  Container(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -443,18 +448,13 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       padding: EdgeInsets.zero,
 
       onPressed: ()async{
-       await  goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
-       setState((){
-         if(isUpcoming){
-           List<GroupNotificationData> listGroupNotificationData = [];
-           listGroupNotificationData.add(groupNotificationData);
-           allGroupNotificationData.insertAll(0, listGroupNotificationData);
-           upComingGroupNotificationData.removeAt(index);
-         }else{
-           allGroupNotificationData[index].viewed = true;
-         }
-         groupNotificationData = allGroupNotificationData[index];
-       });
+        if(groupNotificationData.group != null){
+          await  goTo(context, GroupAnnouncement(widget.user,groupNotificationData: groupNotificationData,));
+          readNotification(isUpcoming,groupNotificationData,index);
+        }else{
+          toastMessage("Group deleted or suspended");
+        }
+
       },
       child: Column(
         children: [
@@ -473,6 +473,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                   width: 5,
                   height: 60,
                 ),
+                SizedBox(width: 5,),
                 Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,11 +481,13 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                       sText("ANNOUNCEMENT",),
                       SizedBox(height: 5,),
                       Container(
-                        width: 250,
+                        width: appWidth(context) * 0.60,
                         child: sText("${groupNotificationData.message}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
+                      groupNotificationData.group != null ?
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+                      sText("Group deleted or suspended",weight: FontWeight.normal,size: 12) ,
                     ],
                   ),
                 ),
@@ -513,20 +516,17 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       padding: EdgeInsets.zero,
 
       onPressed: ()async{
-       await  goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
-       setState((){
-         if(isUpcoming){
-           List<GroupNotificationData> listGroupNotificationData = [];
-           listGroupNotificationData.add(groupNotificationData);
-           allGroupNotificationData.insertAll(0,listGroupNotificationData);
-           upComingGroupNotificationData.removeAt(index);
-         }else{
-           allGroupNotificationData[index].viewed = true;
-           print("object2");
-         }
-         groupNotificationData = allGroupNotificationData[index];
+        if(groupNotificationData.group != null){
+          await  goTo(context, GroupInvite(widget.user,groupNotificationData: groupNotificationData,));
+          readNotification(isUpcoming,groupNotificationData,index);
+        }else{
+          toastMessage("Group deleted or suspended");
+        }
 
-       });
+        setState(() {
+          print("allGroupNotificationData:${allGroupNotificationData.length}");
+        });
+
       },
       child: Column(
         children: [
@@ -545,6 +545,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                   width: 5,
                   height: 60,
                 ),
+                SizedBox(width: 5,),
                 Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -552,11 +553,13 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                       sText("INVITATION",),
                       SizedBox(height: 5,),
                       Container(
-                        width: 250,
+                        width: appWidth(context) * 0.60,
                         child: sText("${groupNotificationData.message}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
+                      groupNotificationData.group != null ?
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+                      sText("Group deleted or suspended",weight: FontWeight.normal,size: 12)
                     ],
                   ),
                 ),
@@ -566,7 +569,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.group!.dateCreated.toString())}",weight: FontWeight.normal),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.group != null ? groupNotificationData.group!.dateCreated.toString() : groupNotificationData.createdAt!.toString())}",weight: FontWeight.normal),
                       SizedBox(height: 20,),
                       Icon(Icons.arrow_forward),
                     ],
@@ -584,18 +587,13 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       padding: EdgeInsets.zero,
 
       onPressed: ()async{
-        await goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
-        setState((){
-          if(isUpcoming){
-            List<GroupNotificationData> listGroupNotificationData = [];
-            listGroupNotificationData.add(groupNotificationData);
-            allGroupNotificationData.insertAll(0, listGroupNotificationData);
-            upComingGroupNotificationData.removeAt(index);
-          }else{
-            allGroupNotificationData[index].viewed = true;
-          }
-          groupNotificationData =  allGroupNotificationData[index];
-        });
+        if(groupNotificationData.group != null){
+          await goTo(context, GroupRequest(widget.user,groupNotificationData: groupNotificationData,));
+          readNotification(isUpcoming,groupNotificationData,index);
+        }else{
+          toastMessage("Group deleted or suspended");
+        }
+
       },
       child: Column(
         children: [
@@ -614,6 +612,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                   width: 5,
                   height: 60,
                 ),
+                SizedBox(width: 5,),
                 Container(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -621,11 +620,13 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                       sText("GROUP REQUEST",),
                       SizedBox(height: 5,),
                       Container(
-                        width: 250,
+                        width: appWidth(context) * 0.60,
                         child: sText("${groupNotificationData.message}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12),
+                      groupNotificationData.group != null ?
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+                      sText("Group deleted or suspended",weight: FontWeight.normal,size: 12)
                     ],
                   ),
                 ),
@@ -647,5 +648,22 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
         ],
       ),
     )    ;
+  }
+
+  readNotification(bool isUpcoming,GroupNotificationData groupNotificationData,int index){
+    setState((){
+      if(isUpcoming){
+        List<GroupNotificationData> listGroupNotificationData = [];
+        groupNotificationData.viewed = true;
+        listGroupNotificationData.add(groupNotificationData);
+        allGroupNotificationData.insertAll(0,listGroupNotificationData);
+        upComingGroupNotificationData.removeAt(index);
+      }else{
+        allGroupNotificationData[index].viewed = true;
+        print("object2");
+      }
+      groupNotificationData = allGroupNotificationData[index];
+
+    });
   }
 }

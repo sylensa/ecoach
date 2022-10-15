@@ -68,7 +68,7 @@ class _CategoryGroupsPageState extends State<CategoryGroupsPage> {
                         if(groupByCategory[index].isMember! == 1){
                           goTo(context, GroupActivity(widget.user,groupData: groupByCategory[index]));
                         }else{
-                         GroupListData groupList  = await goTo(context, GroupDetails(groupData: groupByCategory[index],));
+                         GroupListData groupList  = await goTo(context, GroupDetails(user: widget.user,groupData: groupByCategory[index],));
                          groupByCategory[index] = groupList;
                         }
                         setState((){

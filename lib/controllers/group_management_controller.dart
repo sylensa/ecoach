@@ -777,10 +777,11 @@ class GroupManagementController{
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
       var res = await doGet("${AppUrl.userGroupNotification}/notifications?upcoming=true",);
-      print("res:$res");
+      print("res upcoming:${res["data"]["data"]}");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
+          print("groups:${res["data"]["data"][i]["group"]}");
           if(!groupNotificationData.viewed!){
             listGroupNotificationData.add(groupNotificationData);
           }

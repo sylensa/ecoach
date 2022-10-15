@@ -17,7 +17,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 class GroupDetails extends StatefulWidget {
   static const String routeName = '/user_group';
   GroupListData? groupData;
-  GroupDetails( {Key? key,this.groupData,}) : super(key: key);
+  User user;
+  GroupDetails( {Key? key,required this.user,this.groupData,}) : super(key: key);
   @override
   State<GroupDetails> createState() => _GroupDetailsState();
 }
