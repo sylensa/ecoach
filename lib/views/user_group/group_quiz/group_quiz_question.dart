@@ -124,7 +124,6 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
     }else if(controller.timing == "Time per Question"){
       nextButton();
     }
-
   }
 
   nextButton() async {
@@ -1673,7 +1672,6 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
             if (remaining.inSeconds == 0) {
               return Text("Time Up", style: TextStyle(color: backgroundColor, fontSize: 14));
             }
-
             return Text(
                 "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
                 style: TextStyle(color: backgroundColor, fontSize: 14));
@@ -1684,6 +1682,30 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
           Text("Untimed Quiz",
               style: TextStyle(
                   color: backgroundColor, fontSize: 12))
+        );
+  }
+  quizTimerWidget() {
+    return Container(
+          child:
+          AdeoTimer(
+          controller: timerController,
+          startDuration: controller.countDownDuration!,
+          callbackWidget: (time) {
+            if (controller.disableTime) {
+              return Image(image: AssetImage("assets/images/infinite.png"));
+            }
+            Duration remaining = Duration(seconds: time.toInt());
+            controller.countDownDuration = remaining;
+            if (remaining.inSeconds == 0) {
+              return Text("Time Up", style: TextStyle(color: backgroundColor, fontSize: 14));
+            }
+            return Text(
+                "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                style: TextStyle(color: backgroundColor, fontSize: 14));
+          },
+          onFinish: () {
+            onEnd();
+          })
         );
   }
 

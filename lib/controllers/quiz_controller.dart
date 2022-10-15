@@ -30,9 +30,11 @@ class QuizController {
     this.questions = const [],
     required this.name,
     this.time = 30,
+    this.countDown = 30,
     this.timing = 'Time per Quiz',
   }) {
     duration = Duration(seconds: time);
+    countDownDuration = Duration(seconds: countDown);
     resetDuration = Duration(seconds: time);
     startingDuration = duration;
 
@@ -49,6 +51,7 @@ class QuizController {
   TestType type;
   TestCategory challengeType;
   int time;
+  int countDown;
   String timing;
 
   bool disableTime = false;
@@ -63,7 +66,7 @@ class QuizController {
   int finalQuestion = 0;
 
   DateTime? startTime;
-  Duration? duration, resetDuration, startingDuration;
+  Duration? duration, resetDuration, startingDuration,countDownDuration;
   int endTime = 0;
   TimerController? timerController;
   int countdownInSeconds = 0;

@@ -183,6 +183,31 @@ class _TestInstructionState extends State<TestInstruction> {
                     ),
                     GestureDetector(
                       onTap: ()async{
+                        int countDown = 0;
+                        if(widget.groupNotificationData!.notificationtable!.configurations!.timing! != "Untimed"){
+
+                          if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime != null && widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime != null){
+                            // period
+                           DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
+                           DateTime endTime = widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!;
+                           countDown = endTime.difference(startTime).inSeconds;
+                          }else{
+                            // exact
+                            if(widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question"){
+                              countDown = widget.groupNotificationData!.notificationtable!.configurations!.countDown! * 10;
+                            }else if(widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Quiz"){
+                              countDown = 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown!;
+                            }
+                            DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
+                            countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+                            widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime  = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+                          }
+                        }else{
+                          DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
+                          countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+                          widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime  = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+                        }
+
                         showLoaderDialog(context);
                        var res = await GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).getUserGroupTestTaken(testId: int.parse(widget.groupNotificationData!.notificationtable!.configurations!.testId!));
                         if(res){
@@ -215,6 +240,7 @@ class _TestInstructionState extends State<TestInstruction> {
                               default:
                                 questions = await TestController().getMockQuestions(0);
                             }
+
                             Course? course =  await CourseDB().getCourseByName(widget.groupNotificationData!.notificationtable!.configurations!.course!);
                             if(course != null && questions.isNotEmpty){
                               Navigator.pop(context);
@@ -228,6 +254,7 @@ class _TestInstructionState extends State<TestInstruction> {
                                   time: widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question" ? widget.groupNotificationData!.notificationtable!.configurations!.countDown! : 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! ,
                                   type: TestType.KNOWLEDGE,
                                   challengeType: TestCategory.TOPIC,
+                                  countDown: countDown
                                 ),
                                 diagnostic: true,
                                 groupId: widget.groupNotificationData!.groupId!,
