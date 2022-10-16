@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
@@ -38,91 +37,94 @@ class _LearnSpeedState extends State<LearnSpeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CarouselSlider(
-        items: [
-          SpeedCompletionRules(
-            letGo: () {
-              controller.nextPage();
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: CarouselSlider(
+          items: [
+            SpeedCompletionRules(
+                // letGo: () {
+                //   controller.nextPage();
+                // },
+                ),
+            ChooseSpeedMode(
+                // onGoing: () {
+                //   controller.nextPage();
+                // },
+                // newLearning: () {
+                //   SpeedStudyProgressController().restartCCLevel();
+                //   controller.nextPage();
+                // },
+                ),
+
+            // SpeedEnhancementIntroit(
+            //   heroText: 'Speed Enhancement',
+            //   subText:
+            //       'Let\'s help you improve your speed,\none question at a time.',
+            //   heroImageURL: 'assets/images/learn_module/speed_enhancement_1.png',
+            //   stage: 1,
+            //   mainActionOnPressed: () {
+            //     controller.nextPage();
+            //   },
+            //   topActionOnPressed: () {
+            //     Navigator.popUntil(
+            //         context, ModalRoute.withName(LearnMode.routeName));
+            //   },
+            // ),
+            SecondComponent(
+              // controller: controller,
+              progress: widget.progress,
+            ),
+
+            // SpeedCompletionRules(
+            //   letGo: () async {
+
+            //     List<Question> questions =
+            //         await QuestionDB().getRandomQuestions(widget.course.id!, 10);
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) {
+            //           return StudyQuizView(
+            //               controller: SpeedController(widget.user, widget.course,
+            //                   questions: questions,
+            //                   name: widget.progress.name!,
+            //                   progress: widget.progress));
+            //         },
+            //       ),
+            //     );
+
+            //   },
+            // ),
+
+            // SpeedEnhancementIntroit(
+            //   heroText: 'Speed Test',
+            //   subText:
+            //       'If you answer 10 questions correctly , you move to the next level\nif you fail 3 questions consecutive questions,\nyou go back to the previous level.\nFor every wrong answer, the test restarts.',
+            //   heroImageURL: 'assets/images/learn_module/speed_enhancement_3.png',
+            //   stage: 3,
+            //   topActionOnPressed: () {
+            //     Navigator.popUntil(
+            //         context, ModalRoute.withName(LearnMode.routeName));
+            //   },
+            //   mainActionOnPressed: () async {
+
+            //   },
+            // ),
+          ],
+          carouselController: controller,
+          options: CarouselOptions(
+            aspectRatio: 1 / 2,
+            viewportFraction: 1,
+            scrollPhysics: NeverScrollableScrollPhysics(),
+            enableInfiniteScroll: false,
+            initialPage: widget.page!,
+            // autoPlay: true,
+            onPageChanged: (index, reason) {
+              setState(() {
+                currentSliderIndex = index;
+              });
             },
           ),
-          ChooseSpeedMode(
-            onGoing: () {
-              controller.nextPage();
-            },
-            newLearning: () {
-              SpeedStudyProgressController().restartCCLevel();
-              controller.nextPage();
-            },
-          ),
-
-          // SpeedEnhancementIntroit(
-          //   heroText: 'Speed Enhancement',
-          //   subText:
-          //       'Let\'s help you improve your speed,\none question at a time.',
-          //   heroImageURL: 'assets/images/learn_module/speed_enhancement_1.png',
-          //   stage: 1,
-          //   mainActionOnPressed: () {
-          //     controller.nextPage();
-          //   },
-          //   topActionOnPressed: () {
-          //     Navigator.popUntil(
-          //         context, ModalRoute.withName(LearnMode.routeName));
-          //   },
-          // ),
-          SecondComponent(
-            controller: controller,
-            progress: widget.progress,
-          ),
-
-          // SpeedCompletionRules(
-          //   letGo: () async {
-
-          //     List<Question> questions =
-          //         await QuestionDB().getRandomQuestions(widget.course.id!, 10);
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) {
-          //           return StudyQuizView(
-          //               controller: SpeedController(widget.user, widget.course,
-          //                   questions: questions,
-          //                   name: widget.progress.name!,
-          //                   progress: widget.progress));
-          //         },
-          //       ),
-          //     );
-
-          //   },
-          // ),
-
-          // SpeedEnhancementIntroit(
-          //   heroText: 'Speed Test',
-          //   subText:
-          //       'If you answer 10 questions correctly , you move to the next level\nif you fail 3 questions consecutive questions,\nyou go back to the previous level.\nFor every wrong answer, the test restarts.',
-          //   heroImageURL: 'assets/images/learn_module/speed_enhancement_3.png',
-          //   stage: 3,
-          //   topActionOnPressed: () {
-          //     Navigator.popUntil(
-          //         context, ModalRoute.withName(LearnMode.routeName));
-          //   },
-          //   mainActionOnPressed: () async {
-
-          //   },
-          // ),
-        ],
-        carouselController: controller,
-        options: CarouselOptions(
-          aspectRatio: 1 / 2,
-          viewportFraction: 1,
-          scrollPhysics: NeverScrollableScrollPhysics(),
-          enableInfiniteScroll: false,
-          initialPage: widget.page!,
-          // autoPlay: true,
-          onPageChanged: (index, reason) {
-            setState(() {
-              currentSliderIndex = index;
-            });
-          },
         ),
       ),
     );
@@ -132,7 +134,7 @@ class _LearnSpeedState extends State<LearnSpeed> {
 class SecondComponent extends StatelessWidget {
   SecondComponent({
     Key? key,
-    required this.controller,
+    // required this.controller,
     required this.progress,
   }) : super(key: key) {
     int? level = progress.level;
@@ -141,7 +143,7 @@ class SecondComponent extends StatelessWidget {
     sliderValue = level * 20 - 18;
   }
 
-  final CarouselController controller;
+  // final CarouselController controller;
   final StudyProgress progress;
   double sliderValue = 0;
 

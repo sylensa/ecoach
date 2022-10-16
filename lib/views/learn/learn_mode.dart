@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/speed_enhancement_progress_model.dart';
-import 'learn_speed_enhancement.dart';
+import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
 
 class LearnMode extends StatefulWidget {
   static const String routeName = '/learning/mode';
@@ -192,7 +192,7 @@ class _LearnModeState extends State<LearnMode> {
                   if (progress == null) {
                     return;
                   }
-                  view = LearnSpeed(widget.user, widget.course, progress);
+                  view = SpeedCompletionRules();
                   break;
                 case StudyType.MASTERY_IMPROVEMENT:
                   StudyProgress? progress =

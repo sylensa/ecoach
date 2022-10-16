@@ -1,4 +1,6 @@
+import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/welcome_screen_provider.dart';
@@ -6,8 +8,8 @@ import '../../utils/speed_completion_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
 
 class SpeedCompletionRules extends StatelessWidget {
-  final Function letGo;
-  const SpeedCompletionRules({required this.letGo, Key? key}) : super(key: key);
+  // final Function letGo;
+  const SpeedCompletionRules({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +27,8 @@ class SpeedCompletionRules extends StatelessWidget {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          letGo();
-          // Get.to(() => ChooseSpeedMode());
+          // letGo();
+          Get.to(() => ChooseSpeedMode());
         },
         child: Container(
           color: const Color(0xFF00C9B9),

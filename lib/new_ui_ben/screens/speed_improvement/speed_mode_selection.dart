@@ -1,14 +1,13 @@
+import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import "package:flutter/material.dart";
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../controllers/speed_study_controller.dart';
 import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/learn_card.dart';
 
 class ChooseSpeedMode extends StatelessWidget {
-  final Function onGoing, newLearning;
-
-  ChooseSpeedMode({required this.onGoing, required this.newLearning});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +49,8 @@ class ChooseSpeedMode extends StatelessWidget {
                     value: welcome.currentSpeedStudyProgress!.level!.toDouble(),
                     icon: 'assets/images/learn_mode2/hourglass.png',
                     onTap: () async {
-                      onGoing();
+                      Get.to(
+                          () => SecondComponent(progress: welcome.progress!));
                     },
                   ),
                 ),
@@ -63,7 +63,8 @@ class ChooseSpeedMode extends StatelessWidget {
                   value: 0,
                   icon: 'assets/images/learn_mode2/stopwatch.png',
                   onTap: () {
-                    newLearning();
+                    SpeedStudyProgressController().restartCCLevel();
+                    Get.to(() => SecondComponent(progress: welcome.progress!));
                   },
                 ),
               ],
