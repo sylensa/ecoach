@@ -1,5 +1,6 @@
 import 'package:ecoach/new_ui_ben/utils/helper_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../controllers/study_mastery_controller.dart';
 import '../../../controllers/test_controller.dart';
@@ -13,6 +14,7 @@ import '../../../models/topic.dart';
 import '../../../models/topic_analysis.dart';
 import '../../../views/learn/learn_attention_topics.dart';
 import '../../../views/learn/learn_mode.dart';
+import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/green_pill_button.dart';
 import '../../widgets/highlighted_topic.dart';
 import '../../widgets/highlighted_topics_container.dart';
@@ -103,178 +105,172 @@ class _MasteryImprovementTopicsState extends State<MasteryImprovementTopics> {
       body: SizedBox(
         // padding: const EdgeInsets.symmetric(horizontal: 20),
         width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Text(
-                "Spot weaknesses and improve upon them",
-                style: TextStyle(
-                    fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.5)),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 30),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25)),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                child: Column(
-                  children: [
-                    Row(
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  const Text(
+                    "Spot weaknesses and improve upon them",
+                    style: TextStyle(
+                        fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.5)),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 30),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 15),
+                    child: Column(
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              sortTopicsByPercentage();
-                            },
-                            icon: Image.asset(
-                              'assets/images/learn_mode2/up-and-down-arrow.png',
-                              height: 21,
-                              width: 21,
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  sortTopicsByPercentage();
+                                },
+                                icon: Image.asset(
+                                  'assets/images/learn_mode2/up-and-down-arrow.png',
+                                  height: 21,
+                                  width: 21,
+                                )),
+                            const Text(
+                              'Topic',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 14),
+                            ),
+                            const Expanded(
+                                child: SizedBox(
+                              width: 10,
                             )),
-                        const Text(
-                          'Topic',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
+                            const Text(
+                              'Strength',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 14),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            )
+                          ],
                         ),
-                        const Expanded(
-                            child: SizedBox(
-                          width: 10,
-                        )),
-                        const Text(
-                          'Strength',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
+                        HighlightedTopicsContainer(
+                          topics: [
+                            ...List.generate(topics.length, (index) {
+                              return HighlightedTopic(
+                                barsWidget: Image.asset(
+                                    getBarPercentage(topics[index].performace)),
+                                number:
+                                    (index + 1).toString(),
+                                topic: topics[index].name,
+                              );
+                            }),
+                          ],
                         ),
                         const SizedBox(
-                          width: 10,
-                        )
+                          height: 30,
+                        ),
+                        RichText(
+                          text: TextSpan(
+                              text: 'You have to improve your mastery in ',
+                              style: TextStyle(
+                                  color: Colors.black, fontFamily: 'Poppins'),
+                              children: [
+                                TextSpan(
+                                    text: '${topicsToRevise.length} Topics',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w700))
+                              ]),
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
-                    HighlightedTopicsContainer(
-                      topics: [
-                        ...List.generate(topics.length, (index) {
-                          return HighlightedTopic(
-                            barsWidget: Image.asset(
-                                getBarPercentage(topics[index].performace)),
-                            number: topics[index].performace.toStringAsFixed(0),
-                            topic: topics[index].name,
-                          );
-                        }),
-                        // HighlightedTopic(
-                        //   barsWidget: Image.asset(
-                        //       'assets/images/learn_mode2/bars1.png'),
-                        //   number: '01',
-                        //   topic: 'Photosynthesis',
-                        // ),
-                        // HighlightedTopic(
-                        //   barsWidget: Image.asset(
-                        //       'assets/images/learn_mode2/bars1.png'),
-                        //   number: '02',
-                        //   topic: 'Matter',
-                        // ),
-                        // HighlightedTopic(
-                        //   barsWidget: Image.asset(
-                        //       'assets/images/learn_mode2/bars1.png'),
-                        //   number: '03',
-                        //   topic: 'Light',
-                        // ),
-                      ],
-                    ),
-                    // UnhighlightedTopicsContainer(
-                    //   topics: [
-                    //     ...List.generate(topicsSubList2.length, (index) {
-                    //       return UnhighlightedTopic(
-                    //         barsWidget: Image.asset(
-                    //             getBarPercentage(topics[index].performace)),
-                    //         number: topics[index].performace.toStringAsFixed(0),
-                    //         topic: topics[index].name,
-                    //       );
-                    //     }),
-                    //     // UnhighlightedTopic(
-                    //     //   barsWidget: Image.asset(
-                    //     //       'assets/images/learn_mode2/bars2.png'),
-                    //     //   number: '04',
-                    //     //   topic: 'Flowering Plants',
-                    //     // ),
-                    //     // UnhighlightedTopic(
-                    //     //   barsWidget: Image.asset(
-                    //     //       'assets/images/learn_mode2/bars4.png'),
-                    //     //   number: '05',
-                    //     //   topic: 'Osmosis & Diffusion',
-                    //     // ),
-                    //   ],
-                    // ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    RichText(
-                      text: TextSpan(
-                          text: 'You have to improve your mastery in ',
-                          style: TextStyle(
-                              color: Colors.black, fontFamily: 'Poppins'),
-                          children: [
-                            TextSpan(
-                                text: '${topicsToRevise.length} Topics',
-                                style: TextStyle(fontWeight: FontWeight.w700))
-                          ]),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    height: 80,
+                  ),
+                ],
               ),
-              const SizedBox(
-                height: 80,
-              ),
-              GreenPillButton(
-                  onTap: () async {
-                    List<Topic> topicsToRevise = [];
-                    topics.forEach((topic) {
-                      if (topic.correct < 3 && topic.topic != null) {
-                        topicsToRevise.add(topic.topic!);
-                      }
-                    });
+            ),
+            Positioned(
+              bottom: 10,
+              left: 30,
+              right: 30,
+              child: Align(
+                alignment: Alignment.center,
+                child: GreenPillButton(
+                    onTap: () async {
+                      List<Topic> topicsToRevise = [];
+                      topics.forEach((topic) {
+                        if (topic.correct < 3 && topic.topic != null) {
+                          topicsToRevise.add(topic.topic!);
+                        }
+                      });
 
-                    if (topicsToRevise.length > 0) {
-                      print("Adding new progress");
-                      print("revise topics length = ${topicsToRevise.length}");
-                      StudyProgress progress = StudyProgress(
-                          studyId: controller.progress.studyId!,
-                          level: 2,
-                          section: 1,
-                          topicId: topicsToRevise[0].id,
-                          name: topicsToRevise[0].name,
-                          createdAt: DateTime.now(),
-                          updatedAt: DateTime.now());
-                      await StudyDB().insertProgress(progress);
+                      if (topicsToRevise.length > 0) {
+                        print("Adding new progress");
+                        print(
+                            "revise topics length = ${topicsToRevise.length}");
+                        StudyProgress progress = StudyProgress(
+                            studyId: controller.progress.studyId!,
+                            level: 2,
+                            section: 1,
+                            topicId: topicsToRevise[0].id,
+                            name: topicsToRevise[0].name,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now());
+                        await StudyDB().insertProgress(progress);
 
-                      for (int i = 0; i < topicsToRevise.length; i++) {
-                        print("saving mastery ....");
-                        await MasteryCourseDB().insert(MasteryCourse(
+                        for (int i = 0; i < topicsToRevise.length; i++) {
+                          print("saving mastery ....");
+                          MasteryCourseUpgrade mastery = MasteryCourseUpgrade(
                             level: progress.level,
                             passed: false,
+                            courseId: Provider.of<WelcomeScreenProvider>(
+                                    context,
+                                    listen: false)
+                                .currentCourse!
+                                .id,
                             studyId: progress.studyId,
                             topicId: topicsToRevise[i].id,
                             topicName: topicsToRevise[i].name,
                             createdAt: DateTime.now(),
-                            updatedAt: DateTime.now()));
-                      }
-
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                        builder: (context) {
-                          return LearnAttentionTopics(
-                            controller: MasteryController(
-                                controller.user, controller.course,
-                                name: controller.name, progress: progress),
-                            topics: topicsToRevise,
+                            updatedAt: DateTime.now(),
                           );
-                        },
-                      ), ModalRoute.withName(LearnMode.routeName));
-                    } else {}
-                  },
-                  text: 'Start Mastery Run')
-            ],
-          ),
+                          await MasteryCourseDB().insertMasteryCourseUpgrade(
+                            mastery,
+                          );
+                          print("mastery study ${mastery.toJson()}");
+                          await MasteryCourseDB().insert(
+                            MasteryCourse(
+                              level: progress.level,
+                              passed: false,
+                              studyId: progress.studyId,
+                              topicId: topicsToRevise[i].id,
+                              topicName: topicsToRevise[i].name,
+                              createdAt: DateTime.now(),
+                              updatedAt: DateTime.now(),
+                            ),
+                          );
+                        }
+
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                          builder: (context) {
+                            return LearnAttentionTopics(
+                              controller: MasteryController(
+                                  controller.user, controller.course,
+                                  name: controller.name, progress: progress),
+                              topics: topicsToRevise,
+                            );
+                          },
+                        ), ModalRoute.withName(LearnMode.routeName));
+                      } else {}
+                    },
+                    text: 'Start Mastery Run'),
+              ),
+            )
+          ],
         ),
       ),
     );

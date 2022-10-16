@@ -201,9 +201,12 @@ class _LearnModeState extends State<LearnMode> {
                   if (progress == null) {
                     return;
                   }
-                  List<MasteryCourse> mcs = await MasteryCourseDB()
-                      .getMasteryTopics(progress.studyId!);
-                  if (progress.level == 1 || mcs.length == 0) {
+                  List<MasteryCourseUpgrade> mcs = await MasteryCourseDB()
+                      .getMasteryTopicsUpgrade(welcome.currentCourse!.id!);
+
+                  print("list course to master: ${mcs.length}");
+
+                  if (mcs.isEmpty) {
                     view = LearnMastery(widget.user, widget.course, progress);
                   } else {
                     view = LearnMasteryTopic(

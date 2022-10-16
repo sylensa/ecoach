@@ -2,12 +2,14 @@ import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/course_completion_study_progress.dart';
+import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../database/mastery_course_db.dart';
 import '../../models/topic.dart';
 import '../providers/welcome_screen_provider.dart';
 import '../widgets/learn_card.dart';
@@ -184,15 +186,31 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                   SizedBox(
                     height: 20,
                   ),
-                  LearnCard(
-                    title: 'Mastery Improvement',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    value: 0,
-                    icon: 'assets/images/learn_mode2/target.png',
-                    onTap: () {
-                      widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
-                    },
-                  ),
+                  FutureBuilder<List<MasteryCourseUpgrade>>(
+                      future: MasteryCourseDB()
+                          .getMasteryTopicsUpgrade(welcome.currentCourse!.id!),
+                      builder: (context, snapshot) {
+                        print(snapshot.data);
+                        if (snapshot.data == null) {
+                          return CircularProgressIndicator.adaptive();
+                        }
+                        print(snapshot.data);
+                        print(
+                            "mastery length: ${(welcome.totalTopics - snapshot.data!.length)}");
+                        return LearnCard(
+                          title: 'Mastery Improvement',
+                          desc: 'Do a quick revision for an upcoming exam',
+                          value: snapshot.data!.isEmpty
+                              ? 0
+                              : ((welcome.totalTopics - snapshot.data!.length) /
+                                      welcome.totalTopics) *
+                                  100,
+                          icon: 'assets/images/learn_mode2/target.png',
+                          onTap: () {
+                            widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
+                          },
+                        );
+                      }),
                   SizedBox(
                     height: 20,
                   ),

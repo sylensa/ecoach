@@ -3,6 +3,7 @@ import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
+import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
@@ -261,6 +262,31 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       return;
     }
 
+    if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
+      int level = controller.progress.level!;
+      controller.updateProgressSection(2);
+      print("level $level");
+      final masteryTopics = await MasteryCourseDB().getMasteryTopicsUpgrade(
+          Provider.of<WelcomeScreenProvider>(context, listen: false)
+              .currentCourse!
+              .id!);
+      if (masteryTopics.isEmpty) {
+        Get.to(() => MasteryImprovementTopics(
+              test: testTakenSaved!,
+              controller: controller as MasteryController,
+            ));
+      } else {
+        Get.to(() => LearnMasteryFeedback(
+            passed: controller.progress.passed!,
+            topic: controller.progress.name!,
+            topicId: masteryTopics[0].topicId!,
+            masteryCourseUpgrade: masteryTopics[0],
+            controller: controller as MasteryController));
+      }
+
+      return;
+    }
+
     Navigator.push<void>(
       context,
       MaterialPageRoute<void>(builder: (BuildContext context) {
@@ -288,22 +314,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                 'questions': 1
               });
         }
-        if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
-          int level = controller.progress.level!;
-          controller.updateProgressSection(2);
-          print("level $level");
-          if (level == 1) {
-            return MasteryImprovementTopics(
-              test: testTakenSaved!,
-              controller: controller as MasteryController,
-            );
-          }
-
-          return LearnMasteryFeedback(
-              passed: controller.progress.passed!,
-              topic: controller.progress.name!,
-              controller: controller as MasteryController);
-        }
         return SuccessfulRevision();
       }),
     ).then((value) {
@@ -315,26 +325,37 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     });
   }
 
-  viewResults() {
+  viewResults() async {
+    if (StudyType.MASTERY_IMPROVEMENT == controller.type) {
+      int level = controller.progress.level!;
+      controller.updateProgressSection(2);
+      print("level $level");
+      final masteryTopics = await MasteryCourseDB().getMasteryTopicsUpgrade(
+          Provider.of<WelcomeScreenProvider>(context, listen: false)
+              .currentCourse!
+              .id!);
+      if (masteryTopics.isEmpty) {
+        Get.to(() => MasteryImprovementTopics(
+              test: testTakenSaved!,
+              controller: controller as MasteryController,
+            ));
+      } else {
+        Get.to(() => LearnMasteryFeedback(
+            passed: controller.progress.passed!,
+            topic: controller.progress.name!,
+            topicId: masteryTopics[0].topicId!,
+            masteryCourseUpgrade: masteryTopics[0],
+            controller: controller as MasteryController));
+      }
+      return;
+    }
+
     print("viewing results");
     print(testTakenSaved!.toJson().toString());
     Navigator.push<int>(
       context,
       MaterialPageRoute<int>(
         builder: (BuildContext context) {
-          if (controller.type == StudyType.MASTERY_IMPROVEMENT) {
-            if (controller.progress.level == 1)
-              return MasteryImprovementTopics(
-                  test: testTakenSaved!,
-                  controller: controller as MasteryController);
-            if (controller.progress.level == 2)
-              return LearnMasteryFeedback(
-                passed: controller.progress.passed!,
-                topic: controller.progress.name!,
-                controller: controller as MasteryController,
-              );
-          }
-
           return StudyCCResults(test: testTakenSaved!, controller: controller);
         },
       ),
@@ -631,7 +652,25 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 }
                               } else if (controller.type ==
                                   StudyType.MASTERY_IMPROVEMENT) {
-                                showNext = true;
+                                // showNext = true;
+                                setState(() {
+                                  if (answeredWrong) {
+                                    wrong++;
+                                    wasWrong = true;
+                                  } else {
+                                    correctAnswered++;
+                                    wasWrong = false;
+                                  }
+
+                                  calAvgScore();
+                                });
+                                if (!controller.lastQuestion) {
+                                  controller.currentQuestion++;
+                                }
+
+                                pageController.nextPage(
+                                    duration: Duration(milliseconds: 1),
+                                    curve: Curves.ease);
                                 if (controller.lastQuestion) {
                                   showNext = false;
                                   showComplete = true;
@@ -1586,12 +1625,15 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                     //     ),
                     //   ),
                     // ),
-                    newSelectedAnswer(answers![i], Color(0xFF00C664), (
-                      answerSelected,
-                    ) {
-                      widget.callback!(
-                          answerSelected, answerSelected == correctAnswer);
-                    }),
+                    GestureDetector(
+                      onTap: () {},
+                      child: newSelectedAnswer(answers![i], Color(0xFF00C664), (
+                        answerSelected,
+                      ) {
+                        widget.callback!(
+                            answerSelected, answerSelected == correctAnswer);
+                      }),
+                    ),
                   // newSelectedAnswer(answers![i])
                 ],
               ),
@@ -1734,6 +1776,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
         }
         setState(() {
           selectedAnswer = widget.question.selectedAnswer = answer;
+
           callback!(answer);
         });
       },

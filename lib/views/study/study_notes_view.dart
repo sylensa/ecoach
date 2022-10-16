@@ -2,22 +2,20 @@ import 'package:ecoach/controllers/course_completion_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
+import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/questions_db.dart';
-import 'package:ecoach/models/course_completion_progress_attempt.dart';
+import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
-import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
-import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
-import 'package:ecoach/views/learn/learning_widget.dart';
 import 'package:ecoach/views/study/study_quiz_cover.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class StudyNoteView extends StatefulWidget {
   const StudyNoteView(this.topic, {Key? key, required this.controller})
@@ -146,10 +144,17 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                 }
                                 if (controller.type ==
                                     StudyType.MASTERY_IMPROVEMENT) {
-                                  await controller.updateProgressSection(2);
+                                  // await controller.updateProgressSection(2);
+                                  MasteryCourseUpgrade? mastery =
+                                      await MasteryCourseDB()
+                                          .getCurrentTopicUpgrade(Provider.of<
+                                              WelcomeScreenProvider>(
+                                    context,
+                                    listen: false,
+                                  ).currentCourse!.id!);
                                   questions = await QuestionDB()
                                       .getMasteryTopicQuestions(
-                                          controller.progress.topicId!, 5);
+                                          mastery!.topicId!, 10);
                                 }
 
                                 Navigator.push(
@@ -160,7 +165,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                         case StudyType.REVISION:
                                           return StudyQuizCover(
                                             topicName: widget.topic.name!,
-                                            controller: RevisionController( 
+                                            controller: RevisionController(
                                                 controller.user,
                                                 controller.course,
                                                 questions: questions!,
@@ -197,7 +202,6 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                     },
                                   ),
                                 );
-                              
                               },
                               style: ButtonStyle(
                                 side: MaterialStateProperty.all(BorderSide(

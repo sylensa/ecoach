@@ -519,6 +519,18 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       )""");
 
+      await db.execute("""CREATE TABLE 'mastery_courses_upgrade' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'level' int NOT NULL,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' varchar(255) NOT NULL,
+        'passed' tinyint(1) NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
+
       await db.execute("""CREATE TABLE 'review_test_taken' (
         id INTEGER PRIMARY KEY, 
         'user_id' int NOT NULL,

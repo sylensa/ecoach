@@ -2,13 +2,12 @@ import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/topic_analysis.dart';
+import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
-import 'package:ecoach/views/learn/learn_mastery_topic.dart';
 import 'package:ecoach/views/learn/learn_next_topic.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LearnAttentionTopics extends StatelessWidget {
   TextStyle auxTextStyle = TextStyle(
@@ -115,8 +114,11 @@ class LearnAttentionTopics extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              MasteryCourse? topic = await MasteryCourseDB()
-                  .getCurrentTopic(controller.progress.studyId!);
+              MasteryCourseUpgrade? topic = await MasteryCourseDB()
+                  .getCurrentTopicUpgrade(
+                      Provider.of<WelcomeScreenProvider>(context, listen: false)
+                          .currentCourse!
+                          .id!);
               if (topic != null) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return LearnNextTopic(
