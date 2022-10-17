@@ -59,22 +59,29 @@ class ChoseRevisionMode extends StatelessWidget {
                       ),
                       Visibility(
                         visible: snapshot.data!.isNotEmpty,
-                        child: LearnCard(
-                          title: 'Ongoing',
-                          desc: 'Do a quick revision for an upcoming exam',
-                          value: welcome.currentRevisionStudyProgress == null
-                              ? 0
-                              : (((welcome.currentRevisionStudyProgress!
-                                              .level! -
-                                          1)) /
-                                      welcome.totalTopics) *
-                                  100,
-                          icon: 'assets/images/learn_mode2/hourglass.png',
-                          onTap: () async {
-                            controller.getRevisionQuestion();
-                            // controller.recordAttempts();
-                          },
-                        ),
+                        child: FutureBuilder<RevisionStudyProgress?>(
+                            future: StudyDB()
+                                .getCurrentRevisionProgressByCourse(
+                                    welcome.currentCourse!.id!),
+                            builder: (context, progressSnapshot) {
+                              if (progressSnapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox();
+                              }
+                              return LearnCard(
+                                title: 'Ongoing',
+                                desc:
+                                    'Do a quick revision for an upcoming exam',
+                                value: ((progressSnapshot.data!.level! - 1) /
+                                        welcome.totalTopics) *
+                                    100,
+                                icon: 'assets/images/learn_mode2/hourglass.png',
+                                onTap: () async {
+                                  controller.getRevisionQuestion();
+                                  // controller.recordAttempts();
+                                },
+                              );
+                            }),
                       ),
                       const SizedBox(
                         height: 40,

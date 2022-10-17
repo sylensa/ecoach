@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../database/questions_db.dart';
 import '../../models/question.dart';
+import '../../models/speed_enhancement_progress_model.dart';
 import '../../new_ui_ben/providers/welcome_screen_provider.dart';
 import '../study/study_quiz_view.dart';
 
@@ -50,9 +51,9 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
               onSwipe: () async {
                 // get current course speed level
 
-                // SpeedStudyProgress? speed = await StudyDB()
-                //     .getCurrentSpeedProgressLevelByCourse(
-                //         welcome.currentCourse!.id!);
+                SpeedStudyProgress? speed = await StudyDB()
+                    .getCurrentSpeedProgressLevelByCourse(
+                        welcome.currentCourse!.id!);
 
                 // int nextLevel = moveUp
                 //     ? speed!.level! + 1

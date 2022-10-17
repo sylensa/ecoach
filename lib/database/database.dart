@@ -375,6 +375,7 @@ class DBProvider {
         'topic_id' int DEFAULT NULL,
         'course_id' int DEFAULT NULL,
         'level' int DEFAULT NULL,
+        'fails' int DEFAULT 0,
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);

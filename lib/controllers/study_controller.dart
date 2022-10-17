@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
-import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
@@ -17,8 +16,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
-
-import '../views/learn/learn_speed_enhancement_completion.dart';
 
 abstract class StudyController {
   StudyController(this.user, this.course,
@@ -188,26 +185,26 @@ abstract class StudyController {
             .currentStudyType;
     print("current study type $studyType");
 
-    if (studyType == StudyType.SPEED_ENHANCEMENT) {
-      bool moveUp = true;
-
-      if (moveUp) {
-        moveUp = score >= 70;
-        SpeedStudyProgressController().updateCCLevel(moveUp);
-      }
-      Get.off(
-        () => LearnSpeedEnhancementCompletion(
-          // controller: controller as SpeedController,
-          progress: progress,
-          moveUp: moveUp,
-          level: {
-            'level': 1,
-            'duration': resetDuration!.inSeconds,
-            'questions': 1
-          },
-        ),
-      );
-    }
+    // if (studyType == StudyType.SPEED_ENHANCEMENT) {
+    //   bool moveUp = true;
+    //
+    //   if (moveUp) {
+    //     moveUp = score >= 70;
+    //     SpeedStudyProgressController().updateCCLevel(moveUp);
+    //   }
+    //   Get.off(
+    //     () => LearnSpeedEnhancementCompletion(
+    //       // controller: controller as SpeedController,
+    //       progress: progress,
+    //       moveUp: moveUp,
+    //       level: {
+    //         'level': 1,
+    //         'duration': resetDuration!.inSeconds,
+    //         'questions': 1
+    //       },
+    //     ),
+    //   );
+    // }
 
     // if (studyType == StudyType.REVISION) {
     //   RevisionStudyProgress? revision =

@@ -284,6 +284,8 @@ class StudyDB {
     // ignore: unused_local_variable
     final db = await DBProvider.database;
 
+    print(revision.toMap());
+
     await db!.update(
       'speed_study_level',
       revision.toMap(),

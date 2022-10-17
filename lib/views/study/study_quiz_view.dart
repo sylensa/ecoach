@@ -13,6 +13,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/new_ui_ben/providers/revision_attempts_provider.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/revision/successful_revision.dart';
+import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
@@ -32,6 +33,7 @@ import '../../database/study_db.dart';
 import '../../helper/helper.dart';
 import '../../models/course.dart';
 import '../../models/revision_study_progress.dart';
+import '../../models/speed_enhancement_progress_model.dart';
 import '../../new_ui_ben/screens/mastery/mastery_improvement_topics.dart';
 import '../../new_ui_ben/widgets/answers_widget.dart';
 import '../../new_ui_ben/widgets/save_question_widget.dart';
@@ -162,12 +164,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
   endSpeedSession() async {
     Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-      return LearnSpeed(
-        controller.user,
-        controller.course,
-        controller.progress,
-        page: 1,
-      );
+      return ChooseSpeedMode(
+          // controller.user,
+          // controller.course,
+          // controller.progress,
+          // page: 1,
+          );
     }), ModalRoute.withName(LearnSpeed.routeName));
   }
 
@@ -236,28 +238,34 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     }
 
     if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-      // bool moveUp = controller.progress.section == null ||
-      //     controller.progress.section! <= 3;
+      SpeedStudyProgress? speed = await StudyDB()
+          .getCurrentSpeedProgressLevelByCourse(controller.course.id!);
 
-      // TODO: call function to upgrade level
+      if (correctAnswered == 10) {
+        speed!.fails = 0;
+        if (speed.level! < 6) {
+          speed.level = speed.level! + 1;
+        } else {
+          speed.level = 6;
+        }
 
-      // bool moveUp = true;
-      //
-      // if (moveUp) {
-      //   moveUp = controller.progress.passed!;
-      //   SpeedStudyProgressController().updateCCLevel(moveUp);
-      // }
-      // Get.to(
-      //   () => LearnSpeedEnhancementCompletion(
-      //     controller: controller as SpeedController,
-      //     moveUp: moveUp,
-      //     level: {
-      //       'level': moveUp ? controller.nextLevel : controller.progress.level,
-      //       'duration': controller.resetDuration!.inSeconds,
-      //       'questions': 1
-      //     },
-      //   ),
-      // );
+        print("correct answer" + "${speed.toMap()}");
+
+        StudyDB().updateSpeedProgressLevel(speed);
+        Provider.of<WelcomeScreenProvider>(context, listen: false)
+            .setCurrentSpeedProgress(speed);
+      }
+
+      Get.off(
+        () => LearnSpeedEnhancementCompletion(
+          progress: controller.progress,
+          level: {
+            'level': controller.nextLevel,
+            'duration': controller.resetDuration!.inSeconds,
+            'questions': 1
+          },
+        ),
+      );
 
       return;
     }
@@ -296,24 +304,24 @@ class _StudyQuizViewState extends State<StudyQuizView> {
           return StudyCCResults(test: testTakenSaved!, controller: controller);
         }
 
-        if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-          bool moveUp = controller.progress.section == null ||
-              controller.progress.section! <= 3;
-
-          if (moveUp) {
-            moveUp = controller.progress.passed!;
-            SpeedStudyProgressController().updateCCLevel(moveUp);
-          }
-          return LearnSpeedEnhancementCompletion(
-              progress: controller.progress,
-              moveUp: moveUp,
-              level: {
-                'level':
-                    moveUp ? controller.nextLevel : controller.progress.level,
-                'duration': controller.resetDuration!.inSeconds,
-                'questions': 1
-              });
-        }
+        // if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+        //   bool moveUp = controller.progress.section == null ||
+        //       controller.progress.section! <= 3;
+        //
+        //   if (moveUp) {
+        //     moveUp = controller.progress.passed!;
+        //     SpeedStudyProgressController().updateCCLevel(moveUp);
+        //   }
+        //   return LearnSpeedEnhancementCompletion(
+        //       progress: controller.progress,
+        //       moveUp: moveUp,
+        //       level: {
+        //         'level':
+        //             moveUp ? controller.nextLevel : controller.progress.level,
+        //         'duration': controller.resetDuration!.inSeconds,
+        //         'questions': 1
+        //       });
+        // }
         return SuccessfulRevision();
       }),
     ).then((value) {
@@ -723,7 +731,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                               color: kAccessmentButtonColor,
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: InkWell(
-                                onTap: () {
+                                onTap: () async {
                                   setState(() {
                                     showSubmit = false;
                                     showNext = true;
@@ -773,14 +781,20 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     if (answeredWrong &&
                                         controller.type ==
                                             StudyType.SPEED_ENHANCEMENT) {
-                                      int section =
-                                          controller.progress.section ?? 1;
-                                      controller
-                                          .updateProgressSection(section + 1);
-                                      if (section >= 3) {
-                                        showComplete = true;
-                                        showNext = false;
-                                      }
+                                      // int section =
+                                      //     controller.progress.section ?? 1;
+
+                                      SpeedStudyProgressController()
+                                          .manageSpeedEnhancementLevels();
+                                      // print(section);
+
+                                      // controller
+                                      //     .updateProgressSection(section + 1);
+                                      // if (section >= 3) {
+                                      showComplete = true;
+                                      showNext = false;
+                                      // }
+                                      // SpeedStudyProgress? speed = await StudyDB().getCurrentSpeedProgressLevelByCourse(courseId)
                                     }
                                   });
                                 },

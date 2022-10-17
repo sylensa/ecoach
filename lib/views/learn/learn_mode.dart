@@ -181,6 +181,7 @@ class _LearnModeState extends State<LearnMode> {
                     topicId: progress!.topicId,
                     studyId: progress.studyId,
                     level: 1,
+                    fails: 1,
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now(),
                   );

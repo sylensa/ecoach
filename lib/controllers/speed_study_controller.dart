@@ -54,8 +54,38 @@ class SpeedStudyProgressController {
         .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!);
 
     speed!.level = 1;
+    speed.fails = 0;
     speed.updatedAt = DateTime.now();
     await StudyDB().updateSpeedProgressLevel(speed);
+
+    // update the provider
+    welcome.setCurrentSpeedProgress(speed);
+  }
+
+  manageSpeedEnhancementLevels() async {
+    WelcomeScreenProvider welcome =
+        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
+
+    SpeedStudyProgress? speed = await StudyDB()
+        .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!);
+
+    print(speed!.fails);
+
+    if (speed.fails! >= 3) {
+      speed.fails = 0;
+      if (speed.level! > 1) {
+        speed.level = speed.level! - 1;
+      } else {
+        speed.level = 1;
+      }
+    } else {
+      speed.fails = speed.fails! + 1;
+    }
+
+    print(speed.toMap());
+
+    //  update speed
+    StudyDB().updateSpeedProgressLevel(speed);
 
     // update the provider
     welcome.setCurrentSpeedProgress(speed);

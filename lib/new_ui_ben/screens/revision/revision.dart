@@ -1,10 +1,12 @@
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../database/study_db.dart';
 import '../../../models/topic.dart';
 import '../../utils/revision_utils.dart';
 import '../../widgets/bullet_rules_container.dart';
@@ -41,17 +43,24 @@ class Revision extends StatelessWidget {
             color: const Color(0xFF00C9B9),
             height: 60,
             alignment: Alignment.center,
-            child: Text(
-              revision.currentRevisionStudyProgress == null
-                  ? 'Start Revision'
-                  : revision.currentRevisionStudyProgress!.level! >= 1
-                      ? 'Continue Revision'
-                      : "Continue Revision",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18),
-            ),
+            child: FutureBuilder<RevisionStudyProgress?>(
+                future: StudyDB().getCurrentRevisionProgressByCourse(
+                    revision.currentCourse!.id!),
+                builder: (context, revisionProgressSnapshot) {
+                  if (revisionProgressSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return Text(
+                    revisionProgressSnapshot.data == null
+                        ? 'Start Revision'
+                        : "Continue Revision",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18),
+                  );
+                }),
           ),
         ),
         body: Consumer<WelcomeScreenProvider>(
@@ -80,16 +89,23 @@ class Revision extends StatelessWidget {
                       Stack(
                         alignment: AlignmentDirectional.bottomCenter,
                         children: [
-                          Consumer<WelcomeScreenProvider>(
-                            builder: (_, welcome, __) => Text(
-                              "${welcome.currentRevisionStudyProgress == null ? welcome.totalTopics : welcome.totalTopics - (welcome.currentRevisionStudyProgress!.level! - 1)}",
-                              style: TextStyle(
-                                fontFamily: 'Cocon',
-                                fontSize: 95,
-                                color: Color(0xFF00C9B9),
-                              ),
-                            ),
-                          ),
+                          FutureBuilder<RevisionStudyProgress?>(
+                              future: StudyDB()
+                                  .getCurrentRevisionProgressByCourse(
+                                      welcome.currentCourse!.id!),
+                              builder: (context, progressSnapshot) {
+                                if (progressSnapshot.data == null) {
+                                  return CircularProgressIndicator();
+                                }
+                                return Text(
+                                  "${snapshot.data!.length - (progressSnapshot.data!.level! - 1)}",
+                                  style: TextStyle(
+                                    fontFamily: 'Cocon',
+                                    fontSize: 95,
+                                    color: Color(0xFF00C9B9),
+                                  ),
+                                );
+                              }),
                           Image.asset('assets/images/learn_mode2/shadow.png')
                         ],
                       ),
