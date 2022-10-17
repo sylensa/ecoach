@@ -230,7 +230,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                 (item) => DropdownMenuItem<Course>(
                               value: item,
                               child: Container(
-                                width: appWidth(context) * 0.54,
+                                width: appWidth(context) * 0.52,
                                 child: sText(
                                   "${item.name}",
                                  color: kAdeoGray3,

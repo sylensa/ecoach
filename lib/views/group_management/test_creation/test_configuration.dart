@@ -767,7 +767,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
              GestureDetector(
                onTap: ()async{
                  if(testDescriptionController.text.isNotEmpty && testNameController.text.isNotEmpty){
-                   if(startDateTime != null && dueDateTime != null){
+                   if((startDateTime != null && dueDateTime != null) || startDateTime != null){
                      showLoaderDialog(context);
                      await createGroupTest();
                    }else{

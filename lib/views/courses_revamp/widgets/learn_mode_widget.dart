@@ -106,6 +106,89 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
 
     return progress;
   }
+
+  letGo()async{
+    Widget? view = null;
+    switch (studyType) {
+      case StudyType.REVISION:
+        StudyProgress? progress =
+            await getStudyProgress(StudyType.REVISION);
+        print(progress);
+        if (progress == null) {
+          return;
+        }
+        view = LearnRevision(widget.user, widget.course, progress);
+        break;
+
+      case StudyType.COURSE_COMPLETION:
+        StudyProgress? progress =
+            await getStudyProgress(
+            StudyType.COURSE_COMPLETION);
+        print(progress);
+        if (progress == null) {
+          return;
+        }
+        view = LearnCourseCompletion(widget.user, widget.course, progress);
+        break;
+      case StudyType.SPEED_ENHANCEMENT:
+        StudyProgress? progress =
+            await getStudyProgress(
+            StudyType.SPEED_ENHANCEMENT);
+        print(progress);
+        if (progress == null) {
+          return;
+        }
+        view = LearnSpeed(
+            widget.user, widget.course, progress);
+        break;
+      case StudyType.MASTERY_IMPROVEMENT:
+        StudyProgress? progress =
+            await getStudyProgress(
+            StudyType.MASTERY_IMPROVEMENT);
+        print(progress);
+        if (progress == null) {
+          return;
+        }
+        List<MasteryCourse> mcs =
+            await MasteryCourseDB()
+            .getMasteryTopics(progress.studyId!);
+        if (progress.level == 1 || mcs.length == 0) {
+          view = LearnMastery(
+              widget.user, widget.course, progress);
+        } else {
+          view = LearnMasteryTopic(
+              widget.user, widget.course, progress,
+              topics: mcs);
+        }
+
+        break;
+      case StudyType.NONE:
+        break;
+    }
+    // Navigator.push(context,
+    //     MaterialPageRoute(builder: (context) {
+    //       return view!;
+    //     }));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(name: CoursesDetailsPage.routeName),
+        builder: (context) {
+          return view!;
+        },
+      ),
+    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     settings: RouteSettings(name: CoursesDetailsPage.routeName),
+    //     builder: (context) {
+    //       return view!;
+    //     },
+    //   ),
+    // );
+  }
+
   List<CourseDetail> learnModeDetails = [
     CourseDetail(
       title: 'Revision',
@@ -141,10 +224,11 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                     padding: EdgeInsets.only(left: 24.0, right: 24.0),
                     child: CourseDetailCard(
                       courseDetail: learnModeDetails[0],
-                      onTap: () {
+                      onTap: () async{
                         setState(() {
                           studyType = StudyType.REVISION;
                         });
+                       await letGo();
                       },
                     ),
                   ),
@@ -156,6 +240,7 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                         setState(() {
                           studyType = StudyType.COURSE_COMPLETION;
                         });
+                        await letGo();
                       },
                     ),
                   ),
@@ -163,11 +248,11 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                     padding: EdgeInsets.only(left: 24.0, right: 24.0),
                     child: CourseDetailCard(
                       courseDetail: learnModeDetails[2],
-                      onTap: () {
+                      onTap: () async{
                         setState(() {
                           studyType =  StudyType.SPEED_ENHANCEMENT;
                         });
-
+                        await letGo();
                       },
                     ),
                   ),
@@ -175,10 +260,11 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                     padding: EdgeInsets.only(left: 24.0, right: 24.0),
                     child: CourseDetailCard(
                       courseDetail: learnModeDetails[3],
-                      onTap: () {
+                      onTap: () async{
                         setState(() {
                           studyType =  StudyType.MASTERY_IMPROVEMENT;
                         });
+                        await letGo();
                       },
                     ),
                   ),
@@ -187,104 +273,26 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
               ),
             ),
           ),
-          if (studyType != StudyType.NONE)
-            SizedBox(
-              width: 150,
-              height: 44,
-              child: OutlinedButton(
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(getButtonColor(studyType)),
-                  side: MaterialStateProperty.all(BorderSide(
-                      color: getButtonColor(studyType),
-                      width: 1,
-                      style: BorderStyle.solid)),
-                ),
-                onPressed: () async {
-                  Widget? view = null;
-                  switch (studyType) {
-                    case StudyType.REVISION:
-                      StudyProgress? progress =
-                      await getStudyProgress(StudyType.REVISION);
-                      print(progress);
-                      if (progress == null) {
-                        return;
-                      }
-                      view = LearnRevision(widget.user, widget.course, progress);
-                      break;
-
-                    case StudyType.COURSE_COMPLETION:
-                      StudyProgress? progress =
-                      await getStudyProgress(
-                          StudyType.COURSE_COMPLETION);
-                      print(progress);
-                      if (progress == null) {
-                        return;
-                      }
-                      view = LearnCourseCompletion(widget.user, widget.course, progress);
-                      break;
-                    case StudyType.SPEED_ENHANCEMENT:
-                      StudyProgress? progress =
-                      await getStudyProgress(
-                          StudyType.SPEED_ENHANCEMENT);
-                      print(progress);
-                      if (progress == null) {
-                        return;
-                      }
-                      view = LearnSpeed(
-                          widget.user, widget.course, progress);
-                      break;
-                    case StudyType.MASTERY_IMPROVEMENT:
-                      StudyProgress? progress =
-                      await getStudyProgress(
-                          StudyType.MASTERY_IMPROVEMENT);
-                      print(progress);
-                      if (progress == null) {
-                        return;
-                      }
-                      List<MasteryCourse> mcs =
-                      await MasteryCourseDB()
-                          .getMasteryTopics(progress.studyId!);
-                      if (progress.level == 1 || mcs.length == 0) {
-                        view = LearnMastery(
-                            widget.user, widget.course, progress);
-                      } else {
-                        view = LearnMasteryTopic(
-                            widget.user, widget.course, progress,
-                            topics: mcs);
-                      }
-
-                      break;
-                    case StudyType.NONE:
-                      break;
-                  }
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) {
-                  //       return view!;
-                  //     }));
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: CoursesDetailsPage.routeName),
-                      builder: (context) {
-                        return view!;
-                      },
-                    ),
-                  );
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     settings: RouteSettings(name: CoursesDetailsPage.routeName),
-                  //     builder: (context) {
-                  //       return view!;
-                  //     },
-                  //   ),
-                  // );
-                },
-                child: Text(
-                  "Let's go",
-                ),
-              ),
-            ),
+          // if (studyType != StudyType.NONE)
+          //   SizedBox(
+          //     width: 150,
+          //     height: 44,
+          //     child: OutlinedButton(
+          //       style: ButtonStyle(
+          //         foregroundColor: MaterialStateProperty.all(getButtonColor(studyType)),
+          //         side: MaterialStateProperty.all(BorderSide(
+          //             color: getButtonColor(studyType),
+          //             width: 1,
+          //             style: BorderStyle.solid)),
+          //       ),
+          //       onPressed: () async {
+          //
+          //       },
+          //       child: Text(
+          //         "Let's go",
+          //       ),
+          //     ),
+          //   ),
         ],
       ),
     );
