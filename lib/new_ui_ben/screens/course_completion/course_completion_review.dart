@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course_completion_progress_attempt.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
@@ -8,7 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../api/api_call.dart';
 import '../../../models/course_completion_study_progress.dart';
+import '../../../models/report.dart';
+import '../../../utils/app_url.dart';
 
 class CourseCompletionReview extends StatefulWidget {
   @override
@@ -147,6 +152,8 @@ class _SingleCourseCompletionWidgetState
     extends State<SingleCourseCompletionWidget> {
   int totalScore = 0;
   int totalAttempts = 0;
+  int rank = 0;
+  bool loadingRank = false;
   List<CourseCompletionProgressAttempt> attempts = [];
 
   setTotalRevisionScore() async {
@@ -161,9 +168,36 @@ class _SingleCourseCompletionWidgetState
     setState(() {});
   }
 
+  getCourseStats(int courseId) async {
+    return await ApiCall<Report>(
+      AppUrl.report,
+      user: Provider.of<WelcomeScreenProvider>(context, listen: false)
+          .currentUser,
+      params: {'course_id': jsonEncode(courseId)},
+      isList: false,
+      create: (data) {
+        setState(() {});
+        return Report.fromJson(data);
+      },
+    ).get(context);
+  }
+
+  getReportRank() async {
+    setState(() {
+      loadingRank = true;
+    });
+    Report stat = await getCourseStats(widget.progress!.courseId!);
+    CourseStat courseStat = stat.courseStats!.first;
+    print("course stats: ${courseStat.rank}");
+    rank = courseStat.rank ?? 0;
+    loadingRank = false;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
+    getReportRank();
     setTotalRevisionScore();
     getAttemptsByRevision();
   }
@@ -229,7 +263,7 @@ class _SingleCourseCompletionWidgetState
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
+                        children: [
                           Icon(
                             Icons.emoji_events,
                             color: Color(0xFF0367B4),
@@ -237,14 +271,19 @@ class _SingleCourseCompletionWidgetState
                           SizedBox(
                             width: 10,
                           ),
-                          Text(
-                            '2nd',
-                            style: TextStyle(
-                                color: Color(0xFFC2C2C2),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: "Helvetica"),
-                          )
+                          loadingRank
+                              ? SizedBox(
+                                  height: 25,
+                                  width: 25,
+                                  child: CircularProgressIndicator())
+                              : Text(
+                                  '${rank} ${courseRankPosition(rank.toString())}',
+                                  style: TextStyle(
+                                      color: Color(0xFFC2C2C2),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Helvetica"),
+                                )
                         ],
                       ),
                       SizedBox(

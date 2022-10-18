@@ -97,7 +97,7 @@ class CourseCompletionStudyController {
     getCourseCompletionQuestion();
   }
 
-  getCourseCompletionQuestion() async {
+  getCourseCompletionQuestion({bool questionPage = true}) async {
     // int currentRevisionLevel = welcomeProvider.currentCourseCompletion!.level!;
 
     Course course = welcomeProvider.currentCourse!;
@@ -114,23 +114,25 @@ class CourseCompletionStudyController {
         await StudyDB().getCurrentCourseCompletionProgressByCourse(course.id!);
     print("this is the progress of revision: ${studyProgress!.toMap()}");
 
-    Navigator.push(
-      Get.context!,
-      MaterialPageRoute(
-        settings: RouteSettings(name: LearnCourseCompletion.routeName),
-        builder: (context) {
-          return LearningWidget(
-            controller: CourseCompletionController(
-              welcomeProvider.currentUser!,
-              welcomeProvider.currentCourse!,
-              name: topic.name!,
-              questions: questions,
-              progress: welcomeProvider.progress!,
-            ),
-          );
-        },
-      ),
-    );
+    if (questionPage) {
+      Navigator.push(
+        Get.context!,
+        MaterialPageRoute(
+          settings: RouteSettings(name: LearnCourseCompletion.routeName),
+          builder: (context) {
+            return LearningWidget(
+              controller: CourseCompletionController(
+                welcomeProvider.currentUser!,
+                welcomeProvider.currentCourse!,
+                name: topic.name!,
+                questions: questions,
+                progress: welcomeProvider.progress!,
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 
   recordAttempts(double score) async {

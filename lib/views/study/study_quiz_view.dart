@@ -300,7 +300,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       MaterialPageRoute<void>(builder: (BuildContext context) {
         if (StudyType.COURSE_COMPLETION == controller.type) {
           CourseCompletionStudyController()
-              .recordAttempts(controller.progress.score!);
+              .recordAttempts(correctAnswered.toDouble());
           return StudyCCResults(test: testTakenSaved!, controller: controller);
         }
 

@@ -1,4 +1,3 @@
-import 'package:ecoach/controllers/course_completion_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_revision_controller.dart';
@@ -9,13 +8,18 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
-import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/views/study/study_quiz_cover.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
+
+import '../../controllers/study_cc_controller.dart';
+import '../../database/study_db.dart';
+import '../../database/topics_db.dart';
+import '../../models/course_completion_study_progress.dart';
+import '../learn/learning_widget.dart';
 
 class StudyNoteView extends StatefulWidget {
   const StudyNoteView(this.topic, {Key? key, required this.controller})
@@ -138,9 +142,21 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                 }
                                 if (controller.type ==
                                     StudyType.COURSE_COMPLETION) {
+                                  CourseCompletionStudyProgress? progress =
+                                      await StudyDB()
+                                          .getCurrentCourseCompletionProgressByCourse(
+                                              controller.course.id!);
+
+                                  Topic? topic = await TopicDB().getLevelTopic(
+                                      controller.course.id!, progress!.level!);
+
+                                  questions = await QuestionDB()
+                                      .getTopicQuestions([topic!.id!], 10);
+
                                   // await controller.updateProgressSection(2);
-                                  CourseCompletionStudyController()
-                                      .getCourseCompletionQuestion();
+                                  // CourseCompletionStudyController()
+                                  //     .getCourseCompletionQuestion(
+                                  //         questionPage: false);
                                 }
                                 if (controller.type ==
                                     StudyType.MASTERY_IMPROVEMENT) {
@@ -166,17 +182,36 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                           return StudyQuizCover(
                                             topicName: widget.topic.name!,
                                             controller: RevisionController(
-                                                controller.user,
-                                                controller.course,
-                                                questions: questions!,
-                                                name: widget.topic.name!,
-                                                progress: controller.progress),
-                                          );
-                                        case StudyType.COURSE_COMPLETION:
-                                          return LearnCourseCompletion(
                                               controller.user,
                                               controller.course,
-                                              controller.progress);
+                                              questions: questions!,
+                                              name: widget.topic.name!,
+                                              progress: controller.progress,
+                                            ),
+                                          );
+                                        case StudyType.COURSE_COMPLETION:
+                                          return LearningWidget(
+                                            controller:
+                                                CourseCompletionController(
+                                              controller.user,
+                                              controller.course,
+                                              name: widget.topic.name!,
+                                              questions: questions!,
+                                              progress: controller.progress,
+                                            ),
+                                          );
+                                        // return StudyQuizCover(
+                                        //   topicName:
+                                        //       controller.progress.name!,
+                                        //   controller:
+                                        //       CourseCompletionController(
+                                        //     controller.user,
+                                        //     controller.course,
+                                        //     questions: questions!,
+                                        //     name: controller.progress.name!,
+                                        //     progress: controller.progress,
+                                        //   ),
+                                        // );
                                         case StudyType.SPEED_ENHANCEMENT:
                                           return LearnSpeed(
                                               controller.user,

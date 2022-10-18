@@ -1,3 +1,5 @@
+import 'package:ecoach/database/study_db.dart';
+import 'package:ecoach/models/course_completion_study_progress.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
 import 'package:ecoach/new_ui_ben/screens/course_completion/choose_cc_mode.dart';
 import 'package:flutter/material.dart';
@@ -36,17 +38,24 @@ class CourseCompletion extends StatelessWidget {
             color: const Color(0xFF00C9B9),
             height: 60,
             alignment: Alignment.center,
-            child: Text(
-              cc.currentCourseCompletion == null
-                  ? 'Start Study'
-                  : cc.currentCourseCompletion!.level! >= 1
-                      ? 'Continue Study'
-                      : "Continue Study",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18),
-            ),
+            child: FutureBuilder<CourseCompletionStudyProgress?>(
+                future: StudyDB().getCurrentCourseCompletionProgressByCourse(
+                    cc.currentCourse!.id!),
+                builder: (context, ccProgressSnapshot) {
+                  if (ccProgressSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  return Text(
+                    ccProgressSnapshot.data == null
+                        ? 'Start Study'
+                        : "Continue Study",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18),
+                  );
+                }),
           ),
         ),
         body: Consumer<WelcomeScreenProvider>(
@@ -74,14 +83,26 @@ class CourseCompletion extends StatelessWidget {
                   Stack(
                     alignment: AlignmentDirectional.bottomCenter,
                     children: [
-                      Text(
-                        '${welcome.currentCourseCompletion == null ? welcome.totalTopics : welcome.totalTopics - (welcome.currentCourseCompletion!.level! - 1)}',
-                        style: TextStyle(
-                          fontFamily: 'Cocon',
-                          fontSize: 95,
-                          color: Color(0xFF00C9B9),
-                        ),
-                      ),
+                      FutureBuilder<CourseCompletionStudyProgress?>(
+                          future: StudyDB()
+                              .getCurrentCourseCompletionProgressByCourse(
+                                  welcome.currentCourse!.id!),
+                          builder: (context, ccSnapshot) {
+                            if (ccSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            return Text(
+                              ccSnapshot.data == null
+                                  ? "${welcome.totalTopics}"
+                                  : "${welcome.totalTopics - (ccSnapshot.data!.level! - 1)}",
+                              style: TextStyle(
+                                fontFamily: 'Cocon',
+                                fontSize: 95,
+                                color: Color(0xFF00C9B9),
+                              ),
+                            );
+                          }),
                       Image.asset('assets/images/learn_mode2/shadow.png')
                     ],
                   ),

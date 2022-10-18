@@ -57,20 +57,28 @@ class ChoseCourseCompletionMode extends StatelessWidget {
                       ),
                       Visibility(
                         visible: snapshot.data!.isNotEmpty,
-                        child: LearnCard(
-                          title: 'Ongoing',
-                          desc: 'Do a quick revision for an upcoming exam',
-                          value: welcome.currentCourseCompletion == null
-                              ? 0
-                              : (((welcome.currentCourseCompletion!.level! -
-                                          1)) /
-                                      welcome.totalTopics) *
-                                  100,
-                          icon: 'assets/images/learn_mode2/hourglass.png',
-                          onTap: () {
-                            continueOngoing();
-                          },
-                        ),
+                        child: FutureBuilder<CourseCompletionStudyProgress?>(
+                            future: StudyDB()
+                                .getCurrentCourseCompletionProgressByCourse(
+                                    welcome.currentCourse!.id!),
+                            builder: (context, progressSnapshot) {
+                              if (progressSnapshot.data == null) {
+                                return CircularProgressIndicator();
+                              }
+
+                              return LearnCard(
+                                title: 'Ongoing',
+                                desc:
+                                    'Do a quick revision for an upcoming exam',
+                                value: ((progressSnapshot.data!.level! - 1) /
+                                        welcome.totalTopics) *
+                                    100,
+                                icon: 'assets/images/learn_mode2/hourglass.png',
+                                onTap: () {
+                                  continueOngoing();
+                                },
+                              );
+                            }),
                       ),
                       const SizedBox(
                         height: 40,
