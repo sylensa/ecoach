@@ -120,11 +120,19 @@ class _TreadmillTimeAndInstructionState
                 borderColor: kAdeoLightTeal,
                 fontSize: 22,
                 onPressed: () {
-                  if (duration != null && duration!.inSeconds > 1) {
-                    setState(() {
-                      timePerQuestion = duration!.inSeconds;
-                      TestIntroitLayout.goForward();
-                    });
+                  if (duration != null ) {
+                    if(duration!.inSeconds > 1){
+                      setState(() {
+                        timePerQuestion = duration!.inSeconds;
+                        TestIntroitLayout.goForward();
+                      });
+                    }else{
+                      showFeedback(
+                        context,
+                        'Enter a valid duration',
+                      );
+                    }
+
                   } else
                     showFeedback(
                       context,

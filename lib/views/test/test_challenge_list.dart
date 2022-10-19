@@ -20,6 +20,7 @@ class TestChallengeList extends StatelessWidget {
     required this.testType,
     required this.course,
     required this.user,
+     this.mode = "quiz",
     this.time,
     Key? key,
   }) : super(key: key);
@@ -28,6 +29,7 @@ class TestChallengeList extends StatelessWidget {
   final TestType testType;
   final Course course;
   int? time;
+  String mode;
 
   getTest(BuildContext context, TestCategory testCategory) {
     Future futureList;
@@ -59,7 +61,7 @@ class TestChallengeList extends StatelessWidget {
     futureList.then(
       (data) {
         // Navigator.pop(context);
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) {
@@ -110,6 +112,7 @@ class TestChallengeList extends StatelessWidget {
                     data,
                     testType,
                     title: "Topic",
+
                     multiSelect: true,
                     time: time,
                     testCategory: TestCategory.TOPIC,
