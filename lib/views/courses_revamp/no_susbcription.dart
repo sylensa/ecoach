@@ -124,9 +124,70 @@ class _NoSubscriptionsPageState extends State<NoSubscriptionsPage> {
       subTitle: 'Do a quick revision for an upcoming exam',
       iconURL: 'assets/icons/courses/learn.png',
     ),
+    CourseDetail(
+      title: 'Efficiency Mode',
+      subTitle: 'Do a quick revision for an upcoming exam',
+      iconURL: 'assets/icons/courses/learn.png',
+    ),
+    CourseDetail(
+      title: 'Prep Mode',
+      subTitle: 'Do a quick revision for an upcoming exam',
+      iconURL: 'assets/icons/courses/learn.png',
+    ),
+    CourseDetail(
+      title: 'Custom Mode',
+      subTitle: 'Do a quick revision for an upcoming exam',
+      iconURL: 'assets/icons/courses/learn.png',
+    ),
   ];
 
-
+  List<CourseDetail> testTypeDetails = [
+    CourseDetail(
+      title: 'Speed',
+      subTitle: 'Accuracy matters , don\'t let the clock run down',
+      iconURL: 'assets/icons/courses/learn.png',
+    ),
+    CourseDetail(
+      title: 'Knowledge',
+      subTitle: 'Standard test',
+      iconURL: 'assets/icons/courses/knowledge.png',
+    ),
+    CourseDetail(
+      title: 'Marathon',
+      subTitle: 'Race to complete all questions',
+      iconURL: 'assets/icons/courses/marathon.png',
+    ),
+    CourseDetail(
+      title: 'Autopilot',
+      subTitle: 'Completing a course one topic at a time',
+      iconURL: 'assets/icons/courses/autopilot.png',
+    ),
+    CourseDetail(
+      title: 'Treadmill',
+      subTitle: 'Crank up the speed, how far can you go?',
+      iconURL: 'assets/icons/courses/treadmill.png',
+    ),
+    CourseDetail(
+      title: 'Customised',
+      subTitle: 'Create your own kind of quiz',
+      iconURL: 'assets/icons/courses/customised.png',
+    ),
+    CourseDetail(
+      title: 'Timeless',
+      subTitle: 'Practice mode, no pressure',
+      iconURL: 'assets/icons/courses/untimed.png',
+    ),
+    CourseDetail(
+      title: 'Review',
+      subTitle: 'Know the answer to every question',
+      iconURL: 'assets/icons/courses/review.png',
+    ),
+    CourseDetail(
+      title: 'Conquest',
+      subTitle: 'Prepare for battle. Attempt everything',
+      iconURL: 'assets/icons/courses/conquest.png',
+    ),
+  ];
   @override
   void initState() {
     // TODO: implement initState
@@ -138,7 +199,7 @@ class _NoSubscriptionsPageState extends State<NoSubscriptionsPage> {
     return Scaffold(
       backgroundColor:kAdeoGray,
       body: Container(
-        padding: EdgeInsets.only(top: 5.h, bottom: 2.h,),
+        padding: EdgeInsets.only(top: 5.h,),
         child: Column(
           children: [
             Row(
@@ -173,7 +234,9 @@ class _NoSubscriptionsPageState extends State<NoSubscriptionsPage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: ()async{
+                    await goTo(context, AvailableBundles(widget.user,controller: widget.controller,));
+
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
@@ -279,122 +342,107 @@ class _NoSubscriptionsPageState extends State<NoSubscriptionsPage> {
 
   learnModeWidget(){
     return   Expanded(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: learnModeDetails[0],
-                onTap: () {
-
-                },
+      child: Column(
+        children: [
+         Container(
+           padding: EdgeInsets.symmetric(horizontal: 20),
+           child:  sText("Different modes to help you understand a course.",align: TextAlign.center,weight: FontWeight.w600,size: 16),
+         ),
+          SizedBox(height: 10,),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child:  sText("Choose your learning goal and achieve it with adeo",align: TextAlign.center,weight: FontWeight.normal,size: 12),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 20,horizontal:10),
+              margin: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
               ),
+              child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: learnModeDetails.length,
+                  itemBuilder: (BuildContext context, int index){
+                    return Column(
+                      children: [
+                        Container(
+                          child: Row(
+                            children: [
+                              Image.asset("${learnModeDetails[index].iconURL}",width: 35,height: 35,),
+                              SizedBox(width: 10,),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  sText("${learnModeDetails[index].title}",weight: FontWeight.w500),
+                                  SizedBox(height: 5,),
+                                  Container(
+                                    width: appWidth(context) * 0.7,
+                                    child: sText("${learnModeDetails[index].subTitle}",size: 12,color: kAdeoGray2),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20,)
+                      ],
+                    );
+                  }),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: learnModeDetails[1],
-                onTap: () async {
-
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: learnModeDetails[2],
-                onTap: () {
-
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              child: CourseDetailCard(
-                courseDetail: learnModeDetails[3],
-                onTap: () {
-
-                },
-              ),
-            ),
-
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   testTypeWidget(){
     return   Expanded(
-      child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
         children: [
-          MultiPurposeCourseCard(
-            title: 'Speed',
-            subTitle:
-            'Accuracy matters , don\'t let the clock run down',
-            iconURL: 'assets/icons/courses/speed.png',
-            onTap: () {
-            },
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child:  sText("Plethora of Test types",align: TextAlign.center,weight: FontWeight.w600,size: 16),
           ),
-          MultiPurposeCourseCard(
-            title: 'Knowledge',
-            subTitle: 'Standard test',
-            iconURL: 'assets/icons/courses/knowledge.png',
-            onTap: () {
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Marathon',
-            subTitle: 'Race to complete all questions',
-            iconURL: 'assets/icons/courses/marathon.png',
-            onTap: () {
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Autopilot',
-            subTitle: 'Completing a course one topic at a time',
-            iconURL: 'assets/icons/courses/autopilot.png',
-            onTap: () {
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Treadmill',
-            subTitle: 'Crank up the speed, how far can you go?',
-            iconURL: 'assets/icons/courses/treadmill.png',
-            onTap: () async {
-
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Customised',
-            subTitle: 'Create your own kind of quiz',
-            iconURL: 'assets/icons/courses/customised.png',
-            onTap: () {
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Timeless',
-            subTitle: 'Practice mode, no pressure.',
-            iconURL: 'assets/icons/courses/untimed.png',
-            onTap: () {
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Review',
-            subTitle: 'Know the answer to every question',
-            iconURL: 'assets/icons/courses/review.png',
-            onTap: () {
-
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Conquest',
-            subTitle: 'Prepare for battle, attempt everything',
-            iconURL: 'assets/icons/courses/conquest.png',
-            onTap: () {
-            },
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 20,horizontal:10),
+              margin: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: testTypeDetails.length,
+                  itemBuilder: (BuildContext context, int index){
+                    return Column(
+                      children: [
+                        Container(
+                          child: Row(
+                            children: [
+                              Image.asset("${testTypeDetails[index].iconURL}",width: 35,height: 35,),
+                              SizedBox(width: 10,),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  sText("${testTypeDetails[index].title}",weight: FontWeight.w500),
+                                  SizedBox(height: 5,),
+                                  Container(
+                                    width: appWidth(context) * 0.7,
+                                    child: sText("${testTypeDetails[index].subTitle}",size: 12,color: kAdeoGray2),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20,)
+                      ],
+                    );
+                  }),
+            ),
           ),
         ],
       ),
@@ -458,7 +506,18 @@ class _NoSubscriptionsPageState extends State<NoSubscriptionsPage> {
               Padding(
                 padding: EdgeInsets.only(left: 5.w, right: 5.w),
                 child: const Text(
-                  "Self explanatory notes on every topic.",
+                  "Track your progress",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              SizedBox(height: 3.h),
+              Padding(
+                padding: EdgeInsets.only(left: 5.w, right: 5.w),
+                child: const Text(
+                  "compare your performance",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

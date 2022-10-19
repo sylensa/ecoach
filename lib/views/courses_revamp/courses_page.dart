@@ -34,7 +34,7 @@ class _CoursesPageState extends State<CoursesPage> {
   List<Subscription> selectedSubscription = [];
   getUserSubscriptions()async{
     context.read<DownloadUpdate>().plans = await widget.controller.makeSubscriptionsCall();
-    if(context.read<DownloadUpdate>().plans .isEmpty){
+    if(context.read<DownloadUpdate>().plans .isNotEmpty){
       await goTo(context, NoSubscriptionsPage(controller: widget.controller,user: widget.user,));
     }
     if(mounted)
@@ -45,7 +45,7 @@ class _CoursesPageState extends State<CoursesPage> {
   @override
   void initState() {
     // TODO: implement initState
-    if(context.read<DownloadUpdate>().plans.isEmpty){
+    if(context.read<DownloadUpdate>().plans.isNotEmpty){
       getUserSubscriptions();
     }
 
