@@ -48,4 +48,5 @@ List<Messages> chatBetweenListDate = [];
 List<Messages> groupChatBetweenListDate = [];
 List<GroupListData> myGroupList= [];
 String errorMessage = '';
+String speedTestMode = '';
 
