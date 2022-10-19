@@ -107,7 +107,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
       timerController.start();
     });
     setState(() {
-      duration = resetDuration;
+      // duration = resetDuration;
     });
   }
 
@@ -815,16 +815,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           durationStart = dateFormat.parse(
                                               DateFormat('hh:mm:ss')
                                                   .format(DateTime.now()));
-                                          if (!savedTest &&
-                                                  currentQuestion ==
-                                                      controller.questions
-                                                              .length -
-                                                          1 ||
-                                              (enabled &&
-                                                  controller.speedTest &&
-                                                  currentQuestion ==
-                                                      finalQuestion)) {
-                                            completeQuiz();
+                                          if (!savedTest && currentQuestion == controller.questions.length - 1 ||(enabled && controller.speedTest && currentQuestion == finalQuestion)) {
+                                            // completeQuiz();
+                                            nextButton();
                                           } else {
                                             nextButton();
                                           }
