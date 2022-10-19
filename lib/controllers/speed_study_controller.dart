@@ -71,7 +71,7 @@ class SpeedStudyProgressController {
 
     print(speed!.fails);
 
-    if (speed.fails! >= 3) {
+    if (speed.fails! >= 2) {
       speed.fails = 0;
       if (speed.level! > 1) {
         speed.level = speed.level! - 1;

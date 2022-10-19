@@ -132,7 +132,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       showNext = false;
       if (controller.type == StudyType.REVISION ||
           controller.type == StudyType.SPEED_ENHANCEMENT) {
-        controller.enabled = true;
+        // controller.enabled = true;
       }
 
       pageController.nextPage(
@@ -183,41 +183,31 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     controller.saveTest(context, (test, success) async {
       Navigator.pop(context);
-      if (success) {
-        setState(() {
-          testTakenSaved = test;
-          controller.savedTest = true;
-          controller.enabled = false;
-        });
-        await controller.updateProgress(test!);
+      // if (success) {
+      setState(() {
+        testTakenSaved = test;
+        controller.savedTest = true;
+        controller.enabled = false;
+      });
+      await controller.updateProgress(test!);
 
-        progressCompleteView();
-      }
+      progressCompleteView();
+      // }
     });
   }
 
   progressCompleteView() async {
-    print("viewing results");
-
-    print(testTakenSaved!.toJson().toString());
-
     Provider.of<RevisionAttemptProvider>(context, listen: false)
         .setQuestionCountAndAvgScore(
             questionsLength: correctAnswered + wrong, score: avgScore);
 
-    // int pageIndex = 0;
-    // if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-    //   int nextLevel = controller.nextLevel;
-    //   Topic? topic =
-    //       await TopicDB().getLevelTopic(controller.course.id!, nextLevel);
-    //   if (topic == null) pageIndex = 1;
-    // }
-
-    print("Controller details: ${controller.type}");
-
     if (StudyType.REVISION == controller.type) {
       RevisionStudyProgress? revision = await StudyDB()
           .getCurrentRevisionProgressByCourse(controller.course.id!);
+
+      controller.currentQuestion = 0;
+      controller.reviewMode = true;
+      pageController.jumpToPage(controller.currentQuestion);
 
       RevisionProgressController().recordAttempts(correctAnswered.toDouble());
 
@@ -233,7 +223,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             .setCurrentRevisionStudyProgress(revision);
       }
 
-      Get.off(() => SuccessfulRevision());
+      Get.to(() => SuccessfulRevision())!.then((value) {
+        controller.currentQuestion = 0;
+        controller.reviewMode = true;
+        pageController.jumpToPage(controller.currentQuestion);
+      });
+
       return;
     }
 
@@ -265,7 +260,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             'questions': 1
           },
         ),
-      );
+      )!
+          .then((value) {
+        controller.currentQuestion = 0;
+        controller.reviewMode = true;
+        pageController.jumpToPage(controller.currentQuestion);
+      });
+      ;
 
       return;
     }
@@ -280,16 +281,26 @@ class _StudyQuizViewState extends State<StudyQuizView> {
               .id!);
       if (masteryTopics.isEmpty) {
         Get.to(() => MasteryImprovementTopics(
-              test: testTakenSaved!,
-              controller: controller as MasteryController,
-            ));
+                  test: testTakenSaved!,
+                  controller: controller as MasteryController,
+                ))!
+            .then((value) {
+          controller.currentQuestion = 0;
+          controller.reviewMode = true;
+          pageController.jumpToPage(controller.currentQuestion);
+        });
       } else {
         Get.to(() => LearnMasteryFeedback(
-            passed: controller.progress.passed!,
-            topic: controller.progress.name!,
-            topicId: masteryTopics[0].topicId!,
-            masteryCourseUpgrade: masteryTopics[0],
-            controller: controller as MasteryController));
+                passed: controller.progress.passed!,
+                topic: controller.progress.name!,
+                topicId: masteryTopics[0].topicId!,
+                masteryCourseUpgrade: masteryTopics[0],
+                controller: controller as MasteryController))!
+            .then((value) {
+          controller.currentQuestion = 0;
+          controller.reviewMode = true;
+          pageController.jumpToPage(controller.currentQuestion);
+        });
       }
 
       return;
@@ -355,6 +366,11 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             masteryCourseUpgrade: masteryTopics[0],
             controller: controller as MasteryController));
       }
+      return;
+    }
+
+    if (controller.type == StudyType.REVISION) {
+      Get.to(() => SuccessfulRevision());
       return;
     }
 
@@ -635,54 +651,37 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           type: controller.type,
                           // useTex: useTex,
                           callback: (Answer answer, correct) async {
-                            print(
-                                "last question ${controller.questions[i].text}");
                             setState(() {
-                              showSubmit = true;
                               if (correct) {
                                 answeredWrong = false;
-                                // correctAnswered++;
+                                correctAnswered++;
                               } else {
-                                // wrong++;
+                                wrong++;
                                 answeredWrong = true;
                               }
-                              // increase total number of question
-                              // totalQuestionsAnswered++;
-                              if (controller.type == StudyType.REVISION ||
+
+                              if (answeredWrong &&
                                   controller.type ==
                                       StudyType.SPEED_ENHANCEMENT) {
-                                if (correct) {
-                                  answeredWrong = false;
-                                  // correctAnswered++;
-                                } else {
-                                  // wrong++;
-                                  answeredWrong = true;
-                                }
-                              } else if (controller.type ==
-                                  StudyType.MASTERY_IMPROVEMENT) {
-                                // showNext = true;
-                                setState(() {
-                                  if (answeredWrong) {
-                                    wrong++;
-                                    wasWrong = true;
-                                  } else {
-                                    correctAnswered++;
-                                    wasWrong = false;
-                                  }
+                                SpeedStudyProgressController()
+                                    .manageSpeedEnhancementLevels();
 
-                                  calAvgScore();
-                                });
-                                if (!controller.lastQuestion) {
-                                  controller.currentQuestion++;
-                                }
+                                completeQuiz();
+                              }
 
-                                pageController.nextPage(
-                                    duration: Duration(milliseconds: 1),
-                                    curve: Curves.ease);
-                                if (controller.lastQuestion) {
-                                  showNext = false;
-                                  showComplete = true;
-                                }
+                              totalQuestionsAnswered++;
+                              calAvgScore();
+
+                              pageController.nextPage(
+                                  duration: Duration(milliseconds: 1),
+                                  curve: Curves.ease);
+
+                              if (!controller.lastQuestion) {
+                                controller.currentQuestion++;
+                              } else {
+                                controller.reviewMode = true;
+                                controller.currentQuestion = 0;
+                                completeQuiz();
                               }
                             });
                           },
@@ -698,7 +697,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                       children: [
                         if (showPreviousButton())
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Container(
                               color: kAccessmentButtonColor,
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -781,20 +780,11 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     if (answeredWrong &&
                                         controller.type ==
                                             StudyType.SPEED_ENHANCEMENT) {
-                                      // int section =
-                                      //     controller.progress.section ?? 1;
-
                                       SpeedStudyProgressController()
                                           .manageSpeedEnhancementLevels();
-                                      // print(section);
 
-                                      // controller
-                                      //     .updateProgressSection(section + 1);
-                                      // if (section >= 3) {
                                       showComplete = true;
                                       showNext = false;
-                                      // }
-                                      // SpeedStudyProgress? speed = await StudyDB().getCurrentSpeedProgressLevelByCourse(courseId)
                                     }
                                   });
                                 },
@@ -818,7 +808,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           VerticalDivider(width: 2, color: Colors.white),
                         if (showNextButton())
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Container(
                               color: kAccessmentButtonColor,
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -842,7 +832,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           VerticalDivider(width: 2, color: Colors.white),
                         if (showCompleteButton())
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Container(
                               color: kAccessmentButtonColor,
                               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -878,16 +868,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                 onTap: () {
                                   viewResults();
                                 },
-                                child: RichText(
-                                  softWrap: false,
+                                child: Text(
+                                  "Result",
                                   textAlign: TextAlign.center,
-                                  overflow: TextOverflow.clip,
-                                  text: TextSpan(
-                                    text: "Results",
-                                    style: TextStyle(
-                                      color: Color(0xFFFFFFFF),
-                                      fontSize: 21,
-                                    ),
+                                  style: TextStyle(
+                                    color: Color(0xFFFFFFFF),
+                                    fontSize: 21,
                                   ),
                                 ),
                               ),
@@ -989,10 +975,13 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   bool showPreviousButton() {
     switch (controller.type) {
       case StudyType.REVISION:
-        if (controller.reviewMode) return true;
+        if (controller.reviewMode && controller.currentQuestion > 0)
+          return true;
         break;
       case StudyType.COURSE_COMPLETION:
-        if (controller.currentQuestion > 0) return true;
+        if (controller.reviewMode && controller.currentQuestion > 0)
+          return true;
+        // if (controller.currentQuestion > 0) return true;
         break;
       case StudyType.SPEED_ENHANCEMENT:
         break;
@@ -1027,7 +1016,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       case StudyType.REVISION:
         break;
       case StudyType.COURSE_COMPLETION:
-        return controller.currentQuestion < controller.questions.length - 1;
+        // return controller.currentQuestion < controller.questions.length - 1;
+        break;
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
@@ -1044,10 +1034,12 @@ class _StudyQuizViewState extends State<StudyQuizView> {
 
     switch (controller.type) {
       case StudyType.REVISION:
+        if (controller.reviewMode) return false;
         break;
       case StudyType.COURSE_COMPLETION:
         if (!controller.enabled) return false;
-        return controller.lastQuestion;
+        // return controller.lastQuestion;
+        break;
       case StudyType.SPEED_ENHANCEMENT:
         break;
       case StudyType.MASTERY_IMPROVEMENT:
@@ -1061,7 +1053,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   bool showResultButton() {
     switch (controller.type) {
       case StudyType.REVISION:
-        return false;
+        break;
       case StudyType.COURSE_COMPLETION:
         break;
       case StudyType.SPEED_ENHANCEMENT:
@@ -1639,15 +1631,12 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                     //     ),
                     //   ),
                     // ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: newSelectedAnswer(answers![i], Color(0xFF00C664), (
-                        answerSelected,
-                      ) {
-                        widget.callback!(
-                            answerSelected, answerSelected == correctAnswer);
-                      }),
-                    ),
+                    newSelectedAnswer(answers![i], Color(0xFF00C664), (
+                      answerSelected,
+                    ) {
+                      widget.callback!(
+                          answerSelected, answerSelected == correctAnswer);
+                    }),
                   // newSelectedAnswer(answers![i])
                 ],
               ),

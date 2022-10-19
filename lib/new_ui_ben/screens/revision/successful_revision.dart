@@ -28,6 +28,24 @@ class SuccessfulRevision extends StatelessWidget {
               child: TextButton(
                 onPressed: () {
                   // Get.to(() => ChoseRevisionMode());
+                  // attempt.avgScore >= 70
+                  //     ? Get.to(() => ChoseRevisionMode())
+                  //     : RevisionProgressController().openStudyView();
+                  Get.back();
+                },
+                child: Text(
+                  "review",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFFA2A2A2),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  // Get.to(() => ChoseRevisionMode());
                   attempt.avgScore >= 70
                       ? Get.to(() => ChoseRevisionMode())
                       : RevisionProgressController().openStudyView();

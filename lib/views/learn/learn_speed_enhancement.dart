@@ -11,6 +11,7 @@ import 'package:ecoach/new_ui_ben/screens/speed_improvement/level_container.dart
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/study/study_quiz_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
@@ -155,20 +156,16 @@ class SecondComponent extends StatelessWidget {
         proceed: () async {
           List<Question> questions = await QuestionDB()
               .getRandomQuestions(welcome.currentCourse!.id!, 10);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return StudyQuizView(
-                  controller: SpeedController(
-                    welcome.currentUser!,
-                    welcome.currentCourse!,
-                    questions: questions,
-                    name: progress.name!,
-                    progress: progress,
-                  ),
-                );
-              },
+
+          Get.off(
+            () => StudyQuizView(
+              controller: SpeedController(
+                welcome.currentUser!,
+                welcome.currentCourse!,
+                questions: questions,
+                name: progress.name!,
+                progress: progress,
+              ),
             ),
           );
         },
