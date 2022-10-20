@@ -1,4 +1,6 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
@@ -121,31 +123,15 @@ class MarathonEnded extends StatelessWidget {
                             fontSize: 20,
                             color: Colors.white,
                             background: kAdeoBlue,
-                            onPressed: () {},
-                          ),
-                        ),
-                        Container(
-                          width: 1.0,
-                          color: kAdeoBlueAccent,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: AdeoTextButton(
-                            label: 'result',
-                            fontSize: 20,
-                            color: Colors.white,
-                            background: kAdeoBlue,
                             onPressed: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (c) {
-                                return MarathonIntroit(
-                                    controller.user, controller.course);
-                              }));
+                              final testTaken = controller.getTest();
+                              goTo(
+                                  context,
+                                  QuizReviewPage(
+                                    testTaken: testTaken,
+                                    user: controller.user,
+                                    disgnostic: false,
+                                  ));
                             },
                           ),
                         ),
@@ -156,6 +142,31 @@ class MarathonEnded extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // Expanded(
+                  //   child: Row(
+                  //     children: [
+                  //       Expanded(
+                  //         child: AdeoTextButton(
+                  //           label: 'result',
+                  //           fontSize: 20,
+                  //           color: Colors.white,
+                  //           background: kAdeoBlue,
+                  //           onPressed: () {
+                  //             Navigator.push(context,
+                  //                 MaterialPageRoute(builder: (c) {
+                  //               return MarathonIntroit(
+                  //                   controller.user, controller.course);
+                  //             }));
+                  //           },
+                  //         ),
+                  //       ),
+                  //       Container(
+                  //         width: 1.0,
+                  //         color: kAdeoBlueAccent,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   Expanded(
                     child: AdeoTextButton(
                       label: 'new test',
