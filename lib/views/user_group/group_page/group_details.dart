@@ -33,7 +33,14 @@ class _GroupDetailsState extends State<GroupDetails> {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
-      widget.groupData = await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupDetails();
+
+      GroupListData? groupListDetails =  await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupDetails();
+      if(groupListDetails != null){
+        widget.groupData = groupListDetails;
+      }
+      setState(() {
+
+      });
     } else {
       showNoConnectionToast(context);
     }

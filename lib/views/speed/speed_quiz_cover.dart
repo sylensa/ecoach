@@ -130,6 +130,7 @@ class SpeedQuizCover extends StatelessWidget {
                 label: 'Start',
                 onPressed: () async {
                   if(speedTestMode == "quiz"){
+
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

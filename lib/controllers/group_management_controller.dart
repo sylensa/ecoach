@@ -102,7 +102,7 @@ class GroupManagementController{
   Future<GroupListData?> getGroupDetails()async {
     GroupListData? groupListDetails;
     try{
-      var js = await doGet('${AppUrl.groups}');
+      var js = await doGet('${AppUrl.groups}/$groupId');
       print("res groups : $js");
       if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
         groupListDetails = GroupListData.fromJson(js["data"]);
@@ -643,9 +643,9 @@ class GroupManagementController{
       String queryUrl = AppUrl.userGroups + '?' + Uri(queryParameters: params).query;
       var js = await doGet(queryUrl);
       print("res groups category : ${js["data"]}");
-      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
-        for(int i =0; i < js["data"]["data"].length; i++){
-            GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
+      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
+        for(int i =0; i < js["data"].length; i++){
+            GroupListData groupListData = GroupListData.fromJson(js["data"][i]);
             groupListDetails.add(groupListData);
         }
         return groupListDetails;

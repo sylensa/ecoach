@@ -116,7 +116,6 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                         );
                       }
 
-
                       else if (mode.toUpperCase() == 'QUESTION'){
                         speedTestMode =  "question";
                         Navigator.push(
