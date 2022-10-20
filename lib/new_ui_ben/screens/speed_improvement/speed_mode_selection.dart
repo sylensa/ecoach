@@ -1,9 +1,11 @@
+import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controllers/speed_study_controller.dart';
+import '../../../database/study_db.dart';
 import '../../providers/welcome_screen_provider.dart';
 import '../../widgets/learn_card.dart';
 
@@ -40,20 +42,29 @@ class ChooseSpeedMode extends StatelessWidget {
                 const SizedBox(
                   height: 67,
                 ),
-                Visibility(
-                  visible: welcome.currentSpeedStudyProgress!.level != 0,
-                  child: LearnCard(
-                    title: 'Ongoing',
-                    desc: 'Do a quick revision for an upcoming exam',
-                    isLevel: true,
-                    value: welcome.currentSpeedStudyProgress!.level!.toDouble(),
-                    icon: 'assets/images/learn_mode2/hourglass.png',
-                    onTap: () async {
-                      Get.to(
-                          () => SecondComponent(progress: welcome.progress!));
-                    },
-                  ),
-                ),
+                FutureBuilder<SpeedStudyProgress?>(
+                    future: StudyDB().getCurrentSpeedProgressLevelByCourse(
+                        welcome.currentCourse!.id!),
+                    builder: (context, snapshot) {
+                      return Visibility(
+                        visible: snapshot.data != null,
+                        child: LearnCard(
+                          title: 'Ongoing',
+                          desc: 'Do a quick revision for an upcoming exam',
+                          isLevel: true,
+                          value: snapshot.data != null
+                              ? snapshot.data!.level!.toDouble()
+                              : 1,
+                          icon: 'assets/images/learn_mode2/hourglass.png',
+                          onTap: () async {
+                            Get.to(
+                              () =>
+                                  SecondComponent(progress: welcome.progress!),
+                            );
+                          },
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 40,
                 ),

@@ -1,4 +1,3 @@
-import 'package:ecoach/controllers/speed_study_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -16,7 +15,6 @@ import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/speed_enhancement_progress_model.dart';
 import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
 
 class LearnMode extends StatefulWidget {
@@ -176,18 +174,18 @@ class _LearnModeState extends State<LearnMode> {
                   StudyProgress? progress =
                       await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
 
-                  SpeedStudyProgress revisionStudyProgress = SpeedStudyProgress(
-                    courseId: widget.course.id,
-                    topicId: progress!.topicId,
-                    studyId: progress.studyId,
-                    level: 1,
-                    fails: 1,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-
-                  SpeedStudyProgressController()
-                      .createInitialCourseSpeed(revisionStudyProgress);
+                  // SpeedStudyProgress revisionStudyProgress = SpeedStudyProgress(
+                  //   courseId: widget.course.id,
+                  //   topicId: progress!.topicId,
+                  //   studyId: progress.studyId,
+                  //   level: 1,
+                  //   fails: 1,
+                  //   createdAt: DateTime.now(),
+                  //   updatedAt: DateTime.now(),
+                  // );
+                  //
+                  // SpeedStudyProgressController()
+                  //     .createInitialCourseSpeed(revisionStudyProgress);
 
                   print(progress);
                   if (progress == null) {

@@ -197,19 +197,32 @@ class _WelcomeToLearnModeState extends State<WelcomeToLearnMode> {
                         print(snapshot.data);
                         print(
                             "mastery length: ${(welcome.totalTopics - snapshot.data!.length)}");
-                        return LearnCard(
-                          title: 'Mastery Improvement',
-                          desc: 'Do a quick revision for an upcoming exam',
-                          value: snapshot.data!.isEmpty
-                              ? 0
-                              : ((welcome.totalTopics - snapshot.data!.length) /
-                                      welcome.totalTopics) *
-                                  100,
-                          icon: 'assets/images/learn_mode2/target.png',
-                          onTap: () {
-                            widget.startLearning(StudyType.MASTERY_IMPROVEMENT);
-                          },
-                        );
+                        return FutureBuilder<List<MasteryCourseUpgrade>>(
+                            future: MasteryCourseDB()
+                                .getAllMasteryTopicsUpgrade(
+                                    welcome.currentCourse!.id!),
+                            builder: (context, allTopicsSnapshot) {
+                              if (allTopicsSnapshot.data == null) {
+                                return SizedBox();
+                              }
+
+                              return LearnCard(
+                                title: 'Mastery Improvement',
+                                desc:
+                                    'Do a quick revision for an upcoming exam',
+                                value: snapshot.data!.isEmpty
+                                    ? 0
+                                    : ((allTopicsSnapshot.data!.length -
+                                                snapshot.data!.length) /
+                                            welcome.totalTopics) *
+                                        100,
+                                icon: 'assets/images/learn_mode2/target.png',
+                                onTap: () {
+                                  widget.startLearning(
+                                      StudyType.MASTERY_IMPROVEMENT);
+                                },
+                              );
+                            });
                       }),
                   SizedBox(
                     height: 20,

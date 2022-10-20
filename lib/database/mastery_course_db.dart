@@ -186,6 +186,24 @@ class MasteryCourseDB {
     return mc;
   }
 
+  Future<List<MasteryCourseUpgrade>> getAllMasteryTopicsUpgrade(
+      int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    final List<Map<String, dynamic>> maps = await db!.query(
+        'mastery_courses_upgrade',
+        orderBy: "created_at ASC",
+        where: "course_id = ? ",
+        whereArgs: [courseId]);
+
+    List<MasteryCourseUpgrade> mc = [];
+    for (int i = 0; i < maps.length; i++) {
+      MasteryCourseUpgrade progress = MasteryCourseUpgrade.fromJson(maps[i]);
+      mc.add(progress);
+    }
+    return mc;
+  }
+
   Future<MasteryCourseUpgrade?> getCurrentTopicUpgrade(int courseId) async {
     final Database? db = await DBProvider.database;
     print('study id = $courseId');

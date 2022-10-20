@@ -3,7 +3,6 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:slider_button/slider_button.dart';
 
 import 'customer_button_swipe.dart';
 
@@ -37,7 +36,7 @@ class _LevelContainerState extends State<LevelContainer> {
 
   @override
   void dispose() {
-   player.dispose();
+    // player.dispose();
     super.dispose();
   }
 

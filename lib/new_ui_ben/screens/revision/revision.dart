@@ -94,11 +94,14 @@ class Revision extends StatelessWidget {
                                   .getCurrentRevisionProgressByCourse(
                                       welcome.currentCourse!.id!),
                               builder: (context, progressSnapshot) {
-                                if (progressSnapshot.data == null) {
+                                if (progressSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
                                   return CircularProgressIndicator();
                                 }
                                 return Text(
-                                  "${snapshot.data!.length - (progressSnapshot.data!.level! - 1)}",
+                                  progressSnapshot.data == null
+                                      ? "${snapshot.data!.length}"
+                                      : "${snapshot.data!.length - (progressSnapshot.data!.level! - 1)}",
                                   style: TextStyle(
                                     fontFamily: 'Cocon',
                                     fontSize: 95,

@@ -102,8 +102,11 @@ class _StudyQuizViewState extends State<StudyQuizView> {
     revisionStartTime = DateTime.now();
     setRevisionTime();
     setStudyController();
-    controller.startTest();
+
     print("Controller details: ${controller.type}");
+    setState(() {
+      controller.startTest();
+    });
     super.initState();
   }
 
@@ -260,13 +263,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
             'questions': 1
           },
         ),
-      )!
-          .then((value) {
-        controller.currentQuestion = 0;
-        controller.reviewMode = true;
-        pageController.jumpToPage(controller.currentQuestion);
-      });
-      ;
+      );
 
       return;
     }

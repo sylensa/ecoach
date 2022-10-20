@@ -6,6 +6,7 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/new_ui_ben/screens/level_start_screen.dart';
 import 'package:ecoach/new_ui_ben/screens/speed_improvement/utils/speed_enhancement_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/questions_db.dart';
@@ -49,26 +50,9 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
 
           return LevelStartScreen(
               onSwipe: () async {
-                // get current course speed level
-
                 SpeedStudyProgress? speed = await StudyDB()
                     .getCurrentSpeedProgressLevelByCourse(
                         welcome.currentCourse!.id!);
-
-                // int nextLevel = moveUp
-                //     ? speed!.level! + 1
-                //     : speed!.level! - 1;
-                // if (nextLevel < 1) {
-                //   nextLevel = 1;
-                // }
-
-                // update level of current course speed
-                // speed.level = nextLevel;
-                // speed.updatedAt = DateTime.now();
-                // await StudyDB().updateSpeedProgressLevel(speed);
-
-                // // update the provider
-                // welcome.setCurrentSpeedProgress(speed);
 
                 Topic? topic = await TopicDB()
                     .getLevelTopic(welcome.currentCourse!.id!, 1);
@@ -85,33 +69,18 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
                       updatedAt: DateTime.now());
                   await StudyDB().insertProgress(progress);
 
-                  // Navigator.pushAndRemoveUntil(context,
-                  //     MaterialPageRoute(builder: (context) {
-                  //   return LearnSpeed(
-                  //     controller.user,
-                  //     controller.course,
-                  //     progress,
-                  //     page: 1,
-                  //   );
-                  // }), ModalRoute.withName(LearnSpeed.routeName));
-
                   List<Question> questions = await QuestionDB()
                       .getRandomQuestions(welcome.currentCourse!.id!, 10);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return StudyQuizView(
-                          controller: SpeedController(
-                            welcome.currentUser!,
-                            welcome.currentCourse!,
-                            questions: questions,
-                            name: progress.name!,
-                            progress: progress,
-                          ),
-                        );
-                      },
+                  Get.off(
+                    () => StudyQuizView(
+                      controller: SpeedController(
+                        welcome.currentUser!,
+                        welcome.currentCourse!,
+                        questions: questions,
+                        name: progress.name!,
+                        progress: progress,
+                      ),
                     ),
                   );
                 } else {

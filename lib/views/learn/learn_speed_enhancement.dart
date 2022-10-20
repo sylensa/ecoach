@@ -4,6 +4,7 @@ import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../database/study_db.dart';
 import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
 import '../../new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
 
@@ -151,25 +153,34 @@ class SecondComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<WelcomeScreenProvider>(
-      builder: (_, welcome, __) => SpeedImprovementLevelContainer(
-        level: welcome.currentSpeedStudyProgress!.level ?? 1,
-        proceed: () async {
-          List<Question> questions = await QuestionDB()
-              .getRandomQuestions(welcome.currentCourse!.id!, 10);
+      builder: (_, welcome, __) => FutureBuilder<SpeedStudyProgress?>(
+          future: StudyDB()
+              .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
 
-          Get.off(
-            () => StudyQuizView(
-              controller: SpeedController(
-                welcome.currentUser!,
-                welcome.currentCourse!,
-                questions: questions,
-                name: progress.name!,
-                progress: progress,
-              ),
-            ),
-          );
-        },
-      ),
+            return SpeedImprovementLevelContainer(
+              level: snapshot.data == null ? 1 : snapshot.data!.level!,
+              proceed: () async {
+                List<Question> questions = await QuestionDB()
+                    .getRandomQuestions(welcome.currentCourse!.id!, 10);
+
+                Get.off(
+                  () => StudyQuizView(
+                    controller: SpeedController(
+                      welcome.currentUser!,
+                      welcome.currentCourse!,
+                      questions: questions,
+                      name: progress.name!,
+                      progress: progress,
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
     );
 
     // Column(

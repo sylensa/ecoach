@@ -50,13 +50,17 @@ class SpeedStudyProgressController {
     WelcomeScreenProvider welcome =
         Provider.of<WelcomeScreenProvider>(Get.context!, listen: false);
 
-    SpeedStudyProgress? speed = await StudyDB()
-        .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!);
+    SpeedStudyProgress speed = SpeedStudyProgress(
+      courseId: welcome.currentCourse!.id!,
+      topicId: welcome.progress!.topicId,
+      studyId: welcome.progress!.studyId,
+      level: 1,
+      fails: 1,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
 
-    speed!.level = 1;
-    speed.fails = 0;
-    speed.updatedAt = DateTime.now();
-    await StudyDB().updateSpeedProgressLevel(speed);
+    await StudyDB().insertSpeedProgressLevel(speed);
 
     // update the provider
     welcome.setCurrentSpeedProgress(speed);
