@@ -50,3 +50,6 @@ List<GroupListData> myGroupList= [];
 String errorMessage = '';
 String speedTestMode = '';
 
+const double kAdeoPaddingValue = 40;
+const double kAdeoBorderRadiusValue = 10;
+const double kAdeoBorderRadiusValueLg = 15;
