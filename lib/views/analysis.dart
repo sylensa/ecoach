@@ -108,9 +108,16 @@ class _AnalysisViewState extends State<AnalysisView> {
       body: SafeArea(
         child: Column(
           children: [
-            PageHeader(
-              pageHeading: 'Track your progress',
-              size: Sizes.small,
+            Row(
+              children: [
+                IconButton(onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(Icons.arrow_back,color: Colors.black,)),
+                PageHeader(
+                  pageHeading: 'Track your progress',
+                  size: Sizes.small,
+                ),
+              ],
             ),
             subscriptions.isNotEmpty ?
             Expanded(

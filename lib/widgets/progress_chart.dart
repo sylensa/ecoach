@@ -6,10 +6,13 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/widgets/adeo_loading_progress_indicator.dart';
+import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/dropdowns/adeo_dropdown.dart';
 import 'package:ecoach/widgets/section_heading.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -18,6 +21,7 @@ import 'package:flutter/material.dart';
 class ProgressChart extends StatefulWidget {
    ProgressChart({
     required this.subscriptions,
+    required this.user,
     this.selectedSubscription,
     this.updateState,
     Key? key,
@@ -26,6 +30,7 @@ class ProgressChart extends StatefulWidget {
   final List<SubscriptionItem> subscriptions;
    SubscriptionItem? selectedSubscription;
   final dynamic updateState;
+  final User user;
 
   @override
   State<ProgressChart> createState() => _ProgressChartState();
@@ -190,20 +195,34 @@ class _ProgressChartState extends State<ProgressChart> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SectionHeading('your progress'),
-                        SizedBox(width: 40),
+                        // SizedBox(width: 40),
                        if( widget.selectedSubscription == null)
                          LoadingProgressIndicator(
                           activeColor: kAdeoCoral,
                           backgroundColor: kShadowColor,
                           size: 20,
                           strokeWidth: 3,
-                        )
+                        ),
+                        SectionHeaderTextButton(
+                          label: 'View Details',
+                          textStyle: appStyle(col: Color(0xFF1182D8)),
+                          onPressed: () {
+                            goTo(
+                              context,
+                              AnalysisView(
+                                user: widget.user,
+                                course: course,
+                              ),
+                            );
+                          },
+                        ),
 
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 0),
 
                     if(  widget.selectedSubscription != null)
                       AdeoDropDown(

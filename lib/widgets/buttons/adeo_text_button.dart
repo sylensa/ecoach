@@ -72,10 +72,7 @@ class SectionHeaderTextButton extends StatelessWidget {
           label,
           style: _textStyle,
         ),
-        onPressed: Feedback.wrapForTap(() async {
-          await Future.delayed(Duration(milliseconds: 600));
-          onPressed;
-        }, context),
+        onPressed: onPressed,
       ),
     );
   }

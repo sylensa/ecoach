@@ -568,6 +568,7 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                     horizontal: 24,
                                   ),
                                   child: ProgressChart(
+                                    user: widget.user,
                                     subscriptions: subscriptions,
                                     selectedSubscription: subscription,
                                     updateState: (s) {
