@@ -5,6 +5,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/user_group/group_page/group_details.dart';
 import 'package:ecoach/views/user_group/group_page/my_groups.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/section_heading.dart';
@@ -25,7 +26,7 @@ class _GroupClassState extends State<GroupClass> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(
@@ -68,17 +69,21 @@ class _GroupClassState extends State<GroupClass> {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
                   case ConnectionState.waiting:
-                    return SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        child: CircularProgressIndicator(
-                          color: kAdeoGreen4,
-                          strokeWidth: 2,
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            child: CircularProgressIndicator(
+                              color: kAdeoGreen4,
+                              strokeWidth: 2,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     );
                   default:
                     if (snapshot.hasError) {
@@ -97,7 +102,9 @@ class _GroupClassState extends State<GroupClass> {
                                   ownerName: group.owner!.name!.toCapitalized(),
                                   cardImage:
                                       "assets/images/store/store-img-1.png",
-                                  onClick: () {},
+                                  onClick: () {
+                                    goTo(context, GroupDetails(user: widget.user,groupData: group,));
+                                  },
                                   isLightTheme: true,
                                   imgHeight: 120,
                                 ),

@@ -128,6 +128,25 @@ class TestTakenDB {
     }
     return tests;
   }
+  Future<List<TestTaken>> getAllAverageScore({String courseId = "0"}) async {
+    final Database? db = await DBProvider.database;
+     List<Map<String, dynamic>> maps = [];
+     if(courseId == "0"){
+       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where challenge_type IS NOT NULL");
+     }else{
+       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL");
+     }
+    print("object maps len:${maps.length}");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      test.score = maps[i]["avg_score"];
+      tests.add(test);
+      print("object maps:${test.score}");
+    }
+    return tests;
+  }
   Future<List<TestTaken>> courseTestsTakenPeriod(String courseId,String period,{int? groupId = null}) async {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];

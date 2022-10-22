@@ -4,6 +4,7 @@ import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
 import 'package:ecoach/database/plan.dart';
 import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/plan.dart';
@@ -63,6 +64,7 @@ class DashboardContent extends StatefulWidget {
 
 class _HomePage2ContentState extends State<DashboardContent> {
   bool notificationsToggled = false;
+  bool progressCode = true;
   SubscriptionItem? subscription;
   List<TestTaken> selectedTests = [];
 
@@ -396,6 +398,15 @@ class _HomePage2ContentState extends State<DashboardContent> {
   @override
   void initState() {
     super.initState();
+    SubscriptionItemDB().allSubscriptionItems().then((List<SubscriptionItem> subscriptions) {
+      if (subscriptions.length > 0) {
+        this.subscriptions = subscriptions;
+        this.subscription = subscriptions[0];
+      }
+      setState(() {
+        progressCode = false;
+      });
+    });
   }
 
   @override
@@ -544,9 +555,9 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                         child:
                                             FreeAssessmentWidget(widget.user),
                                       ),
-                                      SizedBox(
-                                        height: 32,
-                                      ),
+                                      // SizedBox(
+                                      //   height: 32,
+                                      // ),
                                       Expanded(
                                         child: GroupClass(
                                           user: widget.user,

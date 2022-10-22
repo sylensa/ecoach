@@ -1,7 +1,12 @@
 import 'dart:math';
 
+import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/adeo_loading_progress_indicator.dart';
@@ -11,7 +16,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class ProgressChart extends StatefulWidget {
-  const ProgressChart({
+   ProgressChart({
     required this.subscriptions,
     this.selectedSubscription,
     this.updateState,
@@ -19,7 +24,7 @@ class ProgressChart extends StatefulWidget {
   }) : super(key: key);
 
   final List<SubscriptionItem> subscriptions;
-  final SubscriptionItem? selectedSubscription;
+   SubscriptionItem? selectedSubscription;
   final dynamic updateState;
 
   @override
@@ -27,30 +32,93 @@ class ProgressChart extends StatefulWidget {
 }
 
 class _ProgressChartState extends State<ProgressChart> {
-  // Generate some dummy data for the chart
-  // This will be used to draw the red line
-  final List<FlSpot> dummyData1 = List.generate(20, (index) {
-    return FlSpot(
-      index.toDouble(),
-      index * Random().nextDouble(),
-    );
-  });
+  List<TestTaken> testData = [];
+  String dropdownValue = 'All';
+  Course? course;
+  List<FlSpot> testdata = [];
+  final List<FlSpot> dummyData1 = [];
+  final List<FlSpot> dummyData2 = [];
+  final List<FlSpot> dummyData3 = [];
 
-  // This will be used to draw the orange line
-  final List<FlSpot> dummyData2 = List.generate(20, (index) {
-    return FlSpot(
-      index.toDouble(),
-      index * Random().nextDouble(),
-    );
-  });
+  getAverageStats(String progressType) async {
+    testData.clear();
+    testdata.clear();
+    print("periodperiod:$progressType");
+    if(course == null){
+      testData = await TestTakenDB().getAllAverageScore();
+    }else{
+      testData = await TestTakenDB().getAllAverageScore(courseId: course!.id.toString());
+    }
+    print("testData len:${testData.length}");
+    if (progressType == "exam") {
+      List<TestTaken> graphResultData = [];
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType == TestCategory.EXAM.toString() ||
+          element.challengeType == TestCategory.MOCK.toString() ||
+          element.challengeType == TestCategory.NONE.toString())
+          .toList();
+      for (int i = 0; i < graphResultData.length; i++) {
+        final test = graphResultData[i];
+        dummyData1.add(
+          FlSpot(
+            (i + 1).toDouble(),
+            double.parse(test.score!.toStringAsFixed(2)),
+          ),
+        );
+      }
+    }
+    else if (progressType == "topic") {
+      List<TestTaken> graphResultData = [];
+      graphResultData = testData.where((element) => element.challengeType == TestCategory.TOPIC.toString()).toList();
+      for (int i = 0; i < graphResultData.length; i++) {
+        final test = graphResultData[i];
+        dummyData2.add(
+          FlSpot(
+            (i + 1).toDouble(),
+            double.parse(test.score!.toStringAsFixed(2)),
+          ),
+        );
+      }
+    }
+    else if (progressType == "other") {
+      List<TestTaken> graphResultData = [];
+      graphResultData = testData
+          .where((element) =>
+      element.challengeType != TestCategory.TOPIC.toString() &&
+          element.challengeType != TestCategory.EXAM.toString() &&
+          element.challengeType != TestCategory.MOCK.toString() &&
+          element.challengeType != TestCategory.NONE.toString())
+          .toList();
+      for (int i = 0; i < graphResultData.length; i++) {
+        final test = graphResultData[i];
+        dummyData3.add(
+          FlSpot(
+            (i + 1).toDouble(),
+            double.parse(test.score!.toStringAsFixed(2)),
+          ),
+        );
+      }
+    }
+    // else {
+    //   List<TestTaken> graphResultData = [];
+    //   graphResultData = testData;
+    //   for (int i = 0; i < graphResultData.length; i++) {
+    //     final test = graphResultData[i];
+    //     dummyData1.add(
+    //       FlSpot(
+    //         (i + 1).toDouble(),
+    //         double.parse(test.score!.toStringAsFixed(2)),
+    //       ),
+    //     );
+    //   }
+    // }
 
-  // This will be used to draw the blue line
-  final List<FlSpot> dummyData3 = List.generate(20, (index) {
-    return FlSpot(
-      index.toDouble(),
-      index * Random().nextDouble(),
-    );
-  });
+    setState(() {});
+  }
+  getCourseById(int id) {
+    return CourseDB().getCourseById(id);
+  }
 
   generateLegend({
     required Color color,
@@ -81,6 +149,15 @@ class _ProgressChartState extends State<ProgressChart> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAverageStats("exam");
+    getAverageStats("topic");
+    getAverageStats("other");
+  }
+
+  @override
   Widget build(BuildContext context) {
     var sideTitleStyle = TextStyle(
       color: Color(0xFF919FB6),
@@ -107,30 +184,51 @@ class _ProgressChartState extends State<ProgressChart> {
               spacing: 48,
               runSpacing: 4,
               children: [
-                Row(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SectionHeading('your progress'),
-                    SizedBox(width: 48),
-                    widget.selectedSubscription == null
-                        ? LoadingProgressIndicator(
-                            activeColor: kAdeoCoral,
-                            backgroundColor: kShadowColor,
-                            size: 20,
-                            strokeWidth: 3,
-                          )
-                        : AdeoDropDown(
-                            value: widget.selectedSubscription!,
-                            items: widget.subscriptions,
-                            onChanged: (item) {
-                              widget.updateState({
-                                'item': item,
-                                'selectedTests': <TestTaken>[],
-                              });
-                            },
-                          ),
+                    //
+                    // if(  widget.selectedSubscription != null)
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 0),
+                    //  decoration: BoxDecoration(
+                    //    color: Colors.white,
+                    //    borderRadius: BorderRadius.circular(10)
+                    //  ),
+                    //   child: AdeoDropDown(
+                    //     value: widget.selectedSubscription!,
+                    //     items: widget.subscriptions,
+                    //     onChanged: (item) async{
+                    //       widget.selectedSubscription = item;
+                    //       course = await getCourseById(int.parse(item.tag!));
+                    //       dummyData1.clear();
+                    //       dummyData2.clear();
+                    //       dummyData3.clear();
+                    //       getAverageStats("exam");
+                    //       getAverageStats("topic");
+                    //       getAverageStats("other");
+                    //     },
+                    //   ),
+                    // ),
+                    // SizedBox(height: 10),
+                    Row(
+                      children: [
+                        SectionHeading('your progress'),
+                        SizedBox(width: 40),
+                       if( widget.selectedSubscription == null)
+                         LoadingProgressIndicator(
+                          activeColor: kAdeoCoral,
+                          backgroundColor: kShadowColor,
+                          size: 20,
+                          strokeWidth: 3,
+                        )
+
+                      ],
+                    ),
+                    SizedBox(height: 10),
+
                   ],
                 ),
                 // Expanded(child: SizedBox()),
@@ -158,6 +256,7 @@ class _ProgressChartState extends State<ProgressChart> {
             ),
           ),
           SizedBox(height: 20),
+          if(dummyData1.isNotEmpty || dummyData2.isNotEmpty || dummyData3.isNotEmpty)
           Expanded(
             child: LineChart(
               LineChartData(
@@ -182,7 +281,7 @@ class _ProgressChartState extends State<ProgressChart> {
                     getTextStyles: (BuildContext context, value) =>
                         sideTitleStyle,
                     margin: 12,
-                    interval: 1,
+                    interval: 10,
                   ),
                   bottomTitles: SideTitles(
                     showTitles: true,
@@ -231,6 +330,12 @@ class _ProgressChartState extends State<ProgressChart> {
               ),
             ),
           )
+          else
+            Expanded(
+              child: Center(
+                child: sText("No Progress data available"),
+              ),
+            )
         ],
       ),
     );

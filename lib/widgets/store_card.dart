@@ -49,7 +49,7 @@ class StoreCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.hardEdge,
-            constraints: BoxConstraints(minHeight: 180),
+            constraints: BoxConstraints(minHeight: 190),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
