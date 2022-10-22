@@ -189,30 +189,6 @@ class _ProgressChartState extends State<ProgressChart> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //
-                    // if(  widget.selectedSubscription != null)
-                    // Container(
-                    //   padding: EdgeInsets.symmetric(horizontal: 0),
-                    //  decoration: BoxDecoration(
-                    //    color: Colors.white,
-                    //    borderRadius: BorderRadius.circular(10)
-                    //  ),
-                    //   child: AdeoDropDown(
-                    //     value: widget.selectedSubscription!,
-                    //     items: widget.subscriptions,
-                    //     onChanged: (item) async{
-                    //       widget.selectedSubscription = item;
-                    //       course = await getCourseById(int.parse(item.tag!));
-                    //       dummyData1.clear();
-                    //       dummyData2.clear();
-                    //       dummyData3.clear();
-                    //       getAverageStats("exam");
-                    //       getAverageStats("topic");
-                    //       getAverageStats("other");
-                    //     },
-                    //   ),
-                    // ),
-                    // SizedBox(height: 10),
                     Row(
                       children: [
                         SectionHeading('your progress'),
@@ -227,6 +203,27 @@ class _ProgressChartState extends State<ProgressChart> {
 
                       ],
                     ),
+                    SizedBox(height: 20),
+
+                    if(  widget.selectedSubscription != null)
+                      AdeoDropDown(
+                        value: widget.selectedSubscription!,
+                        items: widget.subscriptions,
+                        onChanged: (item) async{
+                          print("selectedSubscription:${item.tag}");
+                          widget.selectedSubscription = item;
+                          course = await getCourseById(int.parse(item.tag!));
+                          setState(() {
+
+                          });
+                          dummyData1.clear();
+                          dummyData2.clear();
+                          dummyData3.clear();
+                          getAverageStats("exam");
+                          getAverageStats("topic");
+                          getAverageStats("other");
+                        },
+                      ),
                     SizedBox(height: 10),
 
                   ],

@@ -31,7 +31,15 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
         padding: EdgeInsets.all(2.h),
         height: 150,
         decoration: BoxDecoration(
-          color: kHomeAccessmentColor,
+          // color: kHomeAccessmentColor,
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF0184FE),
+              Color(0xFF1182D8),
+
+            ]
+          ),
+          color: Color(0xFF0184FE),
           borderRadius: BorderRadius.circular(23),
         ),
         child: Row(
@@ -51,10 +59,9 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
                   const Text(
                     'Take a free test today and get to know your strenghts and weaknesses.',
                     style: TextStyle(
-                      color: Colors.white60,
-                      fontWeight: FontWeight.w200,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 9,
+                      color: Color(0xFFC2E5FF),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 10,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -82,9 +89,14 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
                     child: SizedBox(
                       height: 41,
                       width: 121,
-                      child: Material(
-                        color: const Color(0xFF00C9B9),
-                        borderRadius: BorderRadius.circular(7),
+                      child: Container(
+
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0AE0E4),
+                          borderRadius: BorderRadius.circular(7),
+
+                        ),
+
                         child: const Center(
                           child: Text(
                             "Try it Now",

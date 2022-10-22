@@ -28,6 +28,7 @@ class _GroupClassState extends State<GroupClass> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        SizedBox(height: 12),
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 24,
@@ -41,7 +42,8 @@ class _GroupClassState extends State<GroupClass> {
               children: [
                 SectionHeading('Groups'),
                 SectionHeaderTextButton(
-                  label: 'See More Groups',
+                  label: 'See all',
+                  textStyle: appStyle(col: Color(0xFF1182D8)),
                   onPressed: () {
                     // goTo(
                     //   context,
@@ -114,7 +116,9 @@ class _GroupClassState extends State<GroupClass> {
                               label: group.name!.toCapitalized(),
                               ownerName: group.owner!.name!.toCapitalized(),
                               cardImage: "assets/images/store/store-img-1.png",
-                              onClick: () {},
+                              onClick: () {
+                                goTo(context, GroupDetails(user: widget.user,groupData: group,));
+                              },
                               isLightTheme: true,
                               imgHeight: 120,
                             );

@@ -13,7 +13,7 @@ import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/ui/bundle.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/revamp/features/home/view/widgets/free_assessment_widget.dart';
+import 'package:ecoach/revamp/features/home/view/widgets/free_accessment_widget.dart';
 import 'package:ecoach/revamp/features/home/view/widgets/groups.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -464,54 +464,35 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                                 fontSize: 20,
                                               ),
                                             ),
-                                            Text(
-                                              widget.user.name!,
-                                              style: TextStyle(
-                                                fontFamily: 'PoppinsMedium',
-                                                fontSize: 32,
-                                                height: 1.2,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            maxWidth: 560,
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              promoCodeModalBottomSheet(
-                                                  context);
-                                            },
-                                            child: Container(
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  widget.user.promoCode != null
-                                                      ? Container(
-                                                          width: 200,
-                                                          child: Text(
-                                                            "Discounts expires in ${widget.user.promoCode!.validityPeriod}",
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Colors
-                                                                    .blue),
-                                                          ),
-                                                        )
-                                                      : Container(),
-                                                  Container(
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Container(
+                                                  width: appWidth(context) * 0.57,
+                                                  child: sText(
+                                                    widget.user.name!,
+                                                    family: 'PoppinsMedium',
+                                                    weight: FontWeight.w500,
+                                                    lHeight: 1.5,
+                                                    maxLines: 1,
+                                                    size: 25,
+                                                    color: Colors.black
+
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    promoCodeModalBottomSheet(context);
+                                                  },
+                                                  child: Container(
                                                     padding: EdgeInsets.all(5),
                                                     decoration: BoxDecoration(
                                                         border: Border.all(
                                                             color: Colors
                                                                 .grey[400]!),
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(30)),
+                                                        BorderRadius
+                                                            .circular(30)),
                                                     child: Row(
                                                       children: [
                                                         Image.asset(
@@ -523,28 +504,42 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                                           style: TextStyle(
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight.w500,
+                                                            FontWeight.w500,
                                                           ),
                                                         )
                                                       ],
                                                     ),
-                                                  )
-                                                ],
-                                              ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        if( widget.user.promoCode != null)
+                                        Container(
+                                            width: appWidth(context),
+                                            child: Text(
+                                              "Discounts expires in ${widget.user.promoCode!.validityPeriod}",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight:
+                                                      FontWeight
+                                                          .w500,
+                                                  color: Colors
+                                                      .blue),
                                             ),
                                           ),
-                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 32),
+                                SizedBox(height: 20),
                                 Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 0,
                                   ),
                                   constraints: BoxConstraints(
-                                    maxHeight: 520,
+                                    maxHeight: 435,
                                   ),
                                   child: Column(
                                     children: [
@@ -553,7 +548,8 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                           horizontal: 24,
                                         ),
                                         child:
-                                            FreeAssessmentWidget(widget.user),
+                                        FreeAccessmentWidget(widget.user),
+
                                       ),
                                       // SizedBox(
                                       //   height: 32,
@@ -566,7 +562,7 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 42),
+                                SizedBox(height: 10),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 24,

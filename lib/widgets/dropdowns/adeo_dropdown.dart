@@ -1,6 +1,6 @@
+import 'package:ecoach/models/subscription_item.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
-
-import '../../models/subscription_item.dart';
 
 class AdeoDropDown extends StatelessWidget {
   const AdeoDropDown({
@@ -15,36 +15,36 @@ class AdeoDropDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<SubscriptionItem>(
-          iconEnabledColor: Color(0xFF787E87),
-          focusColor: Colors.transparent,
-          value: value,
-          itemHeight: 50,
-          onChanged: onChanged,
-          dropdownColor: Color(0xFFE5E5E5),
-          style: TextStyle(
-            color: Colors.white,
-          ),
-          items: items
-              .map(
-                (item) => DropdownMenuItem<SubscriptionItem>(
-                  // alignment: AlignmentDirectional.center,
-                  value: item,
-                  child: Text(
-                    item.name!,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'PoppinsMedium',
-                      color: Color(0xFF787E87),
-                    ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+      child: Container(
+        width: double.infinity,
+        color: Colors.white,
+        padding: EdgeInsets.only(left: 12, right: 4),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<SubscriptionItem>(
+            value: value,
+            itemHeight: 48,
+            style: TextStyle(
+              fontSize: 16,
+              color: kDefaultBlack,
+            ),
+            onChanged: onChanged,
+            items: items
+                .map(
+                  (item) => DropdownMenuItem<SubscriptionItem>(
+                value: item,
+                child: Text(
+                  item.name!,
+                  style: TextStyle(
+                    color: kDefaultBlack,
+                    fontSize: 14,
                   ),
                 ),
-              )
-              .toList(),
+              ),
+            )
+                .toList(),
+          ),
         ),
       ),
     );

@@ -118,6 +118,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   nextButton() async {
     if (currentQuestion == controller.questions.length - 1) {
+      await completeQuiz();
       return;
     }
     await Future.delayed(Duration(milliseconds: 200));
