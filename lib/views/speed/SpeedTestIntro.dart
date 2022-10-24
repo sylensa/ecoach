@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
@@ -102,17 +103,21 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                     label: 'Next',
                     backcolor: Colors.red,
                     onPressed: () {
-                      if (mode.toUpperCase() == 'QUIZ')
+
+                      if (mode.toUpperCase() == 'QUIZ'){
+                        speedTestMode =  "quiz";
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return SpeedTestQuestionMode(
-                                  widget.user, widget.course, "quiz");
+                              return SpeedTestQuestionMode(widget.user, widget.course, "quiz");
                             },
                           ),
                         );
-                      else if (mode.toUpperCase() == 'QUESTION')
+                      }
+
+                      else if (mode.toUpperCase() == 'QUESTION'){
+                        speedTestMode =  "question";
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -122,6 +127,9 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                             },
                           ),
                         );
+                      }
+
+
                     },
                   ),
                   SizedBox(height: 53),

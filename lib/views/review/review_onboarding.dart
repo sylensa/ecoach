@@ -31,9 +31,9 @@ class ReviewOnBoarding extends StatefulWidget {
 }
 
 class _ReviewOnBoardingeState extends State<ReviewOnBoarding> {
-  List <ListNames> listChallenge = [ListNames(name: "Topic",id: "1",testCategory: TestCategory.TOPIC),ListNames(name: "Mock",id: "2",testCategory: TestCategory.MOCK),ListNames(name: "Bank",id: "3",testCategory: TestCategory.BANK),ListNames(name: "Saved",id: "4",testCategory: TestCategory.SAVED)];
-  // List <ListNames> listTopics = [ListNames(name: "Acids",id: "1"),ListNames(name: "Base",id: "2"),ListNames(name: "Capillary",id: "3")];
-  List <ListNames> selectedChallenge = [];
+  List <ListNamesReview> listChallenge = [ListNamesReview(name: "Topic",id: "1",testCategory: TestCategory.TOPIC),ListNamesReview(name: "Mock",id: "2",testCategory: TestCategory.MOCK),ListNamesReview(name: "Bank",id: "3",testCategory: TestCategory.BANK),ListNamesReview(name: "Saved",id: "4",testCategory: TestCategory.SAVED)];
+  // List <ListNamesReview> listTopics = [ListNamesReview(name: "Acids",id: "1"),ListNamesReview(name: "Base",id: "2"),ListNamesReview(name: "Capillary",id: "3")];
+  List <ListNamesReview> selectedChallenge = [];
   List <TestNameAndCount> selectedListTopics = [];
   int _currentPage = 0;
   TestCategory? testCategory;
@@ -1086,11 +1086,11 @@ class _ReviewOnBoardingeState extends State<ReviewOnBoarding> {
 
 
 }
-class ListNames{
+class ListNamesReview{
   String name;
   String id;
   TestCategory? testCategory;
-  ListNames({this.name = '',this.id = '',this.testCategory});
+  ListNamesReview({this.name = '',this.id = '',this.testCategory});
 }
 
 

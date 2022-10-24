@@ -125,7 +125,7 @@ class GroupTestData {
   dynamic deletedAt;
   DateTime? createdAt;
   DateTime? updatedAt;
-  User? user;
+  UserOwner? user;
 
   factory GroupTestData.fromJson(Map<String, dynamic> json) => GroupTestData(
     id: json["id"] == null ? null : json["id"],
@@ -138,7 +138,7 @@ class GroupTestData {
     deletedAt: json["deleted_at"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
+    user: json["user"] == null ? null : UserOwner.fromJson(json["user"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -196,9 +196,9 @@ class ConfigurationsClass {
     countDown: json["count_down"] == null ? null : json["count_down"],
     showReview: json["show_review"] == null ? null : json["show_review"],
     testSource: json["test_source"] == null ? null : json["test_source"],
-    dueDateTime: json["due_dateTime"] == null ? null : DateTime.parse(json["due_dateTime"]),
+    dueDateTime: json["due_dateTime"] == null ? null :json["due_dateTime"].toString() == "null" ? null :  DateTime.parse(json["due_dateTime"]),
     showPassMark: json["show_pass_mark"] == null ? null : json["show_pass_mark"],
-    startDatetime: json["start_datetime"] == null ? null : DateTime.parse(json["start_datetime"]),
+    startDatetime: json["start_datetime"] == null ? null :json["start_datetime"].toString() == "null" ? null :  DateTime.parse(json["start_datetime"]),
     showInstantResult: json["show_instant_result"] == null ? null : json["show_instant_result"],
     type: json["type"] == null ? null : json["type"],
   );
@@ -220,8 +220,8 @@ class ConfigurationsClass {
   };
 }
 
-class User {
-  User({
+class UserOwner {
+  UserOwner({
     this.id,
     this.name,
     this.role,
@@ -235,7 +235,7 @@ class User {
   bool? isAgent;
   bool? isGroupCreator;
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory UserOwner.fromJson(Map<String, dynamic> json) => UserOwner(
     id: json["id"] == null ? null : json["id"],
     name: json["name"] == null ? null : json["name"],
     role: json["role"] == null ? null : json["role"],

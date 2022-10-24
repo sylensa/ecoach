@@ -5,6 +5,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/speed/speed_quiz_menu.dart';
 import 'package:ecoach/views/test/test_challenge_list.dart';
+import 'package:ecoach/widgets/adeo_duration_input.dart';
 import 'package:ecoach/widgets/buttons/adeo_outlined_button.dart';
 
 import 'package:ecoach/widgets/layouts/test_introit_layout_speed.dart';
@@ -25,9 +26,10 @@ class SpeedTestQuestionMode extends StatefulWidget {
 }
 
 class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
-  String durationLeft = '';
-  String durationRight = '';
-  String duration = '';
+  // String durationLeft = '';
+  // String durationRight = '';
+  // String duration = '';
+  Duration? duration ;
   late FocusNode focusNode, focusNode2, numberFocus;
   @override
   void initState() {
@@ -56,38 +58,43 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 120.0,
-                    child: PinInput(
-                      length: 2,
-                      focusNode: focusNode,
-                      textColor: Colors.white,
-                      onChanged: (v) {
-                        setState(() {
-                          durationLeft = v.split('').join('');
-                          if (durationLeft.length > 1) {
-                            focusNode2.requestFocus();
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                  Text(':', style: kPinInputTextStyle),
-                  Container(
-                    width: 120.0,
-                    child: PinInput(
-                      autoFocus: durationLeft.length == 2,
-                      focusNode: focusNode2,
-                      length: 2,
-                      textColor: Colors.white,
-                      onChanged: (v) {
-                        setState(() {
-                          durationRight = v.split('').join('');
-                          print('......Done');
-                        });
-                      },
-                    ),
-                  )
+                  AdeoDurationInput(onDurationChange: (d) {
+                    setState(() {
+                      duration = d;
+                    });
+                  }),
+                  // Container(
+                  //   width: 120.0,
+                  //   child: PinInput(
+                  //     length: 2,
+                  //     focusNode: focusNode,
+                  //     textColor: Colors.white,
+                  //     onChanged: (v) {
+                  //       setState(() {
+                  //         durationLeft = v.split('').join('');
+                  //         if (durationLeft.length > 1) {
+                  //           focusNode2.requestFocus();
+                  //         }
+                  //       });
+                  //     },
+                  //   ),
+                  // ),
+                  // Text(':', style: kPinInputTextStyle),
+                  // Container(
+                  //   width: 120.0,
+                  //   child: PinInput(
+                  //     autoFocus: durationLeft.length == 2,
+                  //     focusNode: focusNode2,
+                  //     length: 2,
+                  //     textColor: Colors.white,
+                  //     onChanged: (v) {
+                  //       setState(() {
+                  //         durationRight = v.split('').join('');
+                  //         print('......Done');
+                  //       });
+                  //     },
+                  //   ),
+                  // )
                 ],
               ),
             ],
@@ -98,45 +105,57 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
               AdeoOutlinedButton(
                 label: 'Next',
                 onPressed: () async {
-                  if (durationRight.length > 0) {
-                    showLoaderDialog(context, message: "loading questions");
+                  if (duration != null) {
+                    print(duration!.inSeconds);
+                    if(duration!.inSeconds > 0){
+                      showLoaderDialog(context, message: "loading questions");
 
-                    int min = int.parse(durationLeft);
-                    int sec = int.parse(durationRight);
-                    int time = (min * 60) + sec;
+                      int min = duration!.inMinutes;
+                      int sec = duration!.inSeconds;
+                      int time = (min * 60) + sec;
 
-                    Navigator.pop(context);
-                    if (widget.mode == "question") {
-                      Navigator.push(
+                      Navigator.pop(context);
+                      print("speedTestMode:$speedTestMode");
+                      if (speedTestMode == "quiz") {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return TestChallengeList(
+                                testType: TestType.SPEED,
+                                course: widget.course,
+                                user: widget.user,
+                                time: time,
+                                mode: widget.mode,
+                              );
+                            },
+                          ),
+                        );
+                      }
+                      else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return SpeedQuizMenu(
+                                controller: MarathonController(
+                                    widget.user, widget.course,
+                                    type: TestType.SPEED,
+                                    time: time,
+                                    name: widget.course.name!),
+                                time: time,
+                              );
+                            },
+                          ),
+                        );
+                      }
+                    }else{
+                      showFeedback(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return TestChallengeList(
-                              testType: TestType.SPEED,
-                              course: widget.course,
-                              user: widget.user,
-                              time: time,
-                            );
-                          },
-                        ),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return SpeedQuizMenu(
-                              controller: MarathonController(
-                                  widget.user, widget.course,
-                                  type: TestType.SPEED,
-                                  time: time,
-                                  name: widget.course.name!),
-                              time: time,
-                            );
-                          },
-                        ),
+                        'Enter a valid duration2',
                       );
                     }
+
                   } else
                     showFeedback(
                       context,

@@ -1425,6 +1425,7 @@ class _GroupPageState extends State<GroupPage> {
     getAnnouncement();
     getGroupTest();
     listGroupTestData.clear();
+
     super.initState();
   }
 
@@ -2420,13 +2421,11 @@ class _GroupPageState extends State<GroupPage> {
                                 GestureDetector(
                                   onTap: () async{
                                     if(listActivePackageData[0].maxTests == listGroupTestData.length){
-                                      toastMessage("You've reach your maximum number of groups for this package");
+                                      toastMessage("You've reach your maximum number of test for this package");
                                     }else{
                                       groupID = widget.groupListData!.id.toString();
-                                      await goTo(context, TestCreation());
-                                      setState((){
-
-                                      });
+                                      await goTo(context, TestCreation(groupListData: widget.groupListData!,));
+                                      setState((){});
                                     }
 
                                   },

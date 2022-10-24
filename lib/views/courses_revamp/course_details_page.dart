@@ -1,18 +1,25 @@
+import 'dart:convert';
+
+import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/notes_read_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/subscription.dart';
+import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
@@ -60,7 +67,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   bool topicsProgressCode = true;
   bool isTopicSelected = true;
   PageController pageController = PageController();
-
+  Future? stats;
   Map<String, Widget> getPage() {
     switch (_currentPage) {
       case 0:
@@ -77,7 +84,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
         return {'Games': GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,)};
 
       case 5:
-        return {'Progress': ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,)};
+        return {'Progress': ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,)};
 
     }
     return {'': Container()};
@@ -144,6 +151,30 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
           print("topics:${topics.length}");
       });
     }
+    getAnalysisStats(){
+      SubscriptionItemDB().allSubscriptionItems().then((List<SubscriptionItem> subscriptions) {
+        if (subscriptions.length > 0) {
+          stats = getCourseStats(course!.id!);
+        }
+
+        setState(() {
+
+        });
+      });
+    }
+  getCourseStats(int courseId) {
+    return ApiCall<Report>(
+      AppUrl.report,
+      user: widget.user,
+      params: {'course_id': jsonEncode(courseId)},
+      isList: false,
+      create: (data) {
+        setState((){
+        });
+        return Report.fromJson(data);
+      },
+    ).get(context);
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -151,6 +182,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     getNotesTopics(widget.courses[0]);
     course = widget.courses[0];
     listCourseDetails.add(courseDetails[0]);
+    getAnalysisStats();
   }
   @override
   Widget build(BuildContext context) {
@@ -190,6 +222,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                               topics.clear();
                               topicsProgressCode = true;
                               course = value;
+                              getAnalysisStats();
                             });
                            await getNotesTopics(course!);
                           },
@@ -197,7 +230,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                 (item) => DropdownMenuItem<Course>(
                               value: item,
                               child: Container(
-                                width: appWidth(context) * 0.54,
+                                width: appWidth(context) * 0.52,
                                 child: sText(
                                   "${item.name}",
                                  color: kAdeoGray3,

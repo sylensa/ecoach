@@ -22,7 +22,7 @@ class _CreateGroupState extends State<CreateGroup> {
   TextEditingController groupNameController = TextEditingController();
   TextEditingController groupDescriptionController = TextEditingController();
   bool switchOn = false;
-  bool status = true;
+  bool status = false;
   createGroup() async {
     var res = await doPost(AppUrl.groups, {
       "name": groupNameController.text,
@@ -233,6 +233,11 @@ class _CreateGroupState extends State<CreateGroup> {
                             onToggle: (val) {
                               setState(() {
                                 switchOn = val;
+                                if(switchOn){
+                                  status = true;
+                                }else{
+                                  status = false;
+                                }
                               });
                             },
                           ),
@@ -250,6 +255,7 @@ class _CreateGroupState extends State<CreateGroup> {
                     SizedBox(
                       height: 20,
                     ),
+                    if(switchOn)
                     MaterialButton(
                       onPressed: () {
                         setState(() {

@@ -3,6 +3,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_questions.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
@@ -128,28 +129,55 @@ class SpeedQuizCover extends StatelessWidget {
               AdeoOutlinedButton(
                 label: 'Start',
                 onPressed: () async {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return SpeedQuizView(
-                          type,
-                          controller: QuizController(
-                            user,
-                            course!,
-                            questions: questions,
-                            level: level,
-                            name: name,
-                            time: time,
-                            type: type,
-                            challengeType: category,
-                          ),
-                          theme: theme,
-                          diagnostic: diagnostic,
-                        );
-                      },
-                    ),
-                  );
+                  if(speedTestMode == "quiz"){
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return QuizQuestion(
+                            controller: QuizController(
+                              user,
+                              course!,
+                              questions: questions,
+                              level: level,
+                              name: name,
+                              time: time,
+                              type: type,
+                              challengeType: category,
+                            ),
+                            theme: theme,
+                            diagnostic: diagnostic,
+                          );
+                        },
+                      ),
+                    );
+                  }else{
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return SpeedQuizView(
+                            type,
+                            controller: QuizController(
+                              user,
+                              course!,
+                              questions: questions,
+                              level: level,
+                              name: name,
+                              time: time,
+                              type: type,
+                              challengeType: category,
+                            ),
+                            theme: theme,
+                            diagnostic: diagnostic,
+                          );
+                        },
+                      ),
+                    );
+                  }
+
+
                 },
               )
             ],

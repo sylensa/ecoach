@@ -11,6 +11,7 @@ import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/courses_revamp/no_susbcription.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,10 @@ class _CoursesPageState extends State<CoursesPage> {
   List<Subscription> selectedSubscription = [];
   getUserSubscriptions()async{
     context.read<DownloadUpdate>().plans = await widget.controller.makeSubscriptionsCall();
+    if(context.read<DownloadUpdate>().plans .isEmpty){
+      await goTo(context, NoSubscriptionsPage(controller: widget.controller,user: widget.user,));
+    }
+    if(mounted)
     setState(() {
       progressCode = false;
     });

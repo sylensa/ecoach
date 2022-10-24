@@ -107,7 +107,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
       timerController.start();
     });
     setState(() {
-      duration = resetDuration;
+      // duration = resetDuration;
     });
   }
 
@@ -121,13 +121,12 @@ class _QuizQuestionState extends State<QuizQuestion> {
       return;
     }
     await Future.delayed(Duration(milliseconds: 200));
+    await currentCorrectScoreState();
 
     setState(() {
-      currentCorrectScoreState();
       currentQuestion++;
 
-      pageController.nextPage(
-          duration: Duration(milliseconds: 1), curve: Curves.ease);
+      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
 
       // numberingController.scrollTo(
       //     index: currentQuestion,
@@ -212,6 +211,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
   }
 
   completeQuiz() async {
+    await scoreCurrentQuestion(widget.controller.questions[currentQuestion]);
     if (!controller.disableTime) {
       timerController.pause();
     }
@@ -355,7 +355,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
 
   bool _isBannerAdReady = false;
 
-  currentCorrectScoreState() {
+  currentCorrectScoreState() async{
     setState(() {
       if (widget.controller.questions[currentQuestion].isCorrect) {
         isCorrect = true;
@@ -363,6 +363,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
         isCorrect = false;
       }
     });
+   await scoreCurrentQuestion(widget.controller.questions[currentQuestion]);
   }
 
   getWithoutSpaces(String s) {
@@ -814,16 +815,9 @@ class _QuizQuestionState extends State<QuizQuestion> {
                                           durationStart = dateFormat.parse(
                                               DateFormat('hh:mm:ss')
                                                   .format(DateTime.now()));
-                                          if (!savedTest &&
-                                                  currentQuestion ==
-                                                      controller.questions
-                                                              .length -
-                                                          1 ||
-                                              (enabled &&
-                                                  controller.speedTest &&
-                                                  currentQuestion ==
-                                                      finalQuestion)) {
-                                            completeQuiz();
+                                          if (!savedTest && currentQuestion == controller.questions.length - 1 ||(enabled && controller.speedTest && currentQuestion == finalQuestion)) {
+                                            // completeQuiz();
+                                            nextButton();
                                           } else {
                                             nextButton();
                                           }

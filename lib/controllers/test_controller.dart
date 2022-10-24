@@ -1,5 +1,6 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/database/answers.dart';
+import 'package:ecoach/database/conquest_test_taken_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/treadmill_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -125,7 +126,9 @@ class TestController {
   saveTestTaken(TestTaken test) {
     TestTakenDB().insert(test);
   }
-
+  saveConquestTestTaken(TestTaken test) {
+    ConquestTestTakenDB().conquestInsert(test);
+  }
   Future<List<Question>> getQuizQuestions(int quizId, {int? limit = 40}) {
     return QuizDB().getQuestions(quizId, limit!);
   }
@@ -333,8 +336,7 @@ class TestController {
     return testNames;
   }
 
-  Future<int> getTopicAnsweredCount(int courseId, int topicId,
-      {bool onlyAttempted = false, bool onlyCorrect = false}) async {
+  Future<int> getTopicAnsweredCount(int courseId, int topicId, {bool onlyAttempted = false, bool onlyCorrect = false}) async {
     List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
@@ -361,6 +363,8 @@ class TestController {
 
     return topicIds.length;
   }
+
+
 
   Future<double> getTopicAnsweredAverageScore(
     int courseId,

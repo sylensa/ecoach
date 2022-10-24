@@ -228,7 +228,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              itemBuilder: (BuildContext context, int index){
                                return GestureDetector(
                                  onTap: (){
-                                   goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
+                                   if(myGroupList[index].owner!.id != widget.user.id){
+                                     goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
+                                   }else{
+                                     toastMessage("You're the owner of this group");
+                                   }
                                  },
                                  child: Row(
                                    children: [
@@ -504,10 +508,10 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             MaterialButton(
                               padding: EdgeInsets.zero,
                               onPressed: ()async{
-                                if(groupByCategory[i].isMember! == 1){
+                                if(groupByCategory[i].isMember! == 1 &&  groupByCategory[i].owner!.id != widget.user.id){
                                   goTo(context, GroupActivity(widget.user,groupData: groupByCategory[i]));
                                 }else{
-                                  GroupListData groupList =  await goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                                  GroupListData groupList =  await goTo(context, GroupDetails(user: widget.user,groupData: groupByCategory[i],));
                                   groupByCategory[i] = groupList;
                                 }
                                 setState((){
@@ -538,14 +542,15 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         return    MaterialButton(
                           padding: EdgeInsets.zero,
                           onPressed: ()async{
-                            if(groupBySearch[index].isMember! == 1){
-                              goTo(context, GroupActivity(widget.user,groupData: groupBySearch[index]));
+                            if(groupBySearch[index].owner!.id != widget.user.id){
+                              GroupListData groupList =  await  goTo(context, GroupDetails(user: widget.user,groupData: groupBySearch[index]));
+                             setState(() {
+                               groupBySearch[index] = groupList;
+                             });
                             }else{
-                            GroupListData groupList =  await goTo(context, GroupDetails(groupData: groupBySearch[index],));
-                            groupBySearch[index] = groupList;
+                              toastMessage("You're the owner of this group");
                             }
-                            setState((){
-                            });
+
                           },
                           child:groupListWidget(groupBySearch[index]),
                         );

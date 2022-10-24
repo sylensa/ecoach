@@ -13,7 +13,7 @@ import 'package:ecoach/models/question.dart';
 enum ProgressIndicatorSize { small, large }
 enum Sizes { small, medium, large }
 enum ExamScore { CORRECTLY_ANSWERED, WRONGLY_ANSWERED, NOT_ATTEMPTED }
-enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, DIAGNOSTIC, NONE }
+enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, DIAGNOSTIC, NONE,UNSEEN,UNANSWERED,WRONGLYANSWERED }
 enum TestCategory { MOCK, EXAM, TOPIC, ESSAY, SAVED, BANK, NONE }
 enum TestMode { LIVE, PRACTISE, COMPLETED, CONTINUE, NEW }
 enum CardVariant { LIGHT, DARK }
@@ -48,4 +48,8 @@ List<Messages> chatBetweenListDate = [];
 List<Messages> groupChatBetweenListDate = [];
 List<GroupListData> myGroupList= [];
 String errorMessage = '';
+String speedTestMode = '';
 
+const double kAdeoPaddingValue = 40;
+const double kAdeoBorderRadiusValue = 10;
+const double kAdeoBorderRadiusValueLg = 15;

@@ -95,7 +95,7 @@ class _TestCreationTestTypeListState extends State<TestCreationTestTypeList> {
                   padding: EdgeInsets.zero,
                   onPressed: (){
                     groupTestId = listTopics[index].id.toString();
-                    goTo(context, TestConfigurations(testName: listTopics[index].name,));
+                    // goTo(context, TestConfigurations(testName: listTopics[index].name,));
                   },
                   child: Container(
                     padding: appPadding(20),

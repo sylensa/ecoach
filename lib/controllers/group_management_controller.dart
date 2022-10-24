@@ -102,7 +102,7 @@ class GroupManagementController{
   Future<GroupListData?> getGroupDetails()async {
     GroupListData? groupListDetails;
     try{
-      var js = await doGet('${AppUrl.groups}');
+      var js = await doGet('${AppUrl.groups}/$groupId');
       print("res groups : $js");
       if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
         groupListDetails = GroupListData.fromJson(js["data"]);
@@ -643,9 +643,9 @@ class GroupManagementController{
       String queryUrl = AppUrl.userGroups + '?' + Uri(queryParameters: params).query;
       var js = await doGet(queryUrl);
       print("res groups category : ${js["data"]}");
-      if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
-        for(int i =0; i < js["data"]["data"].length; i++){
-            GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
+      if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
+        for(int i =0; i < js["data"].length; i++){
+            GroupListData groupListData = GroupListData.fromJson(js["data"][i]);
             groupListDetails.add(groupListData);
         }
         return groupListDetails;
@@ -777,10 +777,11 @@ class GroupManagementController{
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
       var res = await doGet("${AppUrl.userGroupNotification}/notifications?upcoming=true",);
-      print("res:$res");
+      print("res upcoming:${res["data"]["data"]}");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
+          print("groups:${res["data"]["data"][i]["group"]}");
           if(!groupNotificationData.viewed!){
             listGroupNotificationData.add(groupNotificationData);
           }
@@ -798,7 +799,7 @@ class GroupManagementController{
   }
   Future<List<GroupNotificationData>>  getUpcomingAllGroupNotifications() async {
     List<GroupNotificationData> listGroupNotificationData = [];
-    try{
+    // try{
       var res = await doGet("${AppUrl.userGroupNotification}/notifications",);
       print("res notifications:$res");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
@@ -815,10 +816,10 @@ class GroupManagementController{
         toastMessage("${res["message"]}");
         return listGroupNotificationData;
       }
-    }catch(e){
-      print(e.toString());
-      return listGroupNotificationData;
-    }
+    // }catch(e){
+    //   print(e.toString());
+    //   return listGroupNotificationData;
+    // }
   }
 
   Future<List<TopicStat>>  getGroupPerformance() async {

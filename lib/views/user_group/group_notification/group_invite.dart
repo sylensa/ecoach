@@ -237,6 +237,8 @@ class _GroupInviteState extends State<GroupInvite> {
     if (isConnected) {
       myGroupList = await GroupManagementController().getJoinGroupList();
       Navigator.pop(context);
+      widget.groupNotificationData!.viewed = true;
+      widget.groupNotificationData!.group!.isMember = 1;
       showDialogOk(context: context,message: "You've successfully join the group");
     } else {
       Navigator.pop(context);
@@ -443,9 +445,10 @@ class _GroupInviteState extends State<GroupInvite> {
 
                       ],
                     ),
+
                     Column(
                       children: [
-                        if(widget.groupNotificationData!.group!.settings != null)
+                        if(widget.groupNotificationData!.group!.settings != null && widget.groupNotificationData!.group!.isMember != 1)
                           if(widget.groupNotificationData!.group!.settings!.access!.toLowerCase() != "free")
                         GestureDetector(
                           onTap: (){
@@ -461,7 +464,8 @@ class _GroupInviteState extends State<GroupInvite> {
                             ),
                             child: Center(child: sText("Pay & Join",color: Colors.white,weight: FontWeight.w500)),
                           ),
-                        ) else  GestureDetector(
+                        )
+                          else  GestureDetector(
                             onTap: (){
                               showRevokeDialog(context: context,message: "Accept",type:"join");
                             },
@@ -476,9 +480,9 @@ class _GroupInviteState extends State<GroupInvite> {
                               child: Center(child: sText("Accept",color: Colors.white,weight: FontWeight.w500)),
                             ),
                           ),
-
                         SizedBox(height: 20,),
                         if(widget.groupNotificationData!.group!.settings == null)
+                          if(widget.groupNotificationData!.group!.isMember != 1)
                         GestureDetector(
                           onTap: (){
                             showRevokeDialog(context: context,message: "Accept",type:"join");

@@ -30,7 +30,7 @@ class _EmptyGroupMembersState extends State<EmptyGroupMembers> {
       try{
         if(await GroupManagementController(groupId: widget.groupListData!.id.toString()).inviteToGroup(email)){
           Navigator.pop(context);
-          goTo(context, GroupPage(groupListData:widget.groupListData));
+          goTo(context, GroupPage(groupListData:widget.groupListData),replace: true);
         }else{
           Navigator.pop(context);
         }
