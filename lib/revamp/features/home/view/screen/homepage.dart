@@ -534,33 +534,17 @@ class _HomePage2ContentState extends State<DashboardContent> {
                                   ),
                                 ),
                                 SizedBox(height: 20),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 0,
-                                  ),
-                                  constraints: BoxConstraints(
-                                    maxHeight: 435,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                        ),
-                                        child:
-                                        FreeAccessmentWidget(widget.user),
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 24,),
+                                      child: FreeAccessmentWidget(widget.user),
+                                    ),
 
-                                      ),
-                                      // SizedBox(
-                                      //   height: 32,
-                                      // ),
-                                      Expanded(
-                                        child: GroupClass(
-                                          user: widget.user,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    // GroupClass(
+                                    //   user: widget.user,
+                                    // ),
+                                  ],
                                 ),
                                 SizedBox(height: 10),
                                 Padding(

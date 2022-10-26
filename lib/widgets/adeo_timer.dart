@@ -46,8 +46,7 @@ class _AdeoTimerState extends State<AdeoTimer> {
 }
 
 class TimerController {
-  final CountdownController _controller =
-      new CountdownController(autoStart: true);
+  final CountdownController _controller = new CountdownController(autoStart: true);
 
   TimerController() {}
 

@@ -78,10 +78,10 @@ class _MainHomePageState extends State<MainHomePage>
         },
         controller: mainController,
       ),
-      // GroupMainPage(widget.user),
-      UserGroupPage(widget.user),
+
+      // UserGroupPage(widget.user),
       CoursesPage(widget.user,mainController,planId: widget.planId,),
-      AnalysisView(user: widget.user),
+      // AnalysisView(user: widget.user),
       // MoreView(
       //   widget.user,
       //   controller: mainController,
@@ -266,15 +266,15 @@ class _MainHomePageState extends State<MainHomePage>
               'active': Icons.home_filled,
               'inactive': Icons.home_outlined,
             },
-            {
-              'active': Icons.group_add_rounded,
-              'inactive': Icons.group_add_outlined,
-            },
+            // {
+            //   'active': Icons.group_add_rounded,
+            //   'inactive': Icons.group_add_outlined,
+            // },
             {'active': Icons.school_rounded, 'inactive': Icons.school_outlined},
-            {
-              'active': Icons.bar_chart,
-              'inactive': Icons.bar_chart_outlined,
-            },
+            // {
+            //   'active': Icons.bar_chart,
+            //   'inactive': Icons.bar_chart_outlined,
+            // },
             {
               'active': Icons.account_circle_rounded,
               'inactive': Icons.account_circle_outlined,

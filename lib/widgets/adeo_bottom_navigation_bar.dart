@@ -24,7 +24,7 @@ class AdeoBottomNavigationBar extends StatelessWidget {
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: items.map((item) {
           int index = items.indexOf(item);
 
