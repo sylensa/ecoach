@@ -94,11 +94,13 @@ class TreadmillController {
     speedtimerController!.pause();
     int time = DateTime.now().difference(questionTimer).inSeconds;
     questions[currentQuestion].addTime(time);
+    print("pause timer");
   }
 
   resumeTimer() {
     speedtimerController!.start();
     questionTimer = DateTime.now();
+    print("resume timer");
   }
 
   resetTimer() {

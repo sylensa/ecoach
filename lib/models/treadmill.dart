@@ -168,13 +168,14 @@ class TreadmillProgress {
     return total;
   }
 
-  void set times(int t) {
-    time = t;
-  }
+  // void set times(int t) {
+  //   time = t;
+  // }
 
   void addTime(int t) {
     questionTimes.add(t);
     time = times;
+    print("time=------> $time");
   }
 
   factory TreadmillProgress.fromJson(Map<String, dynamic> json) =>

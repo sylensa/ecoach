@@ -252,6 +252,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     if (controller.lastQuestion) {
       testTaken = controller.getTest();
 
+      controller.resumeTimer();
       completeQuiz();
     } else {
       setState(() {
