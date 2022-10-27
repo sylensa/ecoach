@@ -132,11 +132,11 @@ class TestTakenDB {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
      if(courseId == "0"){
-       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where challenge_type IS NOT NULL");
+       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken");
      }else{
-       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL");
+       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"'");
      }
-    print("object maps len:${maps.length}");
+    print("object maps len:${maps}");
     List<TestTaken> tests = [];
     for (int i = 0; i < maps.length; i++) {
       TestTaken test = TestTaken.fromJson(maps[i]);
@@ -275,6 +275,12 @@ class TestTakenDB {
       'tests_taken',
       where: "id = ?",
       whereArgs: [id],
+    );
+  }
+  deleteAll() async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'tests_taken',
     );
   }
 

@@ -127,7 +127,7 @@ class QuizCover extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) => MainHomePage(
                                       user,
-                                      index: 4,
+                                      index: 2,
                                     ),
                                   ),
                                   (Route<dynamic> route) => true,

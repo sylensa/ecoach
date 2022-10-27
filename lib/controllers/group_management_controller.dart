@@ -852,7 +852,7 @@ class GroupManagementController{
     List<TestTaken> listTestTaken = [] ;
     // try{
     var res = await doGet("${AppUrl.userGroup}/tests/taken?group_id=$groupId",);
-    print("performance:${res["data"].length}");
+    print("getGroupTestTaken:${res["data"]}");
     if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
       for(int i =0; i < res["data"]["data"].length; i++){
         TestTaken  testTaken = TestTaken.fromJson(res["data"]["data"][i]);
@@ -865,6 +865,27 @@ class GroupManagementController{
     }else{
       toastMessage("${res["message"]}");
     }
+    // }catch(e){
+    //   print(e.toString());
+    // }
+  }
+    getTestTaken() async {
+    List<TestTaken> listTestTaken = [] ;
+    // try{
+    var res = await doGet("${AppUrl.userGroup}/tests/taken",);
+    print("getGroupTestTaken:${res["data"]}");
+    if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
+      for(int i =0; i < res["data"]["data"].length; i++){
+        TestTaken  testTaken = TestTaken.fromJson(res["data"]["data"][i]);
+        listTestTaken.add(testTaken);
+        print("group_id:${testTaken.groupId}");
+       await  TestTakenDB().delete(testTaken.id!);
+      }
+      TestTakenDB().insertAll(listTestTaken);
+    }else{
+      toastMessage("${res["message"]}");
+    }
+    return listTestTaken;
     // }catch(e){
     //   print(e.toString());
     // }

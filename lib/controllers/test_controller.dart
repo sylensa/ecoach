@@ -175,7 +175,7 @@ class TestController {
     return topicsMap;
   }
 
-  Future<List<Question>> getAllQuestions(TestTaken test) async {
+  Future<List<Question>> getAllQuestions(TestTaken test,{int? topicId}) async {
     String responses = test.responses;
     // print("respones:");
 
@@ -193,8 +193,12 @@ class TestController {
     for (int i = 0; i < answers!.length; i++) {
       TestAnswer answer = answers[i];
       //  print("answer questionId:${answer.questionId}");
-      Question? question =
-          await QuestionDB().getQuestionById(answer.questionId!);
+      Question? question;
+      if(topicId == null){
+        question = await QuestionDB().getQuestionById(answer.questionId!);
+      }else{
+        question = await QuestionDB().getQuestionByIdTopicId(answer.questionId!,topicId);
+      }
       if (question != null) {
         if (answer.selectedAnswerId != null) {
           question.selectedAnswer =
@@ -205,6 +209,7 @@ class TestController {
       }
     }
 
+    print("questions:${questions.length}");
     return questions;
   }
 

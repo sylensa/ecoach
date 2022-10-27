@@ -72,8 +72,7 @@ class _ResultsViewState extends State<ResultsView> {
         });
       });
 
-      List<Question> questions =
-          await TestController().getAllQuestions(widget.test);
+      List<Question> questions = await TestController().getAllQuestions(widget.test);
 
       print("questions=${questions.length}");
       for (int i = 0; i < questions.length; i++) {

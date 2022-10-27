@@ -391,8 +391,18 @@ class _HomePage2ContentState extends State<DashboardContent> {
     super.dispose();
   }
 
-  getCourseById(int id) {
-    // return CourseDB().getCourseById(id);
+  getSubscriptionItem() {
+    SubscriptionItemDB().allSubscriptionItems().then((List<SubscriptionItem> subscriptions) {
+      if (subscriptions.length > 0) {
+        this.subscriptions = subscriptions;
+        this.subscription = subscriptions[0];
+      }else{
+        getSubscriptionItem();
+      }
+      setState(() {
+        progressCode = false;
+      });
+    });
   }
 
   @override
@@ -402,6 +412,8 @@ class _HomePage2ContentState extends State<DashboardContent> {
       if (subscriptions.length > 0) {
         this.subscriptions = subscriptions;
         this.subscription = subscriptions[0];
+      }else{
+        getSubscriptionItem();
       }
       setState(() {
         progressCode = false;

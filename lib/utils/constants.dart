@@ -9,6 +9,7 @@ import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 
 enum ProgressIndicatorSize { small, large }
 enum Sizes { small, medium, large }
@@ -49,7 +50,7 @@ List<Messages> groupChatBetweenListDate = [];
 List<GroupListData> myGroupList= [];
 String errorMessage = '';
 String speedTestMode = '';
-
+List<TestTaken> listTestTaken = [];
 const double kAdeoPaddingValue = 40;
 const double kAdeoBorderRadiusValue = 10;
 const double kAdeoBorderRadiusValueLg = 15;

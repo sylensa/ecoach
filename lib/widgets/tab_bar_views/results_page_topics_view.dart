@@ -62,8 +62,9 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
 
 
 
-  handleSelection(topic) {
+  handleSelection(topic) async{
     setState(() {
+      print("selected:$topic");
       selectAnsweredQuestions.clear();
       unSelectAnsweredQuestions.clear();
       if (selected == topic)
@@ -71,12 +72,22 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
       else
         selected = topic;
     });
+    if(selected == null){
+      await getAll(null);
+    }else{
+      await getAll(selected["topicId"]);
+    }
   }
 
 
-  getAll()async{
+  getAll(int? topicId)async{
     reviewQuestionsBack.clear();
-    List<Question> questions = await TestController().getAllQuestions(widget.testTaken!);
+    List<Question> questions = [];
+    if(selected == null){
+    questions = await TestController().getAllQuestions(widget.testTaken!,topicId: null);
+    }else{
+   questions = await TestController().getAllQuestions(widget.testTaken!,topicId: topicId);
+    }
     for(int i = 0; i < questions.length; i++){
       print("hmm:${questions[i].selectedAnswer}");
       // await  QuestionDB().insertTestQuestion(questions[i]);
@@ -92,7 +103,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
   @override
   void initState() {
     print("topics:${widget.topics}");
-    getAll();
+    getAll(null);
     showInPercentage = false;
     selected = null;
     super.initState();

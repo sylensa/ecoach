@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -153,13 +154,26 @@ class _ProgressChartState extends State<ProgressChart> {
     );
   }
 
+  getUserTestTakenResults()async{
+  listTestTaken =  await GroupManagementController().getTestTaken();
+   getAverageStats("exam");
+   getAverageStats("topic");
+   getAverageStats("other");
+  setState(() {
+
+  });
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getAverageStats("exam");
-    getAverageStats("topic");
-    getAverageStats("other");
+    // if(listTestTaken.isEmpty){
+    //   getUserTestTakenResults();
+    // }else{
+       getAverageStats("exam");
+       getAverageStats("topic");
+       getAverageStats("other");
+    // }
   }
 
   @override

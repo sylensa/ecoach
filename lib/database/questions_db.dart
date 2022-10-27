@@ -122,6 +122,17 @@ class QuestionDB {
 
     return question;
   }
+  Future<Question?> getQuestionByIdTopicId(int qid,int tid) async {
+    final db = await DBProvider.database;
+    var result = await db!.query("questions", where: "id = ? AND topic_id = ?", whereArgs: [qid,tid]);
+    Question? question =
+        result.isNotEmpty ? Question.fromJson(result.first) : null;
+    if (question != null) {
+      question.answers = await AnswerDB().questoinAnswers(question.id!);
+    }
+
+    return question;
+  }
 
   Future<List<Question>> getSavedTestQuestion() async {
     final db = await DBProvider.database;

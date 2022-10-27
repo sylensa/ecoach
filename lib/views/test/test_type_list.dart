@@ -110,7 +110,7 @@ class _MockListViewState extends State<TestTypeListView> {
                       MaterialPageRoute(
                         builder: (context) => MainHomePage(
                           widget.user,
-                          index: 4,
+                          index: 2,
                         ),
                       ),
                       (Route<dynamic> route) => true,
