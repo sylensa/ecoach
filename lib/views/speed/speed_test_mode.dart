@@ -106,14 +106,15 @@ class _SpeedTestQuestionModeState extends State<SpeedTestQuestionMode> {
                 label: 'Next',
                 onPressed: () async {
                   if (duration != null) {
-                    print(duration!.inSeconds);
                     if(duration!.inSeconds > 0){
                       showLoaderDialog(context, message: "loading questions");
 
                       int min = duration!.inMinutes;
                       int sec = duration!.inSeconds;
-                      int time = (min * 60) + sec;
-
+                      int time =  sec;
+                        print("time:$time");
+                        print("sec:${duration!.inSeconds}");
+                        print("min:${duration!.inMinutes}");
                       Navigator.pop(context);
                       print("speedTestMode:$speedTestMode");
                       if (speedTestMode == "quiz") {

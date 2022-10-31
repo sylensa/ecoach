@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
@@ -102,6 +103,7 @@ class TestChallengeList extends StatelessWidget {
                     data,
                     testType,
                     title: "Exams",
+                    time: time,
                     testCategory: TestCategory.EXAM,
                   );
                   break;
@@ -112,7 +114,6 @@ class TestChallengeList extends StatelessWidget {
                     data,
                     testType,
                     title: "Topic",
-
                     multiSelect: true,
                     time: time,
                     testCategory: TestCategory.TOPIC,
@@ -124,22 +125,24 @@ class TestChallengeList extends StatelessWidget {
                     course,
                     data,
                     testType,
+                    time: time,
                     title: "Essays",
                     testCategory: TestCategory.ESSAY,
                   );
                   break;
                 case TestCategory.SAVED:
                   List<Question> questions = data as List<Question>;
-                  widgetView = QuizCover(
-                    user,
-                    questions,
-                    category: testCategory,
-                    course: course,
-                    theme: QuizTheme.BLUE,
-                    time:
-                        testType == TestType.SPEED ? 30 : questions.length * 60,
-                    name: "Saved Test",
-                  );
+                    widgetView = QuizCover(
+                      user,
+                      questions,
+                      category: testCategory,
+                      course: course,
+                      theme: QuizTheme.BLUE,
+                      time: testType == TestType.SPEED ?  time! : questions.length * 60,
+                      name: "Saved Test",
+                    );
+
+
                   break;
                 case TestCategory.BANK:
                   widgetView = TestTypeListView(
@@ -147,6 +150,7 @@ class TestChallengeList extends StatelessWidget {
                     course,
                     data,
                     testType,
+                    time: time,
                     title: "Bank",
                     testCategory: TestCategory.BANK,
                   );
