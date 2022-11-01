@@ -1,4 +1,3 @@
-import 'package:ecoach/controllers/course_completion_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -18,8 +17,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/course_completion_study_progress.dart';
-import '../../new_ui_ben/providers/welcome_screen_provider.dart';
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class StudyCCResults extends StatefulWidget {
   const StudyCCResults({
@@ -188,18 +186,18 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                                 updatedAt: DateTime.now());
                             await StudyDB().insertProgress(progress);
 
-                            Course? course = Provider.of<WelcomeScreenProvider>(
+                            Course? course = Provider.of<LearnModeProvider>(
                                     context,
                                     listen: false)
                                 .currentCourse;
-
-                            CourseCompletionStudyProgress?
-                                completionStudyProgress = await StudyDB()
-                                    .getCurrentCourseCompletionProgressByCourse(
-                                        course!.id!);
-
-                            CourseCompletionStudyController()
-                                .updateInsertProgress(completionStudyProgress!);
+                            //
+                            // CourseCompletionStudyProgress?
+                            //     completionStudyProgress = await StudyDB()
+                            //         .getCurrentCourseCompletionProgressByCourse(
+                            //             course!.id!);
+                            //
+                            // CourseCompletionStudyController()
+                            //     .updateInsertProgress(completionStudyProgress!);
 
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(builder: (context) {

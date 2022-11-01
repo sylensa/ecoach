@@ -7,8 +7,8 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/speed_enhancement_progress_model.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
-import 'package:ecoach/new_ui_ben/screens/speed_improvement/level_container.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
+import 'package:ecoach/new_learn_mode/screens/speed_improvement/level_container.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/study/study_quiz_view.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +16,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/study_db.dart';
-import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
-import '../../new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
+import '../../new_learn_mode/screens/speed_improvement/speed_completion_rules.dart';
+import '../../new_learn_mode/screens/speed_improvement/speed_mode_selection.dart';
 
 class LearnSpeed extends StatefulWidget {
   static const String routeName = '/learning/speed';
@@ -152,7 +152,7 @@ class SecondComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<WelcomeScreenProvider>(
+    return Consumer<LearnModeProvider>(
       builder: (_, welcome, __) => FutureBuilder<SpeedStudyProgress?>(
           future: StudyDB()
               .getCurrentSpeedProgressLevelByCourse(welcome.currentCourse!.id!),

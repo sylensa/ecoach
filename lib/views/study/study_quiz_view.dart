@@ -1,5 +1,3 @@
-import 'package:ecoach/controllers/course_completion_controller.dart';
-import 'package:ecoach/controllers/revision_progress_controller.dart';
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
@@ -10,13 +8,13 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/revision_attempts_provider.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
-import 'package:ecoach/new_ui_ben/screens/revision/successful_revision.dart';
-import 'package:ecoach/new_ui_ben/screens/speed_improvement/speed_mode_selection.dart';
+import 'package:ecoach/new_learn_mode/controllers/course_completion_controller.dart';
+import 'package:ecoach/new_learn_mode/controllers/revision_progress_controller.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/revision_attempts_provider.dart';
+import 'package:ecoach/new_learn_mode/screens/revision/successful_revision.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
-import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/views/study/study_cc_results.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
@@ -28,18 +26,24 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/speed_study_controller.dart';
+import '../../controllers/quiz_controller.dart';
 import '../../database/study_db.dart';
 import '../../helper/helper.dart';
 import '../../models/course.dart';
+import '../../models/course_completion_study_progress.dart';
+import '../../models/flag_model.dart';
 import '../../models/revision_study_progress.dart';
 import '../../models/speed_enhancement_progress_model.dart';
-import '../../new_ui_ben/screens/mastery/mastery_improvement_topics.dart';
-import '../../new_ui_ben/widgets/answers_widget.dart';
-import '../../new_ui_ben/widgets/save_question_widget.dart';
+import '../../new_learn_mode/controllers/speed_study_controller.dart';
+import '../../new_learn_mode/screens/course_completion/choose_cc_mode.dart';
+import '../../new_learn_mode/screens/mastery/mastery_improvement_topics.dart';
+import '../../new_learn_mode/screens/speed_improvement/speed_mode_selection.dart';
+import '../../new_learn_mode/widgets/answers_widget.dart';
+import '../../new_learn_mode/widgets/save_question_widget.dart';
 import '../../revamp/core/utils/app_colors.dart';
 import '../../revamp/features/questions/view/widgets/actual_question.dart';
 import '../../utils/style_sheet.dart';
+import '../learn/learn_speed_enhancement.dart';
 import '../learn/learn_speed_enhancement_completion.dart';
 
 class StudyQuizView extends StatefulWidget {
@@ -72,6 +76,177 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   double avgScore = 0.0;
   late DateTime revisionStartTime;
 
+  List<ListNames> listReportsTypes = [
+    ListNames(name: "Select Error Type", id: "0"),
+    ListNames(name: "Typographical Mistake", id: "1"),
+    ListNames(name: "Wrong Answer", id: "2"),
+    ListNames(name: "Problem With The Question", id: "3")
+  ];
+  ListNames? reportTypes;
+  TextEditingController descriptionController = TextEditingController();
+  final FocusNode descriptionNode = FocusNode();
+
+  successModalBottomSheet(context, {Question? question}) {
+    double sheetHeight = 350.00;
+    bool isSubmit = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              // timerController.resume();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border:
+                                  Border.all(color: Colors.green, width: 15),
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.green,
+                            size: 100,
+                          )),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        child: sText("Error report successfully submitted",
+                            weight: FontWeight.bold,
+                            size: 20,
+                            align: TextAlign.center),
+                      )
+                    ],
+                  ));
+            },
+          );
+        });
+  }
+
+  failedModalBottomSheet(context, {Question? question}) {
+    double sheetHeight = 330.00;
+    bool isSubmit = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              // timerController.resume();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.red, width: 15),
+                              shape: BoxShape.circle),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 100,
+                          )),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 20),
+                        child: sText("Error report failed try again",
+                            weight: FontWeight.bold,
+                            size: 20,
+                            align: TextAlign.center),
+                      )
+                    ],
+                  ));
+            },
+          );
+        });
+  }
+
   calAvgScore() {
     double totalAverage = 0.0;
     // print("avg scoring current question= $unattempted");
@@ -91,8 +266,256 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   setStudyController() {
-    Provider.of<WelcomeScreenProvider>(context, listen: false)
+    Provider.of<LearnModeProvider>(context, listen: false)
         .setCurrentStudyController(controller);
+  }
+
+  reportModalBottomSheet(context, {Question? question}) async {
+    double sheetHeight = 440.00;
+    bool isSubmit = true;
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        isDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              if (controller.type ==
+                                      StudyType.SPEED_ENHANCEMENT ||
+                                  controller.type ==
+                                      StudyType.COURSE_COMPLETION) {
+                                controller.timerController!.resume();
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                right: 20,
+                              ),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 0,
+                      ),
+                      Container(
+                        child: Icon(
+                          Icons.warning,
+                          color: Colors.orange,
+                          size: 50,
+                        ),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.grey[200]),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        child: sText("Error Reporting",
+                            weight: FontWeight.bold, size: 20),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            SizedBox(
+                              height: 40,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(10)),
+                                padding: EdgeInsets.only(left: 12, right: 4),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<ListNames>(
+                                    value: reportTypes == null
+                                        ? listReportsTypes[0]
+                                        : reportTypes,
+                                    itemHeight: 48,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: kDefaultBlack,
+                                    ),
+                                    // onTap: (){
+                                    //   stateSetter((){
+                                    //     sheetHeight = 400;
+                                    //   });
+                                    // },
+
+                                    onChanged: (ListNames? value) {
+                                      stateSetter(() {
+                                        reportTypes = value;
+                                        sheetHeight = 700;
+                                        FocusScope.of(context)
+                                            .requestFocus(descriptionNode);
+                                      });
+                                    },
+                                    items: listReportsTypes
+                                        .map(
+                                          (item) => DropdownMenuItem<ListNames>(
+                                            value: item,
+                                            child: Text(
+                                              item.name,
+                                              style: TextStyle(
+                                                color: kDefaultBlack,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 40,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 20, right: 20),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      // autofocus: true,
+                                      controller: descriptionController,
+                                      focusNode: descriptionNode,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please check that you\'ve entered your email correctly';
+                                        }
+                                        return null;
+                                      },
+                                      onFieldSubmitted: (value) {
+                                        stateSetter(() {
+                                          sheetHeight = 440;
+                                        });
+                                      },
+                                      onTap: () {
+                                        stateSetter(() {
+                                          sheetHeight = 700;
+                                        });
+                                      },
+                                      decoration: textDecorNoBorder(
+                                        hint: 'Description',
+                                        radius: 10,
+                                        labelText: "Description",
+                                        hintColor: Colors.black,
+                                        fill: Colors.white,
+                                        padding: EdgeInsets.only(
+                                            left: 10, right: 10),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 40,
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          print("${reportTypes}");
+                          if (descriptionController.text.isNotEmpty) {
+                            if (reportTypes != null) {
+                              stateSetter(() {
+                                isSubmit = false;
+                              });
+                              try {
+                                FlagData flagData = FlagData(
+                                    reason: descriptionController.text,
+                                    type: reportTypes!.name,
+                                    questionId: question!.id);
+                                var res = await QuizController(
+                                        controller.user, controller.course,
+                                        name: "")
+                                    .saveFlagQuestion(
+                                        context, flagData, question.id!);
+                                print("final res:$res");
+                                if (res) {
+                                  stateSetter(() {
+                                    descriptionController.clear();
+                                  });
+                                  Navigator.pop(context);
+                                  successModalBottomSheet(context);
+                                } else {
+                                  Navigator.pop(context);
+                                  failedModalBottomSheet(context);
+                                  print("object res: $res");
+                                }
+                              } catch (e) {
+                                stateSetter(() {
+                                  isSubmit = true;
+                                });
+                                print("error: $e");
+                              }
+                            } else {
+                              toastMessage("Select error type");
+                            }
+                          } else {
+                            toastMessage("Description is required");
+                          }
+                        },
+                        child: Container(
+                          padding: appPadding(20),
+                          width: appWidth(context),
+                          color: isSubmit ? Colors.blue : Colors.grey,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              sText("Submit",
+                                  align: TextAlign.center,
+                                  weight: FontWeight.bold,
+                                  color: isSubmit ? Colors.white : Colors.black,
+                                  size: 25),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              isSubmit ? Container() : progress()
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ));
+            },
+          );
+        });
   }
 
   @override
@@ -116,20 +539,20 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       return;
     }
     setState(() {
-      if (controller.type == StudyType.COURSE_COMPLETION ||
-          controller.type == StudyType.MASTERY_IMPROVEMENT) {
-        setState(() {
-          if (answeredWrong) {
-            wrong++;
-            wasWrong = true;
-          } else {
-            correctAnswered++;
-            wasWrong = false;
-          }
-
-          calAvgScore();
-        });
-      }
+      // if (controller.type == StudyType.COURSE_COMPLETION ||
+      //     controller.type == StudyType.MASTERY_IMPROVEMENT) {
+      //   setState(() {
+      //     if (answeredWrong) {
+      //       wrong++;
+      //       wasWrong = true;
+      //     } else {
+      //       correctAnswered++;
+      //       wasWrong = false;
+      //     }
+      //
+      //     calAvgScore();
+      //   });
+      // }
 
       controller.currentQuestion++;
       showNext = false;
@@ -149,8 +572,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   notesButton() async {
-    Course course = Provider.of<WelcomeScreenProvider>(context, listen: false)
-        .currentCourse!;
+    Course course =
+        Provider.of<LearnModeProvider>(context, listen: false).currentCourse!;
 
     RevisionStudyProgress? revisionStudyProgress =
         await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
@@ -166,14 +589,23 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   endSpeedSession() async {
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-      return ChooseSpeedMode(
-          // controller.user,
-          // controller.course,
-          // controller.progress,
-          // page: 1,
+    if (controller.type == StudyType.SPEED_ENHANCEMENT) {
+      SpeedStudyProgressController().manageSpeedEnhancementLevels();
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) {
+        return ChooseSpeedMode();
+      }), ModalRoute.withName(LearnSpeed.routeName));
+    } else if (controller.type == StudyType.COURSE_COMPLETION) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return ChoseCourseCompletionMode(
+            continueOngoing: () {},
           );
-    }), ModalRoute.withName(LearnSpeed.routeName));
+        }),
+        ModalRoute.withName(LearnSpeed.routeName),
+      );
+    }
   }
 
   completeQuiz() async {
@@ -222,7 +654,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         revision.updatedAt = DateTime.now();
         print("revision update => ${revision.toMap()}");
         await StudyDB().updateRevisionProgress(revision);
-        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+        Provider.of<LearnModeProvider>(Get.context!, listen: false)
             .setCurrentRevisionStudyProgress(revision);
       }
 
@@ -250,7 +682,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         print("correct answer" + "${speed.toMap()}");
 
         StudyDB().updateSpeedProgressLevel(speed);
-        Provider.of<WelcomeScreenProvider>(context, listen: false)
+        Provider.of<LearnModeProvider>(context, listen: false)
             .setCurrentSpeedProgress(speed);
       }
 
@@ -273,7 +705,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       controller.updateProgressSection(2);
       print("level $level");
       final masteryTopics = await MasteryCourseDB().getMasteryTopicsUpgrade(
-          Provider.of<WelcomeScreenProvider>(context, listen: false)
+          Provider.of<LearnModeProvider>(context, listen: false)
               .currentCourse!
               .id!);
       if (masteryTopics.isEmpty) {
@@ -303,42 +735,70 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       return;
     }
 
-    Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(builder: (BuildContext context) {
-        if (StudyType.COURSE_COMPLETION == controller.type) {
-          CourseCompletionStudyController()
-              .recordAttempts(correctAnswered.toDouble());
-          return StudyCCResults(test: testTakenSaved!, controller: controller);
-        }
+    if (StudyType.COURSE_COMPLETION == controller.type) {
+      CourseCompletionStudyController()
+          .recordAttempts(correctAnswered.toDouble());
 
-        // if (StudyType.SPEED_ENHANCEMENT == controller.type) {
-        //   bool moveUp = controller.progress.section == null ||
-        //       controller.progress.section! <= 3;
-        //
-        //   if (moveUp) {
-        //     moveUp = controller.progress.passed!;
-        //     SpeedStudyProgressController().updateCCLevel(moveUp);
-        //   }
-        //   return LearnSpeedEnhancementCompletion(
-        //       progress: controller.progress,
-        //       moveUp: moveUp,
-        //       level: {
-        //         'level':
-        //             moveUp ? controller.nextLevel : controller.progress.level,
-        //         'duration': controller.resetDuration!.inSeconds,
-        //         'questions': 1
-        //       });
-        // }
-        return SuccessfulRevision();
-      }),
-    ).then((value) {
-      setState(() {
-        controller.currentQuestion = 0;
-        controller.reviewMode = true;
-        pageController.jumpToPage(controller.currentQuestion);
+      Course? course =
+          Provider.of<LearnModeProvider>(context, listen: false).currentCourse;
+
+      CourseCompletionStudyProgress? completionStudyProgress = await StudyDB()
+          .getCurrentCourseCompletionProgressByCourse(course!.id!);
+
+      CourseCompletionStudyController()
+          .updateInsertProgress(completionStudyProgress!);
+
+      Get.to(() =>
+              StudyCCResults(test: testTakenSaved!, controller: controller))!
+          .then((value) {
+        setState(() {
+          controller.currentQuestion = 0;
+          controller.reviewMode = true;
+          pageController.jumpToPage(controller.currentQuestion);
+        });
       });
-    });
+
+      return;
+    }
+
+    // Navigator.push<void>(
+    //   context,
+    //   MaterialPageRoute<void>(builder: (BuildContext context) {
+    //     if () {
+    //
+    //
+    //
+    //
+    //       return
+    //     }
+    //
+    //     // if (StudyType.SPEED_ENHANCEMENT == controller.type) {
+    //     //   bool moveUp = controller.progress.section == null ||
+    //     //       controller.progress.section! <= 3;
+    //     //
+    //     //   if (moveUp) {
+    //     //     moveUp = controller.progress.passed!;
+    //     //     SpeedStudyProgressController().updateCCLevel(moveUp);
+    //     //   }
+    //     //   return LearnSpeedEnhancementCompletion(
+    //     //       progress: controller.progress,
+    //     //       moveUp: moveUp,
+    //     //       level: {
+    //     //         'level':
+    //     //             moveUp ? controller.nextLevel : controller.progress.level,
+    //     //         'duration': controller.resetDuration!.inSeconds,
+    //     //         'questions': 1
+    //     //       });
+    //     // }
+    //     return SuccessfulRevision();
+    //   }),
+    // ).then((value) {
+    //   setState(() {
+    //     controller.currentQuestion = 0;
+    //     controller.reviewMode = true;
+    //     pageController.jumpToPage(controller.currentQuestion);
+    //   });
+    // });
   }
 
   viewResults() async {
@@ -347,7 +807,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
       controller.updateProgressSection(2);
       print("level $level");
       final masteryTopics = await MasteryCourseDB().getMasteryTopicsUpgrade(
-          Provider.of<WelcomeScreenProvider>(context, listen: false)
+          Provider.of<LearnModeProvider>(context, listen: false)
               .currentCourse!
               .id!);
       if (masteryTopics.isEmpty) {
@@ -456,9 +916,14 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     ),
                     IconButton(
                         onPressed: () async {
-                          // timerController.pause();
-                          // await reportModalBottomSheet(context,
-                          //     question: controller.questions[currentQuestion]);
+                          if (controller.type == StudyType.SPEED_ENHANCEMENT ||
+                              controller.type == StudyType.COURSE_COMPLETION) {
+                            controller.timerController!.pause();
+                          }
+
+                          await reportModalBottomSheet(context,
+                              question: controller
+                                  .questions[controller.currentQuestion]);
                         },
                         icon: Icon(
                           Icons.more_vert,
@@ -510,19 +975,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     const SizedBox(
                       width: 18.2,
                     ),
-                    // SvgPicture.asset(
-                    //   "assets/images/speed.svg",
-                    // ),
-                    // const SizedBox(
-                    //   width: 6.4,
-                    // ),
-                    // Text(
-                    //   "${avgTimeComplete()}s",
-                    //   style: TextStyle(
-                    //     fontSize: 10,
-                    //     color: Color(0xFF9EE4FF),
-                    //   ),
-                    // ),
                     const SizedBox(
                       width: 17.6,
                     ),
@@ -591,48 +1043,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                   ],
                 ),
               ),
-
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       CircularPercentIndicator(
-              //         radius: 25,
-              //         lineWidth: 3,
-              //         progressColor: Color(0xFF707070),
-              //         backgroundColor: Colors.transparent,
-              //         percent: controller.percentageCompleted,
-              //         center: Text(
-              //           "${controller.currentQuestion + 1}",
-              //           style:
-              //               TextStyle(fontSize: 14, color: Color(0xFF969696)),
-              //         ),
-              //       ),
-              //       Expanded(
-              //         child: Text(controller.name,
-              //             softWrap: true,
-              //             overflow: TextOverflow.ellipsis,
-              //             textAlign: TextAlign.center,
-              //             style: TextStyle(
-              //                 color: Color(0xFF15CA70),
-              //                 fontSize: 18,
-              //                 fontWeight: FontWeight.w500)),
-              //       ),
-              //       if (controller.type == StudyType.REVISION ||
-              //           controller.type == StudyType.MASTERY_IMPROVEMENT)
-              //         OutlinedButton(
-              //             onPressed: () {
-              //               showPauseDialog();
-              //             },
-              //             child: Text("Exit")),
-              // if (controller.type == StudyType.COURSE_COMPLETION ||
-              //     controller.type == StudyType.SPEED_ENHANCEMENT)
-              //   getTimerWidget(),
-              //     ],
-              //   ),
-              // ),
-
               Expanded(
                 child: Container(
                   child: PageView(
@@ -648,39 +1058,95 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                           type: controller.type,
                           // useTex: useTex,
                           callback: (Answer answer, correct) async {
-                            setState(() {
-                              if (correct) {
-                                answeredWrong = false;
-                                correctAnswered++;
-                              } else {
-                                wrong++;
-                                answeredWrong = true;
+                            if (controller.type ==
+                                StudyType.SPEED_ENHANCEMENT) {
+                              setState(() {
+                                ((controller) as SpeedController).resetTimer();
+                              });
+                              controller.timerController!.reset();
+                              // showNext = true;
+                            }
+
+                            if (correct) {
+                              answeredWrong = false;
+                              correctAnswered++;
+                            } else {
+                              wrong++;
+                              answeredWrong = true;
+                            }
+
+                            if (answeredWrong &&
+                                controller.type ==
+                                    StudyType.SPEED_ENHANCEMENT) {
+                              controller.enabled = false;
+                              showComplete = true;
+
+                              controller.timerController!.pause();
+
+                              SpeedStudyProgressController().showFailedDialog(
+                                isSuccess: false,
+                                action: () {
+                                  SpeedStudyProgressController()
+                                      .manageSpeedEnhancementLevels();
+
+                                  completeQuiz();
+                                },
+                              );
+
+                              return;
+                            }
+
+                            totalQuestionsAnswered++;
+                            calAvgScore();
+
+                            pageController.nextPage(
+                                duration: Duration(milliseconds: 1),
+                                curve: Curves.ease);
+
+                            // await Future.delayed(Duration(seconds: 1));
+                            // nextButton();
+
+                            if (!controller.lastQuestion) {
+                              controller.enabled = true;
+
+                              controller.currentQuestion++;
+
+                              if (controller.type ==
+                                      StudyType.SPEED_ENHANCEMENT &&
+                                  controller.enabled) {
+                                print(controller.duration);
+                                setState(() {
+                                  ((controller) as SpeedController)
+                                      .resetTimer();
+                                });
+
+                                // print(Provid)
+
+                                print(controller.duration);
+                                print("restart");
                               }
+                            } else {
+                              controller.reviewMode = true;
+                              controller.currentQuestion = 0;
 
-                              if (answeredWrong &&
-                                  controller.type ==
-                                      StudyType.SPEED_ENHANCEMENT) {
-                                SpeedStudyProgressController()
-                                    .manageSpeedEnhancementLevels();
-
+                              if (controller.type ==
+                                  StudyType.SPEED_ENHANCEMENT) {
+                                SpeedStudyProgressController().showFailedDialog(
+                                  isSuccess: true,
+                                  action: () {
+                                    completeQuiz();
+                                    showComplete = true;
+                                    showNext = false;
+                                    controller.enabled = false;
+                                    controller.timerController!.pause();
+                                  },
+                                );
+                              } else {
                                 completeQuiz();
                               }
-
-                              totalQuestionsAnswered++;
-                              calAvgScore();
-
-                              pageController.nextPage(
-                                  duration: Duration(milliseconds: 1),
-                                  curve: Curves.ease);
-
-                              if (!controller.lastQuestion) {
-                                controller.currentQuestion++;
-                              } else {
-                                controller.reviewMode = true;
-                                controller.currentQuestion = 0;
-                                completeQuiz();
-                              }
-                            });
+                            }
+                            // controller.timerController!.reset();
+                            setState(() {});
                           },
                         )
                     ],
@@ -793,11 +1259,6 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                                     fontSize: 21,
                                   ),
                                 ),
-                                // style: ButtonStyle(
-                                //   backgroundColor: MaterialStateProperty.all(
-                                //     Color(0xFFF6F6F6),
-                                //   ),
-                                // ),
                               ),
                             ),
                           ),
@@ -938,6 +1399,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                 //   child:
                 AdeoTimer(
                   callbackWidget: (time) {
+                    print(time);
+                    print("reset timer ${controller.duration}");
                     Duration remaining = Duration(seconds: time.toInt());
                     controller.duration = remaining;
                     controller.countdownInSeconds = remaining.inSeconds;
@@ -961,6 +1424,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                   controller: controller.timerController!,
                   startDuration: controller.duration!,
                 ),
+
                 // ),
               ],
             )
@@ -1016,6 +1480,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
         // return controller.currentQuestion < controller.questions.length - 1;
         break;
       case StudyType.SPEED_ENHANCEMENT:
+        return false;
         break;
       case StudyType.MASTERY_IMPROVEMENT:
         break;
@@ -1116,6 +1581,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                   Navigator.pop(context);
                   if (action == "resume") {
                     // startTimer();
+                    controller.timerController!.resume();
                   } else if (action == "quit") {
                     Navigator.popUntil(
                         context, ModalRoute.withName(LearnMode.routeName));
@@ -1367,13 +1833,6 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                     ),
                   ),
 
-                  // AdeoHtmlTex(
-                  //   widget.user,
-                  //   widget.question.text!,
-                  //   fontSize: 18,
-                  //   textColor: textColor,
-                  // ),
-
                   //*********
                   // resoucres
                   //*******
@@ -1437,27 +1896,6 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                         ),
                       ),
                     ),
-
-                  // Container(
-                  //   padding: EdgeInsets.fromLTRB(2, 12, 2, 4),
-                  //   decoration: BoxDecoration(
-                  //       color: Color(0xFF444444),
-                  //       borderRadius: BorderRadius.circular(20)),
-                  //   child: Column(
-                  //     children: [
-                  //       Text(
-                  //         "Resource",
-                  //         textAlign: TextAlign.center,
-                  //         style: TextStyle(fontSize: 12),
-                  //       ),
-                  //       AdeoHtmlTex(
-                  //         widget.user,
-                  //         widget.question.resource!,
-                  //         textColor: Colors.white,
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -1476,50 +1914,9 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                   textColor: Colors.black,
                 )),
 
-            // Container(
-            //   width: double.infinity,
-
-            //   padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
-            //   margin: EdgeInsets.only(bottom: 2),
-            //   color: Color(0xFFF6F6F6),
-            //   child: Text(
-            //     widget.question.instructions!,
-            //     textAlign: TextAlign.center,
-            //     style: TextStyle(color: textColor),
-            //   ),
-            // ),
-
-            // Theme(
-            //   data:
-            //       Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            //   child: ExpansionTile(
-            //     textColor: Colors.white,
-            //     iconColor: kAdeoGray3,
-            //     initiallyExpanded: true,
-            //     collapsedIconColor: kAdeoGray3,
-            //     backgroundColor: Color(0xFFEFEFEF),
-            //     title: Text(
-            //       'View Question',
-            //       textAlign: TextAlign.center,
-            //       style: TextStyle(
-            //         fontSize: 18,
-            //         fontWeight: FontWeight.normal,
-            //         color: kAdeoGray3,
-            //       ),
-            //     ),
-            //     children: <Widget>[
-            //       ActualQuestion(
-            //         user: widget.user,
-            //         question: widget.question.text!,
-            //         // diagnostic: widget.diagnostic,
-            //         direction: "",
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
             if (!widget.enabled &&
                 selectedAnswer != null &&
+                correctAnswer != null &&
                 correctAnswer!.solution != null &&
                 correctAnswer!.solution != "")
               Container(
@@ -1541,6 +1938,7 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
                       ),
                     ),
                     if (selectedAnswer != null &&
+                        correctAnswer != null &&
                         correctAnswer!.solution != null &&
                         correctAnswer!.solution != "")
                       Container(
@@ -1569,65 +1967,6 @@ class _StudyQuestionWidgetState extends State<StudyQuestionWidget> {
               child: Column(
                 children: [
                   for (int i = 0; i < answers!.length; i++)
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     if (!widget.enabled) {
-                    //       return;
-                    //     }
-                    //     setState(() {
-                    //       selectedAnswer =
-                    //           widget.question.selectedAnswer = answers![i];
-                    //       widget.callback!(
-                    //           selectedAnswer!, selectedAnswer == correctAnswer);
-                    //       // callback!(answer);
-                    //     });
-                    //   },
-                    //   child: Container(
-                    //     margin: const EdgeInsets.only(
-                    //         bottom: 10, right: 20, left: 20),
-                    //     child: Row(
-                    //       children: [
-                    //         Expanded(
-                    //           child: AdeoHtmlTex(
-                    //             widget.user,
-                    //             answers![i].text!.replaceAll("https", "http"),
-                    //             // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
-                    //             useLocalImage: true,
-                    //             textColor: selectedAnswer == answers![i]
-                    //                 ? Colors.white
-                    //                 : kSecondaryTextColor,
-                    //             fontSize:
-                    //                 selectedAnswer == answers![i] ? 25 : 16,
-                    //             textAlign: TextAlign.left,
-                    //             fontWeight: FontWeight.bold,
-                    //             removeBr: true,
-                    //           ),
-                    //         ),
-                    //         const SizedBox(
-                    //           width: 10,
-                    //         ),
-                    //         Icon(
-                    //           Icons.radio_button_off,
-                    //           color: Colors.white,
-                    //         )
-                    //       ],
-                    //     ),
-                    //     padding: const EdgeInsets.symmetric(
-                    //         vertical: 10, horizontal: 5),
-                    //     decoration: BoxDecoration(
-                    //       color: selectedAnswer == answers![i]
-                    //           ? Color(0xFF0367B4)
-                    //           : Colors.white,
-                    //       borderRadius: BorderRadius.circular(14),
-                    //       border: Border.all(
-                    //         width: selectedAnswer == answers![i] ? 1 : 1,
-                    //         color: selectedAnswer == answers![i]
-                    //             ? Colors.transparent
-                    //             : Color(0xFFC8C8C8),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     newSelectedAnswer(answers![i], Color(0xFF00C664), (
                       answerSelected,
                     ) {

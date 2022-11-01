@@ -6,8 +6,8 @@ import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
-import 'package:ecoach/new_ui_ben/screens/welcome_to_learn_mode.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
+import 'package:ecoach/new_learn_mode/screens/welcome_to_learn_mode.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mastery_topic.dart';
@@ -15,7 +15,7 @@ import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../new_ui_ben/screens/speed_improvement/speed_completion_rules.dart';
+import '../../new_learn_mode/screens/speed_improvement/speed_completion_rules.dart';
 
 class LearnMode extends StatefulWidget {
   static const String routeName = '/learning/mode';
@@ -82,7 +82,7 @@ class _LearnModeState extends State<LearnMode> {
       progress = await StudyDB().getCurrentProgress(study.id!);
     }
 
-    Provider.of<WelcomeScreenProvider>(context, listen: false)
+    Provider.of<LearnModeProvider>(context, listen: false)
         .setCurrentProgress(progress!);
 
     return progress;
@@ -110,13 +110,13 @@ class _LearnModeState extends State<LearnMode> {
               //   )
               // :
 
-              Consumer<WelcomeScreenProvider>(
+              Consumer<LearnModeProvider>(
         builder: (_, welcome, __) {
           return WelcomeToLearnMode(
             course: widget.course,
             startLearning: (StudyType study) async {
               Widget? view = null;
-              Provider.of<WelcomeScreenProvider>(context, listen: false)
+              Provider.of<LearnModeProvider>(context, listen: false)
                   .setCurrentStudyType(study);
               switch (study) {
                 case StudyType.REVISION:

@@ -6,7 +6,7 @@ import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
@@ -78,7 +78,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
           lastStudyTopic = "----";
         } else
           StudyDB().getCurrentProgress(value.id!).then((value) {
-            Provider.of<WelcomeScreenProvider>(context, listen: false)
+            Provider.of<LearnModeProvider>(context, listen: false)
                 .setCurrentProgress(value!);
             if (value == null) {
               lastStudyTopic = "----";
@@ -158,7 +158,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                         courseDetail: courseDetails[0],
                         onTap: () {
                           final welcomeProvider =
-                              Provider.of<WelcomeScreenProvider>(context,
+                              Provider.of<LearnModeProvider>(context,
                                   listen: false);
 
                           welcomeProvider

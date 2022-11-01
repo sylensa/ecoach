@@ -9,7 +9,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
@@ -181,7 +181,7 @@ abstract class StudyController {
     await StudyDB().updateProgress(progress);
 
     StudyType? studyType =
-        Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+        Provider.of<LearnModeProvider>(Get.context!, listen: false)
             .currentStudyType;
     print("current study type $studyType");
 

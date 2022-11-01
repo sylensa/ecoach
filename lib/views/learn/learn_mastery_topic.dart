@@ -6,7 +6,7 @@ import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/study/study_quiz_view.dart';
@@ -44,7 +44,7 @@ class LearnMasteryTopic extends StatelessWidget {
         child: Scaffold(
       body: FutureBuilder<List<MasteryCourseUpgrade>>(
           future: MasteryCourseDB().getMasteryTopicsUpgrade(
-              Provider.of<WelcomeScreenProvider>(context, listen: false)
+              Provider.of<LearnModeProvider>(context, listen: false)
                   .currentCourse!
                   .id!),
           builder: (context, snapshot) {
@@ -145,7 +145,7 @@ class LearnMasteryTopic extends StatelessWidget {
                               user,
                               course,
                               questions: questions,
-                              name: progress.name!,
+                              name: masteryTopics[0].topicName!,
                               progress: progress,
                             ),
                           );

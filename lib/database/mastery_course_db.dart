@@ -217,4 +217,10 @@ class MasteryCourseDB {
         result.isNotEmpty ? MasteryCourseUpgrade.fromJson(result.first) : null;
     return progress;
   }
+
+  Future<void> emptyMasteryTable() async {
+    final Database? db = await DBProvider.database;
+
+    await db!.delete('mastery_courses_upgrade');
+  }
 }

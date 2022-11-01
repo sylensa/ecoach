@@ -14,7 +14,7 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../new_ui_ben/providers/welcome_screen_provider.dart';
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class LearnMasteryFeedback extends StatelessWidget {
   const LearnMasteryFeedback(
@@ -114,7 +114,7 @@ class LearnMasteryFeedback extends StatelessWidget {
                 SizedBox(height: 12.0),
                 Text(
                   passed
-                      ? 'You have successfully mastered\n$topic'
+                      ? 'You have successfully mastered\n${masteryCourseUpgrade.topicName}'
                       : 'You scored below the pass mark.\nLet\'s try one more time\nTogether we can',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -145,14 +145,13 @@ class LearnMasteryFeedback extends StatelessWidget {
                   child: Button(
                     label: passed ? 'continue' : 'revise',
                     onPressed: () async {
-                      final masteryTopics = await MasteryCourseDB()
-                          .getMasteryTopicsUpgrade(
-                              Provider.of<WelcomeScreenProvider>(context,
+                      List<MasteryCourseUpgrade> masteryTopics =
+                          await MasteryCourseDB().getMasteryTopicsUpgrade(
+                              Provider.of<LearnModeProvider>(context,
                                       listen: false)
                                   .currentCourse!
                                   .id!);
 
-                      MasteryCourseUpgrade topic = masteryTopics[0];
                       if (passed) {
                         StudyProgress progress =
                             await controller.updateMasteryCourse();
@@ -162,9 +161,17 @@ class LearnMasteryFeedback extends StatelessWidget {
 
                         controller.updateProgressSection(2);
 
+                        masteryTopics = await MasteryCourseDB()
+                            .getMasteryTopicsUpgrade(
+                                Provider.of<LearnModeProvider>(context,
+                                        listen: false)
+                                    .currentCourse!
+                                    .id!);
+
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           if (masteryTopics.isNotEmpty) {
+                            MasteryCourseUpgrade topic = masteryTopics[0];
                             return LearnNextTopic(
                               controller.user,
                               controller.course,

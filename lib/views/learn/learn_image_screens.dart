@@ -9,8 +9,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/ui/course_detail.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:ecoach/views/study/study_quiz_cover.dart';
@@ -39,7 +38,7 @@ class LearnImageScreens extends StatelessWidget {
             mainActionLabel: 'Next topic',
             mainActionColor: Color(0xFFFB7B76),
             mainActionOnPressed: () async {
-              final WelcomeScreenProvider welcomeProvider =
+              final LearnModeProvider welcomeProvider =
                   Provider.of(context, listen: false);
 
               StudyType studyType = welcomeProvider.currentStudyType!;

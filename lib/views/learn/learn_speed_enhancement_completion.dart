@@ -3,8 +3,8 @@ import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/new_ui_ben/screens/level_start_screen.dart';
-import 'package:ecoach/new_ui_ben/screens/speed_improvement/utils/speed_enhancement_utils.dart';
+import 'package:ecoach/new_learn_mode/screens/level_start_screen.dart';
+import 'package:ecoach/new_learn_mode/screens/speed_improvement/utils/speed_enhancement_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import '../../database/questions_db.dart';
 import '../../models/question.dart';
 import '../../models/speed_enhancement_progress_model.dart';
-import '../../new_ui_ben/providers/welcome_screen_provider.dart';
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 import '../study/study_quiz_view.dart';
 
 class LearnSpeedEnhancementCompletion extends StatelessWidget {
@@ -43,56 +43,60 @@ class LearnSpeedEnhancementCompletion extends StatelessWidget {
     // SpeedEnhancementLevel currentLevel = speedEnhancementLevels[level['level']];
 
     return Scaffold(
-      body: Consumer<WelcomeScreenProvider>(
+      body: Consumer<LearnModeProvider>(
         builder: (_, welcome, __) {
           SpeedEnhancementLevel currentLevel = speedEnhancementLevels[
               welcome.currentSpeedStudyProgress!.level! - 1];
 
-          return LevelStartScreen(
-              onSwipe: () async {
-                SpeedStudyProgress? speed = await StudyDB()
-                    .getCurrentSpeedProgressLevelByCourse(
-                        welcome.currentCourse!.id!);
+          return FutureBuilder(
+            builder: (context, snapshot) {
+              return LevelStartScreen(
+                  onSwipe: () async {
+                    SpeedStudyProgress? speed = await StudyDB()
+                        .getCurrentSpeedProgressLevelByCourse(
+                            welcome.currentCourse!.id!);
 
-                Topic? topic = await TopicDB()
-                    .getLevelTopic(welcome.currentCourse!.id!, 1);
-                if (topic != null) {
-                  print("${topic.name}");
-                  StudyProgress newProgress = StudyProgress(
-                      id: topic.id,
-                      studyId: progress.studyId!,
-                      level: null,
-                      topicId: topic.id,
-                      section: 1,
-                      name: progress.name,
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now());
-                  await StudyDB().insertProgress(progress);
+                    Topic? topic = await TopicDB()
+                        .getLevelTopic(welcome.currentCourse!.id!, 1);
+                    if (topic != null) {
+                      print("${topic.name}");
+                      StudyProgress newProgress = StudyProgress(
+                          id: topic.id,
+                          studyId: progress.studyId!,
+                          level: null,
+                          topicId: topic.id,
+                          section: 1,
+                          name: progress.name,
+                          createdAt: DateTime.now(),
+                          updatedAt: DateTime.now());
+                      await StudyDB().insertProgress(progress);
 
-                  List<Question> questions = await QuestionDB()
-                      .getRandomQuestions(welcome.currentCourse!.id!, 10);
+                      List<Question> questions = await QuestionDB()
+                          .getRandomQuestions(welcome.currentCourse!.id!, 10);
 
-                  Get.off(
-                    () => StudyQuizView(
-                      controller: SpeedController(
-                        welcome.currentUser!,
-                        welcome.currentCourse!,
-                        questions: questions,
-                        name: progress.name!,
-                        progress: progress,
-                      ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text("No topics")));
-                }
-              },
-              bgImage: currentLevel.backgroundImage,
-              levelImage: currentLevel.levelImage,
-              label: currentLevel.label,
-              level: currentLevel.level,
-              timer: currentLevel.timer);
+                      Get.off(
+                        () => StudyQuizView(
+                          controller: SpeedController(
+                            welcome.currentUser!,
+                            welcome.currentCourse!,
+                            questions: questions,
+                            name: progress.name!,
+                            progress: progress,
+                          ),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text("No topics")));
+                    }
+                  },
+                  bgImage: currentLevel.backgroundImage,
+                  levelImage: currentLevel.levelImage,
+                  label: currentLevel.label,
+                  level: currentLevel.level,
+                  timer: currentLevel.timer);
+            },
+          );
         },
       ),
     );

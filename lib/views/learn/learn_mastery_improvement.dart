@@ -4,12 +4,10 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/study/study_quiz_view.dart';
-import 'package:ecoach/widgets/layouts/speed_enhancement_introit.dart';
 import 'package:flutter/material.dart';
 
-import '../../new_ui_ben/screens/mastery/mastery_improvement_rules.dart';
+import '../../new_learn_mode/screens/mastery/mastery_improvement_rules.dart';
 
 class LearnMastery extends StatefulWidget {
   const LearnMastery(this.user, this.course, this.progress, {Key? key})

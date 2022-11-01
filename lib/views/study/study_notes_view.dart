@@ -7,7 +7,7 @@ import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/views/study/study_quiz_cover.dart';
@@ -34,6 +34,8 @@ class StudyNoteView extends StatefulWidget {
 class _StudyNoteViewState extends State<StudyNoteView> {
   late StudyController controller;
   bool notesExit = true;
+
+  MasteryCourseUpgrade? masteryCourseUpgrade;
 
   @override
   void initState() {
@@ -163,14 +165,16 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                   // await controller.updateProgressSection(2);
                                   MasteryCourseUpgrade? mastery =
                                       await MasteryCourseDB()
-                                          .getCurrentTopicUpgrade(Provider.of<
-                                              WelcomeScreenProvider>(
+                                          .getCurrentTopicUpgrade(
+                                              Provider.of<LearnModeProvider>(
                                     context,
                                     listen: false,
                                   ).currentCourse!.id!);
                                   questions = await QuestionDB()
                                       .getMasteryTopicQuestions(
                                           mastery!.topicId!, 10);
+
+                                  masteryCourseUpgrade = mastery;
                                 }
 
                                 Navigator.push(
@@ -219,8 +223,8 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                                               controller.progress);
                                         case StudyType.MASTERY_IMPROVEMENT:
                                           return StudyQuizCover(
-                                              topicName:
-                                                  controller.progress.name!,
+                                              topicName: masteryCourseUpgrade!
+                                                  .topicName,
                                               controller: MasteryController(
                                                   controller.user,
                                                   controller.course,

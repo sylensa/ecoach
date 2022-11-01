@@ -1,22 +1,10 @@
-import 'package:ecoach/controllers/revision_progress_controller.dart';
-import 'package:ecoach/controllers/study_controller.dart';
-import 'package:ecoach/controllers/study_revision_controller.dart';
-import 'package:ecoach/database/questions_db.dart';
-import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/revision_study_progress.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/views/learn/learn_mode.dart';
-import 'package:ecoach/views/learn/learning_widget.dart';
+import 'package:ecoach/new_learn_mode/controllers/revision_progress_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../database/topics_db.dart';
-import '../../models/topic.dart';
-import '../../new_ui_ben/providers/welcome_screen_provider.dart';
-import '../../new_ui_ben/screens/revision/revision.dart';
+import '../../new_learn_mode/screens/revision/revision.dart';
 
 class LearnRevision extends StatefulWidget {
   static const String routeName = '/learning/revision';

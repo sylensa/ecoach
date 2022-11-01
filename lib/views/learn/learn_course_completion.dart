@@ -7,14 +7,14 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/new_ui_ben/providers/welcome_screen_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/views/learn/learning_widget.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/study_db.dart';
-import '../../new_ui_ben/screens/course_completion/course_completion.dart';
+import '../../new_learn_mode/screens/course_completion/course_completion.dart';
 
 Color themeColor = Color(0xFF00ABE0);
 
@@ -60,8 +60,8 @@ class _TopicCoverState extends State<TopicCover> {
       proceed: () async {
         int topicId = widget.progress.topicId!;
 
-        WelcomeScreenProvider welcomeProvider =
-            Provider.of<WelcomeScreenProvider>(context, listen: false);
+        LearnModeProvider welcomeProvider =
+            Provider.of<LearnModeProvider>(context, listen: false);
 
         CourseCompletionStudyProgress? progress = await StudyDB()
             .getCurrentCourseCompletionProgressByCourse(

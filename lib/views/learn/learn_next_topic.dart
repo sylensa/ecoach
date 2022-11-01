@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/mastery_course_db.dart';
-import '../../new_ui_ben/providers/welcome_screen_provider.dart';
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class LearnNextTopic extends StatelessWidget {
   static const String routeName = '/learning/mastery/next';
@@ -49,7 +49,7 @@ class LearnNextTopic extends StatelessWidget {
             // int topicId = topic.topicId!;
             final masteryTopics = await MasteryCourseDB()
                 .getMasteryTopicsUpgrade(
-                    Provider.of<WelcomeScreenProvider>(context, listen: false)
+                    Provider.of<LearnModeProvider>(context, listen: false)
                         .currentCourse!
                         .id!);
             Topic? currentTopic =

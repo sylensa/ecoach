@@ -64,6 +64,7 @@ class TimerController {
   }
 
   reset() {
+    print("reset call");
     _controller.restart();
   }
 
