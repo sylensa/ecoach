@@ -83,7 +83,7 @@ class _MainHomePageState extends State<MainHomePage>
       CoursesPage(widget.user,mainController,planId: widget.planId,),
       // AnalysisView(user: widget.user),
       // MoreView(
-      //   widget.user,
+      //   widget.user, 
       //   controller: mainController,
       // ),
       MorePage(
