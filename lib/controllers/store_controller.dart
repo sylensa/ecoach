@@ -1,43 +1,17 @@
-import 'package:ecoach/api/api_call.dart';
-import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/api/api_response.dart';
+import 'package:ecoach/api2/api_call.dart';
+import 'package:ecoach/models/plan2.dart';
+import 'package:ecoach/models/store_search.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/components/subscription/subscribe_to_plan.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/blur_dialog.dart';
 import 'package:flutter/material.dart';
 
-class StoreController extends ChangeNotifier {
-  List tags = [
-    {
-      "id": "1",
-      "label": "English",
-    },
-    {
-      "id": "2",
-      "label": "Mathematics",
-    },
-    {
-      "id": "3",
-      "label": "Physics",
-    },
-    {
-      "id": "4",
-      "label": "Social Studies",
-    },
-    {
-      "id": "5",
-      "label": "Integrated Science",
-    },
-    {
-      "id": "6",
-      "label": "Chemistry",
-    },
-    {
-      "id": "7",
-      "label": "Biology",
-    },
-  ];
-  // List<Group> groups = [];
-  List<dynamic> groups = [];
-
+class StoreController {
   List featuredTests = [
     {
       "id": "1",
@@ -51,137 +25,168 @@ class StoreController extends ChangeNotifier {
     },
   ];
 
-  Future<List<dynamic>> getGroups(BuildContext context) async {
-    var response = await ApiCall<dynamic>(
-      AppUrl.groups,
-      params: {
-        "sort": "popularity",
-        "order": "asc",
-      },
+  Future<List<Plan>> searchPlans(BuildContext context,
+      {String query = ""}) async {
+    List<Plan> plans = [];
+    try {
+      var response = await ApiCall<StoreSearch>(context).get(
+        AppUrl.searchPlans,
+        isList: false,
+        params: {"search_query": query},
+        create: (dataItem) {
+          return StoreSearch.fromJson(dataItem);
+        },
+      );
+      plans = response.data.bundles;
+      //  response.data!.bundles
+    } catch (e) {
+      return plans;
+    }
+    return plans;
+  }
+
+  Future<List<Plan>> filterPlans(BuildContext context,
+      {String query = ""}) async {
+    var response = await ApiCall<Plan>(context).get(
+      AppUrl.filterPlans,
+      isList: true,
+      params: {"filter": query},
       create: (dataItem) {
-        // return Group.fromJson(dataItem);
+        return Plan.fromJson(dataItem);
       },
-    ).get(context);
-    groups = response;
+    );
 
-    return response;
+    // plans = response.data!;
+    return response.data!;
   }
 
-  Future<dynamic> getGroupDetail(BuildContext context, int groupId) async {
-    // var response = await ApiCall<dynamic>(
-    //   "${AppUrl.getGroupDetail}/${groupId}",
-    //   isList: false,
-    //   create: (dataItem) {
-    //     return Group.fromJson(dataItem);
-    //   },
-    // ).get(context);
-
-    // return response;
-    return [];
-  }
+  // void setFilteredPlans(List<Plan>? filteredPlans) {
+  //   plans = filteredPlans!;
+  // }
 
   Future<List<Plan>> getPlans(BuildContext context) async {
-    var response = await ApiCall<Plan>(
+    var response = await ApiCall<Plan>(context).get(
       AppUrl.plans,
       create: (dataItem) {
         return Plan.fromJson(dataItem);
       },
-    ).get(context);
-    return response;
+    );
+    return response.data;
   }
 
-  // showSubscriptionModal(BuildContext context, String bundleName, Plan plan) {
-  //   return showDialogWithBlur(
-  //     backgroundColor: Colors.transparent,
-  //     context: context,
-  //     child: Container(
-  //       padding: EdgeInsets.only(
-  //         top: 44,
-  //         right: 44,
-  //         bottom: 42,
-  //         left: 44,
-  //       ),
-  //       constraints: BoxConstraints(
-  //           maxWidth: Responsive.isDesktop(context) ? 900 : 800,
-  //           maxHeight: 800),
-  //       decoration: BoxDecoration(
-  //         color: kAdeoRoyalBlue,
-  //         borderRadius: BorderRadius.circular(
-  //           kAdeoBorderRadiusValueLg,
-  //         ),
-  //       ),
-  //       child: Column(
-  //         children: [
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 bundleName,
-  //                 style: TextStyle(
-  //                   color: Colors.white,
-  //                   fontSize: 20,
-  //                   fontFamily: 'PoppinsSemiBold',
-  //                 ),
-  //               ),
-  //               IconButton(
-  //                 onPressed: () {
-  //                   Navigator.pop(context);
-  //                 },
-  //                 iconSize: 15,
-  //                 icon: Image.asset(
-  //                   'assets/icons/close_red.png',
-  //                   height: 15,
-  //                   width: 15,
-  //                   fit: BoxFit.cover,
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //           SizedBox(
-  //             height: 42,
-  //           ),
-  //           FutureBuilder<User?>(
-  //             future: UserPreferences().getUser(),
-  //             builder: (context, snapshot) {
-  //               switch (snapshot.connectionState) {
-  //                 case ConnectionState.none:
-  //                 case ConnectionState.waiting:
-  //                   return SizedBox(
-  //                     width: 18,
-  //                     height: 18,
-  //                     child: Container(
-  //                       width: 60,
-  //                       height: 60,
-  //                       child: CircularProgressIndicator(
-  //                         color: kAdeoGreen4,
-  //                         strokeWidth: 2,
-  //                       ),
-  //                     ),
-  //                   );
-  //                 default:
-  //                   if (snapshot.hasError) {
-  //                     return Container();
-  //                   } else if (snapshot.data != null) {
-  //                     User user = snapshot.data!;
-  //                     return Expanded(
-  //                       child: SingleChildScrollView(
-  //                         child: SubscribeToPlan(
-  //                           user,
-  //                           plan,
-  //                           key: UniqueKey(),
-  //                         ),
-  //                       ),
-  //                     );
-  //                   } else {
-  //                     return Container();
-  //                   }
-  //               }
-  //             },
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  Future<Plan> getPlanDetails(BuildContext context, int planId) async {
+    final ApiResponse<Plan> response = await ApiCall<Plan>(context).get(
+      "${AppUrl.planDetails}/$planId",
+      isList: false,
+      create: (dataItem) {
+        return Plan.fromJson(dataItem);
+      },
+    );
+    return response.data;
+  }
+
+  showSubscriptionModal(BuildContext context, String bundleName, Plan plan) {
+    return showDialogWithBlur(
+      backgroundColor: Colors.transparent,
+      context: context,
+      child: Container(
+        padding: EdgeInsets.only(
+          top: 44,
+          right: 44,
+          left: 44,
+          bottom: 42,
+        ),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width , maxHeight: 800),
+        decoration: BoxDecoration(
+          color: kAdeoRoyalBlue,
+          borderRadius: BorderRadius.circular(
+            kAdeoBorderRadiusValueLg,
+          ),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  bundleName,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontFamily: 'PoppinsSemiBold',
+                  ),
+                ),
+                InkWell(
+                   onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.cancel,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+                // IconButton(
+                //   onPressed: () {
+                //     Navigator.pop(context);
+                //   },
+                //   iconSize: 14,
+                //   icon: Image.asset(
+                //     'assets/icons/close_red.png',
+                //     height: 15,
+                //     width: 15,
+                //     fit: BoxFit.cover,
+                //   ),
+                // )
+              ],
+            ),
+            SizedBox(
+              height: 42,
+            ),
+            FutureBuilder<User?>(
+              future: UserPreferences().getUser(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          color: kAdeoGreen4,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    );
+                  default:
+                    if (snapshot.hasError) {
+                      return Container();
+                    } else if (snapshot.data != null) {
+                      User user = snapshot.data!;
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          child: SubscribeToPlan(
+                            user,
+                            plan,
+                            key: UniqueKey(),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                }
+              },
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

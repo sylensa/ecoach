@@ -7,6 +7,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/store/all_bundles.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -15,6 +16,7 @@ import 'package:ecoach/views/courses_revamp/courses_page.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/more_page.dart';
+import 'package:ecoach/views/store_new.dart';
 import 'package:ecoach/views/user_group/group_page/user_group_page.dart';
 import 'package:ecoach/websocket/event_data.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -34,7 +36,7 @@ class MainHomePage extends StatefulWidget {
   User user;
   int index;
   int planId;
-  MainHomePage(this.user, {this.index = 0,this.planId = -1});
+  MainHomePage(this.user, {this.index = 0, this.planId = -1});
 
   @override
   _MainHomePageState createState() => _MainHomePageState();
@@ -46,8 +48,6 @@ class _MainHomePageState extends State<MainHomePage>
   late List<Widget> _children;
   int currentIndex = 0;
   late MainController mainController;
-
-
 
   @override
   void initState() {
@@ -80,12 +80,17 @@ class _MainHomePageState extends State<MainHomePage>
       ),
 
       // UserGroupPage(widget.user),
-      CoursesPage(widget.user,mainController,planId: widget.planId,),
+      CoursesPage(
+        widget.user,
+        mainController,
+        planId: widget.planId,
+      ),
       // AnalysisView(user: widget.user),
       // MoreView(
       //   widget.user,
       //   controller: mainController,
       // ),
+      AvailableBundlesPage(),
       MorePage(
         widget.user,
         controller: mainController,
@@ -95,8 +100,8 @@ class _MainHomePageState extends State<MainHomePage>
     checkSubscription();
 
     WebsocketCall().addListener(this);
-    WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
-
+    WebsocketCall()
+        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
 
     super.initState();
   }
@@ -130,7 +135,8 @@ class _MainHomePageState extends State<MainHomePage>
         Wakelock.enable();
       }
       WebsocketCall().addListener(this);
-      WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
+      WebsocketCall().connect(
+          user: widget.user, channel: "${widget.user.id}-subscription");
     }
     if (state == AppLifecycleState.paused) {
       Wakelock.disable();
@@ -184,78 +190,69 @@ class _MainHomePageState extends State<MainHomePage>
       },
       child: Scaffold(
         backgroundColor: kPageBackgroundGray,
-        bottomSheet:
-          context.watch<DownloadUpdate>().isDownloading ?
-      Container(
-        height: MediaQuery.of(context).size.height * .25,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(blurRadius: 24, color: Color(0x4D000000))
-          ],
-        ),
-        child: Column(
-          children: [
-            context.read<DownloadUpdate>().percentage > 0 &&
-                context.read<DownloadUpdate>().percentage < 100
-                ? LinearPercentIndicator(
-              percent:
-              context.read<DownloadUpdate>().percentage /
-                  100,
-              linearStrokeCap: LinearStrokeCap.butt,
-              progressColor: Colors.green,
-              padding: EdgeInsets.symmetric(horizontal: 0),
-              lineHeight: 4,
-            )
-                : LinearProgressIndicator(),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 16,
-              ),
-              child: Text(
-                context
-                    .read<DownloadUpdate>()
-                    .message!
-                    .toTitleCase(),
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
+        bottomSheet: context.watch<DownloadUpdate>().isDownloading
+            ? Container(
+                height: MediaQuery.of(context).size.height * .25,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(blurRadius: 24, color: Color(0x4D000000))
+                  ],
                 ),
-              ),
-            ),
-
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  bottom: 24,
+                child: Column(
+                  children: [
+                    context.read<DownloadUpdate>().percentage > 0 &&
+                            context.read<DownloadUpdate>().percentage < 100
+                        ? LinearPercentIndicator(
+                            percent:
+                                context.read<DownloadUpdate>().percentage / 100,
+                            linearStrokeCap: LinearStrokeCap.butt,
+                            progressColor: Colors.green,
+                            padding: EdgeInsets.symmetric(horizontal: 0),
+                            lineHeight: 4,
+                          )
+                        : LinearProgressIndicator(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
+                      child: Text(
+                        context.read<DownloadUpdate>().message!.toTitleCase(),
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                          bottom: 24,
+                        ),
+                        shrinkWrap: true,
+                        itemCount:
+                            context.read<DownloadUpdate>().doneDownloads.length,
+                        itemBuilder: (context, index) {
+                          return Text(
+                            context.read<DownloadUpdate>().doneDownloads[index],
+                            style: TextStyle(color: kAdeoGray2),
+                          );
+                        },
+                      ),
+                    )
+                  ],
                 ),
-                shrinkWrap: true,
-                itemCount: context
-                    .read<DownloadUpdate>()
-                    .doneDownloads
-                    .length,
-                itemBuilder: (context, index) {
-                  return Text(
-                    context
-                        .read<DownloadUpdate>()
-                        .doneDownloads[index],
-                    style: TextStyle(color: kAdeoGray2),
-                  );
-                },
+              )
+            : Container(
+                height: 0,
               ),
-            )
-
-          ],
-        ),
-      ) :
-      Container(height: 0,),
         drawer: AppDrawer(user: widget.user),
         body: _children[currentIndex],
         bottomNavigationBar: AdeoBottomNavigationBar(
@@ -275,6 +272,10 @@ class _MainHomePageState extends State<MainHomePage>
             //   'active': Icons.bar_chart,
             //   'inactive': Icons.bar_chart_outlined,
             // },
+            {
+              'active': Icons.shopping_bag,
+              'inactive': Icons.shopping_bag_outlined,
+            },
             {
               'active': Icons.account_circle_rounded,
               'inactive': Icons.account_circle_outlined,

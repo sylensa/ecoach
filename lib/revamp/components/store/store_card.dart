@@ -1,4 +1,3 @@
-
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,6 +16,7 @@ class StoreCard extends StatelessWidget {
     this.onClick,
     this.ownerName,
     this.isLightTheme = false,
+    this.maxWidth = 700,
   }) : super(key: key);
   final String label;
   final String? ownerName;
@@ -28,6 +28,7 @@ class StoreCard extends StatelessWidget {
   final bool isFeaturedTest;
   final bool isBundle;
   final bool? isLightTheme;
+  final double maxWidth;
   final Function()? onClick;
 
   @override
@@ -43,13 +44,16 @@ class StoreCard extends StatelessWidget {
         child: InkWell(
           onTap: _onClick,
           child: Container(
-            width: 300,
+            width: double.maxFinite,
             decoration: BoxDecoration(
               color: isLightTheme! ? Colors.white : kAdeoDark_Gray,
               borderRadius: BorderRadius.circular(18),
             ),
             clipBehavior: Clip.hardEdge,
-            constraints: BoxConstraints(minHeight: 190),
+            constraints: BoxConstraints(
+              minHeight: 200,
+              maxWidth: maxWidth,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -134,7 +138,7 @@ class StoreCard extends StatelessWidget {
                                           maxLines: 2,
                                           softWrap: true,
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 18,
                                             color: isLightTheme!
                                                 ? kDefaultBlack
                                                 : Colors.white,
