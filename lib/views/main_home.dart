@@ -87,7 +87,7 @@ class _MainHomePageState extends State<MainHomePage>
       ),
       // AnalysisView(user: widget.user),
       // MoreView(
-      //   widget.user,
+      //   widget.user, 
       //   controller: mainController,
       // ),
       AvailableBundlesPage(),
