@@ -14,27 +14,38 @@ class ApiResponse<T> {
 
   bool? status;
   String? message;
-  List<T>? data;
+  dynamic data;
+  // List<T>? data;
   Meta? meta;
 
   factory ApiResponse.fromJson(
-          String str, Function(Map<String, dynamic>) create) =>
-      ApiResponse.fromMap(json.decode(str), create);
+          String str, Function(Map<String, dynamic>) create,
+          {bool isList = true}) =>
+      ApiResponse.fromMap(json.decode(str), create, isList: isList);
 
   // String toJson() => json.encode(toMap());
 
   factory ApiResponse.fromMap(
-      Map<String, dynamic> json, Function(Map<String, dynamic>) create) {
-    List<T> data = [];
-    json['data'].forEach((v) {
-      data.add(create(v));
-    });
-    print("checking data");
-    print(data);
+      Map<String, dynamic> json, Function(Map<String, dynamic>) create,
+      {bool isList = true}) {
+    dynamic finalData;
+    if (isList) {
+      List<T> data = [];
+      json['data'].forEach((v) {
+        data.add(create(v));
+      });
+      print("checking data");
+      print(data);
+      finalData = data;
+    } else {
+      T data;
+      data = create(json['data']);
+      finalData = data;
+    }
     return ApiResponse(
       status: json["status"],
       message: json["message"],
-      data: data,
+      data: finalData,
       // meta: Meta.fromMap(json["meta"]),
     );
   }

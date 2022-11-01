@@ -9,7 +9,7 @@ import 'package:ecoach/views/user_group/group_page/group_details.dart';
 import 'package:ecoach/views/user_group/group_page/my_groups.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/section_heading.dart';
-import 'package:ecoach/widgets/store_card.dart';
+import 'package:ecoach/revamp/components/store/store_card.dart';
 import 'package:flutter/material.dart';
 
 class GroupClass extends StatefulWidget {

@@ -82,6 +82,7 @@ const kAdeoDark = Color(0xFF202B31);
 const kAdeoDark_Green = Color(0xFF00C664);
 const kAdeoDark_Gray = Color(0xFF3C3D42);
 const kAdeoDark_Gray2 = Color(0xFF9B9B9B);
+const kActiveOnDarkMode = Color(0xFF222E3B);
 
 const kTableBodyMainText = TextStyle(
   fontSize: 13,

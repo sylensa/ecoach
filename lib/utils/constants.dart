@@ -19,6 +19,8 @@ enum TestCategory { MOCK, EXAM, TOPIC, ESSAY, SAVED, BANK, NONE }
 enum TestMode { LIVE, PRACTISE, COMPLETED, CONTINUE, NEW }
 enum CardVariant { LIGHT, DARK }
 enum TreadmillMode { TOPIC, MOCK, BANK }
+enum Mode { LIGHT, DARK, TINT }
+enum StoreDetails { BUNDLE, GROUP, FEATURE }
 
 double backgroundIllustrationHeight = 480.0;
 // List savedQuestions = [2, 4, 3, 5];
