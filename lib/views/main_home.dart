@@ -7,6 +7,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/store/all_bundles.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -80,12 +81,17 @@ class _MainHomePageState extends State<MainHomePage>
       ),
 
       // UserGroupPage(widget.user),
-      CoursesPage(widget.user,mainController,planId: widget.planId,),
+      CoursesPage(
+        widget.user,
+        mainController,
+        planId: widget.planId,
+      ),
       // AnalysisView(user: widget.user),
       // MoreView(
       //   widget.user, 
       //   controller: mainController,
       // ),
+      AvailableBundlesPage(),
       MorePage(
         widget.user,
         controller: mainController,
@@ -95,8 +101,8 @@ class _MainHomePageState extends State<MainHomePage>
     checkSubscription();
 
     WebsocketCall().addListener(this);
-    WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
-
+    WebsocketCall()
+        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
 
     super.initState();
   }
@@ -271,10 +277,10 @@ class _MainHomePageState extends State<MainHomePage>
             //   'inactive': Icons.group_add_outlined,
             // },
             {'active': Icons.school_rounded, 'inactive': Icons.school_outlined},
-            // {
-            //   'active': Icons.bar_chart,
-            //   'inactive': Icons.bar_chart_outlined,
-            // },
+            {
+              'active': Icons.storefront,
+              'inactive': Icons.storefront,
+            },
             {
               'active': Icons.account_circle_rounded,
               'inactive': Icons.account_circle_outlined,

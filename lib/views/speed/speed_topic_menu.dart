@@ -1,11 +1,17 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/revamp/features/questions/view/screens/quiz_questions.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
+import 'package:ecoach/views/speed/speed_test_question_view.dart';
 
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
@@ -163,6 +169,7 @@ class Instructions1 extends StatelessWidget {
                   topicId: topicId,
                   controller: controller,
                   time: time,
+                  noOfQuestion: noOfQuestion,
                 );
               },
             ),
@@ -174,11 +181,12 @@ class Instructions1 extends StatelessWidget {
 }
 
 class Instructions2 extends StatelessWidget {
-  Instructions2({required this.controller, required this.topicId, this.time});
+  Instructions2({required this.controller, required this.topicId, this.time,this.noOfQuestion});
   MarathonController controller;
   int topicId;
 
   int? time;
+  int? noOfQuestion;
 
   @override
   Widget build(BuildContext context) {
@@ -190,15 +198,25 @@ class Instructions2 extends StatelessWidget {
           await controller.createTopicMarathon(topicId);
           Topic? topic = await TopicDB().getTopicById(topicId);
           controller.name = topic!.name!;
+          List<Question> questions =  await TestController().getTopicQuestions([topicId],limit: noOfQuestion);
 
           Navigator.pop(context);
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) {
-                return MarathonQuizView(
-                  controller: controller,
-                  themeColor: kAdeoOrangeH,
+                return  SpeedTestQuestionView(
+                  controller: QuizController(
+                    controller.user,
+                    controller.course,
+                    questions: questions,
+                    name:  controller.name!,
+                    time:  controller.time,
+                    type: TestType.SPEED,
+                    challengeType: TestCategory.TOPIC,
+                  ),
+                  theme: QuizTheme.GREEN,
+                  diagnostic: false,
                 );
               },
             ),

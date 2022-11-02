@@ -133,6 +133,7 @@ class TestChallengeList extends StatelessWidget {
                 case TestCategory.SAVED:
                   List<Question> questions = data as List<Question>;
                     widgetView = QuizCover(
+
                       user,
                       questions,
                       category: testCategory,

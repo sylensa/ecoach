@@ -1,5 +1,6 @@
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
+import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -32,10 +33,20 @@ class CoursesPage extends StatefulWidget {
 class _CoursesPageState extends State<CoursesPage> {
   bool progressCode = true;
   List<Subscription> selectedSubscription = [];
-  getUserSubscriptions()async{
+  getUserSubscriptionsFromOnline()async{
     context.read<DownloadUpdate>().plans = await widget.controller.makeSubscriptionsCall();
     if(context.read<DownloadUpdate>().plans .isEmpty){
       await goTo(context, NoSubscriptionsPage(controller: widget.controller,user: widget.user,));
+    }
+    if(mounted)
+    setState(() {
+      progressCode = false;
+    });
+  }
+  getUserSubscriptions()async{
+    context.read<DownloadUpdate>().plans = await SubscriptionDB().subscriptions();
+    if(context.read<DownloadUpdate>().plans .isEmpty){
+      await getUserSubscriptionsFromOnline();
     }
     if(mounted)
     setState(() {

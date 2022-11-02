@@ -248,54 +248,55 @@ class _BelowPassMarkState extends State<BelowPassMark> {
                     image: "assets/images/refresh.png",
                     orientation: orientation,
                     onpress: () async {
-                      List<Question> questions = [];
-                      switch (widget.testCategory) {
-                        case TestCategory.BANK:
-                        case TestCategory.EXAM:
-                        case TestCategory.ESSAY:
-                          questions = await TestController().getQuizQuestions(
-                            widget.test.id!,
-                            limit: 40,
-                          );
-                          break;
-                        case TestCategory.TOPIC:
-                          List<int> topicIds = widget.test.getTopicIds();
-
-                          questions =
-                              await TestController().getTopicQuestions(
-                            topicIds,
-                            limit: () {
-                              if (widget.testType == TestType.CUSTOMIZED)
-                                return 40;
-                              return widget.testType != TestType.SPEED
-                                  ? 10
-                                  : 1000;
-                            }(),
-                          );
-                          break;
-                        default:
-                          questions =
-                              await TestController().getMockQuestions(0);
-                      }
-
                       Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return QuizCover(
-                              widget.user,
-                              questions,
-                              type: widget.testType,
-                              name: widget.test.testname!,
-                              theme: QuizTheme.ORANGE,
-                              category: widget.testCategory,
-                              time: questions.length * 60,
-                              course: widget.course,
-                            );
-                          },
-                        ),
-                      );
+                      // List<Question> questions = [];
+                      // switch (widget.testCategory) {
+                      //   case TestCategory.BANK:
+                      //   case TestCategory.EXAM:
+                      //   case TestCategory.ESSAY:
+                      //     questions = await TestController().getQuizQuestions(
+                      //       widget.test.id!,
+                      //       limit: 40,
+                      //     );
+                      //     break;
+                      //   case TestCategory.TOPIC:
+                      //     List<int> topicIds = widget.test.getTopicIds();
+                      //
+                      //     questions =
+                      //         await TestController().getTopicQuestions(
+                      //       topicIds,
+                      //       limit: () {
+                      //         if (widget.testType == TestType.CUSTOMIZED)
+                      //           return 40;
+                      //         return widget.testType != TestType.SPEED
+                      //             ? 10
+                      //             : 1000;
+                      //       }(),
+                      //     );
+                      //     break;
+                      //   default:
+                      //     questions =
+                      //         await TestController().getMockQuestions(0);
+                      // }
+                      //
+                      // Navigator.pop(context);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return QuizCover(
+                      //         widget.user,
+                      //         questions,
+                      //         type: widget.testType,
+                      //         name: widget.test.testname!,
+                      //         theme: QuizTheme.ORANGE,
+                      //         category: widget.testCategory,
+                      //         time: questions.length * 60,
+                      //         course: widget.course,
+                      //       );
+                      //     },
+                      //   ),
+                      // );
                     },
                   ),
                 ],

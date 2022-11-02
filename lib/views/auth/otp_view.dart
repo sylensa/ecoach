@@ -52,7 +52,6 @@ class _OTPViewState extends State<OTPView> {
   @override
   void dispose() {
     errorController!.close();
-
     super.dispose();
   }
 
