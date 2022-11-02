@@ -167,13 +167,13 @@ class _ProgressChartState extends State<ProgressChart> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // if(listTestTaken.isEmpty){
-    //   getUserTestTakenResults();
-    // }else{
+    if(listTestTaken.isEmpty){
+      getUserTestTakenResults();
+    }else{
        getAverageStats("exam");
        getAverageStats("topic");
        getAverageStats("other");
-    // }
+    }
   }
 
   @override

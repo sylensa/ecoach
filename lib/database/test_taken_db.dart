@@ -131,6 +131,7 @@ class TestTakenDB {
   Future<List<TestTaken>> getAllAverageScore({String courseId = "0"}) async {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
+     print("courseId:$courseId");
      if(courseId == "0"){
        maps = await db!.rawQuery("Select *, score as avg_score from tests_taken");
      }else{
