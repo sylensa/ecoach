@@ -382,14 +382,28 @@ EdgeInsets noPadding() {
 EdgeInsets appPadding(double size) {
   return EdgeInsets.all(size);
 }
-InputDecoration textDecorSuffix({Color fillColor = Colors.white,String? hint, Icon? icon, Icon? suffIcon,Color? suffIconColor, String prefix = '', String suffix = '', bool enabled = true, Color hintColor = Colors.grey, double hintSize = 16, bool showBorder = true, String label = '', double size = 40,double top = 12.0,double radius = 0}) {
+
+InputDecoration textDecorSuffix(
+    {Color fillColor = Colors.white,
+    String? hint,
+    Icon? icon,
+    Icon? suffIcon,
+    Color? suffIconColor,
+    String prefix = '',
+    String suffix = '',
+    bool enabled = true,
+    Color hintColor = Colors.grey,
+    double hintSize = 16,
+    bool showBorder = true,
+    String label = '',
+    double size = 40,
+    double top = 12.0,
+    double radius = 0}) {
   return new InputDecoration(
-    suffixIcon:  Container(
+    suffixIcon: Container(
       child: suffIcon,
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(size)
-      ),
+          color: Colors.white, borderRadius: BorderRadius.circular(size)),
     ),
     prefixIcon: icon,
     prefixText: prefix,
@@ -402,7 +416,7 @@ InputDecoration textDecorSuffix({Color fillColor = Colors.white,String? hint, Ic
     ),
     focusedBorder: OutlineInputBorder(
       borderSide: BorderSide(color: appDarkText.withOpacity(0.1), width: 1),
-      borderRadius:  BorderRadius.all(Radius.circular(size)),
+      borderRadius: BorderRadius.all(Radius.circular(size)),
     ),
     labelStyle: appStyle(size: hintSize, col: hintColor),
     labelText: label,
@@ -626,25 +640,23 @@ Future<bool> clearPrefs() async {
   sp.clear();
   return true;
 }
-getInDays(DateTime timestamp){
-  double days = timestamp.difference(DateTime.now()).inHours/24;
 
-  if(days.round() == 0){
+getInDays(DateTime timestamp) {
+  double days = timestamp.difference(DateTime.now()).inHours / 24;
+
+  if (days.round() == 0) {
     return "Today";
-  }else if(days.round() == 1){
+  } else if (days.round() == 1) {
     return "Tomorrow";
-  }else if(days.round() == 2){
+  } else if (days.round() == 2) {
     return "In 2days";
-  }else if(days.round() == 3){
+  } else if (days.round() == 3) {
     return "In 3days";
-  }else if(days.round() == 4){
+  } else if (days.round() == 4) {
     return "In 4days";
-  }else{
+  } else {
     return "${DateFormat.yMMMEd().format(timestamp)}";
   }
-
-
-
 }
 
 Future<bool> setPref(key, value, {type = 'string'}) async {
@@ -727,12 +739,18 @@ sentenceCase(String txt) {
   return txt.sentenceCase;
 }
 
-toastMessage(String text, {bool long = false}) {
+toastMessage(
+  String text, {
+  bool long = false,
+  Color background = dDarkText,
+  Color textColor = Colors.white,
+}) {
   Fluttertoast.showToast(
-      msg: text,
-      toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
-      backgroundColor: dDarkText,
-      textColor: Colors.white);
+    msg: text,
+    toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
+    backgroundColor: background,
+    textColor: textColor,
+  );
 }
 
 Map replaceNulls(Map m) {
@@ -980,21 +998,20 @@ String utf8convert(String text) {
   return utf8.decode(bytes);
 }
 
-getOutDays(DateTime timestamp){
-  double days = DateTime.now().difference(timestamp).inHours/24;
+getOutDays(DateTime timestamp) {
+  double days = DateTime.now().difference(timestamp).inHours / 24;
 
-  if(days.round() == 0){
+  if (days.round() == 0) {
     return "Today";
-  }else if(days.round() == 1){
+  } else if (days.round() == 1) {
     return "Yesterday";
-  }else if(days.round() == 2){
+  } else if (days.round() == 2) {
     return "2 days ago";
-  }else if(days.round() == 3){
+  } else if (days.round() == 3) {
     return "3 days ago";
-  }else{
+  } else {
     return "${DateFormat.yMMMEd().format(timestamp)}";
   }
-
 }
 
 class ListNames {
@@ -1003,100 +1020,156 @@ class ListNames {
   ListNames({this.name = '', this.id = ''});
 }
 
-groupListWidget(GroupListData groupListData){
-
+groupListWidget(GroupListData groupListData) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-    margin: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     decoration: BoxDecoration(
-        color: Color(0XFFF5F5F5),
-        borderRadius: BorderRadius.circular(10)
-    ),
+        color: Color(0XFFF5F5F5), borderRadius: BorderRadius.circular(10)),
     child: Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
           child: Image.asset("assets/images/fCvBipe.png"),
         ),
-        SizedBox(width: 5,),
+        SizedBox(
+          width: 5,
+        ),
         Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                child: sText("${properCase(groupListData.name.toString())}",size: 14,weight: FontWeight.bold),
+                child: sText("${properCase(groupListData.name.toString())}",
+                    size: 14, weight: FontWeight.bold),
               ),
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               Container(
-                child: sText("by ${groupListData.owner != null ? properCase(groupListData.owner!.name.toString()) : ""}",size: 10,weight: FontWeight.normal,color: Colors.grey),
+                child: sText(
+                    "by ${groupListData.owner != null ? properCase(groupListData.owner!.name.toString()) : ""}",
+                    size: 10,
+                    weight: FontWeight.normal,
+                    color: Colors.grey),
               ),
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               Row(
                 children: [
                   Container(
                     child: Row(
                       children: [
                         Container(
-                          child: Icon(Icons.groups,color: Colors.grey,size: 14,),
+                          child: Icon(
+                            Icons.groups,
+                            color: Colors.grey,
+                            size: 14,
+                          ),
                         ),
-                        SizedBox(width: 5,),
+                        SizedBox(
+                          width: 5,
+                        ),
                         Container(
-                          child: sText("${groupListData.membersCount}",size: 10,weight: FontWeight.normal,),
+                          child: sText(
+                            "${groupListData.membersCount}",
+                            size: 10,
+                            weight: FontWeight.normal,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   Container(
                     child: Row(
                       children: [
                         Container(
-                          child: Icon(Icons.star,color: Colors.orange,size: 14,),
+                          child: Icon(
+                            Icons.star,
+                            color: Colors.orange,
+                            size: 14,
+                          ),
                         ),
-                        SizedBox(width: 0,),
-                        Container(
-                          child: sText("${groupListData.rating}",size: 10,weight: FontWeight.w400,),
+                        SizedBox(
+                          width: 0,
                         ),
-                        SizedBox(width: 5,),
                         Container(
-                          child: sText("(${groupListData.reviews} reviews)",size: 10,weight: FontWeight.normal,),
+                          child: sText(
+                            "${groupListData.rating}",
+                            size: 10,
+                            weight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Container(
+                          child: sText(
+                            "(${groupListData.reviews} reviews)",
+                            size: 10,
+                            weight: FontWeight.normal,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   Container(
                     child: Row(
                       children: [
                         Container(
                           child: Image.asset("assets/images/label.png"),
                         ),
-                        SizedBox(width: 5,),
-                        if(groupListData.settings != null)
+                        SizedBox(
+                          width: 5,
+                        ),
+                        if (groupListData.settings != null)
                           Container(
-                            child: sText(groupListData.settings!.access.toString() != "free" ? "${groupListData.settings!.currency} ${groupListData.settings!.amount}" : "Free",size: 10,weight: FontWeight.bold,),
+                            child: sText(
+                              groupListData.settings!.access.toString() !=
+                                      "free"
+                                  ? "${groupListData.settings!.currency} ${groupListData.settings!.amount}"
+                                  : "Free",
+                              size: 10,
+                              weight: FontWeight.bold,
+                            ),
                           )
                         else
                           Container(
-                            child: sText("Free",size: 10,weight: FontWeight.bold,),
+                            child: sText(
+                              "Free",
+                              size: 10,
+                              weight: FontWeight.bold,
+                            ),
                           )
                       ],
                     ),
                   ),
                 ],
               ),
-
             ],
           ),
         ),
         Expanded(child: Container()),
         Container(
-          padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-          child: sText(groupListData.isMember! == 1 ? "JOINED" : groupListData.isMember! == 2 ? "REQUEST SENT" :"JOIN",color: groupListData.isMember! == 0 ? Colors.white : Colors.white,weight: FontWeight.bold),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: sText(
+              groupListData.isMember! == 1
+                  ? "JOINED"
+                  : groupListData.isMember! == 2
+                      ? "REQUEST SENT"
+                      : "JOIN",
+              color: groupListData.isMember! == 0 ? Colors.white : Colors.white,
+              weight: FontWeight.bold),
           decoration: BoxDecoration(
               color: groupListData.isMember! == 0 ? Colors.orange : Colors.grey,
-              borderRadius: BorderRadius.circular(10)
-          ),
+              borderRadius: BorderRadius.circular(10)),
         )
       ],
     ),
@@ -1109,10 +1182,11 @@ Future<bool> scoreCurrentQuestion(Question question) async {
   if (question.unattempted) {
     question.confirmed = 0;
     print("questions[currentQuestion]:${question.unattempted}");
-    Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
-    if(questions == null){
+    Question? questions =
+        await QuestionDB().getConquestQuestionById(question.id!);
+    if (questions == null) {
       await QuestionDB().insertConquestQuestion(question);
-    }else{
+    } else {
       await QuestionDB().updateConquest(question);
     }
     return true;
@@ -1121,10 +1195,11 @@ Future<bool> scoreCurrentQuestion(Question question) async {
   if (question.isWrong) {
     print("selected answer:${question.selectedAnswer}");
     question.confirmed = 1;
-    Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
-    if(questions == null){
+    Question? questions =
+        await QuestionDB().getConquestQuestionById(question.id!);
+    if (questions == null) {
       await QuestionDB().insertConquestQuestion(question);
-    }else{
+    } else {
       await QuestionDB().updateConquest(question);
     }
     return false;
@@ -1132,14 +1207,14 @@ Future<bool> scoreCurrentQuestion(Question question) async {
 
   if (question.isCorrect) {
     question.confirmed = 2;
-    Question? questions = await QuestionDB().getConquestQuestionById(question.id!);
-    if(questions == null){
+    Question? questions =
+        await QuestionDB().getConquestQuestionById(question.id!);
+    if (questions == null) {
       await QuestionDB().insertConquestQuestion(question);
-    }else{
+    } else {
       await QuestionDB().updateConquest(question);
     }
   }
-
 
   return true;
 }

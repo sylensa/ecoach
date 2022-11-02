@@ -1,5 +1,6 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/api2/api_call.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/plan2.dart';
 import 'package:ecoach/models/store_search.dart';
 import 'package:ecoach/models/user.dart';
@@ -38,9 +39,14 @@ class StoreController {
         },
       );
       plans = response.data.bundles;
-      //  response.data!.bundles
     } catch (e) {
-      return plans;
+      toastMessage(
+        "Ooops! Something went wrong",
+        long: true,
+        background: kAnalysisInfoSnippetBackground1,
+        textColor: dDarkText,
+      );
+      print("Store - Bundles Search Error: $e");
     }
     return plans;
   }
@@ -91,12 +97,13 @@ class StoreController {
       context: context,
       child: Container(
         padding: EdgeInsets.only(
-          top: 44,
-          right: 44,
-          left: 44,
+          top: 28,
+          right: 26,
+          left: 26,
           bottom: 42,
         ),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width , maxHeight: 800),
+        constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width, maxHeight: 800),
         decoration: BoxDecoration(
           color: kAdeoRoyalBlue,
           borderRadius: BorderRadius.circular(
@@ -119,7 +126,7 @@ class StoreController {
                   ),
                 ),
                 InkWell(
-                   onTap: () {
+                  onTap: () {
                     Navigator.pop(context);
                   },
                   child: Container(

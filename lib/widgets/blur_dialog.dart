@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' show ImageFilter;
 
-showDialogWithBlur(
-    {required BuildContext context,
-    required Widget child,
-    Color backgroundColor = Colors.white}) {
+showDialogWithBlur({
+  required BuildContext context,
+  required Widget child,
+  Color backgroundColor = Colors.white,
+}) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -14,6 +15,7 @@ showDialogWithBlur(
         child: Dialog(
           child: child,
           backgroundColor: backgroundColor,
+          insetPadding: EdgeInsets.all(8),
         ),
       );
     },

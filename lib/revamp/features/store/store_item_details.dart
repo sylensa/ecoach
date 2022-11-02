@@ -251,10 +251,10 @@ class _StoreItemDetailsPageContentState
                                                                 ),
                                                               ),
                                                               _plan.features!.indexOf(
-                                                                          feature) != 
-                                                                      _plan
-                                                                          .features!
-                                                                          .length - 1
+                                                                          feature) !=
+                                                                      _plan.features!
+                                                                              .length -
+                                                                          1
                                                                   ? TextSpan(
                                                                       text:
                                                                           "  |",
