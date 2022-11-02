@@ -1,6 +1,7 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/api2/api_call.dart';
-import 'package:ecoach/models/plan2.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/plan2.dart' as planModel;
 import 'package:ecoach/models/store_search.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/components/subscription/subscribe_to_plan.dart';
@@ -25,9 +26,9 @@ class StoreController {
     },
   ];
 
-  Future<List<Plan>> searchPlans(BuildContext context,
+  Future<List<planModel.Plan>> searchPlans(BuildContext context,
       {String query = ""}) async {
-    List<Plan> plans = [];
+    List<planModel.Plan> plans = [];
     try {
       var response = await ApiCall<StoreSearch>(context).get(
         AppUrl.searchPlans,
@@ -38,21 +39,26 @@ class StoreController {
         },
       );
       plans = response.data.bundles;
-      //  response.data!.bundles
     } catch (e) {
-      return plans;
+      toastMessage(
+        "Ooops! Something went wrong",
+        long: true,
+        background: kAnalysisInfoSnippetBackground1,
+        textColor: dDarkText,
+      );
+      print("Store - Bundles Search Error: $e");
     }
     return plans;
   }
 
-  Future<List<Plan>> filterPlans(BuildContext context,
-      {String query = ""}) async {
-    var response = await ApiCall<Plan>(context).get(
+  Future<List<planModel.Plan>> filterPlans(BuildContext context,
+      {List<String>? query}) async {
+    var response = await ApiCall<planModel.Plan>(context).post(
       AppUrl.filterPlans,
       isList: true,
-      params: {"filter": query},
+      params: {"topics": query ?? []},
       create: (dataItem) {
-        return Plan.fromJson(dataItem);
+        return planModel.Plan.fromJson(dataItem);
       },
     );
 
@@ -64,39 +70,40 @@ class StoreController {
   //   plans = filteredPlans!;
   // }
 
-  Future<List<Plan>> getPlans(BuildContext context) async {
-    var response = await ApiCall<Plan>(context).get(
+  Future<List<planModel.Plan>> getPlans(BuildContext context) async {
+    var response = await ApiCall<planModel.Plan>(context).get(
       AppUrl.plans,
       create: (dataItem) {
-        return Plan.fromJson(dataItem);
+        return planModel.Plan.fromJson(dataItem);
       },
     );
     return response.data;
   }
 
-  Future<Plan> getPlanDetails(BuildContext context, int planId) async {
-    final ApiResponse<Plan> response = await ApiCall<Plan>(context).get(
+  Future<planModel.Plan> getPlanDetails(BuildContext context, int planId) async {
+    final ApiResponse<planModel.Plan> response = await ApiCall<planModel.Plan>(context).get(
       "${AppUrl.planDetails}/$planId",
       isList: false,
       create: (dataItem) {
-        return Plan.fromJson(dataItem);
+        return planModel.Plan.fromJson(dataItem);
       },
     );
     return response.data;
   }
 
-  showSubscriptionModal(BuildContext context, String bundleName, Plan plan) {
+  showSubscriptionModal(BuildContext context, String bundleName, planModel.Plan plan) {
     return showDialogWithBlur(
       backgroundColor: Colors.transparent,
       context: context,
       child: Container(
         padding: EdgeInsets.only(
-          top: 44,
-          right: 44,
-          left: 44,
+          top: 28,
+          right: 26,
+          left: 26,
           bottom: 42,
         ),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width , maxHeight: 800),
+        constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width, maxHeight: 800),
         decoration: BoxDecoration(
           color: kAdeoRoyalBlue,
           borderRadius: BorderRadius.circular(
@@ -119,7 +126,7 @@ class StoreController {
                   ),
                 ),
                 InkWell(
-                   onTap: () {
+                  onTap: () {
                     Navigator.pop(context);
                   },
                   child: Container(
@@ -129,18 +136,6 @@ class StoreController {
                     ),
                   ),
                 )
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.pop(context);
-                //   },
-                //   iconSize: 14,
-                //   icon: Image.asset(
-                //     'assets/icons/close_red.png',
-                //     height: 15,
-                //     width: 15,
-                //     fit: BoxFit.cover,
-                //   ),
-                // )
               ],
             ),
             SizedBox(

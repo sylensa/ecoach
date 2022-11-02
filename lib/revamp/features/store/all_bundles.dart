@@ -37,11 +37,11 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
     filterBundles();
   }
 
-  filterBundles({String query = ""}) async {
+  filterBundles({List<String>? query}) async {
     isLoadingBundles = true;
     _plans = await storeController.filterPlans(
       context,
-      query: query,
+      query: query ?? [],
     );
     isLoadingBundles = false;
     setState(() {});
@@ -136,7 +136,7 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
                                                     _selectedFilters.join(' ');
 
                                                 filterBundles(
-                                                  query: _queryFilter,
+                                                  query: _selectedFilters,
                                                 );
 
                                                 setState(() {});

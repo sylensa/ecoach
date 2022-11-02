@@ -126,30 +126,27 @@ class _SubscribeToPlanState extends State<SubscribeToPlan>
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 104),
+        SizedBox(height: 86),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          padding: EdgeInsets.symmetric(horizontal: 0.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Text(
+                'GHS',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                ),
+              ),
               Text(
                 totalAmount.toStringAsFixed(2),
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Helvetica Rounded',
-                  fontSize: 56.0,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: Text(
-                  'GHS',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                  ),
+                  fontSize: 48.0,
                 ),
               ),
             ],
@@ -166,7 +163,7 @@ class _SubscribeToPlanState extends State<SubscribeToPlan>
         ),
         SizedBox(height: 32.0),
         Container(
-          width: 420,
+          width: double.maxFinite,
           height: 400,
           child: AdeoTabControl(
             variant: 'underline',

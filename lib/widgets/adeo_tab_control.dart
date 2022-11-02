@@ -51,43 +51,21 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          if (widget.variant.toUpperCase() == 'SQUARE')
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child:  Container(
-                decoration: BoxDecoration(
-                    // color: Colors.grey[100],
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:  Radius.circular(20))
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: widget.tabs
-                      .map(
-                        (tab) => AdeoSquareTabButton(
-                          onTap: changePage,
-                          text: tab,
-                          pageNumber: widget.tabs.indexOf(tab),
-                          count: widget.tabs.length,
-                          isSelected:
-                              currentPageNumber == widget.tabs.indexOf(tab),
-                        ),
-                      )
-                      .toList(),
-                ),
+    return Column(
+      children: [
+        if (widget.variant.toUpperCase() == 'SQUARE')
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child:  Container(
+              decoration: BoxDecoration(
+                  // color: Colors.grey[100],
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight:  Radius.circular(20))
               ),
-            )
-          else
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: widget.tabs
                     .map(
-                      (tab) => AdeoTabButton(
-                        variant: widget.variant,
+                      (tab) => AdeoSquareTabButton(
                         onTap: changePage,
                         text: tab,
                         pageNumber: widget.tabs.indexOf(tab),
@@ -99,19 +77,39 @@ class _AdeoTabControlState extends State<AdeoTabControl> {
                     .toList(),
               ),
             ),
-          Expanded(
-            child: PageView(
-              controller: pageController,
-              onPageChanged: (page) {
-                setState(() {
-                  currentPageNumber = page;
-                });
-              },
-              children: widget.tabPages!,
+          )
+        else
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: widget.tabs
+                  .map(
+                    (tab) => AdeoTabButton(
+                      variant: widget.variant,
+                      onTap: changePage,
+                      text: tab,
+                      pageNumber: widget.tabs.indexOf(tab),
+                      count: widget.tabs.length,
+                      isSelected:
+                          currentPageNumber == widget.tabs.indexOf(tab),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
-        ],
-      ),
+        Expanded(
+          child: PageView(
+            controller: pageController,
+            onPageChanged: (page) {
+              setState(() {
+                currentPageNumber = page;
+              });
+            },
+            children: widget.tabPages!,
+          ),
+        ),
+      ],
     );
   }
 }
