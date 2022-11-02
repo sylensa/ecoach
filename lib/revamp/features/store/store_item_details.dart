@@ -144,7 +144,7 @@ class _StoreItemDetailsPageContentState
                   ),
                   child: Container(
                     margin: EdgeInsets.only(
-                      top: 36,
+                      top: 42,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -165,13 +165,13 @@ class _StoreItemDetailsPageContentState
                                   minHeight: 430,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: kAdeoDark_Gray,
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(24),
-                                    topRight: Radius.circular(24),
-                                    bottomLeft: Radius.zero,
-                                    bottomRight: Radius.zero,
-                                  ),
+                                  color: kAdeoDark,
+                                  // borderRadius: BorderRadius.only(
+                                  //   topLeft: Radius.circular(24),
+                                  //   topRight: Radius.circular(24),
+                                  //   bottomLeft: Radius.zero,
+                                  //   bottomRight: Radius.zero,
+                                  // ),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,7 +217,7 @@ class _StoreItemDetailsPageContentState
                                                 Text(
                                                   "Courses",
                                                   style: TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize: 18,
                                                     color: Colors.white,
                                                     fontFamily: "poppins",
                                                     fontWeight: FontWeight.bold,
@@ -231,44 +231,85 @@ class _StoreItemDetailsPageContentState
                                                   runSpacing: 8,
                                                   children: _plan.features!
                                                       .map(
-                                                        (feature) => Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                            horizontal: 24,
-                                                            vertical: 12,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
+                                                        (feature) => RichText(
+                                                          text: TextSpan(
                                                             children: [
-                                                              Text(
-                                                                "${feature.name}",
-                                                              ),
-                                                              if (feature
-                                                                      .description !=
-                                                                  null)
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                    top: 8.0,
-                                                                  ),
-                                                                  child: Text(
-                                                                    "${feature.description}",
-                                                                  ),
+                                                              TextSpan(
+                                                                text:
+                                                                    "${feature.name}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic,
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
                                                                 ),
+                                                              ),
+                                                              _plan.features!.indexOf(
+                                                                          feature) != 
+                                                                      _plan
+                                                                          .features!
+                                                                          .length - 1
+                                                                  ? TextSpan(
+                                                                      text:
+                                                                          "  |",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .white
+                                                                            .withOpacity(0.3),
+                                                                      ),
+                                                                    )
+                                                                  : TextSpan()
                                                             ],
                                                           ),
                                                         ),
+
+                                                        // Container(
+                                                        //   padding: EdgeInsets
+                                                        //       .symmetric(
+                                                        //     horizontal: 18,
+                                                        //     vertical: 8,
+                                                        //   ),
+                                                        //   decoration:
+                                                        //       BoxDecoration(
+                                                        //     color: Colors.white,
+                                                        //     borderRadius:
+                                                        //         BorderRadius
+                                                        //             .circular(
+                                                        //                 8),
+                                                        //   ),
+                                                        //   child: Column(
+                                                        //     crossAxisAlignment:
+                                                        //         CrossAxisAlignment
+                                                        //             .start,
+                                                        //     children: [
+                                                        //       Text(
+                                                        //         "${feature.name}",
+                                                        //       ),
+                                                        //       if (feature
+                                                        //               .description !=
+                                                        //           null)
+                                                        //         Padding(
+                                                        //           padding:
+                                                        //               const EdgeInsets
+                                                        //                   .only(
+                                                        //             top: 8.0,
+                                                        //           ),
+                                                        //           child: Text(
+                                                        //             "${feature.description}",
+                                                        //           ),
+                                                        //         ),
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
                                                       )
                                                       .toList(),
                                                 ),
@@ -289,113 +330,23 @@ class _StoreItemDetailsPageContentState
                 ),
               ),
             ),
-            Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width,
-              ),
-              decoration: BoxDecoration(
-                color: kAdeoDark_Gray,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
+            InkWell(
+              onTap: (() => storeController.showSubscriptionModal(
+                  context, widget.item.name.toString(), widget.item)),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 60,
+                color: kAdeoGreen,
+                child: Center(
+                  child: Text(
+                    "Subscribe",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 18.0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AdeoFilledButton(
-                          
-                          background: kAdeoGreen,
-                          borderRadius: 0,
-                          label: "Subscribe",
-                          onPressed: () {
-                            return widget.isBundle
-                                ? storeController.showSubscriptionModal(context,
-                                    widget.item.name.toString(), widget.item)
-                                : widget.isGroup
-                                    ? Container()
-                                    : Container();
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.only(bottom: 24),
-                      color: kAdeoDark_Gray,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 24,
-                          right: 24,
-                          bottom: 24,
-                          top: 12
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Administrator",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontFamily: "poppins",
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 18,
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  margin: EdgeInsets.only(
-                                    right: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
-                                  child: Image.asset(
-                                    "assets/images/store/store-img-2.png",
-                                    width: double.maxFinite,
-                                    height: double.maxFinite,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: SizedBox(
-                                    child: Text(
-                                      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla illo incidunt nobis? Fugit nisi placeat, vero"
-                                      "nemo, quam provident perferendis eius sint incidunt error maxime aperiam voluptatibus omnis facere hic.",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: kAdeoDark_Gray2,
-                                        fontFamily: "poppins",
-                                      ),
-                                      maxLines: 8,
-                                      softWrap: true,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
@@ -409,10 +360,10 @@ class _StoreItemDetailsPageContentState
               top: MediaQuery.of(context).size.height * 0.05,
             ),
             width: MediaQuery.of(context).size.width,
-            color: kAdeoDark_Gray,
+            color: kAdeoDark,
             child: Padding(
               padding: const EdgeInsets.only(
-                left: 24.0,
+                left: 18.0,
                 right: 24.0,
                 bottom: 24.0,
               ),
@@ -421,19 +372,16 @@ class _StoreItemDetailsPageContentState
                 children: [
                   Row(
                     children: [
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: (() => Navigator.pop(context)),
-                          child: SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: Center(
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                                size: 18,
-                              ),
+                      InkWell(
+                        onTap: (() => Navigator.pop(context)),
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: Center(
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 18,
                             ),
                           ),
                         ),

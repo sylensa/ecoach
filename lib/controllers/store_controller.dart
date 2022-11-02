@@ -46,11 +46,11 @@ class StoreController {
   }
 
   Future<List<Plan>> filterPlans(BuildContext context,
-      {String query = ""}) async {
-    var response = await ApiCall<Plan>(context).get(
+      {List<String>? query}) async {
+    var response = await ApiCall<Plan>(context).post(
       AppUrl.filterPlans,
       isList: true,
-      params: {"filter": query},
+      params: {"topics": query ?? []},
       create: (dataItem) {
         return Plan.fromJson(dataItem);
       },
