@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:ecoach/models/plan2.dart' as planModel;
 
-import 'package:ecoach/models/plan.dart';
 
 
 
@@ -14,11 +14,11 @@ class StoreSearch {
         this.groups,
     });
 
-    final List<Plan>? bundles;
+    final List<planModel.Plan>? bundles;
     final List<dynamic>? groups;
 
     factory StoreSearch.fromJson(Map<String, dynamic> json) => StoreSearch(
-        bundles: List<Plan>.from(json["bundles"].map((x) => Plan.fromJson(x))),
+        bundles: List<planModel.Plan>.from(json["bundles"].map((x) => planModel.Plan.fromJson(x))),
         groups: List<dynamic>.from(json["groups"].map((x) => x)),
     );
 
