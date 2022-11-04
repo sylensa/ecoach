@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
@@ -129,54 +130,58 @@ class SpeedQuizCover extends StatelessWidget {
               AdeoOutlinedButton(
                 label: 'Start',
                 onPressed: () async {
-                  if(speedTestMode == "quiz"){
+                  if(questions.isNotEmpty){
+                    if(speedTestMode == "quiz"){
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return QuizQuestion(
-                            controller: QuizController(
-                              user,
-                              course!,
-                              questions: questions,
-                              level: level,
-                              name: name,
-                              time: time,
-                              type: type,
-                              challengeType: category,
-                            ),
-                            theme: theme,
-                            diagnostic: diagnostic,
-                          );
-                        },
-                      ),
-                    );
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return QuizQuestion(
+                              controller: QuizController(
+                                user,
+                                course!,
+                                questions: questions,
+                                level: level,
+                                name: name,
+                                time: time,
+                                type: type,
+                                challengeType: category,
+                              ),
+                              theme: theme,
+                              diagnostic: diagnostic,
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    else{
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SpeedQuizView(
+                              type,
+                              controller: QuizController(
+                                user,
+                                course!,
+                                questions: questions,
+                                level: level,
+                                name: name,
+                                time: time,
+                                type: type,
+                                challengeType: category,
+                              ),
+                              theme: theme,
+                              diagnostic: diagnostic,
+                            );
+                          },
+                        ),
+                      );
+                    }
                   }else{
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return SpeedQuizView(
-                            type,
-                            controller: QuizController(
-                              user,
-                              course!,
-                              questions: questions,
-                              level: level,
-                              name: name,
-                              time: time,
-                              type: type,
-                              challengeType: category,
-                            ),
-                            theme: theme,
-                            diagnostic: diagnostic,
-                          );
-                        },
-                      ),
-                    );
+                    toastMessage("No questions for test type ${category.name}");
                   }
-
 
                 },
               )
