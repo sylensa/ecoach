@@ -26,7 +26,13 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class TestTypeWidget extends StatefulWidget {
-  TestTypeWidget({Key? key,required this.course,required this.user,required this.subscription, required this.controller}) : super(key: key);
+  TestTypeWidget(
+      {Key? key,
+      required this.course,
+      required this.user,
+      required this.subscription,
+      required this.controller})
+      : super(key: key);
   Course course;
   User user;
   Plan subscription;
@@ -39,9 +45,15 @@ class TestTypeWidget extends StatefulWidget {
 class _TestTypeWidgetState extends State<TestTypeWidget> {
   String selectedConquestType = '';
   TestType testType = TestType.NONE;
-  List<ListNames> conquestTypes = [ListNames(name: "Unseen",id: "1"),ListNames(name: "Unanswered",id: "2"),ListNames(name: "Wrong answered",id: "3"),];
+  List<ListNames> conquestTypes = [
+    ListNames(name: "Unseen", id: "1"),
+    ListNames(name: "Unanswered", id: "2"),
+    ListNames(name: "Wrong answered", id: "3"),
+  ];
 
-  conquestModalBottomSheet(context,) {
+  conquestModalBottomSheet(
+    context,
+  ) {
     double sheetHeight = 400;
     showModalBottomSheet(
         context: context,
@@ -74,7 +86,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Center(child:Image.asset("assets/images/flag.png")),
+                        child: Center(
+                            child: Image.asset("assets/images/flag.png")),
                       ),
                       SizedBox(
                         height: 10,
@@ -84,7 +97,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                         child: sText("Conquest",
                             color: kAdeoGray3,
                             weight: FontWeight.bold,
-                            align: TextAlign.center,size: 20),
+                            align: TextAlign.center,
+                            size: 20),
                       ),
                       SizedBox(
                         height: 20,
@@ -94,8 +108,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                               itemCount: conquestTypes.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return MaterialButton(
-                                  onPressed: () async{
-
+                                  onPressed: () async {
                                     // showLoaderDialog(context);
                                     // List<Question> listQuestions = [];
                                     // if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
@@ -128,8 +141,6 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                     //       testType: testType,
                                     //       listQuestions: listQuestions,
                                     //     ));
-
-
                                   },
                                   child: Container(
                                     width: appWidth(context),
@@ -138,11 +149,25 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                     margin: EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10),
                                     decoration: BoxDecoration(
-                                        color: selectedConquestType == conquestTypes[index].name ? Color(0XFFFD6363) :  Colors.white,
-                                        border: Border.all(color: selectedConquestType == conquestTypes[index].name ? Colors.transparent : Colors.black,width: 1),
-                                        borderRadius: BorderRadius.circular(10)),
-
-                                    child:sText("${conquestTypes[index].name}", color: selectedConquestType == conquestTypes[index].name ? Colors.white : Colors.black, weight: FontWeight.w500,align: TextAlign.center),
+                                        color: selectedConquestType ==
+                                                conquestTypes[index].name
+                                            ? Color(0XFFFD6363)
+                                            : Colors.white,
+                                        border: Border.all(
+                                            color: selectedConquestType ==
+                                                    conquestTypes[index].name
+                                                ? Colors.transparent
+                                                : Colors.black,
+                                            width: 1),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: sText("${conquestTypes[index].name}",
+                                        color: selectedConquestType ==
+                                                conquestTypes[index].name
+                                            ? Colors.white
+                                            : Colors.black,
+                                        weight: FontWeight.w500,
+                                        align: TextAlign.center),
                                   ),
                                 );
                               })),
@@ -152,16 +177,16 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           );
         });
   }
+
   @override
   Widget build(BuildContext context) {
-    return   Expanded(
+    return Expanded(
       child: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20),
         children: [
           MultiPurposeCourseCard(
             title: 'Speed',
-            subTitle:
-            'Accuracy matters , don\'t let the clock run down',
+            subTitle: 'Accuracy matters , don\'t let the clock run down',
             iconURL: 'assets/icons/courses/speed.png',
             onTap: () {
               Navigator.push(
@@ -220,8 +245,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return AutopilotIntroit(
-                        widget.user, widget.course);
+                    return AutopilotIntroit(widget.user, widget.course);
                   },
                 ),
               );
@@ -232,7 +256,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             subTitle: 'Crank up the speed, how far can you go?',
             iconURL: 'assets/icons/courses/treadmill.png',
             onTap: () async {
-              Treadmill? treadmill = await TestController().getCurrentTreadmill(widget.course);
+              Treadmill? treadmill =
+                  await TestController().getCurrentTreadmill(widget.course);
               if (treadmill == null) {
                 return Navigator.push(
                   context,
@@ -243,20 +268,18 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                     ),
                   ),
                 );
-              }
-              else {
+              } else {
                 return Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        TreadmillSaveResumptionMenu(
-                          controller: TreadmillController(
-                            widget.user,
-                            widget.course,
-                            name: widget.course.name!,
-                            treadmill: treadmill,
-                          ),
-                        ),
+                    builder: (context) => TreadmillSaveResumptionMenu(
+                      controller: TreadmillController(
+                        widget.user,
+                        widget.course,
+                        name: widget.course.name!,
+                        treadmill: treadmill,
+                      ),
+                    ),
                   ),
                 );
               }
@@ -273,7 +296,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                   builder: (context) {
                     return CustomizedTestIntroit(
                       user: widget.user,
-                      course:widget.course,
+                      course: widget.course,
                     );
                   },
                 ),

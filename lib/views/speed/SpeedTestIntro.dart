@@ -44,8 +44,8 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+        // Navigator.popUntil(
+        //     context, ModalRoute.withName(CourseDetailsPage.routeName));
         return true;
       },
       child: Scaffold(
@@ -103,21 +103,19 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                     label: 'Next',
                     backcolor: Colors.red,
                     onPressed: () {
-
-                      if (mode.toUpperCase() == 'QUIZ'){
-                        speedTestMode =  "quiz";
+                      if (mode.toUpperCase() == 'QUIZ') {
+                        speedTestMode = "quiz";
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return SpeedTestQuestionMode(widget.user, widget.course, "quiz");
+                              return SpeedTestQuestionMode(
+                                  widget.user, widget.course, "quiz");
                             },
                           ),
                         );
-                      }
-
-                      else if (mode.toUpperCase() == 'QUESTION'){
-                        speedTestMode =  "question";
+                      } else if (mode.toUpperCase() == 'QUESTION') {
+                        speedTestMode = "question";
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -128,8 +126,6 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
                           ),
                         );
                       }
-
-
                     },
                   ),
                   SizedBox(height: 53),
