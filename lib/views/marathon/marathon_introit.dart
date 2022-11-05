@@ -19,6 +19,7 @@ class MarathonIntroit extends StatefulWidget {
 
   final User user;
   final Course course;
+  static const String routeName = '/marathon-introit';
 
   @override
   State<MarathonIntroit> createState() => _MarathonIntroitState();
@@ -54,8 +55,11 @@ class _MarathonIntroitState extends State<MarathonIntroit> {
             await TestController().getCurrentMarathon(widget.course);
         if (marathon == null) {
           screenToNavigateTo = MarathonPractiseMenu(
-            controller: MarathonController(widget.user, widget.course,
-                name: widget.course.name!),
+            controller: MarathonController(
+              widget.user,
+              widget.course,
+              name: widget.course.name!,
+            ),
           );
         } else {
           print(marathon.toJson());

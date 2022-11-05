@@ -12,6 +12,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/conquest/conquest_complete_congratulations.dart';
 import 'package:ecoach/views/conquest/conquest_ended.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_ended.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -471,7 +472,7 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
                 onPressed: () {
                   canExit = true;
                   Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                      ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               Button(
@@ -690,7 +691,7 @@ class SessionSavedPrompt extends StatelessWidget {
       onWillPop: () async {
         await controller.scoreCurrentQuestion();
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
@@ -725,7 +726,7 @@ class SessionSavedPrompt extends StatelessWidget {
                   onPressed: () async {
                     await controller.scoreCurrentQuestion();
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),

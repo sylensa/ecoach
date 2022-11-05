@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/marathon/marathon_completed.dart';
 import 'package:ecoach/views/marathon/marathon_countdown.dart';
 import 'package:ecoach/views/marathon/marathon_practise_menu.dart';
@@ -234,7 +235,7 @@ class Caution extends StatelessWidget {
                           controller.user, controller.course,
                           name: controller.course.name!),
                     );
-                  }), ModalRoute.withName(CourseDetailsPage.routeName));
+                  }), ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               )
             ],

@@ -10,6 +10,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/conquest/conquest_onboarding.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/review/review_onboarding.dart';
 import 'package:ecoach/views/review/review_questions.dart';
 import 'package:ecoach/views/speed/SpeedTestIntro.dart';
@@ -60,7 +61,7 @@ class _TestTypeViewState extends State<TestTypeView> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return true;
       },
       child: Scaffold(

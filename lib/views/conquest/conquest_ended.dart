@@ -4,6 +4,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/conquest/conquest_complete_congratulations.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -19,7 +20,7 @@ class ConquestEnded extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return true;
       },
       child: Scaffold(
@@ -38,7 +39,7 @@ class ConquestEnded extends StatelessWidget {
                   fontSize: 14,
                   onPressed: () {
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                 ),
                 SizedBox(width: 10),
@@ -167,7 +168,7 @@ class ConquestEnded extends StatelessWidget {
                       background: kAdeoBlue,
                       onPressed: () {
                         Navigator.popUntil(context,
-                            ModalRoute.withName(CourseDetailsPage.routeName));
+                            ModalRoute.withName(CoursesDetailsPage.routeName));
                       },
                     ),
                   ),

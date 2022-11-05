@@ -9,6 +9,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/treadmill/treadmill_complete_congratulations.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_ended.dart';
@@ -1142,7 +1143,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
               Navigator.pop(context);
               Navigator.popUntil(
                 context,
-                ModalRoute.withName(CourseDetailsPage.routeName),
+                ModalRoute.withName(CoursesDetailsPage.routeName),
               );
             },
             style: ButtonStyle(
@@ -1251,7 +1252,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
               controller.endTreadmill();
               Navigator.popUntil(
                 context,
-                ModalRoute.withName(CourseDetailsPage.routeName),
+                ModalRoute.withName(CoursesDetailsPage.routeName),
               );
             },
             style: ButtonStyle(
@@ -1578,7 +1579,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   canExit = true;
                   Navigator.popUntil(
                     context,
-                    ModalRoute.withName(CourseDetailsPage.routeName),
+                    ModalRoute.withName(CoursesDetailsPage.routeName),
                   );
                 },
               ),
@@ -1757,7 +1758,7 @@ class SessionSavedPrompt extends StatelessWidget {
       onWillPop: () async {
         controller.scoreCurrentQuestion();
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
@@ -1792,7 +1793,7 @@ class SessionSavedPrompt extends StatelessWidget {
                   onPressed: () {
                     controller.scoreCurrentQuestion();
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),
@@ -2004,7 +2005,7 @@ class SpeedQuizEnded extends StatelessWidget {
                 onPressed: () {
                   Navigator.popUntil(
                     context,
-                    ModalRoute.withName(CourseDetailsPage.routeName),
+                    ModalRoute.withName(CoursesDetailsPage.routeName),
                   );
                 },
               ),
