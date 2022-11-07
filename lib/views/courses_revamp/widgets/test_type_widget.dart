@@ -341,7 +341,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             subTitle: 'Prepare for battle, attempt everything',
             iconURL: 'assets/icons/courses/conquest.png',
             onTap: () {
-              // conquestModalBottomSheet(context);
+              conquestModalBottomSheet(context);
             },
           ),
         ],
