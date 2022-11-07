@@ -27,6 +27,7 @@ class _LearnMasteryState extends State<LearnMastery> {
       onTap: () async {
         List<Question> questions =
             await QuestionDB().getMasteryQuestions(widget.course.id!, 5);
+        print(questions);
         Navigator.push(
           context,
           MaterialPageRoute(
