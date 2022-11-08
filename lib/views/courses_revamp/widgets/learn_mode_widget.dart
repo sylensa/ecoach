@@ -20,7 +20,13 @@ import 'package:flutter/material.dart';
 
 class LearnModeWidget extends StatefulWidget {
   static const String routeName = '/learning/mode';
-  LearnModeWidget({Key? key,required this.course,required this.user,required this.subscription, required this.controller}) : super(key: key);
+  LearnModeWidget(
+      {Key? key,
+      required this.course,
+      required this.user,
+      required this.subscription,
+      required this.controller})
+      : super(key: key);
   Course course;
   User user;
   Plan subscription;
@@ -54,6 +60,7 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
 
     return color!;
   }
+
   Future<StudyProgress?> getStudyProgress(StudyType type) async {
     Study? study = await StudyDB().getStudyByType(widget.course.id!, type);
     Topic? topic;
@@ -65,12 +72,12 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
             id: topic.id,
             courseId: widget.course.id!,
             name: type == StudyType.SPEED_ENHANCEMENT ||
-                type == StudyType.MASTERY_IMPROVEMENT
+                    type == StudyType.MASTERY_IMPROVEMENT
                 ? widget.course.name
                 : topic.name,
             type: type.toString(),
             currentTopicId: type == StudyType.SPEED_ENHANCEMENT ||
-                type == StudyType.MASTERY_IMPROVEMENT
+                    type == StudyType.MASTERY_IMPROVEMENT
                 ? null
                 : topic.id,
             userId: widget.user.id!,
@@ -84,11 +91,11 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
             level: 1,
             section: 1,
             name: type == StudyType.SPEED_ENHANCEMENT ||
-                type == StudyType.MASTERY_IMPROVEMENT
+                    type == StudyType.MASTERY_IMPROVEMENT
                 ? widget.course.name
                 : topic.name,
             topicId: type == StudyType.SPEED_ENHANCEMENT ||
-                type == StudyType.MASTERY_IMPROVEMENT
+                    type == StudyType.MASTERY_IMPROVEMENT
                 ? null
                 : topic.id,
             createdAt: DateTime.now(),
@@ -107,12 +114,11 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
     return progress;
   }
 
-  letGo()async{
+  letGo() async {
     Widget? view = null;
     switch (studyType) {
       case StudyType.REVISION:
-        StudyProgress? progress =
-            await getStudyProgress(StudyType.REVISION);
+        StudyProgress? progress = await getStudyProgress(StudyType.REVISION);
         print(progress);
         if (progress == null) {
           return;
@@ -122,8 +128,7 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
 
       case StudyType.COURSE_COMPLETION:
         StudyProgress? progress =
-            await getStudyProgress(
-            StudyType.COURSE_COMPLETION);
+            await getStudyProgress(StudyType.COURSE_COMPLETION);
         print(progress);
         if (progress == null) {
           return;
@@ -132,33 +137,31 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
         break;
       case StudyType.SPEED_ENHANCEMENT:
         StudyProgress? progress =
-            await getStudyProgress(
-            StudyType.SPEED_ENHANCEMENT);
+            await getStudyProgress(StudyType.SPEED_ENHANCEMENT);
         print(progress);
         if (progress == null) {
           return;
         }
-        view = LearnSpeed(
-            widget.user, widget.course, progress);
+        view = LearnSpeed(widget.user, widget.course, progress);
         break;
       case StudyType.MASTERY_IMPROVEMENT:
         StudyProgress? progress =
-            await getStudyProgress(
-            StudyType.MASTERY_IMPROVEMENT);
+            await getStudyProgress(StudyType.MASTERY_IMPROVEMENT);
         print(progress);
         if (progress == null) {
           return;
         }
-        List<MasteryCourse> mcs =
-            await MasteryCourseDB()
-            .getMasteryTopics(progress.studyId!);
+        List<MasteryCourseUpgrade> mcs =
+            await MasteryCourseDB().getMasteryTopicsUpgrade(progress.studyId!);
         if (progress.level == 1 || mcs.length == 0) {
-          view = LearnMastery(
-              widget.user, widget.course, progress);
+          view = LearnMastery(widget.user, widget.course, progress);
         } else {
           view = LearnMasteryTopic(
-              widget.user, widget.course, progress,
-              topics: mcs);
+            widget.user,
+            widget.course,
+            progress,
+            topics: mcs,
+          );
         }
 
         break;
@@ -224,11 +227,11 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                     padding: EdgeInsets.only(left: 24.0, right: 24.0),
                     child: CourseDetailCard(
                       courseDetail: learnModeDetails[0],
-                      onTap: () async{
+                      onTap: () async {
                         setState(() {
                           studyType = StudyType.REVISION;
                         });
-                       await letGo();
+                        await letGo();
                       },
                     ),
                   ),
@@ -248,9 +251,9 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                     padding: EdgeInsets.only(left: 24.0, right: 24.0),
                     child: CourseDetailCard(
                       courseDetail: learnModeDetails[2],
-                      onTap: () async{
+                      onTap: () async {
                         setState(() {
-                          studyType =  StudyType.SPEED_ENHANCEMENT;
+                          studyType = StudyType.SPEED_ENHANCEMENT;
                         });
                         await letGo();
                       },
@@ -260,15 +263,14 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                     padding: EdgeInsets.only(left: 24.0, right: 24.0),
                     child: CourseDetailCard(
                       courseDetail: learnModeDetails[3],
-                      onTap: () async{
+                      onTap: () async {
                         setState(() {
-                          studyType =  StudyType.MASTERY_IMPROVEMENT;
+                          studyType = StudyType.MASTERY_IMPROVEMENT;
                         });
                         await letGo();
                       },
                     ),
                   ),
-
                 ],
               ),
             ),
