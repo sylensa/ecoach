@@ -109,38 +109,38 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                               itemBuilder: (BuildContext context, int index) {
                                 return MaterialButton(
                                   onPressed: () async {
-                                    // showLoaderDialog(context);
-                                    // List<Question> listQuestions = [];
-                                    // if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
-                                    //   testType = TestType.UNSEEN;
-                                    //   listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
-                                    //  print("listQuestions:${listQuestions.length}");
-                                    //   if(listQuestions.isEmpty){
-                                    //     listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                                    //     print("$testType:$listQuestions");
-                                    //   }
-                                    // }
-                                    // else if(conquestTypes[index].name.toUpperCase() == "UNANSWERED"){
-                                    //   testType = TestType.UNANSWERED;
-                                    //   listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,);
-                                    //   print("$testType:$listQuestions");
-                                    // }
-                                    // else{
-                                    //   testType = TestType.WRONGLYANSWERED;
-                                    //   listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 1);
-                                    //   print("$testType:$listQuestions");
-                                    //
-                                    // }
-                                    // stateSetter(() {
-                                    //   selectedConquestType = conquestTypes[index].name;
-                                    // });
-                                    // Navigator.pop(context);
-                                    // goTo(context, ConquestOnBoarding(
-                                    //       user: widget.user,
-                                    //       course: widget.course,
-                                    //       testType: testType,
-                                    //       listQuestions: listQuestions,
-                                    //     ));
+                                    showLoaderDialog(context);
+                                    List<Question> listQuestions = [];
+                                    if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
+                                      testType = TestType.UNSEEN;
+                                      listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
+                                     print("listQuestions:${listQuestions.length}");
+                                      if(listQuestions.isEmpty){
+                                        listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                                        print("$testType:$listQuestions");
+                                      }
+                                    }
+                                    else if(conquestTypes[index].name.toUpperCase() == "UNANSWERED"){
+                                      testType = TestType.UNANSWERED;
+                                      listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,);
+                                      print("$testType:$listQuestions");
+                                    }
+                                    else{
+                                      testType = TestType.WRONGLYANSWERED;
+                                      listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 1);
+                                      print("$testType:$listQuestions");
+
+                                    }
+                                    stateSetter(() {
+                                      selectedConquestType = conquestTypes[index].name;
+                                    });
+                                    Navigator.pop(context);
+                                    goTo(context, ConquestOnBoarding(
+                                          user: widget.user,
+                                          course: widget.course,
+                                          testType: testType,
+                                          listQuestions: listQuestions,
+                                        ));
                                   },
                                   child: Container(
                                     width: appWidth(context),
