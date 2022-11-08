@@ -35,9 +35,9 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
   getAverageStats(String period) async {
     testData.clear();
     testdata.clear();
+    print("periodperiod:$period");
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB()
-        .courseTestsTakenPeriod(widget.course.id!.toString(), period);
+    testData = await TestTakenDB().courseTestsTakenPeriod(widget.course.id!.toString(), period.toLowerCase());
     if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
@@ -45,12 +45,11 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType == TestCategory.MOCK.toString() ||
               element.challengeType == TestCategory.NONE.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "topic") {
-      graphResultData = testData
-          .where((element) =>
-              element.challengeType == TestCategory.TOPIC.toString())
-          .toList();
-    } else if (widget.tabName.toLowerCase() == "other") {
+    }
+    else if (widget.tabName.toLowerCase() == "topic") {
+      graphResultData = testData.where((element) => element.challengeType == TestCategory.TOPIC.toString()).toList();
+    }
+    else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
               element.challengeType != TestCategory.TOPIC.toString() &&
@@ -58,7 +57,8 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType != TestCategory.MOCK.toString() &&
               element.challengeType != TestCategory.NONE.toString())
           .toList();
-    } else {
+    }
+    else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -77,8 +77,7 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB()
-        .courseTestsTakenPeriodPoint(widget.course.id!.toString(), period);
+    testData = await TestTakenDB().courseTestsTakenPeriodPoint(widget.course.id!.toString(), period.toLowerCase());
     if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
@@ -86,12 +85,14 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType == TestCategory.MOCK.toString() ||
               element.challengeType == TestCategory.NONE.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "topic") {
+    }
+    else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
               element.challengeType == TestCategory.TOPIC.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "other") {
+    }
+    else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
               element.challengeType != TestCategory.TOPIC.toString() &&
@@ -99,7 +100,8 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType != TestCategory.MOCK.toString() &&
               element.challengeType != TestCategory.NONE.toString())
           .toList();
-    } else {
+    }
+    else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -118,8 +120,7 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
     testData.clear();
     testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await TestTakenDB()
-        .courseTestsTakenSpeedPoint(widget.course.id!.toString(), period);
+    testData = await TestTakenDB().courseTestsTakenSpeedPoint(widget.course.id!.toString(), period.toLowerCase());
     if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
@@ -127,12 +128,14 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType == TestCategory.MOCK.toString() ||
               element.challengeType == TestCategory.NONE.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "topic") {
+    }
+    else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
               element.challengeType == TestCategory.TOPIC.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "other") {
+    }
+    else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
               element.challengeType != TestCategory.TOPIC.toString() &&
@@ -140,7 +143,8 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType != TestCategory.MOCK.toString() &&
               element.challengeType != TestCategory.NONE.toString())
           .toList();
-    } else {
+    }
+    else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -160,7 +164,7 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
     testdata.clear();
     List<TestTaken> graphResultData = [];
     testData = await TestTakenDB()
-        .courseTestsTakenStrengthPoint(widget.course.id!.toString(), period);
+        .courseTestsTakenStrengthPoint(widget.course.id!.toString(), period.toLowerCase());
     if (widget.tabName.toLowerCase() == "exam") {
       graphResultData = testData
           .where((element) =>
@@ -168,12 +172,14 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType == TestCategory.MOCK.toString() ||
               element.challengeType == TestCategory.NONE.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "topic") {
+    }
+    else if (widget.tabName.toLowerCase() == "topic") {
       graphResultData = testData
           .where((element) =>
               element.challengeType == TestCategory.TOPIC.toString())
           .toList();
-    } else if (widget.tabName.toLowerCase() == "other") {
+    }
+    else if (widget.tabName.toLowerCase() == "other") {
       graphResultData = testData
           .where((element) =>
               element.challengeType != TestCategory.TOPIC.toString() &&
@@ -181,7 +187,8 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
               element.challengeType != TestCategory.MOCK.toString() &&
               element.challengeType != TestCategory.NONE.toString())
           .toList();
-    } else {
+    }
+    else {
       graphResultData = testData;
     }
     for (int i = 0; i < graphResultData.length; i++) {
@@ -267,6 +274,7 @@ class _AverageScoreGraphState extends State<AverageScoreGraph> {
   @override
   Widget build(BuildContext context) {
     if (widget.onChangeStatus) {
+      print("widget.onChangeStatus:${widget.onChangeStatus}");
       getStat();
     }
 

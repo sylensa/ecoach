@@ -128,17 +128,41 @@ class TestTakenDB {
     }
     return tests;
   }
-  Future<List<TestTaken>> courseTestsTakenPeriod(String courseId,String period) async {
+  Future<List<TestTaken>> getAllAverageScore({String courseId = "0"}) async {
+    final Database? db = await DBProvider.database;
+     List<Map<String, dynamic>> maps = [];
+     print("courseId:$courseId");
+     if(courseId == "0"){
+       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken");
+     }else{
+       maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"'");
+     }
+    print("object maps len:${maps}");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      test.score = maps[i]["avg_score"];
+      tests.add(test);
+      print("object maps:${test.score}");
+    }
+    return tests;
+  }
+  Future<List<TestTaken>> courseTestsTakenPeriod(String courseId,String period,{int? groupId = null}) async {
     final Database? db = await DBProvider.database;
      List<Map<String, dynamic>> maps = [];
     if(period.toLowerCase() == 'all'){
-    maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"'");
+      if(groupId != null){
+        maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and group_id = $groupId and challenge_type IS NOT NULL");
+      }else{
+        maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL");
+      }
     }else if(period.toLowerCase() == 'daily'){
-      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"'  GROUP by Date(created_at)");
+      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL  GROUP by Date(created_at)");
     }else if(period.toLowerCase() == 'weekly'){
-    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
+    maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
     }else if(period.toLowerCase() == 'monthly'){
-      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '"+ courseId +"' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
     }
     print("object maps:$maps");
     List<TestTaken> tests = [];
@@ -221,6 +245,8 @@ class TestTakenDB {
     return tests;
   }
 
+
+
   Future<TestTaken?> courseLastTest(int courseId) async {
     final Database? db = await DBProvider.database;
 
@@ -250,6 +276,12 @@ class TestTakenDB {
       'tests_taken',
       where: "id = ?",
       whereArgs: [id],
+    );
+  }
+  deleteAll() async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'tests_taken',
     );
   }
 

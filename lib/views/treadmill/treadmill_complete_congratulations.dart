@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -38,7 +39,7 @@ class _TreadmillCompleteCongratulationsState
     return WillPopScope(
       onWillPop: () async {
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
@@ -53,7 +54,7 @@ class _TreadmillCompleteCongratulationsState
                   onTap: () {
                     //  widget.controller.endTreadmill();
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   child: Container(
                       margin: EdgeInsets.all(8),
@@ -87,7 +88,7 @@ class _TreadmillCompleteCongratulationsState
                 //   onPressed: () {
                 //     widget.controller.endTreadmill();
                 //     Navigator.popUntil(context,
-                //         ModalRoute.withName(CourseDetailsPage.routeName));
+                //         ModalRoute.withName(CoursesDetailsPage.routeName));
                 //   },
                 // ),
 

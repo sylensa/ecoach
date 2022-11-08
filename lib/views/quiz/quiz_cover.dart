@@ -105,7 +105,7 @@ class QuizCover extends StatelessWidget {
                                   ),
                                   SizedBox(height: 32),
                                   Text(
-                                    "Ensure you have downloaded the course package",
+                                    TestCategory.SAVED == category ?"Ensure you have save questions for this the course package" : "Ensure you have downloaded the course package",
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
@@ -117,21 +117,29 @@ class QuizCover extends StatelessWidget {
                             ),
                           ),
                           if (questions.length == 0)
+
                             AdeoFilledButton(
-                              label: 'Download Package',
+                              label: TestCategory.SAVED == category ? "You haven't saved any questions yet" : 'Download Package',
                               fontSize: 16,
                               size: Sizes.large,
+
                               onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MainHomePage(
-                                      user,
-                                      index: 4,
+                                if(TestCategory.SAVED == category ){
+                                  Navigator.pop(context);
+                                }else{
+                                  Navigator.pushAndRemoveUntil(
+
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MainHomePage(
+                                        user,
+                                        index: 2,
+                                      ),
                                     ),
-                                  ),
-                                  (Route<dynamic> route) => true,
-                                );
+                                        (Route<dynamic> route) => true,
+                                  );
+                                }
+
                               },
                             )
                           else if (theme == QuizTheme.GREEN)

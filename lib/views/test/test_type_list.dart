@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
@@ -110,7 +111,7 @@ class _MockListViewState extends State<TestTypeListView> {
                       MaterialPageRoute(
                         builder: (context) => MainHomePage(
                           widget.user,
-                          index: 4,
+                          index: 2,
                         ),
                       ),
                       (Route<dynamic> route) => true,
@@ -274,27 +275,32 @@ class _MockListViewState extends State<TestTypeListView> {
                     }
                     print(questions.toString());
                     print(questions.length);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return SpeedQuizCover(
-                            widget.user,
-                            widget.type,
-                            questions,
-                            name: testsSelected[0].name,
-                            theme: QuizTheme.ORANGE,
-                            category: testsSelected[0].category!,
-                            time: widget.time != null
-                                ? widget.time!
-                                : widget.type == TestType.SPEED
-                                    ? widget.time!
-                                    : questions.length * 60,
-                            course: widget.course,
-                          );
-                        },
-                      ),
-                    );
+                    if(questions.isNotEmpty){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SpeedQuizCover(
+                              widget.user,
+                              widget.type,
+                              questions,
+                              name: testsSelected[0].name,
+                              theme: QuizTheme.ORANGE,
+                              category: testsSelected[0].category!,
+                              time: widget.time != null
+                                  ? widget.time!
+                                  : widget.type == TestType.SPEED
+                                  ? widget.time!
+                                  : questions.length * 60,
+                              course: widget.course,
+                            );
+                          },
+                        ),
+                      );
+                    }else{
+                      toastMessage("Empty questions for this test category ${widget.testCategory.name}");
+                    }
+
                   },
                   label: "Take Test",
                   color: kAdeoBlue,

@@ -17,7 +17,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 class GroupDetails extends StatefulWidget {
   static const String routeName = '/user_group';
   GroupListData? groupData;
-  GroupDetails( {Key? key,this.groupData,}) : super(key: key);
+  User user;
+  GroupDetails( {Key? key,required this.user,this.groupData,}) : super(key: key);
   @override
   State<GroupDetails> createState() => _GroupDetailsState();
 }
@@ -26,11 +27,20 @@ class _GroupDetailsState extends State<GroupDetails> {
   TextEditingController searchController = TextEditingController();
   List<GroupRatingData> listGroupRatingData = [];
   bool progressCode = true;
+  late String generatedLink = '';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   getGroupDetails() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
-      widget.groupData = await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupDetails();
+
+      GroupListData? groupListDetails =  await GroupManagementController(groupId: widget.groupData!.id.toString()).getGroupDetails();
+      if(groupListDetails != null){
+        widget.groupData = groupListDetails;
+      }
+      setState(() {
+
+      });
     } else {
       showNoConnectionToast(context);
     }
@@ -57,15 +67,17 @@ class _GroupDetailsState extends State<GroupDetails> {
       progressCode = false;
     });
   }
-  late String generatedLink = '';
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  getMyGroups() async {
 
+  getMyGroups() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     // try {
     if (isConnected) {
       myGroupList = await GroupManagementController().getJoinGroupList();
       Navigator.pop(context);
+      setState(() {
+        widget.groupData!.isMember = 1;
+      });
+      showDialogOk(context: context,message: "You've successfully join the group");
     } else {
       Navigator.pop(context);
       showNoConnectionToast(context);
@@ -73,7 +85,6 @@ class _GroupDetailsState extends State<GroupDetails> {
     // } catch (e) {
     //   print(e.toString());
     // }
-
     setState(() {
     });
   }
@@ -121,7 +132,7 @@ class _GroupDetailsState extends State<GroupDetails> {
   }
 
   upgradePackageModalBottomSheet(context,) {
-    double sheetHeight = 300;
+    double sheetHeight = 330;
     showModalBottomSheet(
         context: context,
         isDismissible: true,
@@ -198,10 +209,19 @@ class _GroupDetailsState extends State<GroupDetails> {
                         height: 20,
                       ),
                       MaterialButton(
-                  onPressed: () {
+                  onPressed: () async{
                     Navigator.pop(context);
                     showLoaderDialog(context);
-                    authorisePayment(context, widget.groupData!.id!);
+                    if(widget.groupData!.settings != null){
+                      if(widget.groupData!.settings!.access.toString() != "free"){
+                        authorisePayment(context, widget.groupData!.id!);
+                      }else{
+                        await requestToJoin();
+                      }
+                    }else{
+                      await requestToJoin();
+                    }
+
                   },
                   child: Container(
                     width: appWidth(context),
@@ -213,7 +233,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                         color: Colors.orange,
                         borderRadius:
                         BorderRadius.circular(10)),
-                    child: sText("Join Now",color: Colors.white,weight: FontWeight.bold,align: TextAlign.center),
+                    child: sText(widget.groupData!.settings != null ? widget.groupData!.settings!.access.toString() != "free" ? "PAY TO JOIN" : "REQUEST TO JOIN" : "REQUEST TO JOIN",color: Colors.white,weight: FontWeight.bold,align: TextAlign.center),
                   ),
                 ),
                     ],
@@ -221,6 +241,29 @@ class _GroupDetailsState extends State<GroupDetails> {
             },
           );
         });
+  }
+
+  requestToJoin() async {
+    print("widget.groupData:${widget.groupData!.toJson()}");
+    final bool isConnected = await InternetConnectionChecker().hasConnection;
+    // try {
+    if (isConnected) {
+      var res = await GroupManagementController(groupId: widget.groupData!.uid.toString()).groupRequestJoin();
+      setState(() {
+        widget.groupData!.isMember = 2;
+      });
+      Navigator.pop(context);
+      showDialogOk(context: context,message: "Request to join was successful");
+    } else {
+      Navigator.pop(context);
+      showNoConnectionToast(context);
+    }
+    // } catch (e) {
+    //   print(e.toString());
+    // }
+
+    setState(() {
+    });
   }
 
 
@@ -248,25 +291,40 @@ class _GroupDetailsState extends State<GroupDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.only(top: 3.h,),
+                    padding: EdgeInsets.only(top: 4.h,),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                        GestureDetector(
                           onTap: (){
-                            Navigator.pop(context);
+                            Navigator.pop(context,widget.groupData);
                           },
                            child: Icon(Icons.arrow_back,color: Colors.black,),
                        ),
-                        GestureDetector(
-                          onTap: ()async{
+                        widget.groupData!.isMember == 0 ?
+                        MaterialButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: ()async{
                             upgradePackageModalBottomSheet(_scaffoldKey.currentContext);
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-                            child: sText("JOIN",color: Colors.white,weight: FontWeight.bold),
+                            child: sText( widget.groupData!.settings != null ? widget.groupData!.settings!.access.toString() != "free" ? "PAY TO JOIN" : "REQUEST TO JOIN" : "REQUEST TO JOIN",color: Colors.white,weight: FontWeight.bold),
                             decoration: BoxDecoration(
                                 color: Colors.orange,
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                          ),
+                        ) :
+                        GestureDetector(
+                          onTap: ()async{
+                            // upgradePackageModalBottomSheet(_scaffoldKey.currentContext);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 8,horizontal: 8),
+                            child: sText( widget.groupData!.isMember == 1 ? "JOINED" : "REQUEST SENT",color: Colors.white,weight: FontWeight.bold),
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
                                 borderRadius: BorderRadius.circular(10)
                             ),
                           ),

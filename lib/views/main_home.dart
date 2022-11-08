@@ -1,15 +1,18 @@
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/revamp/features/home/view/screen/homepage.dart';
 import 'package:ecoach/revamp/features/home/view/screen/main_home_page.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/store/all_bundles.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/courses.dart';
+// import 'package:ecoach/views/courses.dart';
+import 'package:ecoach/views/courses_revamp/courses_page.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/more_page.dart';
@@ -62,21 +65,33 @@ class _MainHomePageState extends State<MainHomePage>
       //     tapping(tabNumber);
       //   },
       // ),
-      HomePageAnnex(
+      // HomePageAnnex(
+      //   widget.user,
+      //   callback: (tabNumber) {
+      //     tapping(tabNumber);
+      //   },
+      //   controller: mainController,
+      // ),
+      HomePage2(
         widget.user,
         callback: (tabNumber) {
           tapping(tabNumber);
         },
         controller: mainController,
       ),
-      GroupMainPage(widget.user),
-      // UserGroupPage(widget.user),
-      CoursesPage(widget.user,mainController,planId: widget.planId,),
-      AnalysisView(user: widget.user),
+
+      UserGroupPage(widget.user),
+      CoursesPage(
+        widget.user,
+        mainController,
+        planId: widget.planId,
+      ),
+      // AnalysisView(user: widget.user),
       // MoreView(
-      //   widget.user,
+      //   widget.user, 
       //   controller: mainController,
       // ),
+      AvailableBundlesPage(),
       MorePage(
         widget.user,
         controller: mainController,
@@ -86,8 +101,8 @@ class _MainHomePageState extends State<MainHomePage>
     checkSubscription();
 
     WebsocketCall().addListener(this);
-    WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
-
+    WebsocketCall()
+        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
 
     super.initState();
   }
@@ -261,10 +276,11 @@ class _MainHomePageState extends State<MainHomePage>
               'active': Icons.group_add_rounded,
               'inactive': Icons.group_add_outlined,
             },
-            {'active': Icons.school_rounded, 'inactive': Icons.school_outlined},
+            {'active': Icons.school_rounded,
+              'inactive': Icons.school_outlined},
             {
-              'active': Icons.bar_chart,
-              'inactive': Icons.bar_chart_outlined,
+              'active': Icons.storefront,
+              'inactive': Icons.storefront,
             },
             {
               'active': Icons.account_circle_rounded,

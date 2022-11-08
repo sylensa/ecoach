@@ -9,6 +9,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/treadmill/treadmill_complete_congratulations.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_ended.dart';
@@ -83,13 +84,13 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   double? value = 0.0;
   double values = 0;
   bool enabled = true;
+  bool answered = false;
   var timeSpent = 0;
   var durationStart;
   int countdownInSeconds = 0;
   int questionTimer = 0;
-  Timer? _timer;
   // StopW
-  currentCorrectScoreState() {
+  currentCorrectScoreState() async{
     setState(() {
       if (controller.questions[controller.currentQuestion].isCorrect) {
         isCorrect = true;
@@ -97,6 +98,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
         isCorrect = false;
       }
     });
+
   }
 
   avgTimeComplete() {
@@ -120,23 +122,21 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     super.initState();
 
     controller = widget.controller;
-    //print(controller.countdown);
-    // controller.endTreadmill();
     pageController = PageController(initialPage: controller.currentQuestion);
-    // widget.controller.startTest();
     var dateFormat = DateFormat('h:m:s');
     durationStart =
         dateFormat.parse(DateFormat('hh:mm:ss').format(DateTime.now()));
     print("No of Questions = ${controller.questions.length}");
     print("CURRENT QUESTION ================= ${controller.currentQuestion}");
     print(controller.time);
-    // startTimer();
-    controller.startTest();
+    Future.delayed(Duration.zero, () {
+      controller.startTest();
+    });
   }
 
   @override
   void dispose() {
-    _timer!.cancel();
+    controller.stopTimer();
     super.dispose();
   }
 
@@ -204,23 +204,14 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   }
 
   completeQuiz() async {
-    // // if (!controller.disableTime) {
-    // //   timerController.pause();
-    // // }
-    // if (widget.controller.speedTest) {
-    //   finalQuestion = controller.currentQuestion;
-    // }
-    controller.endTreadmill();
-    print('++++++++++++++++++++++++++++++');
-    setState(() {
-      enabled = false;
-    });
-    showLoaderDialog(context, message: "Test Completed\nSaving results");
+    controller.pauseTimer();
 
-    if (widget.controller.speedTest) {
-      await Future.delayed(Duration(seconds: 1));
-    }
-    // bool succes = await controller.scoreCurrentQuestion();
+    print('++++++++++++++++++++++++++++++');
+    // setState(() {
+    //   enabled = false;
+    //   answered = true;
+    // });
+    showLoaderDialog(context, message: "Test Completed\nSaving results");
 
     widget.controller.saveTest(context, (test, success) {
       Navigator.pop(context);
@@ -234,6 +225,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           enabled = false;
         });
         viewResults();
+        controller.endTreadmill();
       } else {
         // Navigator.pop(context);
         print("success $success");
@@ -242,7 +234,9 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   }
 
   submitAnswer() async {
+    answered = true;
     controller.pauseTimer();
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
     await controller.scoreCurrentQuestion();
     double newScore = controller.treadmill!.avgScore!;
     if (mounted) {
@@ -256,20 +250,15 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
       });
     }
 
-    print("last q=${controller.lastQuestion}");
-    print("q length=${controller.questions.length}");
-    print("curent = ${controller.currentQuestion}");
-
     if (controller.lastQuestion) {
-      // _timer!.cancel();
       testTaken = controller.getTest();
 
+      controller.resumeTimer();
       completeQuiz();
-      // controller.endTreadmill();
-      // viewResults();
     } else {
       setState(() {
         controller.nextQuestion();
+        answered = false;
         pageController.nextPage(
             duration: Duration(milliseconds: 1), curve: Curves.ease);
       });
@@ -312,8 +301,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
     return WillPopScope(
       onWillPop: () async {
         // printtimerController.pause();
-        controller.pauseTimer();
-        _timer!.cancel();
+        setState(() {
+          controller.pauseTimer();
+        });
+
         Get.bottomSheet(quitWidget());
         return false;
       },
@@ -332,8 +323,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   children: [
                     IconButton(
                       onPressed: () {
-                        //     NavigatortimerController.pause();
-                        _timer!.cancel();
+                        setState(() {
+                          controller.pauseTimer();
+                        });
+
                         Get.bottomSheet(quitWidget());
                         return;
                       },
@@ -367,8 +360,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                     ),
                     IconButton(
                       onPressed: () async {
-                        //  timerController.pause();
-                        _timer!.cancel();
+                        controller.pauseTimer();
 
                         await reportModalBottomSheet(context,
                             question: widget
@@ -384,29 +376,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   ],
                 ),
               ),
-
               getQuestionStats(),
-              // LinearProgressIndicator(
-              //   backgroundColor: Colors.grey,
-              //   value: value,
-              //   minHeight: 8,
-              //   valueColor:
-              //       const AlwaysStoppedAnimation<Color>(Color(0xFF87F6FF)),
-              // ),
               getTimerWidget(),
-              // FAProgressBar(
-              //   changeColorValue: 100,
-              //   changeProgressColor: Color(0xFF87F6FF),
-              //   backgroundColor: Colors.white,
-              //   progressColor: Color(0xFF87F6FF),
-              //   animatedDuration: controller.duration!,
-              //   direction: Axis.horizontal,
-              //   verticalDirection: VerticalDirection.up,
-              //   currentValue: controller.timerProgress().toDouble(),
-              //   maxValue: controller.resetDuration!.inSeconds.toDouble(),
-              //   size: 8,
-              // ),
-
               Expanded(
                 child: PageView(
                   controller: pageController,
@@ -464,8 +435,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                                 .questions[
                                                     controller.currentQuestion]
                                                 .question!
-                                                .instructions!
-                                                .replaceAll("https", "http"),
+                                                .instructions!,
                                             useLocalImage: false,
                                             fontWeight: FontWeight.normal,
                                             textColor: Colors.black,
@@ -498,10 +468,9 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                                 .questions[
                                                     controller.currentQuestion]
                                                 .question!
-                                                .resource!
-                                                .replaceAll("https", "http"),
+                                                .resource!,
                                             // removeTags:  widget.controller.questions[i].question!.resource!.contains("src") ? false : true,
-                                            useLocalImage: false,
+
                                             textColor: Colors.grey,
                                             fontWeight: FontWeight.normal,
                                           ),
@@ -551,16 +520,9 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                             durationStart = dateFormat.parse(
                                                 DateFormat('hh:mm:ss')
                                                     .format(DateTime.now()));
-
-                                            // widget.controller.endTreadmill();
-                                            // _timer!.cancel();
-                                            // _start = controller.time;
-                                            // startTimer();
                                           });
 
                                           await submitAnswer();
-
-                                          // startTimer();
                                         },
                                         child: Container(
                                           margin: const EdgeInsets.only(
@@ -576,8 +538,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                                                       .question!
                                                       .answers![index]
                                                       .text!,
-                                                  // removeTags:  widget.controller.questions[i].question!.answers![index].text!.contains("src") ? false : true,
-                                                  useLocalImage: true,
                                                   textColor: widget
                                                               .controller
                                                               .questions[controller
@@ -683,7 +643,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   ],
                 ),
               ),
-
               Container(
                 // margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                 child: Row(
@@ -705,8 +664,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                             setState(() {});
 
                             await submitAnswer();
-                            // _timer!.cancel();
-                            // startTimer();
                           },
                           child: Container(
                             color: kAccessmentButtonColor,
@@ -735,8 +692,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                             setState(() {});
 
                             await submitAnswer();
-                            // _timer!.cancel();
-                            // startTimer();
                           },
                           child: Container(
                             color: kAccessmentButtonColor,
@@ -936,8 +891,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                           GestureDetector(
                             onTap: () {
                               Navigator.pop(context);
-                              // timerController.resume();
-                              _timer!.tick;
+                              controller.resumeTimer();
                             },
                             child: Container(
                               padding: const EdgeInsets.only(
@@ -1183,13 +1137,13 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
             onPressed: () {
               setState(() {
                 // submitAnswer();
-                _timer!.cancel();
+                controller.stopTimer();
               });
 
               Navigator.pop(context);
               Navigator.popUntil(
                 context,
-                ModalRoute.withName(CourseDetailsPage.routeName),
+                ModalRoute.withName(CoursesDetailsPage.routeName),
               );
             },
             style: ButtonStyle(
@@ -1240,7 +1194,10 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           SizedBox(height: 10),
           OutlinedButton(
             onPressed: () {
-              controller.resumeTimer();
+              setState(() {
+                controller.resumeTimer();
+              });
+
               Navigator.pop(context);
             },
             style: ButtonStyle(
@@ -1295,7 +1252,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
               controller.endTreadmill();
               Navigator.popUntil(
                 context,
-                ModalRoute.withName(CourseDetailsPage.routeName),
+                ModalRoute.withName(CoursesDetailsPage.routeName),
               );
             },
             style: ButtonStyle(
@@ -1367,6 +1324,20 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           countdownInSeconds = remaining.inSeconds;
 
           print("remaining time: ${remaining.inMilliseconds}");
+          if (answered) {
+            return FAProgressBar(
+              changeColorValue: 100,
+              changeProgressColor: Color(0xFF87F6FF),
+              backgroundColor: Colors.white,
+              progressColor: Color(0xFF87F6FF),
+              animatedDuration: controller.duration!,
+              direction: Axis.horizontal,
+              verticalDirection: VerticalDirection.up,
+              currentValue: controller.timerProgress().toDouble(),
+              maxValue: controller.resetDuration!.inSeconds.toDouble(),
+              size: 8,
+            );
+          }
           if (remaining.inSeconds == 0) {
             submitAnswer();
             return FAProgressBar(
@@ -1385,21 +1356,21 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
           if (controller.currentQuestion ==
               widget.controller.questions.length - 1) {
             submitAnswer();
-            showDialogOk(
-              message: 'Time is up. View Scores.',
-              context: context,
-              target: TreadmillCompleteCongratulations(
-                controller: widget.controller,
-                correct: correct,
-                wrong: wrong,
-                avgScore: avgScore,
-              ),
-              // target: TreadmillCompleted(
-              //     widget.controller.user, widget.controller.course),
-              status: true,
-              replace: true,
-              dismiss: false,
-            );
+            // showDialogOk(
+            //   message: 'Time is up. View Scores.',
+            //   context: context,
+            //   target: TreadmillCompleteCongratulations(
+            //     controller: widget.controller,
+            //     correct: correct,
+            //     wrong: wrong,
+            //     avgScore: avgScore,
+            //   ),
+            //   // target: TreadmillCompleted(
+            //   //     widget.controller.user, widget.controller.course),
+            //   status: true,
+            //   replace: true,
+            //   dismiss: false,
+            // );
           }
           return TweenAnimationBuilder<double>(
             duration: const Duration(seconds: 1),
@@ -1608,7 +1579,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                   canExit = true;
                   Navigator.popUntil(
                     context,
-                    ModalRoute.withName(CourseDetailsPage.routeName),
+                    ModalRoute.withName(CoursesDetailsPage.routeName),
                   );
                 },
               ),
@@ -1787,7 +1758,7 @@ class SessionSavedPrompt extends StatelessWidget {
       onWillPop: () async {
         controller.scoreCurrentQuestion();
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
@@ -1822,7 +1793,7 @@ class SessionSavedPrompt extends StatelessWidget {
                   onPressed: () {
                     controller.scoreCurrentQuestion();
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),
@@ -2034,7 +2005,7 @@ class SpeedQuizEnded extends StatelessWidget {
                 onPressed: () {
                   Navigator.popUntil(
                     context,
-                    ModalRoute.withName(CourseDetailsPage.routeName),
+                    ModalRoute.withName(CoursesDetailsPage.routeName),
                   );
                 },
               ),

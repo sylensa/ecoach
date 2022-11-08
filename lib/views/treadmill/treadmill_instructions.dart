@@ -68,8 +68,6 @@ class _InstructionPageState extends State<InstructionPage> {
                 await widget.controller.createTreadmill();
                 break;
               case TreadmillMode.TOPIC:
-                // print(topicId);
-                // return;
                 await widget.controller.createTopicTreadmill(widget.topicId!);
 
                 Topic? topic = await TopicDB().getTopicById(widget.topicId!);

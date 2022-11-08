@@ -53,6 +53,7 @@ class GroupViewData {
     this.members,
     this.pendingInvites,
     this.suspendedUser,
+    this.incomingInvites,
   });
 
   int? id;
@@ -69,7 +70,8 @@ class GroupViewData {
   List<Admin>? admins;
   List<Member>? members;
   List<PendingInvite>? pendingInvites;
-  List<SuspendedUser>? suspendedUser;
+  List<PendingInvite>? incomingInvites;
+  List<Member>? suspendedUser;
 
   factory GroupViewData.fromJson(Map<String, dynamic> json) => GroupViewData(
     id: json["id"] == null ? null : json["id"],
@@ -86,7 +88,8 @@ class GroupViewData {
     admins: json["admins"] == null ? [] : List<Admin>.from(json["admins"].map((x) => Admin.fromJson(x))),
     members: json["members"] == null ? [] : List<Member>.from(json["members"].map((x) => Member.fromJson(x))),
     pendingInvites: json["pending_invites"] == null ? [] : List<PendingInvite>.from(json["pending_invites"].map((x) => PendingInvite.fromJson(x))),
-    suspendedUser: json["suspended_user"] == null ? [] : List<SuspendedUser>.from(json["suspended_user"].map((x) => SuspendedUser.fromJson(x))),
+    incomingInvites: json["incoming_invites"] == null ? [] : List<PendingInvite>.from(json["incoming_invites"].map((x) => PendingInvite.fromJson(x))),
+    suspendedUser: json["suspended"] == null ? [] : List<Member>.from(json["suspended"].map((x) => Member.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -104,7 +107,8 @@ class GroupViewData {
     "admins": admins == null ? null : List<dynamic>.from(admins!.map((x) => x.toJson())),
     "members": members == null ? null : List<dynamic>.from(members!.map((x) => x.toJson())),
     "pending_invites": pendingInvites == null ? null : List<dynamic>.from(pendingInvites!.map((x) => x.toJson())),
-    "suspended_user": suspendedUser == null ? null : List<dynamic>.from(suspendedUser!.map((x) => x.toJson())),
+    "incoming_invites": incomingInvites == null ? null : List<dynamic>.from(incomingInvites!.map((x) => x.toJson())),
+    "suspended": suspendedUser == null ? null : List<dynamic>.from(suspendedUser!.map((x) => x.toJson())),
   };
 }
 

@@ -1,12 +1,14 @@
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/customized_controller.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
@@ -49,7 +51,9 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
     super.initState();
   }
 
-  nextButton() {
+  nextButton() async{
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion]);
+
     if (controller.lastQuestion) {
       setState(() {
         controller.pauseTimer();
@@ -71,6 +75,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
   }
 
   completeQuiz() async {
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion]);
     setState(() {
       controller.enabled = false;
     });
@@ -361,7 +366,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                 onPressed: () {
                   canExit = true;
                   Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                      ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               Button(
@@ -392,7 +397,7 @@ class _CustomizedTestScreenState extends State<CustomizedTestScreen> {
                     // startTimer();
                   } else if (action == "quit") {
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   }
                 },
               );

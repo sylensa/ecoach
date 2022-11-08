@@ -1,3 +1,5 @@
+import 'package:ecoach/api/api_call.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/announcement_list_model.dart';
@@ -7,10 +9,15 @@ import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_page_view_model.dart';
+import 'package:ecoach/models/group_performance_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
+import 'package:ecoach/models/report.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user_group_rating.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
+
+import '../views/user_group/group_activities/performance/performance.dart';
 
 class GroupManagementController{
   String? groupId;
@@ -95,7 +102,7 @@ class GroupManagementController{
   Future<GroupListData?> getGroupDetails()async {
     GroupListData? groupListDetails;
     try{
-      var js = await doGet('${AppUrl.groups}');
+      var js = await doGet('${AppUrl.groups}/$groupId');
       print("res groups : $js");
       if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
         groupListDetails = GroupListData.fromJson(js["data"]);
@@ -168,9 +175,11 @@ class GroupManagementController{
       "user_id": userId,
     });
     if(res["status"]){
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }else{
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }
@@ -181,9 +190,11 @@ class GroupManagementController{
       "user_id": userId,
     });
     if(res["status"]){
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }else{
+      errorMessage = res["message"];
       toastMessage(res["message"]);
       return true;
     }
@@ -193,7 +204,7 @@ class GroupManagementController{
     List<GroupViewData>listGroupViewData = [];
     try{
       var js = await doGet('${AppUrl.groups}/$groupId');
-      print("res groups view : $js");
+      print("res groups view : ${js["data"]["incoming_invites"]}");
       if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
         GroupViewData groupViewData = GroupViewData.fromJson(js["data"]);
         listGroupViewData.add(groupViewData);
@@ -246,18 +257,19 @@ class GroupManagementController{
     try{
       var res = await doPost(AppUrl.groupInviteAccept,
           {
-            "group_id": groupId,
+            "group_code": groupId,
           });
       if(res["status"] && res["code"].toString() == "200"){
-        toastMessage(res["message"]);
+        errorMessage = res["message"];
         return true;
       }else{
-        toastMessage(res["message"]);
+        errorMessage = res["message"] ;
         return false;
 
       }
     }catch(e){
       print("error:$e");
+      errorMessage = "Accepting group invite failed, try again";
       return false;
     }
   }
@@ -284,7 +296,7 @@ class GroupManagementController{
     try{
       var res = await doPost(AppUrl.groupInviteReject,
           {
-            "group_id": groupId,
+            "group_code": groupId,
           });
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
@@ -303,8 +315,9 @@ class GroupManagementController{
     try{
       var res = await doPost(AppUrl.groupRequestJoin,
           {
-            "group_id": groupId,
+            "group_code": groupId,
           });
+      print("groupRequestJoin:$res");
       if(res["status"] && res["code"].toString() == "200"){
         toastMessage(res["message"]);
         return true;
@@ -607,10 +620,8 @@ class GroupManagementController{
       print("res groups joined : $js");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
         for(int i =0; i < js["data"]["data"].length; i++){
-          if(js["data"]["data"][i]["settings"] != null){
             GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
             groupListDetails.add(groupListData);
-          }
         }
         return groupListDetails;
       }else{
@@ -631,9 +642,9 @@ class GroupManagementController{
       };
       String queryUrl = AppUrl.userGroups + '?' + Uri(queryParameters: params).query;
       var js = await doGet(queryUrl);
-      print("res groups category : ${js["data"]}");
+      print("res groups category : ${js["data"]["data"]}");
       if (js["code"].toString() == "200" && js["data"]["data"].isNotEmpty) {
-        for(int i =0; i < js["data"]["data"].length; i++){
+        for(int i =0; i < js["data"] ["data"].length; i++){
             GroupListData groupListData = GroupListData.fromJson(js["data"]["data"][i]);
             groupListDetails.add(groupListData);
         }
@@ -766,11 +777,14 @@ class GroupManagementController{
     List<GroupNotificationData> listGroupNotificationData = [];
     try{
       var res = await doGet("${AppUrl.userGroupNotification}/notifications?upcoming=true",);
-      print("res:$res");
+      print("res upcoming:${res["data"]["data"]}");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
-          listGroupNotificationData.add(groupNotificationData);
+          print("groups:${res["data"]["data"][i]["group"]}");
+          if(!groupNotificationData.viewed!){
+            listGroupNotificationData.add(groupNotificationData);
+          }
         }
         toastMessage("${res["message"]}");
         return listGroupNotificationData;
@@ -785,23 +799,125 @@ class GroupManagementController{
   }
   Future<List<GroupNotificationData>>  getUpcomingAllGroupNotifications() async {
     List<GroupNotificationData> listGroupNotificationData = [];
-    try{
+    // try{
       var res = await doGet("${AppUrl.userGroupNotification}/notifications",);
-      print("res:$res");
+      print("res notifications:$res");
       if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
         for(int i =0; i< res["data"]["data"].length; i++){
           GroupNotificationData  groupNotificationData = GroupNotificationData.fromJson(res["data"]["data"][i]);
-          listGroupNotificationData.add(groupNotificationData);
+          if(groupNotificationData.viewed!){
+            listGroupNotificationData.add(groupNotificationData);
+          }
         }
+        print("listGroupNotificationData:${listGroupNotificationData.length}");
         toastMessage("${res["message"]}");
         return listGroupNotificationData;
       }else{
         toastMessage("${res["message"]}");
         return listGroupNotificationData;
       }
+    // }catch(e){
+    //   print(e.toString());
+    //   return listGroupNotificationData;
+    // }
+  }
+
+  Future<List<TopicStat>>  getGroupPerformance() async {
+    List<TopicStat> listReport = [] ;
+    // try{
+      var res = await doGet("${AppUrl.userGroup}/performance?group_id=$groupId",);
+      print("performance:${res["data"].length}");
+      if (res["code"].toString() == "200" && res["data"].isNotEmpty) {
+          for(int i =0; i < res["data"].length; i++){
+           for(int t =0; t < res["data"][i]["topics_stats"].length; t++){
+             print("topic stats:${res["data"][i]["topics_stats"]}");
+             TopicStat  report = TopicStat.fromJson(res["data"][i]["topics_stats"][t]);
+             listReport.add(report);
+           }
+          }
+          await getGroupTestTaken();
+         toastMessage("${res["message"]}");
+        return listReport;
+      }else{
+        toastMessage("${res["message"]}");
+        return listReport;
+      }
+    // }catch(e){
+    //   print(e.toString());
+    //   return listGroupPerformanceData;
+    // }
+  }
+
+    getGroupTestTaken() async {
+    List<TestTaken> listTestTaken = [] ;
+    // try{
+    var res = await doGet("${AppUrl.userGroup}/tests/taken?group_id=$groupId",);
+    print("getGroupTestTaken:${res["data"]}");
+    if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
+      for(int i =0; i < res["data"]["data"].length; i++){
+        TestTaken  testTaken = TestTaken.fromJson(res["data"]["data"][i]);
+        listTestTaken.add(testTaken);
+        print("group_id:${testTaken.groupId}");
+       await  TestTakenDB().delete(testTaken.id!);
+      }
+
+      TestTakenDB().insertAll(listTestTaken);
+    }else{
+      toastMessage("${res["message"]}");
+    }
+    // }catch(e){
+    //   print(e.toString());
+    // }
+  }
+    getTestTaken() async {
+    List<TestTaken> listTestTaken = [] ;
+    // try{
+    var res = await doGet("${AppUrl.userGroup}/tests/taken",);
+    print("getGroupTestTaken:${res["data"]}");
+    if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
+      for(int i =0; i < res["data"]["data"].length; i++){
+        TestTaken  testTaken = TestTaken.fromJson(res["data"]["data"][i]);
+        listTestTaken.add(testTaken);
+        print("group_id:${testTaken.groupId}");
+       await  TestTakenDB().delete(testTaken.id!);
+      }
+      TestTakenDB().insertAll(listTestTaken);
+    }else{
+      toastMessage("${res["message"]}");
+    }
+    return listTestTaken;
+    // }catch(e){
+    //   print(e.toString());
+    // }
+  }
+    getUserGroupTestTaken({int? testId}) async {
+    try{
+    var res = await doGet("${AppUrl.userGroup}/test/taken?group_id=$groupId&test_id=$testId",);
+    print("performance:${res["data"]}");
+    if (res["code"].toString() == "200" && res["data"] == null) {
+      return false;
+    }else{
+      toastMessage("${res["message"]}");
+      return true;
+    }
     }catch(e){
       print(e.toString());
-      return listGroupNotificationData;
+      return true;
+    }
+  }
+    viewedNotification({int? notificationId}) async {
+    try{
+    var res = await doGet("${AppUrl.userGroup}/notifications/$notificationId/view",);
+    print("notifications viewed:$res");
+    if (res["code"].toString() == "200" && res["data"] == null) {
+      return false;
+    }else{
+      toastMessage("${res["message"]}");
+      return true;
+    }
+    }catch(e){
+      print(e.toString());
+      return true;
     }
   }
 

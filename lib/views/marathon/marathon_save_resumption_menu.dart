@@ -1,8 +1,11 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/marathon/marathon_completed.dart';
 import 'package:ecoach/views/marathon/marathon_countdown.dart';
+import 'package:ecoach/views/marathon/marathon_practise_menu.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -220,13 +223,19 @@ class Caution extends StatelessWidget {
                 color: kAdeoBlue,
                 label: 'Continue',
                 onPressed: () async {
-                  showLoaderDialog(context, message: "Restarting marathon");
-                  await controller.restartMarathon();
+                  showLoaderDialog(context,
+                      message: "Deleting current marathon");
+                  await controller.deleteMarathon();
                   Navigator.pop(context);
 
-                  Navigator.push(context, MaterialPageRoute(builder: (c) {
-                    return MarathonCountdown(controller: controller);
-                  }));
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (c) {
+                    return MarathonPractiseMenu(
+                      controller: MarathonController(
+                          controller.user, controller.course,
+                          name: controller.course.name!),
+                    );
+                  }), ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               )
             ],

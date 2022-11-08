@@ -1,9 +1,16 @@
+import 'package:ecoach/database/conquest_test_taken_db.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
+import 'package:ecoach/views/conquest/conquest_onboarding.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/review/review_onboarding.dart';
 import 'package:ecoach/views/review/review_questions.dart';
 import 'package:ecoach/views/speed/SpeedTestIntro.dart';
@@ -38,6 +45,8 @@ class TestTypeView extends StatefulWidget {
 class _TestTypeViewState extends State<TestTypeView> {
   TestType testType = TestType.NONE;
   TestCategory testCategory = TestCategory.NONE;
+  String selectedConquestType = '';
+  List<ListNames> conquestTypes = [ListNames(name: "Unseen",id: "1"),ListNames(name: "Unanswered",id: "2"),ListNames(name: "Wrong answered",id: "3"),];
 
   @override
   void initState() {
@@ -52,7 +61,7 @@ class _TestTypeViewState extends State<TestTypeView> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return true;
       },
       child: Scaffold(
@@ -294,24 +303,27 @@ class _TestTypeViewState extends State<TestTypeView> {
                         subTitle: 'Prepare for battle, attempt everything',
                         iconURL: 'assets/icons/courses/conquest.png',
                         onTap: () {
-                          return showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AdeoDialog(
-                                title: 'Conquest',
-                                content:
-                                    'Prepare for battle, attempt everything. Feature coming soon.',
-                                actions: [
-                                  AdeoDialogAction(
-                                    label: 'Dismiss',
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          conquestModalBottomSheet(context);
+
+
+                          // return showDialog(
+                          //   context: context,
+                          //   builder: (BuildContext context) {
+                          //     return AdeoDialog(
+                          //       title: 'Conquest',
+                          //       content:
+                          //           'Prepare for battle, attempt everything. Feature coming soon.',
+                          //       actions: [
+                          //         AdeoDialogAction(
+                          //           label: 'Dismiss',
+                          //           onPressed: () {
+                          //             Navigator.of(context).pop();
+                          //           },
+                          //         ),
+                          //       ],
+                          //     );
+                          //   },
+                          // );
                         },
                       ),
                     ],
@@ -324,4 +336,115 @@ class _TestTypeViewState extends State<TestTypeView> {
       ),
     );
   }
+
+  conquestModalBottomSheet(context,) {
+    double sheetHeight = 400;
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: kAdeoGray,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Center(child:Image.asset("assets/images/flag.png")),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: sText("Conquest",
+                            color: kAdeoGray3,
+                            weight: FontWeight.bold,
+                            align: TextAlign.center,size: 20),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                          child: ListView.builder(
+                              itemCount: conquestTypes.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return MaterialButton(
+                                  onPressed: () async{
+                                    // await ConquestTestTakenDB().conquestDeleteAll();
+                                    // await QuestionDB().deleteAllConquestTest();
+                                    List<Question> listQuestions = [];
+                                      if(conquestTypes[index].name.toUpperCase() == "UNSEEN"){
+                                        testType = TestType.UNSEEN;
+                                        listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
+                                        if(listQuestions.isEmpty){
+                                          listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                                          print("$testType:$listQuestions");
+                                        }
+                                      }else if(conquestTypes[index].name.toUpperCase() == "UNANSWERED"){
+                                        testType = TestType.UNANSWERED;
+                                        listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,);
+                                        print("$testType:$listQuestions");
+                                      }else{
+                                        testType = TestType.WRONGLYANSWERED;
+                                        listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 1);
+                                        print("$testType:$listQuestions");
+
+                                      }
+                                    stateSetter(() {
+                                     selectedConquestType = conquestTypes[index].name;
+                                     });
+                                        goTo(
+                                            context,
+                                            ConquestOnBoarding(
+                                              user: widget.user,
+                                              course: widget.course,
+                                              testType: testType,
+                                              listQuestions: listQuestions,
+                                            ));
+
+
+                                  },
+                                  child: Container(
+                                    width: appWidth(context),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    decoration: BoxDecoration(
+                                        color: selectedConquestType == conquestTypes[index].name ? Color(0XFFFD6363) :  Colors.white,
+                                        border: Border.all(color: selectedConquestType == conquestTypes[index].name ? Colors.transparent : Colors.black,width: 1),
+                                        borderRadius: BorderRadius.circular(10)),
+
+                                    child:sText("${conquestTypes[index].name}", color: selectedConquestType == conquestTypes[index].name ? Colors.white : Colors.black, weight: FontWeight.w500,align: TextAlign.center),
+                                  ),
+                                );
+                              })),
+                    ],
+                  ));
+            },
+          );
+        });
+  }
+
 }

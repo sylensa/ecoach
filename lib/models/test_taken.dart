@@ -26,10 +26,12 @@ class TestTaken {
     this.totalRank,
     this.createdAt,
     this.updatedAt,
+    this.groupId,
   });
 
   int? id;
   int? userId;
+  int? groupId;
   DateTime? datetime;
   int? courseId;
   String? courseName;
@@ -85,6 +87,7 @@ class TestTaken {
   factory TestTaken.fromJson(Map<String, dynamic> json) => TestTaken(
         id: json["id"],
         userId: json["user_id"],
+        groupId: json["group_id"],
         datetime: DateTime.parse(json["date_time"]),
         courseId: json["course_id"],
         testname: json["test_name"],
@@ -114,6 +117,7 @@ class TestTaken {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
+        "group_id": groupId ,
         "date_time": datetime!.toIso8601String(),
         "course_id": courseId,
         "test_name": testname,

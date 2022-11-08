@@ -147,6 +147,7 @@ flutter:
       - assets/images/
       - assets/images/notes/
       - assets/images/learn_module/
+      - assets/images/store/
       - assets/icons/
       - assets/icons/navigation/
       - assets/icons/arrows/

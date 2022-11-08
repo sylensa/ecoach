@@ -47,6 +47,8 @@ class _UserGroupPageState extends State<UserGroupPage> {
       } else {
         showNoConnectionToast(context);
       }
+
+      print("myGroupList:${myGroupList.length}");
     // } catch (e) {
     //   print(e.toString());
     // }
@@ -66,7 +68,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
     // } catch (e) {
     //   print(e.toString());
     // }
-
+    if(mounted)
     setState(() {
       progressCodeCategory = false;
     });
@@ -90,6 +92,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
   @override
   void initState(){
     super.initState();
+    myGroupList.clear();
     getMyGroups();
     getGroupsByCategories(sortBy,orderBy);
   }
@@ -120,7 +123,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             children: [
                               Row(
                                 children: [
-                                  sText("Hi, Victor",size: 20,weight: FontWeight.bold),
+                                  sText("Hi, ${widget.user.name}",size: 20,weight: FontWeight.bold),
                                   SizedBox(width: 5,),
                                   Icon(Icons.hide_image,color: Colors.yellow,)
                                 ],
@@ -173,8 +176,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         ),
                         SizedBox(width: 10,),
                         GestureDetector(
-                          onTap: (){
-                            goTo(context, GroupNotificationActivity(widget.user,));
+                          onTap: ()async{
+                            await goTo(context, GroupNotificationActivity(widget.user,));
+                            setState(() {
+
+                            });
                           },
                             child: Image.asset("assets/images/schedule.png"),
                         )
@@ -204,7 +210,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              sText("My Groups",size: 16,weight: FontWeight.bold),
                              GestureDetector(
                                onTap: (){
-                                 goTo(context, MyGroupsPage(myGroupList: myGroupList,));
+                                 goTo(context, MyGroupsPage(widget.user,myGroupList: myGroupList,));
                                },
                                  child: sText("See all",size: 16,color: Colors.grey[400]!),
                              ),
@@ -222,7 +228,11 @@ class _UserGroupPageState extends State<UserGroupPage> {
                              itemBuilder: (BuildContext context, int index){
                                return GestureDetector(
                                  onTap: (){
-                                   goTo(context, GroupActivity(groupData: myGroupList[index],));
+                                   if(myGroupList[index].owner!.id != widget.user.id){
+                                     goTo(context, GroupActivity(widget.user,groupData: myGroupList[index]));
+                                   }else{
+                                     toastMessage("You're the owner of this group");
+                                   }
                                  },
                                  child: Row(
                                    children: [
@@ -248,7 +258,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                  Icon(Icons.arrow_back_ios,color: Colors.white,),
                                                  Container(
                                                    width: 150,
-                                                   child: sText("${myGroupList[index].currentTest != null ? myGroupList[index].currentTest!.name : "No testing available"}",weight: FontWeight.w500,size: 14,maxLines: 1),
+                                                   child: sText("${myGroupList[index].currentTest != null ? myGroupList[index].currentTest!.name : "No test available".toUpperCase()}",weight: FontWeight.w500,size: 14,maxLines: 1),
                                                  ),
                                                  Icon(Icons.arrow_forward_ios_outlined,color: Colors.white,),
                                                ],
@@ -267,7 +277,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                      sText("by ${myGroupList[index].owner!.name}",weight: FontWeight.w500,size: 12,color: Colors.grey[400]!),
                                                    ],
                                                  ),
-
+                                                 myGroupList[index].owner!.id == widget.user.id ?
                                                  Row(
                                                    children: [
                                                      Center(
@@ -297,7 +307,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                                        ),
                                                      ),
                                                    ],
-                                                 ),
+                                                 ) : Container()
                                                ],
                                              ),
                                            ),
@@ -381,7 +391,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
                                  padding: EdgeInsets.zero,
                                  onPressed: (){
                                    List cat = categoryList[index].id.split("_");
-                                   goTo(context, CategoryGroupsPage(categoryName: cat.join(" "),));
+                                   goTo(context, CategoryGroupsPage(widget.user,categoryName: cat.join(" "),));
                                  },
                                  child: Row(
                                    children: [
@@ -498,7 +508,12 @@ class _UserGroupPageState extends State<UserGroupPage> {
                             MaterialButton(
                               padding: EdgeInsets.zero,
                               onPressed: ()async{
-                                await goTo(context, GroupDetails(groupData: groupByCategory[i],));
+                                if(groupByCategory[i].isMember! == 1 &&  groupByCategory[i].owner!.id != widget.user.id){
+                                  goTo(context, GroupActivity(widget.user,groupData: groupByCategory[i]));
+                                }else{
+                                  GroupListData groupList =  await goTo(context, GroupDetails(user: widget.user,groupData: groupByCategory[i],));
+                                  groupByCategory[i] = groupList;
+                                }
                                 setState((){
 
                                 });
@@ -527,10 +542,15 @@ class _UserGroupPageState extends State<UserGroupPage> {
                         return    MaterialButton(
                           padding: EdgeInsets.zero,
                           onPressed: ()async{
-                            await goTo(context, GroupDetails(groupData: groupBySearch[index],));
-                            setState((){
+                            if(groupBySearch[index].owner!.id != widget.user.id){
+                              GroupListData groupList =  await  goTo(context, GroupDetails(user: widget.user,groupData: groupBySearch[index]));
+                             setState(() {
+                               groupBySearch[index] = groupList;
+                             });
+                            }else{
+                              toastMessage("You're the owner of this group");
+                            }
 
-                            });
                           },
                           child:groupListWidget(groupBySearch[index]),
                         );

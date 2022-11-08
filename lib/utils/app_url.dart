@@ -24,6 +24,10 @@ class AppUrl {
   static String payment_callback = baseURL + "paystack/callback";
 
   static String plans = baseURL + "plans";
+  static String planDetails = baseURL + "subscriptions/show";
+  static String planFilters = baseURL + "store/bundles/filters";
+  static String filterPlans = baseURL + "store/bundles";
+  static String searchPlans = baseURL + "store/search";
   static String grades = baseURL + "grades";
   static String agentPromoCodes = baseURL + "agent/promo/codes";
   static String groupTest = baseURL + "group/tests";
@@ -36,6 +40,7 @@ class AppUrl {
   static String groups = baseURL + "groups";
   static String joinedGroups = baseURL + "user/joined/groups";
   static String userGroups = baseURL + "user/groups";
+  static String userGroup = baseURL + "user/group";
   static String userGroupNotification = baseURL + "user/group";
   static String userSearchGroups = baseURL + "user/groups/search";
   static String suspendGroupMember = baseURL + "groups/member/suspend";

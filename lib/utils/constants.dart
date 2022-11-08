@@ -9,15 +9,18 @@ import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 
 enum ProgressIndicatorSize { small, large }
 enum Sizes { small, medium, large }
 enum ExamScore { CORRECTLY_ANSWERED, WRONGLY_ANSWERED, NOT_ATTEMPTED }
-enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, DIAGNOSTIC, NONE }
+enum TestType { SPEED, KNOWLEDGE, UNTIMED, CUSTOMIZED, DIAGNOSTIC, NONE,UNSEEN,UNANSWERED,WRONGLYANSWERED }
 enum TestCategory { MOCK, EXAM, TOPIC, ESSAY, SAVED, BANK, NONE }
 enum TestMode { LIVE, PRACTISE, COMPLETED, CONTINUE, NEW }
 enum CardVariant { LIGHT, DARK }
 enum TreadmillMode { TOPIC, MOCK, BANK }
+enum Mode { LIGHT, DARK, TINT }
+enum StoreDetails { BUNDLE, GROUP, FEATURE }
 
 double backgroundIllustrationHeight = 480.0;
 // List savedQuestions = [2, 4, 3, 5];
@@ -47,4 +50,9 @@ List<Messages> groupChatBetweenList = [];
 List<Messages> chatBetweenListDate = [];
 List<Messages> groupChatBetweenListDate = [];
 List<GroupListData> myGroupList= [];
-
+String errorMessage = '';
+String speedTestMode = '';
+List<TestTaken> listTestTaken = [];
+const double kAdeoPaddingValue = 40;
+const double kAdeoBorderRadiusValue = 10;
+const double kAdeoBorderRadiusValueLg = 15;

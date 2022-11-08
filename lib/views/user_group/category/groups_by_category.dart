@@ -3,6 +3,7 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/views/user_group/group_activities/group_activity.dart';
 import 'package:ecoach/views/user_group/group_page/group_details.dart';
 import 'package:ecoach/widgets/toast.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,8 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 class CategoryGroupsPage extends StatefulWidget {
   static const String routeName = '/user_group';
   String categoryName;
-  CategoryGroupsPage({Key? key,this.categoryName = ''}) : super(key: key);
-
+  CategoryGroupsPage(this.user, {Key? key,this.categoryName = ''}) : super(key: key);
+  User user;
   @override
   State<CategoryGroupsPage> createState() => _CategoryGroupsPageState();
 }
@@ -63,8 +64,16 @@ class _CategoryGroupsPageState extends State<CategoryGroupsPage> {
                   itemBuilder: (BuildContext context, int index){
                     return  MaterialButton(
                       padding: EdgeInsets.zero,
-                      onPressed: (){
-                        goTo(context, GroupDetails(groupData: groupByCategory[index],));
+                      onPressed: ()async{
+                        if(groupByCategory[index].isMember! == 1){
+                          goTo(context, GroupActivity(widget.user,groupData: groupByCategory[index]));
+                        }else{
+                         GroupListData groupList  = await goTo(context, GroupDetails(user: widget.user,groupData: groupByCategory[index],));
+                         groupByCategory[index] = groupList;
+                        }
+                        setState((){
+
+                        });
                       },
                       child: groupListWidget(groupByCategory[index])
                     );

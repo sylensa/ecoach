@@ -60,6 +60,7 @@ class AdeoFilledButton extends StatelessWidget {
           ),
           child: Text(
             label,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: fontSize ?? 22.0,
               color: color ?? Colors.white,

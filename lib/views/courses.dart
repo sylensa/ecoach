@@ -259,8 +259,7 @@ class _CourseViewState extends State<CourseView> {
   String subName = ""; //FIXME temp;
   bool progressCode = true;
   getSubscriptionCourse() async {
-    futureItems = await SubscriptionItemDB()
-        .subscriptionCourses(widget.subscription.planId!);
+    futureItems = await SubscriptionItemDB().subscriptionCourses(widget.subscription.planId!);
     if (futureItems.isEmpty) {
       ApiCall<Data>(AppUrl.new_user_data, isList: false,
               create: (Map<String, dynamic> json) {
@@ -269,15 +268,15 @@ class _CourseViewState extends State<CourseView> {
         if (data != null) {
           await LevelDB().insertAll(data!.levels!);
           await CourseDB().insertAll(data!.courses!);
+          await getSubscriptionCourse();
         }
-        await getSubscriptionCourse();
       }, onError: (e) {})
           .get(context);
     } else {
-      if(mounted)
-      setState(() {
-        progressCode = false;
-      });
+      if (mounted)
+        setState(() {
+          progressCode = false;
+        });
     }
   }
 

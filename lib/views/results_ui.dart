@@ -72,8 +72,7 @@ class _ResultsViewState extends State<ResultsView> {
         });
       });
 
-      List<Question> questions =
-          await TestController().getAllQuestions(widget.test);
+      List<Question> questions = await TestController().getAllQuestions(widget.test);
 
       print("questions=${questions.length}");
       for (int i = 0; i < questions.length; i++) {
@@ -179,31 +178,33 @@ class _ResultsViewState extends State<ResultsView> {
             color: Colors.white,
           ),
           SizedBox(height: 25),
-          AdeoTabControl(
-            variant: 'default',
-            tabs: ['topics', 'questions'],
-            tabPages: [
-              TopicsTabPage(widget.testType,
-                  topics: topicsPlaceholder,
+          Expanded(
+            child: AdeoTabControl(
+              variant: 'default',
+              tabs: ['topics', 'questions'],
+              tabPages: [
+                TopicsTabPage(widget.testType,
+                    topics: topicsPlaceholder,
+                    diagnostic: widget.diagnostic,
+                    user: widget.user,
+                    testTaken: widget.test,
+
+                    // TODO - add course to topics page - find a better way like using getx or provider
+                    course: widget.course,
+                    history: widget.history),
+                QuestionsTabPage(
+                  questions: questionPlaceholder,
                   diagnostic: widget.diagnostic,
                   user: widget.user,
+                  history: widget.history,
                   testTaken: widget.test,
-
-                  // TODO - add course to topics page - find a better way like using getx or provider
                   course: widget.course,
-                  history: widget.history),
-              QuestionsTabPage(
-                questions: questionPlaceholder,
-                diagnostic: widget.diagnostic,
-                user: widget.user,
-                history: widget.history,
-                testTaken: widget.test,
-                course: widget.course,
-                testType: widget.testType,
-                challengeType: widget.testCategory,
-                controller: widget.controller,
-              ),
-            ],
+                  testType: widget.testType,
+                  challengeType: widget.testCategory,
+                  controller: widget.controller,
+                ),
+              ],
+            ),
           ),
         ],
       ),

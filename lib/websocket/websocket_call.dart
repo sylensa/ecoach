@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/notification_service.dart';
 import 'package:ecoach/websocket/event_data.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -37,14 +38,12 @@ class WebsocketCall {
         print(event);
         var pushObject = eventDataFromJson(event);
         print(pushObject.event);
-
         if (pushObject.event == CONNECTION_ESTABLISHED) {
           if (user != null) {
             subscribe(channel);
           }
         } else if (pushObject.channel == channel) {
           print("channel is good");
-
           listeners.forEach((listener) {
             listener.eventHandler(pushObject);
           });
@@ -52,6 +51,8 @@ class WebsocketCall {
           listeners.forEach((listener) {
             listener.eventHandler(pushObject);
           });
+        } else{
+          NotificationService().showNotification('Notification', 'Group Notifications', "group");
         }
       }, onError: (error) {
         print("Websocket is on error");
@@ -98,7 +99,9 @@ class WebsocketCall {
     print("subscribing  to channel $channel");
     var data =
         "{\"event\":\"SubscriptionPurchasedNotification\",\"channel\":\"$channel\",\"data\":${jsonEncode(user!.id)}-subscription}";
-    _channel!.sink.add(data);
+    if (_channel != null) {
+      _channel!.sink.add(data);
+    }
   }
 
   sendMessage(String message) {

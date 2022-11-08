@@ -7,6 +7,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view.dart';
 import 'package:ecoach/views/treadmill/treadmill_quiz_view_old.dart';
+import 'package:ecoach/widgets/adeo_duration_input.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/pin_input.dart';
@@ -37,8 +38,7 @@ class TreadmillTimeAndInstruction extends StatefulWidget {
 class _TreadmillTimeAndInstructionState
     extends State<TreadmillTimeAndInstruction> {
   late FocusNode focusNode, focusNode2;
-  String durationLeft = '';
-  String durationRight = '';
+  Duration? duration;
   int timePerQuestion = 0;
 
   @override
@@ -74,53 +74,11 @@ class _TreadmillTimeAndInstructionState
           middlePiece: Column(
             children: [
               SizedBox(height: 60),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 120,
-                    child: PinInput(
-                      focusNode: focusNode,
-                      textColor: kAdeoWhiteAlpha81,
-                      length: 2,
-                      onChanged: (v) {
-                        // String value = v.split('').join('');
-                        inspect(v);
-                        if (v.length > 1) {
-                          setState(() {
-                            durationLeft = v;
-                          });
-                          focusNode2.requestFocus();
-                        }
-                      },
-                    ),
-                  ),
-                  Text(
-                    ':',
-                    style: kPinInputTextStyle.copyWith(
-                      color: kAdeoWhiteAlpha81,
-                    ),
-                  ),
-                  Container(
-                    width: 120,
-                    child: PinInput(
-                      autoFocus: durationLeft.length == 2,
-                      focusNode: focusNode2,
-                      textColor: kAdeoWhiteAlpha81,
-                      length: 2,
-                      onChanged: (v) {
-                        print('second');
-                        inspect(v);
-                        if (v.length > 1) {
-                          setState(() {
-                            durationRight = v;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              AdeoDurationInput(onDurationChange: (d) {
+                setState(() {
+                  duration = d;
+                });
+              }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -162,15 +120,19 @@ class _TreadmillTimeAndInstructionState
                 borderColor: kAdeoLightTeal,
                 fontSize: 22,
                 onPressed: () {
-                  if (durationRight.length > 0) {
-                    int min =
-                        int.parse(durationLeft != '' ? durationLeft : '0');
-                    int sec = int.parse(durationRight);
-                    int time = (min * 60) + sec;
-                    setState(() {
-                      timePerQuestion = time;
-                      TestIntroitLayout.goForward();
-                    });
+                  if (duration != null ) {
+                    if(duration!.inSeconds > 1){
+                      setState(() {
+                        timePerQuestion = duration!.inSeconds;
+                        TestIntroitLayout.goForward();
+                      });
+                    }else{
+                      showFeedback(
+                        context,
+                        'Enter a valid duration',
+                      );
+                    }
+
                   } else
                     showFeedback(
                       context,

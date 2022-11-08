@@ -2,6 +2,7 @@ import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/course.dart';
@@ -112,7 +113,9 @@ class _SpeedQuizViewState extends State<SpeedQuizView> {
     completeQuiz();
   }
 
-  nextButton() {
+  nextButton() async{
+    await scoreCurrentQuestion(controller.questions[currentQuestion]);
+
     if (currentQuestion == controller.questions.length - 1) {
       return;
     }
@@ -200,6 +203,7 @@ class _SpeedQuizViewState extends State<SpeedQuizView> {
   }
 
   completeQuiz() async {
+    await scoreCurrentQuestion(controller.questions[currentQuestion]);
     if (!controller.disableTime) {
       timerController.pause();
     }
@@ -334,7 +338,7 @@ class _SpeedQuizViewState extends State<SpeedQuizView> {
                           if (controller.speedTest && answer.value == 0) {
                             completeQuiz();
                           } else {
-                            nextButton();
+                            await nextButton();
                           }
                         },
                       )
@@ -419,7 +423,9 @@ class _SpeedQuizViewState extends State<SpeedQuizView> {
                       Expanded(
                         flex: 2,
                         child: TextButton(
-                          onPressed: nextButton,
+                          onPressed: ()async{
+                            await nextButton();
+                          },
                           child: Text(
                             "Next",
                             style: TextStyle(

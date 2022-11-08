@@ -6,6 +6,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/marathon/marathon_save_resumption_menu.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
@@ -35,7 +36,7 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
                 fontSize: 14,
                 onPressed: () {
                   Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                      ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               SizedBox(width: 10),
@@ -120,7 +121,7 @@ class AutopilotCompleteCongratulations extends StatelessWidget {
                       Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (c) {
                         return AutopilotTopicMenu(controller: controller);
-                      }), ModalRoute.withName(CourseDetailsPage.routeName));
+                      }), ModalRoute.withName(CoursesDetailsPage.routeName));
                     },
                   ),
                 ),

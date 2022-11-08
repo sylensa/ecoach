@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/quiz_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -29,8 +30,11 @@ class QuizController {
     this.questions = const [],
     required this.name,
     this.time = 30,
+    this.countDown = 30,
+    this.timing = 'Time per Quiz',
   }) {
     duration = Duration(seconds: time);
+    countDownDuration = Duration(seconds: countDown);
     resetDuration = Duration(seconds: time);
     startingDuration = duration;
 
@@ -47,6 +51,8 @@ class QuizController {
   TestType type;
   TestCategory challengeType;
   int time;
+  int countDown;
+  String timing;
 
   bool disableTime = false;
   bool speedTest = false;
@@ -60,11 +66,14 @@ class QuizController {
   int finalQuestion = 0;
 
   DateTime? startTime;
-  Duration? duration, resetDuration, startingDuration;
+  Duration? duration, resetDuration, startingDuration,countDownDuration;
   int endTime = 0;
   TimerController? timerController;
   int countdownInSeconds = 0;
-
+  List<ListNames> listReportsTypes = [ListNames(name: "Select Error Type",id: "0"),ListNames(name: "Typographical Mistake",id: "1"),ListNames(name: "Wrong Answer",id: "2"),ListNames(name: "Problem With The Question",id: "3")];
+  ListNames? reportTypes;
+  TextEditingController descriptionController = TextEditingController();
+  final FocusNode descriptionNode = FocusNode();
   startTest() {
     timerController!.start();
     startTime = DateTime.now();
@@ -135,10 +144,11 @@ class QuizController {
     return jsonEncode(responses);
   }
 
-  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback) async {
+  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback,{int? groupId,int? testId}) async {
     TestTaken testTaken = TestTaken(
         id :user.id,
         userId: user.id,
+        testId: testId,
         datetime: startTime,
         totalQuestions: questions.length,
         courseId: course.id,
@@ -151,6 +161,7 @@ class QuizController {
         score: score,
         correct: correct,
         wrong: wrong,
+        groupId: groupId,
         unattempted: unattempted,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
@@ -264,10 +275,7 @@ class QuizController {
   Duration getDuration() {
     return startingDuration!;
   }
-  List<ListNames> listReportsTypes = [ListNames(name: "Select Error Type",id: "0"),ListNames(name: "Typographical Mistake",id: "1"),ListNames(name: "Wrong Answer",id: "2"),ListNames(name: "Problem With The Question",id: "3")];
-  ListNames? reportTypes;
-  TextEditingController descriptionController = TextEditingController();
-  final FocusNode descriptionNode = FocusNode();
+
   reportModalBottomSheet(context,{Question? question}) async{
     double sheetHeight = 400.00;
     bool isSubmit = true;

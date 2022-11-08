@@ -1,6 +1,7 @@
 import 'package:another_xlider/another_xlider.dart';
 import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_list_model.dart';
 import 'package:ecoach/models/group_test_model.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -15,7 +16,8 @@ import '../../../utils/constants.dart';
 
 class TestConfigurations extends StatefulWidget {
   String testName ;
-   TestConfigurations({this.testName = '',Key? key}) : super(key: key);
+  GroupListData groupListData;
+   TestConfigurations({this.testName = '',required this.groupListData,Key? key}) : super(key: key);
 
   @override
   State<TestConfigurations> createState() => _TestConfigurationsState();
@@ -30,6 +32,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
   double _upperValue = 100;
   DateTime? startDateTime;
   DateTime? dueDateTime;
+  DateTime? fromDateTime;
   bool passMarkOn = false;
   bool instantResultOn = false;
   bool reviewOn = false;
@@ -40,7 +43,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
       Map configuration = {
           "timing" : timing!.name,
           "count_down": _lowerValue,
-          "start_datetime": startDateTime.toString(),
+          "start_datetime": startDateTime != null ? startDateTime.toString() : fromDateTime.toString(),
           "due_dateTime": dueDateTime.toString(),
           "show_pass_mark": passMarkOn,
           "show_instant_result": instantResultOn,
@@ -381,8 +384,14 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                         ),
                       ],
                     ) : Container(),
-
                     SizedBox(height: 20,),
+                    Container(
+                      padding: leftPadding(20),
+                      child:  sText("Select Period",color: kAdeoGray3),
+                    ),
+                    SizedBox(height: 20,),
+
+                    if((dueDateTime == null || fromDateTime == null) && timing!.id != "3")
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
@@ -418,14 +427,17 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                         maxTime: DateTime(2019, 6, 7), onChanged: (date) {
                                           setState((){
                                             startDateTime = date;
+                                            dueDateTime = null;
                                             print('change $date');
                                           });
                                         }, onConfirm: (date) {
                                           setState((){
                                             startDateTime = date;
+                                            dueDateTime = null;
                                             print('confirm $date');
                                           });
-                                        }, currentTime: DateTime.now(), locale: LocaleType.en);
+                                        },
+                                        currentTime: DateTime.now(), locale: LocaleType.en);
 
                                     setState(() {
                                       if(startDateTime != null){
@@ -455,8 +467,22 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                                 ],
                                               ),
                                               SizedBox(height: 10,),
+
                                               if(startDateTime != null)
-                                              sText("${startDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                              Row(
+                                                children: [
+                                                  sText("${startDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                                  Expanded(child: Container()),
+                                                  GestureDetector(
+                                                      onTap: (){
+                                                       setState(() {
+                                                         startDateTime = null;
+                                                       });
+                                                      },
+                                                      child: Icon(Icons.clear,color: Colors.red,size: 20,),
+                                                  )
+                                                ],
+                                              ),
 
                                             ],
                                           ),
@@ -471,6 +497,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                       ),
                     ),
                     SizedBox(height: 20,),
+                    if(startDateTime == null)
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),
@@ -498,6 +525,77 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                               Divider(color: Colors.grey,),
                               MaterialButton(
                                 padding: EdgeInsets.zero,
+                                onPressed: ()async{
+
+                                  DatePicker.showDateTimePicker(context,
+                                      showTitleActions: true,
+                                      minTime: DateTime(2018, 3, 5),
+                                      maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                        setState((){
+                                          fromDateTime = date;
+                                          print('change $date');
+                                        });
+                                      }, onConfirm: (date) {
+                                        setState((){
+                                          fromDateTime = date;
+                                          print('confirm $date');
+                                        });
+                                      },
+                                      currentTime: DateTime.now(), locale: LocaleType.en);
+
+                                  setState(() {
+                                    if(fromDateTime != null){
+
+                                    }
+
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 20,right: 20,top: 10),
+
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15)
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              sText("Start Date and Time",weight: FontWeight.w500,size: 16),
+                                              Expanded(child: Container()),
+                                              Icon(Icons.calendar_today_outlined,color: kAdeoGray3,size: 16,)
+                                            ],
+                                          ),
+                                          SizedBox(height: 10,),
+                                            if(fromDateTime != null)
+                                            Row(
+                                              children: [
+                                                sText("${fromDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                                Expanded(child: Container()),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    setState(() {
+                                                      fromDateTime = null;
+                                                    });
+                                                  },
+                                                  child: Icon(Icons.clear,color: Colors.red,size: 20,),
+                                                )
+                                              ],
+                                            ),
+
+                                        ],
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Divider(color: Colors.grey,),
+                              MaterialButton(
+                                padding: EdgeInsets.zero,
                                 onPressed: (){
                                   DatePicker.showDateTimePicker(context,
                                       showTitleActions: true,
@@ -505,11 +603,13 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                       maxTime: DateTime(2019, 6, 7), onChanged: (date) {
                                         setState((){
                                           dueDateTime = date;
+                                          startDateTime = null;
                                           print('change $date');
                                         });
                                       }, onConfirm: (date) {
                                         setState((){
                                           dueDateTime = date;
+                                          startDateTime = null;
                                           print('confirm $date');
                                         });
                                       }, currentTime: DateTime.now(), locale: LocaleType.en);
@@ -536,8 +636,20 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                                           ),
                                           SizedBox(height: 10,),
                                           if(dueDateTime != null)
-                                          sText("${dueDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
-
+                                            Row(
+                                              children: [
+                                                sText("${dueDateTime.toString().split(".").first}",weight: FontWeight.w500,size: 12,color: kAdeoGray2),
+                                                Expanded(child: Container()),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    setState(() {
+                                                      dueDateTime = null;
+                                                    });
+                                                  },
+                                                  child: Icon(Icons.clear,color: Colors.red,size: 20,),
+                                                )
+                                              ],
+                                            ),
                                         ],
                                       ),
 
@@ -551,109 +663,120 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                       ),
                     ),
                     SizedBox(height: 20,),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                      margin: EdgeInsets.symmetric(horizontal: 20,),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
-
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Pass mark", size: 16,weight: FontWeight.w500),
-                              ),
-                              FlutterSwitch(
-                                width: 50.0,
-                                height: 20.0,
-                                valueFontSize: 10.0,
-                                toggleSize: 15.0,
-                                value: passMarkOn,
-                                borderRadius: 30.0,
-                                padding: 2.0,
-                                showOnOff: false,
-                                activeColor: Color(0xFF555555),
-                                inactiveColor: Colors.grey[200]!,
-                                inactiveTextColor: Colors.red,
-                                inactiveToggleColor: Colors.white,
-                                onToggle: (val) {
-                                  setState(() {
-                                    passMarkOn = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Instant Result", size: 16,weight: FontWeight.w500),
-                              ),
-                              FlutterSwitch(
-                                width: 50.0,
-                                height: 20.0,
-                                valueFontSize: 10.0,
-                                toggleSize: 15.0,
-                                value: instantResultOn,
-                                borderRadius: 30.0,
-                                padding: 2.0,
-                                showOnOff: false,
-                                activeColor: Color(0xFF555555),
-                                inactiveColor: Colors.grey[200]!,
-                                inactiveTextColor: Colors.red,
-                                inactiveToggleColor: Colors.white,
-                                onToggle: (val) {
-                                  setState(() {
-                                    instantResultOn = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                child: sText("Review", size: 16,weight: FontWeight.w500),
-                              ),
-                              FlutterSwitch(
-                                width: 50.0,
-                                height: 20.0,
-                                valueFontSize: 10.0,
-                                toggleSize: 15.0,
-                                value: reviewOn,
-                                borderRadius: 30.0,
-                                padding: 2.0,
-                                showOnOff: false,
-                                activeColor: Color(0xFF555555),
-                                inactiveColor: Colors.grey[200]!,
-                                inactiveTextColor: Colors.red,
-                                inactiveToggleColor: Colors.white,
-                                onToggle: (val) {
-                                  setState(() {
-                                    reviewOn = val;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
+                    // if(widget.groupListData.settings != null)
+                    //   if(widget.groupListData.settings!.features!.passMark! && widget.groupListData.settings!.features!.instantResult! && widget.groupListData.settings!.features!.review!)
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                    //   margin: EdgeInsets.symmetric(horizontal: 20,),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(15),
+                    //
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //       Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Container(
+                    //             child: sText("Pass mark", size: 16,weight: FontWeight.w500),
+                    //           ),
+                    //           FlutterSwitch(
+                    //             width: 50.0,
+                    //             height: 20.0,
+                    //             valueFontSize: 10.0,
+                    //             toggleSize: 15.0,
+                    //             value: passMarkOn,
+                    //             borderRadius: 30.0,
+                    //             padding: 2.0,
+                    //             showOnOff: false,
+                    //             activeColor: Color(0xFF555555),
+                    //             inactiveColor: Colors.grey[200]!,
+                    //             inactiveTextColor: Colors.red,
+                    //             inactiveToggleColor: Colors.white,
+                    //             onToggle: (val) {
+                    //               setState(() {
+                    //                 passMarkOn = val;
+                    //               });
+                    //             },
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       SizedBox(height: 15,),
+                    //       Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Container(
+                    //             child: sText("Instant Result", size: 16,weight: FontWeight.w500),
+                    //           ),
+                    //           FlutterSwitch(
+                    //             width: 50.0,
+                    //             height: 20.0,
+                    //             valueFontSize: 10.0,
+                    //             toggleSize: 15.0,
+                    //             value: instantResultOn,
+                    //             borderRadius: 30.0,
+                    //             padding: 2.0,
+                    //             showOnOff: false,
+                    //             activeColor: Color(0xFF555555),
+                    //             inactiveColor: Colors.grey[200]!,
+                    //             inactiveTextColor: Colors.red,
+                    //             inactiveToggleColor: Colors.white,
+                    //             onToggle: (val) {
+                    //               setState(() {
+                    //                 instantResultOn = val;
+                    //               });
+                    //             },
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       SizedBox(height: 15,),
+                    //       Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Container(
+                    //             child: sText("Review", size: 16,weight: FontWeight.w500),
+                    //           ),
+                    //           FlutterSwitch(
+                    //             width: 50.0,
+                    //             height: 20.0,
+                    //             valueFontSize: 10.0,
+                    //             toggleSize: 15.0,
+                    //             value: reviewOn,
+                    //             borderRadius: 30.0,
+                    //             padding: 2.0,
+                    //             showOnOff: false,
+                    //             activeColor: Color(0xFF555555),
+                    //             inactiveColor: Colors.grey[200]!,
+                    //             inactiveTextColor: Colors.red,
+                    //             inactiveToggleColor: Colors.white,
+                    //             onToggle: (val) {
+                    //               setState(() {
+                    //                 reviewOn = val;
+                    //               });
+                    //             },
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ],
+                    //   ),
+                    // )
                   ],
                 ),
               ),
              GestureDetector(
                onTap: ()async{
-                 showLoaderDialog(context);
-                 await createGroupTest();
+                 if(testDescriptionController.text.isNotEmpty && testNameController.text.isNotEmpty){
+                   if((startDateTime != null && dueDateTime != null) || startDateTime != null){
+                     showLoaderDialog(context);
+                     await createGroupTest();
+                   }else{
+                     toastMessage("Select Exact and Define Period");
+                   }
+                 }else{
+                   toastMessage("All fields are required");
+                 }
+
                },
                child: Container(
                  width: appWidth(context),

@@ -75,6 +75,7 @@ class TreadmillController {
   int wrongCount = 0;
   int correctCount = 0;
   int unattemptedCount = 0;
+
   startTest() {
     speedtimerController!.start();
     startTime = DateTime.now();
@@ -83,12 +84,23 @@ class TreadmillController {
     questionTimer = DateTime.now();
   }
 
+  setTimerDuration(Duration duration) {
+    resetDuration = duration;
+    this.duration = duration;
+    startingDuration = duration;
+  }
+
   pauseTimer() {
-    timerController!.pause();
+    speedtimerController!.pause();
+    int time = DateTime.now().difference(questionTimer).inSeconds;
+    questions[currentQuestion].addTime(time);
+    print("pause timer");
   }
 
   resumeTimer() {
-    timerController!.start();
+    speedtimerController!.start();
+    questionTimer = DateTime.now();
+    print("resume timer");
   }
 
   resetTimer() {
@@ -105,7 +117,7 @@ class TreadmillController {
 
   double timerProgress() {
     int progress = resetDuration!.inSeconds - duration!.inSeconds;
-    print("progress $progress");
+    print("progress $progress r=${resetDuration!.inSeconds}");
     return progress.toDouble();
   }
 
@@ -312,7 +324,8 @@ class TreadmillController {
 
     mp.selectedAnswerId =
         question.selectedAnswer != null ? question.selectedAnswer!.id : 0;
-    mp.time = DateTime.now().difference(questionTimer).inSeconds;
+    int time = DateTime.now().difference(questionTimer).inSeconds;
+    mp.addTime(time);
     print("time=${mp.time}");
     // print(mp.toJson());
     if (question.isCorrect) {
@@ -322,11 +335,12 @@ class TreadmillController {
     } else {
       mp.status = "skipped";
     }
+    int totalTime = treadmill!.totalTime ?? 0;
     treadmill!.title = name;
     treadmill!.avgScore = avgScore;
     treadmill!.topicId = topicid;
     treadmill!.avgTime = avgTime;
-    treadmill!.totalTime = time; //duration!.inSeconds;
+    treadmill!.totalTime = totalTime + mp.time!; //duration!.inSeconds;
     treadmill!.totalCorrect = correct;
     treadmill!.totalWrong = wrong + unattempted;
     treadmill!.totalQuestions =
@@ -363,6 +377,7 @@ class TreadmillController {
       avgTime: 0,
       totalCorrect: 0,
       totalWrong: 0,
+      questionDuration: resetDuration!.inSeconds,
     );
 
     int treadmillId = await TreadmillDB().insert(treadmill!);
@@ -398,6 +413,7 @@ class TreadmillController {
       status: TreadmillStatus.NEW.toString(),
       userId: user.id,
       startTime: DateTime.now(),
+      questionDuration: resetDuration!.inSeconds,
     );
 
     print(treadmill!.toJson());
@@ -437,6 +453,7 @@ class TreadmillController {
       status: TreadmillStatus.NEW.toString(),
       userId: user.id,
       startTime: DateTime.now(),
+      questionDuration: resetDuration!.inSeconds,
     );
 
     int treadmillId = await TreadmillDB().insert(treadmill!);
@@ -476,6 +493,8 @@ class TreadmillController {
       }
       name = treadmill!.title;
       print("topic: $name");
+
+      setTimerDuration(Duration(seconds: treadmill!.questionDuration!));
 
       questions = await TreadmillDB().getProgresses(treadmill!.id!);
       int index = 0;

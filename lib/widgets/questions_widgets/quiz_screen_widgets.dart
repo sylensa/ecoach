@@ -96,7 +96,7 @@ class DetailedInstruction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return details.isNotEmpty ? Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
           horizontal: 16,
@@ -108,7 +108,7 @@ class DetailedInstruction extends StatelessWidget {
           fontSize: 15,
           textColor: Colors.white,
           fontStyle: FontStyle.italic,
-        ));
+        )): SizedBox.shrink();
   }
 }
 
@@ -133,7 +133,7 @@ class Instruction extends StatelessWidget {
       color: Color(0xFF66717D),
       child: AdeoHtmlTex(
         user,
-        instruction,
+        instruction.isEmpty ? "Choose the right answer to the question above" :instruction ,
         fontSize: 15,
         textColor: Colors.white,
       ),
@@ -163,6 +163,7 @@ class QuestionWid extends StatelessWidget {
       child: AdeoHtmlTex(
         user,
         question,
+        useLocalImage: true,
         fontSize: 18,
         textColor: Colors.white,
       ),

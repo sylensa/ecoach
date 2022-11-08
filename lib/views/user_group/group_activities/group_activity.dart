@@ -12,7 +12,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class GroupActivity extends StatefulWidget {
   static const String routeName = '/user_group';
   GroupListData? groupData;
-  GroupActivity( {Key? key,this.groupData,}) : super(key: key);
+  GroupActivity(this.user, {Key? key,this.groupData,}) : super(key: key);
+  User user;
   @override
   State<GroupActivity> createState() => _GroupActivityState();
 }
@@ -46,7 +47,7 @@ class _GroupActivityState extends State<GroupActivity> {
                           child: Icon(Icons.arrow_back,color: Colors.black,),
                         ),
                         SizedBox(width: 20,),
-                        sText("Afram's SAT",weight: FontWeight.bold,size: 20),
+                        sText("${widget.groupData!.name}",weight: FontWeight.bold,size: 20),
 
                       ],
                     ),
@@ -60,11 +61,11 @@ class _GroupActivityState extends State<GroupActivity> {
                         color: Color(0XFFF7B06E),
                       ),
                       SizedBox(width: 10,),
-                      sText("20 days remaining",weight: FontWeight.w500,size: 12,color: Colors.black),
+                      sText(widget.groupData!.endDate != null ? "${DateTime.parse(widget.groupData!.endDate.toString()).difference(DateTime.now()).inDays.toString()} days remaining" : "No Expiration",weight: FontWeight.w500,size: 12,color: Colors.black),
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Welcome, Victor",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("Welcome, ${widget.groupData!.owner!.name}",weight: FontWeight.w500,size: 20,color: Colors.black),
 
                 ],
               ),
@@ -77,9 +78,9 @@ class _GroupActivityState extends State<GroupActivity> {
                 'Chat',
               ],
               tabPages: [
-                Activity(groupData: widget.groupData,),
-                GroupPerformance(),
-                GroupChatScreen()
+                Activity(widget.user,groupData: widget.groupData,),
+                GroupPerformance(widget.user,groupData: widget.groupData,),
+                GroupChatScreen(widget.user,)
               ],
             ),
 

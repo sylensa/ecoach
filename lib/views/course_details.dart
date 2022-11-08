@@ -179,8 +179,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              settings:
-                                  RouteSettings(name: LearnMode.routeName),
+                              settings: RouteSettings(name: LearnMode.routeName),
                               builder: (context) {
                                 return LearnMode(
                                     widget.user, widget.courseInfo.course);
@@ -195,8 +194,7 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[1],
                         onTap: () async {
-                          List<Topic> topics = await TestController()
-                              .getTopicsAndNotes(widget.courseInfo.course);
+                          List<Topic> topics = await TestController().getTopicsAndNotes(widget.courseInfo.course);
                           Navigator.push(
                               context,
                               MaterialPageRoute(

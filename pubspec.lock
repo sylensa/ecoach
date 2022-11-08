@@ -818,7 +818,7 @@ packages:
       name: meta
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.7.0"
   mime:
     dependency: transitive
     description:
@@ -1250,7 +1250,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.0"
+    version: "1.8.2"
   sqflite:
     dependency: "direct main"
     description:
@@ -1292,14 +1292,7 @@ packages:
       name: string_scanner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.1"
-  swipeable_button_view:
-    dependency: "direct main"
-    description:
-      name: swipeable_button_view
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.2"
+    version: "1.1.0"
   syncfusion_flutter_charts:
     dependency: "direct main"
     description:
@@ -1334,14 +1327,14 @@ packages:
       name: term_glyph
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.1"
+    version: "1.2.0"
   test_api:
     dependency: transitive
     description:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.12"
+    version: "0.4.9"
   timeago:
     dependency: "direct main"
     description:

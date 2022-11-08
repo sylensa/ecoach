@@ -102,6 +102,9 @@ class _HomePageState extends State<HomePage> {
         return [Color(0xFF393FC8), Color(0xFF282D9A)];
       case TestType.NONE:
         return [Color(0xFF595959), Color(0xFF595959)];
+      default:
+        return [Color(0xFF595959), Color(0xFF595959)];
+
     }
   }
 

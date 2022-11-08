@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/group_chat_model.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -28,7 +29,8 @@ import 'package:path_provider/path_provider.dart';
 
 
 class GroupChatScreen extends StatefulWidget {
-  GroupChatScreen();
+  User user;
+  GroupChatScreen(this.user);
   @override
   _GroupChatScreenState createState() => _GroupChatScreenState();
 }
@@ -145,9 +147,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         });
         _start();
       } else {
-        // Scaffold.of(context).showSnackBar(
-        //     new SnackBar(content: new Text("You must accept permissions"))
-        // );
+       toastMessage("You must accept permissions");
       }
     } catch (e) {
       print(e);
@@ -420,7 +420,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                child: TextButton(onPressed: _currentStatus != RecordingStatus.Unset ? _stop : null, child: sText("Stop",color: Colors.white)),
+                child: MaterialButton(onPressed: _currentStatus != RecordingStatus.Unset ? _stop : null, child: sText("Stop",color: Colors.white)),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(30),bottomLeft: Radius.circular(30)),
                     color: appMainDarkGrey
@@ -475,7 +475,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 ),
               ),
               Container(
-                child: TextButton(onPressed: ()async{
+                child: MaterialButton(onPressed: ()async{
                   await  _stop();
                   if(_current != null){
                   }

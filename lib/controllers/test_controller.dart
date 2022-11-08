@@ -1,5 +1,6 @@
 import 'package:ecoach/api/api_response.dart';
 import 'package:ecoach/database/answers.dart';
+import 'package:ecoach/database/conquest_test_taken_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/treadmill_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -125,7 +126,9 @@ class TestController {
   saveTestTaken(TestTaken test) {
     TestTakenDB().insert(test);
   }
-
+  saveConquestTestTaken(TestTaken test) {
+    ConquestTestTakenDB().conquestInsert(test);
+  }
   Future<List<Question>> getQuizQuestions(int quizId, {int? limit = 40}) {
     return QuizDB().getQuestions(quizId, limit!);
   }
@@ -172,7 +175,7 @@ class TestController {
     return topicsMap;
   }
 
-  Future<List<Question>> getAllQuestions(TestTaken test) async {
+  Future<List<Question>> getAllQuestions(TestTaken test,{int? topicId}) async {
     String responses = test.responses;
     // print("respones:");
 
@@ -190,8 +193,12 @@ class TestController {
     for (int i = 0; i < answers!.length; i++) {
       TestAnswer answer = answers[i];
       //  print("answer questionId:${answer.questionId}");
-      Question? question =
-          await QuestionDB().getQuestionById(answer.questionId!);
+      Question? question;
+      if(topicId == null){
+        question = await QuestionDB().getQuestionById(answer.questionId!);
+      }else{
+        question = await QuestionDB().getQuestionByIdTopicId(answer.questionId!,topicId);
+      }
       if (question != null) {
         if (answer.selectedAnswerId != null) {
           question.selectedAnswer =
@@ -202,6 +209,7 @@ class TestController {
       }
     }
 
+    print("questions:${questions.length}");
     return questions;
   }
 
@@ -333,8 +341,7 @@ class TestController {
     return testNames;
   }
 
-  Future<int> getTopicAnsweredCount(int courseId, int topicId,
-      {bool onlyAttempted = false, bool onlyCorrect = false}) async {
+  Future<int> getTopicAnsweredCount(int courseId, int topicId, {bool onlyAttempted = false, bool onlyCorrect = false}) async {
     List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
@@ -361,6 +368,8 @@ class TestController {
 
     return topicIds.length;
   }
+
+
 
   Future<double> getTopicAnsweredAverageScore(
     int courseId,

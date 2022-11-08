@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
@@ -12,6 +13,7 @@ import 'package:ecoach/views/autopilot/autopilot_topic_complete.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/autopilot/autopilot_complete_congratulation.dart';
 import 'package:ecoach/views/autopilot/autopilot_ended.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -72,7 +74,8 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     });
   }
 
-  next() {
+  next() async{
+
     setState(() {
       showSubmit = true;
     });
@@ -86,7 +89,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     }
   }
 
-  nextButton() {
+  nextButton() async{
     setState(() {
       showNext = false;
       controller.reviewMode = false;
@@ -110,9 +113,9 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
   }
 
   sumbitAnswer() async {
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.currentTopic!.avgScore!;
-
     setState(() {
       showSubmit = false;
       if (newScore != avgScore) {
@@ -382,7 +385,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
                 onPressed: () {
                   canExit = true;
                   Navigator.popUntil(context,
-                      ModalRoute.withName(CourseDetailsPage.routeName));
+                      ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               Button(
@@ -558,7 +561,7 @@ class SessionSavedPrompt extends StatelessWidget {
       onWillPop: () async {
         await controller.scoreCurrentQuestion();
         Navigator.popUntil(
-            context, ModalRoute.withName(CourseDetailsPage.routeName));
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
@@ -593,7 +596,7 @@ class SessionSavedPrompt extends StatelessWidget {
                   onPressed: () {
                     controller.scoreCurrentQuestion();
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CourseDetailsPage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),

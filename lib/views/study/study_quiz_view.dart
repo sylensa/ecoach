@@ -3,6 +3,7 @@ import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/controllers/study_speed_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -609,6 +610,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   completeQuiz() async {
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion]);
+
     setState(() {
       controller.enabled = false;
     });

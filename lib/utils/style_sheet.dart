@@ -11,9 +11,11 @@ const kCourseCardOverlayColor = Colors.black12;
 const kTenPointWhiteText = TextStyle(fontSize: 10, color: Colors.white);
 const kBlack38 = Colors.black38;
 const kDefaultBlack = Color(0xFF2A2121);
-const reviewBackgroundColors =   Color(0xFF464FA0);
-const reviewSelectedColor =   Color(0xFF2E346F);
-const reviewDividerColor =   Color(0xFFA8B1FF);
+const reviewBackgroundColors = Color(0xFF464FA0);
+const reviewSelectedColor = Color(0xFF2E346F);
+const reviewDividerColor = Color(0xFFA8B1FF);
+const kDefaultBlack2 = Color(0xFF132239);
+const kDefaultBlack2SubtextColor = Color(0xFF787E87);
 
 // progress colors
 const kProgressColors = [
@@ -48,8 +50,10 @@ const kAdeoTaupe = Color(0xFFFFB444);
 Color kAdeoOrangeH = HexColor("#FF8444");
 const kAdeoBlue = Color(0xFF00ABE0);
 const kAdeoBlue2 = Color(0xFF2A9CEA);
+const kAdeoBlue3 = Color(0xFF0078D7);
 const kAdeoBlueAccent = Color(0xFF9EE4FF);
 const kAdeoGreen = Color(0xFF00C664);
+const kAdeoGreen4 = Color(0xFF00C9B9);
 const kAdeoWhiteAlpha40 = Color(0x66FFFFFF);
 const kAdeoWhiteAlpha50 = Color(0x80FFFFFF);
 const kAdeoWhiteAlpha81 = Color(0xCFFFFFFF);
@@ -71,6 +75,14 @@ const kSixteenPointWhiteText = TextStyle(
   fontWeight: FontWeight.w500,
   fontFamily: 'Poppins',
 );
+const kShadowColor = Color(0x29000000);
+const kAdeoPrimary = Color(0xFF00C9B9);
+const kPageBackgroundGray2 = Color(0xFFF8F8F8);
+const kAdeoDark = Color(0xFF202B31);
+const kAdeoDark_Green = Color(0xFF00C664);
+const kAdeoDark_Gray = Color(0xFF3C3D42);
+const kAdeoDark_Gray2 = Color(0xFF9B9B9B);
+const kActiveOnDarkMode = Color(0xFF222E3B);
 
 const kTableBodyMainText = TextStyle(
   fontSize: 13,

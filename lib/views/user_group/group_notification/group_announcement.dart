@@ -1,4 +1,6 @@
+import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/group_notification_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/views/user_group/group_activities/activities/group_activity.dart';
@@ -9,7 +11,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class GroupAnnouncement extends StatefulWidget {
   static const String routeName = '/user_group';
-  GroupAnnouncement(this.user, {Key? key}) : super(key: key);
+  GroupAnnouncement(this.user, {Key? key,this.groupNotificationData}) : super(key: key);
+  GroupNotificationData? groupNotificationData;
   User user;
   @override
   State<GroupAnnouncement> createState() => _GroupAnnouncementState();
@@ -17,6 +20,14 @@ class GroupAnnouncement extends StatefulWidget {
 
 class _GroupAnnouncementState extends State<GroupAnnouncement> {
   TextEditingController searchController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(!widget.groupNotificationData!.viewed!){
+      GroupManagementController(groupId: widget.groupNotificationData!.groupId.toString()).viewedNotification(notificationId: widget.groupNotificationData!.id);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,12 +69,12 @@ class _GroupAnnouncementState extends State<GroupAnnouncement> {
                         color: Color(0XFFF7B06E),
                       ),
                       SizedBox(width: 10,),
-                      sText("3 days ago",weight: FontWeight.w500,color: Colors.black),
+                      sText("${StringExtension.displayTimeAgoFromTimestamp(widget.groupNotificationData!.notificationtable!.createdAt.toString())}",weight: FontWeight.w500,color: Colors.black),
 
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Track all group_activities",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("Track all group activities",weight: FontWeight.w500,size: 20,color: Colors.black),
                   SizedBox(height: 5,),
                   sText("Never miss deadlines",weight: FontWeight.w500,size: 20,color: Colors.black),
 
@@ -87,10 +98,9 @@ class _GroupAnnouncementState extends State<GroupAnnouncement> {
                       crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-                        sText("Instruction",weight: FontWeight.bold,size: 16,align: TextAlign.left),
+                        sText("Announcement",weight: FontWeight.bold,size: 16,align: TextAlign.left),
                         SizedBox(height: 20,),
-                        sText("This test is your final assessment before your actual exam. Ensure to answer every question. Any wrongly answered question attracts a mark of -1 Any unanswered question attracts a mark of -1 The test comprises of 30 questions.Your pass mark for the test is 60%. Good luck candidates."),
-
+                        sText("${widget.groupNotificationData!.message}"),
                       ],
                     ),
                    Image.asset("assets/images/announcement.png")
