@@ -123,7 +123,7 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
 
   nextButton() async {
     if (currentQuestion == controller.questions.length - 1) {
-      completeQuiz();
+     await completeQuiz();
       return;
     }
      timerController.restart();controller.duration =  Duration(seconds: controller.time);
@@ -211,7 +211,6 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
 
   completeQuiz() async {
     await scoreCurrentQuestion(widget.controller.questions[currentQuestion]);
-
     if (!controller.disableTime) {
       timerController.pause();
     }
@@ -741,6 +740,7 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
                                           iconColor: kAdeoGray3,
                                           collapsedBackgroundColor:
                                           Colors.white,
+                                          initiallyExpanded: true,
                                           collapsedIconColor: kAdeoGray3,
                                           backgroundColor: Colors.white,
                                           title: Text(
