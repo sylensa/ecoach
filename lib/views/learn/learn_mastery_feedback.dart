@@ -12,16 +12,22 @@ import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class LearnMasteryFeedback extends StatelessWidget {
-  const LearnMasteryFeedback({
-    required this.passed,
-    required this.topic,
-    required this.controller,
-  });
+  const LearnMasteryFeedback(
+      {required this.passed,
+      required this.topic,
+      required this.controller,
+      required this.masteryCourseUpgrade,
+      required this.topicId});
 
   final bool passed;
   final String topic;
+  final int topicId;
+  final MasteryCourseUpgrade masteryCourseUpgrade;
   final MasteryController controller;
 
   static const TextStyle _topLabelStyle = TextStyle(
@@ -108,7 +114,7 @@ class LearnMasteryFeedback extends StatelessWidget {
                 SizedBox(height: 12.0),
                 Text(
                   passed
-                      ? 'You have successfully mastered\n$topic'
+                      ? 'You have successfully mastered\n${masteryCourseUpgrade.topicName}'
                       : 'You scored below the pass mark.\nLet\'s try one more time\nTogether we can',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -139,16 +145,33 @@ class LearnMasteryFeedback extends StatelessWidget {
                   child: Button(
                     label: passed ? 'continue' : 'revise',
                     onPressed: () async {
+                      List<MasteryCourseUpgrade> masteryTopics =
+                          await MasteryCourseDB().getMasteryTopicsUpgrade(
+                              Provider.of<LearnModeProvider>(context,
+                                      listen: false)
+                                  .currentCourse!
+                                  .id!);
+
                       if (passed) {
                         StudyProgress progress =
                             await controller.updateMasteryCourse();
-                        MasteryCourse? topic = await MasteryCourseDB()
-                            .getCurrentTopic(controller.progress.studyId!);
+                        masteryCourseUpgrade.passed = passed;
+                        await MasteryCourseDB()
+                            .updateMasteryCourseUpgrade(masteryCourseUpgrade);
+
                         controller.updateProgressSection(2);
+
+                        masteryTopics = await MasteryCourseDB()
+                            .getMasteryTopicsUpgrade(
+                                Provider.of<LearnModeProvider>(context,
+                                        listen: false)
+                                    .currentCourse!
+                                    .id!);
 
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          if (topic != null) {
+                          if (masteryTopics.isNotEmpty) {
+                            MasteryCourseUpgrade topic = masteryTopics[0];
                             return LearnNextTopic(
                               controller.user,
                               controller.course,
@@ -162,7 +185,7 @@ class LearnMasteryFeedback extends StatelessWidget {
                       }
                       if (!passed) {
                         Topic? topic = await TopicDB()
-                            .getTopicById(controller.progress.topicId!);
+                            .getTopicById(masteryCourseUpgrade.topicId!);
                         controller.updateProgressSection(1);
                         Navigator.pushAndRemoveUntil(context,
                             MaterialPageRoute(builder: (context) {

@@ -391,7 +391,7 @@ class _TestConfigurationsState extends State<TestConfigurations> {
                     ),
                     SizedBox(height: 20,),
 
-                    if(dueDateTime == null || fromDateTime == null)
+                    if((dueDateTime == null || fromDateTime == null) && timing!.id != "3")
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       padding: EdgeInsets.symmetric(horizontal: 0,vertical: 10),

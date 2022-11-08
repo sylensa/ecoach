@@ -1,14 +1,10 @@
-import 'dart:convert';
-
+import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/course_db.dart';
-import 'package:ecoach/database/quiz_db.dart';
+import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/database/answers.dart';
-import 'package:ecoach/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class QuestionDB {
@@ -362,10 +358,11 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
 
     Course? course = await CourseDB().getCourseById(courseId);
+    // print("course ${course!.toJson()}");
     if (course == null) {
       return [];
     }
-    List<Topic>? topics = await TopicDB().courseTopics(course);
+    List<Topic>? topics = await TopicDB().allCourseTopics(course);
     print("topic length=${topics.length}");
     List<Question> questions = [];
     for (int i = 0; i < topics.length; i++) {
@@ -605,4 +602,8 @@ class QuestionDB {
     final db = await DBProvider.database;
     db!.rawQuery("Delete from test_saved_questions where course_id = $id");
   }
+
+  // getRevisionLevelQuestions(Course course, ){
+
+  // }
 }

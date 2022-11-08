@@ -1,8 +1,14 @@
 import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/course_completion_progress_attempt.dart';
 import 'package:ecoach/models/study.dart';
-import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:sqflite/sqflite.dart';
+
+import '../models/course_completion_study_progress.dart';
+import '../models/revision_progress_attempts.dart';
+import '../models/revision_study_progress.dart';
+import '../models/speed_enhancement_progress_model.dart';
 
 class StudyDB {
   Future<void> insert(Study study) async {
@@ -171,6 +177,9 @@ class StudyDB {
       where: "id = ?",
       whereArgs: [progress.id],
     );
+
+    // Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+    //     .setCurrentProgress(progress);
   }
 
   delete(int id) async {
@@ -180,5 +189,335 @@ class StudyDB {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  // revision progress
+  Future<void> insertRevisionProgress(RevisionStudyProgress revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("revision_study_progress", revision.toMap());
+    }).then((value) {
+      print("revision was added");
+    }).catchError((e) {
+      print("this is the error $e");
+    });
+  }
+
+  Future<void> updateRevisionProgress(RevisionStudyProgress revision) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'revision_study_progress',
+      revision.toMap(),
+      where: "id = ?",
+      whereArgs: [revision.id],
+    );
+  }
+
+  Future<RevisionStudyProgress?> getCurrentRevisionProgress() async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('revision_study_progress',
+        orderBy: "created_at DESC",
+        // where: "study_id = ?",
+        // whereArgs: [revisionId],
+        limit: 1);
+
+    RevisionStudyProgress? progress =
+        result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  Future<RevisionStudyProgress?> getCurrentRevisionProgressByCourse(
+      int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('revision_study_progress',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],
+        limit: 1);
+
+    RevisionStudyProgress? progress =
+        result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  Future<List<RevisionStudyProgress?>> getRevisionProgressByCourse(
+      Course course,
+      {bool isDesc = true}) async {
+    final Database? db = await DBProvider.database;
+
+    final topics = await TopicDB().courseTopics(course);
+
+    var result = await db!.query(
+      'revision_study_progress',
+      orderBy: "created_at ${isDesc ? "DESC" : "ASC"}",
+      where: "course_id = ?",
+      whereArgs: [course.id],
+    );
+
+    List<RevisionStudyProgress?> progressAttempts = [];
+
+    result.forEach((element) {
+      RevisionStudyProgress? progress = RevisionStudyProgress.fromMap(element);
+      progressAttempts.add(progress);
+    });
+
+    return progressAttempts;
+  }
+
+  // speed progress level db functions
+  Future<void> insertSpeedProgressLevel(SpeedStudyProgress revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("speed_study_level", revision.toMap());
+    }).then((value) {
+      print("revision was added");
+    }).catchError((e) {
+      print("this is the error $e");
+    });
+  }
+
+  Future<void> updateSpeedProgressLevel(SpeedStudyProgress revision) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    print(revision.toMap());
+
+    await db!.update(
+      'speed_study_level',
+      revision.toMap(),
+      where: "id = ?",
+      whereArgs: [revision.id],
+    );
+  }
+
+  Future<SpeedStudyProgress?> getCurrentSpeedProgressLevel() async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('speed_study_level',
+        orderBy: "created_at DESC",
+        // where: "study_id = ?",
+        // whereArgs: [revisionId],
+        limit: 1);
+
+    SpeedStudyProgress? progress =
+        result.isNotEmpty ? SpeedStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  Future<SpeedStudyProgress?> getCurrentSpeedProgressLevelByCourse(
+      int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('speed_study_level',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],
+        limit: 1);
+
+    SpeedStudyProgress? progress =
+        result.isNotEmpty ? SpeedStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  // revision progress
+  Future<void> insertCourseCompletionProgress(
+      CourseCompletionStudyProgress revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("course_completion_study_progress", revision.toMap());
+    });
+  }
+
+  Future<void> updateCourseCompletionProgress(
+      CourseCompletionStudyProgress revision) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'course_completion_study_progress',
+      revision.toMap(),
+      where: "id = ?",
+      whereArgs: [revision.id],
+    );
+  }
+
+  Future<RevisionStudyProgress?> getCurrentCourseCompletionProgress(
+      int revisionId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('course_completion_study_progress',
+        orderBy: "created_at DESC",
+        // where: "study_id = ?",
+        // whereArgs: [revisionId],
+        limit: 1);
+
+    RevisionStudyProgress? progress =
+        result.isNotEmpty ? RevisionStudyProgress.fromMap(result.first) : null;
+    return progress;
+  }
+
+  Future<CourseCompletionStudyProgress?>
+      getCurrentCourseCompletionProgressByCourse(int courseId) async {
+    final Database? db = await DBProvider.database;
+
+    var result = await db!.query('course_completion_study_progress',
+        orderBy: "created_at DESC",
+        where: "course_id = ?",
+        whereArgs: [courseId],
+        limit: 1);
+
+    CourseCompletionStudyProgress? progress = result.isNotEmpty
+        ? CourseCompletionStudyProgress.fromMap(result.first)
+        : null;
+    return progress;
+  }
+
+  Future<List<CourseCompletionStudyProgress?>>
+      getCouseCompletionProgressByCourse(Course course,
+          {bool isDesc = true}) async {
+    final Database? db = await DBProvider.database;
+
+    final topics = await TopicDB().courseTopics(course);
+
+    var result = await db!.query(
+      'course_completion_study_progress',
+      orderBy: "created_at ${isDesc ? "DESC" : "ASC"}",
+      where: "course_id = ?",
+      whereArgs: [course.id],
+    );
+
+    List<CourseCompletionStudyProgress?> progressAttempts = [];
+
+    result.forEach((element) {
+      CourseCompletionStudyProgress? progress =
+          CourseCompletionStudyProgress.fromMap(element);
+      progressAttempts.add(progress);
+    });
+
+    return progressAttempts;
+  }
+
+  // insert revision attempt
+  Future<void> insertRevisionAttempt(RevisionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("revision_progress_attempts", revision.toMap());
+    });
+  }
+
+  Future<List<RevisionProgressAttempt>> getRevisionAttemptByTopicAndProgress(
+      RevisionStudyProgress progress) async {
+    final db = await DBProvider.database;
+
+    List<RevisionProgressAttempt> attempts = [];
+
+    List progressAttempts = await db!.query("revision_progress_attempts",
+        where: 'revision_progress_id = ?', whereArgs: [progress.id]);
+
+    for (var progress in progressAttempts) {
+      RevisionProgressAttempt attempt =
+          RevisionProgressAttempt.fromMap(progress);
+      attempts.add(attempt);
+    }
+
+    return attempts;
+  }
+
+  Future<RevisionProgressAttempt> getSingleRevisionAttemptByProgress(
+      RevisionStudyProgress revision) async {
+    final db = await DBProvider.database;
+
+    final data = await db!.query(
+      "revision_progress_attempts",
+      where: "revision_progress_id = ?",
+      orderBy: "created_at DESC ",
+      whereArgs: [revision.id],
+      limit: 1,
+    );
+
+    return RevisionProgressAttempt.fromMap(data.first);
+  }
+
+  Future<void> updateRevisionAttempt(RevisionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+
+    db!.update("revision_progress_attempts", revision.toMap(),
+        where: 'id=?', whereArgs: [revision.id]);
+  }
+
+  Future<dynamic> getRevisionAttemptSumByProgress(
+      RevisionStudyProgress revision) async {
+    final db = await DBProvider.database;
+    final result = await db!.rawQuery(
+        "select SUM(score) from revision_progress_attempts where revision_progress_id=?",
+        [revision.id]);
+    // print("total score result: ${result[0]["SUM"]}");
+    final score = result[0]["SUM(score)"] ?? 0;
+    return score;
+  }
+
+  // insert revision attempt
+  Future<void> insertCCAttempt(CourseCompletionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+    db!.transaction((txn) async {
+      txn.insert("course_completion_progress_attempts", revision.toMap());
+    });
+  }
+
+  Future<List<CourseCompletionProgressAttempt>> getCCAttemptByTopicAndProgress(
+      CourseCompletionStudyProgress progress) async {
+    final db = await DBProvider.database;
+
+    List<CourseCompletionProgressAttempt> attempts = [];
+
+    List progressAttempts = await db!.query(
+        "course_completion_progress_attempts",
+        where: 'cc_progress_id = ?',
+        whereArgs: [progress.id]);
+
+    for (var progress in progressAttempts) {
+      CourseCompletionProgressAttempt attempt =
+          CourseCompletionProgressAttempt.fromMap(progress);
+      attempts.add(attempt);
+    }
+
+    return attempts;
+  }
+
+  Future<CourseCompletionProgressAttempt> getSingleCCAttemptByProgress(
+      CourseCompletionStudyProgress revision) async {
+    final db = await DBProvider.database;
+
+    final data = await db!.query(
+      "course_completion_progress_attempts",
+      where: "cc_progress_id = ?",
+      orderBy: "created_at DESC ",
+      whereArgs: [revision.id],
+      limit: 1,
+    );
+
+    return CourseCompletionProgressAttempt.fromMap(data.first);
+  }
+
+  Future<void> updateCCAttempt(CourseCompletionProgressAttempt revision) async {
+    final db = await DBProvider.database;
+
+    db!.update("course_completion_progress_attempts", revision.toMap(),
+        where: 'id=?', whereArgs: [revision.id]);
+  }
+
+  Future<dynamic> getCCAttemptSumByProgress(
+      CourseCompletionStudyProgress revision) async {
+    final db = await DBProvider.database;
+    final result = await db!.rawQuery(
+        "select SUM(score) from course_completion_progress_attempts where cc_progress_id=?",
+        [revision.id]);
+    // print("total score result: ${result[0]["SUM"]}");
+    final score = result[0]["SUM(score)"] ?? 0;
+    return score;
   }
 }

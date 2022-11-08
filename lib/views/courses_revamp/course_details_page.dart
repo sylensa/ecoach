@@ -66,7 +66,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   List<Topic> topics = [];
   bool topicsProgressCode = true;
   bool isTopicSelected = true;
-  PageController pageController = PageController();
+  // PageController pageController = PageController();
+  int currentPageNumber = 0;
+  PageController pageController = PageController(initialPage: 0);
+  PageController pageControllerView = PageController(initialPage: 0);
+
   Future? stats;
   Map<String, Widget> getPage() {
     switch (_currentPage) {
@@ -274,14 +278,14 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
-                  controller: pageController,
+                  controller: pageControllerView,
                   itemBuilder: (BuildContext context, int index){
                     return    GestureDetector(
                       onTap: (){
                         if(index >= _currentPage){
-                          pageController.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                          pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
                         }else{
-                          pageController.jumpTo(0.0);
+                          pageControllerView.jumpTo(0.0);
                         }
                         setState(() {
                           _currentPage = index;
@@ -289,9 +293,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                             listCourseDetails.clear();
                             listCourseDetails.add(courseDetails[index]);
                           }
-
-
                         });
+                        pageController.jumpToPage(index);
+
                       },
                       child: Row(
                         children: [
@@ -332,7 +336,40 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   }),
             ),
             SizedBox(height: 20,),
-            getPage().values.first
+            Expanded(
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (page) {
+                  setState(() {
+                    print("currentPageNumber:$currentPageNumber");
+                    print("page:$page");
+                    if(page >= currentPageNumber){
+                      pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                    }else{
+                      pageControllerView.jumpTo(0.0);
+                    }
+
+                    if(!listCourseDetails.contains(courseDetails[page])){
+                      listCourseDetails.clear();
+                      listCourseDetails.add(courseDetails[page]);
+                    }
+                    currentPageNumber = page;
+
+                  });
+                },
+                children:  [
+              LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+              NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,),
+               TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+               LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+             GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+               ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,),
+
+
+                ],
+              ),
+            ),
+
           ],
         ),
       ),

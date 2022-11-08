@@ -1,23 +1,22 @@
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/course_db.dart';
+import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/study_db.dart';
-import 'package:ecoach/models/notes_read.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/database/notes_read_db.dart';
-import 'package:ecoach/database/test_taken_db.dart';
-import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/notes/notes_topics.dart';
 import 'package:ecoach/views/test/test_type.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
-import 'package:ecoach/widgets/page_header.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
+import 'package:ecoach/widgets/page_header.dart';
 import 'package:flutter/material.dart';
-import 'package:ecoach/utils/manip.dart';
+import 'package:provider/provider.dart';
 
 class CourseDetailsPage extends StatefulWidget {
   CourseDetailsPage(this.user, {this.courseInfo, course});
@@ -79,6 +78,8 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
           lastStudyTopic = "----";
         } else
           StudyDB().getCurrentProgress(value.id!).then((value) {
+            Provider.of<LearnModeProvider>(context, listen: false)
+                .setCurrentProgress(value!);
             if (value == null) {
               lastStudyTopic = "----";
             } else {
@@ -129,26 +130,24 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
       body: SafeArea(
         child: Column(
           children: [
-           Container(
-             margin: EdgeInsets.only(left: 20,right: 20),
-             child: Row(
-               mainAxisAlignment: MainAxisAlignment.spaceAround,
-               children: [
-                 GestureDetector(
-                   onTap: (){
-                     Navigator.pop(context);
-                   },
-                   child: Container(
-                     child: Icon(Icons.arrow_back_ios)
-                   ),
-                 ),
-                 PageHeader(
-                   pageHeading: widget.courseInfo.title,
-                 ),
-                 Container()
-               ],
-             ),
-           ),
+            Container(
+              margin: EdgeInsets.only(left: 20, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(child: Icon(Icons.arrow_back_ios)),
+                  ),
+                  PageHeader(
+                    pageHeading: widget.courseInfo.title,
+                  ),
+                  Container()
+                ],
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -158,12 +157,32 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                       child: CourseDetailCard(
                         courseDetail: courseDetails[0],
                         onTap: () {
+                          final welcomeProvider =
+                              Provider.of<LearnModeProvider>(context,
+                                  listen: false);
+
+                          welcomeProvider
+                              .getTotalTopics(widget.courseInfo.course);
+
+                          welcomeProvider
+                              .setCurrentCourse(widget.courseInfo.course);
+
+                          welcomeProvider.setCurrentRevisionStudyProgress(null);
+
+                          welcomeProvider
+                              .setCurrentCourseCompletionStudyProgress(null);
+
+                          welcomeProvider.setCurrentSpeedProgress(null);
+
+                          welcomeProvider.setCurrentUser(widget.user);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               settings: RouteSettings(name: LearnMode.routeName),
                               builder: (context) {
-                                return LearnMode(widget.user, widget.courseInfo.course);
+                                return LearnMode(
+                                    widget.user, widget.courseInfo.course);
                               },
                             ),
                           );
@@ -203,7 +222,6 @@ class _CourseDetailsPageState extends State<CourseDetailsPage> {
                                 return TestTypeView(
                                   widget.user,
                                   widget.courseInfo.course,
-
                                 );
                               },
                             ),

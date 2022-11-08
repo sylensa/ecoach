@@ -228,16 +228,16 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  LowerButtons(
-                    height: height,
-                    width: width,
-                    text: "Share",
-                    image: "assets/images/share.png",
-                    orientation: orientation,
-                    onpress: () {
-                      toastMessage("This feature not available now");
-                    },
-                  ),
+                  // LowerButtons(
+                  //   height: height,
+                  //   width: width,
+                  //   text: "Share",
+                  //   image: "assets/images/share.png",
+                  //   orientation: orientation,
+                  //   onpress: () {
+                  //     toastMessage("This feature not available now");
+                  //   },
+                  // ),
                   LowerButtons(
                     height: height,
                     width: width,

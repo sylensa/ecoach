@@ -92,8 +92,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
       controller.reviewMode = false;
       controller.nextQuestion();
       controller.resumeTimer();
-      pageController.nextPage(
-          duration: Duration(milliseconds: 1), curve: Curves.ease);
+      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
     });
   }
 
@@ -119,8 +118,7 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   sumbitAnswer() async {
-    await scoreCurrentQuestion(
-        controller.questions[controller.currentQuestion].question!);
+    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.marathon!.avgScore!;
 

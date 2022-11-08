@@ -1,23 +1,21 @@
 import 'dart:convert';
 
-import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
-import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:provider/provider.dart';
 
 abstract class StudyController {
   StudyController(this.user, this.course,
@@ -172,7 +170,98 @@ abstract class StudyController {
     progress.passed = score >= 70 ? true : false;
     progress.updatedAt = DateTime.now();
 
+    print("progress after complete ${progress.toJson()}");
+
+    if (score >= 70) {
+      print("test progress: passed");
+    } else {
+      print("test progress: failed");
+    }
+
     await StudyDB().updateProgress(progress);
+
+    StudyType? studyType =
+        Provider.of<LearnModeProvider>(Get.context!, listen: false)
+            .currentStudyType;
+    print("current study type $studyType");
+
+    // if (studyType == StudyType.SPEED_ENHANCEMENT) {
+    //   bool moveUp = true;
+    //
+    //   if (moveUp) {
+    //     moveUp = score >= 70;
+    //     SpeedStudyProgressController().updateCCLevel(moveUp);
+    //   }
+    //   Get.off(
+    //     () => LearnSpeedEnhancementCompletion(
+    //       // controller: controller as SpeedController,
+    //       progress: progress,
+    //       moveUp: moveUp,
+    //       level: {
+    //         'level': 1,
+    //         'duration': resetDuration!.inSeconds,
+    //         'questions': 1
+    //       },
+    //     ),
+    //   );
+    // }
+
+    // if (studyType == StudyType.REVISION) {
+    //   RevisionStudyProgress? revision =
+    //       await StudyDB().getCurrentRevisionProgressByCourse(course.id!);
+
+    //   if (revision == null) {
+    //     RevisionStudyProgress newRevision = RevisionStudyProgress(
+    //         studyId: progress.studyId,
+    //         level: 1,
+    //         topicId: progress.topicId,
+    //         courseId: course.id,
+    //         createdAt: DateTime.now(),
+    //         updatedAt: DateTime.now());
+
+    //     StudyDB().insertRevisionProgress(newRevision);
+
+    //     print("new revision: ${newRevision.toMap()}");
+    //   } else {
+    //     revision.level = revision.level! + 1;
+    //     revision.updatedAt = DateTime.now();
+    //     print("revision update => ${revision.toMap()}");
+    //     await StudyDB().updateRevisionProgress(revision);
+    //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+    //         .setCurrentRevisionStudyProgress(revision);
+    //   }
+    // }
+    // else if (studyType == StudyType.SPEED_ENHANCEMENT) {
+    //   SpeedStudyProgress? revision =
+    //       await StudyDB().getCurrentSpeedProgressLevelByCourse(course.id!);
+
+    //   if (revision == null) {
+    //     RevisionStudyProgress newRevision = RevisionStudyProgress(
+    //         studyId: progress.studyId,
+    //         level: 1,
+    //         topicId: progress.topicId,
+    //         courseId: course.id,
+    //         createdAt: DateTime.now(),
+    //         updatedAt: DateTime.now());
+
+    //     StudyDB().insertRevisionProgress(newRevision);
+
+    //     print("new revision: ${newRevision.toMap()}");
+    //   } else {
+    //     revision.level = progress.passed!
+    //         ? revision.level! + 1
+    //         : revision.level! > 1
+    //             ? revision.level! - 1
+    //             : revision.level;
+    //     revision.updatedAt = DateTime.now();
+    //     print("revision update => ${revision.toMap()}");
+    //     await StudyDB().updateSpeedProgressLevel(revision);
+    //     Provider.of<WelcomeScreenProvider>(Get.context!, listen: false)
+    //         .setCurrentSpeedProgress(revision);
+    //   }
+    // }
+
+    // await StudyDB().getCurrentRevisionProgress();
 
     return progress;
   }

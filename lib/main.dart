@@ -1,20 +1,14 @@
-import 'dart:io';
-
-import 'package:ecoach/api/api_call.dart';
-import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/flavor_settings.dart';
-import 'package:ecoach/helper/helper.dart';
-import 'package:ecoach/models/plan.dart';
-import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/download_update.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/revision_attempts_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/revamp/features/account/view/screen/log_in.dart';
 import 'package:ecoach/revamp/features/account/view/screen/phone_number_verification.dart';
-import 'package:ecoach/test/test.dart';
-import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/views/group_management/test_creation/settings.dart';
-import 'package:ecoach/views/result_summary/result_summary.dart';
-import 'package:ecoach/views/review/review_onboarding.dart';
-import 'package:ecoach/views/review/review_questions.dart';
+import 'package:ecoach/routes/Routes.dart';
+import 'package:ecoach/utils/shared_preference.dart';
+import 'package:ecoach/views/main_home.dart';
+import 'package:ecoach/views/onboard/onboarding.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,21 +20,13 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:ecoach/models/download_update.dart';
-import 'package:ecoach/routes/Routes.dart';
-import 'package:ecoach/utils/shared_preference.dart';
-import 'package:ecoach/views/auth/otp_view.dart';
-import 'package:ecoach/views/main_home.dart';
-import 'package:ecoach/views/onboard/onboarding.dart';
-import 'package:ecoach/views/onboard/welcome_adeo.dart';
-
 import 'models/user.dart';
 import 'utils/notification_service.dart';
-import 'views/auth/login_view.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 bool? seenOnboard;
 List<String> testDeviceIds = ['B23C05CA86653B5B363BFEB03DCC3406'];
+
 void main() async {
   print("object:inti");
   LicenseRegistry.addLicense(() async* {
@@ -140,24 +126,37 @@ class _MyAppState extends State<MyApp> {
         builder: (context, widget) {
           return FlavorBanner(
             child: ResponsiveSizer(
-              builder: (_, __, ___) => GetMaterialApp(
-                debugShowCheckedModeBanner: false,
-                title: 'Adeo',
-                theme: ThemeData(
-                  primarySwatch: Colors.green,
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                  fontFamily: 'Poppins',
-                  scaffoldBackgroundColor: Colors.white,
-                  textTheme: Theme.of(context).textTheme.apply(
-                        // bodyColor: Colors.white,
-                        // displayColor: Colors.white,
-                        fontFamily: 'Poppins',
-                      ),
+              builder: (_, __, ___) => MultiProvider(
+                providers: [
+                  ChangeNotifierProvider<SpeedEnhancementProvider>(
+                    create: (context) => SpeedEnhancementProvider(),
+                  ),
+                  ChangeNotifierProvider<LearnModeProvider>(
+                    create: (context) => LearnModeProvider(),
+                  ),
+                  ChangeNotifierProvider<RevisionAttemptProvider>(
+                    create: (context) => RevisionAttemptProvider(),
+                  )
+                ],
+                child: GetMaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  title: 'Adeo',
+                  theme: ThemeData(
+                    primarySwatch: Colors.green,
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                    fontFamily: 'Poppins',
+                    scaffoldBackgroundColor: Colors.white,
+                    textTheme: Theme.of(context).textTheme.apply(
+                          // bodyColor: Colors.white,
+                          // displayColor: Colors.white,
+                          fontFamily: 'Poppins',
+                        ),
+                  ),
+                  // home: MyTestApp(),
+                  home: seenOnboard == true ? myFuture : Onboarding(),
+                  // home: Settings(),
+                  routes: routes,
                 ),
-                // home: MyTestApp(),
-                home: seenOnboard == true ? myFuture : Onboarding(),
-                // home: Settings(),
-                routes: routes,
               ),
             ),
           );

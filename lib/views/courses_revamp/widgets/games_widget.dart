@@ -43,28 +43,26 @@ class _GameWidgetState extends State<GameWidget> {
   ];
   @override
   Widget build(BuildContext context) {
-    return  Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          sText(""),
-          Center(
+    return  Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        sText(""),
+        Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+            margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+            width: appWidth(context),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-              width: appWidth(context),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Container(
-                child: sText("Coming Soon",color: kAdeoGray3,weight: FontWeight.bold,size: 16,align: TextAlign.center),
-              ),
+              child: sText("Coming Soon",color: kAdeoGray3,weight: FontWeight.bold,size: 16,align: TextAlign.center),
             ),
           ),
-          sText(""),
-        ],
-      ),
+        ),
+        sText(""),
+      ],
     ) ;
 
   }

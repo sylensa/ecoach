@@ -2,13 +2,14 @@ import 'package:ecoach/controllers/study_mastery_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/topic_analysis.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
-import 'package:ecoach/views/learn/learn_mastery_topic.dart';
+import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/learn/learn_next_topic.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class LearnAttentionTopics extends StatelessWidget {
   TextStyle auxTextStyle = TextStyle(
@@ -115,20 +116,72 @@ class LearnAttentionTopics extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              MasteryCourse? topic = await MasteryCourseDB()
-                  .getCurrentTopic(controller.progress.studyId!);
-              if (topic != null) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return LearnNextTopic(
-                    controller.user,
-                    controller.course,
-                    controller.progress,
-                    topic: topic,
+              int courseId =
+                  Provider.of<LearnModeProvider>(context, listen: false)
+                      .currentCourse!
+                      .id!;
+
+              List<MasteryCourseUpgrade> upgradeCourses =
+                  await MasteryCourseDB().getMasteryTopicsUpgrade(courseId);
+
+              if (upgradeCourses.isNotEmpty) {
+                MasteryCourseUpgrade? topic =
+                    await MasteryCourseDB().getCurrentTopicUpgrade(courseId);
+
+                if (topic != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return LearnNextTopic(
+                          controller.user,
+                          controller.course,
+                          controller.progress,
+                          topic: topic,
+                        );
+                      },
+                    ),
                   );
-                }));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Mastery topic does not exist")));
+                }
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Mastery topic does not exist")));
+                Get.defaultDialog(
+                  title: "Congratulations",
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Image.asset(
+                        "assets/images/learn_mode2/happy_face.gif",
+                        height: 100,
+                        width: 100,
+                      ),
+                      // Text("Aww"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Mastery Completed Successfully",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.popUntil(context,
+                              ModalRoute.withName(LearnMode.routeName));
+                        },
+                        child: Text(
+                          "Finish",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      )
+                    ],
+                  ),
+                );
               }
             },
             child: Container(

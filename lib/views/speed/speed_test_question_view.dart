@@ -123,16 +123,14 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
 
   nextButton() async {
     if (currentQuestion == controller.questions.length - 1) {
-      completeQuiz();
+     await completeQuiz();
       return;
     }
-     timerController.restart();
-      controller.duration =  Duration(seconds: controller.time);
+     timerController.restart();controller.duration =  Duration(seconds: controller.time);
 
     await Future.delayed(Duration(milliseconds: 200));
-
+    await currentCorrectScoreState();
     setState(() {
-      currentCorrectScoreState();
       currentQuestion++;
       pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
 
@@ -212,6 +210,7 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
   }
 
   completeQuiz() async {
+    await scoreCurrentQuestion(widget.controller.questions[currentQuestion]);
     if (!controller.disableTime) {
       timerController.pause();
     }
@@ -357,7 +356,7 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
 
   bool _isBannerAdReady = false;
 
-  currentCorrectScoreState() {
+  currentCorrectScoreState() async{
     setState(() {
       if (widget.controller.questions[currentQuestion].isCorrect) {
         isCorrect = true;
@@ -365,6 +364,8 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
         isCorrect = false;
       }
     });
+    await scoreCurrentQuestion(widget.controller.questions[currentQuestion]);
+
   }
 
   getWithoutSpaces(String s) {
@@ -739,6 +740,7 @@ class _SpeedTestQuestionViewState extends State<SpeedTestQuestionView> {
                                           iconColor: kAdeoGray3,
                                           collapsedBackgroundColor:
                                           Colors.white,
+                                          initiallyExpanded: true,
                                           collapsedIconColor: kAdeoGray3,
                                           backgroundColor: Colors.white,
                                           title: Text(

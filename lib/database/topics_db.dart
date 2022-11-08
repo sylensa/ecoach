@@ -1,8 +1,6 @@
-import 'dart:convert';
-
+import 'package:ecoach/database/database.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/database/database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TopicDB {
@@ -94,6 +92,21 @@ class TopicDB {
         orderBy: "name ASC",
         where: "course_id = ? AND notes <> '' ",
         whereArgs: [course.id]);
+
+    print('course len=${maps.length}');
+    List<Topic> topics = [];
+    for (int i = 0; i < maps.length; i++) {
+      Topic topic = Topic.fromJson(maps[i]);
+      topics.add(topic);
+    }
+    return topics;
+  }
+
+  Future<List<Topic>> allCourseTopics(Course course) async {
+    final Database? db = await DBProvider.database;
+    print("course id = ${course.id}");
+    final List<Map<String, dynamic>> maps = await db!.query('topics',
+        orderBy: "name ASC", where: "course_id = ? ", whereArgs: [course.id]);
 
     print('course len=${maps.length}');
     List<Topic> topics = [];

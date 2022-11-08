@@ -1,11 +1,13 @@
-import 'package:custom_timer/custom_timer.dart';
 import 'package:ecoach/controllers/study_controller.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/models/course.dart';
-import 'package:ecoach/views/learn/learn_mode.dart';
+import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
+import 'package:ecoach/new_learn_mode/providers/speed_enhancement_provider.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class SpeedController extends StudyController {
   SpeedController(this.user, this.course,
@@ -13,7 +15,10 @@ class SpeedController extends StudyController {
       : super(user, course, name: name, progress: progress) {
     type = StudyType.SPEED_ENHANCEMENT;
     int seconds = 120;
-    switch (progress.level) {
+    LearnModeProvider welcome =
+        Provider.of<LearnModeProvider>(Get.context!, listen: false);
+
+    switch (welcome.currentSpeedStudyProgress!.level!) {
       case 1:
         seconds = 120;
         break;
@@ -33,9 +38,13 @@ class SpeedController extends StudyController {
         seconds = 10;
         break;
     }
+
     duration = Duration(seconds: seconds);
     resetDuration = Duration(seconds: seconds);
     startingDuration = duration;
+
+    Provider.of<SpeedEnhancementProvider>(Get.context!, listen: false)
+        .setQuizDuration(duration!);
 
     timerController = TimerController();
   }
@@ -55,6 +64,10 @@ class SpeedController extends StudyController {
   }
 
   resetTimer() {
+    timerController!.reset();
     duration = resetDuration;
+    print(duration!.inSeconds);
+    Provider.of<SpeedEnhancementProvider>(Get.context!, listen: false)
+        .setQuizDuration(duration!);
   }
 }

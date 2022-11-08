@@ -6,11 +6,14 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/study/study_notes_view.dart';
 import 'package:ecoach/widgets/layouts/learn_peripheral_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../database/mastery_course_db.dart';
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class LearnNextTopic extends StatelessWidget {
   static const String routeName = '/learning/mastery/next';
@@ -24,7 +27,7 @@ class LearnNextTopic extends StatelessWidget {
   final User user;
   final Course course;
   final StudyProgress progress;
-  final MasteryCourse topic;
+  final MasteryCourseUpgrade topic;
 
   @override
   Widget build(BuildContext context) {
@@ -43,23 +46,31 @@ class LearnNextTopic extends StatelessWidget {
           mainActionLabel: 'let\'s go',
           mainActionColor: kAdeoCoral,
           mainActionOnPressed: () async {
-            int topicId = topic.topicId!;
-            Topic? currentTopic = await TopicDB().getTopicById(topicId);
+            // int topicId = topic.topicId!;
+            final masteryTopics = await MasteryCourseDB()
+                .getMasteryTopicsUpgrade(
+                    Provider.of<LearnModeProvider>(context, listen: false)
+                        .currentCourse!
+                        .id!);
+            Topic? currentTopic =
+                await TopicDB().getTopicById(masteryTopics[0].topicId!);
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    settings: RouteSettings(name: LearnNextTopic.routeName),
-                    builder: (context) {
-                      return StudyNoteView(
-                        currentTopic!,
-                        controller: MasteryController(
-                          user,
-                          course,
-                          name: currentTopic.name!,
-                          progress: progress,
-                        ),
-                      );
-                    }));
+              context,
+              MaterialPageRoute(
+                settings: RouteSettings(name: LearnNextTopic.routeName),
+                builder: (context) {
+                  return StudyNoteView(
+                    currentTopic!,
+                    controller: MasteryController(
+                      user,
+                      course,
+                      name: currentTopic.name!,
+                      progress: progress,
+                    ),
+                  );
+                },
+              ),
+            );
           },
         ),
       ),

@@ -1,10 +1,11 @@
 import 'dart:io';
+
 import 'package:ecoach/utils/shared_preference.dart';
+// ignore: unused_import
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-// ignore: unused_import
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DBProvider {
   DBProvider._();
@@ -21,7 +22,7 @@ class DBProvider {
 
   static initDB() async {
     int? userId = await UserPreferences().getUserId();
-    String name = userId != null ? "ecoach_${userId}.123.db" : "ecoach62.db";
+    String name = userId != null ? "ecoach_${userId}.123.db" : "ecoach63.db";
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
@@ -394,6 +395,61 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
+      await db.execute("""CREATE TABLE 'revision_study_progress' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'course_completion_study_progress' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'speed_study_level' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'level' int DEFAULT NULL,
+        'fails' int DEFAULT 0,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'revision_progress_attempts' (
+        id INTEGER PRIMARY KEY, 
+        "revision_progress_id" int NOT NULL,
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'topic_name' varchar(255) DEFAULT NULL,
+        'score' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'course_completion_progress_attempts' (
+        id INTEGER PRIMARY KEY, 
+        "cc_progress_id" int NOT NULL,
+        'study_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
+        'course_id' int DEFAULT NULL,
+        'topic_name' varchar(255) DEFAULT NULL,
+        'score' int DEFAULT NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
       await db.execute("""CREATE TABLE 'marathons' (
         id INTEGER PRIMARY KEY, 
         'user_id' int NOT NULL,
@@ -504,6 +560,18 @@ class DBProvider {
         id INTEGER PRIMARY KEY, 
         'study_id' int NOT NULL,
         'level' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'topic_name' varchar(255) NOT NULL,
+        'passed' tinyint(1) NOT NULL DEFAULT '0',
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      )""");
+
+      await db.execute("""CREATE TABLE 'mastery_courses_upgrade' (
+        id INTEGER PRIMARY KEY, 
+        'study_id' int NOT NULL,
+        'level' int NOT NULL,
+        'course_id' int NOT NULL,
         'topic_id' int NOT NULL,
         'topic_name' varchar(255) NOT NULL,
         'passed' tinyint(1) NOT NULL DEFAULT '0',

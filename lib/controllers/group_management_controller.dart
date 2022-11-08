@@ -204,7 +204,7 @@ class GroupManagementController{
     List<GroupViewData>listGroupViewData = [];
     try{
       var js = await doGet('${AppUrl.groups}/$groupId');
-      print("res groups view : $js");
+      print("res groups view : ${js["data"]["incoming_invites"]}");
       if (js["code"].toString() == "200" && js["data"].isNotEmpty) {
         GroupViewData groupViewData = GroupViewData.fromJson(js["data"]);
         listGroupViewData.add(groupViewData);

@@ -1,6 +1,7 @@
 import 'package:ecoach/controllers/study_controller.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
@@ -14,8 +15,9 @@ import 'package:ecoach/widgets/courses/circular_progress_indicator_wrapper.dart'
 import 'package:ecoach/widgets/toast.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../main_home.dart';
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class StudyCCResults extends StatefulWidget {
   const StudyCCResults({
@@ -183,6 +185,19 @@ class _StudyCCResultsState extends State<StudyCCResults> {
                                 createdAt: DateTime.now(),
                                 updatedAt: DateTime.now());
                             await StudyDB().insertProgress(progress);
+
+                            Course? course = Provider.of<LearnModeProvider>(
+                                    context,
+                                    listen: false)
+                                .currentCourse;
+                            //
+                            // CourseCompletionStudyProgress?
+                            //     completionStudyProgress = await StudyDB()
+                            //         .getCurrentCourseCompletionProgressByCourse(
+                            //             course!.id!);
+                            //
+                            // CourseCompletionStudyController()
+                            //     .updateInsertProgress(completionStudyProgress!);
 
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(builder: (context) {

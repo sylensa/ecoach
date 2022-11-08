@@ -52,8 +52,8 @@ class _NoteViewState extends State<NoteView> {
                         border: Border.all(color: Colors.white, width: 1)),
                     'th': Style(backgroundColor: Colors.blue),
                     'img': Style(
-                        width: imageWidth,
-                        height: imageHeight,
+                        width: 200,
+                        height: 200,
                         padding: EdgeInsets.all(0)),
                   },
                   customRenders: {
