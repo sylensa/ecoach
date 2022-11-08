@@ -3,6 +3,7 @@ import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -17,7 +18,7 @@ class ConquestCompleteCongratulations extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Navigator.popUntil(context, ModalRoute.withName(CourseDetailsPage.routeName));
+        Navigator.popUntil(context, ModalRoute.withName(CoursesDetailsPage.routeName));
         Navigator.pop(context);
         return true;
       },
@@ -37,8 +38,8 @@ class ConquestCompleteCongratulations extends StatelessWidget {
                   fontSize: 14,
                   onPressed: () {
                     Navigator.pop(context);
-                    // Navigator.popUntil(context,
-                    //     ModalRoute.withName(CourseDetailsPage.routeName));
+                    Navigator.popUntil(context,
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                 ),
                 SizedBox(width: 10),
@@ -134,12 +135,12 @@ class ConquestCompleteCongratulations extends StatelessWidget {
                       background: kAdeoBlue,
                       onPressed: () {
                         Navigator.pop(context);
-                        // Navigator.popUntil(context,
-                        //     ModalRoute.withName(CourseDetailsPage.routeName));
-                        // Navigator.push(context, MaterialPageRoute(builder: (c) {
-                        //   return MarathonIntroit(
-                        //       controller.user, controller.course);
-                        // }));
+                        Navigator.popUntil(context,
+                            ModalRoute.withName(CoursesDetailsPage.routeName));
+                        Navigator.push(context, MaterialPageRoute(builder: (c) {
+                          return MarathonIntroit(
+                              controller.user, controller.course);
+                        }));
                       },
                     ),
                   ),

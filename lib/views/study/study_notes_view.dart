@@ -5,6 +5,7 @@ import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
@@ -63,7 +64,7 @@ class _StudyNoteViewState extends State<StudyNoteView> {
                   OutlinedButton(
                       onPressed: () {
                         Navigator.popUntil(
-                            context, ModalRoute.withName(LearnMode.routeName));
+                            context, ModalRoute.withName(CoursesDetailsPage.routeName));
                       },
                       child: Text("Exit"))
                 ],
