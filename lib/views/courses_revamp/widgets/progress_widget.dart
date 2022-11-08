@@ -69,93 +69,93 @@ class _ProgressWidgetState extends State<ProgressWidget> {
   @override
   Widget build(BuildContext context) {
 
-    return  Expanded(
-      child: Column(
-        children: [
-          SizedBox(height: 26),
-          FutureBuilder(
-              future: widget.stats,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
+    return  Column(
+      children: [
+        SizedBox(height: 26),
+        FutureBuilder(
+            future: widget.stats,
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return Expanded(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                      ),
+                    ),
+                  );
+                default:
+                  if (snapshot.hasError)
                     return Expanded(
                       child: Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.blue,
+                        child: Text(
+                          'Error: ${snapshot.error}',
+                          style: inlinePromptStyle.copyWith(
+                              color: Colors.red),
                         ),
                       ),
                     );
-                  default:
-                    if (snapshot.hasError)
-                      return Expanded(
-                        child: Center(
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: inlinePromptStyle.copyWith(
-                                color: Colors.red),
-                          ),
+                  else if (snapshot.data == null)
+                    return Expanded(
+                      child: Center(
+                        child: Text(
+                          'Course not found',
+                          style: inlinePromptStyle,
                         ),
-                      );
-                    else if (snapshot.data == null)
-                      return Expanded(
-                        child: Center(
-                          child: Text(
-                            'Course not found',
-                            style: inlinePromptStyle,
-                          ),
-                        ),
-                      );
-                    else if (snapshot.data != null) {
+                      ),
+                    );
+                  else if (snapshot.data != null) {
 
-                      return Expanded(
-                        child: Column(
-                          children: [
-                            FutureBuilder(
-                              future: widget.stats,
-                              builder: (context, snapshot) {
-                                switch (
-                                snapshot.connectionState) {
-                                  case ConnectionState.none:
-                                  case ConnectionState.waiting:
-                                  case ConnectionState.active:
-                                    if(snapshot.data == null){
-                                      return StatsNonDataWidget(
-                                        isLoading: true,
-                                      );
-                                    }else{
-                                      Report stats = snapshot.data as Report;
-                                      return getStatsBlock(stats, widget.course.packageCode, widget.course);
-                                    }
+                    return Expanded(
+                      child: Column(
+                        children: [
+                          FutureBuilder(
+                            future: widget.stats,
+                            builder: (context, snapshot) {
+                              switch (
+                              snapshot.connectionState) {
+                                case ConnectionState.none:
+                                case ConnectionState.waiting:
+                                case ConnectionState.active:
+                                  if(snapshot.data == null){
+                                    return StatsNonDataWidget(
+                                      isLoading: true,
+                                    );
+                                  }else{
+                                    Report stats = snapshot.data as Report;
+                                    return getStatsBlock(stats, widget.course.packageCode, widget.course);
+                                  }
 
-                                  case ConnectionState.done:
-                                    if (snapshot.data != null) {
-                                      Report stats = snapshot
-                                          .data! as Report;
-                                      // inspect(snapshot);
-                                      if (stats.courseStats!.length == 0)
-                                        return StatsNonDataWidget(
-                                          message:
-                                          'No statistics for this course yet.',
-                                        );
-                                      return getStatsBlock(stats, widget.course.packageCode, widget.course);
-                                    } else if (snapshot
-                                        .hasError) {
+                                case ConnectionState.done:
+                                  if (snapshot.data != null) {
+                                    Report stats = snapshot
+                                        .data! as Report;
+                                    // inspect(snapshot);
+                                    if (stats.courseStats!.length == 0)
                                       return StatsNonDataWidget(
                                         message:
-                                        'Could not fetch course stats',
-                                        isError: true,
+                                        'No statistics for this course yet.',
                                       );
-                                    }
+                                    return getStatsBlock(stats, widget.course.packageCode, widget.course);
+                                  } else if (snapshot
+                                      .hasError) {
                                     return StatsNonDataWidget(
                                       message:
-                                      'An error occured. \nCould not fetch course stats.',
+                                      'Could not fetch course stats',
+                                      isError: true,
                                     );
-                                }
-                              },
-                            ),
-                            SizedBox(height: 26),
-                            AdeoTabControl(
+                                  }
+                                  return StatsNonDataWidget(
+                                    message:
+                                    'An error occured. \nCould not fetch course stats.',
+                                  );
+                              }
+                            },
+                          ),
+                          SizedBox(height: 26),
+                          Expanded(
+                            child: AdeoTabControl(
                               variant: 'square',
                               tabs: [
                                 'all',
@@ -190,22 +190,22 @@ class _ProgressWidgetState extends State<ProgressWidget> {
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    } else
-                      return Expanded(
-                        child: Center(
-                          child: Text(
-                            "Something isn't right",
-                            style: inlinePromptStyle,
                           ),
+                        ],
+                      ),
+                    );
+                  } else
+                    return Expanded(
+                      child: Center(
+                        child: Text(
+                          "Something isn't right",
+                          style: inlinePromptStyle,
                         ),
-                      );
-                }
-              })
-        ],
-      ),
+                      ),
+                    );
+              }
+            })
+      ],
     );
   }
   getStatsBlock(Report stats, packageCode,Course course) {

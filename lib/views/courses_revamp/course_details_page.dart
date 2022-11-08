@@ -66,7 +66,10 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   List<Topic> topics = [];
   bool topicsProgressCode = true;
   bool isTopicSelected = true;
-  PageController pageController = PageController();
+  // PageController pageController = PageController();
+  int currentPageNumber = 0;
+  PageController pageController = PageController(initialPage: 0);
+
   Future? stats;
   Map<String, Widget> getPage() {
     switch (_currentPage) {
@@ -274,23 +277,26 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
-                  controller: pageController,
+                  // controller: pageController,
                   itemBuilder: (BuildContext context, int index){
                     return    GestureDetector(
                       onTap: (){
-                        if(index >= _currentPage){
-                          pageController.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
-                        }else{
-                          pageController.jumpTo(0.0);
-                        }
+                        pageController.jumpToPage(index);
+
+                        // if(index >= _currentPage){
+                        //   pageController.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                        // }else{
+                        //   pageController.jumpTo(0.0);
+                        // }
                         setState(() {
                           _currentPage = index;
                           if(!listCourseDetails.contains(courseDetails[index])){
                             listCourseDetails.clear();
                             listCourseDetails.add(courseDetails[index]);
                           }
-
-
+                          setState(() {
+                            currentPageNumber = index;
+                          });
                         });
                       },
                       child: Row(
@@ -332,7 +338,31 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   }),
             ),
             SizedBox(height: 20,),
-            getPage().values.first
+            Expanded(
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (page) {
+                  setState(() {
+                    currentPageNumber = page;
+                    if(!listCourseDetails.contains(courseDetails[currentPageNumber])){
+                      listCourseDetails.clear();
+                      listCourseDetails.add(courseDetails[currentPageNumber]);
+                    }
+                  });
+                },
+                children:  [
+              LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+              NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,),
+               TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+               LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+             GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+               ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,),
+
+
+                ],
+              ),
+            ),
+
           ],
         ),
       ),
