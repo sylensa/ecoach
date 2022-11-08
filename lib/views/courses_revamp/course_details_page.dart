@@ -69,6 +69,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   // PageController pageController = PageController();
   int currentPageNumber = 0;
   PageController pageController = PageController(initialPage: 0);
+  PageController pageControllerView = PageController(initialPage: 0);
 
   Future? stats;
   Map<String, Widget> getPage() {
@@ -277,27 +278,24 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
-                  // controller: pageController,
+                  controller: pageControllerView,
                   itemBuilder: (BuildContext context, int index){
                     return    GestureDetector(
                       onTap: (){
-                        pageController.jumpToPage(index);
-
-                        // if(index >= _currentPage){
-                        //   pageController.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
-                        // }else{
-                        //   pageController.jumpTo(0.0);
-                        // }
+                        if(index >= _currentPage){
+                          pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                        }else{
+                          pageControllerView.jumpTo(0.0);
+                        }
                         setState(() {
                           _currentPage = index;
                           if(!listCourseDetails.contains(courseDetails[index])){
                             listCourseDetails.clear();
                             listCourseDetails.add(courseDetails[index]);
                           }
-                          setState(() {
-                            currentPageNumber = index;
-                          });
                         });
+                        pageController.jumpToPage(index);
+
                       },
                       child: Row(
                         children: [
@@ -343,11 +341,20 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                 controller: pageController,
                 onPageChanged: (page) {
                   setState(() {
-                    currentPageNumber = page;
-                    if(!listCourseDetails.contains(courseDetails[currentPageNumber])){
-                      listCourseDetails.clear();
-                      listCourseDetails.add(courseDetails[currentPageNumber]);
+                    print("currentPageNumber:$currentPageNumber");
+                    print("page:$page");
+                    if(page >= currentPageNumber){
+                      pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                    }else{
+                      pageControllerView.jumpTo(0.0);
                     }
+
+                    if(!listCourseDetails.contains(courseDetails[page])){
+                      listCourseDetails.clear();
+                      listCourseDetails.add(courseDetails[page]);
+                    }
+                    currentPageNumber = page;
+
                   });
                 },
                 children:  [
