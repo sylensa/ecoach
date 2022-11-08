@@ -233,14 +233,14 @@ class _BelowPassMarkState extends State<BelowPassMark> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  LowerButtons(
-                    height: height,
-                    width: width,
-                    text: "Share",
-                    image: "assets/images/share.png",
-                    orientation: orientation,
-                    onpress: () {},
-                  ),
+                  // LowerButtons(
+                  //   height: height,
+                  //   width: width,
+                  //   text: "Share",
+                  //   image: "assets/images/share.png",
+                  //   orientation: orientation,
+                  //   onpress: () {},
+                  // ),
                   LowerButtons(
                     height: height,
                     width: width,

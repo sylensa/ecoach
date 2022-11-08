@@ -1,6 +1,12 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
+import 'package:ecoach/views/speed/speed_test_question_view.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/layouts/test_introit_layout.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -69,20 +75,44 @@ class _SpeedQuizMockState extends State<SpeedQuizMock> {
         ),
         getMarathonInstructionsLayout(() async {
           showLoaderDialog(context, message: "Creating Speed Quiz");
-          await controller.createMarathon();
-          Navigator.pop(context);
+          controller.name = controller.course.name;
+          List<Question> questions =  await TestController().getMockQuestions(controller.course.id!,limit: widget.count);
 
+          Navigator.pop(context);
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) {
-                return MarathonQuizView(
-                  controller: controller,
-                  themeColor: kAdeoOrangeH,
+                return  SpeedTestQuestionView(
+                  controller: QuizController(
+                    controller.user,
+                    controller.course,
+                    questions: questions,
+                    name:  controller.name!,
+                    time:  controller.time,
+                    type: TestType.SPEED,
+                    challengeType: TestCategory.TOPIC,
+                  ),
+                  theme: QuizTheme.GREEN,
+                  diagnostic: false,
                 );
               },
             ),
           );
+          // await controller.createMarathon();
+          // Navigator.pop(context);
+          //
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) {
+          //       return MarathonQuizView(
+          //         controller: controller,
+          //         themeColor: kAdeoOrangeH,
+          //       );
+          //     },
+          //   ),
+          // );
         }),
       ],
     );

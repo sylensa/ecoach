@@ -58,8 +58,7 @@ class _SpeedQuizMenuState extends State<SpeedQuizMenu> {
 
     switch (mode) {
       case Modes.TOPIC:
-        List<TestNameAndCount> topics =
-            await TestController().getTopics(controller.course);
+        List<TestNameAndCount> topics = await TestController().getTopics(controller.course);
         screenToNavigateTo = SpeedTopicMenu(
           topics: topics,
           controller: controller,
@@ -67,10 +66,8 @@ class _SpeedQuizMenuState extends State<SpeedQuizMenu> {
         );
         break;
       case Modes.MOCK:
-        int count =
-            await QuestionDB().getTotalQuestionCount(controller.course.id!);
-        screenToNavigateTo =
-            SpeedQuizMock(count: count, controller: controller);
+        int count = await QuestionDB().getTotalQuestionCount(controller.course.id!);
+        screenToNavigateTo = SpeedQuizMock(count: count, controller: controller);
         break;
     }
 

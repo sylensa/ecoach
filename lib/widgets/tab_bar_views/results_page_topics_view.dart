@@ -103,9 +103,10 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
   @override
   void initState() {
     print("topics:${widget.topics}");
+    selected = null;
     getAll(null);
     showInPercentage = false;
-    selected = null;
+
     super.initState();
   }
 

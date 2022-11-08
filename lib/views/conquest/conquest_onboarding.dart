@@ -144,7 +144,7 @@ class _ReviewOnBoardingeState extends State<ConquestOnBoarding> {
         children: [
           SizedBox(
             width: appWidth(context),
-            height: appHeight(context) * 0.75,
+            height: appHeight(context) * 0.70,
             child: Stack(
               children: [
                 Image.asset("assets/images/conquest_path.png",width: appWidth(context),height: appHeight(context) * 0.75,fit: BoxFit.fitHeight,),
