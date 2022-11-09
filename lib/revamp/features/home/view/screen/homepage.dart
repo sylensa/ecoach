@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
 import 'package:ecoach/database/plan.dart';
@@ -21,7 +23,7 @@ import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/subscribe.dart';
 import 'package:ecoach/widgets/progress_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_html/custom_render.dart';
 
 class HomePage2 extends StatefulWidget {
   static const String routeName = '/home';
@@ -62,7 +64,8 @@ class DashboardContent extends StatefulWidget {
   State<DashboardContent> createState() => _HomePage2ContentState();
 }
 
-class _HomePage2ContentState extends State<DashboardContent> {
+class _HomePage2ContentState extends State<DashboardContent>
+    with SingleTickerProviderStateMixin {
   bool notificationsToggled = false;
   bool progressCode = true;
   SubscriptionItem? subscription;
@@ -72,6 +75,9 @@ class _HomePage2ContentState extends State<DashboardContent> {
   List<Plan> annuallyPlan = [];
   List<Bundle> bundleList = [];
   List<SubscriptionItem> subscriptions = [];
+  late TabController _tabController;
+  late List<String> _tabs;
+  bool isActiveTab = false;
 
   uploadOfflineFlagQuestions() async {
     List<FlagData> results = await QuizDB().getAllFlagQuestions();
@@ -388,15 +394,18 @@ class _HomePage2ContentState extends State<DashboardContent> {
 
   @override
   void dispose() {
+    _tabController.dispose();
     super.dispose();
   }
 
   getSubscriptionItem() {
-    SubscriptionItemDB().allSubscriptionItems().then((List<SubscriptionItem> subscriptions) {
+    SubscriptionItemDB()
+        .allSubscriptionItems()
+        .then((List<SubscriptionItem> subscriptions) {
       if (subscriptions.length > 0) {
         this.subscriptions = subscriptions;
         this.subscription = subscriptions[0];
-      }else{
+      } else {
         getSubscriptionItem();
       }
       setState(() {
@@ -408,190 +417,467 @@ class _HomePage2ContentState extends State<DashboardContent> {
   @override
   void initState() {
     super.initState();
-    SubscriptionItemDB().allSubscriptionItems().then((List<SubscriptionItem> subscriptions) {
+
+    SubscriptionItemDB()
+        .allSubscriptionItems()
+        .then((List<SubscriptionItem> subscriptions) {
       if (subscriptions.length > 0) {
         this.subscriptions = subscriptions;
         this.subscription = subscriptions[0];
-      }else{
+      } else {
         getSubscriptionItem();
       }
       setState(() {
         progressCode = false;
       });
     });
+    _tabController = TabController(length: 3, vsync: this);
+    _tabs = [
+      "Home",
+      "Ongoing",
+      "Completed",
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: kPageBackgroundGray,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Stack(
-              children: [
-                Column(
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 164.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
                   children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          color: kPageBackgroundGray,
-                          padding: EdgeInsets.only(
-                            top: 60,
-                            bottom: 60,
-                            // right: 40,
-                            // left: 40,
-                          ),
-                          alignment: Alignment.center,
-                          child: Container(
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Column(
+                          children: [
+                            Column(
                               children: [
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: 24,
+                                    horizontal: 18,
                                   ),
-                                  child: SizedBox(
-                                    width: double.maxFinite,
-                                    child: Wrap(
-                                      alignment: WrapAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.end,
-                                      spacing: 60,
-                                      runSpacing: 16,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Hello,',
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Container(
-                                                  width: appWidth(context) * 0.57,
-                                                  child: sText(
-                                                    widget.user.name!,
-                                                    family: 'PoppinsMedium',
-                                                    weight: FontWeight.w500,
-                                                    lHeight: 1.5,
-                                                    maxLines: 1,
-                                                    size: 25,
-                                                    color: Colors.black
-
-                                                  ),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: (){
-                                                    promoCodeModalBottomSheet(context);
-                                                  },
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(5),
-                                                    decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: Colors
-                                                                .grey[400]!),
-                                                        borderRadius:
-                                                        BorderRadius
-                                                            .circular(30)),
-                                                    child: Row(
-                                                      children: [
-                                                        Image.asset(
-                                                          "assets/images/gift.png",
-                                                          width: 20,
-                                                        ),
-                                                        Text(
-                                                          "Apply code",
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                            FontWeight.w500,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        if( widget.user.promoCode != null)
-                                        Container(
-                                            width: appWidth(context),
-                                            child: Text(
-                                              "Discounts expires in ${widget.user.promoCode!.validityPeriod}",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight:
-                                                      FontWeight
-                                                          .w500,
-                                                  color: Colors
-                                                      .blue),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
+                                  child: FreeAccessmentWidget(widget.user),
                                 ),
-                                SizedBox(height: 20),
-                                Column(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 24,),
-                                      child: FreeAccessmentWidget(widget.user),
-                                    ),
-
-                                    // GroupClass(
-                                    //   user: widget.user,
-                                    // ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                  ),
-                                  child: ProgressChart(
-                                    user: widget.user,
-                                    subscriptions: subscriptions,
-                                    selectedSubscription: subscription,
-                                    updateState: (s) {
-                                      setState(() {
-                                        subscription = s['item'];
-                                        selectedTests = s['selectedTests'];
-                                      });
-                                    },
-                                  ),
-                                ),
-                                SizedBox(height: 42),
-                                // DashboardAvailableBundles(
-                                //   user: widget.user,
-                                // ),
                               ],
                             ),
-                          ),
+                            SizedBox(height: 32),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 18,
+                              ),
+                              child: ProgressChart(
+                                user: widget.user,
+                                subscriptions: subscriptions,
+                                selectedSubscription: subscription,
+                                updateState: (s) {
+                                  setState(() {
+                                    subscription = s['item'];
+                                    selectedTests = s['selectedTests'];
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 42),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                        padding: EdgeInsets.all(
+                          24,
+                        ),
+                        decoration: BoxDecoration(
+                          color: kPageBackgroundGray2,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text("Ongoing Activities"),
+                        ),
+                      ),
+                    ),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+                        padding: EdgeInsets.all(
+                          24,
+                        ),
+                        decoration: BoxDecoration(
+                          color: kPageBackgroundGray2,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text("Completed Activities"),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Column(
+          children: [
+            Container(
+              // color: kPageBackgroundGray2,
+              padding: EdgeInsets.only(
+                top: 54,
+              ),
+              alignment: Alignment.center,
+              child: Container(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18,
+                      ),
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.end,
+                          spacing: 60,
+                          runSpacing: 16,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Text(
+                                //   'Hello, ${widget.user.name}',
+                                //   style: TextStyle(
+                                //     color: Colors.black,
+                                //     fontSize: 20,
+                                //   ),
+                                // ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Hello, ',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: widget.user.name,
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 20,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    // Container(
+                                    //   width: appWidth(context) * 0.57,
+                                    //   child: sText(widget.user.name!,
+                                    //       family: 'PoppinsMedium',
+                                    //       weight: FontWeight.w500,
+                                    //       lHeight: 1.5,
+                                    //       maxLines: 1,
+                                    //       size: 25,
+                                    //       color: Colors.black),
+                                    // ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        promoCodeModalBottomSheet(context);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.grey[400]!),
+                                            borderRadius:
+                                                BorderRadius.circular(30)),
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/gift.png",
+                                              width: 20,
+                                            ),
+                                            Text(
+                                              "Apply code",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            if (widget.user.promoCode != null)
+                              Container(
+                                width: appWidth(context),
+                                child: Text(
+                                  "Discounts expires in ${widget.user.promoCode!.validityPeriod}",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.blue),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 18),
+                    //  TabBar
+                    Container(
+                      width: double.infinity,
+                      height: 60,
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TabBar(
+                          controller: _tabController,
+                          isScrollable: true,
+                          labelColor: kAdeoGreen4,
+                          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                          labelPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 1,
+                          ),
+                          unselectedLabelColor: Colors.black87,
+                          unselectedLabelStyle:
+                              TextStyle(fontWeight: FontWeight.w500),
+                          splashFactory: NoSplash.splashFactory,
+                          overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent,
+                          ),
+                          // indicator: CircleTabIndicator(
+                          //   color: Colors.black,
+                          //   radius: 3,
+                          // ),
+
+                          onTap: (x) {
+                            print("tab: $x");
+                            isActiveTab = _tabController.index == x;
+                            setState(() {});
+                          },
+                          indicatorColor: Colors.transparent,
+                          tabs: _tabs.map((tab) {
+                            isActiveTab =
+                                _tabController.index == _tabs.indexOf(tab);
+                            return Tab(
+                              child: UnselectedTabIndicator(
+                                label: tab,
+                                isActive: isActiveTab,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
+  }
+}
+
+class HomeTab extends StatefulWidget {
+  HomeTab({
+    Key? key,
+    required this.user,
+    this.subscription,
+    required this.subscriptions,
+    required this.selectedTests,
+  }) : super(key: key);
+  final User user;
+  SubscriptionItem? subscription;
+  List<TestTaken> selectedTests = [];
+  List<SubscriptionItem> subscriptions = [];
+
+  @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  late SubscriptionItem? _subscription;
+  late List<TestTaken> _selectedTests;
+  late List<SubscriptionItem> _subscriptions;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _subscription = widget.subscription;
+    _selectedTests = widget.selectedTests;
+    _subscriptions = widget.subscriptions;
+    return Column(
+      children: [
+        Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 24,
+              ),
+              child: FreeAccessmentWidget(widget.user),
+            ),
+
+            // GroupClass(
+            //   user: widget.user,
+            // ),
+          ],
+        ),
+        SizedBox(height: 10),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
+          child: ProgressChart(
+            user: widget.user,
+            subscriptions: _subscriptions,
+            selectedSubscription: _subscription,
+            updateState: (s) {
+              setState(() {
+                _subscription = s['item'];
+                _selectedTests = s['selectedTests'];
+              });
+            },
+          ),
+        ),
+        SizedBox(height: 42),
+        // DashboardAvailableBundles(
+        //   user: widget.user,
+        // ),
+      ],
+    );
+  }
+}
+
+class UnselectedTabIndicator extends StatelessWidget {
+  const UnselectedTabIndicator({
+    Key? key,
+    required this.label,
+    this.isActive = false,
+  }) : super(key: key);
+
+  final String label;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 11.0,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(fontFamily: "Poppins", fontSize: 16),
+          ),
+        ),
+        isActive
+            ? Column(
+                children: [
+                  SizedBox(
+                    height: 7,
+                  ),
+                  Container(
+                    width: 40,
+                    height: 2,
+                    decoration: BoxDecoration(
+                      color: kAdeoGreen4,
+                      borderRadius: BorderRadius.circular(
+                        8,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Container(
+                    width: 4,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(
+                        8,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+      ],
+    );
+  }
+}
+
+class CircleTabIndicator extends Decoration {
+  CircleTabIndicator({required this.color, required this.radius});
+  final Color color;
+  final double radius;
+
+  //override createBoxPainter
+
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _CirclePainter(color: color, radius: radius);
+  }
+}
+
+class _CirclePainter extends BoxPainter {
+//override paint
+  final Color color;
+  final double radius;
+
+  _CirclePainter({
+    required this.color,
+    required this.radius,
+  });
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
+    late Paint _paint;
+    _paint = Paint()
+      ..color = color
+      ..isAntiAlias = true;
+
+    final Offset circleOffset =
+        offset + Offset(cfg.size!.width / 2, cfg.size!.height - radius - 5);
+    canvas.drawCircle(circleOffset, radius, _paint);
   }
 }
