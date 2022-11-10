@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:ecoach/revamp/features/home/components/completed_activities_tab.dart';
+import 'package:ecoach/revamp/features/home/components/ongoing_activities_tab.dart';
+import 'package:ecoach/views/treadmill/completed.dart';
 import 'package:flutter/material.dart';
-
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
 import 'package:ecoach/database/plan.dart';
@@ -10,20 +12,17 @@ import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/flag_model.dart';
 import 'package:ecoach/models/plan.dart';
-import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/ui/bundle.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/home/view/widgets/free_accessment_widget.dart';
-import 'package:ecoach/revamp/features/home/view/widgets/groups.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/subscribe.dart';
 import 'package:ecoach/widgets/progress_chart.dart';
-import 'package:flutter_html/custom_render.dart';
 
 class HomePage2 extends StatefulWidget {
   static const String routeName = '/home';
@@ -77,6 +76,9 @@ class _HomePage2ContentState extends State<DashboardContent>
   List<SubscriptionItem> subscriptions = [];
   late TabController _tabController;
   late List<String> _tabs;
+  late String _activeTab;
+  List ongoingActivities = [1, 2, 3, 4, 5];
+  List completedActivities = [1, 2, 3, 4, 5];
   bool isActiveTab = false;
 
   uploadOfflineFlagQuestions() async {
@@ -431,12 +433,17 @@ class _HomePage2ContentState extends State<DashboardContent>
         progressCode = false;
       });
     });
-    _tabController = TabController(length: 3, vsync: this);
     _tabs = [
       "Home",
       "Ongoing",
       "Completed",
     ];
+
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      isActiveTab = _tabController.index == _tabs.indexOf(_activeTab);
+      setState(() {});
+    });
   }
 
   @override
@@ -491,38 +498,14 @@ class _HomePage2ContentState extends State<DashboardContent>
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
-                        padding: EdgeInsets.all(
-                          24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kPageBackgroundGray2,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SingleChildScrollView(
-                          child: Text("Ongoing Activities"),
-                        ),
+                      child: OngoingActivitiesTab(
+                        ongoingActivities: ongoingActivities,
                       ),
                     ),
-                  Padding(
+                    Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
-                        padding: EdgeInsets.all(
-                          24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: kPageBackgroundGray2,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SingleChildScrollView(
-                          child: Text("Completed Activities"),
-                        ),
+                      child: CompletedActivitiesTab(
+                        completedActivities: completedActivities,
                       ),
                     ),
                   ],
@@ -534,7 +517,6 @@ class _HomePage2ContentState extends State<DashboardContent>
         Column(
           children: [
             Container(
-              // color: kPageBackgroundGray2,
               padding: EdgeInsets.only(
                 top: 54,
               ),
@@ -560,13 +542,6 @@ class _HomePage2ContentState extends State<DashboardContent>
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Text(
-                                //   'Hello, ${widget.user.name}',
-                                //   style: TextStyle(
-                                //     color: Colors.black,
-                                //     fontSize: 20,
-                                //   ),
-                                // ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -592,16 +567,6 @@ class _HomePage2ContentState extends State<DashboardContent>
                                         ],
                                       ),
                                     ),
-                                    // Container(
-                                    //   width: appWidth(context) * 0.57,
-                                    //   child: sText(widget.user.name!,
-                                    //       family: 'PoppinsMedium',
-                                    //       weight: FontWeight.w500,
-                                    //       lHeight: 1.5,
-                                    //       maxLines: 1,
-                                    //       size: 25,
-                                    //       color: Colors.black),
-                                    // ),
                                     GestureDetector(
                                       onTap: () {
                                         promoCodeModalBottomSheet(context);
@@ -673,11 +638,6 @@ class _HomePage2ContentState extends State<DashboardContent>
                           overlayColor: MaterialStateProperty.all<Color>(
                             Colors.transparent,
                           ),
-                          // indicator: CircleTabIndicator(
-                          //   color: Colors.black,
-                          //   radius: 3,
-                          // ),
-
                           onTap: (x) {
                             print("tab: $x");
                             isActiveTab = _tabController.index == x;
@@ -685,6 +645,7 @@ class _HomePage2ContentState extends State<DashboardContent>
                           },
                           indicatorColor: Colors.transparent,
                           tabs: _tabs.map((tab) {
+                            _activeTab = tab;
                             isActiveTab =
                                 _tabController.index == _tabs.indexOf(tab);
                             return Tab(
@@ -703,80 +664,6 @@ class _HomePage2ContentState extends State<DashboardContent>
             ),
           ],
         ),
-      ],
-    );
-  }
-}
-
-class HomeTab extends StatefulWidget {
-  HomeTab({
-    Key? key,
-    required this.user,
-    this.subscription,
-    required this.subscriptions,
-    required this.selectedTests,
-  }) : super(key: key);
-  final User user;
-  SubscriptionItem? subscription;
-  List<TestTaken> selectedTests = [];
-  List<SubscriptionItem> subscriptions = [];
-
-  @override
-  State<HomeTab> createState() => _HomeTabState();
-}
-
-class _HomeTabState extends State<HomeTab> {
-  late SubscriptionItem? _subscription;
-  late List<TestTaken> _selectedTests;
-  late List<SubscriptionItem> _subscriptions;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _subscription = widget.subscription;
-    _selectedTests = widget.selectedTests;
-    _subscriptions = widget.subscriptions;
-    return Column(
-      children: [
-        Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 24,
-              ),
-              child: FreeAccessmentWidget(widget.user),
-            ),
-
-            // GroupClass(
-            //   user: widget.user,
-            // ),
-          ],
-        ),
-        SizedBox(height: 10),
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 24,
-          ),
-          child: ProgressChart(
-            user: widget.user,
-            subscriptions: _subscriptions,
-            selectedSubscription: _subscription,
-            updateState: (s) {
-              setState(() {
-                _subscription = s['item'];
-                _selectedTests = s['selectedTests'];
-              });
-            },
-          ),
-        ),
-        SizedBox(height: 42),
-        // DashboardAvailableBundles(
-        //   user: widget.user,
-        // ),
       ],
     );
   }
