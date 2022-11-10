@@ -1,14 +1,21 @@
+import 'dart:math';
+
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
 
-class OngoingActivitiesTab extends StatelessWidget {
+class OngoingActivitiesTab extends StatefulWidget {
   const OngoingActivitiesTab({Key? key, required this.ongoingActivities})
       : super(key: key);
   final List ongoingActivities;
 
+  @override
+  State<OngoingActivitiesTab> createState() => _OngoingActivitiesTabState();
+}
+
+class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
   showTapActions(context) {
     double sheetHeight = 480;
 
@@ -172,6 +179,9 @@ class OngoingActivitiesTab extends StatelessWidget {
     );
   }
 
+  Random random = Random();
+  late double _percentageCompleted;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -187,10 +197,12 @@ class OngoingActivitiesTab extends StatelessWidget {
           child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18.0),
         child: Column(
-          children: ongoingActivities.map(
+          children: widget.ongoingActivities.map(
             ((ongoingActivity) {
-              bool isLastItem = ongoingActivities.indexOf(ongoingActivity) ==
-                  ongoingActivities.length - 1;
+              bool isLastItem =
+                  widget.ongoingActivities.indexOf(ongoingActivity) ==
+                      widget.ongoingActivities.length - 1;
+              _percentageCompleted = random.nextDouble() * 100;
               return Container(
                 margin: EdgeInsets.only(
                   bottom: isLastItem ? 0 : 12,
@@ -200,7 +212,7 @@ class OngoingActivitiesTab extends StatelessWidget {
                   courseTitle: 'JHS 2 Ashanti Twi',
                   iconUrl: 'assets/icons/courses/treadmill.png',
                   hasProgressIndicator: true,
-                  percentageCompleted: 12.5,
+                  percentageCompleted: _percentageCompleted,
                   onTap: () {
                     showTapActions(context);
                   },

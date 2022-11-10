@@ -572,7 +572,10 @@ class _HomePage2ContentState extends State<DashboardContent>
                                         promoCodeModalBottomSheet(context);
                                       },
                                       child: Container(
-                                        padding: EdgeInsets.all(5),
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 8,
+                                          horizontal: 12,
+                                        ),
                                         decoration: BoxDecoration(
                                             border: Border.all(
                                                 color: Colors.grey[400]!),
@@ -583,6 +586,9 @@ class _HomePage2ContentState extends State<DashboardContent>
                                             Image.asset(
                                               "assets/images/gift.png",
                                               width: 20,
+                                            ),
+                                            SizedBox(
+                                              width: 8,
                                             ),
                                             Text(
                                               "Apply code",
