@@ -645,7 +645,6 @@ class _HomePage2ContentState extends State<DashboardContent>
                             Colors.transparent,
                           ),
                           onTap: (x) {
-                            print("tab: $x");
                             isActiveTab = _tabController.index == x;
                             setState(() {});
                           },

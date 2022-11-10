@@ -1,15 +1,21 @@
-import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/models/completed_activity.dart';
+import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
 
-class CompletedActivitiesTab extends StatelessWidget {
+class CompletedActivitiesTab extends StatefulWidget {
   const CompletedActivitiesTab({Key? key, required this.completedActivities})
       : super(key: key);
   final List completedActivities;
 
-  showTapActions(context) {
+  @override
+  State<CompletedActivitiesTab> createState() => _CompletedActivitiesTabState();
+}
+
+class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
+  showTapActions(context, String title, CompletedActivity completedActivity) {
     double sheetHeight = 480;
 
     showModalBottomSheet(
@@ -43,7 +49,9 @@ class CompletedActivitiesTab extends StatelessWidget {
                         Column(
                           children: [
                             Text(
-                              "Speed Enhancement".trim().toUpperCase(),
+                              "${completedActivity.activityType}"
+                                  .trim()
+                                  .toUpperCase(),
                               style: TextStyle(
                                 color: kAdeoBlue3,
                                 fontSize: 16.0,
@@ -54,7 +62,7 @@ class CompletedActivitiesTab extends StatelessWidget {
                               height: 8,
                             ),
                             Text(
-                              "Animal Husbandry".trim(),
+                              "${title}".trim(),
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 20.0,
@@ -173,8 +181,44 @@ class CompletedActivitiesTab extends StatelessWidget {
     );
   }
 
+  List<CompletedActivity> completedActivities = [];
+  List<Marathon> marathons = [];
+  late CompletedActivityList completedMarathons;
+
+  getCompletedMarathons() {
+    MarathonDB().completedMarathons().then((mList) {
+      marathons = mList;
+
+      print("marathons length: ${marathons.length}");
+      Map<String, dynamic> completedMarathon = {
+        "marathons": marathons,
+      };
+      completedMarathons = CompletedActivityList.fromJson(completedMarathon);
+
+      for (var completedMarathon in completedMarathons.marathons!) {
+        Map<String, dynamic> completedMarathonJSON = {
+          "activityType": CompletedActivityType.MARATHON.name,
+          "activityStartTime": completedMarathon.startTime,
+          "marathon": completedMarathon,
+        };
+
+        CompletedActivity completedMarathonObject =
+            CompletedActivity.fromJson(completedMarathonJSON);
+        completedActivities.add(completedMarathonObject);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCompletedMarathons();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    // print("Completed Activities: ${completedActivities[0].type}");
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: 16,
@@ -190,21 +234,47 @@ class CompletedActivitiesTab extends StatelessWidget {
         child: Column(
           children: completedActivities.map(
             ((completedActivity) {
-              bool isLastItem = completedActivities.indexOf(completedActivity) ==
-                  completedActivities.length - 1;
-              return Container(
-                margin: EdgeInsets.only(
-                  bottom: isLastItem ? 0 : 12,
-                ),
-                child: ActivityCourseCard(
-                  activityType: 'Speed Enhancement',
-                  courseTitle: 'Animal Husbandry',
-                  iconUrl: 'assets/icons/courses/learn.png',
-                  onTap: () {
-                    showTapActions(context);
-                  },
-                ),
-              );
+              int index = completedActivities.indexOf(completedActivity);
+              bool isLastItem = index == completedActivities.length - 1;
+              String activityTitle;
+
+              switch (completedActivity.activityType) {
+                case "MARATHON":
+                  activityTitle = completedActivity.marathon!.title.toString();
+;
+                  return Container(
+                    margin: EdgeInsets.only(
+                      bottom: isLastItem ? 0 : 12,
+                    ),
+                    child: ActivityCourseCard(
+                      courseTitle: activityTitle,
+                      activityType: completedActivity.activityType!,
+                      iconUrl: 'assets/icons/courses/marathon.png',
+                      onTap: () {
+                        showTapActions(
+                            context, activityTitle, completedActivity);
+                      },
+                    ),
+                  );
+                // break;
+                default:
+                  activityTitle = "Title";
+
+                  return Container(
+                    margin: EdgeInsets.only(
+                      bottom: isLastItem ? 0 : 12,
+                    ),
+                    child: ActivityCourseCard(
+                      courseTitle: "Title",
+                      activityType: "Type",
+                      iconUrl: 'assets/icons/courses/learn.png',
+                      onTap: () {
+                        showTapActions(
+                            context, activityTitle, completedActivity);
+                      },
+                    ),
+                  );
+              }
             }),
           ).toList(),
         ),
