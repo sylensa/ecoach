@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -8,8 +9,11 @@ import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
+import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +28,15 @@ class CompletedActivitiesTab extends StatefulWidget {
 }
 
 class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
-  showTapActions(context, String title, CompletedActivity completedActivity) {
+  showTapActions(
+    context, {
+    required String title,
+    required int courseId,
+    required CompletedActivity completedActivity,
+  }) async {
     double sheetHeight = 480;
+    User _user = await UserPreferences().getUser() as User;
+    Course? course = await CourseDB().getCourseById(courseId) as Course;
 
     showModalBottomSheet(
       context: context,
@@ -169,7 +180,20 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                     left: 0,
                     right: 0,
                     child: InkWell(
-                      onTap: (() {}),
+                      onTap: (() {
+                        switch (completedActivity.activityType) {
+                          case "MARATHON":
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (c) {
+                              return MarathonIntroit(_user, course);
+                            }));
+                            break;
+                          case "TREADMILL":
+
+                          default:
+                            return;
+                        }
+                      }),
                       child: Container(
                         width: double.maxFinite,
                         height: 60,
@@ -243,6 +267,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       for (var completedMarathon in completedMarathons.marathons!) {
         Map<String, dynamic> completedMarathonJSON = {
           "activityType": CompletedActivityType.MARATHON.name,
+          "courseId": completedMarathon.courseId,
           "activityStartTime": completedMarathon.startTime!.toIso8601String(),
           "marathon": completedMarathon,
         };
@@ -268,6 +293,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       for (var completedTreadmill in completedTreadmills.treadmills!) {
         Map<String, dynamic> completedTreadmillJSON = {
           "activityType": CompletedActivityType.TREADMILL.name,
+          "courseId": completedTreadmill.courseId,
           "activityStartTime": completedTreadmill.updatedAt!.toIso8601String(),
           "treadmill": completedTreadmill,
         };
@@ -351,7 +377,11 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               iconUrl: 'assets/icons/courses/marathon.png',
                               onTap: () {
                                 showTapActions(
-                                    context, activityTitle, completedActivity);
+                                  context,
+                                  title: activityTitle,
+                                  completedActivity: completedActivity,
+                                  courseId: completedActivity.courseId!,
+                                );
                               },
                             ),
                           );
@@ -369,7 +399,11 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               iconUrl: 'assets/icons/courses/treadmill.png',
                               onTap: () {
                                 showTapActions(
-                                    context, activityTitle, completedActivity);
+                                  context,
+                                  completedActivity: completedActivity,
+                                  title: activityTitle,
+                                  courseId: completedActivity.courseId!,
+                                );
                               },
                             ),
                           );
@@ -387,7 +421,11 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               iconUrl: 'assets/icons/courses/learn.png',
                               onTap: () {
                                 showTapActions(
-                                    context, activityTitle, completedActivity);
+                                  context,
+                                  completedActivity: completedActivity,
+                                  title: activityTitle,
+                                  courseId: completedActivity.courseId!,
+                                );
                               },
                             ),
                           );

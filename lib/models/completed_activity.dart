@@ -30,6 +30,7 @@ class CompletedActivityList {
 class CompletedActivity {
   CompletedActivity({
     this.activityType,
+    this.courseId,
     this.activityStartTime,
     this.marathon,
     this.treadmill,
@@ -37,6 +38,7 @@ class CompletedActivity {
   });
 
   String? activityType;
+  int? courseId;
   DateTime? activityStartTime;
   Marathon? marathon;
   TestTaken? treadmill;
@@ -47,6 +49,7 @@ class CompletedActivity {
         activityType: json["activityType"] == null
             ? CompletedActivityType.MARATHON.name
             : json["activityType"],
+        courseId: json["courseId"] == null ? null : json["courseId"],
         activityStartTime: json["start_time"] == null
             ? null
             : DateTime.parse(json['start_time']),
@@ -58,6 +61,7 @@ class CompletedActivity {
   Map<String, dynamic> toJson(activity) {
     return {
       'activityType': activityType,
+      'courseId': courseId,
       'start_time': activityStartTime,
       'marathon': activity,
       'treadmill': treadmill,
