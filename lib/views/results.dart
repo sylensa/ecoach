@@ -5,6 +5,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic_analysis.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/store.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -125,12 +126,14 @@ class _ResultViewState extends State<ResultView> {
                           ),
                         ),
                       ),
-                       if(widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
+                      if (widget.diagnostic &&
+                          context.read<DownloadUpdate>().plans.isEmpty)
                         VerticalDivider(
                           width: 2,
                           color: Colors.white,
                         ),
-                      if (widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
+                      if (widget.diagnostic &&
+                          context.read<DownloadUpdate>().plans.isEmpty)
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(11.0),
@@ -150,16 +153,17 @@ class _ResultViewState extends State<ResultView> {
                             ),
                           ),
                         ),
-                      if (context.read<DownloadUpdate>().plans.isNotEmpty )
+                      if (context.read<DownloadUpdate>().plans.isNotEmpty)
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(11.0),
                             child: TextButton(
                               onPressed: () {
                                 Navigator.popUntil(
-                                    context,
-                                    ModalRoute.withName(
-                                        CourseDetailsPage.routeName));
+                                  context,
+                                  ModalRoute.withName(
+                                      CoursesDetailsPage.routeName),
+                                );
                               },
                               child: Text("New",
                                   style: TextStyle(

@@ -342,7 +342,7 @@ class TestController {
   }
 
   Future<int> getTopicAnsweredCount(int courseId, int topicId, {bool onlyAttempted = false, bool onlyCorrect = false}) async {
-    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
+    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId: courseId);
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
       responses.addAll(jsonDecode(test.responses));
@@ -375,7 +375,7 @@ class TestController {
     int courseId,
     int topicId,
   ) async {
-    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
+    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId: courseId);
     Map<String, dynamic> responses = Map();
     int index = 0;
     tests.forEach((test) {
@@ -413,7 +413,7 @@ class TestController {
 
   Future<int> getQuestionsAnsweredCount(int courseId,
       {bool onlyAttempted = false, bool onlyCorrect = false}) async {
-    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId);
+    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId: courseId);
     // print("number of test= ${tests.length}");
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
@@ -450,7 +450,7 @@ class TestController {
   }
 
   Future<List<TestTaken>> getTestTaken(String tag) {
-    return TestTakenDB().courseTestsTaken(int.parse(tag));
+    return TestTakenDB().courseTestsTaken(courseId: int.parse(tag));
   }
 
   Future<List<Question>> getCustomizedQuestions(

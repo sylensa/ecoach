@@ -19,8 +19,11 @@ class AdeoDropDown extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 0.0),
       child: Container(
         width: double.infinity,
-        color: Colors.white,
-        padding: EdgeInsets.only(left: 4, right: 10),
+        padding: EdgeInsets.only(left: 14, right: 10),
+        decoration: BoxDecoration(
+          color: kPageBackgroundGray2,
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<SubscriptionItem>(
             value: value,
@@ -33,16 +36,16 @@ class AdeoDropDown extends StatelessWidget {
             items: items
                 .map(
                   (item) => DropdownMenuItem<SubscriptionItem>(
-                value: item,
-                child: Text(
-                  item.name!,
-                  style: TextStyle(
-                    color: kDefaultBlack,
-                    fontSize: 14,
+                    value: item,
+                    child: Text(
+                      item.name!,
+                      style: TextStyle(
+                        color: kDefaultBlack,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            )
+                )
                 .toList(),
           ),
         ),

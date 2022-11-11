@@ -81,7 +81,7 @@ class _AllTabPageState extends State<AllTabPage> {
     super.initState();
     showInPercentage = false;
     print("object hjjh:${widget.rightWidgetState}");
-    tests = TestTakenDB().courseTestsTaken(widget.course.id!);
+    tests = TestTakenDB().courseTestsTaken(courseId: widget.course.id!);
   }
 
   @override

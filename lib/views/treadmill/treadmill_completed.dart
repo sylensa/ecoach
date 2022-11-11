@@ -59,7 +59,7 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
     //     treadmills = mList;
     //   });
     // });
-    TestTakenDB().courseTestsTaken(widget.course.id!).then((mList) {
+    TestTakenDB().courseTestsTaken(courseId: widget.course.id!).then((mList) {
       setState(() {
         treadmills = mList;
       });

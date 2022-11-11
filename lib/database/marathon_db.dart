@@ -167,13 +167,27 @@ class MarathonDB {
     return marathons;
   }
 
-  Future<List<Marathon>> completedMarathons(Course course) async {
+  Future<List<Marathon>> completedMarathons({Course? course}) async {
     final Database? db = await DBProvider.database;
-    print("course id = ${course.id}");
-    final List<Map<String, dynamic>> maps = await db!.query('marathons',
-        orderBy: "start_time DESC",
-        where: "course_id = ? AND status = ? ",
-        whereArgs: [course.id, MarathonStatus.COMPLETED.toString()]);
+    final List<Map<String, dynamic>> maps;
+
+    if (course != null) {
+      print("course id = ${course.id}");
+
+      maps = await db!.query('marathons',
+          orderBy: "start_time DESC",
+          where: "course_id = ? AND status = ? ",
+          whereArgs: [course.id, MarathonStatus.COMPLETED.toString()]);
+    } else {
+      print("no course id provided");
+
+      maps = await db!.query('marathons',
+          distinct: true,
+          orderBy: "start_time DESC",
+          groupBy: "course_id",
+          where: '"status" = ?',
+          whereArgs: [MarathonStatus.COMPLETED.toString()]);
+    }
 
     print('course len=${maps.length}');
     List<Marathon> marathons = [];

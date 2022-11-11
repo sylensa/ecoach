@@ -32,19 +32,9 @@ class _SubscribeToPlanState extends State<SubscribeToPlan>
     super.initState();
   }
 
-  Future<String?> getUrlFrmInitialization({
-    String? email,
-    required double amount,
-    List<String>? metadata,
-  }) async {
-    // showSnackbar(
-    //   context,
-    //   Snackbar(
-    //     content: Text('Initializing payment information ...'),
-    //     extended: true,
-    //   ),
-    //   alignment: Alignment.topCenter,
-    // );
+  Future<String?> getUrlFrmInitialization(
+      {String? email, required double amount, List<String>? metadata}) async {
+   
     String? url;
     String? email = widget.user.email;
     if (email == null || email.isEmpty) {
@@ -56,11 +46,11 @@ class _SubscribeToPlanState extends State<SubscribeToPlan>
         'phone': widget.user.phone,
         'amount': amount,
         "plan_id": widget.plan.id,
-        'metadata': json.encode(
-          "{purpose: buying book, description: I want to learn}",
-        ),
+        'metadata':
+            json.encode("{purpose: buying book, description: I want to learn}"),
       };
-
+      print("making call..........");
+      print(amount);
       http.Response response = await http.post(
         Uri.parse(AppUrl.payment_initialize),
         body: json.encode(paymentData),
@@ -71,41 +61,106 @@ class _SubscribeToPlanState extends State<SubscribeToPlan>
         },
       );
 
+      print(response.body);
+
       final Map<String, dynamic> responseData = json.decode(response.body);
 
+      print("url = $responseData['data']");
       if (responseData['status'] == true) {
         url = responseData['data']['authorization_url'];
       } else {
-        // showSnackbar(
-        //   context,
-        //   Snackbar(
-        //     content: Text(responseData['message']),
-        //     extended: true,
-        //   ),
-        //   alignment: Alignment.topCenter,
-        // );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message']),
+        ));
       }
     } catch (e, m) {
-      // showSnackbar(
-      //   context,
-      //   Snackbar(
-      //     content: Text(
-      //       'There was a problem initializing payment. Please try again later',
-      //     ),
-      //     extended: true,
-      //   ),
-      //   alignment: Alignment.topCenter,
-      // );
+      print(e);
+      print(m);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "There was a problem initializing payment. Please try again later"),
+      ));
     }
 
     return url;
   }
 
+  // Future<String?> getUrlFrmInitialization({
+  //   String? email,
+  //   required double amount,
+  //   List<String>? metadata,
+  // }) async {
+  //   // showSnackbar(
+  //   //   context,
+  //   //   Snackbar(
+  //   //     content: Text('Initializing payment information ...'),
+  //   //     extended: true,
+  //   //   ),
+  //   //   alignment: Alignment.topCenter,
+  //   // );
+  //   String? url;
+  //   String? email = widget.user.email;
+  //   if (email == null || email.isEmpty) {
+  //     email = "${widget.user.phone}@ecoach.com";
+  //   }
+  //   try {
+  //     final Map<String, dynamic> paymentData = {
+  //       'email': email,
+  //       'phone': widget.user.phone,
+  //       'amount': amount,
+  //       "plan_id": widget.plan.id,
+  //       'metadata': json.encode(
+  //         "{purpose: buying book, description: I want to learn}",
+  //       ),
+  //     };
+
+  //     http.Response response = await http.post(
+  //       Uri.parse(AppUrl.payment_initialize),
+  //       body: json.encode(paymentData),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //         'api-token': widget.user.token!
+  //       },
+  //     );
+
+  //     final Map<String, dynamic> responseData = json.decode(response.body);
+
+  //     if (responseData['status'] == true) {
+  //       url = responseData['data']['authorization_url'];
+  //     } else {
+  //       // showSnackbar(
+  //       //   context,
+  //       //   Snackbar(
+  //       //     content: Text(responseData['message']),
+  //       //     extended: true,
+  //       //   ),
+  //       //   alignment: Alignment.topCenter,
+  //       // );
+  //     }
+  //   } catch (e, m) {
+  //     // showSnackbar(
+  //     //   context,
+  //     //   Snackbar(
+  //     //     content: Text(
+  //     //       'There was a problem initializing payment. Please try again later',
+  //     //     ),
+  //     //     extended: true,
+  //     //   ),
+  //     //   alignment: Alignment.topCenter,
+  //     // );
+  //   }
+
+  //   return url;
+  // }
+
   authorisePayment(BuildContext context) async {
+    print("Autorizing Payyment");
     String? authorizationUrl = await getUrlFrmInitialization(
       email: widget.user.email,
       amount: totalAmount,
     );
+    print("Autorization Url: ${totalAmount}");
     if (authorizationUrl == null) {
       return;
     }
@@ -171,6 +226,7 @@ class _SubscribeToPlanState extends State<SubscribeToPlan>
             tabPages: [
               ThirdPartyPay(
                 onPressed: () {
+                  //  print("Autorizing Payyment");
                   authorisePayment(context);
                 },
               ),

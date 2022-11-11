@@ -4,6 +4,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
 import 'package:ecoach/views/speed/speed_quiz_menu.dart';
 import 'package:ecoach/views/speed/speed_quiz_menu.dart';
@@ -44,8 +45,8 @@ class _SpeedTestIntroState extends State<SpeedTestIntro> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Navigator.popUntil(
-        //     context, ModalRoute.withName(CourseDetailsPage.routeName));
+        Navigator.popUntil(
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return true;
       },
       child: Scaffold(
