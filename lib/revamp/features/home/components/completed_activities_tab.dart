@@ -15,6 +15,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -189,7 +190,18 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             }));
                             break;
                           case "TREADMILL":
-
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return TreadmillWelcome(
+                                    user: _user,
+                                    course: course,
+                                  );
+                                },
+                              ),
+                            );
+                            break;
                           default:
                             return;
                         }
