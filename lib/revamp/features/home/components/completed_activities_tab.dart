@@ -221,6 +221,14 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   List<TestTaken> treadmills = [];
   late CompletedActivityList completedMarathons;
   late CompletedActivityList completedTreadmills;
+  bool isLoadingCompletedActivities = true;
+
+  Future loadCompletedActivities() async {
+    await getCompletedMarathons();
+    await getCompletedTreadmills();
+
+    isLoadingCompletedActivities = false;
+  }
 
   getCompletedMarathons() {
     MarathonDB().completedMarathons().then((mList) {
@@ -273,9 +281,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   @override
   void initState() {
     super.initState();
-    getCompletedMarathons();
-    getCompletedTreadmills();
-
+    loadCompletedActivities();
     setState(() {});
   }
 
@@ -294,81 +300,101 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       child: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18.0),
-        child: Column(children: [
-          if (completedActivities.isEmpty)
-            Text(
-              "You do not currently have any completed activity",
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          if (completedActivities.isNotEmpty)
-            ...completedActivities.map(
-              ((completedActivity) {
-                int index = completedActivities.indexOf(completedActivity);
-                bool isLastItem = index == completedActivities.length - 1;
-                String activityTitle;
+        child: isLoadingCompletedActivities
+            ? Column(
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          color: kAdeoGreen4,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(children: [
+                if (completedActivities.isEmpty)
+                  Text(
+                    "You do not currently have any completed activity",
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                if (completedActivities.isNotEmpty)
+                  ...completedActivities.map(
+                    ((completedActivity) {
+                      int index =
+                          completedActivities.indexOf(completedActivity);
+                      bool isLastItem = index == completedActivities.length - 1;
+                      String activityTitle;
 
-                switch (completedActivity.activityType) {
-                  case "MARATHON":
-                    activityTitle =
-                        completedActivity.marathon!.title.toString();
-                    ;
-                    return Container(
-                      margin: EdgeInsets.only(
-                        bottom: isLastItem ? 0 : 12,
-                      ),
-                      child: ActivityCourseCard(
-                        courseTitle: activityTitle,
-                        activityType: completedActivity.activityType!,
-                        iconUrl: 'assets/icons/courses/marathon.png',
-                        onTap: () {
-                          showTapActions(
-                              context, activityTitle, completedActivity);
-                        },
-                      ),
-                    );
-                  case "TREADMILL":
-                    activityTitle =
-                        completedActivity.treadmill!.testname.toString();
-                    ;
-                    return Container(
-                      margin: EdgeInsets.only(
-                        bottom: isLastItem ? 0 : 12,
-                      ),
-                      child: ActivityCourseCard(
-                        courseTitle: activityTitle,
-                        activityType: completedActivity.activityType!,
-                        iconUrl: 'assets/icons/courses/treadmill.png',
-                        onTap: () {
-                          showTapActions(
-                              context, activityTitle, completedActivity);
-                        },
-                      ),
-                    );
+                      switch (completedActivity.activityType) {
+                        case "MARATHON":
+                          activityTitle =
+                              completedActivity.marathon!.title.toString();
+                          ;
+                          return Container(
+                            margin: EdgeInsets.only(
+                              bottom: isLastItem ? 0 : 12,
+                            ),
+                            child: ActivityCourseCard(
+                              courseTitle: activityTitle,
+                              activityType: completedActivity.activityType!,
+                              iconUrl: 'assets/icons/courses/marathon.png',
+                              onTap: () {
+                                showTapActions(
+                                    context, activityTitle, completedActivity);
+                              },
+                            ),
+                          );
+                        case "TREADMILL":
+                          activityTitle =
+                              completedActivity.treadmill!.testname.toString();
+                          ;
+                          return Container(
+                            margin: EdgeInsets.only(
+                              bottom: isLastItem ? 0 : 12,
+                            ),
+                            child: ActivityCourseCard(
+                              courseTitle: activityTitle,
+                              activityType: completedActivity.activityType!,
+                              iconUrl: 'assets/icons/courses/treadmill.png',
+                              onTap: () {
+                                showTapActions(
+                                    context, activityTitle, completedActivity);
+                              },
+                            ),
+                          );
 
-                  default:
-                    activityTitle = "Title";
+                        default:
+                          activityTitle = "Title";
 
-                    return Container(
-                      margin: EdgeInsets.only(
-                        bottom: isLastItem ? 0 : 12,
-                      ),
-                      child: ActivityCourseCard(
-                        courseTitle: "Title",
-                        activityType: "Type",
-                        iconUrl: 'assets/icons/courses/learn.png',
-                        onTap: () {
-                          showTapActions(
-                              context, activityTitle, completedActivity);
-                        },
-                      ),
-                    );
-                }
-              }),
-            )
-        ]),
+                          return Container(
+                            margin: EdgeInsets.only(
+                              bottom: isLastItem ? 0 : 12,
+                            ),
+                            child: ActivityCourseCard(
+                              courseTitle: "Title",
+                              activityType: "Type",
+                              iconUrl: 'assets/icons/courses/learn.png',
+                              onTap: () {
+                                showTapActions(
+                                    context, activityTitle, completedActivity);
+                              },
+                            ),
+                          );
+                      }
+                    }),
+                  )
+              ]),
       )),
     );
   }
