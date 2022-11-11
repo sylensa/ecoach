@@ -295,71 +295,81 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       child: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18.0),
-        child: Column(
-          children: completedActivities.toSet().toList().map(
-            ((completedActivity) {
-              int index = completedActivities.indexOf(completedActivity);
-              bool isLastItem = index == completedActivities.length - 1;
-              String activityTitle;
+        child: Column(children: [
+          if (completedActivities.isEmpty)
+            Text(
+              "You do not currently have any completed activity",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          if (completedActivities.isNotEmpty)
+            ...completedActivities.map(
+              ((completedActivity) {
+                int index = completedActivities.indexOf(completedActivity);
+                bool isLastItem = index == completedActivities.length - 1;
+                String activityTitle;
 
-              switch (completedActivity.activityType) {
-                case "MARATHON":
-                  activityTitle = completedActivity.marathon!.title.toString();
-                  ;
-                  return Container(
-                    margin: EdgeInsets.only(
-                      bottom: isLastItem ? 0 : 12,
-                    ),
-                    child: ActivityCourseCard(
-                      courseTitle: activityTitle,
-                      activityType: completedActivity.activityType!,
-                      iconUrl: 'assets/icons/courses/marathon.png',
-                      onTap: () {
-                        showTapActions(
-                            context, activityTitle, completedActivity);
-                      },
-                    ),
-                  );
-                case "TREADMILL":
-                  activityTitle =
-                      completedActivity.treadmill!.testname.toString();
-                  ;
-                  return Container(
-                    margin: EdgeInsets.only(
-                      bottom: isLastItem ? 0 : 12,
-                    ),
-                    child: ActivityCourseCard(
-                      courseTitle: activityTitle,
-                      activityType: completedActivity.activityType!,
-                      iconUrl: 'assets/icons/courses/treadmill.png',
-                      onTap: () {
-                        showTapActions(
-                            context, activityTitle, completedActivity);
-                      },
-                    ),
-                  );
+                switch (completedActivity.activityType) {
+                  case "MARATHON":
+                    activityTitle =
+                        completedActivity.marathon!.title.toString();
+                    ;
+                    return Container(
+                      margin: EdgeInsets.only(
+                        bottom: isLastItem ? 0 : 12,
+                      ),
+                      child: ActivityCourseCard(
+                        courseTitle: activityTitle,
+                        activityType: completedActivity.activityType!,
+                        iconUrl: 'assets/icons/courses/marathon.png',
+                        onTap: () {
+                          showTapActions(
+                              context, activityTitle, completedActivity);
+                        },
+                      ),
+                    );
+                  case "TREADMILL":
+                    activityTitle =
+                        completedActivity.treadmill!.testname.toString();
+                    ;
+                    return Container(
+                      margin: EdgeInsets.only(
+                        bottom: isLastItem ? 0 : 12,
+                      ),
+                      child: ActivityCourseCard(
+                        courseTitle: activityTitle,
+                        activityType: completedActivity.activityType!,
+                        iconUrl: 'assets/icons/courses/treadmill.png',
+                        onTap: () {
+                          showTapActions(
+                              context, activityTitle, completedActivity);
+                        },
+                      ),
+                    );
 
-                default:
-                  activityTitle = "Title";
+                  default:
+                    activityTitle = "Title";
 
-                  return Container(
-                    margin: EdgeInsets.only(
-                      bottom: isLastItem ? 0 : 12,
-                    ),
-                    child: ActivityCourseCard(
-                      courseTitle: "Title",
-                      activityType: "Type",
-                      iconUrl: 'assets/icons/courses/learn.png',
-                      onTap: () {
-                        showTapActions(
-                            context, activityTitle, completedActivity);
-                      },
-                    ),
-                  );
-              }
-            }),
-          ).toList(),
-        ),
+                    return Container(
+                      margin: EdgeInsets.only(
+                        bottom: isLastItem ? 0 : 12,
+                      ),
+                      child: ActivityCourseCard(
+                        courseTitle: "Title",
+                        activityType: "Type",
+                        iconUrl: 'assets/icons/courses/learn.png',
+                        onTap: () {
+                          showTapActions(
+                              context, activityTitle, completedActivity);
+                        },
+                      ),
+                    );
+                }
+              }),
+            )
+        ]),
       )),
     );
   }
