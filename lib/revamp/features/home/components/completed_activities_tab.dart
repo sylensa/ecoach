@@ -235,7 +235,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       for (var completedMarathon in completedMarathons.marathons!) {
         Map<String, dynamic> completedMarathonJSON = {
           "activityType": CompletedActivityType.MARATHON.name,
-          "activityStartTime": completedMarathon.startTime,
+          "activityStartTime": completedMarathon.startTime!.toIso8601String(),
           "marathon": completedMarathon,
         };
 
@@ -260,10 +260,9 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       for (var completedTreadmill in completedTreadmills.treadmills!) {
         Map<String, dynamic> completedTreadmillJSON = {
           "activityType": CompletedActivityType.TREADMILL.name,
-          "activityStartTime": completedTreadmill.updatedAt,
+          "activityStartTime": completedTreadmill.updatedAt!.toIso8601String(),
           "treadmill": completedTreadmill,
         };
-
         CompletedActivity completedTreadmillObject =
             CompletedActivity.fromJson(completedTreadmillJSON);
         completedActivities.add(completedTreadmillObject);
