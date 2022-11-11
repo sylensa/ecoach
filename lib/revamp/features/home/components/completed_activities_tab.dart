@@ -1,7 +1,16 @@
+import 'dart:convert';
+
+import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/completed_activity.dart';
+import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
+import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
 
@@ -77,7 +86,33 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                         Column(
                           children: [
                             InkWell(
-                              onTap: (() {}),
+                              onTap: (() {
+                                // MarathonController controller =
+                                //     MarathonController(user, course);
+
+                                // Navigator.push<void>(context,
+                                //     MaterialPageRoute<void>(
+                                //   builder: (BuildContext context) {
+                                //     return MarathonCompleteCongratulations(
+                                //       controller: controller,
+                                //     );
+                                //   },
+                                // ));
+                                // goTo(
+                                //   context,
+                                //   ResultsView(
+                                //     widget.controller!.user,
+                                //     completedActivity.marathon as Course,
+                                //     widget.controller!.type,
+                                //     // controller: widget.controller,
+                                //     // testCategory:
+                                //     //     widget.controller!.challengeType,
+                                //     // diagnostic: widget.diagnostic,
+                                //     // test: widget.test,
+                                //   ),
+                                //   replace: true,
+                                // );
+                              }),
                               child: Container(
                                 width: double.maxFinite,
                                 height: 60,
@@ -183,17 +218,19 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
 
   List<CompletedActivity> completedActivities = [];
   List<Marathon> marathons = [];
+  List<TestTaken> treadmills = [];
   late CompletedActivityList completedMarathons;
+  late CompletedActivityList completedTreadmills;
 
   getCompletedMarathons() {
     MarathonDB().completedMarathons().then((mList) {
       marathons = mList;
 
-      print("marathons length: ${marathons.length}");
-      Map<String, dynamic> completedMarathon = {
+      Map<String, dynamic> completedMarathonsMap = {
         "marathons": marathons,
       };
-      completedMarathons = CompletedActivityList.fromJson(completedMarathon);
+      completedMarathons =
+          CompletedActivityList.fromJson(completedMarathonsMap);
 
       for (var completedMarathon in completedMarathons.marathons!) {
         Map<String, dynamic> completedMarathonJSON = {
@@ -209,16 +246,43 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
     });
   }
 
+  getCompletedTreadmills() {
+    TestTakenDB().courseTestsTaken().then((mList) {
+      treadmills = mList;
+      print("treadmill length: ${treadmills.length}");
+
+      Map<String, dynamic> completedTreadmillsMap = {
+        "treadmills": treadmills,
+      };
+      completedTreadmills =
+          CompletedActivityList.fromJson(completedTreadmillsMap);
+
+      for (var completedTreadmill in completedTreadmills.treadmills!) {
+        Map<String, dynamic> completedTreadmillJSON = {
+          "activityType": CompletedActivityType.TREADMILL.name,
+          "activityStartTime": completedTreadmill.updatedAt,
+          "treadmill": completedTreadmill,
+        };
+
+        CompletedActivity completedTreadmillObject =
+            CompletedActivity.fromJson(completedTreadmillJSON);
+        completedActivities.add(completedTreadmillObject);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getCompletedMarathons();
+    getCompletedTreadmills();
+
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    // print("Completed Activities: ${completedActivities[0].type}");
+    // print("Completed Activities: ${completedActivitiesSet}");
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: 16,
@@ -232,7 +296,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
           child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18.0),
         child: Column(
-          children: completedActivities.map(
+          children: completedActivities.toSet().toList().map(
             ((completedActivity) {
               int index = completedActivities.indexOf(completedActivity);
               bool isLastItem = index == completedActivities.length - 1;
@@ -241,7 +305,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
               switch (completedActivity.activityType) {
                 case "MARATHON":
                   activityTitle = completedActivity.marathon!.title.toString();
-;
+                  ;
                   return Container(
                     margin: EdgeInsets.only(
                       bottom: isLastItem ? 0 : 12,
@@ -256,7 +320,25 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                       },
                     ),
                   );
-                // break;
+                case "TREADMILL":
+                  activityTitle =
+                      completedActivity.treadmill!.testname.toString();
+                  ;
+                  return Container(
+                    margin: EdgeInsets.only(
+                      bottom: isLastItem ? 0 : 12,
+                    ),
+                    child: ActivityCourseCard(
+                      courseTitle: activityTitle,
+                      activityType: completedActivity.activityType!,
+                      iconUrl: 'assets/icons/courses/treadmill.png',
+                      onTap: () {
+                        showTapActions(
+                            context, activityTitle, completedActivity);
+                      },
+                    ),
+                  );
+
                 default:
                   activityTitle = "Title";
 

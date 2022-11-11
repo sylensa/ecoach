@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/marathon.dart';
-import 'package:ecoach/models/treadmill.dart';
+import 'package:ecoach/models/test_taken.dart';
 
 enum CompletedActivityType { MARATHON, AUTOPILOT, TREADMILL, LEARN }
 
@@ -12,19 +11,19 @@ CompletedActivityList completedActivityListFromJson(String str) =>
 class CompletedActivityList {
   CompletedActivityList({
     this.marathons,
-    // this.treadmills,
+    this.treadmills,
     // this.autopilot,
   });
 
   List<Marathon>? marathons;
-  // Treadmill? treadmills;
+  List<TestTaken>? treadmills;
   // Autopilot? autopilot;
 
   factory CompletedActivityList.fromJson(Map<String, dynamic> json) =>
       CompletedActivityList(
         marathons: json["marathons"] == null ? [] : json["marathons"],
+        treadmills: json["treadmills"] == null ? [] : json["treadmills"],
         // autopilot: json["autopilot"] == null ? null : json["autopilot"],
-        // treadmill: json["treadmill"] == null ? null : json["treadmill"],
       );
 }
 
@@ -40,7 +39,7 @@ class CompletedActivity {
   String? activityType;
   DateTime? activityStartTime;
   Marathon? marathon;
-  Treadmill? treadmill;
+  TestTaken? treadmill;
   // Autopilot? autopilot;
 
   factory CompletedActivity.fromJson(Map<String, dynamic> json) =>
@@ -52,7 +51,16 @@ class CompletedActivity {
             ? null
             : DateTime.parse(json['start_time']),
         marathon: json["marathon"] == null ? null : json["marathon"],
+        treadmill: json["treadmill"] == null ? null : json["treadmill"],
         // autopilot: json["autopilot"] == null ? null : json["autopilot"],
-        // treadmill: json["treadmill"] == null ? null : json["treadmill"],
       );
+
+  Map<String, dynamic> toJson(activity) {
+    return {
+      'activityType': activityType,
+      'start_time': activityStartTime,
+      'marathon': activity,
+      'treadmill': treadmill,
+    };
+  }
 }
