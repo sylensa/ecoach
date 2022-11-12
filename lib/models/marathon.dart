@@ -8,7 +8,7 @@ String marathonToJson(Marathon data) => json.encode(data.toJson());
 
 enum MarathonStatus { NEW, IN_PROGRESS, PAUSED, COMPLETED }
 
-enum MarathonType { FULL, TOPIC }
+enum MarathonType { FULL, TOPIC, MOCK }
 
 class Marathon {
   Marathon({
@@ -69,7 +69,7 @@ class Marathon {
         userId: json["user_id"],
         title: json["title"],
         type: json["type"],
-        topicId: json["type_id"],
+        topicId: json["topic_id"],
         avgScore: json["avg_score"],
         avgTime: json["avg_time"],
         totalCorrect: json["total_correct"],
