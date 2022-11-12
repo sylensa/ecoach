@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/questions_db.dart';
@@ -14,7 +15,9 @@ import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
@@ -24,6 +27,7 @@ import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
 import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
@@ -158,71 +162,105 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             SizedBox(
                               height: 18,
                             ),
-                            InkWell(
-                              onTap: (() async {
-                                switch (completedActivity.activityType) {
-                                  case "MARATHON":
-                                    MarathonController marathonController;
-                                    Marathon marathon =
-                                        completedActivity.marathon!;
+                            if (completedActivity.activityType != "TREADMILL")
+                              InkWell(
+                                onTap: (() async {
+                                  switch (completedActivity.activityType) {
+                                    case "MARATHON":
+                                      MarathonController marathonController =
+                                          MarathonController(
+                                        _user,
+                                        course,
+                                        name: course.name!,
+                                      );
+                                      Marathon marathon =
+                                          completedActivity.marathon!;
 
-                                    marathonController = MarathonController(
-                                      _user,
-                                      course,
-                                      name: course.name!,
-                                    );
-                                    MarathonType marathonTopicType =
-                                        MarathonType.TOPIC;
-                                    MarathonType marathonMockType =
-                                        MarathonType.MOCK;
-                                    if (marathon.type.toString() ==
-                                        marathonTopicType.toString()) {
-                                      await marathonController
-                                          .createTopicMarathon(
-                                              marathon.topicId!);
-                                      marathonController.name =
-                                          completedActivity.topic!.name!;
+                                      MarathonType marathonTopicType =
+                                          MarathonType.TOPIC;
+                                      MarathonType marathonMockType =
+                                          MarathonType.MOCK;
+                                      if (marathon.type.toString() ==
+                                          marathonTopicType.toString()) {
+                                        await marathonController
+                                            .createTopicMarathon(
+                                                marathon.topicId!);
+                                        marathonController.name =
+                                            completedActivity.topic!.name!;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return MarathonQuizView(
+                                                controller: marathonController,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      } else if (marathon.type.toString() ==
+                                          marathonMockType.toString()) {}
+                                      break;
+                                    case "TREADMILL":
+                                      TreadmillController treadmillController =
+                                          TreadmillController(
+                                        _user,
+                                        course,
+                                      );
+
+                                      String? treadmillTestCategory =
+                                          completedActivity
+                                              .treadmill!.challengeType;
+
+                                      late TreadmillMode treadmillMode;
+
+                                      if (treadmillTestCategory ==
+                                          "TestCategory.TOPIC") {
+                                        treadmillMode = TreadmillMode.TOPIC;
+                                      }
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return MarathonQuizView(
-                                              controller: marathonController,
+                                            return TreadmillTime(
+                                              controller: treadmillController,
+                                              mode: treadmillMode,
+                                              count: treadmillController
+                                                  .countQuestions,
+                                              topic: completedActivity.topic,
+                                              // topicId: int.parse(
+                                              //   completedActivity.topic!.topicId!,
+                                              // ),
                                             );
                                           },
                                         ),
                                       );
-                                    } else if (marathon.type.toString() ==
-                                        marathonMockType.toString()) {}
-                                    break;
-                                  case "TREADMILL":
-                                    break;
-                                  default:
-                                    break;
-                                }
-                              }),
-                              child: Container(
-                                width: double.maxFinite,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1,
-                                    color: kAdeoGreen4,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Retake",
-                                    style: TextStyle(
-                                      fontSize: 18,
+                                      break;
+                                    default:
+                                      break;
+                                  }
+                                }),
+                                child: Container(
+                                  width: double.maxFinite,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1,
                                       color: kAdeoGreen4,
-                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Retake",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: kAdeoGreen4,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )
+                              )
                           ],
                         )
                       ],
