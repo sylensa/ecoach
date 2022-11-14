@@ -71,12 +71,19 @@ class QuestionDB {
     final Database? db = await DBProvider.database;
     final List<Map<String, dynamic>> maps;
     List<int> questionIds = [];
+    List<Question> questions = [];
     if(unseen){
       maps = await db!.rawQuery("SELECT * FROM conquest_questions WHERE course_id = $courseId ORDER BY RANDOM()");
+      // if(maps.isEmpty){
+      //   questions = await QuestionDB().getQuestionsByCourseId(courseId);
+      //   for (int i = 0; i < questions.length; i++) {
+      //     questionIds.add(questions[i].id!);
+      //   }
+      // }
     }else{
        maps = await db!.rawQuery("SELECT * FROM conquest_questions WHERE course_id = $courseId and confirmed = $confirm ORDER BY RANDOM()");
     }
-    List<Question> questions = [];
+
     for (int i = 0; i < maps.length; i++) {
       Question question = Question.fromJson(maps[i]);
       question.answers = await AnswerDB().questoinAnswers(question.id!);
@@ -86,6 +93,7 @@ class QuestionDB {
     if(unseen){
       questions.clear();
       questions = await getQuestionsByQuestionIds(questionIds,courseId);
+      print("questions:${questions.length}");
     }
     return questions;
   }

@@ -4,6 +4,7 @@ import 'package:ecoach/database/plan.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -23,6 +24,7 @@ class _LogoutState extends State<Logout> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) async{
       futurePlanItem.clear();
+      listTestTaken.clear();
       listActivePackageData.clear();
       await PlanDB().deleteAllPlans();
       await SubscriptionDB().deleteAll();
@@ -31,6 +33,7 @@ class _LogoutState extends State<Logout> {
       await QuestionDB().deleteAllQuestions();
       await ConquestTestTakenDB().conquestDeleteAll();
       await QuestionDB().deleteAllConquestTest();
+      await TestTakenDB().deleteAll();
       var status = await UserPreferences().getLoginWith() ;
        await UserPreferences().removeUser();
       if(status){

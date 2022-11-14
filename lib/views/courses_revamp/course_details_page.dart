@@ -187,6 +187,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     course = widget.courses[0];
     listCourseDetails.add(courseDetails[0]);
     getAnalysisStats();
+
+
+
   }
   @override
   Widget build(BuildContext context) {

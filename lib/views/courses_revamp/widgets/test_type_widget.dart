@@ -115,10 +115,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                       testType = TestType.UNSEEN;
                                       listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
                                      print("listQuestions:${listQuestions.length}");
-                                      if(listQuestions.isEmpty){
-                                        listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                                        print("$testType:$listQuestions");
-                                      }
+                                      // if(listQuestions.isEmpty){
+                                      //   listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                                      //   print("$testType:$listQuestions");
+                                      // }
                                     }
                                     else if(conquestTypes[index].name.toUpperCase() == "UNANSWERED"){
                                       testType = TestType.UNANSWERED;
