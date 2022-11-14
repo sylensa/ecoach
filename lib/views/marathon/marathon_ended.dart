@@ -119,7 +119,7 @@ class MarathonEnded extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        Expanded(
+                        Expanded (
                           child: AdeoTextButton(
                             label: 'review',
                             fontSize: 20,

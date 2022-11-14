@@ -1,30 +1,19 @@
-import 'dart:convert';
-
 import 'package:ecoach/controllers/marathon_controller.dart';
-import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
-import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/database/topics_db.dart';
-import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
-import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
-import 'package:ecoach/views/marathon/marathon_practise_menu.dart';
-import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
-import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
 import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/views/treadmill/treadmill_timer.dart';
@@ -114,31 +103,20 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           children: [
                             InkWell(
                               onTap: (() {
-                                // MarathonController controller =
-                                //     MarathonController(user, course);
-
-                                // Navigator.push<void>(context,
-                                //     MaterialPageRoute<void>(
-                                //   builder: (BuildContext context) {
-                                //     return MarathonCompleteCongratulations(
-                                //       controller: controller,
-                                //     );
-                                //   },
-                                // ));
-                                // goTo(
-                                //   context,
-                                //   ResultsView(
-                                //     widget.controller!.user,
-                                //     completedActivity.marathon as Course,
-                                //     widget.controller!.type,
-                                //     // controller: widget.controller,
-                                //     // testCategory:
-                                //     //     widget.controller!.challengeType,
-                                //     // diagnostic: widget.diagnostic,
-                                //     // test: widget.test,
-                                //   ),
-                                //   replace: true,
-                                // );
+                                if (completedActivity.activityType ==
+                                    "TREADMILL") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (BuildContext) {
+                                      return ResultsView(
+                                        _user,
+                                        course,
+                                        TestType.NONE,
+                                        test: completedActivity.treadmill!,
+                                      );
+                                    }),
+                                  );
+                                }
                               }),
                               child: Container(
                                 width: double.maxFinite,
@@ -472,6 +450,9 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           activityTitle =
                               completedActivity.marathon!.title.toString();
                           ;
+                          double percentageCompleted =
+                              completedActivity.marathon!.totalCorrect! /
+                                  completedActivity.marathon!.totalQuestions!;
                           return Container(
                             margin: EdgeInsets.only(
                               bottom: isLastItem ? 0 : 12,
@@ -480,6 +461,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               courseTitle: completedActivity.topic!.name!,
                               activityType: completedActivity.activityType!,
                               iconUrl: 'assets/icons/courses/marathon.png',
+                              percentageCompleted: percentageCompleted,
                               onTap: () {
                                 showTapActions(
                                   context,

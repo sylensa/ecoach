@@ -191,7 +191,7 @@ class MarathonDB {
           whereArgs: [MarathonStatus.COMPLETED.toString()]);
     }
 
-    print('course len=${maps.length}');
+
     List<Marathon> marathons = [];
     for (int i = 0; i < maps.length; i++) {
       Marathon marathon = Marathon.fromJson(maps[i]);

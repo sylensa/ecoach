@@ -51,6 +51,17 @@ class ActivityCourseCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        activityType.trim().toUpperCase(),
+                        style: TextStyle(
+                          color: kAdeoBlue3,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
                         courseTitle.trim(),
                         softWrap: true,
                         style: TextStyle(
@@ -59,28 +70,27 @@ class ActivityCourseCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        activityType.trim().toUpperCase(),
-                        style: TextStyle(
-                          color: kAdeoBlue3,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
                     ],
                   ),
                 ),
-                Container(
-                  width: 48.0,
-                  height: 48.0,
-                  child: Image.asset(
-                    iconUrl,
-                    fit: BoxFit.fill,
+                if (!hasProgressIndicator)
+                  Text(
+                    "${(percentageCompleted! * 100).roundToDouble()}%",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                )
+                if (hasProgressIndicator)
+                  Container(
+                    width: 48.0,
+                    height: 48.0,
+                    child: Image.asset(
+                      iconUrl,
+                      fit: BoxFit.fill,
+                    ),
+                  )
               ],
             ),
             if (hasProgressIndicator)
