@@ -32,48 +32,65 @@ class ActivityCourseCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
-        constraints: BoxConstraints(minHeight: hasProgressIndicator ? 160 : 110),
+        constraints:
+            BoxConstraints(minHeight: hasProgressIndicator ? 160 : 110),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: hasProgressIndicator ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+          mainAxisAlignment: hasProgressIndicator
+              ? MainAxisAlignment.spaceBetween
+              : MainAxisAlignment.center,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      courseTitle.trim(),
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500,
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 240),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        activityType.trim().toUpperCase(),
+                        style: TextStyle(
+                          color: kAdeoBlue3,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      activityType.trim().toUpperCase(),
-                      style: TextStyle(
-                        color: kAdeoBlue3,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(
+                        height: 4,
                       ),
-                    )
-                  ],
-                ),
-                Container(
-                  width: 48.0,
-                  height: 48.0,
-                  child: Image.asset(
-                    iconUrl,
-                    fit: BoxFit.fill,
+                      Text(
+                        courseTitle.trim(),
+                        softWrap: true,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                )
+                ),
+                if (!hasProgressIndicator)
+                  Text(
+                    "${(percentageCompleted! * 100).roundToDouble()}%",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                if (hasProgressIndicator)
+                  Container(
+                    width: 48.0,
+                    height: 48.0,
+                    child: Image.asset(
+                      iconUrl,
+                      fit: BoxFit.fill,
+                    ),
+                  )
               ],
             ),
             if (hasProgressIndicator)

@@ -1,20 +1,22 @@
-import 'dart:convert';
-
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
-import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
+import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
 import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +70,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               "${completedActivity.activityType}"
@@ -84,6 +87,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             ),
                             Text(
                               "${title}".trim(),
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 20.0,
@@ -99,31 +103,20 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           children: [
                             InkWell(
                               onTap: (() {
-                                // MarathonController controller =
-                                //     MarathonController(user, course);
-
-                                // Navigator.push<void>(context,
-                                //     MaterialPageRoute<void>(
-                                //   builder: (BuildContext context) {
-                                //     return MarathonCompleteCongratulations(
-                                //       controller: controller,
-                                //     );
-                                //   },
-                                // ));
-                                // goTo(
-                                //   context,
-                                //   ResultsView(
-                                //     widget.controller!.user,
-                                //     completedActivity.marathon as Course,
-                                //     widget.controller!.type,
-                                //     // controller: widget.controller,
-                                //     // testCategory:
-                                //     //     widget.controller!.challengeType,
-                                //     // diagnostic: widget.diagnostic,
-                                //     // test: widget.test,
-                                //   ),
-                                //   replace: true,
-                                // );
+                                if (completedActivity.activityType ==
+                                    "TREADMILL") {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (BuildContext) {
+                                      return ResultsView(
+                                        _user,
+                                        course,
+                                        TestType.NONE,
+                                        test: completedActivity.treadmill!,
+                                      );
+                                    }),
+                                  );
+                                }
                               }),
                               child: Container(
                                 width: double.maxFinite,
@@ -147,30 +140,105 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             SizedBox(
                               height: 18,
                             ),
-                            InkWell(
-                              onTap: (() {}),
-                              child: Container(
-                                width: double.maxFinite,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1,
-                                    color: kAdeoGreen4,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Retake",
-                                    style: TextStyle(
-                                      fontSize: 18,
+                            if (completedActivity.activityType != "TREADMILL")
+                              InkWell(
+                                onTap: (() async {
+                                  switch (completedActivity.activityType) {
+                                    case "MARATHON":
+                                      MarathonController marathonController =
+                                          MarathonController(
+                                        _user,
+                                        course,
+                                        name: course.name!,
+                                      );
+                                      Marathon marathon =
+                                          completedActivity.marathon!;
+
+                                      MarathonType marathonTopicType =
+                                          MarathonType.TOPIC;
+                                      MarathonType marathonMockType =
+                                          MarathonType.MOCK;
+                                      if (marathon.type.toString() ==
+                                          marathonTopicType.toString()) {
+                                        await marathonController
+                                            .createTopicMarathon(
+                                                marathon.topicId!);
+                                        marathonController.name =
+                                            completedActivity.topic!.name!;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return MarathonQuizView(
+                                                controller: marathonController,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      } else if (marathon.type.toString() ==
+                                          marathonMockType.toString()) {}
+                                      break;
+                                    case "TREADMILL":
+                                      TreadmillController treadmillController =
+                                          TreadmillController(
+                                        _user,
+                                        course,
+                                      );
+
+                                      String? treadmillTestCategory =
+                                          completedActivity
+                                              .treadmill!.challengeType;
+
+                                      late TreadmillMode treadmillMode;
+
+                                      if (treadmillTestCategory ==
+                                          "TestCategory.TOPIC") {
+                                        treadmillMode = TreadmillMode.TOPIC;
+                                      }
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return TreadmillTime(
+                                              controller: treadmillController,
+                                              mode: treadmillMode,
+                                              count: treadmillController
+                                                  .countQuestions,
+                                              topic: completedActivity.topic,
+                                              // topicId: int.parse(
+                                              //   completedActivity.topic!.topicId!,
+                                              // ),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                      break;
+                                    default:
+                                      break;
+                                  }
+                                }),
+                                child: Container(
+                                  width: double.maxFinite,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1,
                                       color: kAdeoGreen4,
-                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Retake",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: kAdeoGreen4,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )
+                              )
                           ],
                         )
                       ],
@@ -203,7 +271,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             );
                             break;
                           default:
-                            return;
+                            break;
                         }
                       }),
                       child: Container(
@@ -237,8 +305,9 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           width: 60,
                           height: 4,
                           decoration: BoxDecoration(
-                              color: kAdeoGray3,
-                              borderRadius: BorderRadius.circular(10)),
+                            color: kAdeoGray3,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ],
                     ),
@@ -255,9 +324,10 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   List<CompletedActivity> completedActivities = [];
   List<Marathon> marathons = [];
   List<TestTaken> treadmills = [];
+  bool isLoadingCompletedActivities = true;
   late CompletedActivityList completedMarathons;
   late CompletedActivityList completedTreadmills;
-  bool isLoadingCompletedActivities = true;
+  late Topic? topic;
 
   Future loadCompletedActivities() async {
     await getCompletedMarathons();
@@ -267,7 +337,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   }
 
   getCompletedMarathons() {
-    MarathonDB().completedMarathons().then((mList) {
+    MarathonDB().completedMarathons().then((mList) async {
       marathons = mList;
 
       Map<String, dynamic> completedMarathonsMap = {
@@ -275,18 +345,21 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       };
       completedMarathons =
           CompletedActivityList.fromJson(completedMarathonsMap);
-
       for (var completedMarathon in completedMarathons.marathons!) {
-        Map<String, dynamic> completedMarathonJSON = {
-          "activityType": CompletedActivityType.MARATHON.name,
-          "courseId": completedMarathon.courseId,
-          "activityStartTime": completedMarathon.startTime!.toIso8601String(),
-          "marathon": completedMarathon,
-        };
+        if (completedMarathon.topicId != null) {
+          topic = await TopicDB().getTopicById(completedMarathon.topicId!);
 
-        CompletedActivity completedMarathonObject =
-            CompletedActivity.fromJson(completedMarathonJSON);
-        completedActivities.add(completedMarathonObject);
+          Map<String, dynamic> completedMarathonJSON = {
+            "activityType": CompletedActivityType.MARATHON.name,
+            "courseId": completedMarathon.courseId,
+            "activityStartTime": completedMarathon.startTime!.toIso8601String(),
+            "marathon": completedMarathon,
+            "topic": topic,
+          };
+          CompletedActivity completedMarathonObject =
+              CompletedActivity.fromJson(completedMarathonJSON);
+          completedActivities.add(completedMarathonObject);
+        }
       }
     });
   }
@@ -294,7 +367,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   getCompletedTreadmills() {
     TestTakenDB().courseTestsTaken().then((mList) {
       treadmills = mList;
-      print("treadmill length: ${treadmills.length}");
 
       Map<String, dynamic> completedTreadmillsMap = {
         "treadmills": treadmills,
@@ -325,7 +397,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
 
   @override
   Widget build(BuildContext context) {
-    // print("Completed Activities: ${completedActivitiesSet}");
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: 16,
@@ -379,18 +450,22 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           activityTitle =
                               completedActivity.marathon!.title.toString();
                           ;
+                          double percentageCompleted =
+                              completedActivity.marathon!.totalCorrect! /
+                                  completedActivity.marathon!.totalQuestions!;
                           return Container(
                             margin: EdgeInsets.only(
                               bottom: isLastItem ? 0 : 12,
                             ),
                             child: ActivityCourseCard(
-                              courseTitle: activityTitle,
+                              courseTitle: completedActivity.topic!.name!,
                               activityType: completedActivity.activityType!,
                               iconUrl: 'assets/icons/courses/marathon.png',
+                              percentageCompleted: percentageCompleted,
                               onTap: () {
                                 showTapActions(
                                   context,
-                                  title: activityTitle,
+                                  title: completedActivity.topic!.name!,
                                   completedActivity: completedActivity,
                                   courseId: completedActivity.courseId!,
                                 );

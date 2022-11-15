@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/topic.dart';
 
 enum CompletedActivityType { MARATHON, AUTOPILOT, TREADMILL, LEARN }
 
@@ -33,6 +34,7 @@ class CompletedActivity {
     this.courseId,
     this.activityStartTime,
     this.marathon,
+    this.topic,
     this.treadmill,
     // this.autopilot,
   });
@@ -42,6 +44,7 @@ class CompletedActivity {
   DateTime? activityStartTime;
   Marathon? marathon;
   TestTaken? treadmill;
+  Topic? topic;
   // Autopilot? autopilot;
 
   factory CompletedActivity.fromJson(Map<String, dynamic> json) =>
@@ -55,6 +58,7 @@ class CompletedActivity {
             : DateTime.parse(json['start_time']),
         marathon: json["marathon"] == null ? null : json["marathon"],
         treadmill: json["treadmill"] == null ? null : json["treadmill"],
+        topic: json["topic"],
         // autopilot: json["autopilot"] == null ? null : json["autopilot"],
       );
 
@@ -65,6 +69,7 @@ class CompletedActivity {
       'start_time': activityStartTime,
       'marathon': activity,
       'treadmill': treadmill,
+      'topic': topic,
     };
   }
 }

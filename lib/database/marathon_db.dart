@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/database/questions_db.dart';
@@ -184,12 +186,12 @@ class MarathonDB {
       maps = await db!.query('marathons',
           distinct: true,
           orderBy: "start_time DESC",
-          groupBy: "course_id",
+          groupBy: "topic_id",
           where: '"status" = ?',
           whereArgs: [MarathonStatus.COMPLETED.toString()]);
     }
 
-    print('course len=${maps.length}');
+
     List<Marathon> marathons = [];
     for (int i = 0; i < maps.length; i++) {
       Marathon marathon = Marathon.fromJson(maps[i]);
