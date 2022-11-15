@@ -70,18 +70,20 @@ class _GroupActivityState extends State<GroupActivity> {
                 ],
               ),
             ),
-            AdeoTabControl(
-              variant: 'square',
-              tabs: [
-                'Activity',
-                'Performance',
-                'Chat',
-              ],
-              tabPages: [
-                Activity(widget.user,groupData: widget.groupData,),
-                GroupPerformance(widget.user,groupData: widget.groupData,),
-                GroupChatScreen(widget.user,)
-              ],
+            Expanded(
+              child: AdeoTabControl(
+                variant: 'square',
+                tabs: [
+                  'Activity',
+                  'Performance',
+                  'Chat',
+                ],
+                tabPages: [
+                  Activity(widget.user,groupData: widget.groupData,),
+                  GroupPerformance(widget.user,groupData: widget.groupData,),
+                  GroupChatScreen(widget.user,)
+                ],
+              ),
             ),
 
           ],
