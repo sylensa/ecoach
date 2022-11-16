@@ -1,27 +1,36 @@
+import 'dart:convert';
+
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/home/view/screen/homepage.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
-import 'package:ecoach/views/marathon/marathon_quiz_view.dart';
-import 'package:ecoach/views/results_ui.dart';
+import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
+import 'package:ecoach/views/result_summary/below_pass_mark.dart';
+import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
 import 'package:flutter/material.dart';
 
 class CompletedActivitiesTab extends StatefulWidget {
+  static const String routeName = '/completed-activities';
+
   const CompletedActivitiesTab({Key? key, required this.completedActivities})
       : super(key: key);
   final List completedActivities;
@@ -31,6 +40,93 @@ class CompletedActivitiesTab extends StatefulWidget {
 }
 
 class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
+  List<CompletedActivity> completedActivities = [];
+  List<Marathon> marathons = [];
+  List<TestTaken> treadmills = [];
+  bool isLoadingCompletedActivities = true;
+  late CompletedActivityList completedMarathons;
+  late CompletedActivityList completedTreadmills;
+  late Topic? topic;
+
+  viewResults(TestTaken testTaken, controller, test, diagnostic) {
+    if (testTaken!.score! >= 95) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          controller.user,
+          controller.course,
+          controller.type,
+          test: test!,
+          diagnostic: diagnostic,
+          controller: controller,
+          testCategory: controller.challengeType,
+          message: 'Excellent',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 80) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          controller.user,
+          controller.course,
+          controller.type,
+          test: test!,
+          diagnostic: diagnostic,
+          controller: controller,
+          testCategory: controller.challengeType,
+          message: 'Very Good',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 60) {
+      goTo(
+        context,
+        ResultSummaryScreen(
+          controller.user,
+          controller.course,
+          controller.type,
+          test: test!,
+          diagnostic: diagnostic,
+          controller: controller,
+          testCategory: controller.challengeType,
+          message: 'Good, more room for improvement',
+        ),
+        replace: true,
+      );
+    } else if (testTaken!.score! >= 40) {
+      goTo(
+        context,
+        BelowPassMark(
+          controller.user,
+          controller.course,
+          controller.type,
+          test: test!,
+          diagnostic: diagnostic,
+          controller: controller,
+          testCategory: controller.challengeType,
+          message: 'Average Performance, need improvement',
+        ),
+        replace: true,
+      );
+    } else {
+      goTo(
+        context,
+        BelowPassMark(
+          controller.user,
+          controller.course,
+          controller.type,
+          test: test!,
+          diagnostic: diagnostic,
+          controller: controller,
+          testCategory: controller.challengeType,
+          message: 'Poor Performance',
+        ),
+        replace: true,
+      );
+    }
+  }
+
   showTapActions(
     context, {
     required String title,
@@ -73,7 +169,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "${completedActivity.activityType}"
+                              completedActivity.activityType!.name
                                   .trim()
                                   .toUpperCase(),
                               style: TextStyle(
@@ -103,19 +199,43 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           children: [
                             InkWell(
                               onTap: (() {
-                                if (completedActivity.activityType ==
-                                    "TREADMILL") {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (BuildContext) {
-                                      return ResultsView(
-                                        _user,
-                                        course,
-                                        TestType.NONE,
-                                        test: completedActivity.treadmill!,
-                                      );
-                                    }),
-                                  );
+                                switch (completedActivity.activityType) {
+                                  case CompletedActivityType.MARATHON:
+                                    MarathonController marathonController =
+                                        MarathonController(
+                                      _user,
+                                      course,
+                                      name: course.name!,
+                                      marathon: completedActivity.marathon,
+                                    );
+
+                                    Navigator.push<void>(
+                                      context,
+                                      MaterialPageRoute<void>(
+                                        builder: (BuildContext context) {
+                                          return MarathonCompleteCongratulations(
+                                            controller: marathonController,
+                                          );
+                                        },
+                                      ),
+                                    ).then((value) {
+                                      marathonController.currentQuestion = 0;
+                                      marathonController.reviewMode = true;
+                                      setState(() {});
+                                    });
+                                    break;
+                                  default:
+                                    QuizController controller = QuizController(
+                                      _user,
+                                      course,
+                                      name: completedActivity.topic!.name!,
+                                    );
+                                    viewResults(
+                                      completedActivity.treadmill!,
+                                      controller,
+                                      completedActivity.treadmill!,
+                                      true,
+                                    );
                                 }
                               }),
                               child: Container(
@@ -140,105 +260,119 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             SizedBox(
                               height: 18,
                             ),
-                            if (completedActivity.activityType != "TREADMILL")
-                              InkWell(
-                                onTap: (() async {
-                                  switch (completedActivity.activityType) {
-                                    case "MARATHON":
-                                      MarathonController marathonController =
-                                          MarathonController(
-                                        _user,
-                                        course,
-                                        name: course.name!,
-                                      );
-                                      Marathon marathon =
-                                          completedActivity.marathon!;
+                            // if (completedActivity.activityType != "TREADMILL")
+                            InkWell(
+                              onTap: (() async {
+                                switch (completedActivity.activityType!) {
+                                  case CompletedActivityType.MARATHON:
+                                    MarathonController marathonController =
+                                        MarathonController(
+                                      _user,
+                                      course,
+                                      name: course.name!,
+                                    );
+                                    Marathon marathon =
+                                        completedActivity.marathon!;
 
-                                      MarathonType marathonTopicType =
-                                          MarathonType.TOPIC;
-                                      MarathonType marathonMockType =
-                                          MarathonType.MOCK;
-                                      if (marathon.type.toString() ==
-                                          marathonTopicType.toString()) {
-                                        await marathonController
-                                            .createTopicMarathon(
-                                                marathon.topicId!);
-                                        marathonController.name =
-                                            completedActivity.topic!.name!;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return MarathonQuizView(
-                                                controller: marathonController,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      } else if (marathon.type.toString() ==
-                                          marathonMockType.toString()) {}
-                                      break;
-                                    case "TREADMILL":
-                                      TreadmillController treadmillController =
-                                          TreadmillController(
-                                        _user,
-                                        course,
-                                      );
+                                    MarathonType marathonTopicType =
+                                        MarathonType.TOPIC;
+                                    MarathonType marathonMockType =
+                                        MarathonType.MOCK;
 
-                                      String? treadmillTestCategory =
-                                          completedActivity
-                                              .treadmill!.challengeType;
+                                    if (marathon.type.toString() ==
+                                        marathonTopicType.toString()) {
+                                      await marathonController
+                                          .createTopicMarathon(
+                                              marathon.topicId!);
+                                      marathonController.name =
+                                          completedActivity.topic!.name!;
 
-                                      late TreadmillMode treadmillMode;
-
-                                      if (treadmillTestCategory ==
-                                          "TestCategory.TOPIC") {
-                                        treadmillMode = TreadmillMode.TOPIC;
-                                      }
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
+                                          settings: RouteSettings(
+                                            name: HomePage2.routeName,
+                                          ),
                                           builder: (context) {
-                                            return TreadmillTime(
-                                              controller: treadmillController,
-                                              mode: treadmillMode,
-                                              count: treadmillController
-                                                  .countQuestions,
-                                              topic: completedActivity.topic,
-                                              // topicId: int.parse(
-                                              //   completedActivity.topic!.topicId!,
-                                              // ),
+                                            return Instructions(
+                                              topicId: marathon.topicId!,
+                                              controller: marathonController,
                                             );
                                           },
                                         ),
                                       );
-                                      break;
-                                    default:
-                                      break;
-                                  }
-                                }),
-                                child: Container(
-                                  width: double.maxFinite,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1,
-                                      color: kAdeoGreen4,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Retake",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: kAdeoGreen4,
-                                        fontWeight: FontWeight.w500,
+                                    } else if (marathon.type.toString() ==
+                                        marathonMockType.toString()) {}
+                                    break;
+                                  case CompletedActivityType.TREADMILL:
+                                    TreadmillController treadmillController =
+                                        TreadmillController(
+                                      _user,
+                                      course,
+                                    );
+                                    String? treadmillTestCategory =
+                                        completedActivity
+                                            .treadmill!.challengeType;
+                                    int topicId = jsonDecode(completedActivity
+                                        .treadmill!
+                                        .responses)["Q1"]["topic_id"];
+
+                                    late TreadmillMode treadmillMode;
+                                    print(treadmillTestCategory.runtimeType);
+
+                                    if (treadmillTestCategory ==
+                                        "TestCategory.TOPIC") {
+                                      treadmillMode = TreadmillMode.TOPIC;
+                                    } else if (treadmillTestCategory ==
+                                        "TestCategory.MOCK") {
+                                      treadmillMode = TreadmillMode.MOCK;
+                                    } else {
+                                      treadmillMode = TreadmillMode.BANK;
+                                    }
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return TreadmillTime(
+                                            controller: treadmillController,
+                                            mode: treadmillMode,
+                                            count: treadmillController
+                                                .countQuestions,
+                                            topic: topic,
+                                            topicId: topicId,
+                                            bankId: topicId,
+                                          );
+                                        },
                                       ),
+                                    );
+                                    break;
+                                  default:
+                                    break;
+                                }
+                              }),
+                              child: Container(
+                                width: double.maxFinite,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: kAdeoGreen4,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Retake",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: kAdeoGreen4,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
+                            )
                           ],
                         )
                       ],
@@ -251,13 +385,13 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                     child: InkWell(
                       onTap: (() {
                         switch (completedActivity.activityType) {
-                          case "MARATHON":
+                          case CompletedActivityType.MARATHON:
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (c) {
                               return MarathonIntroit(_user, course);
                             }));
                             break;
-                          case "TREADMILL":
+                          case CompletedActivityType.TREADMILL:
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -321,14 +455,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
     );
   }
 
-  List<CompletedActivity> completedActivities = [];
-  List<Marathon> marathons = [];
-  List<TestTaken> treadmills = [];
-  bool isLoadingCompletedActivities = true;
-  late CompletedActivityList completedMarathons;
-  late CompletedActivityList completedTreadmills;
-  late Topic? topic;
-
   Future loadCompletedActivities() async {
     await getCompletedMarathons();
     await getCompletedTreadmills();
@@ -350,7 +476,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
           topic = await TopicDB().getTopicById(completedMarathon.topicId!);
 
           Map<String, dynamic> completedMarathonJSON = {
-            "activityType": CompletedActivityType.MARATHON.name,
+            "activityType": CompletedActivityType.MARATHON,
             "courseId": completedMarathon.courseId,
             "activityStartTime": completedMarathon.startTime!.toIso8601String(),
             "marathon": completedMarathon,
@@ -365,7 +491,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   }
 
   getCompletedTreadmills() {
-    TestTakenDB().courseTestsTaken().then((mList) {
+    TestTakenDB().courseTestsTaken().then((mList) async {
       treadmills = mList;
 
       Map<String, dynamic> completedTreadmillsMap = {
@@ -375,11 +501,16 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
           CompletedActivityList.fromJson(completedTreadmillsMap);
 
       for (var completedTreadmill in completedTreadmills.treadmills!) {
+        int topicId =
+            jsonDecode(completedTreadmill.responses)["Q1"]["topic_id"];
+        topic = await TopicDB().getTopicById(topicId);
+
         Map<String, dynamic> completedTreadmillJSON = {
-          "activityType": CompletedActivityType.TREADMILL.name,
+          "activityType": CompletedActivityType.TREADMILL,
           "courseId": completedTreadmill.courseId,
           "activityStartTime": completedTreadmill.updatedAt!.toIso8601String(),
           "treadmill": completedTreadmill,
+          "topic": topic,
         };
         CompletedActivity completedTreadmillObject =
             CompletedActivity.fromJson(completedTreadmillJSON);
@@ -446,7 +577,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                       String activityTitle;
 
                       switch (completedActivity.activityType) {
-                        case "MARATHON":
+                        case CompletedActivityType.MARATHON:
                           activityTitle =
                               completedActivity.marathon!.title.toString();
                           ;
@@ -472,7 +603,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               },
                             ),
                           );
-                        case "TREADMILL":
+                        case CompletedActivityType.TREADMILL:
                           activityTitle =
                               completedActivity.treadmill!.testname.toString();
                           ;
@@ -504,7 +635,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             ),
                             child: ActivityCourseCard(
                               courseTitle: "Title",
-                              activityType: "Type",
+                              activityType: CompletedActivityType.MARATHON,
                               iconUrl: 'assets/icons/courses/learn.png',
                               onTap: () {
                                 showTapActions(

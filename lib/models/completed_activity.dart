@@ -39,7 +39,7 @@ class CompletedActivity {
     // this.autopilot,
   });
 
-  String? activityType;
+  CompletedActivityType? activityType;
   int? courseId;
   DateTime? activityStartTime;
   Marathon? marathon;
@@ -50,7 +50,7 @@ class CompletedActivity {
   factory CompletedActivity.fromJson(Map<String, dynamic> json) =>
       CompletedActivity(
         activityType: json["activityType"] == null
-            ? CompletedActivityType.MARATHON.name
+            ? CompletedActivityType.MARATHON
             : json["activityType"],
         courseId: json["courseId"] == null ? null : json["courseId"],
         activityStartTime: json["start_time"] == null

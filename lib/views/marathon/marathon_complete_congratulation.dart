@@ -1,4 +1,6 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/revamp/features/home/components/completed_activities_tab.dart';
+import 'package:ecoach/revamp/features/home/view/screen/homepage.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
@@ -18,7 +20,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         Navigator.popUntil(
-            context, ModalRoute.withName(CoursesDetailsPage.routeName));
+            context, ModalRoute.withName(HomePage2.routeName));
         return true;
       },
       child: Scaffold(
@@ -37,7 +39,7 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   fontSize: 14,
                   onPressed: () {
                     Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                        ModalRoute.withName(HomePage2.routeName));
                   },
                 ),
                 SizedBox(width: 10),

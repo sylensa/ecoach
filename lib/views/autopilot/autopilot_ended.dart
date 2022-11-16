@@ -160,7 +160,6 @@ class AutopilotEnded extends StatelessWidget {
                     background: kAdeoBlue,
                     onPressed: () {
                       controller.updateCurrentTopic();
-
                       Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (c) {
                         return AutopilotTopicMenu(controller: controller);

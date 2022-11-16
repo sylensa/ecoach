@@ -5,7 +5,6 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
-import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -40,7 +39,7 @@ class MarathonEnded extends StatelessWidget {
                   fontSize: 14,
                   onPressed: () {
                     Navigator.popUntil(context,
-                        ModalRoute.withName(MainHomePage.routeName));
+                        ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                 ),
                 SizedBox(width: 10),
@@ -119,7 +118,7 @@ class MarathonEnded extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        Expanded (
+                        Expanded(
                           child: AdeoTextButton(
                             label: 'review',
                             fontSize: 20,
