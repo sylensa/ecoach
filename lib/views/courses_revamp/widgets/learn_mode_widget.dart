@@ -226,87 +226,85 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                    child: CourseDetailCard(
-                      courseDetail: learnModeDetails[0],
-                      onTap: () async {
-                        setState(() {
-                          studyType = StudyType.REVISION;
-                        });
-                        await letGo();
-                      },
-                    ),
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  child: CourseDetailCard(
+                    courseDetail: learnModeDetails[0],
+                    onTap: () async {
+                      setState(() {
+                        studyType = StudyType.REVISION;
+                      });
+                      await letGo();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                    child: CourseDetailCard(
-                      courseDetail: learnModeDetails[1],
-                      onTap: () async {
-                        setState(() {
-                          studyType = StudyType.COURSE_COMPLETION;
-                        });
-                        await letGo();
-                      },
-                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  child: CourseDetailCard(
+                    courseDetail: learnModeDetails[1],
+                    onTap: () async {
+                      setState(() {
+                        studyType = StudyType.COURSE_COMPLETION;
+                      });
+                      await letGo();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                    child: CourseDetailCard(
-                      courseDetail: learnModeDetails[2],
-                      onTap: () async {
-                        setState(() {
-                          studyType = StudyType.SPEED_ENHANCEMENT;
-                        });
-                        await letGo();
-                      },
-                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  child: CourseDetailCard(
+                    courseDetail: learnModeDetails[2],
+                    onTap: () async {
+                      setState(() {
+                        studyType = StudyType.SPEED_ENHANCEMENT;
+                      });
+                      await letGo();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                    child: CourseDetailCard(
-                      courseDetail: learnModeDetails[3],
-                      onTap: () async {
-                        setState(() {
-                          studyType = StudyType.MASTERY_IMPROVEMENT;
-                        });
-                        await letGo();
-                      },
-                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
+                  child: CourseDetailCard(
+                    courseDetail: learnModeDetails[3],
+                    onTap: () async {
+                      setState(() {
+                        studyType = StudyType.MASTERY_IMPROVEMENT;
+                      });
+                      await letGo();
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          // if (studyType != StudyType.NONE)
-          //   SizedBox(
-          //     width: 150,
-          //     height: 44,
-          //     child: OutlinedButton(
-          //       style: ButtonStyle(
-          //         foregroundColor: MaterialStateProperty.all(getButtonColor(studyType)),
-          //         side: MaterialStateProperty.all(BorderSide(
-          //             color: getButtonColor(studyType),
-          //             width: 1,
-          //             style: BorderStyle.solid)),
-          //       ),
-          //       onPressed: () async {
-          //
-          //       },
-          //       child: Text(
-          //         "Let's go",
-          //       ),
-          //     ),
-          //   ),
-        ],
-      ),
+        ),
+        // if (studyType != StudyType.NONE)
+        //   SizedBox(
+        //     width: 150,
+        //     height: 44,
+        //     child: OutlinedButton(
+        //       style: ButtonStyle(
+        //         foregroundColor: MaterialStateProperty.all(getButtonColor(studyType)),
+        //         side: MaterialStateProperty.all(BorderSide(
+        //             color: getButtonColor(studyType),
+        //             width: 1,
+        //             style: BorderStyle.solid)),
+        //       ),
+        //       onPressed: () async {
+        //
+        //       },
+        //       child: Text(
+        //         "Let's go",
+        //       ),
+        //     ),
+        //   ),
+      ],
     );
   }
 }

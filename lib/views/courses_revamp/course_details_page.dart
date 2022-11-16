@@ -52,7 +52,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   List<Topic> topics = [];
   bool topicsProgressCode = true;
   bool isTopicSelected = true;
-  PageController pageController = PageController();
+  // PageController pageController = PageController();
+  int currentPageNumber = 0;
+  PageController pageController = PageController(initialPage: 0);
+  PageController pageControllerView = PageController(initialPage: 0);
+
   Future? stats;
   Map<String, Widget> getPage() {
     switch (_currentPage) {
@@ -233,6 +237,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     listCourseDetails.add(courseDetails[0]);
     setProviderValues(course!);
     getAnalysisStats();
+
+
+
   }
 
   @override
@@ -335,16 +342,14 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
-                  controller: pageController,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {
-                        if (index >= _currentPage) {
-                          pageController.animateTo(appWidth(context) / 10,
-                              duration: new Duration(microseconds: 1),
-                              curve: Curves.easeIn);
-                        } else {
-                          pageController.jumpTo(0.0);
+                  controller: pageControllerView,
+                  itemBuilder: (BuildContext context, int index){
+                    return    GestureDetector(
+                      onTap: (){
+                        if(index >= _currentPage){
+                          pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                        }else{
+                          pageControllerView.jumpTo(0.0);
                         }
                         setState(() {
                           _currentPage = index;
@@ -353,7 +358,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                             listCourseDetails.clear();
                             listCourseDetails.add(courseDetails[index]);
                           }
+
+
                         });
+                        pageController.jumpToPage(index);
+
                       },
                       child: Row(
                         children: [
@@ -412,9 +421,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     );
                   }),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20,),
             getPage().values.first
           ],
         ),

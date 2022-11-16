@@ -48,78 +48,76 @@ class _NoteWidgetState extends State<NoteWidget> {
     // getNotesTopics();
     return
       widget.topics.isNotEmpty ?
-      Expanded(
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount:  widget.topics.length,
-                    itemBuilder: (BuildContext context, int index){
-                      return Column(
-                        children: [
-                          MaterialButton(
-                            onPressed: (){
-                              NotesReadDB().insert(NotesRead(
-                                  courseId:  widget.topics[index].courseId,
-                                  name:  widget.topics[index].name,
-                                  notes:  widget.topics[index].notes,
-                                  topicId:  widget.topics[index].id,
-                                  createdAt: DateTime.now(),
-                                  updatedAt: DateTime.now()));
+      Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount:  widget.topics.length,
+                itemBuilder: (BuildContext context, int index){
+                  return Column(
+                    children: [
+                      MaterialButton(
+                        onPressed: (){
+                          NotesReadDB().insert(NotesRead(
+                              courseId:  widget.topics[index].courseId,
+                              name:  widget.topics[index].name,
+                              notes:  widget.topics[index].notes,
+                              topicId:  widget.topics[index].id,
+                              createdAt: DateTime.now(),
+                              updatedAt: DateTime.now()));
 
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return NoteView(widget.user, widget.topics[index]);
-                                  });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Row(
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return NoteView(widget.user, widget.topics[index]);
+                              });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: appWidth(context) * 0.70,
-                                        child: sText("${widget.topics[index].name}"),
-                                      ),
-                                    ],
+                                  Container(
+                                    width: appWidth(context) * 0.70,
+                                    child: sText("${widget.topics[index].name}"),
                                   ),
-
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Image.asset('assets/icons/courses/learn.png',width: 35,height: 35,),
-                                      SizedBox(height: 10,),
-                                      Container(
-                                        child: Icon(Icons.check,color: Colors.white,),
-                                        decoration: BoxDecoration(
-                                            color: Colors.green,
-                                            shape: BoxShape.circle
-                                        ),
-                                      )
-                                    ],
-                                  )
                                 ],
                               ),
-                            ),
+
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Image.asset('assets/icons/courses/learn.png',width: 35,height: 35,),
+                                  SizedBox(height: 10,),
+                                  Container(
+                                    child: Icon(Icons.check,color: Colors.white,),
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        shape: BoxShape.circle
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
                           ),
-                          SizedBox(height: 15,),
-                        ],
-                      );
-                    }),
-              ),
+                        ),
+                      ),
+                      SizedBox(height: 15,),
+                    ],
+                  );
+                }),
+          ),
 
 
-            ],
-          )
+        ],
       ) :
       topicsProgressCode ?
       Center(child: progress()) :

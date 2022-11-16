@@ -42,7 +42,7 @@ class _MarathonCompletedState extends State<MarathonCompleted> {
   void initState() {
     showInPercentage = false;
 
-    MarathonDB().completedMarathons(widget.course).then((mList) {
+    MarathonDB().completedMarathons(course: widget.course).then((mList) {
       setState(() {
         marathons = mList;
       });

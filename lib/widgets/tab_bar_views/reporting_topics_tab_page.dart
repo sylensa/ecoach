@@ -77,7 +77,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
   @override
   void initState() {
     showInPercentage = false;
-    tests = TestTakenDB().courseTestsTaken(widget.course.id!);
+    tests = TestTakenDB().courseTestsTaken(courseId: widget.course.id!);
     super.initState();
   }
 

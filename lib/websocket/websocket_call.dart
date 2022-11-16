@@ -30,7 +30,6 @@ class WebsocketCall {
     print("connecting websocket ....");
     this.user = user;
     this.channel = channel;
-
     if (_channel == null) {
       _channel = IOWebSocketChannel.connect(Uri.parse(AppUrl.websocket));
       print('connecting ....');

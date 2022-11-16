@@ -20,7 +20,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class ProgressChart extends StatefulWidget {
-   ProgressChart({
+  ProgressChart({
     required this.subscriptions,
     required this.user,
     this.selectedSubscription,
@@ -29,7 +29,7 @@ class ProgressChart extends StatefulWidget {
   }) : super(key: key);
 
   final List<SubscriptionItem> subscriptions;
-   SubscriptionItem? selectedSubscription;
+  SubscriptionItem? selectedSubscription;
   final dynamic updateState;
   final User user;
 
@@ -50,19 +50,20 @@ class _ProgressChartState extends State<ProgressChart> {
     testData.clear();
     testdata.clear();
     print("periodperiod:$progressType");
-    if(course == null){
+    if (course == null) {
       testData = await TestTakenDB().getAllAverageScore();
-    }else{
-      testData = await TestTakenDB().getAllAverageScore(courseId: course!.id.toString());
+    } else {
+      testData = await TestTakenDB()
+          .getAllAverageScore(courseId: course!.id.toString());
     }
     print("testData len:${testData.length}");
     if (progressType == "exam") {
       List<TestTaken> graphResultData = [];
       graphResultData = testData
           .where((element) =>
-      element.challengeType == TestCategory.EXAM.toString() ||
-          element.challengeType == TestCategory.MOCK.toString() ||
-          element.challengeType == TestCategory.NONE.toString())
+              element.challengeType == TestCategory.EXAM.toString() ||
+              element.challengeType == TestCategory.MOCK.toString() ||
+              element.challengeType == TestCategory.NONE.toString())
           .toList();
       for (int i = 0; i < graphResultData.length; i++) {
         final test = graphResultData[i];
@@ -73,10 +74,12 @@ class _ProgressChartState extends State<ProgressChart> {
           ),
         );
       }
-    }
-    else if (progressType == "topic") {
+    } else if (progressType == "topic") {
       List<TestTaken> graphResultData = [];
-      graphResultData = testData.where((element) => element.challengeType == TestCategory.TOPIC.toString()).toList();
+      graphResultData = testData
+          .where((element) =>
+              element.challengeType == TestCategory.TOPIC.toString())
+          .toList();
       for (int i = 0; i < graphResultData.length; i++) {
         final test = graphResultData[i];
         dummyData2.add(
@@ -86,15 +89,14 @@ class _ProgressChartState extends State<ProgressChart> {
           ),
         );
       }
-    }
-    else if (progressType == "other") {
+    } else if (progressType == "other") {
       List<TestTaken> graphResultData = [];
       graphResultData = testData
           .where((element) =>
-      element.challengeType != TestCategory.TOPIC.toString() &&
-          element.challengeType != TestCategory.EXAM.toString() &&
-          element.challengeType != TestCategory.MOCK.toString() &&
-          element.challengeType != TestCategory.NONE.toString())
+              element.challengeType != TestCategory.TOPIC.toString() &&
+              element.challengeType != TestCategory.EXAM.toString() &&
+              element.challengeType != TestCategory.MOCK.toString() &&
+              element.challengeType != TestCategory.NONE.toString())
           .toList();
       for (int i = 0; i < graphResultData.length; i++) {
         final test = graphResultData[i];
@@ -122,6 +124,7 @@ class _ProgressChartState extends State<ProgressChart> {
 
     setState(() {});
   }
+
   getCourseById(int id) {
     return CourseDB().getCourseById(id);
   }
@@ -154,25 +157,24 @@ class _ProgressChartState extends State<ProgressChart> {
     );
   }
 
-  getUserTestTakenResults()async{
-  listTestTaken =  await GroupManagementController().getTestTaken();
-   getAverageStats("exam");
-   getAverageStats("topic");
-   getAverageStats("other");
-  setState(() {
-
-  });
+  getUserTestTakenResults() async {
+    listTestTaken = await GroupManagementController().getTestTaken();
+    getAverageStats("exam");
+    getAverageStats("topic");
+    getAverageStats("other");
+    setState(() {});
   }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(listTestTaken.isEmpty){
+    if (listTestTaken.isEmpty) {
       getUserTestTakenResults();
-    }else{
-       getAverageStats("exam");
-       getAverageStats("topic");
-       getAverageStats("other");
+    } else {
+      getAverageStats("exam");
+      getAverageStats("topic");
+      getAverageStats("other");
     }
   }
 
@@ -211,15 +213,21 @@ class _ProgressChartState extends State<ProgressChart> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SectionHeading('your progress'),
-                        // SizedBox(width: 40),
-                       if( widget.selectedSubscription == null)
-                         LoadingProgressIndicator(
-                          activeColor: kAdeoCoral,
-                          backgroundColor: kShadowColor,
-                          size: 20,
-                          strokeWidth: 3,
+                        SectionHeading(
+                          'your progress',
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18
+                          ),
                         ),
+                        // SizedBox(width: 40),
+                        if (widget.selectedSubscription == null)
+                          LoadingProgressIndicator(
+                            activeColor: kAdeoCoral,
+                            backgroundColor: kShadowColor,
+                            size: 20,
+                            strokeWidth: 3,
+                          ),
                         SectionHeaderTextButton(
                           label: 'View Details',
                           textStyle: appStyle(col: Color(0xFF1182D8)),
@@ -233,22 +241,18 @@ class _ProgressChartState extends State<ProgressChart> {
                             );
                           },
                         ),
-
                       ],
                     ),
                     SizedBox(height: 0),
-
-                    if(  widget.selectedSubscription != null)
+                    if (widget.selectedSubscription != null)
                       AdeoDropDown(
                         value: widget.selectedSubscription!,
                         items: widget.subscriptions,
-                        onChanged: (item) async{
+                        onChanged: (item) async {
                           print("selectedSubscription:${item.tag}");
                           widget.selectedSubscription = item;
                           course = await getCourseById(int.parse(item.tag!));
-                          setState(() {
-
-                          });
+                          setState(() {});
                           dummyData1.clear();
                           dummyData2.clear();
                           dummyData3.clear();
@@ -258,7 +262,6 @@ class _ProgressChartState extends State<ProgressChart> {
                         },
                       ),
                     SizedBox(height: 10),
-
                   ],
                 ),
                 // Expanded(child: SizedBox()),
@@ -286,80 +289,82 @@ class _ProgressChartState extends State<ProgressChart> {
             ),
           ),
           SizedBox(height: 20),
-          if(dummyData1.isNotEmpty || dummyData2.isNotEmpty || dummyData3.isNotEmpty)
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                backgroundColor: kPageBackgroundGray2,
-                borderData: FlBorderData(show: false),
-                gridData: FlGridData(
-                  drawHorizontalLine: true,
-                  horizontalInterval: 1,
-                  getDrawingHorizontalLine: (val) {
-                    return FlLine(
-                      strokeWidth: 1,
-                      color: Color(0xFFE5EFFE),
-                    );
-                  },
-                  drawVerticalLine: false,
+          if (dummyData1.isNotEmpty ||
+              dummyData2.isNotEmpty ||
+              dummyData3.isNotEmpty)
+            Expanded(
+              child: LineChart(
+                LineChartData(
+                  backgroundColor: Colors.transparent,
+                  borderData: FlBorderData(show: false),
+                  gridData: FlGridData(
+                    drawHorizontalLine: false,
+                    horizontalInterval: 1,
+                    getDrawingHorizontalLine: (val) {
+                      return FlLine(
+                        strokeWidth: 1,
+                        color: Color(0xFFE5EFFE),
+                      );
+                    },
+                    drawVerticalLine: false,
+                  ),
+                  titlesData: FlTitlesData(
+                    rightTitles: SideTitles(showTitles: false),
+                    topTitles: SideTitles(showTitles: false),
+                    leftTitles: SideTitles(
+                      showTitles: true,
+                      getTextStyles: (BuildContext context, value) =>
+                          sideTitleStyle,
+                      margin: 12,
+                      interval: 10,
+                    ),
+                    bottomTitles: SideTitles(
+                      showTitles: true,
+                      // getTitles: (double value) {
+                      //   debugPrint(value.toInt().toString());
+                      //   return value.toInt().toString();
+                      //   // return widget
+                      //   //     .testData![(value - 1).toInt()].testname!;
+                      // },
+                      getTextStyles: (BuildContext context, value) =>
+                          sideTitleStyle,
+                      margin: 24,
+                      interval: 1,
+                    ),
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      isCurved: true,
+                      colors: [lineColors[0]],
+                      barWidth: 4,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(show: false),
+                      aboveBarData: BarAreaData(show: false),
+                      belowBarData: BarAreaData(show: false),
+                      spots: dummyData1,
+                    ),
+                    LineChartBarData(
+                      isCurved: true,
+                      colors: [lineColors[1]],
+                      barWidth: 4,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(show: false),
+                      belowBarData: BarAreaData(show: false),
+                      spots: dummyData2,
+                    ),
+                    LineChartBarData(
+                      isCurved: true,
+                      colors: [lineColors[2]],
+                      barWidth: 4,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(show: false),
+                      belowBarData: BarAreaData(show: false),
+                      spots: dummyData3,
+                    ),
+                  ],
                 ),
-                titlesData: FlTitlesData(
-                  rightTitles: SideTitles(showTitles: false),
-                  topTitles: SideTitles(showTitles: false),
-                  leftTitles: SideTitles(
-                    showTitles: true,
-                    getTextStyles: (BuildContext context, value) =>
-                        sideTitleStyle,
-                    margin: 12,
-                    interval: 10,
-                  ),
-                  bottomTitles: SideTitles(
-                    showTitles: true,
-                    // getTitles: (double value) {
-                    //   debugPrint(value.toInt().toString());
-                    //   return value.toInt().toString();
-                    //   // return widget
-                    //   //     .testData![(value - 1).toInt()].testname!;
-                    // },
-                    getTextStyles: (BuildContext context, value) =>
-                        sideTitleStyle,
-                    margin: 24,
-                    interval: 1,
-                  ),
-                ),
-                lineBarsData: [
-                  LineChartBarData(
-                    isCurved: true,
-                    colors: [lineColors[0]],
-                    barWidth: 4,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                    aboveBarData: BarAreaData(show: false),
-                    belowBarData: BarAreaData(show: false),
-                    spots: dummyData1,
-                  ),
-                  LineChartBarData(
-                    isCurved: true,
-                    colors: [lineColors[1]],
-                    barWidth: 4,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                    belowBarData: BarAreaData(show: false),
-                    spots: dummyData2,
-                  ),
-                  LineChartBarData(
-                    isCurved: true,
-                    colors: [lineColors[2]],
-                    barWidth: 4,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                    belowBarData: BarAreaData(show: false),
-                    spots: dummyData3,
-                  ),
-                ],
               ),
-            ),
-          )
+            )
           else
             Expanded(
               child: Center(

@@ -490,6 +490,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                         child: ExpansionTile(
                                           textColor: Colors.white,
                                           iconColor: kAdeoGray3,
+                                          initiallyExpanded: true,
                                           collapsedBackgroundColor: Colors.white,
                                           collapsedIconColor: kAdeoGray3,
                                           backgroundColor: Colors.white,
@@ -545,6 +546,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
                                       child: ExpansionTile(
                                         textColor: Colors.white,
                                         iconColor: Colors.white,
+                                        initiallyExpanded: true,
                                         collapsedIconColor: Colors.white,
                                         title: const Text(
                                           'Solution',

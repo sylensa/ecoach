@@ -115,10 +115,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                       testType = TestType.UNSEEN;
                                       listQuestions = await QuestionDB().getConquestQuestionByCorrectUnAttempted(widget.course.id!,confirm: 0,unseen: true);
                                      print("listQuestions:${listQuestions.length}");
-                                      if(listQuestions.isEmpty){
-                                        listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                                        print("$testType:$listQuestions");
-                                      }
+                                      // if(listQuestions.isEmpty){
+                                      //   listQuestions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                                      //   print("$testType:$listQuestions");
+                                      // }
                                     }
                                     else if(conquestTypes[index].name.toUpperCase() == "UNANSWERED"){
                                       testType = TestType.UNANSWERED;
@@ -180,172 +180,170 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          MultiPurposeCourseCard(
-            title: 'Speed',
-            subTitle: 'Accuracy matters , don\'t let the clock run down',
-            iconURL: 'assets/icons/courses/speed.png',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SpeedTestIntro(
-                      user: widget.user,
-                      course: widget.course,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Knowledge',
-            subTitle: 'Standard test',
-            iconURL: 'assets/icons/courses/knowledge.png',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return TestChallengeList(
-                      testType: TestType.KNOWLEDGE,
-                      course: widget.course,
-                      user: widget.user,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Marathon',
-            subTitle: 'Race to complete all questions',
-            iconURL: 'assets/icons/courses/marathon.png',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return MarathonIntroit(widget.user, widget.course);
-                  },
-                ),
-              );
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Autopilot',
-            subTitle: 'Completing a course one topic at a time',
-            iconURL: 'assets/icons/courses/autopilot.png',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return AutopilotIntroit(widget.user, widget.course);
-                  },
-                ),
-              );
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Treadmill',
-            subTitle: 'Crank up the speed, how far can you go?',
-            iconURL: 'assets/icons/courses/treadmill.png',
-            onTap: () async {
-              Treadmill? treadmill =
-                  await TestController().getCurrentTreadmill(widget.course);
-              if (treadmill == null) {
-                return Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TreadmillWelcome(
-                      user: widget.user,
-                      course: widget.course,
-                    ),
-                  ),
-                );
-              } else {
-                return Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TreadmillSaveResumptionMenu(
-                      controller: TreadmillController(
-                        widget.user,
-                        widget.course,
-                        name: widget.course.name!,
-                        treadmill: treadmill,
-                      ),
-                    ),
-                  ),
-                );
-              }
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Customised',
-            subTitle: 'Create your own kind of quiz',
-            iconURL: 'assets/icons/courses/customised.png',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return CustomizedTestIntroit(
-                      user: widget.user,
-                      course: widget.course,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Timeless',
-            subTitle: 'Practice mode, no pressure.',
-            iconURL: 'assets/icons/courses/untimed.png',
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return TestChallengeList(
-                      testType: TestType.UNTIMED,
-                      course: widget.course,
-                      user: widget.user,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Review',
-            subTitle: 'Know the answer to every question',
-            iconURL: 'assets/icons/courses/review.png',
-            onTap: () {
-              goTo(
-                  context,
-                  ReviewOnBoarding(
+    return ListView(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      children: [
+        MultiPurposeCourseCard(
+          title: 'Speed',
+          subTitle: 'Accuracy matters , don\'t let the clock run down',
+          iconURL: 'assets/icons/courses/speed.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return SpeedTestIntro(
                     user: widget.user,
                     course: widget.course,
-                    testType: TestType.NONE,
-                  ));
-            },
-          ),
-          MultiPurposeCourseCard(
-            title: 'Conquest',
-            subTitle: 'Prepare for battle, attempt everything',
-            iconURL: 'assets/icons/courses/conquest.png',
-            onTap: () {
-              conquestModalBottomSheet(context);
-            },
-          ),
-        ],
-      ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Knowledge',
+          subTitle: 'Standard test',
+          iconURL: 'assets/icons/courses/knowledge.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return TestChallengeList(
+                    testType: TestType.KNOWLEDGE,
+                    course: widget.course,
+                    user: widget.user,
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Marathon',
+          subTitle: 'Race to complete all questions',
+          iconURL: 'assets/icons/courses/marathon.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return MarathonIntroit(widget.user, widget.course);
+                },
+              ),
+            );
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Autopilot',
+          subTitle: 'Completing a course one topic at a time',
+          iconURL: 'assets/icons/courses/autopilot.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return AutopilotIntroit(widget.user, widget.course);
+                },
+              ),
+            );
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Treadmill',
+          subTitle: 'Crank up the speed, how far can you go?',
+          iconURL: 'assets/icons/courses/treadmill.png',
+          onTap: () async {
+            Treadmill? treadmill =
+                await TestController().getCurrentTreadmill(widget.course);
+            if (treadmill == null) {
+              return Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TreadmillWelcome(
+                    user: widget.user,
+                    course: widget.course,
+                  ),
+                ),
+              );
+            } else {
+              return Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TreadmillSaveResumptionMenu(
+                    controller: TreadmillController(
+                      widget.user,
+                      widget.course,
+                      name: widget.course.name!,
+                      treadmill: treadmill,
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Customised',
+          subTitle: 'Create your own kind of quiz',
+          iconURL: 'assets/icons/courses/customised.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return CustomizedTestIntroit(
+                    user: widget.user,
+                    course: widget.course,
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Timeless',
+          subTitle: 'Practice mode, no pressure.',
+          iconURL: 'assets/icons/courses/untimed.png',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return TestChallengeList(
+                    testType: TestType.UNTIMED,
+                    course: widget.course,
+                    user: widget.user,
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Review',
+          subTitle: 'Know the answer to every question',
+          iconURL: 'assets/icons/courses/review.png',
+          onTap: () {
+            goTo(
+                context,
+                ReviewOnBoarding(
+                  user: widget.user,
+                  course: widget.course,
+                  testType: TestType.NONE,
+                ));
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Conquest',
+          subTitle: 'Prepare for battle, attempt everything',
+          iconURL: 'assets/icons/courses/conquest.png',
+          onTap: () {
+            conquestModalBottomSheet(context);
+          },
+        ),
+      ],
     );
   }
 }
