@@ -29,7 +29,6 @@ import 'package:provider/provider.dart';
 
 import '../../controllers/quiz_controller.dart';
 import '../../database/study_db.dart';
-import '../../helper/helper.dart';
 import '../../models/course.dart';
 import '../../models/course_completion_study_progress.dart';
 import '../../models/flag_model.dart';
@@ -610,7 +609,8 @@ class _StudyQuizViewState extends State<StudyQuizView> {
   }
 
   completeQuiz() async {
-    await scoreCurrentQuestion(controller.questions[controller.currentQuestion]);
+    await scoreCurrentQuestion(
+        controller.questions[controller.currentQuestion]);
 
     setState(() {
       controller.enabled = false;
@@ -1040,8 +1040,9 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                       width: 6.2,
                     ),
                     SavedQuestionWidget(
-                      question:
-                          controller.questions[controller.currentQuestion],
+                      question: controller.questions.isEmpty
+                          ? null
+                          : controller.questions[controller.currentQuestion],
                     )
                   ],
                 ),

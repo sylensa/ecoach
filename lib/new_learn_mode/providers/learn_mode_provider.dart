@@ -79,7 +79,11 @@ class LearnModeProvider with ChangeNotifier {
 
   setCurrentCourse(Course course) {
     currentCourse = course;
-    notifyListeners();
+    try {
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 
   setCurrentStudyType(StudyType studyType) {
