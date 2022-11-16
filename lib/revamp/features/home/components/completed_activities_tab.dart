@@ -23,6 +23,7 @@ import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
 import 'package:ecoach/views/result_summary/below_pass_mark.dart';
 import 'package:ecoach/views/result_summary/result_summary.dart';
+import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
 import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
@@ -396,9 +397,12 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return TreadmillWelcome(
-                                    user: _user,
-                                    course: course,
+                                  return TreadmillPractiseMenu(
+                                    controller: TreadmillController(
+                                      _user,
+                                      course,
+                                      name: course.name!,
+                                    ),
                                   );
                                 },
                               ),
