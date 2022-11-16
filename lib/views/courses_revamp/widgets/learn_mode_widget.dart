@@ -17,6 +17,10 @@ import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../new_learn_mode/providers/learn_mode_provider.dart';
+import '../../../new_learn_mode/screens/speed_improvement/speed_completion_rules.dart';
 
 class LearnModeWidget extends StatefulWidget {
   static const String routeName = '/learning/mode';
@@ -111,6 +115,10 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
       progress = await StudyDB().getCurrentProgress(study.id!);
     }
 
+     Provider.of<LearnModeProvider>(context, listen: false)
+        .setCurrentProgress(progress!);
+
+
     return progress;
   }
 
@@ -142,8 +150,10 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
         if (progress == null) {
           return;
         }
-        view = LearnSpeed(widget.user, widget.course, progress);
+        // view = LearnSpeed(widget.user, widget.course, progress);
+        view = SpeedCompletionRules();
         break;
+
       case StudyType.MASTERY_IMPROVEMENT:
         StudyProgress? progress =
             await getStudyProgress(StudyType.MASTERY_IMPROVEMENT);

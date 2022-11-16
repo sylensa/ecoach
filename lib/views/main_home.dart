@@ -101,8 +101,7 @@ class _MainHomePageState extends State<MainHomePage>
     checkSubscription();
 
     WebsocketCall().addListener(this);
-    WebsocketCall()
-        .connect(user: widget.user, channel: "${widget.user.id}-subscription");
+    WebsocketCall().connect(user: widget.user, channel: "${widget.user.id}-subscription");
 
     super.initState();
   }
