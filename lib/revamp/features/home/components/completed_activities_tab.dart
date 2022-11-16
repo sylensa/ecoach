@@ -49,7 +49,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   late Topic? topic;
 
   viewResults(TestTaken testTaken, controller, test, diagnostic) {
-    if (testTaken!.score! >= 95) {
+    if (testTaken.score! >= 95) {
       goTo(
         context,
         ResultSummaryScreen(
@@ -64,7 +64,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
         ),
         replace: true,
       );
-    } else if (testTaken!.score! >= 80) {
+    } else if (testTaken.score! >= 80) {
       goTo(
         context,
         ResultSummaryScreen(
@@ -79,7 +79,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
         ),
         replace: true,
       );
-    } else if (testTaken!.score! >= 60) {
+    } else if (testTaken.score! >= 60) {
       goTo(
         context,
         ResultSummaryScreen(
@@ -94,7 +94,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
         ),
         replace: true,
       );
-    } else if (testTaken!.score! >= 40) {
+    } else if (testTaken.score! >= 40) {
       goTo(
         context,
         BelowPassMark(
