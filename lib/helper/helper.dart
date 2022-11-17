@@ -386,8 +386,8 @@ EdgeInsets appPadding(double size) {
 InputDecoration textDecorSuffix(
     {Color fillColor = Colors.white,
     String? hint,
-    Icon? icon,
-    Icon? suffIcon,
+    Widget? icon,
+    Widget? suffIcon,
     Color? suffIconColor,
     String prefix = '',
     String suffix = '',
@@ -400,11 +400,11 @@ InputDecoration textDecorSuffix(
     double top = 12.0,
     double radius = 0}) {
   return new InputDecoration(
-    suffixIcon: Container(
+    suffixIcon: suffIcon != null ? Container(
       child: suffIcon,
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(size)),
-    ),
+    ) : SizedBox.shrink(),
     prefixIcon: icon,
     prefixText: prefix,
     suffixText: suffix,

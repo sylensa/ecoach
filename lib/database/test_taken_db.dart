@@ -20,12 +20,41 @@ class TestTakenDB {
     return id;
   }
 
+  Future<int> insertKeywordTestTaken(TestTaken testTaken) async {
+    final Database? db = await DBProvider.database;
+
+    int id = await db!.insert(
+      'keyword_test_taken',
+      testTaken.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return id;
+  }
+
   Future<TestTaken?> getTestTakenById(int id) async {
     final db = await DBProvider.database;
     var result =
         await db!.query("tests_taken", where: "id = ?", whereArgs: [id]);
 
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
+  }
+  Future< List<TestTaken>> getKeywordTestTaken() async {
+    List<Map<String, dynamic>> result = [];
+    final db = await DBProvider.database;
+    // var result = await db!.rawQuery("select keyword_test_taken");
+     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken, SUM(correct) correct, SUM(wrong) wrong,SUM(unattempted) unattempted from keyword_test_taken GROUP by test_name");
+      print("result:$result");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < result.length; i++) {
+      TestTaken test = TestTaken.fromJson(result[i]);
+      test.score = result[i]["avg_score"]/result[i]["total_test_taken"];
+      test.userId =  result[i]["total_test_taken"];
+      tests.add(test);
+      print("object maps:${test.score}");
+    }
+
+    return tests;
   }
 
   Future<double> getAverageScore(int courseId) async {

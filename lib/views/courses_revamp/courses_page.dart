@@ -62,6 +62,7 @@ class _CoursesPageState extends State<CoursesPage> {
       });
   }
 
+
   @override
   void initState() {
     // TODO: implement initState
@@ -200,7 +201,8 @@ class _CoursesPageState extends State<CoursesPage> {
                                     },
                                   ),
                                 );
-                              } else {
+                              }
+                              else {
                                 showDialogYesNo(
                                     context: context,
                                     message: "Download course for this bundle",

@@ -212,8 +212,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   }
 
   setProviderValues(Course course) {
-    final welcomeProvider =
-        Provider.of<LearnModeProvider>(context, listen: false);
+    final welcomeProvider = Provider.of<LearnModeProvider>(context, listen: false);
 
     welcomeProvider.getTotalTopics(course);
 
@@ -235,7 +234,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     getNotesTopics(widget.courses[0]);
     course = widget.courses[0];
     listCourseDetails.add(courseDetails[0]);
-    setProviderValues(course!);
+    // setProviderValues(course!);
     getAnalysisStats();
 
 
@@ -422,7 +421,40 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   }),
             ),
             SizedBox(height: 20,),
-            Expanded(child: getPage().values.first)
+            Expanded(
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (page) {
+                  setState(() {
+                    print("currentPageNumber:$currentPageNumber");
+                    print("page:$page");
+                    if(page >= currentPageNumber){
+                      pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
+                    }else{
+                      pageControllerView.jumpTo(0.0);
+                    }
+
+                    if(!listCourseDetails.contains(courseDetails[page])){
+                      listCourseDetails.clear();
+                      listCourseDetails.add(courseDetails[page]);
+                    }
+                    currentPageNumber = page;
+
+                  });
+                },
+                children:  [
+              LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+              NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,),
+               TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+               LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+             GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+               ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,),
+
+
+                ],
+              ),
+            ),
+
           ],
         ),
       ),

@@ -133,6 +133,10 @@ class TestController {
     return QuizDB().getQuestions(quizId, limit!);
   }
 
+  Future<List<Question>> getKeywordQuestions(String keyword,) {
+    return QuestionDB().getQuestionByKeyword(keyword);
+  }
+
   Future<List<Question>> getMockQuestions(int courseId, {int? limit = 40}) {
     return QuestionDB().getRandomQuestions(courseId, limit!);
   }

@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 32, onOpen: (db) {},
+    return await openDatabase(path, version: 33, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -307,6 +307,33 @@ class DBProvider {
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
+
+      await db.execute("""CREATE TABLE 'keyword_test_taken' (
+        'id' INTEGER PRIMARY KEY,
+        'user_id' int NOT NULL,
+        'group_id' int DEFAULT NULL,
+        'date_time' varchar(255) NOT NULL,
+        'course_id' int NOT NULL,
+        'test_name' varchar(255) DEFAULT NULL,
+        'test_type' varchar(255) DEFAULT NULL,
+        'challenge_type' varchar(255) DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'test_time' int DEFAULT NULL,
+        'used_time' int DEFAULT NULL,
+        'pause_duration' int DEFAULT NULL,
+        'total_questions' int NOT NULL,
+        'score' double NOT NULL,
+        'correct' int NOT NULL,
+        'wrong' int NOT NULL,
+        'unattempted' int NOT NULL,
+        'responses' LONGTEXT NOT NULL,
+        'comment' text DEFAULT NULL,
+        'user_rank' int NULL,
+        'total_rank' int NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
       await db.execute("""CREATE TABLE 'conquest_tests_taken' (
         'id' INTEGER PRIMARY KEY,
         'user_id' int NOT NULL,
@@ -695,6 +722,60 @@ class DBProvider {
         'public' int NOT NULL DEFAULT '0',
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0'
+      ) """);
+        }
+        try {
+          await db.execute("""DROP TABLE 'keyword_test_taken'""");
+          await db.execute("""CREATE TABLE 'keyword_test_taken' (
+        'id' INTEGER PRIMARY KEY,
+        'user_id' int NOT NULL,
+        'group_id' int DEFAULT NULL,
+        'date_time' varchar(255) NOT NULL,
+        'course_id' int NOT NULL,
+        'test_name' varchar(255) DEFAULT NULL,
+        'test_type' varchar(255) DEFAULT NULL,
+        'challenge_type' varchar(255) DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'test_time' int DEFAULT NULL,
+        'used_time' int DEFAULT NULL,
+        'pause_duration' int DEFAULT NULL,
+        'total_questions' int NOT NULL,
+        'score' double NOT NULL,
+        'correct' int NOT NULL,
+        'wrong' int NOT NULL,
+        'unattempted' int NOT NULL,
+        'responses' LONGTEXT NOT NULL,
+        'comment' text DEFAULT NULL,
+        'user_rank' int NULL,
+        'total_rank' int NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        } catch (e) {
+          await db.execute("""CREATE TABLE 'keyword_test_taken' (
+        'id' INTEGER PRIMARY KEY,
+        'user_id' int NOT NULL,
+        'group_id' int DEFAULT NULL,
+        'date_time' varchar(255) NOT NULL,
+        'course_id' int NOT NULL,
+        'test_name' varchar(255) DEFAULT NULL,
+        'test_type' varchar(255) DEFAULT NULL,
+        'challenge_type' varchar(255) DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'test_time' int DEFAULT NULL,
+        'used_time' int DEFAULT NULL,
+        'pause_duration' int DEFAULT NULL,
+        'total_questions' int NOT NULL,
+        'score' double NOT NULL,
+        'correct' int NOT NULL,
+        'wrong' int NOT NULL,
+        'unattempted' int NOT NULL,
+        'responses' LONGTEXT NOT NULL,
+        'comment' text DEFAULT NULL,
+        'user_rank' int NULL,
+        'total_rank' int NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
       ) """);
         }
         try {

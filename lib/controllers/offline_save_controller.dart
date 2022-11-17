@@ -39,6 +39,14 @@ class OfflineSaveController {
     await OfflineDataDB().insert(OfflineData(dataId: id, dataType: "test_taken"));
   }
 
+  saveKeywordTestTaken(TestTaken test) async {
+    await TestTakenDB().insertKeywordTestTaken(test);
+    var res = await TestTakenDB().getKeywordTestTaken();
+    print("keyword res:$res");
+  }
+
+
+
   saveFlagQuestion(FlagData flagData) async {
     int id = 0;
      id = await QuizDB().insertFlag(flagData);

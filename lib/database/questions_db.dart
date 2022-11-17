@@ -126,6 +126,21 @@ class QuestionDB {
 
     return question;
   }
+  Future<List<Question>> getQuestionByKeyword(String keyword) async {
+    print("keyword:$keyword");
+    List<Question> questions = [];
+    final db = await DBProvider.database;
+    var result = await db!.rawQuery("select * from questions");
+    for(int i = 0; i < result.length; i++){
+      Question question = Question.fromJson(result[i]) ;
+      if(question.text!.toLowerCase().contains(keyword.toLowerCase())){
+        question.answers = await AnswerDB().questoinAnswers(question.id!);
+        questions.add(question);
+      }
+    }
+
+    return questions;
+  }
   Future<Question?> getQuestionByIdTopicId(int qid,int tid) async {
     final db = await DBProvider.database;
     var result = await db!.query("questions", where: "id = ? AND topic_id = ?", whereArgs: [qid,tid]);
