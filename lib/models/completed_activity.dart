@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
@@ -13,18 +14,18 @@ class CompletedActivityList {
   CompletedActivityList({
     this.marathons,
     this.treadmills,
-    // this.autopilot,
+    this.autopilots,
   });
 
   List<Marathon>? marathons;
   List<TestTaken>? treadmills;
-  // Autopilot? autopilot;
+  List<Autopilot>? autopilots;
 
   factory CompletedActivityList.fromJson(Map<String, dynamic> json) =>
       CompletedActivityList(
         marathons: json["marathons"] == null ? [] : json["marathons"],
         treadmills: json["treadmills"] == null ? [] : json["treadmills"],
-        // autopilot: json["autopilot"] == null ? null : json["autopilot"],
+        autopilots: json["autopilots"] == null ? [] : json["autopilots"],
       );
 }
 
@@ -36,7 +37,7 @@ class CompletedActivity {
     this.marathon,
     this.topic,
     this.treadmill,
-    // this.autopilot,
+    this.autopilot,
   });
 
   CompletedActivityType? activityType;
@@ -45,7 +46,7 @@ class CompletedActivity {
   Marathon? marathon;
   TestTaken? treadmill;
   Topic? topic;
-  // Autopilot? autopilot;
+  Autopilot? autopilot;
 
   factory CompletedActivity.fromJson(Map<String, dynamic> json) =>
       CompletedActivity(
@@ -59,7 +60,7 @@ class CompletedActivity {
         marathon: json["marathon"] == null ? null : json["marathon"],
         treadmill: json["treadmill"] == null ? null : json["treadmill"],
         topic: json["topic"],
-        // autopilot: json["autopilot"] == null ? null : json["autopilot"],
+        autopilot: json["autopilot"] == null ? null : json["autopilot"],
       );
 
   Map<String, dynamic> toJson(activity) {
@@ -67,9 +68,10 @@ class CompletedActivity {
       'activityType': activityType,
       'courseId': courseId,
       'start_time': activityStartTime,
+      'topic': topic,
       'marathon': activity,
       'treadmill': treadmill,
-      'topic': topic,
+      'autopilot': autopilot,
     };
   }
 }

@@ -422,7 +422,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   }),
             ),
             SizedBox(height: 20,),
-            getPage().values.first
+            Expanded(child: getPage().values.first)
           ],
         ),
       ),

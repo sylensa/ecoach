@@ -231,15 +231,28 @@ class AutopilotDB {
     return autopilots;
   }
 
-  Future<List<Autopilot>> completedAutopilots(Course course) async {
+  Future<List<Autopilot>> completedAutopilots({Course? course}) async {
     final Database? db = await DBProvider.database;
-    print("course id = ${course.id}");
-    final List<Map<String, dynamic>> maps = await db!.query('autopilots',
-        orderBy: "start_time DESC",
-        where: "course_id = ? AND status = ? ",
-        whereArgs: [course.id, AutopilotStatus.COMPLETED.toString()]);
+    final List<Map<String, dynamic>> maps;
 
-    print('course len=${maps.length}');
+    if (course != null) {
+      print("course id = ${course.id}");
+      maps = await db!.query('autopilots',
+          orderBy: "start_time DESC",
+          where: "course_id = ? AND status = ? ",
+          whereArgs: [course.id, AutopilotStatus.COMPLETED.toString()]);
+
+      // print('course len=${maps.length}');
+    } else {
+      maps = await db!.query('autopilots',
+          orderBy: "start_time DESC",
+          distinct: true,
+          where: "status = ? ",
+          groupBy: "topic_id",
+          whereArgs: [AutopilotStatus.COMPLETED.toString()]);
+          print(maps);
+    }
+
     List<Autopilot> autopilots = [];
     for (int i = 0; i < maps.length; i++) {
       Autopilot autopilot = Autopilot.fromJson(maps[i]);
