@@ -592,8 +592,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                           message: "Creating marathon");
                                       int count = await QuestionDB()
                                           .getTotalQuestionCount(courseId);
-
-                                      // await marathonController.createMarathon();
                                       Navigator.pop(context);
                                       MarathonPractiseMock(
                                         count: count,
