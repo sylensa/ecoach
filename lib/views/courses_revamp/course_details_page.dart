@@ -3,58 +3,44 @@ import 'dart:convert';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/controllers/treadmill_controller.dart';
-import 'package:ecoach/database/notes_read_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/notes_read.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/report.dart';
-import 'package:ecoach/models/subscription.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/topic.dart';
-import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
-import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/app_url.dart';
-import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/analysis.dart';
-import 'package:ecoach/views/autopilot/autopilot_introit.dart';
-import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/courses_revamp/widgets/games_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/learn_mode_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/live_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/note_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/progress_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/test_type_widget.dart';
-import 'package:ecoach/views/customized_test/customized_test_introit.dart';
-import 'package:ecoach/views/marathon/marathon_introit.dart';
-import 'package:ecoach/views/notes/note_view.dart';
-import 'package:ecoach/views/notes/notes_topics.dart';
-import 'package:ecoach/views/review/review_onboarding.dart';
-import 'package:ecoach/views/speed/SpeedTestIntro.dart';
-import 'package:ecoach/views/test/test_challenge_list.dart';
-import 'package:ecoach/views/treadmill/treadmill_save_resumption_menu.dart';
-import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
-import 'package:ecoach/widgets/adeo_dialog.dart';
-import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
-import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../new_learn_mode/providers/learn_mode_provider.dart';
 
 class CoursesDetailsPage extends StatefulWidget {
   static const String routeName = '/courses/details1';
-  CoursesDetailsPage({Key? key, required this.courses,required this.user,required this.subscription,required this.controller,}) : super(key: key);
+  CoursesDetailsPage({
+    Key? key,
+    required this.courses,
+    required this.user,
+    required this.subscription,
+    required this.controller,
+  }) : super(key: key);
   List<Course> courses;
-   Plan subscription;
+  Plan subscription;
   User user;
-   final MainController controller;
+  final MainController controller;
   @override
-
   State<CoursesDetailsPage> createState() => _CoursesDetailsPageState();
 }
 
@@ -75,24 +61,68 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   Map<String, Widget> getPage() {
     switch (_currentPage) {
       case 0:
-        return {'Learn Mode': LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,)};
+        return {
+          'Learn Mode': LearnModeWidget(
+            controller: widget.controller,
+            subscription: widget.subscription,
+            user: widget.user,
+            course: course!,
+          )
+        };
       case 1:
-        return {'Note': NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,)};
+        return {
+          'Note': NoteWidget(
+            controller: widget.controller,
+            subscription: widget.subscription,
+            user: widget.user,
+            course: course!,
+            topics: topics,
+          )
+        };
 
       case 2:
-        return {'Test Type': TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,)};
+        return {
+          'Test Type': TestTypeWidget(
+            controller: widget.controller,
+            subscription: widget.subscription,
+            user: widget.user,
+            course: course!,
+          )
+        };
 
       case 3:
-        return {'Live': LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,)};
+        return {
+          'Live': LiveWidget(
+            controller: widget.controller,
+            subscription: widget.subscription,
+            user: widget.user,
+            course: course!,
+          )
+        };
       case 4:
-        return {'Games': GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,)};
+        return {
+          'Games': GameWidget(
+            controller: widget.controller,
+            subscription: widget.subscription,
+            user: widget.user,
+            course: course!,
+          )
+        };
 
       case 5:
-        return {'Progress': ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,)};
-
+        return {
+          'Progress': ProgressWidget(
+            controller: widget.controller,
+            subscription: widget.subscription,
+            user: widget.user,
+            course: course!,
+            stats: stats,
+          )
+        };
     }
     return {'': Container()};
   }
+
   List<CourseDetail> courseDetails = [
     CourseDetail(
       title: 'Learn',
@@ -148,24 +178,26 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     ),
   ];
 
-    getNotesTopics(Course course)async{
-      topics = await TestController().getTopicsAndNotes(course);
-      setState(() {
-        topicsProgressCode = false;
-          print("topics:${topics.length}");
-      });
-    }
-    getAnalysisStats(){
-      SubscriptionItemDB().allSubscriptionItems().then((List<SubscriptionItem> subscriptions) {
-        if (subscriptions.length > 0) {
-          stats = getCourseStats(course!.id!);
-        }
+  getNotesTopics(Course course) async {
+    topics = await TestController().getTopicsAndNotes(course);
+    setState(() {
+      topicsProgressCode = false;
+      print("topics:${topics.length}");
+    });
+  }
 
-        setState(() {
+  getAnalysisStats() {
+    SubscriptionItemDB()
+        .allSubscriptionItems()
+        .then((List<SubscriptionItem> subscriptions) {
+      if (subscriptions.length > 0) {
+        stats = getCourseStats(course!.id!);
+      }
 
-        });
-      });
-    }
+      setState(() {});
+    });
+  }
+
   getCourseStats(int courseId) {
     return ApiCall<Report>(
       AppUrl.report,
@@ -173,12 +205,29 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
       params: {'course_id': jsonEncode(courseId)},
       isList: false,
       create: (data) {
-        setState((){
-        });
+        setState(() {});
         return Report.fromJson(data);
       },
     ).get(context);
   }
+
+  setProviderValues(Course course) {
+    final welcomeProvider =
+        Provider.of<LearnModeProvider>(context, listen: false);
+
+    welcomeProvider.getTotalTopics(course);
+
+    welcomeProvider.setCurrentCourse(course);
+
+    welcomeProvider.setCurrentRevisionStudyProgress(null);
+
+    welcomeProvider.setCurrentCourseCompletionStudyProgress(null);
+
+    welcomeProvider.setCurrentSpeedProgress(null);
+
+    welcomeProvider.setCurrentUser(widget.user);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -186,24 +235,33 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     getNotesTopics(widget.courses[0]);
     course = widget.courses[0];
     listCourseDetails.add(courseDetails[0]);
+    setProviderValues(course!);
     getAnalysisStats();
 
 
 
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:kAdeoGray,
-      body: Container(
-        padding: EdgeInsets.only(top: 5.h, bottom: 2.h,),
-      child: Column(
+    return Container(
+        padding: EdgeInsets.only(
+          top: 5.h,
+          bottom: 2.h,
+        ),
+        child: Column(
           children: [
             Row(
               children: [
-               IconButton(onPressed: (){
-                Navigator.pop(context);
-               }, icon: Icon(Icons.arrow_back,color: Colors.black,),),
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 0),
@@ -212,41 +270,40 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                       decoration: BoxDecoration(
                           color: kHomeBackgroundColor,
                           border: Border.all(color: kHomeBackgroundColor),
-                          borderRadius: BorderRadius.circular(10)
-                      ),
+                          borderRadius: BorderRadius.circular(10)),
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       margin: EdgeInsets.only(right: 20),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<Course>(
-                          value:course == null ? widget.courses[0] : course,
+                          value: course == null ? widget.courses[0] : course,
                           itemHeight: 50,
                           style: TextStyle(
                             fontSize: 16,
                             color: kDefaultBlack,
                           ),
-                          onChanged: (Course? value)async{
-                            setState((){
+                          onChanged: (Course? value) async {
+                            setState(() {
                               topics.clear();
                               topicsProgressCode = true;
                               course = value;
+                              setProviderValues(course!);
                               getAnalysisStats();
                             });
-                           await getNotesTopics(course!);
+                            await getNotesTopics(course!);
                           },
-                          items: widget.courses.map(
+                          items: widget.courses
+                              .map(
                                 (item) => DropdownMenuItem<Course>(
-                              value: item,
-                              child: Container(
-                                width: appWidth(context) * 0.52,
-                                child: sText(
-                                  "${item.name}",
-                                 color: kAdeoGray3,
-                                  size: 18,
-                                  align: TextAlign.center
+                                  value: item,
+                                  child: Container(
+                                    width: appWidth(context) * 0.52,
+                                    child: sText("${item.name}",
+                                        color: kAdeoGray3,
+                                        size: 18,
+                                        align: TextAlign.center),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
+                              )
                               .toList(),
                         ),
                       ),
@@ -254,30 +311,32 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(context);
-
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                     margin: rightPadding(20),
                     height: 50,
-                    child: Icon(Icons.school,color: kAdeoGray3,),
-                    decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(10),
-                      color: kHomeBackgroundColor
+                    child: Icon(
+                      Icons.school,
+                      color: kAdeoGray3,
                     ),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: kHomeBackgroundColor),
                   ),
                 )
               ],
             ),
-            SizedBox(height:20,),
+            SizedBox(
+              height: 20,
+            ),
             Container(
               height: 120,
-              padding: EdgeInsets.only(left: 2.h,top: 2.h,bottom: 2.h),
-
+              padding: EdgeInsets.only(left: 2.h, top: 2.h, bottom: 2.h),
               color: kHomeBackgroundColor,
-              child:  ListView.builder(
+              child: ListView.builder(
                   padding: EdgeInsets.zero,
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
@@ -292,10 +351,13 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                         }
                         setState(() {
                           _currentPage = index;
-                          if(!listCourseDetails.contains(courseDetails[index])){
+                          if (!listCourseDetails
+                              .contains(courseDetails[index])) {
                             listCourseDetails.clear();
                             listCourseDetails.add(courseDetails[index]);
                           }
+
+
                         });
                         pageController.jumpToPage(index);
 
@@ -310,7 +372,10 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     width: 2.0,
-                                    color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF2692E4) : Colors.transparent,
+                                    color: listCourseDetails
+                                            .contains(courseDetails[index])
+                                        ? Color(0xFF2692E4)
+                                        : Colors.transparent,
                                   ),
                                 ),
                                 child: Container(
@@ -318,67 +383,48 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                     height: 50,
                                     width: 50,
                                     decoration: BoxDecoration(
-                                      color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFF2692E4) : Colors.transparent,
+                                      color: listCourseDetails
+                                              .contains(courseDetails[index])
+                                          ? Color(0xFF2692E4)
+                                          : Colors.transparent,
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         width: 2.0,
-                                        color: listCourseDetails.contains(courseDetails[index]) ? Color(0xFFFFFFF) : Colors.transparent,
+                                        color: listCourseDetails
+                                                .contains(courseDetails[index])
+                                            ? Color(0xFFFFFFF)
+                                            : Colors.transparent,
                                       ),
                                     ),
-                                    child:Image.asset("${courseDetails[index].iconURL}")
-                                ),
+                                    child: Image.asset(
+                                        "${courseDetails[index].iconURL}")),
                               ),
-                              SizedBox(height: 5,),
-                              sText("${courseDetails[index].title}",color: listCourseDetails.contains(courseDetails[index]) ? Colors.blue : Colors.grey,weight: FontWeight.w500,size: 12)
+                              SizedBox(
+                                height: 5,
+                              ),
+                              sText("${courseDetails[index].title}",
+                                  color: listCourseDetails
+                                          .contains(courseDetails[index])
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                  weight: FontWeight.w500,
+                                  size: 12)
                             ],
                           ),
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                         ],
                       ),
                     );
                   }),
             ),
             SizedBox(height: 20,),
-            Expanded(
-              child: PageView(
-                controller: pageController,
-                onPageChanged: (page) {
-                  setState(() {
-                    print("currentPageNumber:$currentPageNumber");
-                    print("page:$page");
-                    if(page >= currentPageNumber){
-                      pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
-                    }else{
-                      pageControllerView.jumpTo(0.0);
-                    }
-
-                    if(!listCourseDetails.contains(courseDetails[page])){
-                      listCourseDetails.clear();
-                      listCourseDetails.add(courseDetails[page]);
-                    }
-                    currentPageNumber = page;
-
-                  });
-                },
-                children:  [
-              LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-              NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,),
-               TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-               LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-             GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-               ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,),
-
-
-                ],
-              ),
-            ),
-
+            Expanded(child: getPage().values.first)
           ],
         ),
-      ),
     );
   }
-
 
   // learnModeWidget(){
   //   return  Expanded(

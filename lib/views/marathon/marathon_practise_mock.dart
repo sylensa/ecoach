@@ -31,7 +31,7 @@ class _MarathonPractiseMockState extends State<MarathonPractiseMock> {
       background: kAdeoRoyalBlue,
       backgroundImageURL: 'assets/images/deep_pool_blue_2.png',
       pages: [
-        TestIntroitLayoutPage(
+        TestIntroitLayoutPage (
           foregroundColor: Colors.white,
           middlePiece: Column(
             children: [

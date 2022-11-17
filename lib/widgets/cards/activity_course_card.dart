@@ -1,3 +1,4 @@
+import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class ActivityCourseCard extends StatelessWidget {
 
   final Function()? onTap;
   final String courseTitle;
-  final String activityType;
+  final CompletedActivityType activityType;
   final String iconUrl;
   final double? percentageCompleted;
   final bool hasProgressIndicator;
@@ -51,7 +52,7 @@ class ActivityCourseCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        activityType.trim().toUpperCase(),
+                        activityType.name.trim().toUpperCase(),
                         style: TextStyle(
                           color: kAdeoBlue3,
                           fontSize: 14.0,

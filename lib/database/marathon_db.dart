@@ -180,8 +180,8 @@ class MarathonDB {
           orderBy: "start_time DESC",
           where: "course_id = ? AND status = ? ",
           whereArgs: [course.id, MarathonStatus.COMPLETED.toString()]);
+    
     } else {
-      print("no course id provided");
 
       maps = await db!.query('marathons',
           distinct: true,

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
@@ -208,7 +209,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                   bottom: isLastItem ? 0 : 12,
                 ),
                 child: ActivityCourseCard(
-                  activityType: 'Marathon',
+                  activityType: CompletedActivityType.MARATHON,
                   courseTitle: 'JHS 2 Ashanti Twi',
                   iconUrl: 'assets/icons/courses/treadmill.png',
                   hasProgressIndicator: true,

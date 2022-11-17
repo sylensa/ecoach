@@ -17,6 +17,10 @@ import 'package:ecoach/views/learn/learn_revision.dart';
 import 'package:ecoach/views/learn/learn_speed_enhancement.dart';
 import 'package:ecoach/widgets/cards/course_detail_card.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../../new_learn_mode/providers/learn_mode_provider.dart';
+import '../../../new_learn_mode/screens/speed_improvement/speed_completion_rules.dart';
 
 class LearnModeWidget extends StatefulWidget {
   static const String routeName = '/learning/mode';
@@ -111,6 +115,10 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
       progress = await StudyDB().getCurrentProgress(study.id!);
     }
 
+     Provider.of<LearnModeProvider>(context, listen: false)
+        .setCurrentProgress(progress!);
+
+
     return progress;
   }
 
@@ -142,8 +150,10 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
         if (progress == null) {
           return;
         }
-        view = LearnSpeed(widget.user, widget.course, progress);
+        // view = LearnSpeed(widget.user, widget.course, progress);
+        view = SpeedCompletionRules();
         break;
+
       case StudyType.MASTERY_IMPROVEMENT:
         StudyProgress? progress =
             await getStudyProgress(StudyType.MASTERY_IMPROVEMENT);
@@ -216,85 +226,61 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                  child: CourseDetailCard(
-                    courseDetail: learnModeDetails[0],
-                    onTap: () async {
-                      setState(() {
-                        studyType = StudyType.REVISION;
-                      });
-                      await letGo();
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                  child: CourseDetailCard(
-                    courseDetail: learnModeDetails[1],
-                    onTap: () async {
-                      setState(() {
-                        studyType = StudyType.COURSE_COMPLETION;
-                      });
-                      await letGo();
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                  child: CourseDetailCard(
-                    courseDetail: learnModeDetails[2],
-                    onTap: () async {
-                      setState(() {
-                        studyType = StudyType.SPEED_ENHANCEMENT;
-                      });
-                      await letGo();
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 24.0, right: 24.0),
-                  child: CourseDetailCard(
-                    courseDetail: learnModeDetails[3],
-                    onTap: () async {
-                      setState(() {
-                        studyType = StudyType.MASTERY_IMPROVEMENT;
-                      });
-                      await letGo();
-                    },
-                  ),
-                ),
-              ],
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: learnModeDetails[0],
+                onTap: () async {
+                  setState(() {
+                    studyType = StudyType.REVISION;
+                  });
+                  await letGo();
+                },
+              ),
             ),
-          ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: learnModeDetails[1],
+                onTap: () async {
+                  setState(() {
+                    studyType = StudyType.COURSE_COMPLETION;
+                  });
+                  await letGo();
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: learnModeDetails[2],
+                onTap: () async {
+                  setState(() {
+                    studyType = StudyType.SPEED_ENHANCEMENT;
+                  });
+                  await letGo();
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 24.0, right: 24.0),
+              child: CourseDetailCard(
+                courseDetail: learnModeDetails[3],
+                onTap: () async {
+                  setState(() {
+                    studyType = StudyType.MASTERY_IMPROVEMENT;
+                  });
+                  await letGo();
+                },
+              ),
+            ),
+          ],
         ),
-        // if (studyType != StudyType.NONE)
-        //   SizedBox(
-        //     width: 150,
-        //     height: 44,
-        //     child: OutlinedButton(
-        //       style: ButtonStyle(
-        //         foregroundColor: MaterialStateProperty.all(getButtonColor(studyType)),
-        //         side: MaterialStateProperty.all(BorderSide(
-        //             color: getButtonColor(studyType),
-        //             width: 1,
-        //             style: BorderStyle.solid)),
-        //       ),
-        //       onPressed: () async {
-        //
-        //       },
-        //       child: Text(
-        //         "Let's go",
-        //       ),
-        //     ),
-        //   ),
-      ],
+      ),
     );
   }
 }
