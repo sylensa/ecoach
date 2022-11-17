@@ -139,15 +139,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
     }
   }
 
-  Future loadCompletedActivities() async {
-    user = await UserPreferences().getUser() as User;
-    await getCompletedMarathons();
-    await getCompletedTreadmills();
-    await getCompletedAutopilots();
-
-    isLoadingCompletedActivities = false;
-  }
-
   getCompletedAutopilots() {
     AutopilotDB().completedAutopilots().then((mList) async {
       autopilots = mList;
@@ -235,6 +226,15 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
     });
   }
 
+  Future loadCompletedActivities() async {
+    user = await UserPreferences().getUser() as User;
+    await getCompletedMarathons();
+    await getCompletedTreadmills();
+    await getCompletedAutopilots();
+
+    isLoadingCompletedActivities = false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -255,8 +255,8 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       ),
       child: SingleChildScrollView(
           child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 18.0),
-                child: isLoadingCompletedActivities
+        padding: const EdgeInsets.symmetric(vertical: 18.0),
+        child: isLoadingCompletedActivities
             ? Column(
                 children: [
                   Center(
@@ -318,7 +318,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                         bool isLastItem =
                             index == completedActivities.length - 1;
                         String activityTitle;
-          
+
                         switch (completedActivity.activityType) {
                           case CompletedActivityType.MARATHON:
                             activityTitle =
@@ -373,7 +373,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             );
                           case CompletedActivityType.AUTOPILOT:
                             activityTitle = completedActivity.autopilot!.title!;
-          
+
                             return Container(
                               margin: EdgeInsets.only(
                                 bottom: isLastItem ? 0 : 12,
@@ -393,7 +393,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                 },
                               ),
                             );
-          
+
                           default:
                             return Container();
                         }
@@ -401,7 +401,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                     )
                 ],
               ),
-              )),
+      )),
     );
   }
 

@@ -244,9 +244,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kAdeoGray,
-      body: Container(
+    return Container(
         padding: EdgeInsets.only(
           top: 5.h,
           bottom: 2.h,
@@ -425,7 +423,6 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
             Expanded(child: getPage().values.first)
           ],
         ),
-      ),
     );
   }
 
