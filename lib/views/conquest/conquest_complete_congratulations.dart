@@ -135,12 +135,7 @@ class ConquestCompleteCongratulations extends StatelessWidget {
                       background: kAdeoBlue,
                       onPressed: () {
                         Navigator.pop(context);
-                        Navigator.popUntil(context,
-                            ModalRoute.withName(CoursesDetailsPage.routeName));
-                        Navigator.push(context, MaterialPageRoute(builder: (c) {
-                          return MarathonIntroit(
-                              controller.user, controller.course);
-                        }));
+
                       },
                     ),
                   ),

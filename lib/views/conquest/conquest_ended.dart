@@ -167,8 +167,7 @@ class ConquestEnded extends StatelessWidget {
                       color: Colors.white,
                       background: kAdeoBlue,
                       onPressed: () {
-                        Navigator.popUntil(context,
-                            ModalRoute.withName(CoursesDetailsPage.routeName));
+                       Navigator.pop(context);
                       },
                     ),
                   ),
