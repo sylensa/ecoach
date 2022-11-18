@@ -495,7 +495,7 @@ class AutopilotController {
 
     if (autopilot != null) {
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
-
+      // print(jsonEncode(autoTopics));
       int? topicId = autopilot!.topicId;
       if (topicId != null) {
         Topic? topic = await TopicDB().getTopicById(topicId);
@@ -534,7 +534,7 @@ class AutopilotController {
     bool next = await nextTopic();
     if (!next) {
       print("next not selected");
-      // endAutopilot();
+      endAutopilot();
     }
   }
 

@@ -131,7 +131,6 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     if (controller.lastQuestion) {
       testTaken = controller.getTest();
       controller.endCurrentTopic();
-      await controller.endAutopilot();
       viewResults();
     } else {
       if (success) {
