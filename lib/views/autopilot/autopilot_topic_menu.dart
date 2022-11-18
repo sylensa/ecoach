@@ -58,7 +58,7 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
   }
 
   handleNext() async {
-    print('new value o f isSlected is ${isSelected}');
+    print('new value of isSlected is ${isSelected}');
     showLoaderDialog(context, message: "Creating Autopilot questions");
     await controller.createTopicQuestions(currentAutoTopic!);
     Navigator.pop(context);
@@ -146,20 +146,19 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
                         SizedBox(height: 15),
                         for (int i = 0; i < controller.topics.length; i++)
                           AutopilotTopicSelector(
-                              showInPercentage: showInPercentage,
-                              topicId: controller.autoTopics[i].topicId!,
-                              label: controller.autoTopics[i].topicName!,
-                              isSelected: isSelected > 0 &&
-                                  controller
-                                      .isCurrentTopic(controller.autoTopics[i]),
-                              isUnselected: !controller
-                                  .isCurrentTopic(controller.autoTopics[i]),
-                              numberOfQuestions:
-                                  controller.autoTopics[i].totalQuestions!,
-                              correctlyAnswered:
-                                  controller.autoTopics[i].correct!,
-                              showProgress: controller.autoTopics[i].status ==
-                                  AutopilotStatus.COMPLETED.toString()),
+                            showInPercentage: showInPercentage,
+                            topicId: controller.autoTopics[i].topicId!,
+                            label: controller.autoTopics[i].topicName!,
+                            isSelected: isSelected > 0 &&
+                                controller.isCurrentTopic(controller.autoTopics[i]),
+                            isUnselected: !controller.isCurrentTopic(controller.autoTopics[i]),
+                            numberOfQuestions:
+                                controller.autoTopics[i].totalQuestions!,
+                            correctlyAnswered:
+                                controller.autoTopics[i].correct!,
+                            showProgress: controller.autoTopics[i].status ==
+                                AutopilotStatus.COMPLETED.toString(),
+                          ),
                       ],
                     ),
                   ),
@@ -173,13 +172,13 @@ class _AutopilotTopicMenuState extends State<AutopilotTopicMenu> {
         ),
       ),
       bottomSheet: controller.isLastTopic
-          ? AdeoTextButton(
+          ? AdeoTextButton (
               label: "Replay",
               onPressed: handleReplay,
               color: Colors.white,
               background: kAdeoOrange2,
             )
-          : AdeoTextButton(
+          : AdeoTextButton (
               label: isSelected > 0 || controller.currentQuestion > 1
                   ? "Continue"
                   : "Start",

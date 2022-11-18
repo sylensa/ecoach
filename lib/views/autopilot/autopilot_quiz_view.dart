@@ -318,7 +318,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
         }
         controller.pauseTimer();
 
-        // showPauseDialog();
+        showPauseDialog();
       },
       child: controller.enabled
           ? Row(

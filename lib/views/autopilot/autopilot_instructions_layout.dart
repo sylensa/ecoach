@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/autopilot_db.dart';
@@ -35,9 +33,9 @@ class AutopilotInstructionsLayoutState
 
   handleNext() async {
     print('name from topic_menu ${controller.name}');
-
+   
     Autopilot? autopilot = controller.autopilot;
-    print(jsonEncode(autopilot));
+    // autopilot = null;
     if (autopilot == null) {
       print('creating new autopilot');
       await controller.createAutopilot();
@@ -46,9 +44,9 @@ class AutopilotInstructionsLayoutState
       await controller.loadAutopilot();
     }
 
-    // Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //   return AutopilotTopicMenu(controller: widget.controller);
-    // }));
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return AutopilotTopicMenu(controller: widget.controller);
+    }));
   }
 
   @override
