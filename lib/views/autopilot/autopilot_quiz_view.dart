@@ -74,8 +74,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     });
   }
 
-  next() async{
-
+  next() async {
     setState(() {
       showSubmit = true;
     });
@@ -89,7 +88,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     }
   }
 
-  nextButton() async{
+  nextButton() async {
     setState(() {
       showNext = false;
       controller.reviewMode = false;
@@ -113,7 +112,8 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
   }
 
   sumbitAnswer() async {
-    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
+    await scoreCurrentQuestion(
+        controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.currentTopic!.avgScore!;
     setState(() {
@@ -131,6 +131,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     if (controller.lastQuestion) {
       testTaken = controller.getTest();
       controller.endCurrentTopic();
+      await controller.endAutopilot();
       viewResults();
     } else {
       if (success) {

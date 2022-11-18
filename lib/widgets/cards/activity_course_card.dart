@@ -67,23 +67,23 @@ class ActivityCourseCard extends StatelessWidget {
                         softWrap: true,
                         style: TextStyle(
                           color: Colors.black87,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (!hasProgressIndicator)
+                if (!hasProgressIndicator && activityType.name.toString() != "AUTOPILOT")
                   Text(
                     "${(percentageCompleted! * 100).roundToDouble()}%",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 18.0,
+                      fontSize: 16.0,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                if (hasProgressIndicator)
+                if (hasProgressIndicator || activityType.name.toString() == "AUTOPILOT")
                   Container(
                     width: 48.0,
                     height: 48.0,

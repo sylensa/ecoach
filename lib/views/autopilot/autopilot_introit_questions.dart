@@ -22,8 +22,8 @@ class _AutopilotIntroitQuestionsState extends State<AutopilotIntroitQuestions> {
 
   @override
   void initState() {
-    controller = widget.controller;
     super.initState();
+    controller = widget.controller;
   }
 
   @override

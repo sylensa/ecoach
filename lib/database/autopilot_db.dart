@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ecoach/database/answers.dart';
 import 'package:ecoach/database/database.dart';
 import 'package:ecoach/database/questions_db.dart';
@@ -80,7 +82,7 @@ class AutopilotDB {
   Future<List<AutopilotTopic>> getAutoPilotTopics(int autopilotId) async {
     final Database? db = await DBProvider.database;
 
-    final List<Map<String, dynamic>> maps = await db!.query('autopilot_topics',
+    List<Map<String, dynamic>> maps = await db!.query('autopilot_topics',
         where: "autopilot_id = ?", whereArgs: [autopilotId]);
 
     List<AutopilotTopic> autopilots = [];
@@ -205,7 +207,7 @@ class AutopilotDB {
     final db = await DBProvider.database;
 
     var result = await db!.query("autopilots",
-        where: "course_id= ? AND status <> ? ",
+        where: "course_id = ? AND status <> ? ",
         whereArgs: [course.id!, AutopilotStatus.COMPLETED.toString()]);
 
     Autopilot? autopilot =
@@ -248,9 +250,8 @@ class AutopilotDB {
           orderBy: "start_time DESC",
           distinct: true,
           where: "status = ? ",
-          groupBy: "topic_id",
+          groupBy: "course_id",
           whereArgs: [AutopilotStatus.COMPLETED.toString()]);
-          print(maps);
     }
 
     List<Autopilot> autopilots = [];

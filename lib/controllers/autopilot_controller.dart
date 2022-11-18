@@ -494,7 +494,6 @@ class AutopilotController {
     autopilot = await AutopilotDB().getCurrentAutopilot(course);
 
     if (autopilot != null) {
-      print(autopilot!.toJson());
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
 
       int? topicId = autopilot!.topicId;
@@ -524,6 +523,7 @@ class AutopilotController {
   endAutopilot() async {
     autopilot!.status = AutopilotStatus.COMPLETED.toString();
     autopilot!.endTime = DateTime.now();
+    autopilot!.topicId = topicId;
     AutopilotDB().update(autopilot!);
   }
 

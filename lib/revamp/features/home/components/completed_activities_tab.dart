@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/autopilot_db.dart';
 import 'package:ecoach/database/course_db.dart';
@@ -14,6 +16,7 @@ import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
@@ -21,7 +24,7 @@ import 'package:ecoach/revamp/features/home/view/screen/homepage.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/courses_revamp/courses_page.dart';
+import 'package:ecoach/views/autopilot/autopilot_introit_topics.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
@@ -31,7 +34,6 @@ import 'package:ecoach/views/result_summary/below_pass_mark.dart';
 import 'package:ecoach/views/result_summary/result_summary.dart';
 import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
 import 'package:ecoach/views/treadmill/treadmill_timer.dart';
-import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
@@ -57,6 +59,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   bool isLoadingCompletedActivities = true;
   late CompletedActivityList completedMarathons;
   late CompletedActivityList completedTreadmills;
+  late CompletedActivityList completedAutopilots;
   late Topic? topic;
   late User user;
 
@@ -146,25 +149,20 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       Map<String, dynamic> completedAutopilotsMap = {
         "autopilots": autopilots,
       };
-      completedMarathons =
+      completedAutopilots =
           CompletedActivityList.fromJson(completedAutopilotsMap);
-      for (var completedAutopilot in completedMarathons.marathons!) {
-        if (completedAutopilot.topicId != null) {
-          topic = await TopicDB().getTopicById(completedAutopilot.topicId!);
+      for (var completedAutopilot in completedAutopilots.autopilots!) {
+        Map<String, dynamic> completedAutopilotJSON = {
+          "activityType": CompletedActivityType.AUTOPILOT,
+          "courseId": completedAutopilot.courseId,
+          "activityStartTime": completedAutopilot.startTime!.toIso8601String(),
+          "autopilot": completedAutopilot,
+          // "topic": null,
+        };
 
-          Map<String, dynamic> completedAutopilotJSON = {
-            "activityType": CompletedActivityType.MARATHON,
-            "courseId": completedAutopilot.courseId,
-            "activityStartTime":
-                completedAutopilot.startTime!.toIso8601String(),
-            "autopilot": completedAutopilot,
-            "topic": topic,
-          };
-
-          CompletedActivity completedAutopilotObject =
-              CompletedActivity.fromJson(completedAutopilotJSON);
-          completedActivities.add(completedAutopilotObject);
-        }
+        CompletedActivity completedAutopilotObject =
+            CompletedActivity.fromJson(completedAutopilotJSON);
+        completedActivities.add(completedAutopilotObject);
       }
     });
   }
@@ -254,155 +252,198 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: SingleChildScrollView(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18.0),
-        child: isLoadingCompletedActivities
-            ? Column(
-                children: [
-                  Center(
-                    child: SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        child: CircularProgressIndicator(
-                          color: kAdeoGreen4,
-                          strokeWidth: 2,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 18.0),
+          child: isLoadingCompletedActivities
+              ? Column(
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          child: CircularProgressIndicator(
+                            color: kAdeoGreen4,
+                            strokeWidth: 2,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  if (completedActivities.isEmpty)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "You do not currently have any completed activity",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
+                  ],
+                )
+              : Column(
+                  children: [
+                    if (completedActivities.isEmpty)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "You do not currently have any completed activity",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 14,
-                        ),
-                        AdeoFilledButton(
-                          color: Colors.white,
-                          background: kAdeoBlue,
-                          label: 'Take an activity',
-                          size: Sizes.medium,
-                          fontSize: 16,
-                          onPressed: () {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) {
-                              return MainHomePage(
-                                user,
-                                index: 2,
+                          SizedBox(
+                            height: 14,
+                          ),
+                          AdeoFilledButton(
+                            color: Colors.white,
+                            background: kAdeoBlue,
+                            label: 'Take an activity',
+                            size: Sizes.medium,
+                            fontSize: 16,
+                            onPressed: () {
+                              Navigator.pushReplacement(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return MainHomePage(
+                                  user,
+                                  index: 2,
+                                );
+                              }));
+                            },
+                          )
+                        ],
+                      ),
+                    if (completedActivities.isNotEmpty)
+                      ...completedActivities.map(
+                        ((completedActivity) {
+                          int index =
+                              completedActivities.indexOf(completedActivity);
+                          bool isLastItem =
+                              index == completedActivities.length - 1;
+                          String activityTitle;
+
+                          switch (completedActivity.activityType) {
+                            case CompletedActivityType.MARATHON:
+                              activityTitle =
+                                  completedActivity.marathon!.title.toString();
+                              ;
+                              double percentageCompleted = completedActivity
+                                      .marathon!.totalCorrect! /
+                                  completedActivity.marathon!.totalQuestions!;
+                              return Container(
+                                margin: EdgeInsets.only(
+                                  bottom: isLastItem ? 0 : 12,
+                                ),
+                                child: ActivityCourseCard(
+                                  courseTitle: completedActivity.topic!.name!,
+                                  activityType: completedActivity.activityType!,
+                                  iconUrl: 'assets/icons/courses/marathon.png',
+                                  percentageCompleted: percentageCompleted,
+                                  onTap: () {
+                                    showTapActions(
+                                      context,
+                                      title: completedActivity.topic!.name!,
+                                      completedActivity: completedActivity,
+                                      courseId: completedActivity.courseId!,
+                                      user: user,
+                                    );
+                                  },
+                                ),
                               );
-                            }));
-                          },
-                        )
-                      ],
-                    ),
-                  if (completedActivities.isNotEmpty)
-                    ...completedActivities.map(
-                      ((completedActivity) {
-                        int index =
-                            completedActivities.indexOf(completedActivity);
-                        bool isLastItem =
-                            index == completedActivities.length - 1;
-                        String activityTitle;
+                            case CompletedActivityType.TREADMILL:
+                              activityTitle = completedActivity
+                                  .treadmill!.testname
+                                  .toString();
+                              ;
+                              return Container(
+                                margin: EdgeInsets.only(
+                                  bottom: isLastItem ? 0 : 12,
+                                ),
+                                child: ActivityCourseCard(
+                                  courseTitle: activityTitle,
+                                  activityType: completedActivity.activityType!,
+                                  iconUrl: 'assets/icons/courses/treadmill.png',
+                                  onTap: () {
+                                    showTapActions(
+                                      context,
+                                      completedActivity: completedActivity,
+                                      title: activityTitle,
+                                      courseId: completedActivity.courseId!,
+                                      user: user,
+                                    );
+                                  },
+                                ),
+                              );
+                            case CompletedActivityType.AUTOPILOT:
+                              activityTitle =
+                                  completedActivity.autopilot!.title!;
 
-                        switch (completedActivity.activityType) {
-                          case CompletedActivityType.MARATHON:
-                            activityTitle =
-                                completedActivity.marathon!.title.toString();
-                            ;
-                            double percentageCompleted =
-                                completedActivity.marathon!.totalCorrect! /
-                                    completedActivity.marathon!.totalQuestions!;
-                            return Container(
-                              margin: EdgeInsets.only(
-                                bottom: isLastItem ? 0 : 12,
-                              ),
-                              child: ActivityCourseCard(
-                                courseTitle: completedActivity.topic!.name!,
-                                activityType: completedActivity.activityType!,
-                                iconUrl: 'assets/icons/courses/marathon.png',
-                                percentageCompleted: percentageCompleted,
-                                onTap: () {
-                                  showTapActions(
-                                    context,
-                                    title: completedActivity.topic!.name!,
-                                    completedActivity: completedActivity,
-                                    courseId: completedActivity.courseId!,
-                                    user: user,
-                                  );
-                                },
-                              ),
-                            );
-                          case CompletedActivityType.TREADMILL:
-                            activityTitle = completedActivity
-                                .treadmill!.testname
-                                .toString();
-                            ;
-                            return Container(
-                              margin: EdgeInsets.only(
-                                bottom: isLastItem ? 0 : 12,
-                              ),
-                              child: ActivityCourseCard(
-                                courseTitle: activityTitle,
-                                activityType: completedActivity.activityType!,
-                                iconUrl: 'assets/icons/courses/treadmill.png',
-                                onTap: () {
-                                  showTapActions(
-                                    context,
-                                    completedActivity: completedActivity,
-                                    title: activityTitle,
-                                    courseId: completedActivity.courseId!,
-                                    user: user,
-                                  );
-                                },
-                              ),
-                            );
-                          case CompletedActivityType.AUTOPILOT:
-                            activityTitle = completedActivity.autopilot!.title!;
+                              return FutureBuilder<Course>(
+                                  future: getAutopilotCourse(
+                                      completedActivity.autopilot!.courseId),
+                                  builder: (context, snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                        return SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            child: CircularProgressIndicator(
+                                              color: kAdeoGreen4,
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        );
+                                      default:
+                                        if (snapshot.hasError) {
+                                          return Container();
+                                        } else if (snapshot.data != null) {
+                                          Course autopilotCourse =
+                                              snapshot.data!;
 
-                            return Container(
-                              margin: EdgeInsets.only(
-                                bottom: isLastItem ? 0 : 12,
-                              ),
-                              child: ActivityCourseCard(
-                                courseTitle: activityTitle,
-                                activityType: completedActivity.activityType!,
-                                iconUrl: 'assets/icons/courses/autopilot.png',
-                                onTap: () {
-                                  showTapActions(
-                                    context,
-                                    completedActivity: completedActivity,
-                                    title: activityTitle,
-                                    courseId: completedActivity.courseId!,
-                                    user: user,
-                                  );
-                                },
-                              ),
-                            );
+                                          return Container(
+                                            margin: EdgeInsets.only(
+                                              bottom: isLastItem ? 0 : 12,
+                                            ),
+                                            child: ActivityCourseCard(
+                                              courseTitle:
+                                                  autopilotCourse.name!,
+                                              activityType: completedActivity
+                                                  .activityType!,
+                                              iconUrl:
+                                                  'assets/icons/courses/autopilot.png',
+                                              onTap: () {
+                                                showTapActions(
+                                                  context,
+                                                  completedActivity:
+                                                      completedActivity,
+                                                  title: autopilotCourse.name!,
+                                                  courseId: completedActivity
+                                                      .courseId!,
+                                                  user: user,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                    }
+                                  });
 
-                          default:
-                            return Container();
-                        }
-                      }),
-                    )
-                ],
-              ),
-      )),
+                            default:
+                              return Container();
+                          }
+                        }),
+                      )
+                  ],
+                ),
+        ),
+      ),
     );
+  }
+
+  Future<Course> getAutopilotCourse(courseId) async {
+    Course? course = await CourseDB().getCourseById(courseId) as Course;
+    return course;
   }
 
   showTapActions(
@@ -476,72 +517,85 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                         ),
                         Column(
                           children: [
-                            InkWell(
-                              onTap: (() {
-                                switch (completedActivity.activityType) {
-                                  case CompletedActivityType.MARATHON:
-                                    MarathonController marathonController =
-                                        MarathonController(
-                                      _user,
-                                      course,
-                                      name: course.name!,
-                                      marathon: completedActivity.marathon,
-                                    );
-
-                                    Navigator.push<void>(
-                                      context,
-                                      MaterialPageRoute<void>(
-                                        builder: (BuildContext context) {
-                                          return MarathonCompleteCongratulations(
-                                            controller: marathonController,
+                            if (completedActivity.activityType !=
+                                CompletedActivityType.AUTOPILOT)
+                              Column(
+                                children: [
+                                  InkWell(
+                                    onTap: (() {
+                                      switch (completedActivity.activityType) {
+                                        case CompletedActivityType.MARATHON:
+                                          MarathonController
+                                              marathonController =
+                                              MarathonController(
+                                            _user,
+                                            course,
+                                            name: course.name!,
+                                            marathon:
+                                                completedActivity.marathon,
                                           );
-                                        },
+
+                                          Navigator.push<void>(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (BuildContext context) {
+                                                return MarathonCompleteCongratulations(
+                                                  controller:
+                                                      marathonController,
+                                                );
+                                              },
+                                            ),
+                                          ).then((value) {
+                                            marathonController.currentQuestion =
+                                                0;
+                                            marathonController.reviewMode =
+                                                true;
+                                            setState(() {});
+                                          });
+                                          break;
+                                        case CompletedActivityType.TREADMILL:
+                                          QuizController controller =
+                                              QuizController(
+                                            _user,
+                                            course,
+                                            name: completedActivity
+                                                .treadmill!.testname!,
+                                          );
+                                          viewResults(
+                                            completedActivity.treadmill!,
+                                            controller,
+                                            completedActivity.treadmill!,
+                                            true,
+                                          );
+                                          break;
+                                        default:
+                                          break;
+                                      }
+                                    }),
+                                    child: Container(
+                                      width: double.maxFinite,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        color: kAdeoGreen4,
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                    ).then((value) {
-                                      marathonController.currentQuestion = 0;
-                                      marathonController.reviewMode = true;
-                                      setState(() {});
-                                    });
-                                    break;
-                                  case CompletedActivityType.TREADMILL:
-                                    QuizController controller = QuizController(
-                                      _user,
-                                      course,
-                                      name: completedActivity.topic!.name!,
-                                    );
-                                    viewResults(
-                                      completedActivity.treadmill!,
-                                      controller,
-                                      completedActivity.treadmill!,
-                                      true,
-                                    );
-                                    break;
-                                  default:
-                                    break;
-                                }
-                              }),
-                              child: Container(
-                                width: double.maxFinite,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: kAdeoGreen4,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "View Results",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
+                                      child: Center(
+                                        child: Text(
+                                          "View Results",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  SizedBox(
+                                    height: 18,
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(
-                              height: 18,
-                            ),
                             InkWell(
                               onTap: (() async {
                                 switch (completedActivity.activityType!) {
@@ -642,6 +696,45 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                       ),
                                     );
                                     break;
+                                  case CompletedActivityType.AUTOPILOT:
+                                    Autopilot? autopilot = await AutopilotDB()
+                                        .getCurrentAutopilot(course);
+
+                                    List<TestNameAndCount> topics =
+                                        await TestController()
+                                            .getTopics(course);
+
+                                    int count = await TestController()
+                                        .getQuestionsCount(course.id!);
+
+                                    List<AutopilotTopic> autoTopics =
+                                        await AutopilotDB()
+                                            .getAutoPilotTopics(autopilot!.id!);
+
+                                    AutopilotController autopilotController =
+                                        AutopilotController(
+                                      _user,
+                                      course,
+                                      topics: topics,
+                                      autopilot: autopilot,
+                                    );
+
+                                    autopilotController.autoTopics = autoTopics;
+                                    print("auto topics: $autoTopics");
+                                    print(
+                                        "autopilots: ${jsonEncode(autopilot)}");
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AutopilotIntroitTopics(
+                                          count: count,
+                                          controller: autopilotController,
+                                        ),
+                                      ),
+                                    );
+                                    break;
                                   default:
                                     break;
                                 }
@@ -673,59 +766,63 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                       ],
                     ),
                   ),
-                  Positioned(
-                    bottom: 12,
-                    left: 0,
-                    right: 0,
-                    child: InkWell(
-                      onTap: (() {
-                        switch (completedActivity.activityType) {
-                          case CompletedActivityType.MARATHON:
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (c) {
-                              return MarathonIntroit(_user, course);
-                            }));
-                            break;
-                          case CompletedActivityType.TREADMILL:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return TreadmillPractiseMenu(
-                                    controller: TreadmillController(
-                                      _user,
-                                      course,
-                                      name: course.name!,
-                                    ),
-                                  );
-                                },
+                  if (completedActivity.activityType !=
+                      CompletedActivityType.AUTOPILOT)
+                    Positioned(
+                      bottom: 12,
+                      left: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: (() {
+                          switch (completedActivity.activityType) {
+                            case CompletedActivityType.MARATHON:
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (c) {
+                                return MarathonIntroit(_user, course);
+                              }));
+                              break;
+                            case CompletedActivityType.TREADMILL:
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return TreadmillPractiseMenu(
+                                      controller: TreadmillController(
+                                        _user,
+                                        course,
+                                        name: course.name!,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                              break;
+                            case CompletedActivityType.AUTOPILOT:
+                              break;
+                            default:
+                              break;
+                          }
+                        }),
+                        child: Container(
+                          width: double.maxFinite,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: kAdeoBlue3,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "New",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
                               ),
-                            );
-                            break;
-                          default:
-                            break;
-                        }
-                      }),
-                      child: Container(
-                        width: double.maxFinite,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: kAdeoBlue3,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "New",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                   Positioned(
                     top: 12,
                     left: 0,

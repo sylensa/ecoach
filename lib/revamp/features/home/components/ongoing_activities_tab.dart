@@ -180,8 +180,14 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
     );
   }
 
-  Random random = Random();
+  late Random random;
   late double _percentageCompleted;
+
+  @override
+  void initState() {
+    super.initState();
+    random = Random();
+  }
 
   @override
   Widget build(BuildContext context) {
