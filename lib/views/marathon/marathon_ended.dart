@@ -1,10 +1,13 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -19,8 +22,18 @@ class MarathonEnded extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popUntil(
-            context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        User? user = await UserPreferences().getUser();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MainHomePage(
+              user!,
+            ),
+          ),
+          (route) => false,
+        );
+        // Navigator.popUntil(
+        //     context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return true;
       },
       child: Scaffold(
@@ -37,9 +50,21 @@ class MarathonEnded extends StatelessWidget {
                   color: kAdeoOrange,
                   borderRadius: 5,
                   fontSize: 14,
-                  onPressed: () {
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                  onPressed: () async {
+                    User? user = await UserPreferences().getUser();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          user!,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                    // Navigator.popUntil(
+                    //   context,
+                    //   ModalRoute.withName(CoursesDetailsPage.routeName),
+                    // );
                   },
                 ),
                 SizedBox(width: 10),

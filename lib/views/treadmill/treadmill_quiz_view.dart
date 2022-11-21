@@ -10,6 +10,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/treadmill/treadmill_complete_congratulations.dart';
 import 'package:ecoach/views/treadmill/treadmill_completed.dart';
 import 'package:ecoach/views/treadmill/treadmill_ended.dart';
@@ -90,7 +91,7 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   int countdownInSeconds = 0;
   int questionTimer = 0;
   // StopW
-  currentCorrectScoreState() async{
+  currentCorrectScoreState() async {
     setState(() {
       if (controller.questions[controller.currentQuestion].isCorrect) {
         isCorrect = true;
@@ -98,7 +99,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
         isCorrect = false;
       }
     });
-
   }
 
   avgTimeComplete() {
@@ -236,7 +236,8 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
   submitAnswer() async {
     answered = true;
     controller.pauseTimer();
-    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
+    await scoreCurrentQuestion(
+        controller.questions[controller.currentQuestion].question!);
     await controller.scoreCurrentQuestion();
     double newScore = controller.treadmill!.avgScore!;
     if (mounted) {
@@ -1141,10 +1142,19 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
               });
 
               Navigator.pop(context);
-              Navigator.popUntil(
+              Navigator.pushAndRemoveUntil(
                 context,
-                ModalRoute.withName(CoursesDetailsPage.routeName),
+                MaterialPageRoute(
+                  builder: (_) => MainHomePage(
+                    controller.user,
+                  ),
+                ),
+                (route) => false,
               );
+              // Navigator.popUntil(
+              //   context,
+              //   ModalRoute.withName(CoursesDetailsPage.routeName),
+              // );
             },
             style: ButtonStyle(
               animationDuration: const Duration(milliseconds: 200),
@@ -1250,10 +1260,19 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
             onPressed: () {
               // startTimer();
               controller.endTreadmill();
-              Navigator.popUntil(
+              Navigator.pushAndRemoveUntil(
                 context,
-                ModalRoute.withName(CoursesDetailsPage.routeName),
+                MaterialPageRoute(
+                  builder: (_) => MainHomePage(
+                    controller.user,
+                  ),
+                ),
+                (route) => false,
               );
+              // Navigator.popUntil(
+              //   context,
+              //   ModalRoute.withName(CoursesDetailsPage.routeName),
+              // );
             },
             style: ButtonStyle(
               animationDuration: const Duration(milliseconds: 200),
@@ -1577,10 +1596,19 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                 label: "Yes",
                 onPressed: () {
                   canExit = true;
-                  Navigator.popUntil(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    ModalRoute.withName(CoursesDetailsPage.routeName),
+                    MaterialPageRoute(
+                      builder: (_) => MainHomePage(
+                        controller.user,
+                      ),
+                    ),
+                    (route) => false,
                   );
+                  // Navigator.popUntil(
+                  //   context,
+                  //   ModalRoute.withName(CoursesDetailsPage.routeName),
+                  // );
                 },
               ),
               Button(
@@ -1757,8 +1785,17 @@ class SessionSavedPrompt extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         controller.scoreCurrentQuestion();
-        Navigator.popUntil(
-            context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MainHomePage(
+              controller.user,
+            ),
+          ),
+          (route) => false,
+        );
+        // Navigator.popUntil(
+        //     context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
@@ -1792,8 +1829,17 @@ class SessionSavedPrompt extends StatelessWidget {
                   label: 'Exit',
                   onPressed: () {
                     controller.scoreCurrentQuestion();
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          controller.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                    // Navigator.popUntil(context,
+                    //     ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),
@@ -2003,10 +2049,19 @@ class SpeedQuizEnded extends StatelessWidget {
                 borderRadius: 1,
                 fontSize: 14,
                 onPressed: () {
-                  Navigator.popUntil(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    ModalRoute.withName(CoursesDetailsPage.routeName),
+                    MaterialPageRoute(
+                      builder: (_) => MainHomePage(
+                        controller.user,
+                      ),
+                    ),
+                    (route) => false,
                   );
+                  // Navigator.popUntil(
+                  //   context,
+                  //   ModalRoute.withName(CoursesDetailsPage.routeName),
+                  // );
                 },
               ),
               SizedBox(width: 10),

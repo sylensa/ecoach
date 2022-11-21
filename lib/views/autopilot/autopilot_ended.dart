@@ -5,6 +5,7 @@ import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
 import 'package:ecoach/widgets/questions_widgets/quiz_screen_widgets.dart';
@@ -31,8 +32,17 @@ class AutopilotEnded extends StatelessWidget {
                 borderRadius: 5,
                 fontSize: 14,
                 onPressed: () {
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CoursesDetailsPage.routeName));
+                   Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          controller.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                  // Navigator.popUntil(context,
+                  //     ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               SizedBox(width: 10),
