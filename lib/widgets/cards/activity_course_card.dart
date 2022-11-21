@@ -15,7 +15,7 @@ class ActivityCourseCard extends StatelessWidget {
 
   final Function()? onTap;
   final String courseTitle;
-  final CompletedActivityType activityType;
+  final TestActivityType activityType;
   final String iconUrl;
   final double? percentageCompleted;
   final bool hasProgressIndicator;
@@ -55,7 +55,7 @@ class ActivityCourseCard extends StatelessWidget {
                         activityType.name.trim().toUpperCase(),
                         style: TextStyle(
                           color: kAdeoBlue3,
-                          fontSize: 14.0,
+                          fontSize: 12.0,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

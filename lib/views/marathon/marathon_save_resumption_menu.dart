@@ -232,8 +232,10 @@ class Caution extends StatelessWidget {
                       MaterialPageRoute(builder: (c) {
                     return MarathonPractiseMenu(
                       controller: MarathonController(
-                          controller.user, controller.course,
-                          name: controller.course.name!),
+                        controller.user,
+                        controller.course,
+                        name: controller.course.name!,
+                      ),
                     );
                   }), ModalRoute.withName(CoursesDetailsPage.routeName));
                 },

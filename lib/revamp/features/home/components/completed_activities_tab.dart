@@ -53,14 +53,14 @@ class CompletedActivitiesTab extends StatefulWidget {
 }
 
 class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
-  List<CompletedActivity> completedActivities = [];
+  List<TestActivity> completedActivities = [];
   List<Marathon> marathons = [];
   List<TestTaken> treadmills = [];
   List<Autopilot> autopilots = [];
   bool isLoadingCompletedActivities = true;
-  late CompletedActivityList completedMarathons;
-  late CompletedActivityList completedTreadmills;
-  late CompletedActivityList completedAutopilots;
+  late TestActivityList completedMarathons;
+  late TestActivityList completedTreadmills;
+  late TestActivityList completedAutopilots;
   late Topic? topic;
   late User user;
 
@@ -150,19 +150,18 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       Map<String, dynamic> completedAutopilotsMap = {
         "autopilots": autopilots,
       };
-      completedAutopilots =
-          CompletedActivityList.fromJson(completedAutopilotsMap);
+      completedAutopilots = TestActivityList.fromJson(completedAutopilotsMap);
       for (var completedAutopilot in completedAutopilots.autopilots!) {
         Map<String, dynamic> completedAutopilotJSON = {
-          "activityType": CompletedActivityType.AUTOPILOT,
+          "activityType": TestActivityType.AUTOPILOT,
           "courseId": completedAutopilot.courseId,
           "activityStartTime": completedAutopilot.startTime!.toIso8601String(),
           "autopilot": completedAutopilot,
           // "topic": null,
         };
 
-        CompletedActivity completedAutopilotObject =
-            CompletedActivity.fromJson(completedAutopilotJSON);
+        TestActivity completedAutopilotObject =
+            TestActivity.fromJson(completedAutopilotJSON);
         completedActivities.add(completedAutopilotObject);
       }
     });
@@ -175,21 +174,20 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       Map<String, dynamic> completedMarathonsMap = {
         "marathons": marathons,
       };
-      completedMarathons =
-          CompletedActivityList.fromJson(completedMarathonsMap);
+      completedMarathons = TestActivityList.fromJson(completedMarathonsMap);
       for (var completedMarathon in completedMarathons.marathons!) {
         if (completedMarathon.topicId != null) {
           topic = await TopicDB().getTopicById(completedMarathon.topicId!);
 
           Map<String, dynamic> completedMarathonJSON = {
-            "activityType": CompletedActivityType.MARATHON,
+            "activityType": TestActivityType.MARATHON,
             "courseId": completedMarathon.courseId,
             "activityStartTime": completedMarathon.startTime!.toIso8601String(),
             "marathon": completedMarathon,
             "topic": topic,
           };
-          CompletedActivity completedMarathonObject =
-              CompletedActivity.fromJson(completedMarathonJSON);
+          TestActivity completedMarathonObject =
+              TestActivity.fromJson(completedMarathonJSON);
           completedActivities.add(completedMarathonObject);
         }
       }
@@ -203,8 +201,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
       Map<String, dynamic> completedTreadmillsMap = {
         "treadmills": treadmills,
       };
-      completedTreadmills =
-          CompletedActivityList.fromJson(completedTreadmillsMap);
+      completedTreadmills = TestActivityList.fromJson(completedTreadmillsMap);
 
       for (var completedTreadmill in completedTreadmills.treadmills!) {
         int topicId =
@@ -212,14 +209,14 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
         topic = await TopicDB().getTopicById(topicId);
 
         Map<String, dynamic> completedTreadmillJSON = {
-          "activityType": CompletedActivityType.TREADMILL,
+          "activityType": TestActivityType.TREADMILL,
           "courseId": completedTreadmill.courseId,
           "activityStartTime": completedTreadmill.updatedAt!.toIso8601String(),
           "treadmill": completedTreadmill,
           "topic": topic,
         };
-        CompletedActivity completedTreadmillObject =
-            CompletedActivity.fromJson(completedTreadmillJSON);
+        TestActivity completedTreadmillObject =
+            TestActivity.fromJson(completedTreadmillJSON);
         completedActivities.add(completedTreadmillObject);
       }
     });
@@ -319,10 +316,10 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           String activityTitle;
 
                           switch (completedActivity.activityType) {
-                            case CompletedActivityType.MARATHON:
+                            case TestActivityType.MARATHON:
                               activityTitle =
-                                  completedActivity.marathon!.title.toString();
-                              ;
+                                  "${completedActivity.topic!.name!} (${completedActivity.marathon!.title!})";
+
                               double percentageCompleted = completedActivity
                                       .marathon!.totalCorrect! /
                                   completedActivity.marathon!.totalQuestions!;
@@ -331,7 +328,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                   bottom: isLastItem ? 0 : 12,
                                 ),
                                 child: ActivityCourseCard(
-                                  courseTitle: completedActivity.topic!.name!,
+                                  courseTitle: activityTitle,
                                   activityType: completedActivity.activityType!,
                                   iconUrl: 'assets/icons/courses/marathon.png',
                                   percentageCompleted: percentageCompleted,
@@ -346,11 +343,14 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                   },
                                 ),
                               );
-                            case CompletedActivityType.TREADMILL:
+                            case TestActivityType.TREADMILL:
                               activityTitle = completedActivity
                                   .treadmill!.testname
                                   .toString();
                               ;
+                              // activityTitle =
+                              //     "${completedActivity.treadmill!.testname} (${completedActivity.marathon!.title!})";
+
                               return Container(
                                 margin: EdgeInsets.only(
                                   bottom: isLastItem ? 0 : 12,
@@ -370,7 +370,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                   },
                                 ),
                               );
-                            case CompletedActivityType.AUTOPILOT:
+                            case TestActivityType.AUTOPILOT:
                               activityTitle =
                                   completedActivity.autopilot!.title!;
 
@@ -451,7 +451,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
     context, {
     required String title,
     required int courseId,
-    required CompletedActivity completedActivity,
+    required TestActivity completedActivity,
     required User user,
   }) async {
     double sheetHeight = 480;
@@ -518,13 +518,12 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                         ),
                         Column(
                           children: [
-
                             Column(
                               children: [
                                 InkWell(
                                   onTap: (() async {
                                     switch (completedActivity.activityType) {
-                                      case CompletedActivityType.MARATHON:
+                                      case TestActivityType.MARATHON:
                                         MarathonController marathonController =
                                             MarathonController(
                                           _user,
@@ -549,7 +548,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                           setState(() {});
                                         });
                                         break;
-                                      case CompletedActivityType.TREADMILL:
+                                      case TestActivityType.TREADMILL:
                                         QuizController controller =
                                             QuizController(
                                           _user,
@@ -564,7 +563,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                           true,
                                         );
                                         break;
-                                      case CompletedActivityType.AUTOPILOT:
+                                      case TestActivityType.AUTOPILOT:
                                         List<TestNameAndCount> topics =
                                             await TestController()
                                                 .getTopics(course);
@@ -622,7 +621,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             InkWell(
                               onTap: (() async {
                                 switch (completedActivity.activityType!) {
-                                  case CompletedActivityType.MARATHON:
+                                  case TestActivityType.MARATHON:
                                     MarathonController marathonController =
                                         MarathonController(
                                       _user,
@@ -644,7 +643,8 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
 
                                       await marathonController
                                           .createTopicMarathon(
-                                              marathon.topicId!);
+                                        marathon.topicId!,
+                                      );
                                       marathonController.name =
                                           completedActivity.topic!.name!;
                                       Navigator.pop(context);
@@ -653,7 +653,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                         context,
                                         MaterialPageRoute(
                                           settings: RouteSettings(
-                                            name: HomePage2.routeName,
+                                            name: MainHomePage.routeName,
                                           ),
                                           builder: (context) {
                                             return Instructions(
@@ -676,7 +676,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                       );
                                     }
                                     break;
-                                  case CompletedActivityType.TREADMILL:
+                                  case TestActivityType.TREADMILL:
                                     TreadmillController treadmillController =
                                         TreadmillController(
                                       _user,
@@ -719,7 +719,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                       ),
                                     );
                                     break;
-                                  case CompletedActivityType.AUTOPILOT:
+                                  case TestActivityType.AUTOPILOT:
                                     AutopilotController autopilotController =
                                         AutopilotController(
                                       _user,
@@ -772,7 +772,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                     ),
                   ),
                   if (completedActivity.activityType !=
-                      CompletedActivityType.AUTOPILOT)
+                      TestActivityType.AUTOPILOT)
                     Positioned(
                       bottom: 12,
                       left: 0,
@@ -780,13 +780,13 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                       child: InkWell(
                         onTap: (() {
                           switch (completedActivity.activityType) {
-                            case CompletedActivityType.MARATHON:
+                            case TestActivityType.MARATHON:
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (c) {
                                 return MarathonIntroit(_user, course);
                               }));
                               break;
-                            case CompletedActivityType.TREADMILL:
+                            case TestActivityType.TREADMILL:
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -802,7 +802,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                 ),
                               );
                               break;
-                            case CompletedActivityType.AUTOPILOT:
+                            case TestActivityType.AUTOPILOT:
                               break;
                             default:
                               break;

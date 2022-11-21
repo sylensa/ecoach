@@ -5,13 +5,13 @@ import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 
-enum CompletedActivityType { MARATHON, AUTOPILOT, TREADMILL, LEARN }
+enum TestActivityType { MARATHON, AUTOPILOT, TREADMILL, LEARN }
 
-CompletedActivityList completedActivityListFromJson(String str) =>
-    CompletedActivityList.fromJson(json.decode(str));
+TestActivityList completedActivityListFromJson(String str) =>
+    TestActivityList.fromJson(json.decode(str));
 
-class CompletedActivityList {
-  CompletedActivityList({
+class TestActivityList {
+  TestActivityList({
     this.marathons,
     this.treadmills,
     this.autopilots,
@@ -21,16 +21,16 @@ class CompletedActivityList {
   List<TestTaken>? treadmills;
   List<Autopilot>? autopilots;
 
-  factory CompletedActivityList.fromJson(Map<String, dynamic> json) =>
-      CompletedActivityList(
+  factory TestActivityList.fromJson(Map<String, dynamic> json) =>
+      TestActivityList(
         marathons: json["marathons"] == null ? [] : json["marathons"],
         treadmills: json["treadmills"] == null ? [] : json["treadmills"],
         autopilots: json["autopilots"] == null ? [] : json["autopilots"],
       );
 }
 
-class CompletedActivity {
-  CompletedActivity({
+class TestActivity {
+  TestActivity({
     this.activityType,
     this.courseId,
     this.activityStartTime,
@@ -40,7 +40,7 @@ class CompletedActivity {
     this.autopilot,
   });
 
-  CompletedActivityType? activityType;
+  TestActivityType? activityType;
   int? courseId;
   DateTime? activityStartTime;
   Marathon? marathon;
@@ -48,10 +48,10 @@ class CompletedActivity {
   Topic? topic;
   Autopilot? autopilot;
 
-  factory CompletedActivity.fromJson(Map<String, dynamic> json) =>
-      CompletedActivity(
+  factory TestActivity.fromJson(Map<String, dynamic> json) =>
+      TestActivity(
         activityType: json["activityType"] == null
-            ? CompletedActivityType.MARATHON
+            ? TestActivityType.MARATHON
             : json["activityType"],
         courseId: json["courseId"] == null ? null : json["courseId"],
         activityStartTime: json["start_time"] == null

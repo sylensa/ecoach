@@ -654,8 +654,8 @@ class SessionSavedPrompt extends StatelessWidget {
         print(
             "Route name: ${ModalRoute.withName(CoursesDetailsPage.routeName)}");
         // await controller.scoreCurrentQuestion();
-        // Navigator.popUntil(
-        //     context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        Navigator.popUntil(
+            context, ModalRoute.withName(CoursesDetailsPage.routeName));
         return false;
       },
       child: Scaffold(
