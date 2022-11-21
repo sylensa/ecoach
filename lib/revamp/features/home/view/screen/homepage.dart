@@ -558,6 +558,7 @@ class _HomePage2ContentState extends State<DashboardContent>
                                           ),
                                           TextSpan(
                                             text: widget.user.name,
+
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.w600,

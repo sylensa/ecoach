@@ -263,6 +263,30 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
   }
 
   groupTest(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
+    int countDown = 0;
+    if(groupNotificationData.notificationtable!.configurations!.timing! != "Untimed"){
+
+      if(groupNotificationData.notificationtable!.configurations!.startDatetime != null && groupNotificationData.notificationtable!.configurations!.dueDateTime != null){
+        // period
+        DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+        DateTime endTime = groupNotificationData.notificationtable!.configurations!.dueDateTime!;
+        countDown = endTime.difference(startTime).inSeconds;
+      }else{
+        // exact
+        if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Question"){
+          countDown = groupNotificationData.notificationtable!.configurations!.countDown! * 10;
+        }else if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Quiz"){
+          countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown!;
+        }
+        DateTime startTime =groupNotificationData.notificationtable!.configurations!.startDatetime!;
+        countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+        groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+      }
+    }else{
+      DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+      countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+      groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+    }
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
