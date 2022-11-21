@@ -909,19 +909,19 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Standard test',
           iconURL: 'assets/icons/courses/knowledge.png',
           onTap: () {
-            knowledgeTestModalBottomSheet(context);
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) {
-            //       return TestChallengeList(
-            //         testType: TestType.KNOWLEDGE,
-            //         course: widget.course,
-            //         user: widget.user,
-            //       );
-            //     },
-            //   ),
-            // );
+            // knowledgeTestModalBottomSheet(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return TestChallengeList(
+                    testType: TestType.KNOWLEDGE,
+                    course: widget.course,
+                    user: widget.user,
+                  );
+                },
+              ),
+            );
           },
         ),
         MultiPurposeCourseCard(
