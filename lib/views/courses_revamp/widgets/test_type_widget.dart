@@ -595,10 +595,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                        searchKeyword = keywordTestTaken[indexReport].testname!.toLowerCase();
                                                      });
                                                     await getTest(context, TestCategory.NONE);
-                                                     await  getKeywordTestTaken();
-                                                     stateSetter(() {
 
-                                                     });
 
                                                    },
                                                    child: Container(
@@ -663,10 +660,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                    size: 15,
                                    icon: IconButton(onPressed: ()async{
                                     await getTest(context, TestCategory.NONE);
-                                    await  getKeywordTestTaken();
-                                    stateSetter(() {
 
-                                    });
                                    }, icon: Icon(Icons.search,color: Colors.grey)),
                                    suffIcon: null,
                                    label: "Search Keywords",
@@ -701,10 +695,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                        searchKeyword = "mouse";
                                      });
                                       await getTest(context, TestCategory.NONE);
-                                      await  getKeywordTestTaken();
-                                      stateSetter(() {
 
-                                     });
                                     },
                                     child: Column(
                                       children: [
