@@ -184,6 +184,7 @@ class AutopilotController {
   double get score {
     int totalQuestions = questions.length;
     int correctAnswers = correct;
+    
     if (totalQuestions == 0) {
       return 0;
     }

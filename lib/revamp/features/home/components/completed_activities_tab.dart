@@ -802,8 +802,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                 ),
                               );
                               break;
-                            case TestActivityType.AUTOPILOT:
-                              break;
                             default:
                               break;
                           }

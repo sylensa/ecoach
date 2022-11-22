@@ -262,6 +262,41 @@ class AutopilotDB {
     return autopilots;
   }
 
+  Future<List<Autopilot>> ongoingAutopilots({Course? course}) async {
+    final Database? db = await DBProvider.database;
+    final List<Map<String, dynamic>> maps;
+
+    if (course != null) {
+     
+      maps = await db!.query('autopilots',
+          orderBy: "start_time DESC",
+          where: "course_id = ? AND status <> ? AND status <> ? ",
+          whereArgs: [
+            course.id,
+            AutopilotStatus.NEW.toString(),
+            AutopilotStatus.COMPLETED.toString(),
+          ]);
+
+    } else {
+      maps = await db!.query('autopilots',
+          orderBy: "start_time DESC",
+          distinct: true,
+          where: "status <> ? AND status <> ?",
+          groupBy: "course_id",
+          whereArgs: [
+            AutopilotStatus.NEW.toString(),
+            AutopilotStatus.COMPLETED.toString(),
+          ]);
+    }
+
+    List<Autopilot> autopilots = [];
+    for (int i = 0; i < maps.length; i++) {
+      Autopilot autopilot = Autopilot.fromJson(maps[i]);
+      autopilots.add(autopilot);
+    }
+    return autopilots;
+  }
+
   Future<void> update(Autopilot autopilot) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;

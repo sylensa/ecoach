@@ -273,7 +273,7 @@ class TestController {
     return TopicDB().getLevelTopic(course.id!, level!);
   }
 
-  getTopics(Course course) async {
+  Future<List<TestNameAndCount>> getTopics(Course course) async {
     Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 
     List<TestNameAndCount> testNames = [];
