@@ -243,8 +243,6 @@ class AutopilotDB {
           orderBy: "start_time DESC",
           where: "course_id = ? AND status = ? ",
           whereArgs: [course.id, AutopilotStatus.COMPLETED.toString()]);
-
-      // print('course len=${maps.length}');
     } else {
       maps = await db!.query('autopilots',
           orderBy: "start_time DESC",
@@ -252,6 +250,7 @@ class AutopilotDB {
           where: "status = ? ",
           groupBy: "course_id",
           whereArgs: [AutopilotStatus.COMPLETED.toString()]);
+      // print('course len=${maps}');
     }
 
     List<Autopilot> autopilots = [];
@@ -262,32 +261,19 @@ class AutopilotDB {
     return autopilots;
   }
 
-  Future<List<Autopilot>> ongoingAutopilots({Course? course}) async {
+  Future<List<Autopilot>> ongoingAutopilots() async {
     final Database? db = await DBProvider.database;
     final List<Map<String, dynamic>> maps;
 
-    if (course != null) {
-     
-      maps = await db!.query('autopilots',
-          orderBy: "start_time DESC",
-          where: "course_id = ? AND status <> ? AND status <> ? ",
-          whereArgs: [
-            course.id,
-            AutopilotStatus.NEW.toString(),
-            AutopilotStatus.COMPLETED.toString(),
-          ]);
-
-    } else {
-      maps = await db!.query('autopilots',
-          orderBy: "start_time DESC",
-          distinct: true,
-          where: "status <> ? AND status <> ?",
-          groupBy: "course_id",
-          whereArgs: [
-            AutopilotStatus.NEW.toString(),
-            AutopilotStatus.COMPLETED.toString(),
-          ]);
-    }
+    maps = await db!.query('autopilots',
+        orderBy: "start_time DESC",
+        distinct: true,
+        where: "status == ? OR status == ?",
+        groupBy: "course_id",
+        whereArgs: [
+          AutopilotStatus.NEW.toString(),
+          AutopilotStatus.IN_PROGRESS.toString(),
+        ]);
 
     List<Autopilot> autopilots = [];
     for (int i = 0; i < maps.length; i++) {

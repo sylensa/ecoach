@@ -235,7 +235,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   void initState() {
     super.initState();
     loadCompletedActivities();
-    setState(() {});
   }
 
   @override

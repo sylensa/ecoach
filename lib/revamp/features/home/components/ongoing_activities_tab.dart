@@ -18,8 +18,8 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/main_home.dart';
-import 'package:ecoach/views/marathon/marathon_completed.dart';
 import 'package:ecoach/views/marathon/marathon_countdown.dart';
 import 'package:ecoach/views/marathon/marathon_ended.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
@@ -78,7 +78,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
   }
 
   getOngoingAutopilots() {
-    AutopilotDB().completedAutopilots().then((mList) async {
+    AutopilotDB().ongoingAutopilots().then((mList) async {
       autopilots = mList;
       Map<String, dynamic> ongoingAutopilotsMap = {
         "autopilots": autopilots,
@@ -96,7 +96,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
         TestActivity ongoingAutopilotObject =
             TestActivity.fromJson(completedAutopilotJSON);
-        // print("TEST: ${ongoingAutopilotObject.autopilot!.toJson()}");
         ongoingActivities.add(ongoingAutopilotObject);
       }
     });
@@ -115,7 +114,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
   void initState() {
     super.initState();
     loadCompletedActivities();
-    setState(() {});
   }
 
   @override
@@ -225,7 +223,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
                           case TestActivityType.AUTOPILOT:
                             activityTitle = ongoingActivity.autopilot!.title!;
-
                             return FutureBuilder<Course>(
                                 future: getAutopilotCourse(
                                     ongoingActivity.autopilot!.courseId),
@@ -298,29 +295,9 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                                     autopilotController.topics =
                                                         topics;
 
-                                                    int totalAutopilotTopics =
-                                                        autopilotController
-                                                            .autoTopics.length;
-                                                    int totalCompletedAutopilotTopics =
-                                                        0;
-
-                                                    autopilotController
-                                                        .autoTopics
-                                                        .forEach(
-                                                      (autoTopic) {
-                                                        if (autoTopic.status ==
-                                                            AutopilotStatus
-                                                                .COMPLETED
-                                                                .toString()) {
-                                                          totalCompletedAutopilotTopics++;
-                                                        }
-                                                      },
-                                                    );
-
                                                     double completedAverage =
-                                                        (totalCompletedAutopilotTopics /
-                                                                totalAutopilotTopics) *
-                                                            100;
+                                                        autopilotController
+                                                            .getPercentageOfCompletedAutopilotTopics();
 
                                                     return Container(
                                                       margin: EdgeInsets.only(
@@ -350,6 +327,8 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                                             title:
                                                                 activityTitle,
                                                             user: user,
+                                                            controller:
+                                                                autopilotController,
                                                           );
                                                         },
                                                       ),
@@ -359,12 +338,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                                   }
                                               }
                                             });
-                                        // Future.wait([
-                                        //   TestController()
-                                        //       .getTopics(autopilotCourse),
-                                        // ]).then((value) {
-                                        //   topics = value[0];
-                                        // });
                                       } else {
                                         return Container();
                                       }
@@ -398,6 +371,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
     required int courseId,
     required TestActivity ongoingActivity,
     required User user,
+    dynamic controller,
   }) async {
     double sheetHeight = 480;
     Course? course = await CourseDB().getCourseById(courseId) as Course;
@@ -459,8 +433,9 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                         ),
                         Column(
                           children: [
-                            InkWell(
+                            GestureDetector(
                               onTap: (() async {
+                                print("ehh");
                                 switch (ongoingActivity.activityType) {
                                   case TestActivityType.MARATHON:
                                     MarathonController marathonController =
@@ -498,6 +473,22 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                       );
                                     }
 
+                                    break;
+                                  case TestActivityType.AUTOPILOT:
+                                    AutopilotController autopilotController =
+                                        controller as AutopilotController;
+                                    await autopilotController.loadAutopilot();
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return AutopilotTopicMenu(
+                                            controller: autopilotController,
+                                          );
+                                        },
+                                      ),
+                                    );
                                     break;
                                   default:
                                     break;
@@ -576,6 +567,27 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                         controller: marathonController,
                                       );
                                     }
+
+                                    break;
+                                  case TestActivityType.AUTOPILOT:
+                                    // AutopilotController autopilotController =
+                                    //     controller as AutopilotController;
+                                    // List<TestNameAndCount> topics =
+                                    //     await TestController()
+                                    //         .getTopics(course);
+
+                                    // AutopilotController autopilotController =
+                                    //     AutopilotController(
+                                    //   user,
+                                    //   course,
+                                    //   topics: topics,
+                                    // );
+
+                                    // await autopilotController.loadAutopilot();
+
+                                    // screenToNavigateTo = AutopilotTopicMenu(
+                                    //   controller: autopilotController,
+                                    // );
 
                                     break;
                                   default:

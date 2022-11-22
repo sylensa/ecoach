@@ -184,7 +184,7 @@ class AutopilotController {
   double get score {
     int totalQuestions = questions.length;
     int correctAnswers = correct;
-    
+
     if (totalQuestions == 0) {
       return 0;
     }
@@ -406,6 +406,21 @@ class AutopilotController {
     }
 
     return true;
+  }
+
+  double getPercentageOfCompletedAutopilotTopics() {
+    int totalAutopilotTopics = autoTopics.length;
+    int totalCompletedAutopilotTopics = 0;
+
+    autoTopics.forEach(
+      (autoTopic) {
+        if (autoTopic.status == AutopilotStatus.COMPLETED.toString()) {
+          totalCompletedAutopilotTopics++;
+        }
+      },
+    );
+
+    return (totalCompletedAutopilotTopics / totalAutopilotTopics) * 100;
   }
 
   enableQuestion(bool state) {
