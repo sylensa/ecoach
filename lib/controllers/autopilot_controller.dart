@@ -514,7 +514,6 @@ class AutopilotController {
     autopilot = await AutopilotDB().getCurrentAutopilot(course);
     if (autopilot != null) {
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
-      print("current: ${autoTopics}");
 
       int? topicId = autopilot!.topicId;
       if (topicId != null) {
@@ -565,8 +564,19 @@ class AutopilotController {
     }
   }
 
+  endOngoingAutopilot(Autopilot autoPilot) async {
+    if (autopilot != null) {
+      autoPilot.status = AutopilotStatus.COMPLETED.toString();
+      autopilot!.endTime = DateTime.now();
+      await AutopilotDB().update(autoPilot);
+
+      return true;
+    }
+
+    return false;
+  }
+
   deleteAutopilot(Autopilot? autopilot) async {
-    print("HEy");
     if (autopilot != null) {
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot.id!);
       for (int i = 0; i < autoTopics.length; i++) {

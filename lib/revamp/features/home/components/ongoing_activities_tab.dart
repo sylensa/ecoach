@@ -145,15 +145,17 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
-                  return SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      child: CircularProgressIndicator(
-                        color: kAdeoGreen4,
-                        strokeWidth: 2,
+                  return Center(
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(
+                          color: kAdeoGreen4,
+                          strokeWidth: 2,
+                        ),
                       ),
                     ),
                   );
@@ -496,16 +498,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
                                     break;
                                   case TestActivityType.AUTOPILOT:
-                                    // List<TestNameAndCount> topics =
-                                    //     await TestController()
-                                    //         .getTopics(course);
-
-                                    // AutopilotController autopilotController =
-                                    //     AutopilotController(
-                                    //   user,
-                                    //   course,
-                                    //   topics: topics,
-                                    // );
                                     AutopilotController autopilotController =
                                         controller as AutopilotController;
                                     await autopilotController.loadAutopilot();
@@ -693,22 +685,12 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                               course,
                               autopilot: ongoingActivity.autopilot,
                             );
-                            // AutopilotController autopilotController =
-                            //     controller as AutopilotController;
-                            // autopilotController.restartAutopilot();
-                            // print(ongoingActivity.autopilot);
-                            // autopilotController.autopilot =
-                            //     ongoingActivity.autopilot;
-                            autopilotController.autopilot!.status =
-                                AutopilotStatus.COMPLETED.toString();
 
-                            print(autopilotController.autopilot!.toJson());
+                            await autopilotController.endOngoingAutopilot(
+                                ongoingActivity.autopilot!);
+
                             Navigator.pop(context);
                             setState(() {});
-
-                            // screenToNavigateTo = AutopilotEnded(
-                            //   controller: autopilotController,
-                            // );
 
                             break;
 
