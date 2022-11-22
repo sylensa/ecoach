@@ -26,7 +26,6 @@ class TestTakenDB {
     int id = await db!.insert(
       'keyword_test_taken',
       testTaken.toJson(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
     return id;
@@ -40,19 +39,31 @@ class TestTakenDB {
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
   }
   Future< List<TestTaken>> getKeywordTestTaken() async {
+
     List<Map<String, dynamic>> result = [];
+    List<Map<String, dynamic>> response = [];
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
      result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken, SUM(correct) correct, SUM(wrong) wrong,SUM(unattempted) unattempted from keyword_test_taken GROUP by test_name");
-      print("result:$result");
+      print("result:${result.length}");
     List<TestTaken> tests = [];
     for (int i = 0; i < result.length; i++) {
       TestTaken test = TestTaken.fromJson(result[i]);
+      response = await db.rawQuery("Select * from keyword_test_taken");
+      print("response:${response.length}");
+      double scoreDiff ;
+      if(response.length > 1){
+        scoreDiff = response[1]["score"] -  response[0]["score"];
+      }else{
+        scoreDiff = response[0]["score"];
+      }
       test.score = result[i]["avg_score"]/result[i]["total_test_taken"];
-      test.userId =  result[i]["total_test_taken"];
+      test.total_test_taken =  result[i]["total_test_taken"];
+      test.scoreDiff =  scoreDiff;
       tests.add(test);
       print("object maps:${test.score}");
     }
+
 
     return tests;
   }

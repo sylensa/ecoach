@@ -546,26 +546,29 @@ class _HomePage2ContentState extends State<DashboardContent>
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Hello, ',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20,
+                                    Container(
+                                      width: appWidth(context) * 0.6,
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: 'Hello, ',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20,
+                                              ),
                                             ),
-                                          ),
-                                          TextSpan(
-                                            text: widget.user.name,
+                                            TextSpan(
+                                              text: widget.user.name,
 
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 20,
-                                            ),
-                                          )
-                                        ],
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 20,
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                     GestureDetector(
@@ -575,7 +578,7 @@ class _HomePage2ContentState extends State<DashboardContent>
                                       child: Container(
                                         padding: EdgeInsets.symmetric(
                                           vertical: 8,
-                                          horizontal: 12,
+                                          horizontal: 5,
                                         ),
                                         decoration: BoxDecoration(
                                             border: Border.all(
@@ -586,10 +589,10 @@ class _HomePage2ContentState extends State<DashboardContent>
                                           children: [
                                             Image.asset(
                                               "assets/images/gift.png",
-                                              width: 20,
+                                              width: 15,
                                             ),
                                             SizedBox(
-                                              width: 8,
+                                              width: 5,
                                             ),
                                             Text(
                                               "Apply code",

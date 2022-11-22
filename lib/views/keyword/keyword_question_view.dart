@@ -234,7 +234,6 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
   }
   saveTest(BuildContext context, Function(TestTaken? test, bool success) callback,{int? groupId,int? testId}) async {
     TestTaken testTaken = TestTaken(
-        id :controller.user.id,
         userId: controller.user.id,
         testId: testId,
         datetime: controller.startTime,

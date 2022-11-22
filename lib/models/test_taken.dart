@@ -27,10 +27,13 @@ class TestTaken {
     this.createdAt,
     this.updatedAt,
     this.groupId,
+    this.total_test_taken,
+    this.scoreDiff,
   });
 
   int? id;
   int? userId;
+  int? total_test_taken;
   int? groupId;
   DateTime? datetime;
   int? courseId;
@@ -44,6 +47,7 @@ class TestTaken {
   int? pauseduration;
   int totalQuestions;
   double? score;
+  double? scoreDiff;
   int? correct;
   int? wrong;
   int? unattempted;
@@ -100,6 +104,8 @@ class TestTaken {
         totalQuestions: json["total_questions"],
         score: json["score"] != null ? double.parse("${json['score']}") : 0,
         correct: json["correct"],
+        total_test_taken: json["total_test_taken"] == null ? 0 : json["total_test_taken"],
+       scoreDiff: json["scoreDiff"] == null ? 0.00 : json["scoreDiff"],
         wrong: json["wrong"],
         unattempted: json["unattempted"],
         responses: json["responses"],
@@ -116,6 +122,30 @@ class TestTaken {
 
   Map<String, dynamic> toJson() => {
         "id": id,
+        "user_id": userId,
+        "group_id": groupId ,
+        "date_time": datetime!.toIso8601String(),
+        "course_id": courseId,
+        "test_name": testname,
+        "test_type": testType,
+        "challenge_type": challengeType,
+        "test_id": testId,
+        "test_time": testTime,
+        "used_time": usedTime,
+        "pause_duration": pauseduration,
+        "total_questions": totalQuestions,
+        "score": score,
+        "correct": correct,
+        "wrong": wrong,
+        "unattempted": unattempted,
+        "responses": responses,
+        "comment": comment,
+        "user_rank": userRank,
+        "total_rank": totalRank,
+        "created_at": createdAt!.toIso8601String(),
+        "updated_at": updatedAt!.toIso8601String(),
+      };
+  Map<String, dynamic> toJsonKeyword() => {
         "user_id": userId,
         "group_id": groupId ,
         "date_time": datetime!.toIso8601String(),

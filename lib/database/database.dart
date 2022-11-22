@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 33, onOpen: (db) {},
+    return await openDatabase(path, version: 34, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -309,7 +309,7 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'keyword_test_taken' (
-        'id' INTEGER PRIMARY KEY,
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'user_id' int NOT NULL,
         'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,
@@ -727,7 +727,7 @@ class DBProvider {
         try {
           await db.execute("""DROP TABLE 'keyword_test_taken'""");
           await db.execute("""CREATE TABLE 'keyword_test_taken' (
-        'id' INTEGER PRIMARY KEY,
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'user_id' int NOT NULL,
         'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,
@@ -753,7 +753,7 @@ class DBProvider {
       ) """);
         } catch (e) {
           await db.execute("""CREATE TABLE 'keyword_test_taken' (
-        'id' INTEGER PRIMARY KEY,
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'user_id' int NOT NULL,
         'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,

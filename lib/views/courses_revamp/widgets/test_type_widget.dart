@@ -112,9 +112,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
     }
 
     futureList.then(
-          (data) {
+          (data) async{
         // Navigator.pop(context);
-        Navigator.push(
+       await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) {
@@ -218,6 +218,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             },
           ),
         );
+       await getKeywordTestTaken();
       },
     );
   }
@@ -418,7 +419,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                      Expanded(
                        child: ListView(
                          children: [
-                           if(searchTap)
+                           if(searchTap && keywordTestTaken.isNotEmpty)
                            CarouselSlider.builder(
                                options:
                                CarouselOptions(
@@ -452,7 +453,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                    child: Column(
                                      children: [
                                        Container(
-                                         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                                         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
                                          margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
                                          decoration: BoxDecoration(
                                              color: Color(0XFFE2EFF3),
@@ -497,10 +498,15 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
 
                                                        Row(
                                                          children: [
+                                                           keywordTestTaken[indexReport].scoreDiff! > 0 ?
+                                                           Image.asset(
+                                                             "assets/images/un_fav.png",
+                                                             color: Colors.green,
+                                                           ) :
                                                            SvgPicture.asset(
                                                              "assets/images/fav.svg",
                                                            ),
-                                                           sText("+3")
+                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : "-"}${keywordTestTaken[indexReport].scoreDiff}")
 
                                                          ],
                                                        ),
@@ -515,7 +521,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                children: [
                                                  Column(
                                                    children: [
-                                                     sText("${keywordTestTaken[indexReport].userId}"),
+                                                     sText("${keywordTestTaken[indexReport].total_test_taken}",size: 25,weight: FontWeight.w600),
                                                      SizedBox(height: 10,),
                                                      sText("times taken",size: 12),
 
@@ -523,7 +529,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                  ),
                                                  Column(
                                                    children: [
-                                                     sText("${keywordTestTaken[indexReport].score}%"),
+                                                     sText("${keywordTestTaken[indexReport].score}%",size: 25,weight: FontWeight.w600),
                                                      SizedBox(height: 10,),
                                                      sText("mastery",size: 12),
 
@@ -583,12 +589,25 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                    },
                                                    child: Image.asset("assets/images/pencil.png"),
                                                  ),
-                                                 Container(
-                                                   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                                   child: sText("Take Test",color: Colors.white),
-                                                   decoration: BoxDecoration(
-                                                       color: Color(0XFF00C9B9),
-                                                       borderRadius: BorderRadius.circular(10)
+                                                 MaterialButton(
+                                                   onPressed: ()async{
+                                                     stateSetter(() {
+                                                       searchKeyword = keywordTestTaken[indexReport].testname!.toLowerCase();
+                                                     });
+                                                    await getTest(context, TestCategory.NONE);
+                                                     await  getKeywordTestTaken();
+                                                     stateSetter(() {
+
+                                                     });
+
+                                                   },
+                                                   child: Container(
+                                                     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                                     child: sText("Take Test",color: Colors.white),
+                                                     decoration: BoxDecoration(
+                                                         color: Color(0XFF00C9B9),
+                                                         borderRadius: BorderRadius.circular(10)
+                                                     ),
                                                    ),
                                                  )
                                                ],
@@ -599,7 +618,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                  child: ListView.builder(
                                                      padding: EdgeInsets.only(left: 0,right: 0),
                                                      shrinkWrap: true,
-                                                     itemCount:3,
+                                                     itemCount:keywordTestTaken.length,
                                                      scrollDirection: Axis.horizontal,
                                                      itemBuilder: (BuildContext context, int index){
                                                        return Container(
@@ -636,13 +655,18 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                onTap: (){
                                  stateSetter(() {
                                    searchTap = false;
+
                                  });
 
                                },
                                decoration: textDecorSuffix(
                                    size: 15,
-                                   icon: IconButton(onPressed: (){
-                                     getTest(context, TestCategory.NONE);
+                                   icon: IconButton(onPressed: ()async{
+                                    await getTest(context, TestCategory.NONE);
+                                    await  getKeywordTestTaken();
+                                    stateSetter(() {
+
+                                    });
                                    }, icon: Icon(Icons.search,color: Colors.grey)),
                                    suffIcon: null,
                                    label: "Search Keywords",
@@ -677,7 +701,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                        searchKeyword = "mouse";
                                      });
                                       await getTest(context, TestCategory.NONE);
-                                     keywordTestTaken = await TestTakenDB().getKeywordTestTaken();
+                                      await  getKeywordTestTaken();
                                       stateSetter(() {
 
                                      });
@@ -872,7 +896,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   getKeywordTestTaken()async{
     keywordTestTaken = await TestTakenDB().getKeywordTestTaken();
     setState(() {
-
+      print("am back");
     });
   }
   @override
@@ -909,19 +933,19 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Standard test',
           iconURL: 'assets/icons/courses/knowledge.png',
           onTap: () {
-            // knowledgeTestModalBottomSheet(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return TestChallengeList(
-                    testType: TestType.KNOWLEDGE,
-                    course: widget.course,
-                    user: widget.user,
-                  );
-                },
-              ),
-            );
+            knowledgeTestModalBottomSheet(context);
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) {
+            //       return TestChallengeList(
+            //         testType: TestType.KNOWLEDGE,
+            //         course: widget.course,
+            //         user: widget.user,
+            //       );
+            //     },
+            //   ),
+            // );
           },
         ),
         MultiPurposeCourseCard(
