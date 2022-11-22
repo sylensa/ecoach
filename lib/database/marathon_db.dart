@@ -214,9 +214,8 @@ class MarathonDB {
           distinct: true,
           orderBy: "start_time DESC",
           groupBy: "topic_id",
-          where: 'status <> ? AND status <> ?',
+          where: 'status <> ?',
           whereArgs: [
-            MarathonStatus.NEW.toString(),
             MarathonStatus.COMPLETED.toString(),
           ]);
     }

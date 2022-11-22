@@ -44,9 +44,8 @@ import 'package:flutter/material.dart';
 class CompletedActivitiesTab extends StatefulWidget {
   static const String routeName = '/completed-activities';
 
-  const CompletedActivitiesTab({Key? key, required this.completedActivities})
+  const CompletedActivitiesTab({Key? key})
       : super(key: key);
-  final List completedActivities;
 
   @override
   State<CompletedActivitiesTab> createState() => _CompletedActivitiesTabState();
@@ -519,99 +518,106 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           children: [
                             Column(
                               children: [
-                                InkWell(
-                                  onTap: (() async {
-                                    switch (completedActivity.activityType) {
-                                      case TestActivityType.MARATHON:
-                                        MarathonController marathonController =
-                                            MarathonController(
-                                          _user,
-                                          course,
-                                          name: course.name!,
-                                          marathon: completedActivity.marathon,
-                                        );
+                                if (completedActivity.activityType !=
+                                    TestActivityType.AUTOPILOT)
+                                  InkWell(
+                                    onTap: (() async {
+                                      switch (completedActivity.activityType) {
+                                        case TestActivityType.MARATHON:
+                                          MarathonController
+                                              marathonController =
+                                              MarathonController(
+                                            _user,
+                                            course,
+                                            name: course.name!,
+                                            marathon:
+                                                completedActivity.marathon,
+                                          );
 
-                                        Navigator.push<void>(
-                                          context,
-                                          MaterialPageRoute<void>(
-                                            builder: (BuildContext context) {
-                                              return MarathonCompleteCongratulations(
-                                                controller: marathonController,
-                                              );
-                                            },
+                                          Navigator.push<void>(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (BuildContext context) {
+                                                return MarathonCompleteCongratulations(
+                                                  controller:
+                                                      marathonController,
+                                                );
+                                              },
+                                            ),
+                                          ).then((value) {
+                                            marathonController.currentQuestion =
+                                                0;
+                                            marathonController.reviewMode =
+                                                true;
+                                            setState(() {});
+                                          });
+                                          break;
+                                        case TestActivityType.TREADMILL:
+                                          QuizController controller =
+                                              QuizController(
+                                            _user,
+                                            course,
+                                            name: completedActivity
+                                                .treadmill!.testname!,
+                                          );
+                                          viewResults(
+                                            completedActivity.treadmill!,
+                                            controller,
+                                            completedActivity.treadmill!,
+                                            true,
+                                          );
+                                          break;
+                                        case TestActivityType.AUTOPILOT:
+                                          List<TestNameAndCount> topics =
+                                              await TestController()
+                                                  .getTopics(course);
+
+                                          AutopilotController
+                                              autopilotController =
+                                              AutopilotController(
+                                            _user,
+                                            course,
+                                            topics: topics,
+                                          );
+
+                                          await autopilotController
+                                              .loadAutopilot();
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return AutopilotTopicMenu(
+                                                  controller:
+                                                      autopilotController,
+                                                );
+                                              },
+                                            ),
+                                          );
+                                          break;
+                                        default:
+                                          break;
+                                      }
+                                    }),
+                                    child: Container(
+                                      width: double.maxFinite,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        color: kAdeoGreen4,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "View Results",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                        ).then((value) {
-                                          marathonController.currentQuestion =
-                                              0;
-                                          marathonController.reviewMode = true;
-                                          setState(() {});
-                                        });
-                                        break;
-                                      case TestActivityType.TREADMILL:
-                                        QuizController controller =
-                                            QuizController(
-                                          _user,
-                                          course,
-                                          name: completedActivity
-                                              .treadmill!.testname!,
-                                        );
-                                        viewResults(
-                                          completedActivity.treadmill!,
-                                          controller,
-                                          completedActivity.treadmill!,
-                                          true,
-                                        );
-                                        break;
-                                      case TestActivityType.AUTOPILOT:
-                                        List<TestNameAndCount> topics =
-                                            await TestController()
-                                                .getTopics(course);
-
-                                        AutopilotController
-                                            autopilotController =
-                                            AutopilotController(
-                                          _user,
-                                          course,
-                                          topics: topics,
-                                        );
-
-                                        await autopilotController
-                                            .loadAutopilot();
-
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return AutopilotTopicMenu(
-                                                controller: autopilotController,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                        break;
-                                      default:
-                                        break;
-                                    }
-                                  }),
-                                  child: Container(
-                                    width: double.maxFinite,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      color: kAdeoGreen4,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "View Results",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
                                 SizedBox(
                                   height: 18,
                                 ),

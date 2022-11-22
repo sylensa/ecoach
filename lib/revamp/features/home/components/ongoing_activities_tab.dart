@@ -18,6 +18,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot/autopilot_ended.dart';
 import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_countdown.dart';
@@ -31,33 +32,28 @@ import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class OngoingActivitiesTab extends StatefulWidget {
-  const OngoingActivitiesTab({Key? key, required this.ongoingActivities})
-      : super(key: key);
-  final List ongoingActivities;
+  const OngoingActivitiesTab({Key? key}) : super(key: key);
 
   @override
   State<OngoingActivitiesTab> createState() => _OngoingActivitiesTabState();
 }
 
 class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
-  List<TestActivity> ongoingActivities = [];
-  List<Marathon> marathons = [];
-  List<Autopilot> autopilots = [];
-
-  late TestActivityList ongoingMarathons;
-  late TestActivityList ongoingAutopilots;
   late Topic? topic;
   late User user;
   bool isLoadingCompletedActivities = true;
 
-  getOngoingMarathons() {
-    MarathonDB().ongoingMarathons().then((mList) async {
-      marathons = mList;
+ Future<List<TestActivity>> getOngoingMarathons() async {
+    late List<TestActivity> ongoingMarathonActivities = [];
+
+    late TestActivityList ongoingMarathons;
+    await MarathonDB().ongoingMarathons().then((mList) async {
+      List<Marathon> marathons = mList;
       Map<String, dynamic> ongoingMarathonsMap = {
         "marathons": marathons,
       };
       ongoingMarathons = TestActivityList.fromJson(ongoingMarathonsMap);
-      for (var ongoingMarathon in ongoingMarathons.marathons!) {
+      for (Marathon ongoingMarathon in ongoingMarathons.marathons!) {
         if (ongoingMarathon.topicId != null) {
           topic = await TopicDB().getTopicById(ongoingMarathon.topicId!);
 
@@ -71,21 +67,28 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
           TestActivity completedMarathonObject =
               TestActivity.fromJson(completedMarathonJSON);
-          ongoingActivities.add(completedMarathonObject);
+          ongoingMarathonActivities.add(completedMarathonObject);
         }
       }
+      // print(ongoingMarathonActivities);
     });
+    return ongoingMarathonActivities;
   }
 
-  getOngoingAutopilots() {
+  Future<List<TestActivity>> getOngoingAutopilots() async {
+    List<TestActivity> ongoingAutopilotActivities = [];
+    late TestActivityList ongoingAutopilots;
     AutopilotDB().ongoingAutopilots().then((mList) async {
-      autopilots = mList;
+      List<Autopilot> autopilots = mList;
       Map<String, dynamic> ongoingAutopilotsMap = {
         "autopilots": autopilots,
       };
 
       ongoingAutopilots = TestActivityList.fromJson(ongoingAutopilotsMap);
       for (var ongoingAutopilot in ongoingAutopilots.autopilots!) {
+        // if (ongoingAutopilot.status == AutopilotStatus.NEW.toString()) {
+        //   // print(ongoingAutopilot.toJson());
+        // }
         Map<String, dynamic> completedAutopilotJSON = {
           "activityType": TestActivityType.AUTOPILOT,
           "courseId": ongoingAutopilot.courseId,
@@ -96,24 +99,31 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
         TestActivity ongoingAutopilotObject =
             TestActivity.fromJson(completedAutopilotJSON);
-        ongoingActivities.add(ongoingAutopilotObject);
+        ongoingAutopilotActivities.add(ongoingAutopilotObject);
       }
     });
+    return ongoingAutopilotActivities;
   }
 
-  Future loadCompletedActivities() async {
-    user = await UserPreferences().getUser() as User;
-    await getOngoingMarathons();
+  Future<List<TestActivity>> loadOngoingActivities() async {
     // await getCompletedTreadmills();
-    await getOngoingAutopilots();
 
-    isLoadingCompletedActivities = false;
+    user = await UserPreferences().getUser() as User;
+    List<TestActivity> ongoingMarathonActivities = [];
+    List<TestActivity> ongoingAutopilotActivities = [];
+    ongoingMarathonActivities = await getOngoingMarathons();
+    ongoingAutopilotActivities = await getOngoingAutopilots();
+
+    List<TestActivity> allOngoingActivities = [
+      ...ongoingMarathonActivities,
+      ...ongoingAutopilotActivities,
+    ];
+    return allOngoingActivities;
   }
 
   @override
   void initState() {
     super.initState();
-    loadCompletedActivities();
   }
 
   @override
@@ -130,227 +140,261 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
       child: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 18.0),
-        child: isLoadingCompletedActivities
-            ? Column(
-                children: [
-                  Center(
-                    child: SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        child: CircularProgressIndicator(
-                          color: kAdeoGreen4,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  if (ongoingActivities.isEmpty)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "You do not currently have an ongoing activity",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w500,
+        child:
+            FutureBuilder<List<TestActivity>>(
+                future: loadOngoingActivities(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                      return SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          child: CircularProgressIndicator(
+                            color: kAdeoGreen4,
+                            strokeWidth: 2,
                           ),
                         ),
-                        SizedBox(
-                          height: 14,
-                        ),
-                        AdeoFilledButton(
-                          color: Colors.white,
-                          background: kAdeoBlue,
-                          label: 'Take an activity',
-                          size: Sizes.medium,
-                          fontSize: 16,
-                          onPressed: () {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) {
-                              return MainHomePage(
-                                user,
-                                index: 2,
-                              );
-                            }));
-                          },
-                        )
-                      ],
-                    ),
-                  if (ongoingActivities.isNotEmpty)
-                    ...ongoingActivities.map(
-                      ((ongoingActivity) {
-                        String activityTitle;
-
-                        switch (ongoingActivity.activityType) {
-                          case TestActivityType.MARATHON:
-                            activityTitle =
-                                "${ongoingActivity.topic!.name!} (${ongoingActivity.marathon!.title!})";
-
-                            print(
-                                "Marathon Percentage: ${ongoingActivity.marathon!.toJson()}");
-                            return Container(
-                              margin: EdgeInsets.only(
-                                bottom: 12,
+                      );
+                    default:
+                      if (snapshot.hasError) {
+                        return Container();
+                      } else if (snapshot.data != null) {
+                        
+                        List<TestActivity> _ongoingActivities = snapshot.data!;
+                        return Column(
+                          children: [
+                            if (_ongoingActivities.isEmpty)
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "You do not currently have an ongoing activity",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 14,
+                                  ),
+                                  AdeoFilledButton(
+                                    color: Colors.white,
+                                    background: kAdeoBlue,
+                                    label: 'Take an activity',
+                                    size: Sizes.medium,
+                                    fontSize: 16,
+                                    onPressed: () {
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return MainHomePage(
+                                          user,
+                                          index: 2,
+                                        );
+                                      }));
+                                    },
+                                  )
+                                ],
                               ),
-                              child: ActivityCourseCard(
-                                courseTitle: activityTitle,
-                                activityType: ongoingActivity.activityType!,
-                                iconUrl: 'assets/icons/courses/treadmill.png',
-                                hasProgressIndicator: true,
-                                percentageCompleted:
-                                    ongoingActivity.marathon!.avgScore,
-                                onTap: () {
-                                  showTapActions(
-                                    context,
-                                    courseId: ongoingActivity.courseId!,
-                                    ongoingActivity: ongoingActivity,
-                                    title: activityTitle,
-                                    user: user,
-                                  );
-                                },
-                              ),
-                            );
-                          case TestActivityType.TREADMILL:
-                            return Container();
+                            if (_ongoingActivities.isNotEmpty)
+                              ..._ongoingActivities.map(
+                                ((ongoingActivity) {
+                                  String activityTitle;
+                                  print(
+                                      "Marathon Percentage: ${ongoingActivity.marathon!.toJson()}");
 
-                          case TestActivityType.AUTOPILOT:
-                            activityTitle = ongoingActivity.autopilot!.title!;
-                            return FutureBuilder<Course>(
-                                future: getAutopilotCourse(
-                                    ongoingActivity.autopilot!.courseId),
-                                builder: (context, snapshot) {
-                                  switch (snapshot.connectionState) {
-                                    case ConnectionState.none:
-                                    case ConnectionState.waiting:
-                                      return SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: Container(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                            color: kAdeoGreen4,
-                                            strokeWidth: 2,
-                                          ),
+                                  switch (ongoingActivity.activityType) {
+                                    case TestActivityType.MARATHON:
+                                      activityTitle =
+                                          "${ongoingActivity.topic!.name!} (${ongoingActivity.marathon!.title!})";
+
+                                      return Container(
+                                        margin: EdgeInsets.only(
+                                          bottom: 12,
+                                        ),
+                                        child: ActivityCourseCard(
+                                          courseTitle: activityTitle,
+                                          activityType:
+                                              ongoingActivity.activityType!,
+                                          iconUrl:
+                                              'assets/icons/courses/treadmill.png',
+                                          hasProgressIndicator: true,
+                                          percentageCompleted: ongoingActivity
+                                              .marathon!.avgScore,
+                                          onTap: () {
+                                            showTapActions(
+                                              context,
+                                              courseId:
+                                                  ongoingActivity.courseId!,
+                                              ongoingActivity: ongoingActivity,
+                                              title: activityTitle,
+                                              user: user,
+                                            );
+                                          },
                                         ),
                                       );
-                                    default:
-                                      if (snapshot.hasError) {
-                                        return Container();
-                                      } else if (snapshot.data != null) {
-                                        Course autopilotCourse = snapshot.data!;
-                                        AutopilotController
-                                            autopilotController =
-                                            AutopilotController(
-                                          user,
-                                          autopilotCourse,
-                                        );
-                                        return FutureBuilder(
-                                            future: Future.wait([
-                                              TestController()
-                                                  .getTopics(autopilotCourse),
-                                              autopilotController
-                                                  .loadAutopilot(),
-                                            ]),
-                                            builder: (context,
-                                                AsyncSnapshot<List> snapshot) {
-                                              switch (
-                                                  snapshot.connectionState) {
-                                                case ConnectionState.none:
-                                                case ConnectionState.waiting:
-                                                  return SizedBox(
-                                                    width: 18,
-                                                    height: 18,
-                                                    child: Container(
-                                                      width: 24,
-                                                      height: 24,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        color: kAdeoGreen4,
-                                                        strokeWidth: 2,
-                                                      ),
+                                    case TestActivityType.TREADMILL:
+                                      return Container();
+
+                                    case TestActivityType.AUTOPILOT:
+                                      activityTitle =
+                                          ongoingActivity.autopilot!.title!;
+                                      return FutureBuilder<Course>(
+                                          future: getAutopilotCourse(
+                                              ongoingActivity
+                                                  .autopilot!.courseId),
+                                          builder: (context, snapshot) {
+                                            switch (snapshot.connectionState) {
+                                              case ConnectionState.none:
+                                              case ConnectionState.waiting:
+                                                return SizedBox(
+                                                  width: 18,
+                                                  height: 18,
+                                                  child: Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      color: kAdeoGreen4,
+                                                      strokeWidth: 2,
                                                     ),
+                                                  ),
+                                                );
+                                              default:
+                                                if (snapshot.hasError) {
+                                                  return Container();
+                                                } else if (snapshot.data !=
+                                                    null) {
+                                                  Course autopilotCourse =
+                                                      snapshot.data!;
+                                                  AutopilotController
+                                                      autopilotController =
+                                                      AutopilotController(
+                                                    user,
+                                                    autopilotCourse,
                                                   );
-                                                default:
-                                                  if (snapshot.hasError) {
-                                                    return Container();
-                                                  } else if (snapshot.data !=
-                                                      null) {
-                                                    List<TestNameAndCount>
-                                                        topics =
-                                                        snapshot.data![0];
-
-                                                    autopilotController
-                                                            .autopilot =
-                                                        ongoingActivity
-                                                            .autopilot;
-                                                    autopilotController.topics =
-                                                        topics;
-
-                                                    double completedAverage =
+                                                  return FutureBuilder(
+                                                      future: Future.wait([
+                                                        TestController()
+                                                            .getTopics(
+                                                                autopilotCourse),
                                                         autopilotController
-                                                            .getPercentageOfCompletedAutopilotTopics();
+                                                            .loadAutopilot(),
+                                                      ]),
+                                                      builder: (context,
+                                                          AsyncSnapshot<List>
+                                                              snapshot) {
+                                                        switch (snapshot
+                                                            .connectionState) {
+                                                          case ConnectionState
+                                                              .none:
+                                                          case ConnectionState
+                                                              .waiting:
+                                                            return SizedBox(
+                                                              width: 18,
+                                                              height: 18,
+                                                              child: Container(
+                                                                width: 24,
+                                                                height: 24,
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color:
+                                                                      kAdeoGreen4,
+                                                                  strokeWidth:
+                                                                      2,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          default:
+                                                            if (snapshot
+                                                                .hasError) {
+                                                              return Container();
+                                                            } else if (snapshot
+                                                                    .data !=
+                                                                null) {
+                                                              List<TestNameAndCount>
+                                                                  topics =
+                                                                  snapshot
+                                                                      .data![0];
 
-                                                    return Container(
-                                                      margin: EdgeInsets.only(
-                                                        bottom: 12,
-                                                      ),
-                                                      child: ActivityCourseCard(
-                                                        courseTitle:
-                                                            autopilotCourse
-                                                                .name!,
-                                                        activityType:
-                                                            ongoingActivity
-                                                                .activityType!,
-                                                        iconUrl:
-                                                            'assets/icons/courses/autopilot.png',
-                                                        hasProgressIndicator:
-                                                            true,
-                                                        percentageCompleted:
-                                                            completedAverage,
-                                                        onTap: () {
-                                                          showTapActions(
-                                                            context,
-                                                            courseId:
-                                                                ongoingActivity
-                                                                    .courseId!,
-                                                            ongoingActivity:
-                                                                ongoingActivity,
-                                                            title:
-                                                                activityTitle,
-                                                            user: user,
-                                                            controller:
-                                                                autopilotController,
-                                                          );
-                                                        },
-                                                      ),
-                                                    );
-                                                  } else {
-                                                    return Container();
-                                                  }
-                                              }
-                                            });
-                                      } else {
-                                        return Container();
-                                      }
+                                                              autopilotController
+                                                                      .autopilot =
+                                                                  ongoingActivity
+                                                                      .autopilot;
+                                                              autopilotController
+                                                                      .topics =
+                                                                  topics;
+
+                                                              double
+                                                                  completedAverage =
+                                                                  autopilotController
+                                                                      .getPercentageOfCompletedAutopilotTopics();
+
+                                                              return Container(
+                                                                margin:
+                                                                    EdgeInsets
+                                                                        .only(
+                                                                  bottom: 12,
+                                                                ),
+                                                                child:
+                                                                    ActivityCourseCard(
+                                                                  courseTitle:
+                                                                      autopilotCourse
+                                                                          .name!,
+                                                                  activityType:
+                                                                      ongoingActivity
+                                                                          .activityType!,
+                                                                  iconUrl:
+                                                                      'assets/icons/courses/autopilot.png',
+                                                                  hasProgressIndicator:
+                                                                      true,
+                                                                  percentageCompleted:
+                                                                      completedAverage,
+                                                                  onTap: () {
+                                                                    showTapActions(
+                                                                      context,
+                                                                      courseId:
+                                                                          ongoingActivity
+                                                                              .courseId!,
+                                                                      ongoingActivity:
+                                                                          ongoingActivity,
+                                                                      title:
+                                                                          activityTitle,
+                                                                      user:
+                                                                          user,
+                                                                      controller:
+                                                                          autopilotController,
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              return Container();
+                                                            }
+                                                        }
+                                                      });
+                                                } else {
+                                                  return Container();
+                                                }
+                                            }
+                                          });
+
+                                    default:
+                                      return Container();
                                   }
-                                });
-
-                          default:
-                            return Container();
-                        }
-                      }),
-                    )
-                ],
-              ),
+                                }),
+                              )
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
+                  }
+                }),
       )),
     );
   }
@@ -358,11 +402,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
   Future<Course> getAutopilotCourse(courseId) async {
     Course course = await CourseDB().getCourseById(courseId) as Course;
     return course;
-  }
-
-  Future<List<TestNameAndCount>> getAutopilotTopics(course) async {
-    List<TestNameAndCount> topics = await TestController().getTopics(course);
-    return topics;
   }
 
   showTapActions(
@@ -435,7 +474,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                           children: [
                             GestureDetector(
                               onTap: (() async {
-                                print("ehh");
                                 switch (ongoingActivity.activityType) {
                                   case TestActivityType.MARATHON:
                                     MarathonController marathonController =
@@ -475,6 +513,16 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
                                     break;
                                   case TestActivityType.AUTOPILOT:
+                                    // List<TestNameAndCount> topics =
+                                    //     await TestController()
+                                    //         .getTopics(course);
+
+                                    // AutopilotController autopilotController =
+                                    //     AutopilotController(
+                                    //   user,
+                                    //   course,
+                                    //   topics: topics,
+                                    // );
                                     AutopilotController autopilotController =
                                         controller as AutopilotController;
                                     await autopilotController.loadAutopilot();
@@ -570,24 +618,15 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
                                     break;
                                   case TestActivityType.AUTOPILOT:
-                                    // AutopilotController autopilotController =
-                                    //     controller as AutopilotController;
-                                    // List<TestNameAndCount> topics =
-                                    //     await TestController()
-                                    //         .getTopics(course);
+                                    AutopilotController autopilotController =
+                                        controller as AutopilotController;
 
-                                    // AutopilotController autopilotController =
-                                    //     AutopilotController(
-                                    //   user,
-                                    //   course,
-                                    //   topics: topics,
-                                    // );
+                                    print('creating new autopilot');
+                                    await autopilotController.createAutopilot();
 
-                                    // await autopilotController.loadAutopilot();
-
-                                    // screenToNavigateTo = AutopilotTopicMenu(
-                                    //   controller: autopilotController,
-                                    // );
+                                    screenToNavigateTo = AutopilotTopicMenu(
+                                      controller: autopilotController,
+                                    );
 
                                     break;
                                   default:
@@ -654,19 +693,45 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                             screenToNavigateTo = MarathonEnded(
                               controller: marathonController,
                             );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (c) {
+                                  return screenToNavigateTo;
+                                },
+                              ),
+                            );
 
                             break;
+                          case TestActivityType.AUTOPILOT:
+                            AutopilotController autopilotController =
+                                AutopilotController(
+                              user,
+                              course,
+                              autopilot: ongoingActivity.autopilot,
+                            );
+                            // AutopilotController autopilotController =
+                            //     controller as AutopilotController;
+                            // autopilotController.restartAutopilot();
+                            // print(ongoingActivity.autopilot);
+                            // autopilotController.autopilot =
+                            //     ongoingActivity.autopilot;
+                            autopilotController.autopilot!.status =
+                                AutopilotStatus.COMPLETED.toString();
+
+                            print(autopilotController.autopilot!.toJson());
+                            Navigator.pop(context);
+                            setState(() {});
+
+                            // screenToNavigateTo = AutopilotEnded(
+                            //   controller: autopilotController,
+                            // );
+
+                            break;
+
                           default:
                             break;
                         }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (c) {
-                              return screenToNavigateTo;
-                            },
-                          ),
-                        );
                       }),
                       child: Container(
                         width: double.maxFinite,

@@ -247,10 +247,11 @@ class AutopilotDB {
       maps = await db!.query('autopilots',
           orderBy: "start_time DESC",
           distinct: true,
-          where: "status = ? ",
+          where: "status = ?",
           groupBy: "course_id",
-          whereArgs: [AutopilotStatus.COMPLETED.toString()]);
-      // print('course len=${maps}');
+          whereArgs: [
+            AutopilotStatus.COMPLETED.toString(),
+          ]);
     }
 
     List<Autopilot> autopilots = [];

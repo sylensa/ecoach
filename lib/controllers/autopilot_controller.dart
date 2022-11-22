@@ -414,13 +414,17 @@ class AutopilotController {
 
     autoTopics.forEach(
       (autoTopic) {
-        if (autoTopic.status == AutopilotStatus.COMPLETED.toString()) {
+        if (autoTopic.status == AutopilotStatus.COMPLETED.toString() ||
+            autoTopic.status == AutopilotStatus.NEW.toString()) {
           totalCompletedAutopilotTopics++;
         }
       },
     );
-
-    return (totalCompletedAutopilotTopics / totalAutopilotTopics) * 100;
+    print("hey");
+    if (totalAutopilotTopics > 0) {
+      return (totalCompletedAutopilotTopics / totalAutopilotTopics) * 100;
+    }
+    return 0;
   }
 
   enableQuestion(bool state) {
@@ -508,9 +512,9 @@ class AutopilotController {
 
   Future<bool> loadAutopilot() async {
     autopilot = await AutopilotDB().getCurrentAutopilot(course);
-
     if (autopilot != null) {
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
+      print("current: ${autoTopics}");
 
       int? topicId = autopilot!.topicId;
       if (topicId != null) {
@@ -562,6 +566,7 @@ class AutopilotController {
   }
 
   deleteAutopilot(Autopilot? autopilot) async {
+    print("HEy");
     if (autopilot != null) {
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot.id!);
       for (int i = 0; i < autoTopics.length; i++) {
