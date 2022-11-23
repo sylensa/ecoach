@@ -105,7 +105,124 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         futureList = TestController().getBankTest(widget.course);
         break;
       case TestCategory.NONE:
-        futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
+        for(int i =0; i < keywordTestTaken.length; i++){
+          if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
+            futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+            futureList.then(
+                  (data) async{
+                Navigator.pop(context);
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      Widget? widgetView;
+                      switch (testCategory) {
+                        case TestCategory.MOCK:
+                          List<Question> questions = data as List<Question>;
+                          widgetView = testType == TestType.SPEED
+                              ? SpeedQuizCover(
+                            widget.user,
+                            testType,
+                            questions,
+                            course: widget.course,
+                            theme: QuizTheme.ORANGE,
+                            category: testCategory,
+                            time:  questions.length * 60,
+                            name: "Mock Test",
+                          )
+                              : QuizCover(
+                            widget.user,
+                            questions,
+                            course: widget.course,
+                            type: testType,
+                            theme: QuizTheme.BLUE,
+                            category: testCategory,
+                            time: questions.length * 60,
+                            name: "Mock Test",
+                          );
+                          break;
+                        case TestCategory.EXAM:
+                          widgetView = TestTypeListView(
+                            widget.user,
+                            widget.course,
+                            data,
+                            testType,
+                            title: "Exams",
+                            testCategory: TestCategory.EXAM,
+                          );
+                          break;
+                        case TestCategory.TOPIC:
+                          widgetView = TestTypeListView(
+                            widget.user,
+                            widget.course,
+                            data,
+                            testType,
+                            title: "Topic",
+                            multiSelect: true,
+                            testCategory: TestCategory.TOPIC,
+                          );
+                          break;
+                        case TestCategory.ESSAY:
+                          widgetView = TestTypeListView(
+                            widget.user,
+                            widget.course,
+                            data,
+                            testType,
+                            title: "Essays",
+                            testCategory: TestCategory.ESSAY,
+                          );
+                          break;
+                        case TestCategory.SAVED:
+                          List<Question> questions = data as List<Question>;
+                          widgetView = QuizCover(
+                            widget.user,
+                            questions,
+                            category: testCategory,
+                            course: widget.course,
+                            theme: QuizTheme.BLUE,
+                            time:  questions.length * 60,
+                            name: "Saved Test",
+                          );
+                          break;
+                        case TestCategory.NONE:
+                          List<Question> questions = data as List<Question>;
+
+                          widgetView = KeywordAssessment(quizCover: KeywordQuizCover(
+                            widget.user,
+                            questions,
+                            category: testCategory,
+                            course: widget.course,
+                            theme: QuizTheme.BLUE,
+                            time:  questions.length * 60,
+                            name: searchKeyword,
+                          ),
+                            questionCount: questions.length,
+                          );
+                          break;
+                        case TestCategory.BANK:
+                          widgetView = TestTypeListView(
+                            widget.user,
+                            widget.course,
+                            data,
+                            testType,
+                            title: "Bank",
+                            testCategory: TestCategory.BANK,
+                          );
+                          break;
+                        default:
+                          widgetView = null;
+                      }
+                      return widgetView!;
+                    },
+                  ),
+                );
+
+              },
+            );
+            return;
+          }
+        }
+          futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
         break;
       default:
         futureList = TestController().getBankTest(widget.course);
