@@ -748,7 +748,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                           ongoingActivity
                                               .ongoingTreadmill!.title!,
                                     );
-                           
+
                                     if (ongoingActivity
                                             .ongoingTreadmill!.type ==
                                         "TreadmillType.TOPIC") {
@@ -822,77 +822,79 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                       ],
                     ),
                   ),
-                  Positioned(
-                    bottom: 12,
-                    left: 0,
-                    right: 0,
-                    child: InkWell(
-                      onTap: (() async {
-                        dynamic screenToNavigateTo;
-                        switch (ongoingActivity.activityType) {
-                          case TestActivityType.MARATHON:
-                            Marathon marathon = ongoingActivity.marathon!;
-                            MarathonController marathonController =
-                                MarathonController(
-                              user,
-                              course,
-                              name: ongoingActivity.marathon!.title,
-                              marathon: marathon,
-                            );
+                  if (ongoingActivity.activityType !=
+                      TestActivityType.TREADMILL)
+                    Positioned(
+                      bottom: 12,
+                      left: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: (() async {
+                          dynamic screenToNavigateTo;
+                          switch (ongoingActivity.activityType) {
+                            case TestActivityType.MARATHON:
+                              Marathon marathon = ongoingActivity.marathon!;
+                              MarathonController marathonController =
+                                  MarathonController(
+                                user,
+                                course,
+                                name: ongoingActivity.marathon!.title,
+                                marathon: marathon,
+                              );
 
-                            marathonController.endMarathon();
-                            screenToNavigateTo = MarathonEnded(
-                              controller: marathonController,
-                            );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (c) {
-                                  return screenToNavigateTo;
-                                },
+                              marathonController.endMarathon();
+                              screenToNavigateTo = MarathonEnded(
+                                controller: marathonController,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (c) {
+                                    return screenToNavigateTo;
+                                  },
+                                ),
+                              );
+
+                              break;
+                            case TestActivityType.AUTOPILOT:
+                              AutopilotController autopilotController =
+                                  AutopilotController(
+                                user,
+                                course,
+                                autopilot: ongoingActivity.autopilot,
+                              );
+
+                              await autopilotController.endOngoingAutopilot(
+                                  ongoingActivity.autopilot!);
+
+                              Navigator.pop(context);
+                              setState(() {});
+
+                              break;
+
+                            default:
+                              break;
+                          }
+                        }),
+                        child: Container(
+                          width: double.maxFinite,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "End Activity",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: kAdeoOrange2,
+                                fontWeight: FontWeight.w500,
                               ),
-                            );
-
-                            break;
-                          case TestActivityType.AUTOPILOT:
-                            AutopilotController autopilotController =
-                                AutopilotController(
-                              user,
-                              course,
-                              autopilot: ongoingActivity.autopilot,
-                            );
-
-                            await autopilotController.endOngoingAutopilot(
-                                ongoingActivity.autopilot!);
-
-                            Navigator.pop(context);
-                            setState(() {});
-
-                            break;
-
-                          default:
-                            break;
-                        }
-                      }),
-                      child: Container(
-                        width: double.maxFinite,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "End Activity",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: kAdeoOrange2,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
                   Positioned(
                     top: 12,
                     left: 0,
