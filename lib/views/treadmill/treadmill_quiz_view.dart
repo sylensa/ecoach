@@ -1151,10 +1151,6 @@ class _TreadmillQuizViewState extends State<TreadmillQuizView>
                 ),
                 (route) => false,
               );
-              // Navigator.popUntil(
-              //   context,
-              //   ModalRoute.withName(CoursesDetailsPage.routeName),
-              // );
             },
             style: ButtonStyle(
               animationDuration: const Duration(milliseconds: 200),

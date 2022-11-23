@@ -138,6 +138,32 @@ class TestTakenDB {
     }
     return tests;
   }
+  Future<List<TestTaken>> ongoingCourseTestsTaken({int? courseId}) async {
+    final Database? db = await DBProvider.database;
+    final List<Map<String, dynamic>> maps;
+
+    if (courseId != null) {
+      maps = await db!.query('tests_taken',
+          orderBy: "created_at DESC",
+          where: "course_id = ?",
+          whereArgs: [courseId]);
+    } else {
+      maps = await db!.query(
+        'tests_taken',
+        orderBy: "created_at DESC",
+        groupBy: "course_id",
+        distinct: true,
+      );
+    }
+
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      tests.add(test);
+    }
+    return tests;
+  }
 
   Future<List<TestTaken>> getAllAverageScore({String courseId = "0"}) async {
     final Database? db = await DBProvider.database;

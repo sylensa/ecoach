@@ -476,6 +476,10 @@ class TestController {
     Treadmill? treadmill = await TreadmillDB().getCurrentTreadmill(course);
     return treadmill;
   }
+  Future<List<Treadmill>> getOngoingTreadmill() async {
+    List<Treadmill> treadmills = await TreadmillDB().getOngoingTreadmill();
+    return treadmills;
+  }
 
   insertSaveTestQuestion(int qid) async {
     // Question? response = await  QuestionDB().getSavedTestQuestionById(qid);

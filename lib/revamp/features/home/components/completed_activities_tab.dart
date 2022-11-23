@@ -346,9 +346,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                   .treadmill!.testname
                                   .toString();
                               ;
-                              // activityTitle =
-                              //     "${completedActivity.treadmill!.testname} (${completedActivity.marathon!.title!})";
-
+              
                               return Container(
                                 margin: EdgeInsets.only(
                                   bottom: isLastItem ? 0 : 12,
@@ -695,7 +693,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                         .responses)["Q1"]["topic_id"];
 
                                     late TreadmillMode treadmillMode;
-                                    print(treadmillTestCategory.runtimeType);
 
                                     if (treadmillTestCategory ==
                                         "TestCategory.TOPIC") {

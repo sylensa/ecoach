@@ -1,19 +1,24 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:ecoach/controllers/autopilot_controller.dart';
 import 'package:ecoach/controllers/marathon_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/autopilot_db.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/marathon.dart';
 import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -25,6 +30,9 @@ import 'package:ecoach/views/marathon/marathon_countdown.dart';
 import 'package:ecoach/views/marathon/marathon_ended.dart';
 import 'package:ecoach/views/marathon/marathon_practise_mock.dart';
 import 'package:ecoach/views/marathon/marathon_practise_topic_menu.dart';
+import 'package:ecoach/views/treadmill/treadmill_countdown.dart';
+import 'package:ecoach/views/treadmill/treadmill_save_resumption_menu.dart';
+import 'package:ecoach/views/treadmill/treadmill_timer.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/buttons/adeo_filled_button.dart';
 import 'package:ecoach/widgets/cards/activity_course_card.dart';
@@ -85,10 +93,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
 
       ongoingAutopilots = TestActivityList.fromJson(ongoingAutopilotsMap);
       for (var ongoingAutopilot in ongoingAutopilots.autopilots!) {
-        // if (ongoingAutopilot.status == AutopilotStatus.NEW.toString()) {
-        //   // print(ongoingAutopilot.toJson());
-        // }
-        Map<String, dynamic> completedAutopilotJSON = {
+        Map<String, dynamic> ongoingAutopilotJSON = {
           "activityType": TestActivityType.AUTOPILOT,
           "courseId": ongoingAutopilot.courseId,
           "activityStartTime": ongoingAutopilot.startTime!.toIso8601String(),
@@ -97,26 +102,72 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
         };
 
         TestActivity ongoingAutopilotObject =
-            TestActivity.fromJson(completedAutopilotJSON);
+            TestActivity.fromJson(ongoingAutopilotJSON);
         ongoingAutopilotActivities.add(ongoingAutopilotObject);
       }
     });
     return ongoingAutopilotActivities;
   }
 
+  Future<List<TestActivity>> getOngoingTreadmills() async {
+    List<TestActivity> ongoingTreadmillActivities = [];
+
+    try {
+      late TestActivityList ongoingTreadmills;
+      await TestController().getOngoingTreadmill().then((mList) async {
+        List<Treadmill> treadmills = mList;
+        print("ongoing Tred: ${treadmills}");
+
+        Map<String, dynamic> ongoingTreamillsMap = {
+          "ongoing_treadmills": treadmills,
+        };
+
+        ongoingTreadmills = TestActivityList.fromJson(ongoingTreamillsMap);
+
+        for (var ongoingTreadmill in ongoingTreadmills.ongoingTreadmills!) {
+          print("ttttt: ${ongoingTreadmill.toJson()}");
+          // int topicId =
+          //     jsonDecode(ongoingTreadmill.responses)["Q1"]["topic_id"];
+          // topic = await TopicDB().getTopicById(ongoingTreadmill.topicId!);
+
+          Map<String, dynamic> ongoingTreadmillJSON = {
+            "activityType": TestActivityType.TREADMILL,
+            "courseId": ongoingTreadmill.courseId,
+            "activityStartTime": ongoingTreadmill.startTime!.toIso8601String(),
+            "ongoing_treadmill": ongoingTreadmill,
+            // "topic": topic,
+          };
+
+          TestActivity ongoingTreadmillObject =
+              TestActivity.fromJson(ongoingTreadmillJSON);
+          ongoingTreadmillActivities.add(ongoingTreadmillObject);
+        }
+      });
+    } catch (e) {
+      print("error: ${e}");
+    }
+
+    return ongoingTreadmillActivities;
+  }
+
   Future<List<TestActivity>> loadOngoingActivities() async {
     // await getCompletedTreadmills();
 
-    user = await UserPreferences().getUser() as User;
     List<TestActivity> ongoingMarathonActivities = [];
     List<TestActivity> ongoingAutopilotActivities = [];
+    List<TestActivity> ongoingTreadmillActivities = [];
+
+    user = await UserPreferences().getUser() as User;
     ongoingMarathonActivities = await getOngoingMarathons();
     ongoingAutopilotActivities = await getOngoingAutopilots();
+    ongoingTreadmillActivities = await getOngoingTreadmills();
 
     List<TestActivity> allOngoingActivities = [
       ...ongoingMarathonActivities,
       ...ongoingAutopilotActivities,
+      ...ongoingTreadmillActivities,
     ];
+
     return allOngoingActivities;
   }
 
@@ -203,6 +254,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                           ..._ongoingActivities.map(
                             ((ongoingActivity) {
                               String activityTitle;
+
                               switch (ongoingActivity.activityType) {
                                 case TestActivityType.MARATHON:
                                   activityTitle =
@@ -217,7 +269,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                       activityType:
                                           ongoingActivity.activityType!,
                                       iconUrl:
-                                          'assets/icons/courses/treadmill.png',
+                                          'assets/icons/courses/marathon.png',
                                       hasProgressIndicator: true,
                                       percentageCompleted:
                                           ongoingActivity.marathon!.avgScore,
@@ -233,7 +285,45 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                     ),
                                   );
                                 case TestActivityType.TREADMILL:
-                                  return Container();
+                                  activityTitle = ongoingActivity
+                                      .ongoingTreadmill!.title
+                                      .toString();
+                                  ;
+                                  int totalAnswered = ongoingActivity
+                                          .ongoingTreadmill!.totalCorrect! +
+                                      ongoingActivity
+                                          .ongoingTreadmill!.totalWrong!;
+                                  double percentageAnswered = (totalAnswered /
+                                      ongoingActivity
+                                          .ongoingTreadmill!.totalQuestions!);
+
+                                  print("answered: ${totalAnswered}");
+                                  print(
+                                      "questions: ${ongoingActivity.ongoingTreadmill!.totalQuestions}");
+
+                                  return Container(
+                                    margin: EdgeInsets.only(
+                                      bottom: 12,
+                                    ),
+                                    child: ActivityCourseCard(
+                                      courseTitle: activityTitle,
+                                      activityType:
+                                          ongoingActivity.activityType!,
+                                      iconUrl:
+                                          'assets/icons/courses/treadmill.png',
+                                      hasProgressIndicator: true,
+                                      percentageCompleted: percentageAnswered,
+                                      onTap: () {
+                                        showTapActions(
+                                          context,
+                                          courseId: ongoingActivity.courseId!,
+                                          ongoingActivity: ongoingActivity,
+                                          title: activityTitle,
+                                          user: user,
+                                        );
+                                      },
+                                    ),
+                                  );
 
                                 case TestActivityType.AUTOPILOT:
                                   activityTitle =
@@ -497,6 +587,48 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                     }
 
                                     break;
+                                  case TestActivityType.TREADMILL:
+                                    TreadmillController treadmillController =
+                                        TreadmillController(
+                                      user,
+                                      course,
+                                      name: ongoingActivity
+                                          .ongoingTreadmill!.title!,
+                                      treadmill:
+                                          ongoingActivity.ongoingTreadmill!,
+                                    );
+                                    showLoaderDialog(context,
+                                        message: "loading runs");
+
+                                    bool success = await treadmillController
+                                        .loadTreadmill();
+                                    Navigator.pop(context);
+
+                                    if (success) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (c) {
+                                          return TreadmillCountdown(
+                                            controller: treadmillController,
+                                          );
+                                        }),
+                                      );
+                                    } else {
+                                      AdeoDialog(
+                                        title: "No Treadmill",
+                                        content:
+                                            "No treadmill was found for this course. Kindly start over",
+                                        actions: [
+                                          AdeoDialogAction(
+                                            label: "Ok",
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    }
+                                    break;
                                   case TestActivityType.AUTOPILOT:
                                     AutopilotController autopilotController =
                                         controller as AutopilotController;
@@ -590,6 +722,50 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                                         controller: marathonController,
                                       );
                                     }
+
+                                    break;
+                                  case TestActivityType.TREADMILL:
+                                    TreadmillController treadmillController =
+                                        TreadmillController(
+                                      user,
+                                      course,
+                                      name: ongoingActivity
+                                          .ongoingTreadmill!.title!,
+                                      treadmill:
+                                          ongoingActivity.ongoingTreadmill!,
+                                    );
+                                    late TreadmillMode treadmillMode;
+                                    List<TestNameAndCount> topics =
+                                        await TestController()
+                                            .getTopics(course);
+
+                                    print(
+                                        "topic Name: ${ongoingActivity.ongoingTreadmill!.title!}");
+
+                                    TestNameAndCount topic = topics.firstWhere(
+                                      (topic) =>
+                                          topic.name ==
+                                          ongoingActivity
+                                              .ongoingTreadmill!.title!,
+                                    );
+                           
+                                    if (ongoingActivity
+                                            .ongoingTreadmill!.type ==
+                                        "TreadmillType.TOPIC") {
+                                      treadmillMode = TreadmillMode.TOPIC;
+                                    } else if (ongoingActivity
+                                            .ongoingTreadmill!.type ==
+                                        "TreadmillType.MOCK") {
+                                      treadmillMode = TreadmillMode.MOCK;
+                                    } else {
+                                      treadmillMode = TreadmillMode.BANK;
+                                    }
+
+                                    screenToNavigateTo = TreadmillTime(
+                                      controller: treadmillController,
+                                      mode: treadmillMode,
+                                      topicId: topic.id,
+                                    );
 
                                     break;
                                   case TestActivityType.AUTOPILOT:
