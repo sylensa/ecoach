@@ -44,8 +44,7 @@ import 'package:flutter/material.dart';
 class CompletedActivitiesTab extends StatefulWidget {
   static const String routeName = '/completed-activities';
 
-  const CompletedActivitiesTab({Key? key})
-      : super(key: key);
+  const CompletedActivitiesTab({Key? key}) : super(key: key);
 
   @override
   State<CompletedActivitiesTab> createState() => _CompletedActivitiesTabState();
@@ -288,7 +287,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           ),
                           AdeoFilledButton(
                             color: Colors.white,
-                            background: kAdeoBlue,
+                            background: kAdeoGreen4,
                             label: 'Take an activity',
                             size: Sizes.medium,
                             fontSize: 16,

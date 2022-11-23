@@ -234,7 +234,7 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                               ),
                               AdeoFilledButton(
                                 color: Colors.white,
-                                background: kAdeoBlue,
+                                background: kAdeoGreen4,
                                 label: 'Take an activity',
                                 size: Sizes.medium,
                                 fontSize: 16,
