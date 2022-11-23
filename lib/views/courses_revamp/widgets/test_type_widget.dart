@@ -113,7 +113,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
 
     futureList.then(
           (data) async{
-        // Navigator.pop(context);
+        Navigator.pop(context);
        await Navigator.push(
           context,
           MaterialPageRoute(
@@ -219,7 +219,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             },
           ),
         );
-       await getKeywordTestTaken();
+
       },
     );
   }
@@ -348,7 +348,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         });
   }
 
-  knowledgeTestModalBottomSheet(context,) {
+  knowledgeTestModalBottomSheet(context,) async{
+    await getKeywordTestTaken();
+
     searchTap = true;
     double sheetHeight =  appHeight(context) * 0.90;
     showModalBottomSheet(
@@ -462,6 +464,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                          ),
                                          child: Column(
                                            children: [
+                                             SizedBox(height: 10,),
                                              Row(
                                                children: [
                                                  Container(
