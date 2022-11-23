@@ -134,7 +134,11 @@ class TestController {
   }
 
   Future<List<Question>> getKeywordQuestions(String keyword,{int currentQuestionCount = 0}) {
-    return QuestionDB().getQuestionByKeyword(keyword,currentQuestionCount: currentQuestionCount);
+    return QuestionDB().getQuestionByKeyword(keyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
+  }
+
+  Future<List<Question>> getTotalKeywordQuestions(String keyword) {
+    return QuestionDB().getTotalQuestionByKeyword(keyword);
   }
 
   Future<List<Question>> getMockQuestions(int courseId, {int? limit = 40}) {

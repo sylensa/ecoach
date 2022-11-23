@@ -46,7 +46,8 @@ class TestTakenDB {
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
      result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken GROUP by test_name");
-      print("result:${result.length}");
+      // print("result:${result[0]["test_name"]}");
+      // print("result:${result[1]["test_name"]}");
     List<TestTaken> tests = [];
     for (int i = 0; i < result.length; i++) {
       TestTaken test = TestTaken.fromJson(result[i]);
@@ -404,6 +405,11 @@ class TestTakenDB {
     db!.delete(
       'keyword_test_taken',
     );
+
+  }
+  deleteAllKeywordTestTakenByName(String testname) async {
+    final db = await DBProvider.database;
+    db!.rawQuery('delete from keyword_test_taken where test_name = '" '$testname'"'');
   }
 
   Future<int> insertReviewTest(ReviewTestTaken reviewTestTaken) async {

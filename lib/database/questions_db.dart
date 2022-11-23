@@ -140,11 +140,29 @@ class QuestionDB {
         questions.add(question);
       }
     }
-    for(int i = currentQuestionCount; i < questions.length; i++){
-      allQuestions.add(questions[i]);
+    if(currentQuestionCount <= questions.length ){
+      for(int i = currentQuestionCount; i < questions.length; i++){
+        allQuestions.add(questions[i]);
+      }
     }
+
     print("questions:${allQuestions.length}");
-    return allQuestions;
+    return allQuestions.isNotEmpty ? allQuestions : questions;
+  }
+  Future<List<Question>> getTotalQuestionByKeyword(String keyword) async {
+    print("keyword:$keyword");
+    List<Question> questions = [];
+    final db = await DBProvider.database;
+    var result = await db!.rawQuery("select * from questions");
+    for(int i = 0; i < result.length; i++){
+      Question question = Question.fromJson(result[i]) ;
+      if(question.text!.toLowerCase().contains(keyword.toLowerCase())){
+        question.answers = await AnswerDB().questoinAnswers(question.id!);
+        questions.add(question);
+      }
+    }
+
+    return  questions;
   }
   Future<Question?> getQuestionByIdTopicId(int qid,int tid) async {
     final db = await DBProvider.database;

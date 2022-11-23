@@ -105,7 +105,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         futureList = TestController().getBankTest(widget.course);
         break;
       case TestCategory.NONE:
-        futureList = TestController().getKeywordQuestions(searchKeyword,currentQuestionCount: currentQuestionCount);
+        futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
         break;
       default:
         futureList = TestController().getBankTest(widget.course);
@@ -507,7 +507,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                            SvgPicture.asset(
                                                              "assets/images/fav.svg",
                                                            ),
-                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff}")
+                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!.toStringAsFixed(2)}")
 
                                                          ],
                                                        ),
@@ -530,7 +530,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                  ),
                                                  Column(
                                                    children: [
-                                                     sText("${keywordTestTaken[indexReport].score}%",size: 25,weight: FontWeight.w600),
+                                                     sText("${keywordTestTaken[indexReport].score!.toStringAsFixed(2)}%",size: 25,weight: FontWeight.w600),
                                                      SizedBox(height: 10,),
                                                      sText("mastery",size: 12),
 

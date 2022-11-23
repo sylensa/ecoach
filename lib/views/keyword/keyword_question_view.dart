@@ -5,6 +5,7 @@ import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/offline_save_controller.dart';
 import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/revamp/features/questions/view/screens/quiz_review_page.dart';
@@ -239,7 +240,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
         datetime: controller.startTime,
         totalQuestions: controller.questions.length,
         courseId: controller.course.id,
-        testname: controller.name,
+        testname: controller.name.toLowerCase(),
         testType: controller.type.toString(),
         challengeType: controller.challengeType.toString(),
         testTime: controller.duration == null ? -1 : controller.duration!.inSeconds,
@@ -254,9 +255,13 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
         updatedAt: DateTime.now());
 
     print("testing connection ${jsonEncode(testTaken)}");
-    print("testing connection courseName ${testTaken.courseName}");
-      await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken);
-      callback(testTaken, true);
+    print("testing connection courseName ${testTaken.testname!.toLowerCase()}");
+  List<Question> listQuestions = await TestController().getTotalKeywordQuestions(testTaken.testname!);
+    if(listQuestions.length <= widget.controller.questions.length ){
+      await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
+    }
+    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken);
+    callback(testTaken, true);
     // else {
     //   ApiCall<TestTaken>(AppUrl.testTaken,
     //       user: controller.user,
