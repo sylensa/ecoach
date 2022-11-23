@@ -34,6 +34,7 @@ class _LogoutState extends State<Logout> {
       await ConquestTestTakenDB().conquestDeleteAll();
       await QuestionDB().deleteAllConquestTest();
       await TestTakenDB().deleteAll();
+      await TestTakenDB().deleteAllKeywordTestTaken();
       var status = await UserPreferences().getLoginWith() ;
        await UserPreferences().removeUser();
       if(status){

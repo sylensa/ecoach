@@ -133,8 +133,8 @@ class TestController {
     return QuizDB().getQuestions(quizId, limit!);
   }
 
-  Future<List<Question>> getKeywordQuestions(String keyword,) {
-    return QuestionDB().getQuestionByKeyword(keyword);
+  Future<List<Question>> getKeywordQuestions(String keyword,{int currentQuestionCount = 0}) {
+    return QuestionDB().getQuestionByKeyword(keyword,currentQuestionCount: currentQuestionCount);
   }
 
   Future<List<Question>> getMockQuestions(int courseId, {int? limit = 40}) {

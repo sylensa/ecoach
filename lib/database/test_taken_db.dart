@@ -42,32 +42,28 @@ class TestTakenDB {
 
     List<Map<String, dynamic>> result = [];
     List<Map<String, dynamic>> response = [];
+    List<Map<String, dynamic>> responseTotalQuestion = [];
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
-     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken from keyword_test_taken GROUP by test_name");
+     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken GROUP by test_name");
       print("result:${result.length}");
     List<TestTaken> tests = [];
     for (int i = 0; i < result.length; i++) {
       TestTaken test = TestTaken.fromJson(result[i]);
-      response = await db.rawQuery("Select *,correct,wrong,unattempted from keyword_test_taken");
-      print("response:${response.length}");
+      response = await db.rawQuery("Select score from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id desc limit 2");
+      responseTotalQuestion = await db.rawQuery("Select * from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id asc limit 1");
       double scoreDiff ;
       if(response.length > 1){
         scoreDiff = response[1]["score"] -  response[0]["score"];
-        test.correct =  response[1]["correct"];
-        test.wrong =  response[1]["wrong"];
-        test.unattempted =  response[1]["unattempted"];
       }else{
         scoreDiff = response[0]["score"];
-        test.correct =  response[0]["correct"];
-        test.wrong =  response[0]["wrong"];
-        test.unattempted =  response[0]["unattempted"];
       }
+      test.totalQuestions = responseTotalQuestion[0]["total_questions"];
       test.score = result[i]["avg_score"]/result[i]["total_test_taken"];
       test.total_test_taken =  result[i]["total_test_taken"];
       test.scoreDiff =  scoreDiff;
       tests.add(test);
-      print("object maps:${test.score}");
+      print("object maps:${test.unattempted}");
     }
 
 
@@ -401,6 +397,12 @@ class TestTakenDB {
     final db = await DBProvider.database;
     db!.delete(
       'tests_taken',
+    );
+  }
+  deleteAllKeywordTestTaken() async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'keyword_test_taken',
     );
   }
 

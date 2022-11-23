@@ -81,7 +81,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
     ListNames(name: "Unanswered", id: "2"),
     ListNames(name: "Wrong answered", id: "3"),
   ];
-  getTest(BuildContext context, TestCategory testCategory) {
+  getTest(BuildContext context, TestCategory testCategory,{int currentQuestionCount = 0}) {
     Future futureList;
     switch (testCategory) {
       case TestCategory.MOCK:
@@ -105,7 +105,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         futureList = TestController().getBankTest(widget.course);
         break;
       case TestCategory.NONE:
-        futureList = TestController().getKeywordQuestions(searchKeyword);
+        futureList = TestController().getKeywordQuestions(searchKeyword,currentQuestionCount: currentQuestionCount);
         break;
       default:
         futureList = TestController().getBankTest(widget.course);
@@ -189,6 +189,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                   break;
                 case TestCategory.NONE:
                   List<Question> questions = data as List<Question>;
+
                   widgetView = KeywordAssessment(quizCover: KeywordQuizCover(
                     widget.user,
                     questions,
@@ -506,7 +507,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                            SvgPicture.asset(
                                                              "assets/images/fav.svg",
                                                            ),
-                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : "-"}${keywordTestTaken[indexReport].scoreDiff}")
+                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff}")
 
                                                          ],
                                                        ),
@@ -556,7 +557,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                              LinearProgressIndicator(
                                                color: Color(0XFF00C9B9),
                                                backgroundColor: Color(0XFF0367B4),
-                                               value: (keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!)/keywordTestTaken[indexReport].totalQuestions,
+                                               value: (keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!)/keywordTestTaken[indexReport].totalQuestions!,
 
                                              ),
                                              SizedBox(height: 10,),
@@ -594,7 +595,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                      stateSetter(() {
                                                        searchKeyword = keywordTestTaken[indexReport].testname!.toLowerCase();
                                                      });
-                                                    await getTest(context, TestCategory.NONE);
+                                                    await getTest(context, TestCategory.NONE,currentQuestionCount: keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!);
 
 
                                                    },

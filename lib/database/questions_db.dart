@@ -126,9 +126,11 @@ class QuestionDB {
 
     return question;
   }
-  Future<List<Question>> getQuestionByKeyword(String keyword) async {
+  Future<List<Question>> getQuestionByKeyword(String keyword,{int currentQuestionCount = 0}) async {
     print("keyword:$keyword");
+    print("currentQuestionCount:$currentQuestionCount");
     List<Question> questions = [];
+    List<Question> allQuestions = [];
     final db = await DBProvider.database;
     var result = await db!.rawQuery("select * from questions");
     for(int i = 0; i < result.length; i++){
@@ -138,8 +140,11 @@ class QuestionDB {
         questions.add(question);
       }
     }
-
-    return questions;
+    for(int i = currentQuestionCount; i < questions.length; i++){
+      allQuestions.add(questions[i]);
+    }
+    print("questions:${allQuestions.length}");
+    return allQuestions;
   }
   Future<Question?> getQuestionByIdTopicId(int qid,int tid) async {
     final db = await DBProvider.database;
