@@ -65,7 +65,7 @@ class _GroupActivityState extends State<GroupActivity> {
                     ],
                   ),
                   SizedBox(height: 10,),
-                  sText("Welcome, ${widget.groupData!.owner!.name}",weight: FontWeight.w500,size: 20,color: Colors.black),
+                  sText("Welcome, ${widget.user.name}",weight: FontWeight.w500,size: 20,color: Colors.black),
 
                 ],
               ),
