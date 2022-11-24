@@ -1501,8 +1501,13 @@ class _SettingsState extends State<Settings> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Container(
-                                                width: 42,
+                                                width: 20,
                                                 margin: EdgeInsets.symmetric(horizontal: 0),
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(color: Colors.black)
+                                                  )
+                                                ),
                                                 child:  TextFormField(
                                                   textAlign: TextAlign.left,
                                                   controller: textGradeController[i],
@@ -1585,6 +1590,7 @@ class _SettingsState extends State<Settings> {
                                             ],
                                           ),
                                         ),
+                                        SizedBox(height: 10,),
                                         Container(
                                         padding: bottomPadding(10),
                                         child: Row(
