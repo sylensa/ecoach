@@ -6,6 +6,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/subscription_item.dart';
@@ -56,7 +57,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   int currentPageNumber = 0;
   PageController pageController = PageController(initialPage: 0);
   PageController pageControllerView = PageController(initialPage: 0);
-
+  List<CourseKeywords> listCourseKeywordsData = [];
   Future? stats;
   Map<String, Widget> getPage() {
     switch (_currentPage) {
@@ -87,6 +88,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
             subscription: widget.subscription,
             user: widget.user,
             course: course!,
+            listCourseKeywordsData: listCourseKeywordsData
           )
         };
 
@@ -198,6 +200,19 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     });
   }
 
+  getCourseKeywords()async{
+    var response = await doGet("${AppUrl.courseKeyword}?course_id=${course!.id}");
+    if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
+      for(int i =0; i < response["data"]["data"].length; i++){
+        CourseKeywords courseKeywordsData = CourseKeywords.fromJson(response["data"]["data"][i]);
+        listCourseKeywordsData.add(courseKeywordsData);
+      }
+    }
+    setState(() {
+
+    });
+  }
+
   getCourseStats(int courseId) {
     return ApiCall<Report>(
       AppUrl.report,
@@ -236,7 +251,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     listCourseDetails.add(courseDetails[0]);
     // setProviderValues(course!);
     getAnalysisStats();
-
+    getCourseKeywords();
 
 
   }
@@ -289,6 +304,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                               course = value;
                               setProviderValues(course!);
                               getAnalysisStats();
+                              getCourseKeywords();
                             });
                             await getNotesTopics(course!);
                           },
@@ -445,7 +461,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                 children:  [
               LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
               NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,),
-               TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
+              TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,listCourseKeywordsData: listCourseKeywordsData,),
                LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
              GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
                ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,),

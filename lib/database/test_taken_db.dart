@@ -51,13 +51,13 @@ class TestTakenDB {
     List<TestTaken> tests = [];
     for (int i = 0; i < result.length; i++) {
       TestTaken test = TestTaken.fromJson(result[i]);
-      response = await db.rawQuery("Select score from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id desc limit 2");
+      response = await db.rawQuery("Select correct from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id desc limit 2");
       responseTotalQuestion = await db.rawQuery("Select * from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id asc limit 1");
-      double scoreDiff ;
+      int scoreDiff ;
       if(response.length > 1){
-        scoreDiff = response[1]["score"] -  response[0]["score"];
+        scoreDiff = response[1]["correct"] -  response[0]["correct"];
       }else{
-        scoreDiff = response[0]["score"];
+        scoreDiff = response[0]["correct"];
       }
       test.totalQuestions = responseTotalQuestion[0]["total_questions"];
       test.score = result[i]["avg_score"]/result[i]["total_test_taken"];

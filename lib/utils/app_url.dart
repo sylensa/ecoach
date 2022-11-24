@@ -67,6 +67,7 @@ class AppUrl {
 
   static String questions = baseURL + 'questions/get';
   static String courses = baseURL + 'courses';
+  static String courseKeyword = baseURL + 'course/keywords';
   static String new_user_data = baseURL + 'new_user_data';
   static String testTaken = baseURL + 'tests/taken';
   static String subscriptionData = baseURL + 'subscriptions/data';

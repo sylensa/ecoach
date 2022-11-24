@@ -47,7 +47,7 @@ class TestTaken {
   int? pauseduration;
   int totalQuestions;
   double? score;
-  double? scoreDiff;
+  int? scoreDiff;
   int? correct;
   int? wrong;
   int? unattempted;
@@ -105,7 +105,7 @@ class TestTaken {
         score: json["score"] != null ? double.parse("${json['score']}") : 0,
         correct: json["correct"],
         total_test_taken: json["total_test_taken"] == null ? 0 : json["total_test_taken"],
-       scoreDiff: json["scoreDiff"] == null ? 0.00 : json["scoreDiff"],
+       scoreDiff: json["scoreDiff"] == null ? 0 : json["scoreDiff"],
         wrong: json["wrong"],
         unattempted: json["unattempted"],
         responses: json["responses"],

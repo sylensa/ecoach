@@ -8,6 +8,7 @@ import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -44,11 +45,14 @@ class TestTypeWidget extends StatefulWidget {
       required this.course,
       required this.user,
       required this.subscription,
-      required this.controller})
+      required this.controller,
+      required this.listCourseKeywordsData
+      })
       : super(key: key);
   Course course;
   User user;
   Plan subscription;
+  List<CourseKeywords> listCourseKeywordsData;
   final MainController controller;
 
   @override
@@ -627,7 +631,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                            SvgPicture.asset(
                                                              "assets/images/fav.svg",
                                                            ),
-                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!.toStringAsFixed(2)}")
+                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!}")
 
                                                          ],
                                                        ),
@@ -808,12 +812,13 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                    ],
                                  ),
                                  SizedBox(height: 10,),
-                                for(int i = 0; i < 5; i++)
+                                for(int i = 0; i < widget.listCourseKeywordsData.length; i++)
+                                  if(properCase("${widget.listCourseKeywordsData[i].keyword}").isNotEmpty)
                                   MaterialButton(
                                     padding: EdgeInsets.zero,
                                     onPressed: ()async{
                                       stateSetter(() {
-                                       searchKeyword = "mouse";
+                                       searchKeyword = "${widget.listCourseKeywordsData[i].keyword}";
                                      });
                                       await getTest(context, TestCategory.NONE);
 
@@ -827,8 +832,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                             Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                sText("Photosynthesis",weight: FontWeight.bold),
-                                                sText("200 appearances",size: 12,color: kAdeoGray3),
+                                                sText("${properCase("${widget.listCourseKeywordsData[i].keyword}")}",weight: FontWeight.bold),
+                                                sText("${widget.listCourseKeywordsData[i].total} appearances",size: 12,color: kAdeoGray3),
                                               ],
                                             ),
                                             Expanded(child: Container()),
@@ -1016,6 +1021,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
     // TODO: implement initState
     super.initState();
     getKeywordTestTaken();
+
   }
   @override
   Widget build(BuildContext context) {
