@@ -184,6 +184,7 @@ class AutopilotController {
   double get score {
     int totalQuestions = questions.length;
     int correctAnswers = correct;
+
     if (totalQuestions == 0) {
       return 0;
     }
@@ -407,6 +408,25 @@ class AutopilotController {
     return true;
   }
 
+  double getPercentageOfCompletedAutopilotTopics() {
+    int totalAutopilotTopics = autoTopics.length;
+    int totalCompletedAutopilotTopics = 0;
+
+    autoTopics.forEach(
+      (autoTopic) {
+        if (autoTopic.status == AutopilotStatus.COMPLETED.toString() ||
+            autoTopic.status == AutopilotStatus.NEW.toString()) {
+          totalCompletedAutopilotTopics++;
+        }
+      },
+    );
+    print("hey");
+    if (totalAutopilotTopics > 0) {
+      return (totalCompletedAutopilotTopics / totalAutopilotTopics) * 100;
+    }
+    return 0;
+  }
+
   enableQuestion(bool state) {
     saveQuestion[currentQuestion] = state;
   }
@@ -492,9 +512,7 @@ class AutopilotController {
 
   Future<bool> loadAutopilot() async {
     autopilot = await AutopilotDB().getCurrentAutopilot(course);
-
     if (autopilot != null) {
-      print(autopilot!.toJson());
       autoTopics = await AutopilotDB().getAutoPilotTopics(autopilot!.id!);
 
       int? topicId = autopilot!.topicId;
@@ -524,6 +542,7 @@ class AutopilotController {
   endAutopilot() async {
     autopilot!.status = AutopilotStatus.COMPLETED.toString();
     autopilot!.endTime = DateTime.now();
+    autopilot!.topicId = topicId;
     AutopilotDB().update(autopilot!);
   }
 
@@ -534,7 +553,7 @@ class AutopilotController {
     bool next = await nextTopic();
     if (!next) {
       print("next not selected");
-      // endAutopilot();
+      endAutopilot();
     }
   }
 
@@ -543,6 +562,18 @@ class AutopilotController {
     for (int i = 0; i < autopilots.length; i++) {
       await deleteAutopilot(autopilots[i]);
     }
+  }
+
+  endOngoingAutopilot(Autopilot autoPilot) async {
+    if (autopilot != null) {
+      autoPilot.status = AutopilotStatus.COMPLETED.toString();
+      autopilot!.endTime = DateTime.now();
+      await AutopilotDB().update(autoPilot);
+
+      return true;
+    }
+
+    return false;
   }
 
   deleteAutopilot(Autopilot? autopilot) async {

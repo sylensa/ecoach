@@ -3,6 +3,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -31,10 +32,19 @@ class TreadmillEnded extends StatelessWidget {
                 borderRadius: 5,
                 fontSize: 14,
                 onPressed: () {
-                  Navigator.popUntil(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    ModalRoute.withName(CoursesDetailsPage.routeName),
+                    MaterialPageRoute(
+                      builder: (_) => MainHomePage(
+                        controller.user,
+                      ),
+                    ),
+                    (route) => false,
                   );
+                  // Navigator.popUntil(
+                  //   context,
+                  //   ModalRoute.withName(CoursesDetailsPage.routeName),
+                  // );
                 },
               ),
               SizedBox(width: 10),

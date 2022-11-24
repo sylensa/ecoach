@@ -126,9 +126,11 @@ class TestController {
   saveTestTaken(TestTaken test) {
     TestTakenDB().insert(test);
   }
+
   saveConquestTestTaken(TestTaken test) {
     ConquestTestTakenDB().conquestInsert(test);
   }
+
   Future<List<Question>> getQuizQuestions(int quizId, {int? limit = 40}) {
     return QuizDB().getQuestions(quizId, limit!);
   }
@@ -183,7 +185,7 @@ class TestController {
     return topicsMap;
   }
 
-  Future<List<Question>> getAllQuestions(TestTaken test,{int? topicId}) async {
+  Future<List<Question>> getAllQuestions(TestTaken test, {int? topicId}) async {
     String responses = test.responses;
     // print("respones:");
 
@@ -202,10 +204,11 @@ class TestController {
       TestAnswer answer = answers[i];
       //  print("answer questionId:${answer.questionId}");
       Question? question;
-      if(topicId == null){
+      if (topicId == null) {
         question = await QuestionDB().getQuestionById(answer.questionId!);
-      }else{
-        question = await QuestionDB().getQuestionByIdTopicId(answer.questionId!,topicId);
+      } else {
+        question = await QuestionDB()
+            .getQuestionByIdTopicId(answer.questionId!, topicId);
       }
       if (question != null) {
         if (answer.selectedAnswerId != null) {
@@ -278,7 +281,7 @@ class TestController {
     return TopicDB().getLevelTopic(course.id!, level!);
   }
 
-  getTopics(Course course) async {
+  Future<List<TestNameAndCount>> getTopics(Course course) async {
     Map<int, String> topics = await QuestionDB().questionTopics(course.id!);
 
     List<TestNameAndCount> testNames = [];
@@ -303,7 +306,7 @@ class TestController {
         category: TestCategory.TOPIC,
       ));
     }
-
+    // print(testNames);
     return testNames;
   }
 
@@ -349,8 +352,10 @@ class TestController {
     return testNames;
   }
 
-  Future<int> getTopicAnsweredCount(int courseId, int topicId, {bool onlyAttempted = false, bool onlyCorrect = false}) async {
-    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId: courseId);
+  Future<int> getTopicAnsweredCount(int courseId, int topicId,
+      {bool onlyAttempted = false, bool onlyCorrect = false}) async {
+    List<TestTaken> tests =
+        await TestTakenDB().courseTestsTaken(courseId: courseId);
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
       responses.addAll(jsonDecode(test.responses));
@@ -377,13 +382,12 @@ class TestController {
     return topicIds.length;
   }
 
-
-
   Future<double> getTopicAnsweredAverageScore(
     int courseId,
     int topicId,
   ) async {
-    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId: courseId);
+    List<TestTaken> tests =
+        await TestTakenDB().courseTestsTaken(courseId: courseId);
     Map<String, dynamic> responses = Map();
     int index = 0;
     tests.forEach((test) {
@@ -421,7 +425,8 @@ class TestController {
 
   Future<int> getQuestionsAnsweredCount(int courseId,
       {bool onlyAttempted = false, bool onlyCorrect = false}) async {
-    List<TestTaken> tests = await TestTakenDB().courseTestsTaken(courseId: courseId);
+    List<TestTaken> tests =
+        await TestTakenDB().courseTestsTaken(courseId: courseId);
     // print("number of test= ${tests.length}");
     Map<String, dynamic> responses = Map();
     tests.forEach((test) {
@@ -478,6 +483,10 @@ class TestController {
     // print(topicId);
     Treadmill? treadmill = await TreadmillDB().getCurrentTreadmill(course);
     return treadmill;
+  }
+  Future<List<Treadmill>> getOngoingTreadmill() async {
+    List<Treadmill> treadmills = await TreadmillDB().getOngoingTreadmill();
+    return treadmills;
   }
 
   insertSaveTestQuestion(int qid) async {

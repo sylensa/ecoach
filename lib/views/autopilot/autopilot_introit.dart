@@ -101,12 +101,16 @@ class _AutopilotIntroitState extends State<AutopilotIntroit> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AutopilotIntroitTopics(
-                                  count: count,
-                                  controller: AutopilotController(
-                                      widget.user, widget.course,
-                                      topics: topics, autopilot: autopilot),
-                                )),
+                          builder: (context) => AutopilotIntroitTopics(
+                            count: count,
+                            controller: AutopilotController(
+                              widget.user,
+                              widget.course,
+                              topics: topics,
+                              autopilot: autopilot,
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),

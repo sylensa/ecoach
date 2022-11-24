@@ -3,6 +3,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/treadmill/treadmill_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -38,9 +39,19 @@ class _TreadmillCompleteCongratulationsState
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popUntil(
-            context, ModalRoute.withName(CoursesDetailsPage.routeName));
-        return false;
+        // Navigator.popUntil(
+        //     context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        
+         Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          widget.controller.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                    return false;
       },
       child: Scaffold(
         backgroundColor: kAdeoRoyalBlue,
@@ -53,8 +64,18 @@ class _TreadmillCompleteCongratulationsState
                 GestureDetector(
                   onTap: () {
                     //  widget.controller.endTreadmill();
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                    // Navigator.popUntil(context,
+                    //     ModalRoute.withName(CoursesDetailsPage.routeName));
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          widget.controller.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
                   },
                   child: Container(
                       margin: EdgeInsets.all(8),
@@ -129,7 +150,7 @@ class _TreadmillCompleteCongratulationsState
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '${Duration(seconds: widget.controller.treadmill!.totalTime! ).inMinutes  % 60}min : ${Duration(seconds: widget.controller.treadmill!.totalTime!).inSeconds % 60} sec',
+                      '${Duration(seconds: widget.controller.treadmill!.totalTime!).inMinutes % 60}min : ${Duration(seconds: widget.controller.treadmill!.totalTime!).inSeconds % 60} sec',
                       // '${widget.controller.minutes} min : ${widget.controller.seconds} sec',
                       style: const TextStyle(
                         fontSize: 15,

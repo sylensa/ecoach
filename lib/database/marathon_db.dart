@@ -180,9 +180,7 @@ class MarathonDB {
           orderBy: "start_time DESC",
           where: "course_id = ? AND status = ? ",
           whereArgs: [course.id, MarathonStatus.COMPLETED.toString()]);
-    
     } else {
-
       maps = await db!.query('marathons',
           distinct: true,
           orderBy: "start_time DESC",
@@ -191,6 +189,36 @@ class MarathonDB {
           whereArgs: [MarathonStatus.COMPLETED.toString()]);
     }
 
+    List<Marathon> marathons = [];
+    for (int i = 0; i < maps.length; i++) {
+      Marathon marathon = Marathon.fromJson(maps[i]);
+      marathons.add(marathon);
+    }
+    return marathons;
+  }
+
+  Future<List<Marathon>> ongoingMarathons({Course? course}) async {
+    final Database? db = await DBProvider.database;
+    final List<Map<String, dynamic>> maps;
+
+    if (course != null) {
+      maps = await db!.query('marathons',
+          orderBy: "start_time DESC",
+          where: "course_id = ? AND status <> ?",
+          whereArgs: [
+            course.id,
+            MarathonStatus.COMPLETED.toString(),
+          ]);
+    } else {
+      maps = await db!.query('marathons',
+          distinct: true,
+          orderBy: "start_time DESC",
+          groupBy: "topic_id",
+          where: 'status <> ?',
+          whereArgs: [
+            MarathonStatus.COMPLETED.toString(),
+          ]);
+    }
 
     List<Marathon> marathons = [];
     for (int i = 0; i < maps.length; i++) {

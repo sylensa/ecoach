@@ -184,6 +184,30 @@ class TreadmillDB {
     return treadmill;
   }
 
+  Future<List<Treadmill>> getOngoingTreadmill() async {
+    final db = await DBProvider.database;
+
+    var result = await db!.query(
+      "treadmills",
+      where: "status <> ?",
+      groupBy: "course_id",
+      distinct: true,
+      whereArgs: [TreadmillStatus.COMPLETED.toString()],
+    );
+
+    List<Treadmill> treadmills = [];
+    for (int i = 0; i < result.length; i++) {
+      Treadmill treadmill = Treadmill.fromJson(result[i]);
+      treadmills.add(treadmill);
+    }
+
+    if (result.isEmpty) {
+      return [];
+    }
+
+    return treadmills;
+  }
+
   Future<List<Treadmill>> courseTreadmills(Course course) async {
     final Database? db = await DBProvider.database;
     print("course id = ${course.id}");

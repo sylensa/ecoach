@@ -8,12 +8,14 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_topic_complete.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/autopilot/autopilot_complete_congratulation.dart';
 import 'package:ecoach/views/autopilot/autopilot_ended.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/results_ui.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -74,8 +76,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     });
   }
 
-  next() async{
-
+  next() async {
     setState(() {
       showSubmit = true;
     });
@@ -89,7 +90,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
     }
   }
 
-  nextButton() async{
+  nextButton() async {
     setState(() {
       showNext = false;
       controller.reviewMode = false;
@@ -113,7 +114,8 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
   }
 
   sumbitAnswer() async {
-    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
+    await scoreCurrentQuestion(
+        controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.currentTopic!.avgScore!;
     setState(() {
@@ -318,7 +320,7 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
         }
         controller.pauseTimer();
 
-        // showPauseDialog();
+        showPauseDialog();
       },
       child: controller.enabled
           ? Row(
@@ -382,10 +384,21 @@ class _AutopilotQuizViewState extends State<AutopilotQuizView>
             actions: [
               Button(
                 label: "Yes",
-                onPressed: () {
+                onPressed: () async {
                   canExit = true;
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CoursesDetailsPage.routeName));
+                  User? user = await UserPreferences().getUser();
+
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MainHomePage(
+                        user!,
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                  // Navigator.popUntil(context,
+                  //     ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               Button(
@@ -560,8 +573,17 @@ class SessionSavedPrompt extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         await controller.scoreCurrentQuestion();
-        Navigator.popUntil(
-            context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        // Navigator.popUntil(
+        //     context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MainHomePage(
+              controller.user,
+            ),
+          ),
+          (route) => false,
+        );
         return false;
       },
       child: Scaffold(
@@ -593,10 +615,20 @@ class SessionSavedPrompt extends StatelessWidget {
                 SizedBox(height: 64),
                 AdeoOutlinedButton(
                   label: 'Exit',
-                  onPressed: () {
+                  onPressed: () async {
                     controller.scoreCurrentQuestion();
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                    User? user = await UserPreferences().getUser();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          user!,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                    // Navigator.popUntil(context,
+                    //     ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),

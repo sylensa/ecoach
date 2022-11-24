@@ -9,6 +9,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/analysis.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/treadmill/treadmill_practise_menu.dart';
 import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -108,8 +109,17 @@ class _TreadmillCompletedState extends State<TreadmillCompleted> {
                 GestureDetector(
                   onTap: () {
                     // _controller!.endTreadmill();
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          widget.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
+                    // Navigator.popUntil(context,
+                    //     ModalRoute.withName(CoursesDetailsPage.routeName));
                   },
                   child: Container(
                       margin: const EdgeInsets.all(8),

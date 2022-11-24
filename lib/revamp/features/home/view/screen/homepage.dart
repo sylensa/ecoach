@@ -77,8 +77,6 @@ class _HomePage2ContentState extends State<DashboardContent>
   late TabController _tabController;
   late List<String> _tabs;
   late String _activeTab;
-  List ongoingActivities = [1, 2, 3, 4, 5];
-  List completedActivities = [1, 2, 3, 4, 5];
   bool isActiveTab = false;
 
   uploadOfflineFlagQuestions() async {
@@ -499,13 +497,11 @@ class _HomePage2ContentState extends State<DashboardContent>
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: OngoingActivitiesTab(
-                        ongoingActivities: ongoingActivities,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: CompletedActivitiesTab(
-                        completedActivities: completedActivities,
                       ),
                     ),
                   ],

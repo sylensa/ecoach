@@ -33,8 +33,9 @@ class AutopilotInstructionsLayoutState
 
   handleNext() async {
     print('name from topic_menu ${controller.name}');
-
+   
     Autopilot? autopilot = controller.autopilot;
+    // autopilot = null;
     if (autopilot == null) {
       print('creating new autopilot');
       await controller.createAutopilot();

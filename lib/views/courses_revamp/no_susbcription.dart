@@ -29,7 +29,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class NoSubscriptionsPage extends StatefulWidget {
-  static const String routeName = '/courses/details1';
+  static const String routeName = '/no-subscription';
   NoSubscriptionsPage({Key? key,  this.courses,required this.user, this.subscription,required this.controller,}) : super(key: key);
   List<Course>? courses;
   Plan? subscription;

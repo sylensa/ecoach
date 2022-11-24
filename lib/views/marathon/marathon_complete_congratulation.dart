@@ -1,10 +1,13 @@
 import 'package:ecoach/controllers/marathon_controller.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/home/components/completed_activities_tab.dart';
 import 'package:ecoach/revamp/features/home/view/screen/homepage.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/widgets/adeo_outlined_button.dart';
 import 'package:ecoach/widgets/buttons/adeo_text_button.dart';
@@ -19,8 +22,17 @@ class MarathonCompleteCongratulations extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popUntil(
-            context, ModalRoute.withName(HomePage2.routeName));
+        // Navigator.popUntil(
+        //     context, ModalRoute.withName(MainHomePage.routeName));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MainHomePage(
+              controller.user,
+            ),
+          ),
+          (route) => false,
+        );
         return true;
       },
       child: Scaffold(
@@ -38,8 +50,15 @@ class MarathonCompleteCongratulations extends StatelessWidget {
                   borderRadius: 5,
                   fontSize: 14,
                   onPressed: () {
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(HomePage2.routeName));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          controller.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
                   },
                 ),
                 SizedBox(width: 10),

@@ -10,6 +10,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/course_details.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
+import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
 import 'package:ecoach/views/marathon/marathon_ended.dart';
 import 'package:ecoach/views/results_ui.dart';
@@ -92,7 +93,8 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
       controller.reviewMode = false;
       controller.nextQuestion();
       controller.resumeTimer();
-      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
+      pageController.nextPage(
+          duration: Duration(milliseconds: 1), curve: Curves.ease);
     });
   }
 
@@ -118,7 +120,8 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
   }
 
   sumbitAnswer() async {
-    await scoreCurrentQuestion(controller.questions[controller.currentQuestion].question!);
+    await scoreCurrentQuestion(
+        controller.questions[controller.currentQuestion].question!);
     bool success = await controller.scoreCurrentQuestion();
     double newScore = controller.marathon!.avgScore!;
 
@@ -477,8 +480,17 @@ class _MarathonQuizViewState extends State<MarathonQuizView>
                 label: "Yes",
                 onPressed: () {
                   canExit = true;
-                  Navigator.popUntil(context,
-                      ModalRoute.withName(CoursesDetailsPage.routeName));
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MainHomePage(
+                        controller.user,
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                  // Navigator.popUntil(context,
+                  //     ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               Button(
@@ -656,6 +668,15 @@ class SessionSavedPrompt extends StatelessWidget {
         // await controller.scoreCurrentQuestion();
         // Navigator.popUntil(
         //     context, ModalRoute.withName(CoursesDetailsPage.routeName));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MainHomePage(
+              controller.user,
+            ),
+          ),
+          (route) => false,
+        );
         return false;
       },
       child: Scaffold(
@@ -688,11 +709,18 @@ class SessionSavedPrompt extends StatelessWidget {
                 AdeoOutlinedButton(
                   label: 'Exit',
                   onPressed: () async {
-                    print(
-                        "Route name: ${ModalRoute.withName(CoursesDetailsPage.routeName)}");
                     await controller.scoreCurrentQuestion();
-                    Navigator.popUntil(context,
-                        ModalRoute.withName(CoursesDetailsPage.routeName));
+                    // Navigator.popUntil(context,
+                    //     ModalRoute.withName(CoursesDetailsPage.routeName));
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MainHomePage(
+                          controller.user,
+                        ),
+                      ),
+                      (route) => false,
+                    );
                   },
                   size: Sizes.large,
                   color: Color(0xFFFF4949),
