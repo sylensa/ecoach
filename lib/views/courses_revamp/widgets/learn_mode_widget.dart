@@ -1,14 +1,18 @@
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/database/mastery_course_db.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/study_db.dart';
 import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/mastery_course.dart';
 import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
@@ -237,10 +241,24 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[0],
                     onTap: () async {
-                      setState(() {
-                        studyType = StudyType.REVISION;
-                      });
-                      await letGo();
+                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                      if(questions.isNotEmpty){
+                        setState(() {
+                          studyType = StudyType.REVISION;
+                        });
+                        await letGo();
+                      }
+                      else{
+                        showDialogYesNo(
+                            context: context,
+                            message: "Download questions for ${widget.course.name}",
+                            target: BuyBundlePage(
+                              widget.user,
+                              controller: widget.controller,
+                              bundle: widget.subscription,
+                            ));
+                      }
+
                     },
                   ),
                 ),
@@ -249,10 +267,23 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[1],
                     onTap: () async {
-                      setState(() {
-                        studyType = StudyType.COURSE_COMPLETION;
-                      });
-                      await letGo();
+                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                      if(questions.isNotEmpty){
+                        setState(() {
+                          studyType = StudyType.COURSE_COMPLETION;
+                        });
+                        await letGo();
+                      }
+                      else{
+                        showDialogYesNo(
+                            context: context,
+                            message: "Download questions for ${widget.course.name}",
+                            target: BuyBundlePage(
+                              widget.user,
+                              controller: widget.controller,
+                              bundle: widget.subscription,
+                            ));
+                      }
                     },
                   ),
                 ),
@@ -261,10 +292,24 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[2],
                     onTap: () async {
-                      setState(() {
-                        studyType = StudyType.SPEED_ENHANCEMENT;
-                      });
-                      await letGo();
+                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                      if(questions.isNotEmpty){
+                        setState(() {
+                          studyType = StudyType.SPEED_ENHANCEMENT;
+                        });
+                        await letGo();
+                      }
+                      else{
+                        showDialogYesNo(
+                            context: context,
+                            message: "Download questions for ${widget.course.name}",
+                            target: BuyBundlePage(
+                              widget.user,
+                              controller: widget.controller,
+                              bundle: widget.subscription,
+                            ));
+                      }
+
                     },
                   ),
                 ),
@@ -273,10 +318,24 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[3],
                     onTap: () async {
-                      setState(() {
-                        studyType = StudyType.MASTERY_IMPROVEMENT;
-                      });
-                      await letGo();
+                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+                      if(questions.isNotEmpty){
+                        setState(() {
+                          studyType = StudyType.MASTERY_IMPROVEMENT;
+                        });
+                        await letGo();
+                      }
+                      else{
+                        showDialogYesNo(
+                            context: context,
+                            message: "Download questions for ${widget.course.name}",
+                            target: BuyBundlePage(
+                              widget.user,
+                              controller: widget.controller,
+                              bundle: widget.subscription,
+                            ));
+                      }
+
                     },
                   ),
                 ),

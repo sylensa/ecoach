@@ -2,6 +2,7 @@ import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/database/subscription_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/download_update.dart';
@@ -117,13 +118,9 @@ class _CoursesPageState extends State<CoursesPage> {
                               });
                               print("object");
 
-                              showLoaderDialog(context,
-                                  message: "Loading courses");
-                              List<Course> courses = await SubscriptionItemDB()
-                                  .subscriptionCourses(context
-                                      .read<DownloadUpdate>()
-                                      .plans[index]
-                                      .planId!);
+                              showLoaderDialog(context, message: "Loading courses");
+                              List<Course> courses = await SubscriptionItemDB().subscriptionCourses(context.read<DownloadUpdate>().plans[index].planId!);
+
                               Plan newPlan = Plan(
                                 id: context
                                     .read<DownloadUpdate>()

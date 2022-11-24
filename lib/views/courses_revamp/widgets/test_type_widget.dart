@@ -14,6 +14,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
@@ -1032,7 +1033,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           title: 'Speed',
           subTitle: 'Accuracy matters , don\'t let the clock run down',
           iconURL: 'assets/icons/courses/speed.png',
-          onTap: () {
+          onTap: () async{
+          List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+          if(questions.isNotEmpty){
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -1044,14 +1047,40 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                 },
               ),
             );
+          }
+          else{
+            showDialogYesNo(
+                context: context,
+                message: "Download questions for ${widget.course.name}",
+                target: BuyBundlePage(
+                  widget.user,
+                  controller: widget.controller,
+                  bundle: widget.subscription,
+                ));
+          }
+
+
           },
         ),
         MultiPurposeCourseCard(
           title: 'Knowledge',
           subTitle: 'Standard test',
           iconURL: 'assets/icons/courses/knowledge.png',
-          onTap: () {
-            knowledgeTestModalBottomSheet(context);
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              knowledgeTestModalBottomSheet(context);
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
             // Navigator.push(
             //   context,
             //   MaterialPageRoute(
@@ -1070,30 +1099,58 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           title: 'Marathon',
           subTitle: 'Race to complete all questions',
           iconURL: 'assets/icons/courses/marathon.png',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return MarathonIntroit(widget.user, widget.course);
-                },
-              ),
-            );
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return MarathonIntroit(widget.user, widget.course);
+                  },
+                ),
+              );
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
+
           },
         ),
         MultiPurposeCourseCard(
           title: 'Autopilot',
           subTitle: 'Completing a course one topic at a time',
           iconURL: 'assets/icons/courses/autopilot.png',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return AutopilotIntroit(widget.user, widget.course);
-                },
-              ),
-            );
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return AutopilotIntroit(widget.user, widget.course);
+                  },
+                ),
+              );
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
+
           },
         ),
         MultiPurposeCourseCard(
@@ -1101,92 +1158,161 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Crank up the speed, how far can you go?',
           iconURL: 'assets/icons/courses/treadmill.png',
           onTap: () async {
-            Treadmill? treadmill =
-                await TestController().getCurrentTreadmill(widget.course);
-            if (treadmill == null) {
-              return Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TreadmillWelcome(
-                    user: widget.user,
-                    course: widget.course,
-                  ),
-                ),
-              );
-            } else {
-              return Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TreadmillSaveResumptionMenu(
-                    controller: TreadmillController(
-                      widget.user,
-                      widget.course,
-                      name: widget.course.name!,
-                      treadmill: treadmill,
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              Treadmill? treadmill = await TestController().getCurrentTreadmill(widget.course);
+              if (treadmill == null) {
+                return Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TreadmillWelcome(
+                      user: widget.user,
+                      course: widget.course,
                     ),
                   ),
-                ),
-              );
+                );
+              }
+              else {
+                return Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TreadmillSaveResumptionMenu(
+                      controller: TreadmillController(
+                        widget.user,
+                        widget.course,
+                        name: widget.course.name!,
+                        treadmill: treadmill,
+                      ),
+                    ),
+                  ),
+                );
+              }
             }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
+
           },
         ),
         MultiPurposeCourseCard(
           title: 'Customised',
           subTitle: 'Create your own kind of quiz',
           iconURL: 'assets/icons/courses/customised.png',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return CustomizedTestIntroit(
-                    user: widget.user,
-                    course: widget.course,
-                  );
-                },
-              ),
-            );
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CustomizedTestIntroit(
+                      user: widget.user,
+                      course: widget.course,
+                    );
+                  },
+                ),
+              );
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
+
           },
         ),
         MultiPurposeCourseCard(
           title: 'Timeless',
           subTitle: 'Practice mode, no pressure.',
           iconURL: 'assets/icons/courses/untimed.png',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return TestChallengeList(
-                    testType: TestType.UNTIMED,
-                    course: widget.course,
-                    user: widget.user,
-                  );
-                },
-              ),
-            );
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return TestChallengeList(
+                      testType: TestType.UNTIMED,
+                      course: widget.course,
+                      user: widget.user,
+                    );
+                  },
+                ),
+              );
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
+
           },
         ),
         MultiPurposeCourseCard(
           title: 'Review',
           subTitle: 'Know the answer to every question',
           iconURL: 'assets/icons/courses/review.png',
-          onTap: () {
-            goTo(
-                context,
-                ReviewOnBoarding(
-                  user: widget.user,
-                  course: widget.course,
-                  testType: TestType.NONE,
-                ));
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              goTo(
+                  context,
+                  ReviewOnBoarding(
+                    user: widget.user,
+                    course: widget.course,
+                    testType: TestType.NONE,
+                  ));
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
+
           },
         ),
         MultiPurposeCourseCard(
           title: 'Conquest',
           subTitle: 'Prepare for battle, attempt everything',
           iconURL: 'assets/icons/courses/conquest.png',
-          onTap: () {
-            conquestModalBottomSheet(context);
+          onTap: () async{
+            List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if(questions.isNotEmpty){
+              conquestModalBottomSheet(context);
+            }
+            else{
+              showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ));
+            }
           },
         ),
       ],
