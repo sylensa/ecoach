@@ -261,24 +261,20 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
       await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
     }
     await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken);
-    callback(testTaken, true);
-    // else {
-    //   ApiCall<TestTaken>(AppUrl.testTaken,
-    //       user: controller.user,
-    //       isList: false,
-    //       params: testTaken.toJson(), create: (json) {
-    //         return TestTaken.fromJson(json);
-    //       }, onError: (err) {
-    //         OfflineSaveController(context, controller.user).saveTestTaken(testTaken);
-    //         callback(testTaken, false);
-    //       }, onCallback: (data) {
-    //         print('onCallback');
-    //         print(data);
-    //         TestController().saveTestTaken(data!);
-    //         callback(data, true);
-    //       }).post(context);
-    // }
-
+    ApiCall<TestTaken>(AppUrl.testTaken,
+        user: controller.user,
+        isList: false,
+        params: testTaken.toJson(), create: (json) {
+          return TestTaken.fromJson(json);
+        }, onError: (err) {
+          OfflineSaveController(context, controller.user).saveTestTaken(testTaken);
+          callback(testTaken, false);
+        }, onCallback: (data) {
+          print('onCallback');
+          print(data);
+          TestController().saveTestTaken(data!);
+          callback(data, true);
+        }).post(context);
 
   }
 

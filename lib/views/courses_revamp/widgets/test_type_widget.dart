@@ -63,6 +63,7 @@ class TestTypeWidget extends StatefulWidget {
 class _TestTypeWidgetState extends State<TestTypeWidget> {
   String selectedConquestType = '';
   String searchKeyword = '';
+  List<Question> listQuestions = [];
   bool searchTap = false;
   TestType testType = TestType.NONE;
   int _currentSlide = 0;
@@ -228,6 +229,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           }
         }
           futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
+
         break;
       default:
         futureList = TestController().getBankTest(widget.course);
@@ -770,9 +772,25 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                            Container(
                              padding: EdgeInsets.only(left: 10,right: 10,top: 0),
                              child:  TextFormField(
-                               onChanged: (String value){
+                               onChanged: (String value)async{
                                  stateSetter(() {
                                    searchKeyword = value;
+                                 });
+                                 // for(int i =0; i < keywordTestTaken.length; i++){
+                                 //   if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
+                                 //     listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+                                 //     stateSetter(() {
+                                 //     });
+                                 //     return;
+                                 //   }
+                                 // }
+                                 listQuestions.clear();
+                                 if(searchKeyword.isNotEmpty){
+                                   listQuestions =  await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: 0);
+
+                                 }
+                                 stateSetter(() {
+
                                  });
                                },
                                onTap: (){
@@ -795,7 +813,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                              ),
                            ),
                            SizedBox(height: 20,),
-                           if(!searchTap)
+                           if(!searchTap && listQuestions.isEmpty)
                            Container(
                              padding: EdgeInsets.symmetric(horizontal: 20),
                              child: Column(
@@ -849,7 +867,59 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
 
                                ],
                              ),
-                           ),
+                           )
+                           else if(listQuestions.isNotEmpty)
+                             Container(
+                               padding: EdgeInsets.symmetric(horizontal: 20),
+                               child: Column(
+                                 children: [
+                                   Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     children: [
+                                       sText("Search Result",weight: FontWeight.w600),
+                                       Column(
+                                         children: [
+                                           Icon(Icons.trending_up,size: 14,),
+                                           Icon(Icons.numbers,size: 14,),
+                                         ],
+                                       )
+                                     ],
+                                   ),
+                                   SizedBox(height: 10,),
+                                       MaterialButton(
+                                         padding: EdgeInsets.zero,
+                                         onPressed: ()async{
+                                           stateSetter(() {
+                                           });
+                                           await getTest(context, TestCategory.NONE);
+
+                                         },
+                                         child: Column(
+                                           children: [
+                                             Row(
+                                               children: [
+                                                 Icon(Icons.trending_up),
+                                                 SizedBox(width: 10,),
+                                                 Column(
+                                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                                   children: [
+                                                     sText("${properCase("$searchKeyword")}",weight: FontWeight.bold),
+                                                     sText("${listQuestions.length} appearances",size: 12,color: kAdeoGray3),
+                                                   ],
+                                                 ),
+                                                 Expanded(child: Container()),
+                                                 sText("A",weight: FontWeight.bold),
+
+                                               ],
+                                             ),
+                                             SizedBox(height: 10,),
+                                           ],
+                                         ),
+                                       )
+
+                                 ],
+                               ),
+                             ),
                            SizedBox(height: 10,),
                            Container(
                              decoration: BoxDecoration(

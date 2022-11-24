@@ -139,6 +139,19 @@ class QuestionDB {
         question.answers = await AnswerDB().questoinAnswers(question.id!);
         questions.add(question);
       }
+      if(question.resource!.toLowerCase().contains(keyword.toLowerCase())){
+        questions.add(question);
+      }
+      if(question.instructions!.toLowerCase().contains(keyword.toLowerCase())){
+        questions.add(question);
+      }
+
+      for(int t = 0; t < question.answers!.length; t++){
+        if(question.answers![t].text!.toLowerCase().contains(keyword.toLowerCase())){
+          questions.add(question);
+        }
+      }
+
     }
     if(currentQuestionCount <= questions.length ){
       for(int i = currentQuestionCount; i < questions.length; i++){

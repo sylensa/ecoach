@@ -225,8 +225,7 @@ class ConquestController {
         "question_id": question.id,
         "topic_id": question.topicId,
         "topic_name": question.topicName,
-        "selected_answer_id":
-        question.selectedAnswer != null ? question.selectedAnswer : null,
+        "selected_answer_id": question.selectedAnswer != null ? question.selectedAnswer!.id : null,
         "status": question.isCorrect
             ? "correct"
             : question.isWrong
@@ -284,7 +283,8 @@ class ConquestController {
         unattempted: unattempted,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now());
-    TestController().saveConquestTestTaken(testTaken);
+    await TestController().saveConquestTestTaken(testTaken);
+    await TestController().saveTestTaken(testTaken);
     callback(testTaken, true);
   }
 

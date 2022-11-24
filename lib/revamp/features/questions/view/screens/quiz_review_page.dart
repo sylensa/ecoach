@@ -534,6 +534,7 @@ class _QuizReviewPageState extends State<QuizReviewPage> {
 
                                     ),
                                   ),
+                                  if( reviewQuestionsBack[questionIndex].correctAnswer != null)
                                   Visibility(
                                     visible: reviewQuestionsBack[questionIndex].correctAnswer!.solution!.isNotEmpty ? true : false,
                                     child:  Container(

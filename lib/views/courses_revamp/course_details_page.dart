@@ -203,6 +203,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   getCourseKeywords()async{
     var response = await doGet("${AppUrl.courseKeyword}?course_id=${course!.id}");
     if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
+      listCourseKeywordsData.clear();
       for(int i =0; i < response["data"]["data"].length; i++){
         CourseKeywords courseKeywordsData = CourseKeywords.fromJson(response["data"]["data"][i]);
         listCourseKeywordsData.add(courseKeywordsData);

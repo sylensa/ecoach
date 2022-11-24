@@ -139,6 +139,7 @@ class TestController {
     return QuestionDB().getQuestionByKeyword(keyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
   }
 
+
   Future<List<Question>> getTotalKeywordQuestions(String keyword) {
     return QuestionDB().getTotalQuestionByKeyword(keyword);
   }
@@ -195,7 +196,7 @@ class TestController {
     Map<String, dynamic> res = json.decode(responses);
     // print(res.runtimeType);
     List<TestAnswer>? answers = fromMap(res, (answer) {
-      // print(answer);
+      print("answer:$answer");
       return TestAnswer.fromJson(answer);
     });
 
