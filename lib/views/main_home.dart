@@ -78,6 +78,7 @@ class _MainHomePageState extends State<MainHomePage>
           tapping(tabNumber);
         },
         controller: mainController,
+         planId: widget.planId,
       ),
 
       UserGroupPage(widget.user),

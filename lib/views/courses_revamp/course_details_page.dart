@@ -84,12 +84,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
       case 2:
         return {
           'Test Type': TestTypeWidget(
-            controller: widget.controller,
-            subscription: widget.subscription,
-            user: widget.user,
-            course: course!,
-            listCourseKeywordsData: listCourseKeywordsData
-          )
+              controller: widget.controller,
+              subscription: widget.subscription,
+              user: widget.user,
+              course: course!,
+              listCourseKeywordsData: listCourseKeywordsData)
         };
 
       case 3:
@@ -200,18 +199,20 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     });
   }
 
-  getCourseKeywords()async{
-    var response = await doGet("${AppUrl.courseKeyword}?course_id=${course!.id}");
-    if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
+  getCourseKeywords() async {
+    var response =
+        await doGet("${AppUrl.courseKeyword}?course_id=${course!.id}");
+    if (response["status"] &&
+        response["code"] == "200" &&
+        response["data"]["data"].isNotEmpty) {
       listCourseKeywordsData.clear();
-      for(int i =0; i < response["data"]["data"].length; i++){
-        CourseKeywords courseKeywordsData = CourseKeywords.fromJson(response["data"]["data"][i]);
+      for (int i = 0; i < response["data"]["data"].length; i++) {
+        CourseKeywords courseKeywordsData =
+            CourseKeywords.fromJson(response["data"]["data"][i]);
         listCourseKeywordsData.add(courseKeywordsData);
       }
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   getCourseStats(int courseId) {
@@ -228,7 +229,8 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   }
 
   setProviderValues(Course course) {
-    final welcomeProvider = Provider.of<LearnModeProvider>(context, listen: false);
+    final welcomeProvider =
+        Provider.of<LearnModeProvider>(context, listen: false);
 
     welcomeProvider.getTotalTopics(course);
 
@@ -253,8 +255,6 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     // setProviderValues(course!);
     getAnalysisStats();
     getCourseKeywords();
-
-
   }
 
   @override
@@ -359,12 +359,14 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   itemCount: courseDetails.length,
                   scrollDirection: Axis.horizontal,
                   controller: pageControllerView,
-                  itemBuilder: (BuildContext context, int index){
-                    return    GestureDetector(
-                      onTap: (){
-                        if(index >= _currentPage){
-                          pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
-                        }else{
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (index >= _currentPage) {
+                          pageControllerView.animateTo(appWidth(context) / 10,
+                              duration: new Duration(microseconds: 1),
+                              curve: Curves.easeIn);
+                        } else {
                           pageControllerView.jumpTo(0.0);
                         }
                         setState(() {
@@ -374,11 +376,8 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                             listCourseDetails.clear();
                             listCourseDetails.add(courseDetails[index]);
                           }
-
-
                         });
                         pageController.jumpToPage(index);
-
                       },
                       child: Row(
                         children: [
@@ -437,7 +436,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     );
                   }),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Expanded(
               child: PageView(
                 controller: pageController,
@@ -445,33 +446,64 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                   setState(() {
                     print("currentPageNumber:$currentPageNumber");
                     print("page:$page");
-                    if(page >= currentPageNumber){
-                      pageControllerView.animateTo(appWidth(context)/10, duration: new Duration(microseconds: 1), curve: Curves.easeIn);
-                    }else{
+                    if (page >= currentPageNumber) {
+                      pageControllerView.animateTo(appWidth(context) / 10,
+                          duration: new Duration(microseconds: 1),
+                          curve: Curves.easeIn);
+                    } else {
                       pageControllerView.jumpTo(0.0);
                     }
 
-                    if(!listCourseDetails.contains(courseDetails[page])){
+                    if (!listCourseDetails.contains(courseDetails[page])) {
                       listCourseDetails.clear();
                       listCourseDetails.add(courseDetails[page]);
                     }
                     currentPageNumber = page;
-
                   });
                 },
-                children:  [
-              LearnModeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-              NoteWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,topics: topics,),
-              TestTypeWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,listCourseKeywordsData: listCourseKeywordsData,),
-               LiveWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-             GameWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,),
-               ProgressWidget(controller: widget.controller,subscription: widget.subscription,user: widget.user,course: course!,stats: stats,),
-
-
+                children: [
+                  LearnModeWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                  ),
+                  NoteWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                    topics: topics,
+                  ),
+                  TestTypeWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                    listCourseKeywordsData: listCourseKeywordsData,
+                  ),
+                  LiveWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                  ),
+                  GameWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                  ),
+                  ProgressWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                    stats: stats,
+                  ),
                 ],
               ),
             ),
-
           ],
         ),
       ),
