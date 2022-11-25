@@ -804,15 +804,17 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                  stateSetter(() {
                                    searchKeyword = value;
                                  });
-                                 // for(int i =0; i < keywordTestTaken.length; i++){
-                                 //   if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
-                                 //     listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
-                                 //     stateSetter(() {
-                                 //     });
-                                 //     return;
-                                 //   }
-                                 // }
                                  listQuestions.clear();
+                                 if(searchKeyword.isNotEmpty){
+                                   for(int i =0; i < keywordTestTaken.length; i++){
+                                     if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
+                                       listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+                                       stateSetter(() {
+                                       });
+                                       return;
+                                     }
+                                   }
+                                 }
                                  if(searchKeyword.isNotEmpty){
                                    listQuestions =  await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: 0);
 
