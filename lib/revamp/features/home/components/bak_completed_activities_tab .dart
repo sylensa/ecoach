@@ -10,21 +10,27 @@ import 'package:ecoach/database/autopilot_db.dart';
 import 'package:ecoach/database/course_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/questions_db.dart';
+import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/autopilot.dart';
 import 'package:ecoach/models/completed_activity.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/download_update.dart';
 import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/home/view/screen/homepage.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/autopilot/autopilot_introit_topics.dart';
 import 'package:ecoach/views/autopilot/autopilot_topic_menu.dart';
 import 'package:ecoach/views/main_home.dart';
 import 'package:ecoach/views/marathon/marathon_complete_congratulation.dart';
@@ -49,24 +55,19 @@ class CompletedActivitiesTab extends StatefulWidget {
     Key? key,
     required this.mainController,
     this.planId,
-    required this.user,
-    required this.allCompletedActivities,
-    this.topic,
   }) : super(key: key);
 
   final MainController mainController;
   final int? planId;
-  final User user;
-  final List<TestActivity> allCompletedActivities;
-  final Topic? topic;
 
   @override
   State<CompletedActivitiesTab> createState() => _CompletedActivitiesTabState();
 }
 
 class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
-  // late Topic? topic;
-  List<TestActivity> _allCompletedActivities = [];
+  late Topic? topic;
+  late User user;
+
   viewResults(TestTaken testTaken, controller, test, diagnostic) {
     if (testTaken.score! >= 95) {
       goTo(
@@ -146,10 +147,119 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
     }
   }
 
+  getCompletedAutopilots() async {
+    List<TestActivity> completedAutopilotActivities = [];
+    late TestActivityList completedAutopilots;
+    await AutopilotDB().completedAutopilots().then((mList) async {
+      List<Autopilot> autopilots = mList;
+
+      Map<String, dynamic> completedAutopilotsMap = {
+        "autopilots": autopilots,
+      };
+      completedAutopilots = TestActivityList.fromJson(completedAutopilotsMap);
+      for (var completedAutopilot in completedAutopilots.autopilots!) {
+        Map<String, dynamic> completedAutopilotJSON = {
+          "activityType": TestActivityType.AUTOPILOT,
+          "courseId": completedAutopilot.courseId,
+          "activityStartTime": completedAutopilot.startTime!.toIso8601String(),
+          "autopilot": completedAutopilot,
+          // "topic": null,
+        };
+
+        TestActivity completedAutopilotObject =
+            TestActivity.fromJson(completedAutopilotJSON);
+        completedAutopilotActivities.add(completedAutopilotObject);
+      }
+    });
+    return completedAutopilotActivities;
+  }
+
+  getCompletedMarathons() async {
+    List<TestActivity> completedMarathonActivities = [];
+    late TestActivityList completedMarathons;
+    await MarathonDB().completedMarathons().then((mList) async {
+      List<Marathon> marathons = mList;
+
+      Map<String, dynamic> completedMarathonsMap = {
+        "marathons": marathons,
+      };
+      completedMarathons = TestActivityList.fromJson(completedMarathonsMap);
+      for (var completedMarathon in completedMarathons.marathons!) {
+        if (completedMarathon.topicId != null) {
+          topic = await TopicDB().getTopicById(completedMarathon.topicId!);
+
+          Map<String, dynamic> completedMarathonJSON = {
+            "activityType": TestActivityType.MARATHON,
+            "courseId": completedMarathon.courseId,
+            "activityStartTime": completedMarathon.startTime!.toIso8601String(),
+            "marathon": completedMarathon,
+            "topic": topic,
+          };
+          TestActivity completedMarathonObject =
+              TestActivity.fromJson(completedMarathonJSON);
+          completedMarathonActivities.add(completedMarathonObject);
+        }
+      }
+    });
+    return completedMarathonActivities;
+  }
+
+  getCompletedTreadmills() async {
+    List<TestActivity> completedTreadmillActivities = [];
+    late TestActivityList completedTreadmills;
+    await TestTakenDB().courseTestsTaken().then((mList) async {
+      List<TestTaken> treadmills = mList;
+
+      Map<String, dynamic> completedTreadmillsMap = {
+        "treadmills": treadmills,
+      };
+      completedTreadmills = TestActivityList.fromJson(completedTreadmillsMap);
+      for (var completedTreadmill in completedTreadmills.treadmills!) {
+        int topicId =
+            jsonDecode(completedTreadmill.responses)["Q1"]["topic_id"];
+        topic = await TopicDB().getTopicById(topicId);
+        if (topic == null) {
+          continue;
+        }
+        Map<String, dynamic> completedTreadmillJSON = {
+          "activityType": TestActivityType.TREADMILL,
+          "courseId": completedTreadmill.courseId,
+          "activityStartTime": completedTreadmill.updatedAt!.toIso8601String(),
+          "treadmill": completedTreadmill,
+          "topic": topic,
+        };
+
+        TestActivity completedTreadmillObject =
+            TestActivity.fromJson(completedTreadmillJSON);
+        completedTreadmillActivities.add(completedTreadmillObject);
+      }
+    });
+
+    return completedTreadmillActivities;
+  }
+
+  Future<List<TestActivity>> loadCompletedActivities() async {
+    List<TestActivity> completedMarathonActivities = [];
+    List<TestActivity> completedAutopilotActivities = [];
+    List<TestActivity> completedTreadmillActivities = [];
+
+    user = await UserPreferences().getUser() as User;
+
+    completedMarathonActivities = await getCompletedMarathons();
+    completedAutopilotActivities = await getCompletedTreadmills();
+    completedTreadmillActivities = await getCompletedAutopilots();
+
+    List<TestActivity> allCompletedActivities = [
+      ...completedMarathonActivities,
+      ...completedAutopilotActivities,
+      ...completedTreadmillActivities,
+    ];
+
+    return allCompletedActivities;
+  }
+
   @override
   void initState() {
-    _allCompletedActivities = widget.allCompletedActivities;
-
     super.initState();
   }
 
@@ -164,181 +274,244 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
         color: kPageBackgroundGray2,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: _allCompletedActivities.isEmpty
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "You do not currently have any completed activities",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(
-                  height: 14,
-                ),
-                AdeoFilledButton(
-                  color: Colors.white,
-                  background: kAdeoGreen4,
-                  label: 'Take an activity',
-                  size: Sizes.medium,
-                  fontSize: 16,
-                  onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) {
-                      return MainHomePage(
-                        widget.user,
-                        index: 2,
-                      );
-                    }));
-                  },
-                )
-              ],
-            )
-          : ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 18),
-              itemCount: _allCompletedActivities.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: ((context, index) {
-                TestActivity completedActivity = _allCompletedActivities[index];
-
-                bool isLastItem = index == _allCompletedActivities.length - 1;
-                String activityTitle;
-
-                switch (completedActivity.activityType) {
-                  case TestActivityType.MARATHON:
-                    activityTitle =
-                        "${completedActivity.topic!.name!} (${completedActivity.marathon!.title!})";
-
-                    double percentageCompleted =
-                        completedActivity.marathon!.totalCorrect! /
-                            completedActivity.marathon!.totalQuestions!;
-                    return Container(
-                      margin: EdgeInsets.only(
-                        bottom: isLastItem ? 0 : 12,
-                      ),
-                      child: ActivityCourseCard(
-                        courseTitle: activityTitle,
-                        activityType: completedActivity.activityType!,
-                        iconUrl: 'assets/icons/courses/marathon.png',
-                        percentageCompleted: percentageCompleted,
-                        onTap: () {
-                          showTapActions(
-                            context,
-                            title: completedActivity.topic!.name!,
-                            completedActivity: completedActivity,
-                            courseId: completedActivity.courseId!,
-                            user: widget.user,
-                          );
-                        },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 18.0),
+          child: FutureBuilder<List<TestActivity>>(
+              future: loadCompletedActivities(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return Center(
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: Container(
+                          width: 60,
+                          height: 60,
+                          child: CircularProgressIndicator(
+                            color: kAdeoGreen4,
+                            strokeWidth: 2,
+                          ),
+                        ),
                       ),
                     );
-                  case TestActivityType.TREADMILL:
-                    activityTitle =
-                        completedActivity.treadmill!.testname.toString();
-                    ;
-                    return Container(
-                      margin: EdgeInsets.only(
-                        bottom: isLastItem ? 0 : 12,
-                      ),
-                      child: ActivityCourseCard(
-                        courseTitle: activityTitle,
-                        activityType: completedActivity.activityType!,
-                        iconUrl: 'assets/icons/courses/treadmill.png',
-                        onTap: () async {
-                          List<Question> questions =
-                              await QuestionDB().getQuestionsByCourseId(
-                            completedActivity.courseId!,
-                          );
-                          print(
-                            "Questions: ${questions.length}",
-                          );
-                          if (questions.isNotEmpty) {
-                            showTapActions(
-                              context,
-                              completedActivity: completedActivity,
-                              title: activityTitle,
-                              courseId: completedActivity.courseId!,
-                              user: widget.user,
-                            );
-                          } else {
-                            print("Download course first");
-                            // showDialogYesNo(
-                            //     context: context,
-                            //     message:
-                            //         "Download questions for ${completedActivity.treadmill!.courseName}",
-                            //     target: BuyBundlePage(
-                            //       user,
-                            //       controller:
-                            //           widget.mainController,
-                            //       bundle: widget.subscription,
-                            //     ));
-                          }
-                        },
-                      ),
-                    );
-                  case TestActivityType.AUTOPILOT:
-                    activityTitle = completedActivity.autopilot!.title!;
-
-                    return FutureBuilder<Course>(
-                        future: getAutopilotCourse(
-                            completedActivity.autopilot!.courseId),
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.none:
-                            case ConnectionState.waiting:
-                              return SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: kAdeoGreen4,
-                                    strokeWidth: 2,
+                  default:
+                    if (snapshot.hasError) {
+                      return Container();
+                    } else if (snapshot.data != null) {
+                      List<TestActivity> _completedActivities = snapshot.data!;
+                      return Column(
+                        children: [
+                          if (_completedActivities.isEmpty)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "You do not currently have any completed activity",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              );
-                            default:
-                              if (snapshot.hasError) {
-                                return Container();
-                              } else if (snapshot.data != null) {
-                                Course autopilotCourse = snapshot.data!;
-
-                                return Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: isLastItem ? 0 : 12,
-                                  ),
-                                  child: ActivityCourseCard(
-                                    courseTitle: autopilotCourse.name!,
-                                    activityType:
-                                        completedActivity.activityType!,
-                                    iconUrl:
-                                        'assets/icons/courses/autopilot.png',
-                                    onTap: () {
-                                      showTapActions(
-                                        context,
-                                        completedActivity: completedActivity,
-                                        title: autopilotCourse.name!,
-                                        courseId: completedActivity.courseId!,
-                                        user: widget.user,
+                                SizedBox(
+                                  height: 14,
+                                ),
+                                AdeoFilledButton(
+                                  color: Colors.white,
+                                  background: kAdeoGreen4,
+                                  label: 'Take an activity',
+                                  size: Sizes.medium,
+                                  fontSize: 16,
+                                  onPressed: () {
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return MainHomePage(
+                                        user,
+                                        index: 2,
                                       );
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return Container();
-                              }
-                          }
-                        });
+                                    }));
+                                  },
+                                )
+                              ],
+                            ),
+                          if (_completedActivities.isNotEmpty)
+                            ..._completedActivities.map(
+                              ((completedActivity) {
+                                int index = _completedActivities
+                                    .indexOf(completedActivity);
+                                bool isLastItem =
+                                    index == _completedActivities.length - 1;
+                                String activityTitle;
 
-                  default:
-                    return Container();
+                                switch (completedActivity.activityType) {
+                                  case TestActivityType.MARATHON:
+                                    activityTitle =
+                                        "${completedActivity.topic!.name!} (${completedActivity.marathon!.title!})";
+
+                                    double percentageCompleted =
+                                        completedActivity
+                                                .marathon!.totalCorrect! /
+                                            completedActivity
+                                                .marathon!.totalQuestions!;
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                        bottom: isLastItem ? 0 : 12,
+                                      ),
+                                      child: ActivityCourseCard(
+                                        courseTitle: activityTitle,
+                                        activityType:
+                                            completedActivity.activityType!,
+                                        iconUrl:
+                                            'assets/icons/courses/marathon.png',
+                                        percentageCompleted:
+                                            percentageCompleted,
+                                        onTap: () {
+                                          showTapActions(
+                                            context,
+                                            title:
+                                                completedActivity.topic!.name!,
+                                            completedActivity:
+                                                completedActivity,
+                                            courseId:
+                                                completedActivity.courseId!,
+                                            user: user,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  case TestActivityType.TREADMILL:
+                                    activityTitle = completedActivity
+                                        .treadmill!.testname
+                                        .toString();
+                                    ;
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                        bottom: isLastItem ? 0 : 12,
+                                      ),
+                                      child: ActivityCourseCard(
+                                        courseTitle: activityTitle,
+                                        activityType:
+                                            completedActivity.activityType!,
+                                        iconUrl:
+                                            'assets/icons/courses/treadmill.png',
+                                        onTap: () async {
+                                          List<Question> questions =
+                                              await QuestionDB()
+                                                  .getQuestionsByCourseId(
+                                            completedActivity.courseId!,
+                                          );
+                                          print(
+                                            "Questions: ${questions.length}",
+                                          );
+                                          if (questions.isNotEmpty) {
+                                            showTapActions(
+                                              context,
+                                              completedActivity:
+                                                  completedActivity,
+                                              title: activityTitle,
+                                              courseId:
+                                                  completedActivity.courseId!,
+                                              user: user,
+                                            );
+                                          } else {
+                                            print("Download course first");
+                                            // showDialogYesNo(
+                                            //     context: context,
+                                            //     message:
+                                            //         "Download questions for ${completedActivity.treadmill!.courseName}",
+                                            //     target: BuyBundlePage(
+                                            //       user,
+                                            //       controller:
+                                            //           widget.mainController,
+                                            //       bundle: widget.subscription,
+                                            //     ));
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  case TestActivityType.AUTOPILOT:
+                                    activityTitle =
+                                        completedActivity.autopilot!.title!;
+
+                                    return FutureBuilder<Course>(
+                                        future: getAutopilotCourse(
+                                            completedActivity
+                                                .autopilot!.courseId),
+                                        builder: (context, snapshot) {
+                                          switch (snapshot.connectionState) {
+                                            case ConnectionState.none:
+                                            case ConnectionState.waiting:
+                                              return SizedBox(
+                                                width: 18,
+                                                height: 18,
+                                                child: Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: kAdeoGreen4,
+                                                    strokeWidth: 2,
+                                                  ),
+                                                ),
+                                              );
+                                            default:
+                                              if (snapshot.hasError) {
+                                                return Container();
+                                              } else if (snapshot.data !=
+                                                  null) {
+                                                Course autopilotCourse =
+                                                    snapshot.data!;
+
+                                                return Container(
+                                                  margin: EdgeInsets.only(
+                                                    bottom: isLastItem ? 0 : 12,
+                                                  ),
+                                                  child: ActivityCourseCard(
+                                                    courseTitle:
+                                                        autopilotCourse.name!,
+                                                    activityType:
+                                                        completedActivity
+                                                            .activityType!,
+                                                    iconUrl:
+                                                        'assets/icons/courses/autopilot.png',
+                                                    onTap: () {
+                                                      showTapActions(
+                                                        context,
+                                                        completedActivity:
+                                                            completedActivity,
+                                                        title: autopilotCourse
+                                                            .name!,
+                                                        courseId:
+                                                            completedActivity
+                                                                .courseId!,
+                                                        user: user,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              } else {
+                                                return Container();
+                                              }
+                                          }
+                                        });
+
+                                  default:
+                                    return Container();
+                                }
+                              }),
+                            )
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
                 }
               }),
-            ),
+        ),
+      ),
     );
   }
 
@@ -618,7 +791,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                                             mode: treadmillMode,
                                             count: treadmillController
                                                 .countQuestions,
-                                            // topic: widget.topic,
+                                            topic: topic,
                                             topicId: topicId,
                                             bankId: topicId,
                                           );

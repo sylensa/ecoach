@@ -1,5 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/autopilot_db.dart';
+import 'package:ecoach/database/marathon_db.dart';
+import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/database/topics_db.dart';
+import 'package:ecoach/models/autopilot.dart';
+import 'package:ecoach/models/completed_activity.dart';
+import 'package:ecoach/models/marathon.dart';
+import 'package:ecoach/models/topic.dart';
+import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/revamp/features/home/components/completed_activities_tab.dart';
 import 'package:ecoach/revamp/features/home/components/ongoing_activities_tab.dart';
 import 'package:ecoach/views/treadmill/completed.dart';
@@ -30,11 +41,13 @@ class HomePage2 extends StatefulWidget {
   final Function? callback;
 
   final MainController controller;
+  int? planId;
 
   HomePage2(
     this.user, {
     this.callback,
     required this.controller,
+    this.planId,
   });
 
   @override
@@ -50,14 +63,24 @@ class _HomePage2State extends State<HomePage2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DashboardContent(user: widget.user),
+      body: DashboardContent(
+        user: widget.user,
+        mainController: widget.controller,
+      ),
     );
   }
 }
 
 class DashboardContent extends StatefulWidget {
   final User user;
-  DashboardContent({Key? key, required this.user}) : super(key: key);
+  final MainController mainController;
+  int? planId;
+  DashboardContent({
+    Key? key,
+    required this.user,
+    required this.mainController,
+    this.planId,
+  }) : super(key: key);
 
   @override
   State<DashboardContent> createState() => _HomePage2ContentState();
@@ -414,9 +437,262 @@ class _HomePage2ContentState extends State<DashboardContent>
     });
   }
 
+  late Topic? topic;
+  late Topic? completedActivitiesTopic;
+// Ongoing Activities
+  List<TestActivity> allOngoingActivities = [];
+
+  Future<List<TestActivity>> getOngoingMarathons() async {
+    late List<TestActivity> ongoingMarathonActivities = [];
+
+    late TestActivityList ongoingMarathons;
+    await MarathonDB().ongoingMarathons().then((mList) async {
+      List<Marathon> marathons = mList;
+      Map<String, dynamic> ongoingMarathonsMap = {
+        "marathons": marathons,
+      };
+      ongoingMarathons = TestActivityList.fromJson(ongoingMarathonsMap);
+      for (Marathon ongoingMarathon in ongoingMarathons.marathons!) {
+        if (ongoingMarathon.topicId != null) {
+          topic = await TopicDB().getTopicById(ongoingMarathon.topicId!);
+
+          Map<String, dynamic> completedMarathonJSON = {
+            "activityType": TestActivityType.MARATHON,
+            "courseId": ongoingMarathon.courseId,
+            "activityStartTime": ongoingMarathon.startTime!.toIso8601String(),
+            "marathon": ongoingMarathon,
+            "topic": topic,
+          };
+
+          TestActivity completedMarathonObject =
+              TestActivity.fromJson(completedMarathonJSON);
+          ongoingMarathonActivities.add(completedMarathonObject);
+        }
+      }
+    });
+    return ongoingMarathonActivities;
+  }
+
+  Future<List<TestActivity>> getOngoingAutopilots() async {
+    List<TestActivity> ongoingAutopilotActivities = [];
+    late TestActivityList ongoingAutopilots;
+    await AutopilotDB().ongoingAutopilots().then((mList) async {
+      List<Autopilot> autopilots = mList;
+      Map<String, dynamic> ongoingAutopilotsMap = {
+        "autopilots": autopilots,
+      };
+
+      ongoingAutopilots = TestActivityList.fromJson(ongoingAutopilotsMap);
+      for (var ongoingAutopilot in ongoingAutopilots.autopilots!) {
+        Map<String, dynamic> ongoingAutopilotJSON = {
+          "activityType": TestActivityType.AUTOPILOT,
+          "courseId": ongoingAutopilot.courseId,
+          "activityStartTime": ongoingAutopilot.startTime!.toIso8601String(),
+          "autopilot": ongoingAutopilot,
+          // "topic": null,
+        };
+
+        TestActivity ongoingAutopilotObject =
+            TestActivity.fromJson(ongoingAutopilotJSON);
+        ongoingAutopilotActivities.add(ongoingAutopilotObject);
+      }
+    });
+    return ongoingAutopilotActivities;
+  }
+
+  Future<List<TestActivity>> getOngoingTreadmills() async {
+    List<TestActivity> ongoingTreadmillActivities = [];
+
+    try {
+      late TestActivityList ongoingTreadmills;
+      await TestController().getOngoingTreadmill().then((mList) async {
+        List<Treadmill> treadmills = mList;
+        print("ongoing Tred: ${treadmills}");
+
+        Map<String, dynamic> ongoingTreamillsMap = {
+          "ongoing_treadmills": treadmills,
+        };
+
+        ongoingTreadmills = TestActivityList.fromJson(ongoingTreamillsMap);
+
+        for (var ongoingTreadmill in ongoingTreadmills.ongoingTreadmills!) {
+          print("ttttt: ${ongoingTreadmill.toJson()}");
+          // int topicId =
+          //     jsonDecode(ongoingTreadmill.responses)["Q1"]["topic_id"];
+          // topic = await TopicDB().getTopicById(ongoingTreadmill.topicId!);
+
+          Map<String, dynamic> ongoingTreadmillJSON = {
+            "activityType": TestActivityType.TREADMILL,
+            "courseId": ongoingTreadmill.courseId,
+            "activityStartTime": ongoingTreadmill.startTime!.toIso8601String(),
+            "ongoing_treadmill": ongoingTreadmill,
+            // "topic": topic,
+          };
+
+          TestActivity ongoingTreadmillObject =
+              TestActivity.fromJson(ongoingTreadmillJSON);
+          ongoingTreadmillActivities.add(ongoingTreadmillObject);
+        }
+      });
+    } catch (e) {
+      print("error: ${e}");
+    }
+
+    return ongoingTreadmillActivities;
+  }
+
+  loadOngoingActivities() async {
+    List<TestActivity> ongoingMarathonActivities = await getOngoingMarathons();
+    List<TestActivity> ongoingAutopilotActivities =
+        await getOngoingAutopilots();
+    List<TestActivity> ongoingTreadmillActivities =
+        await getOngoingTreadmills();
+
+    List<TestActivity> ongoingActivities = [
+      ...ongoingMarathonActivities,
+      ...ongoingAutopilotActivities,
+      ...ongoingTreadmillActivities,
+    ];
+
+    setState(() {
+      allOngoingActivities = ongoingActivities;
+    });
+  }
+
+// End of Ongoing Activities
+
+// Completed Activities //
+  late List<TestActivity> allCompletedActivities = [];
+
+  getCompletedAutopilots() async {
+    List<TestActivity> completedAutopilotActivities = [];
+    late TestActivityList completedAutopilots;
+    await AutopilotDB().completedAutopilots().then((mList) async {
+      List<Autopilot> autopilots = mList;
+
+      Map<String, dynamic> completedAutopilotsMap = {
+        "autopilots": autopilots,
+      };
+      completedAutopilots = TestActivityList.fromJson(completedAutopilotsMap);
+      for (var completedAutopilot in completedAutopilots.autopilots!) {
+        Map<String, dynamic> completedAutopilotJSON = {
+          "activityType": TestActivityType.AUTOPILOT,
+          "courseId": completedAutopilot.courseId,
+          "activityStartTime": completedAutopilot.startTime!.toIso8601String(),
+          "autopilot": completedAutopilot,
+          // "topic": null,
+        };
+
+        TestActivity completedAutopilotObject =
+            TestActivity.fromJson(completedAutopilotJSON);
+        completedAutopilotActivities.add(completedAutopilotObject);
+      }
+    });
+    return completedAutopilotActivities;
+  }
+
+  getCompletedMarathons() async {
+    List<TestActivity> completedMarathonActivities = [];
+    late TestActivityList completedMarathons;
+    await MarathonDB().completedMarathons().then((mList) async {
+      List<Marathon> marathons = mList;
+
+      Map<String, dynamic> completedMarathonsMap = {
+        "marathons": marathons,
+      };
+      completedMarathons = TestActivityList.fromJson(completedMarathonsMap);
+      for (var completedMarathon in completedMarathons.marathons!) {
+        if (completedMarathon.topicId != null) {
+          completedActivitiesTopic =
+              await TopicDB().getTopicById(completedMarathon.topicId!);
+
+          Map<String, dynamic> completedMarathonJSON = {
+            "activityType": TestActivityType.MARATHON,
+            "courseId": completedMarathon.courseId,
+            "activityStartTime": completedMarathon.startTime!.toIso8601String(),
+            "marathon": completedMarathon,
+            "topic": completedActivitiesTopic,
+          };
+          TestActivity completedMarathonObject =
+              TestActivity.fromJson(completedMarathonJSON);
+          completedMarathonActivities.add(completedMarathonObject);
+        }
+      }
+    });
+    return completedMarathonActivities;
+  }
+
+  getCompletedTreadmills() async {
+    List<TestActivity> completedTreadmillActivities = [];
+    late TestActivityList completedTreadmills;
+    await TestTakenDB().courseTestsTaken().then((mList) async {
+      List<TestTaken> treadmills = mList;
+
+      Map<String, dynamic> completedTreadmillsMap = {
+        "treadmills": treadmills,
+      };
+      completedTreadmills = TestActivityList.fromJson(completedTreadmillsMap);
+      for (var completedTreadmill in completedTreadmills.treadmills!) {
+        int topicId =
+            jsonDecode(completedTreadmill.responses)["Q1"]["topic_id"];
+        completedActivitiesTopic = await TopicDB().getTopicById(topicId);
+        if (topic == null) {
+          continue;
+        }
+        Map<String, dynamic> completedTreadmillJSON = {
+          "activityType": TestActivityType.TREADMILL,
+          "courseId": completedTreadmill.courseId,
+          "activityStartTime": completedTreadmill.updatedAt!.toIso8601String(),
+          "treadmill": completedTreadmill,
+          "topic": completedActivitiesTopic,
+        };
+
+        TestActivity completedTreadmillObject =
+            TestActivity.fromJson(completedTreadmillJSON);
+        completedTreadmillActivities.add(completedTreadmillObject);
+      }
+    });
+
+    return completedTreadmillActivities;
+  }
+
+  loadCompletedActivities() async {
+    List<TestActivity> completedMarathonActivities =
+        await getCompletedMarathons();
+    List<TestActivity> completedAutopilotActivities =
+        await getCompletedAutopilots();
+    List<TestActivity> completedTreadmillActivities =
+        await getCompletedTreadmills();
+
+    List<TestActivity> completedActivities = [
+      ...completedMarathonActivities,
+      ...completedAutopilotActivities,
+      ...completedTreadmillActivities,
+    ];
+
+    if (mounted) {
+      setState(() {
+        allCompletedActivities = completedActivities;
+      });
+    }
+  }
+
   @override
   void initState() {
-    super.initState();
+    loadOngoingActivities();
+    loadCompletedActivities();
+    _tabs = [
+      "Home",
+      "Ongoing",
+      "Completed",
+    ];
+
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        isActiveTab = _tabController.index == _tabs.indexOf(_activeTab);
+      });
+    });
 
     SubscriptionItemDB()
         .allSubscriptionItems()
@@ -431,17 +707,8 @@ class _HomePage2ContentState extends State<DashboardContent>
         progressCode = false;
       });
     });
-    _tabs = [
-      "Home",
-      "Ongoing",
-      "Completed",
-    ];
 
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      isActiveTab = _tabController.index == _tabs.indexOf(_activeTab);
-      setState(() {});
-    });
+    super.initState();
   }
 
   @override
@@ -497,11 +764,19 @@ class _HomePage2ContentState extends State<DashboardContent>
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: OngoingActivitiesTab(
+                        mainController: widget.mainController,
+                        planId: widget.planId,
+                        user: widget.user,
+                        allOngoingActivities: allOngoingActivities,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: CompletedActivitiesTab(
+                        mainController: widget.mainController,
+                        planId: widget.planId,
+                        user: widget.user,
+                        allCompletedActivities: allCompletedActivities,
                       ),
                     ),
                   ],
@@ -556,7 +831,6 @@ class _HomePage2ContentState extends State<DashboardContent>
                                             ),
                                             TextSpan(
                                               text: widget.user.name,
-
                                               style: TextStyle(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600,
@@ -645,14 +919,15 @@ class _HomePage2ContentState extends State<DashboardContent>
                             Colors.transparent,
                           ),
                           onTap: (x) {
-                            isActiveTab = _tabController.index == x;
-                            setState(() {});
+                            setState(() {
+                              // isActiveTab = _tabController.index == x;
+                            });
                           },
                           indicatorColor: Colors.transparent,
                           tabs: _tabs.map((tab) {
-                            _activeTab = tab;
                             isActiveTab =
                                 _tabController.index == _tabs.indexOf(tab);
+                            _activeTab = tab;
                             return Tab(
                               child: UnselectedTabIndicator(
                                 label: tab,
@@ -738,38 +1013,38 @@ class UnselectedTabIndicator extends StatelessWidget {
   }
 }
 
-class CircleTabIndicator extends Decoration {
-  CircleTabIndicator({required this.color, required this.radius});
-  final Color color;
-  final double radius;
+// class CircleTabIndicator extends Decoration {
+//   CircleTabIndicator({required this.color, required this.radius});
+//   final Color color;
+//   final double radius;
 
-  //override createBoxPainter
+//   //override createBoxPainter
 
-  @override
-  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
-    return _CirclePainter(color: color, radius: radius);
-  }
-}
+//   @override
+//   BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+//     return _CirclePainter(color: color, radius: radius);
+//   }
+// }
 
-class _CirclePainter extends BoxPainter {
-//override paint
-  final Color color;
-  final double radius;
+// class _CirclePainter extends BoxPainter {
+// //override paint
+//   final Color color;
+//   final double radius;
 
-  _CirclePainter({
-    required this.color,
-    required this.radius,
-  });
+//   _CirclePainter({
+//     required this.color,
+//     required this.radius,
+//   });
 
-  @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
-    late Paint _paint;
-    _paint = Paint()
-      ..color = color
-      ..isAntiAlias = true;
+//   @override
+//   void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
+//     late Paint _paint;
+//     _paint = Paint()
+//       ..color = color
+//       ..isAntiAlias = true;
 
-    final Offset circleOffset =
-        offset + Offset(cfg.size!.width / 2, cfg.size!.height - radius - 5);
-    canvas.drawCircle(circleOffset, radius, _paint);
-  }
-}
+//     final Offset circleOffset =
+//         offset + Offset(cfg.size!.width / 2, cfg.size!.height - radius - 5);
+//     canvas.drawCircle(circleOffset, radius, _paint);
+//   }
+// }
