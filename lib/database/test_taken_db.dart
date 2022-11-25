@@ -70,6 +70,28 @@ class TestTakenDB {
 
     return tests;
   }
+  Future<List<TestTaken>> getKeywordTestTakenPeriod(String courseId,String period,String keyword  ) async {
+    final Database? db = await DBProvider.database;
+    List<Map<String, dynamic>> maps = [];
+    if (period.toLowerCase() == 'all') {
+        maps = await db!.rawQuery("Select *, score as avg_score from keyword_test_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "'");
+    } else if (period.toLowerCase() == 'daily') {
+      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "' and challenge_type IS NOT NULL  GROUP by Date(created_at)");
+    } else if (period.toLowerCase() == 'weekly') {
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
+    } else if (period.toLowerCase() == 'monthly') {
+      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
+    }
+    print("object maps:${maps.length}");
+    List<TestTaken> tests = [];
+    for (int i = 0; i < maps.length; i++) {
+      TestTaken test = TestTaken.fromJson(maps[i]);
+      test.score = maps[i]["avg_score"];
+      tests.add(test);
+      print("object maps:${test.score}");
+    }
+    return tests;
+  }
 
   Future<double> getAverageScore(int courseId) async {
     final Database? db = await DBProvider.database;

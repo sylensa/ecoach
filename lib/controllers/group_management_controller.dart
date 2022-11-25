@@ -872,7 +872,8 @@ class GroupManagementController{
     getTestTaken() async {
     List<TestTaken> listTestTaken = [] ;
     // try{
-    var res = await doGet("${AppUrl.userGroup}/tests/taken",);
+    https://qa.adeo.app/api/user/tests/taken?group_id=
+    var res = await doGet("${AppUrl.userTestTaken}",);
     print("getGroupTestTaken:${res["data"]}");
     if (res["code"].toString() == "200" && res["data"]["data"].isNotEmpty) {
       for(int i =0; i < res["data"]["data"].length; i++){
