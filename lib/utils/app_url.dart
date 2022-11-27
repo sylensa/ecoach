@@ -25,6 +25,7 @@ class AppUrl {
 
   static String plans = baseURL + "plans";
   static String planDetails = baseURL + "subscriptions/show";
+  static String userTestTaken = baseURL + "user/tests/taken";
   static String planFilters = baseURL + "store/bundles/filters";
   static String filterPlans = baseURL + "store/bundles";
   static String searchPlans = baseURL + "store/search";

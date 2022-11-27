@@ -21,6 +21,7 @@ import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/conquest/conquest_onboarding.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
 import 'package:ecoach/views/keyword/keyword_assessment.dart';
+import 'package:ecoach/views/keyword/keyword_graph.dart';
 import 'package:ecoach/views/keyword/keyword_quiz_cover.dart';
 import 'package:ecoach/views/marathon/marathon_introit.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
@@ -531,14 +532,32 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                       SizedBox(
                         height: 10,
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: sText("Select your category",
-                            color: kAdeoGray3,
-                            weight: FontWeight.w500,
-                            align: TextAlign.center,
-                            size: 14
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: sText("Select your category",
+                                color: kAdeoGray3,
+                                weight: FontWeight.w500,
+                                align: TextAlign.center,
+                                size: 14
+                            ),
+                          ),
+                          if(showGraph)
+                          GestureDetector(
+                            onTap: (){
+                              stateSetter(() {
+                                if(showGraph){
+                                  showGraph = false;
+                                }else{
+                                  showGraph = true;
+                                }
+                              });
+                            },
+                            child: Image.asset("assets/images/pencil.png",height: 20,),
+                          ),
+                        ],
                       ),
                       SizedBox(
                         height: 20,
@@ -550,7 +569,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                            CarouselSlider.builder(
                                options:
                                CarouselOptions(
-                                 height:   300,
+                                 height:  showGraph ? 200 : 300,
                                  autoPlay:
                                  false,
                                  enableInfiniteScroll:
@@ -575,169 +594,178 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                ),
                                itemCount:keywordTestTaken.length,
                                itemBuilder: (BuildContext context, int indexReport, int index2) {
-                                 return  Container(
-                                   padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                                   child: Column(
-                                     children: [
-                                       Container(
-                                         padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
-                                         margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
-                                         decoration: BoxDecoration(
-                                             color: Color(0XFFE2EFF3),
-                                             borderRadius: BorderRadius.circular(10)
-                                         ),
-                                         child: Column(
-                                           children: [
-                                             SizedBox(height: 10,),
-                                             Row(
-                                               children: [
-                                                 Container(
-                                                   child: Column(
-                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                                     children: [
-                                                       Row(
-                                                         children: [
-                                                           Container(
-                                                             padding: EdgeInsets.all(5),
-                                                             child: Icon(Icons.trending_up,color: Colors.black,),
-                                                             decoration: BoxDecoration(
-                                                                 color: Colors.white,
-                                                                 borderRadius: BorderRadius.circular(10),
-                                                                 shape: BoxShape.rectangle
+                                 if(showGraph){
+                                 return  MaterialButton(
+                                   onPressed: (){
+                                     stateSetter(() {
+                                         showGraph = false;
+                                     });
+                                   },
+                                     child: KeywordGraph(course:widget.course ,keyword: keywordTestTaken[indexReport].testname!,changeState: true,),
+                                 );
+                                 }else{
+                                   return  Container(
+                                     padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                                     child: Column(
+                                       children: [
+                                         Container(
+                                           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                                           margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+                                           decoration: BoxDecoration(
+                                               color: Color(0XFFE2EFF3),
+                                               borderRadius: BorderRadius.circular(10)
+                                           ),
+                                           child: Column(
+                                             children: [
+                                               SizedBox(height: 10,),
+                                               Row(
+                                                 children: [
+                                                   Container(
+                                                     child: Column(
+                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                                       children: [
+                                                         Row(
+                                                           children: [
+                                                             Container(
+                                                               padding: EdgeInsets.all(5),
+                                                               child: Icon(Icons.trending_up,color: Colors.black,),
+                                                               decoration: BoxDecoration(
+                                                                   color: Colors.white,
+                                                                   borderRadius: BorderRadius.circular(10),
+                                                                   shape: BoxShape.rectangle
+                                                               ),
                                                              ),
-                                                           ),
-                                                           SizedBox(width: 5,),
-                                                           sText("${properCase(keywordTestTaken[indexReport].testname!)}",),
-                                                         ],
-                                                       ),
+                                                             SizedBox(width: 5,),
+                                                             sText("${properCase(keywordTestTaken[indexReport].testname!)}",),
+                                                           ],
+                                                         ),
 
-                                                       // SizedBox(height: 5,),
+                                                         // SizedBox(height: 5,),
 
-                                                     ],
-                                                   ),
-                                                 ),
-                                                 Expanded(child: Container()),
-                                                 Container(
-                                                   child: Column(
-                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                     crossAxisAlignment: CrossAxisAlignment.end,
-                                                     children: [
-
-                                                       Row(
-                                                         children: [
-                                                           keywordTestTaken[indexReport].scoreDiff! > 0 ?
-                                                           Image.asset(
-                                                             "assets/images/un_fav.png",
-                                                             color: Colors.green,
-                                                           ) :
-                                                           SvgPicture.asset(
-                                                             "assets/images/fav.svg",
-                                                           ),
-                                                           sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!}")
-
-                                                         ],
-                                                       ),
-                                                     ],
-                                                   ),
-                                                 ),
-                                               ],
-                                             ),
-                                             SizedBox(height: 20,),
-                                             Row(
-                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                               children: [
-                                                 Column(
-                                                   children: [
-                                                     sText("${keywordTestTaken[indexReport].total_test_taken}",size: 25,weight: FontWeight.w600),
-                                                     SizedBox(height: 10,),
-                                                     sText("times taken",size: 12),
-
-                                                   ],
-                                                 ),
-                                                 Column(
-                                                   children: [
-                                                     sText("${keywordTestTaken[indexReport].score!.toStringAsFixed(2)}%",size: 25,weight: FontWeight.w600),
-                                                     SizedBox(height: 10,),
-                                                     sText("mastery",size: 12),
-
-                                                   ],
-                                                 ),
-                                                 Container(
-                                                   child: Column(
-                                                     children: [
-                                                       AdeoSignalStrengthIndicator(
-                                                         strength: keywordTestTaken[indexReport].score!,
-                                                         size: Sizes.small,
-                                                       ),
-                                                       SizedBox(height: 10,),
-                                                       sText("Strength",color: Colors.grey,size: 12),
-
-
-                                                     ],
-                                                   ),
-                                                 ),
-
-                                               ],
-                                             ),
-                                             SizedBox(height: 20,),
-                                             LinearProgressIndicator(
-                                               color: Color(0XFF00C9B9),
-                                               backgroundColor: Color(0XFF0367B4),
-                                               value: (keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!)/keywordTestTaken[indexReport].totalQuestions!,
-
-                                             ),
-                                             SizedBox(height: 10,),
-                                             Row(
-                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                               children: [
-                                                 sText("exposure"),
-                                                 Row(
-                                                   children: [
-                                                     sText("${keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!}/",  color: Color(0XFF00C9B9)),
-                                                     sText("${keywordTestTaken[indexReport].totalQuestions}Q",color: Colors.black),
-
-                                                   ],
-                                                 ),
-                                               ],
-                                             ),
-                                             SizedBox(height: 20,),
-                                             Row(
-                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                               children: [
-                                                 GestureDetector(
-                                                   onTap: (){
-                                                     setState(() {
-                                                       if(showGraph){
-                                                         showGraph = false;
-                                                       }else{
-                                                         showGraph = true;
-                                                       }
-                                                     });
-                                                   },
-                                                   child: Image.asset("assets/images/pencil.png"),
-                                                 ),
-                                                 MaterialButton(
-                                                   onPressed: ()async{
-                                                     stateSetter(() {
-                                                       searchKeyword = keywordTestTaken[indexReport].testname!.toLowerCase();
-                                                     });
-                                                    await getTest(context, TestCategory.NONE,currentQuestionCount: keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!);
-
-
-                                                   },
-                                                   child: Container(
-                                                     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                                                     child: sText("Take Test",color: Colors.white),
-                                                     decoration: BoxDecoration(
-                                                         color: Color(0XFF00C9B9),
-                                                         borderRadius: BorderRadius.circular(10)
+                                                       ],
                                                      ),
                                                    ),
-                                                 )
-                                               ],
-                                             ),
-                                             if(!showGraph)
+                                                   Expanded(child: Container()),
+                                                   Container(
+                                                     child: Column(
+                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                       crossAxisAlignment: CrossAxisAlignment.end,
+                                                       children: [
+
+                                                         Row(
+                                                           children: [
+                                                             keywordTestTaken[indexReport].scoreDiff! > 0 ?
+                                                             Image.asset(
+                                                               "assets/images/un_fav.png",
+                                                               color: Colors.green,
+                                                             ) :
+                                                             SvgPicture.asset(
+                                                               "assets/images/fav.svg",
+                                                             ),
+                                                             sText("${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!}")
+
+                                                           ],
+                                                         ),
+                                                       ],
+                                                     ),
+                                                   ),
+                                                 ],
+                                               ),
+                                               SizedBox(height: 20,),
+                                               Row(
+                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                 children: [
+                                                   Column(
+                                                     children: [
+                                                       sText("${keywordTestTaken[indexReport].total_test_taken}",size: 25,weight: FontWeight.w600),
+                                                       SizedBox(height: 10,),
+                                                       sText("times taken",size: 12),
+
+                                                     ],
+                                                   ),
+                                                   Column(
+                                                     children: [
+                                                       sText("${keywordTestTaken[indexReport].score!.toStringAsFixed(2)}%",size: 25,weight: FontWeight.w600),
+                                                       SizedBox(height: 10,),
+                                                       sText("mastery",size: 12),
+
+                                                     ],
+                                                   ),
+                                                   Container(
+                                                     child: Column(
+                                                       children: [
+                                                         AdeoSignalStrengthIndicator(
+                                                           strength: keywordTestTaken[indexReport].score!,
+                                                           size: Sizes.small,
+                                                         ),
+                                                         SizedBox(height: 10,),
+                                                         sText("Strength",color: Colors.grey,size: 12),
+
+
+                                                       ],
+                                                     ),
+                                                   ),
+
+                                                 ],
+                                               ),
+                                               SizedBox(height: 20,),
+                                               LinearProgressIndicator(
+                                                 color: Color(0XFF00C9B9),
+                                                 backgroundColor: Color(0XFF0367B4),
+                                                 value: (keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!)/keywordTestTaken[indexReport].totalQuestions!,
+
+                                               ),
+                                               SizedBox(height: 10,),
+                                               Row(
+                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                 children: [
+                                                   sText("exposure"),
+                                                   Row(
+                                                     children: [
+                                                       sText("${keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!}/",  color: Color(0XFF00C9B9)),
+                                                       sText("${keywordTestTaken[indexReport].totalQuestions}Q",color: Colors.black),
+
+                                                     ],
+                                                   ),
+                                                 ],
+                                               ),
+                                               SizedBox(height: 20,),
+                                               Row(
+                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                 children: [
+                                                   GestureDetector(
+                                                     onTap: (){
+                                                       stateSetter(() {
+                                                         if(showGraph){
+                                                           showGraph = false;
+                                                         }else{
+                                                           showGraph = true;
+                                                         }
+                                                       });
+                                                     },
+                                                     child: Image.asset("assets/images/pencil.png"),
+                                                   ),
+                                                   MaterialButton(
+                                                     onPressed: ()async{
+                                                       stateSetter(() {
+                                                         searchKeyword = keywordTestTaken[indexReport].testname!.toLowerCase();
+                                                       });
+                                                       await getTest(context, TestCategory.NONE,currentQuestionCount: keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!);
+
+
+                                                     },
+                                                     child: Container(
+                                                       padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                                       child: sText("Take Test",color: Colors.white),
+                                                       decoration: BoxDecoration(
+                                                           color: Color(0XFF00C9B9),
+                                                           borderRadius: BorderRadius.circular(10)
+                                                       ),
+                                                     ),
+                                                   )
+                                                 ],
+                                               ),
                                                Container(
                                                  height: 50,
                                                  child: ListView.builder(
@@ -757,17 +785,17 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                        );
                                                      }),
                                                ),
-                                             // if(showGraph)
-                                             //   PerformanceGraph(course:Course(id: 0) ,tabName: "all",rightWidgetState: "average",onChangeStatus: false,groupId: 8,)
-                                             // else
-                                             //   Container()
 
-                                           ],
+
+                                             ],
+                                           ),
                                          ),
-                                       ),
-                                     ],
-                                   ),
-                                 );
+                                       ],
+                                     ),
+                                   );
+                                 }
+
+
                                }),
                            Container(
                              padding: EdgeInsets.only(left: 10,right: 10,top: 0),
@@ -776,15 +804,17 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                  stateSetter(() {
                                    searchKeyword = value;
                                  });
-                                 // for(int i =0; i < keywordTestTaken.length; i++){
-                                 //   if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
-                                 //     listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
-                                 //     stateSetter(() {
-                                 //     });
-                                 //     return;
-                                 //   }
-                                 // }
                                  listQuestions.clear();
+                                 if(searchKeyword.isNotEmpty){
+                                   for(int i =0; i < keywordTestTaken.length; i++){
+                                     if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
+                                       listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+                                       stateSetter(() {
+                                       });
+                                       return;
+                                     }
+                                   }
+                                 }
                                  if(searchKeyword.isNotEmpty){
                                    listQuestions =  await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: 0);
 

@@ -27,10 +27,12 @@ class _CreateGroupState extends State<CreateGroup> {
     var res = await doPost(AppUrl.groups, {
       "name": groupNameController.text,
       "description": groupDescriptionController.text,
-      "type": status ? "Public" : "Private",
+      "type": switchOn ? "Public" : "Private",
       "discoverability": switchOn,
       "category": level!.name
     });
+    Navigator.pop(context);
+    // return;
     if (res["status"]) {
       GroupListData groupListData = GroupListData.fromJson(res["data"]);
       listGroupListData.add(groupListData);
@@ -238,6 +240,8 @@ class _CreateGroupState extends State<CreateGroup> {
                                 }else{
                                   status = false;
                                 }
+
+                                print(switchOn);
                               });
                             },
                           ),

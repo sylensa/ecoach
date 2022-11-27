@@ -134,14 +134,6 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
 
       pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
 
-      // numberingController.scrollTo(
-      //     index: currentQuestion,
-      //     duration: Duration(seconds: 1),
-      //     curve: Curves.easeInOutCubic);
-
-      if (controller.speedTest && enabled) {
-        resetTimer();
-      }
     });
   }
 
@@ -925,7 +917,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                       controller.questions[i].answers!.length,
                                           (index) {
                                         return GestureDetector(
-                                          onTap: () {
+                                          onTap: () async{
                                             setState(() {
                                               print(
                                                   "countdownInSeconds:$countdownInSeconds");
@@ -945,8 +937,9 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                               durationStart = dateFormat.parse(
                                                   DateFormat('hh:mm:ss')
                                                       .format(DateTime.now()));
-                                              nextButton();
+
                                             });
+                                            await  nextButton();
                                           },
                                           child: Container(
                                             margin: const EdgeInsets.only(
