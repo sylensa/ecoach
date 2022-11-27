@@ -289,15 +289,17 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
                             case ConnectionState.waiting:
-                              return SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: kAdeoGreen4,
-                                    strokeWidth: 2,
+                              return Center(
+                                child: SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: Container(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      color: kAdeoGreen4,
+                                      strokeWidth: 2,
+                                    ),
                                   ),
                                 ),
                               );

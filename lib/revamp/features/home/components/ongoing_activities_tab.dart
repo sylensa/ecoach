@@ -149,10 +149,6 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                       double percentageAnswered = (totalAnswered /
                           ongoingActivity.ongoingTreadmill!.totalQuestions!);
 
-                      print("answered: ${totalAnswered}");
-                      print(
-                          "questions: ${ongoingActivity.ongoingTreadmill!.totalQuestions}");
-
                       return Container(
                         margin: EdgeInsets.only(
                           bottom: 12,
@@ -184,15 +180,17 @@ class _OngoingActivitiesTabState extends State<OngoingActivitiesTab> {
                             switch (snapshot.connectionState) {
                               case ConnectionState.none:
                               case ConnectionState.waiting:
-                                return SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: Container(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      color: kAdeoGreen4,
-                                      strokeWidth: 2,
+                                return Center(
+                                  child: SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: kAdeoGreen4,
+                                        strokeWidth: 2,
+                                      ),
                                     ),
                                   ),
                                 );
