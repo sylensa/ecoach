@@ -41,6 +41,7 @@ class _ProgressChartState extends State<ProgressChart> {
   List<TestTaken> testData = [];
   String dropdownValue = 'All';
   Course? course;
+  int offset = 0;
   List<FlSpot> testdata = [];
   final List<FlSpot> dummyData1 = [];
   final List<FlSpot> dummyData2 = [];
@@ -49,12 +50,14 @@ class _ProgressChartState extends State<ProgressChart> {
   getAverageStats(String progressType) async {
     testData.clear();
     testdata.clear();
+    dummyData1.clear();
+    dummyData2.clear();
+    dummyData3.clear();
     print("periodperiod:$progressType");
     if (course == null) {
-      testData = await TestTakenDB().getAllAverageScore();
+      testData = await TestTakenDB().getAllAverageScore(offset: offset );
     } else {
-      testData = await TestTakenDB()
-          .getAllAverageScore(courseId: course!.id.toString());
+      testData = await TestTakenDB().getAllAverageScore(courseId: course!.id.toString(),offset: offset);
     }
     print("testData len:${testData.length}");
     if (progressType == "exam") {
@@ -266,7 +269,7 @@ class _ProgressChartState extends State<ProgressChart> {
                 ),
                 // Expanded(child: SizedBox()),
                 Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     generateLegend(
                       color: lineColors[0],
@@ -283,6 +286,34 @@ class _ProgressChartState extends State<ProgressChart> {
                       label: 'others',
                       position: 2,
                     ),
+                    SizedBox(width: 10,),
+                    GestureDetector(
+                        onTap: (){
+                          if(offset != 0){
+                            setState(() {
+                              offset = offset - 10;
+                            });
+
+                            getAverageStats("exam",);
+                            getAverageStats("topic");
+                            getAverageStats("other");
+                          }
+
+
+                        }, child: Icon(Icons.arrow_back_ios,size: 16,color: offset == 0 ? Colors.grey[400] : Colors.black,)),
+                        sText("${offset + 10}"),
+                    GestureDetector(
+                        onTap: (){
+                          if(testData.isNotEmpty){
+                            setState(() {
+                              offset = offset + 10;
+                            });
+                            getAverageStats("exam",);
+                            getAverageStats("topic");
+                            getAverageStats("other");
+                          }
+
+                      }, child: Icon(Icons.arrow_forward_ios,size: 16,color: offset != 0 && testData.isEmpty ? Colors.grey[400] : Colors.black,)),
                   ],
                 ),
               ],
@@ -316,7 +347,7 @@ class _ProgressChartState extends State<ProgressChart> {
                       getTextStyles: (BuildContext context, value) =>
                           sideTitleStyle,
                       margin: 12,
-                      interval: 10,
+                      interval: 20,
                     ),
                     bottomTitles: SideTitles(
                       showTitles: true,

@@ -230,18 +230,14 @@ class TestTakenDB {
     return tests;
   }
 
-  Future<List<TestTaken>> getAllAverageScore({String courseId = "0"}) async {
+  Future<List<TestTaken>> getAllAverageScore({String courseId = "0",int offset = 0}) async {
     final Database? db = await DBProvider.database;
     List<Map<String, dynamic>> maps = [];
     print("courseId:$courseId");
     if (courseId == "0") {
-      maps =
-          await db!.rawQuery("Select *, score as avg_score from tests_taken");
+      maps = await db!.rawQuery("Select *, score as avg_score from tests_taken limit 10 offset $offset");
     } else {
-      maps = await db!.rawQuery(
-          "Select *, score as avg_score from tests_taken where course_id = '" +
-              courseId +
-              "'");
+      maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '" + courseId + "' limit 10 offset $offset");
     }
     // print("object maps len:${maps}");
     List<TestTaken> tests = [];

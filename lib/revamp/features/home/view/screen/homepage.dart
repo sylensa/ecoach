@@ -747,6 +747,7 @@ class _HomePage2ContentState extends State<DashboardContent>
       });
     });
 
+    uploadOfflineFlagQuestions();
     super.initState();
   }
 
