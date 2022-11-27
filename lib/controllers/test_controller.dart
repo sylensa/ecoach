@@ -418,7 +418,7 @@ class TestController {
       }
     });
 
-    print("no of correct = $noOfCorrect, topicIds= ${topicIds.length}");
+    // print("no of correct = $noOfCorrect, topicIds= ${topicIds.length}");
 
     if (topicIds.length == 0) return 0;
     return noOfCorrect / topicIds.length * 100;

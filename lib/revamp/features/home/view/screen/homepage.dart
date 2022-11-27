@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,7 +14,6 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/revamp/features/home/components/completed_activities_tab.dart';
 import 'package:ecoach/revamp/features/home/components/ongoing_activities_tab.dart';
-import 'package:ecoach/views/treadmill/completed.dart';
 import 'package:flutter/material.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/plan_controllers.dart';
@@ -455,7 +455,9 @@ class _HomePage2ContentState extends State<DashboardContent>
       for (Marathon ongoingMarathon in ongoingMarathons.marathons!) {
         if (ongoingMarathon.topicId != null) {
           topic = await TopicDB().getTopicById(ongoingMarathon.topicId!);
-
+          if (topic == null) {
+            continue;
+          }
           Map<String, dynamic> completedMarathonJSON = {
             "activityType": TestActivityType.MARATHON,
             "courseId": ongoingMarathon.courseId,
@@ -605,7 +607,9 @@ class _HomePage2ContentState extends State<DashboardContent>
         if (completedMarathon.topicId != null) {
           completedActivitiesTopic =
               await TopicDB().getTopicById(completedMarathon.topicId!);
-
+          if (completedActivitiesTopic == null) {
+            continue;
+          }
           Map<String, dynamic> completedMarathonJSON = {
             "activityType": TestActivityType.MARATHON,
             "courseId": completedMarathon.courseId,
@@ -636,7 +640,7 @@ class _HomePage2ContentState extends State<DashboardContent>
         int topicId =
             jsonDecode(completedTreadmill.responses)["Q1"]["topic_id"];
         completedActivitiesTopic = await TopicDB().getTopicById(topicId);
-        if (topic == null) {
+        if (completedActivitiesTopic == null) {
           continue;
         }
         Map<String, dynamic> completedTreadmillJSON = {
@@ -666,8 +670,8 @@ class _HomePage2ContentState extends State<DashboardContent>
 
     List<TestActivity> completedActivities = [
       ...completedMarathonActivities,
-      ...completedAutopilotActivities,
       ...completedTreadmillActivities,
+      ...completedAutopilotActivities,
     ];
 
     if (mounted) {
@@ -677,10 +681,13 @@ class _HomePage2ContentState extends State<DashboardContent>
     }
   }
 
+  bool _swipeIsInProgress = false;
+  bool _tapIsBeingExecuted = false;
+  double currentIndicatorLineWidth = 40;
+  double tempWidth = 0;
+
   @override
   void initState() {
-    loadOngoingActivities();
-    loadCompletedActivities();
     _tabs = [
       "Home",
       "Ongoing",
@@ -688,11 +695,43 @@ class _HomePage2ContentState extends State<DashboardContent>
     ];
 
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.animation?.addListener(() {
+      print("Offset: ${_tabController.offset}");
+      if (_tabController.offset >= 0.5 || _tabController.offset <= -0.5) {
+        _swipeIsInProgress = true;
+      } else {
+        if (!_tapIsBeingExecuted &&
+            _swipeIsInProgress &&
+            ((_tabController.offset < 0.5 && _tabController.offset > 0) ||
+                (_tabController.offset > -0.5 && _tabController.offset < 0))) {
+          _swipeIsInProgress = false;
+        }
+      }
+      if (_swipeIsInProgress) {
+        tempWidth = --currentIndicatorLineWidth;
+        if (tempWidth >= 0) currentIndicatorLineWidth = tempWidth;
+      } else {
+        tempWidth = 0;
+        currentIndicatorLineWidth = 40;
+      }
+      setState(() {});
+    });
     _tabController.addListener(() {
+      _swipeIsInProgress = false;
       setState(() {
+        currentIndicatorLineWidth = 40;
         isActiveTab = _tabController.index == _tabs.indexOf(_activeTab);
       });
+      if (_tapIsBeingExecuted == true) {
+        _tapIsBeingExecuted = false;
+      } else {
+        if (_tabController.indexIsChanging) {
+          _tapIsBeingExecuted = true;
+        }
+      }
     });
+    loadOngoingActivities();
+    loadCompletedActivities();
 
     SubscriptionItemDB()
         .allSubscriptionItems()
@@ -927,11 +966,15 @@ class _HomePage2ContentState extends State<DashboardContent>
                           tabs: _tabs.map((tab) {
                             isActiveTab =
                                 _tabController.index == _tabs.indexOf(tab);
-                            _activeTab = tab;
+                            if (isActiveTab) {
+                              _activeTab = tab;
+                              setState(() {});
+                            }
                             return Tab(
                               child: UnselectedTabIndicator(
                                 label: tab,
                                 isActive: isActiveTab,
+                                indicatorWidth: currentIndicatorLineWidth,
                               ),
                             );
                           }).toList(),
@@ -949,16 +992,23 @@ class _HomePage2ContentState extends State<DashboardContent>
   }
 }
 
-class UnselectedTabIndicator extends StatelessWidget {
+class UnselectedTabIndicator extends StatefulWidget {
   const UnselectedTabIndicator({
     Key? key,
     required this.label,
     this.isActive = false,
+    this.indicatorWidth,
   }) : super(key: key);
 
   final String label;
   final bool isActive;
+  final double? indicatorWidth;
 
+  @override
+  State<UnselectedTabIndicator> createState() => _UnselectedTabIndicatorState();
+}
+
+class _UnselectedTabIndicatorState extends State<UnselectedTabIndicator> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -969,19 +1019,24 @@ class UnselectedTabIndicator extends StatelessWidget {
             top: 11.0,
           ),
           child: Text(
-            label,
+            widget.label,
             style: TextStyle(fontFamily: "Poppins", fontSize: 16),
           ),
         ),
-        isActive
+        widget.isActive
             ? Column(
                 children: [
                   SizedBox(
-                    height: 7,
+                    height: 6,
                   ),
-                  Container(
-                    width: 40,
+                  AnimatedContainer(
+                    curve: Curves.easeInOut,
+                    duration: Duration(milliseconds: 20),
+                    width: widget.indicatorWidth,
                     height: 2,
+                    constraints: BoxConstraints(
+                      minWidth: 0,
+                    ),
                     decoration: BoxDecoration(
                       color: kAdeoGreen4,
                       borderRadius: BorderRadius.circular(

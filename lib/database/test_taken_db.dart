@@ -243,7 +243,7 @@ class TestTakenDB {
               courseId +
               "'");
     }
-    print("object maps len:${maps}");
+    // print("object maps len:${maps}");
     List<TestTaken> tests = [];
     for (int i = 0; i < maps.length; i++) {
       TestTaken test = TestTaken.fromJson(maps[i]);
