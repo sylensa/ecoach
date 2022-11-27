@@ -126,13 +126,14 @@ class QuestionDB {
 
     return question;
   }
-  Future<List<Question>> getQuestionByKeyword(String keyword,{int currentQuestionCount = 0}) async {
+  Future<List<Question>> getQuestionByKeyword(String keyword,int courseId,{int currentQuestionCount = 0}) async {
     print("keyword:$keyword");
     print("currentQuestionCount:$currentQuestionCount");
     List<Question> questions = [];
     List<Question> allQuestions = [];
     final db = await DBProvider.database;
-    var result = await db!.rawQuery("select * from questions");
+    var result = await db!.rawQuery("select * from questions where course_id = $courseId");
+    print("result:${result.length}");
     for(int i = 0; i < result.length; i++){
       Question question = Question.fromJson(result[i]) ;
       if(question.text!.toLowerCase().contains(keyword.toLowerCase())){
@@ -162,18 +163,31 @@ class QuestionDB {
     print("questions:${allQuestions.length}");
     return allQuestions.isNotEmpty ? allQuestions : questions;
   }
-  Future<List<Question>> getTotalQuestionByKeyword(String keyword) async {
+  Future<List<Question>> getTotalQuestionByKeyword(String keyword, int courseId) async {
     print("keyword:$keyword");
     List<Question> questions = [];
     final db = await DBProvider.database;
-    var result = await db!.rawQuery("select * from questions");
+    var result = await db!.rawQuery("select * from questions where course_id = $courseId");
     for(int i = 0; i < result.length; i++){
       Question question = Question.fromJson(result[i]) ;
       if(question.text!.toLowerCase().contains(keyword.toLowerCase())){
         question.answers = await AnswerDB().questoinAnswers(question.id!);
         questions.add(question);
       }
+      if(question.resource!.toLowerCase().contains(keyword.toLowerCase())){
+        questions.add(question);
+      }
+      if(question.instructions!.toLowerCase().contains(keyword.toLowerCase())){
+        questions.add(question);
+      }
+
+      for(int t = 0; t < question.answers!.length; t++){
+        if(question.answers![t].text!.toLowerCase().contains(keyword.toLowerCase())){
+          questions.add(question);
+        }
+      }
     }
+
 
     return  questions;
   }

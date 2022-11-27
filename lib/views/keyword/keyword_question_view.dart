@@ -248,11 +248,13 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
 
     print("testing connection ${jsonEncode(testTaken)}");
     print("testing connection courseName ${testTaken.testname!.toLowerCase()}");
-  List<Question> listQuestions = await TestController().getTotalKeywordQuestions(testTaken.testname!);
+  List<Question> listQuestions = await TestController().getTotalKeywordQuestions(testTaken.testname!,widget.controller.course.id!);
     if(listQuestions.length <= widget.controller.questions.length ){
+      print("listQuestions.length :${listQuestions.length }");
       await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
     }
     await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken);
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken();
     ApiCall<TestTaken>(AppUrl.testTaken,
         user: controller.user,
         isList: false,

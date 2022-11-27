@@ -71,7 +71,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   bool progressCodeAll = true;
   bool showGraph = false;
   List listReportData = [true];
-  List<TestTaken> keywordTestTaken = [];
+
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
     for (var i = 0; i < listLength; i++) {
@@ -114,7 +114,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
       case TestCategory.NONE:
         for(int i =0; i < keywordTestTaken.length; i++){
           if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
-            futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+            futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),widget.course.id!,currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
             futureList.then(
                   (data) async{
                 Navigator.pop(context);
@@ -229,7 +229,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             return;
           }
         }
-          futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: currentQuestionCount);
+          futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(),widget.course.id!,currentQuestionCount: currentQuestionCount);
 
         break;
       default:
@@ -474,8 +474,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   }
 
   knowledgeTestModalBottomSheet(context,) async{
-    await getKeywordTestTaken();
+    setState((){
 
+    });
     searchTap = true;
     double sheetHeight =  appHeight(context) * 0.90;
     showModalBottomSheet(
@@ -808,7 +809,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                  if(searchKeyword.isNotEmpty){
                                    for(int i =0; i < keywordTestTaken.length; i++){
                                      if(keywordTestTaken[i].testname!.toLowerCase() == searchKeyword.toLowerCase()){
-                                       listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+                                       listQuestions = await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),widget.course.id!,currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
                                        stateSetter(() {
                                        });
                                        return;
@@ -816,7 +817,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                    }
                                  }
                                  if(searchKeyword.isNotEmpty){
-                                   listQuestions =  await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),currentQuestionCount: 0);
+                                   listQuestions =  await TestController().getKeywordQuestions(searchKeyword.toLowerCase(),widget.course.id!,currentQuestionCount: 0);
 
                                  }
                                  stateSetter(() {
@@ -1169,6 +1170,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           onTap: () async{
             List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if(questions.isNotEmpty){
+              setState(() {
+
+              });
               knowledgeTestModalBottomSheet(context);
             }
             else{
