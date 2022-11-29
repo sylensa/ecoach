@@ -60,6 +60,7 @@ const kAdeoWhiteAlpha81 = Color(0xCFFFFFFF);
 const kAdeoGray = Color(0xFFF1F1F1);
 const kAdeoGray2 = Color(0xFF707070);
 const kAdeoGray3 = Color(0xFFA2A2A2);
+const kAdeoGray4 = Color(0xFFF5F5F5);
 const kAdeoCoral = Color(0xFFFB7B76);
 const kAdeoOrange = Color(0xFFFF4F18);
 const kAdeoOrange2 = Color(0xFFFF6344);
