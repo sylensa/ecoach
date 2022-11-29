@@ -252,7 +252,7 @@ class _GroupPerformanceState extends State<GroupPerformance> {
                                       SizedBox(height: 20,),
                                       if(listReportData[index])
                                       if(showGraph)
-                                        PerformanceGraph(course:Course(id: report[indexReport].courseId) ,tabName: "all",rightWidgetState: "average",onChangeStatus: false,groupId: 8,)
+                                        PerformanceGraph(course:Course(id: report[indexReport].courseId) ,tabName: "all",rightWidgetState: "average",onChangeStatus: false,groupId: widget.groupData!.id!,)
                                       else
                                       Container(
                                         decoration: BoxDecoration(

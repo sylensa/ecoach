@@ -70,12 +70,12 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
       progressCodeAll = false;
     });
   }
-  getTimerWidget(String duration,{bool isStartTime = true}){
-    var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
-    var _lastConso = DateTime.now().subtract(lastConsoString3);
-    var diff = DateTime.now().difference(_lastConso);
-    print( diff.inSeconds);
-    endTime = DateTime.now().millisecondsSinceEpoch + 1000 *  diff.inSeconds;
+  getTimerWidget(DateTime dateTime,{bool isStartTime = true}){
+    // var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
+    // var _lastConso = DateTime.now().subtract(lastConsoString3);
+    // var diff = DateTime.now().difference(_lastConso);
+    // print( diff.inSeconds);
+    endTime = dateTime.millisecondsSinceEpoch + 1000 ;
     controller = CountdownTimerController(endTime: endTime, onEnd: _onEnd);
 
 
@@ -262,6 +262,133 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     }
   }
 
+  // groupTest(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
+  //   int countDown = 0;
+  //   if(groupNotificationData.notificationtable!.configurations!.timing! != "Untimed"){
+  //
+  //     if(groupNotificationData.notificationtable!.configurations!.startDatetime != null && groupNotificationData.notificationtable!.configurations!.dueDateTime != null){
+  //       // period
+  //       DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+  //       DateTime endTime = groupNotificationData.notificationtable!.configurations!.dueDateTime!;
+  //       countDown = endTime.difference(startTime).inSeconds;
+  //     }else{
+  //       // exact
+  //       if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Question"){
+  //         countDown = groupNotificationData.notificationtable!.configurations!.countDown! * 10;
+  //       }else if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Quiz"){
+  //         countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown!;
+  //       }
+  //       DateTime startTime =groupNotificationData.notificationtable!.configurations!.startDatetime!;
+  //       countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+  //       groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+  //     }
+  //   }else{
+  //     DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+  //     countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+  //     groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+  //   }
+  //   return MaterialButton(
+  //     padding: EdgeInsets.zero,
+  //     onPressed: ()async{
+  //       if(groupNotificationData.group != null){
+  //         await goTo(context, TestInstruction(widget.user,groupNotificationData: groupNotificationData,));
+  //         readNotification(isUpcoming,groupNotificationData,index);
+  //       }else{
+  //         toastMessage("Group deleted or suspended");
+  //       }
+  //
+  //     },
+  //     child: Column(
+  //       children: [
+  //         Container(
+  //           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+  //           margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+  //           decoration: BoxDecoration(
+  //               color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
+  //               borderRadius: BorderRadius.circular(10)
+  //           ),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Container(
+  //                 color: Colors.red,
+  //                 width: 5,
+  //                 height: 60,
+  //               ),
+  //               Container(
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     sText("GROUP TEST",),
+  //                     SizedBox(height: 5,),
+  //                     Container(
+  //                       width: 150,
+  //                       child: sText("${groupNotificationData.notificationtable!.name}",weight: FontWeight.bold,size: 10),
+  //                     ),
+  //                     SizedBox(height: 10,),
+  //                    groupNotificationData.group != null ?
+  //                       sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+  //                    sText("Group deleted or suspended",weight: FontWeight.normal,size: 12)  ,
+  //                   ],
+  //                 ),
+  //               ),
+  //               if( groupNotificationData.group != null)
+  //               Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   if(groupNotificationData.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
+  //                     Container(
+  //                       // width: 100,
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         crossAxisAlignment: CrossAxisAlignment.end,
+  //                         children: [
+  //                           // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
+  //                           // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
+  //                           getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
+  //                           sText("remaining",weight: FontWeight.normal,size: 10),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   else if(groupNotificationData.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
+  //                     Container(
+  //                       // width: 100,
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         crossAxisAlignment: CrossAxisAlignment.end,
+  //                         children: [
+  //                           // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
+  //                           // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
+  //                           getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false),
+  //                           sText("Test ongoing",weight: FontWeight.normal,size: 10),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   else
+  //                     sText("Test Completed",weight: FontWeight.normal,size: 10),
+  //                   Container(
+  //                     child: Column(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                       crossAxisAlignment: CrossAxisAlignment.end,
+  //                       children: [
+  //                         sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
+  //                         SizedBox(height: 20,),
+  //                         Icon(Icons.arrow_forward),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  //
+  // }
+
+
   groupTest(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     int countDown = 0;
     if(groupNotificationData.notificationtable!.configurations!.timing! != "Untimed"){
@@ -270,23 +397,26 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
         // period
         DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
         DateTime endTime = groupNotificationData.notificationtable!.configurations!.dueDateTime!;
-        countDown = endTime.difference(startTime).inSeconds;
+        countDown = endTime.difference(DateTime.now()).inSeconds;
       }else{
         // exact
         if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Question"){
           countDown = groupNotificationData.notificationtable!.configurations!.countDown! * 10;
         }else if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Quiz"){
-          countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown!;
+          countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown! * 10;
         }
-        DateTime startTime =groupNotificationData.notificationtable!.configurations!.startDatetime!;
-        countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+        DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+        // countDown = countDown - DateTime.now().difference(startTime).inSeconds;
         groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
       }
-    }else{
-      DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
-      countDown = countDown - DateTime.now().difference(startTime).inSeconds;
-      groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
     }
+    else{
+      DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+      DateTime endTime = groupNotificationData.notificationtable!.configurations!.dueDateTime!;
+      countDown = endTime.difference(DateTime.now()).inSeconds;
+    }
+
+    print("startTime:${groupNotificationData.notificationtable!.configurations!.startDatetime}");
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
@@ -302,7 +432,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-            margin: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+            margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
             decoration: BoxDecoration(
                 color: groupNotificationData.viewed! ? Colors.white :  Color(0XFFE2EFF3),
                 borderRadius: BorderRadius.circular(10)
@@ -326,59 +456,48 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                         child: sText("${groupNotificationData.notificationtable!.name}",weight: FontWeight.bold,size: 10),
                       ),
                       SizedBox(height: 10,),
-                     groupNotificationData.group != null ?
-                        sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
-                     sText("Group deleted or suspended",weight: FontWeight.normal,size: 12)  ,
+                      groupNotificationData.group != null ?
+                      sText("${groupNotificationData.group!.name}",weight: FontWeight.normal,size: 12) :
+                      sText("Group deleted or suspended",weight: FontWeight.normal,size: 12)  ,
                     ],
                   ),
                 ),
                 if( groupNotificationData.group != null)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if(groupNotificationData.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
-                      Container(
-                        // width: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
-                            // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
-                            getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
-                            sText("remaining",weight: FontWeight.normal,size: 10),
-                          ],
-                        ),
-                      )
-                    else if(groupNotificationData.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
-                      Container(
-                        // width: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
-                            // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
-                            getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false),
-                            sText("Test ongoing",weight: FontWeight.normal,size: 10),
-                          ],
-                        ),
-                      )
-                    else
-                      sText("Test Completed",weight: FontWeight.normal,size: 10),
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
-                          SizedBox(height: 20,),
-                          Icon(Icons.arrow_forward),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if(groupNotificationData.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
+                        Container(
+                          // width: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
+                              // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
+                              getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime!,isStartTime:true),
+                            ],
+                          ),
+                        )
+                      else if(groupNotificationData.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
+                        Container(
+                          // width: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
+                              // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
+                              getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime!,isStartTime: false),
+                              sText("Test ongoing",weight: FontWeight.normal,size: 10),
+                            ],
+                          ),
+                        )
+                      else
+                        sText("Test Completed",weight: FontWeight.normal,size: 10),
+
+                    ],
+                  )
               ],
             ),
           ),
@@ -387,7 +506,6 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
     );
 
   }
-
   groupTestResult(GroupNotificationData groupNotificationData,int index,bool isUpcoming){
     return MaterialButton(
       padding: EdgeInsets.zero,
@@ -442,7 +560,7 @@ class _GroupNotificationActivityState extends State<GroupNotificationActivity> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
+                        getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime!,isStartTime:true),
                         sText("40 out of 50",weight: FontWeight.normal,size: 10),
                       ],
                     ),

@@ -33,12 +33,12 @@ class _TestInstructionState extends State<TestInstruction> {
   CountdownTimerController? controller;
   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 3;
 
-  getTimerWidget(String duration,{bool isStartTime = true}){
-    var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
-    var _lastConso = DateTime.now().subtract(lastConsoString3);
-    var diff = DateTime.now().difference(_lastConso);
-    print( diff.inSeconds);
-    endTime = DateTime.now().millisecondsSinceEpoch + 1000 *  diff.inSeconds;
+  getTimerWidget(DateTime dateTime,{bool isStartTime = true}){
+    // var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
+    // var _lastConso = DateTime.now().subtract(lastConsoString3);
+    // var diff = DateTime.now().difference(_lastConso);
+    // print( diff.inSeconds);
+    endTime = dateTime.millisecondsSinceEpoch + 1000 ;
     controller = CountdownTimerController(endTime: endTime, onEnd: _onEnd);
 
 
@@ -145,10 +145,10 @@ class _TestInstructionState extends State<TestInstruction> {
                         ),
                         Expanded(child: Container()),
                         if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.compareTo(DateTime.now()) > 0)
-                          getTimerWidget(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true)
+                          getTimerWidget(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!,isStartTime:true)
 
                       else if(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!.compareTo(DateTime.now()) > 0)
-                      getTimerWidget(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false)
+                      getTimerWidget(widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!,isStartTime: false)
 
                       else
                          sText("Test Completed",weight: FontWeight.normal,size: 10, color: Color(0XFF00C9B9),),
@@ -188,24 +188,27 @@ class _TestInstructionState extends State<TestInstruction> {
 
                           if(widget.groupNotificationData!.notificationtable!.configurations!.startDatetime != null && widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime != null){
                             // period
-                           DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
-                           DateTime endTime = widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!;
-                           countDown = endTime.difference(startTime).inSeconds;
+                            DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
+                            DateTime endTime = widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!;
+                            countDown = endTime.difference(DateTime.now()).inSeconds;
                           }else{
                             // exact
                             if(widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question"){
                               countDown = widget.groupNotificationData!.notificationtable!.configurations!.countDown! * 10;
                             }else if(widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Quiz"){
-                              countDown = 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown!;
+                              countDown = 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! * 10;
                             }
                             DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
-                            countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+                            // countDown = countDown - DateTime.now().difference(startTime).inSeconds;
                             widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime  = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+
                           }
-                        }else{
+                        }
+                        else{
                           DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
-                          countDown = countDown - DateTime.now().difference(startTime).inSeconds;
-                          widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime  = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+                          DateTime endTime = widget.groupNotificationData!.notificationtable!.configurations!.dueDateTime!;
+                          countDown = endTime.difference(DateTime.now()).inSeconds;
+
                         }
 
                         showLoaderDialog(context);

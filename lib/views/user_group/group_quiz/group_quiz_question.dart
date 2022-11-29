@@ -67,6 +67,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
   List<QuestionWidget> questionWidgets = [];
 
   late TimerController timerController;
+  late TimerController endTimerController;
   int countdownInSeconds = 0;
 
   bool enabled = true;
@@ -101,6 +102,9 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
   startTimer() {
       timerController.start();
   }
+  endStartTimer() {
+    endTimerController.start();
+  }
 
   restartTimer() {
     timerController.restart();
@@ -126,6 +130,12 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
     }
   }
 
+  onEndQuiz() {
+    print("timer ended");
+    timerController.pause();
+      completeQuiz();
+  }
+
   nextButton() async {
     if (currentQuestion == controller.questions.length - 1) {
       completeQuiz();
@@ -136,6 +146,10 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
       timerController.restart();
       controller.duration =  Duration(seconds: controller.time);
     }
+
+    setState(() {
+
+    });
 
     await Future.delayed(Duration(milliseconds: 200));
 
@@ -423,6 +437,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
     pageController = PageController(initialPage: currentQuestion);
     numberingController = ItemScrollController();
     timerController = TimerController();
+    endTimerController = TimerController();
     controller.startTest();
     Future.delayed(Duration(seconds: 0), () {
       startTimer();
@@ -522,6 +537,10 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   getTimerWidget(),
+                  const SizedBox(
+                    width: 7,
+                  ),
+                  quizTimerWidget(),
                   const SizedBox(
                     width: 7,
                   ),
@@ -1688,7 +1707,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
     return Container(
           child:
           AdeoTimer(
-          controller: timerController,
+          controller: endTimerController,
           startDuration: controller.countDownDuration!,
           callbackWidget: (time) {
             if (controller.disableTime) {
@@ -1704,7 +1723,7 @@ class _GroupQuizQuestionState extends State<GroupQuizQuestion> {
                 style: TextStyle(color: backgroundColor, fontSize: 14));
           },
           onFinish: () {
-            onEnd();
+            onEndQuiz();
           })
         );
   }

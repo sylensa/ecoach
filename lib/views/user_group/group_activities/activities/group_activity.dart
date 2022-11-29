@@ -50,12 +50,12 @@ class _ActivityState extends State<Activity> {
     });
   }
 
-  getTimerWidget(String duration,{bool isStartTime = true}){
-    var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
-    var _lastConso = DateTime.now().subtract(lastConsoString3);
-    var diff = DateTime.now().difference(_lastConso);
-    print( diff.inSeconds);
-    endTime = DateTime.now().millisecondsSinceEpoch + 1000 *  diff.inSeconds;
+  getTimerWidget(DateTime dateTime,{bool isStartTime = true}){
+    // var lastConsoString3= Duration(hours:int.parse(duration.split(":").first),minutes: int.parse(duration.split(":").last),seconds: 0,);
+    // var _lastConso = DateTime.now().subtract(lastConsoString3);
+    // var diff = DateTime.now().difference(_lastConso);
+    // print("diff.inSeconds:${diff.inSeconds}");
+    endTime = dateTime.millisecondsSinceEpoch + 1000 ;
     controller = CountdownTimerController(endTime: endTime, onEnd: _onEnd);
 
 
@@ -70,7 +70,9 @@ class _ActivityState extends State<Activity> {
         return Column(
           children: [
             Text('${time.days != null ? time.days : "00"}:${time.hours != null ? time.hours : "00"}:${time.min != null ? time.min : "00"} : ${time.sec}'),
-            sText(isStartTime? "Time remaining to start" : "Time remaining to complete",weight: FontWeight.normal,size: 10),
+            Container(
+              width: 100,
+                child: sText(isStartTime? "Time remaining to start" : "Time remaining to complete",weight: FontWeight.normal,size: 10)),
           ],
         );
       },
@@ -505,6 +507,33 @@ class _ActivityState extends State<Activity> {
 
 
   groupTest(GroupNotificationData groupNotificationData,int index){
+    int countDown = 0;
+    if(groupNotificationData.notificationtable!.configurations!.timing! != "Untimed"){
+
+      if(groupNotificationData.notificationtable!.configurations!.startDatetime != null && groupNotificationData.notificationtable!.configurations!.dueDateTime != null){
+        // period
+        DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+        DateTime endTime = groupNotificationData.notificationtable!.configurations!.dueDateTime!;
+        countDown = endTime.difference(DateTime.now()).inSeconds;
+      }else{
+        // exact
+        if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Question"){
+          countDown = groupNotificationData.notificationtable!.configurations!.countDown! * 10;
+        }else if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Quiz"){
+          countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown! * 10;
+        }
+        DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+        // countDown = countDown - DateTime.now().difference(startTime).inSeconds;
+        groupNotificationData.notificationtable!.configurations!.dueDateTime  = groupNotificationData.notificationtable!.configurations!.startDatetime!.add(new Duration(seconds: countDown));
+      }
+    }
+    else{
+      DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
+      DateTime endTime = groupNotificationData.notificationtable!.configurations!.dueDateTime!;
+      countDown = endTime.difference(DateTime.now()).inSeconds;
+    }
+
+    print("startTime:${groupNotificationData.notificationtable!.configurations!.startDatetime}");
     return MaterialButton(
       padding: EdgeInsets.zero,
       onPressed: ()async{
@@ -563,8 +592,7 @@ class _ActivityState extends State<Activity> {
                             children: [
                               // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
                               // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
-                              getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
-                              sText("remaining",weight: FontWeight.normal,size: 10),
+                              getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime!,isStartTime:true),
                             ],
                           ),
                         )
@@ -577,24 +605,14 @@ class _ActivityState extends State<Activity> {
                             children: [
                               // sText("${}",weight: FontWeight.bold,color: Color(0XFF8ED4EB)),
                               // allGroupNotificationData[i].notificationtable!.configurations!.dueDateTime! > DateTime.now() ?
-                              getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime.toString().split(" ").last.split(".").first,isStartTime: false),
+                              getTimerWidget(groupNotificationData.notificationtable!.configurations!.dueDateTime!,isStartTime: false),
                               sText("Test ongoing",weight: FontWeight.normal,size: 10),
                             ],
                           ),
                         )
                       else
                         sText("Test Completed",weight: FontWeight.normal,size: 10),
-                      Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            sText("${StringExtension.displayTimeAgoFromTimestamp(groupNotificationData.notificationtable!.configurations!.startDatetime.toString())}",weight: FontWeight.normal),
-                            SizedBox(height: 20,),
-                            Icon(Icons.arrow_forward),
-                          ],
-                        ),
-                      ),
+
                     ],
                   )
               ],
@@ -660,7 +678,7 @@ class _ActivityState extends State<Activity> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime.toString().split(" ").last.split(".").first,isStartTime:true),
+                        getTimerWidget(groupNotificationData.notificationtable!.configurations!.startDatetime!,isStartTime:true),
                         sText("40 out of 50",weight: FontWeight.normal,size: 10),
                       ],
                     ),

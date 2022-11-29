@@ -259,6 +259,7 @@ class _ProgressChartState extends State<ProgressChart> {
                           dummyData1.clear();
                           dummyData2.clear();
                           dummyData3.clear();
+                          offset = 0;
                           getAverageStats("exam");
                           getAverageStats("topic");
                           getAverageStats("other");
