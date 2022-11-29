@@ -70,7 +70,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   bool progressCodeAll = true;
   bool showGraph = false;
   List listReportData = [true];
-  final Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+   Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
     'A':[],
     'B':[],
     'C':[],
@@ -533,6 +533,34 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   knowledgeTestModalBottomSheet(
     context,
   ) async {
+    groupedCourseKeywordsLists = {
+      'A':[],
+      'B':[],
+      'C':[],
+      'D':[],
+      'E':[],
+      'F':[],
+      'G':[],
+      'H':[],
+      'I':[],
+      'J':[],
+      'K':[],
+      'L':[],
+      'M':[],
+      'N':[],
+      'O':[],
+      'P':[],
+      'Q':[],
+      'R':[],
+      'S':[],
+      'T':[],
+      'U':[],
+      'V':[],
+      'W':[],
+      'X':[],
+      'Y':[],
+      'Z':[]
+    };
     setState(() {});
     searchTap = true;
     double sheetHeight = appHeight(context) * 0.60;
