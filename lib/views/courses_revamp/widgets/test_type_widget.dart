@@ -70,6 +70,34 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   bool progressCodeAll = true;
   bool showGraph = false;
   List listReportData = [true];
+  final Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+    'A':[],
+    'B':[],
+    'C':[],
+    'D':[],
+    'E':[],
+    'F':[],
+    'G':[],
+    'H':[],
+    'I':[],
+    'J':[],
+    'K':[],
+    'L':[],
+    'M':[],
+    'N':[],
+    'O':[],
+    'P':[],
+    'Q':[],
+    'R':[],
+    'S':[],
+    'T':[],
+    'U':[],
+    'V':[],
+    'W':[],
+    'X':[],
+    'Y':[],
+    'Z':[]
+  };
 
   List<T> map<T>(int listLength, Function handler) {
     List list = [];
@@ -501,40 +529,20 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         });
   }
 
+
   knowledgeTestModalBottomSheet(
     context,
   ) async {
     setState(() {});
     searchTap = true;
-    double sheetHeight = appHeight(context) * 0.56;
-    List<String> alphaScroll = [
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-      'I',
-      'J',
-      'K',
-      'L',
-      'M',
-      'N',
-      'O',
-      'P',
-      'Q',
-      'R',
-      'S',
-      'T',
-      'U',
-      'V',
-      'W',
-      'X',
-      'Y',
-      'Z'
-    ];
+    double sheetHeight = appHeight(context) * 0.60;
+    widget.listCourseKeywordsData.forEach((courseKeyword) {
+      if (groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] == null) {
+        groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
+      }
+      groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!.add(courseKeyword);
+
+    });
     showModalBottomSheet(
         context: context,
         isDismissible: true,
@@ -1093,59 +1101,60 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                               SizedBox(
                                                 height: 14,
                                               ),
-                                              for (int i = 0;
-                                                  i <
-                                                      widget
-                                                          .listCourseKeywordsData
-                                                          .length;
-                                                  i++)
-                                                if (properCase(
-                                                        "${widget.listCourseKeywordsData[i].keyword}")
-                                                    .isNotEmpty)
-                                                  MaterialButton(
-                                                    padding: EdgeInsets.zero,
-                                                    onPressed: () async {
-                                                      stateSetter(() {
-                                                        searchKeyword =
-                                                            "${widget.listCourseKeywordsData[i].keyword}";
-                                                      });
-                                                      await getTest(context,
-                                                          TestCategory.NONE);
-                                                    },
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
+                                              for (var entry in groupedCourseKeywordsLists.entries)
+                                              Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(entry.key),
+                                                  for (int i = 0; i < entry.value.length; i++)
+                                                    if (properCase("${entry.value[i].keyword}").isNotEmpty)
+                                                      MaterialButton(
+                                                        padding: EdgeInsets.zero,
+                                                        onPressed: () async {
+                                                          stateSetter(() {
+                                                            searchKeyword =
+                                                            "${entry.value[i].keyword}";
+                                                          });
+                                                          await getTest(context,
+                                                              TestCategory.NONE);
+                                                        },
+                                                        child: Column(
                                                           children: [
-                                                            Icon(Icons
-                                                                .trending_up),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            Column(
-                                                              crossAxisAlignment:
+                                                            Row(
+                                                              children: [
+                                                                Icon(Icons
+                                                                    .trending_up),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Column(
+                                                                  crossAxisAlignment:
                                                                   CrossAxisAlignment
                                                                       .start,
-                                                              children: [
-                                                                sText(
-                                                                    "${properCase("${widget.listCourseKeywordsData[i].keyword}")}",
-                                                                    weight:
+                                                                  children: [
+                                                                    sText(
+                                                                        "${properCase("${entry.value[i].keyword}")}",
+                                                                        weight:
                                                                         FontWeight
                                                                             .bold),
-                                                                sText(
-                                                                    "${widget.listCourseKeywordsData[i].total} appearances",
-                                                                    size: 12,
-                                                                    color:
+                                                                    sText(
+                                                                        "${entry.value[i].total} appearances",
+                                                                        size: 12,
+                                                                        color:
                                                                         kAdeoGray3),
+                                                                  ],
+                                                                ),
                                                               ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
                                                             ),
                                                           ],
                                                         ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
+                                                      )
+                                                ],
+                                              )
                                             ],
                                           )
                                         : Column(
@@ -1218,21 +1227,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                         SizedBox(
                                           height: 4,
                                         ),
-                                        ...alphaScroll.map((val) {
-                                          bool isLastItem =
-                                              alphaScroll.length - 1 ==
-                                                  alphaScroll.indexOf(val);
-                                          return Padding(
-                                            padding: EdgeInsets.only(
-                                              bottom: !isLastItem ? 4.0 : 0,
-                                            ),
-                                            child: sText(
-                                              val,
-                                              size: 10,
-                                              weight: FontWeight.bold,
-                                            ),
-                                          );
-                                        }),
+
                                       ]),
                                     ),
                                   )
