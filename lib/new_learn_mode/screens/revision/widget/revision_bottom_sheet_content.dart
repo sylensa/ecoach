@@ -107,136 +107,141 @@ class _RevisionBottomSheetContentState
                 ),
               ),
             Expanded(
-              child: Container(
-                margin: EdgeInsets.only(top: 16),
-                child: _showIntro
-                    ? Column(
-                        children: [
-                          Consumer<LearnModeProvider>(
-                            builder: (_, welcome, __) =>
-                                FutureBuilder<List<Topic>>(
-                              future: TopicDB()
-                                  .allCourseTopics(welcome.currentCourse!),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator.adaptive(),
-                                  );
-                                }
-                                return SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          FutureBuilder<RevisionStudyProgress?>(
-                                            future: StudyDB()
-                                                .getCurrentRevisionProgressByCourse(
-                                                    welcome.currentCourse!.id!),
-                                            builder:
-                                                (context, progressSnapshot) {
-                                              if (progressSnapshot
-                                                      .connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return CircularProgressIndicator();
-                                              }
-                                              return sText(
-                                                progressSnapshot.data == null
-                                                    ? "${snapshot.data!.length}"
-                                                    : "${snapshot.data!.length - (progressSnapshot.data!.level! - 1)}",
-                                                size: 72,
-                                                color: kAdeoGreen4,
-                                              );
-                                            },
-                                          ),
-                                          Image.asset(
-                                            'assets/images/learn_mode2/shadow.png',
-                                            width: 90,
-                                            opacity:
-                                                AlwaysStoppedAnimation<double>(
-                                              0.05,
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: EdgeInsets.only(top: 16),
+                  child: _showIntro
+                      ? Column(
+                          children: [
+                            Consumer<LearnModeProvider>(
+                              builder: (_, welcome, __) =>
+                                  FutureBuilder<List<Topic>>(
+                                future: TopicDB()
+                                    .allCourseTopics(welcome.currentCourse!),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive(),
+                                    );
+                                  }
+                                  return SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        Column(
+                                          children: [
+                                            FutureBuilder<
+                                                RevisionStudyProgress?>(
+                                              future: StudyDB()
+                                                  .getCurrentRevisionProgressByCourse(
+                                                      welcome
+                                                          .currentCourse!.id!),
+                                              builder:
+                                                  (context, progressSnapshot) {
+                                                if (progressSnapshot
+                                                        .connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return CircularProgressIndicator();
+                                                }
+                                                return sText(
+                                                  progressSnapshot.data == null
+                                                      ? "${snapshot.data!.length}"
+                                                      : "${snapshot.data!.length - (progressSnapshot.data!.level! - 1)}",
+                                                  size: 72,
+                                                  color: kAdeoGreen4,
+                                                );
+                                              },
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      sText(
-                                        "topics to be revised",
-                                        size: 12,
-                                        style: FontStyle.italic,
-                                        color: kAdeoGray3,
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            height: 26,
-                          ),
-                          HeroCard(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ..._rules,
-                                  SizedBox(
-                                    height: 8,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: ((context) {
-                                                return ChoseRevisionMode();
-                                              }),
-                                            ),
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 28,
-                                            vertical: 14,
-                                          ),
-                                          child: sText(
-                                            "Start",
-                                            color: Colors.white,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: kAdeoGreen4,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
+                                            Image.asset(
+                                              'assets/images/learn_mode2/shadow.png',
+                                              width: 90,
+                                              opacity: AlwaysStoppedAnimation<
+                                                  double>(
+                                                0.05,
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                      )
-                                    ],
-                                  )
-                                ],
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        sText(
+                                          "topics to be revised",
+                                          size: 12,
+                                          style: FontStyle.italic,
+                                          color: kAdeoGray3,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          sText(
-                            "You  have no revision history",
-                            size: 20,
-                            color: kAdeoGray2.withOpacity(0.6),
-                            weight: FontWeight.w500,
-                          ),
-                        ],
-                      ),
+                            SizedBox(
+                              height: 26,
+                            ),
+                            HeroCard(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 12),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ..._rules,
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: ((context) {
+                                                  return ChoseRevisionMode();
+                                                }),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 28,
+                                              vertical: 14,
+                                            ),
+                                            child: sText(
+                                              "Start",
+                                              color: Colors.white,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: kAdeoGreen4,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            sText(
+                              "You  have no revision history",
+                              size: 20,
+                              color: kAdeoGray2.withOpacity(0.6),
+                              weight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                ),
               ),
             ),
             GestureDetector(
