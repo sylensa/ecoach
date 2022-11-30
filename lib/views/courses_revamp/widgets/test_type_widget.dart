@@ -707,6 +707,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                         KnowledgeTopicTestWidget(
                           course: widget.course,
                           showGraph: showGraph,
+                          activeMenu: activeMenu,
                           getTest: (
                             BuildContext context,
                             TestCategory testCategory,
@@ -816,9 +817,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                         ),
                       ),
 
+                      if (!searchTap) Spacer(),
                       if (searchTap)
                         Expanded(
-                          child: SingleChildScrollView(
+                          child: Container(
                               child: Padding(
                             padding: EdgeInsets.only(
                               left: 20.0,
@@ -827,9 +829,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                               bottom: 14,
                             ),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
+                                SingleChildScrollView(
                                   child: Container(
                                     child: listQuestions.isEmpty
                                         ? Column(
@@ -990,7 +993,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             ),
                           )),
                         ),
-                      if (searchTap) Spacer(),
+                      if (!searchTap && !keywordTestTaken.isNotEmpty) Spacer(),
                       Container(
                         margin: EdgeInsets.only(
                           top: 14,
@@ -1034,23 +1037,41 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                     isActiveTopicMenu = true;
                                 }
                                 stateSetter(() {});
-                                print("Mommyy: $activeMenu");
                               },
                               padding: EdgeInsets.zero,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Stack(
                                 children: [
-                                  Image.asset(
-                                    "assets/icons/courses/topic.png",
-                                    height: 35.0,
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/courses/topic.png",
+                                        height: 35.0,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      sText(
+                                        "Topic ",
+                                        color: activeMenu == TestCategory.TOPIC
+                                            ? Color(0xFF003D6C)
+                                            : Colors.grey,
+                                        align: TextAlign.center,
+                                        size: 12,
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  sText("Topic ",
-                                      color: Colors.grey,
-                                      align: TextAlign.center,
-                                      size: 12),
+                                  if (activeMenu == TestCategory.TOPIC)
+                                    Positioned(
+                                      bottom: 20,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 2,
+                                        width: 46,
+                                        color: Color(0xFF003D6C),
+                                      ),
+                                    )
                                 ],
                               ),
                             ),
@@ -1059,23 +1080,38 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                 getTest(context, TestCategory.EXAM);
                               },
                               padding: EdgeInsets.zero,
-                              child: Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/icons/courses/exam.png",
-                                      height: 35.0,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    sText("Exam ",
-                                        color: Colors.grey,
-                                        align: TextAlign.center,
-                                        size: 12),
-                                  ],
-                                ),
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/icons/courses/exam.png",
+                                        height: 35.0,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      sText("Exam ",
+                                          color: activeMenu == TestCategory.EXAM
+                                              ? Color(0xFF003D6C)
+                                              : Colors.grey,
+                                          align: TextAlign.center,
+                                          size: 12),
+                                    ],
+                                  ),
+                                  if (activeMenu == TestCategory.EXAM)
+                                    Positioned(
+                                      bottom: 20,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 2,
+                                        width: 46,
+                                        color: Color(0xFF003D6C),
+                                      ),
+                                    )
+                                ],
                               ),
                             ),
                             MaterialButton(

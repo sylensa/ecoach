@@ -14,10 +14,13 @@ class KnowledgeTopicTestWidget extends StatefulWidget {
     required this.showGraph,
     required this.course,
     required this.getTest,
+    this.activeMenu = TestCategory.NONE,
   }) : super(key: key);
 
   final bool showGraph;
   final Course course;
+  final TestCategory activeMenu;
+
   final Future Function(BuildContext context, TestCategory testCategory,
       int currentQuestionCount) getTest;
 
