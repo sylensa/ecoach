@@ -1049,8 +1049,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                           onChanged: (String value) async {
                             stateSetter(() {
                               searchKeyword = value.trim();
+                              listQuestions.clear();
+
                             });
-                            listQuestions.clear();
                             if (searchKeyword.isNotEmpty) {
                               for (int i = 0;
                                   i < keywordTestTaken.length;
