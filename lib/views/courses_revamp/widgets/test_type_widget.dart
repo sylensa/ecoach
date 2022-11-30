@@ -604,7 +604,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                       height: 20,
                     ),
                     Container(
-                      color: Colors.grey,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey,
+                      ),
                       height: 3,
                       width: 84,
                     ),
@@ -1020,6 +1023,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                     SizedBox(
                       height: 20,
                     ),
+                    if (searchTap) Spacer(),
                     Container(
                       padding: EdgeInsets.only(left: 10, right: 10, top: 0),
                       child: TextFormField(
@@ -1080,6 +1084,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                         ),
                       ),
                     ),
+
                     if (!searchTap)
                       Expanded(
                           child: Padding(
@@ -1249,6 +1254,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                           ],
                         ),
                       )),
+
                     Container(
                       margin: EdgeInsets.only(
                         top: 14,
