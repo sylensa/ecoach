@@ -71,33 +71,33 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   bool showGraph = false;
   List listReportData = [true];
   TextEditingController searchKeywordController = TextEditingController();
-   Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
-    'A':[],
-    'B':[],
-    'C':[],
-    'D':[],
-    'E':[],
-    'F':[],
-    'G':[],
-    'H':[],
-    'I':[],
-    'J':[],
-    'K':[],
-    'L':[],
-    'M':[],
-    'N':[],
-    'O':[],
-    'P':[],
-    'Q':[],
-    'R':[],
-    'S':[],
-    'T':[],
-    'U':[],
-    'V':[],
-    'W':[],
-    'X':[],
-    'Y':[],
-    'Z':[]
+  Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+    'A': [],
+    'B': [],
+    'C': [],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': [],
+    'H': [],
+    'I': [],
+    'J': [],
+    'K': [],
+    'L': [],
+    'M': [],
+    'N': [],
+    'O': [],
+    'P': [],
+    'Q': [],
+    'R': [],
+    'S': [],
+    'T': [],
+    'U': [],
+    'V': [],
+    'W': [],
+    'X': [],
+    'Y': [],
+    'Z': []
   };
 
   List<T> map<T>(int listLength, Function handler) {
@@ -530,53 +530,55 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         });
   }
 
-
   knowledgeTestModalBottomSheet(
     context,
   ) async {
-    if(widget.listCourseKeywordsData.isNotEmpty){
+    if (widget.listCourseKeywordsData.isNotEmpty) {
       groupedCourseKeywordsLists = {
-        'A':[],
-        'B':[],
-        'C':[],
-        'D':[],
-        'E':[],
-        'F':[],
-        'G':[],
-        'H':[],
-        'I':[],
-        'J':[],
-        'K':[],
-        'L':[],
-        'M':[],
-        'N':[],
-        'O':[],
-        'P':[],
-        'Q':[],
-        'R':[],
-        'S':[],
-        'T':[],
-        'U':[],
-        'V':[],
-        'W':[],
-        'X':[],
-        'Y':[],
-        'Z':[]
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+        'E': [],
+        'F': [],
+        'G': [],
+        'H': [],
+        'I': [],
+        'J': [],
+        'K': [],
+        'L': [],
+        'M': [],
+        'N': [],
+        'O': [],
+        'P': [],
+        'Q': [],
+        'R': [],
+        'S': [],
+        'T': [],
+        'U': [],
+        'V': [],
+        'W': [],
+        'X': [],
+        'Y': [],
+        'Z': []
       };
-    }else{
+    } else {
       groupedCourseKeywordsLists.clear();
     }
 
     searchKeywordController.text = searchKeyword;
     setState(() {});
     searchTap = true;
-    double sheetHeight = appHeight(context) * 0.60;
+    double sheetHeight = appHeight(context) * 0.56;
     widget.listCourseKeywordsData.forEach((courseKeyword) {
-      if (groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] == null) {
-        groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
+      if (groupedCourseKeywordsLists[
+              '${courseKeyword.keyword![0]}'.toUpperCase()] ==
+          null) {
+        groupedCourseKeywordsLists[
+            '${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
       }
-      groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!.add(courseKeyword);
-
+      groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!
+          .add(courseKeyword);
     });
     showModalBottomSheet(
         context: context,
@@ -586,9 +588,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         builder: (BuildContext context) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter stateSetter) {
-              if (searchTap && keywordTestTaken.isNotEmpty) {
-                sheetHeight += 320;
-              }
+              // if (searchTap && keywordTestTaken.isNotEmpty) {
+              //   sheetHeight += 320;
+              // }
 
               return AnimatedContainer(
                   padding: EdgeInsets.symmetric(horizontal: 10),
@@ -674,353 +676,355 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             ),
                         ],
                       ),
-                      if (searchTap && keywordTestTaken.isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            CarouselSlider.builder(
-                              options: CarouselOptions(
-                                height: showGraph ? 200 : 300,
-                                autoPlay: false,
-                                enableInfiniteScroll: false,
-                                autoPlayAnimationDuration: Duration(seconds: 1),
-                                enlargeCenterPage: false,
-                                viewportFraction: 1,
-                                aspectRatio: 2.0,
-                                pageSnapping: true,
-                                onPageChanged: (index, reason) {
-                                  setState(() {
-                                    _currentSlide = index;
-                                  });
-                                },
-                              ),
-                              itemCount: keywordTestTaken.length,
-                              itemBuilder: (BuildContext context,
-                                  int indexReport, int index2) {
-                                if (showGraph) {
-                                  return MaterialButton(
-                                    onPressed: () {
-                                      stateSetter(() {
-                                        showGraph = false;
-                                      });
-                                    },
-                                    child: KeywordGraph(
-                                      course: widget.course,
-                                      keyword: keywordTestTaken[indexReport]
-                                          .testname!,
-                                      changeState: true,
-                                    ),
-                                  );
-                                } else {
-                                  return Container(
-                                    padding: EdgeInsets.all(26),
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/images/oval-pattern.png"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      color: Color(0XFF0ff0364AE),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: <Color>[
-                                          Color(0xFF0364AE),
-                                          Color(0xFF023760),
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        padding:
-                                                            EdgeInsets.all(5),
-                                                        child: Icon(
-                                                          Icons.trending_up,
-                                                          color: Colors.black,
-                                                        ),
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            shape: BoxShape
-                                                                .rectangle),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 12,
-                                                      ),
-                                                      sText(
-                                                        "${properCase(keywordTestTaken[indexReport].testname!)}",
-                                                        color: Colors.white,
-                                                        weight: FontWeight.bold,
-                                                        size: 16,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      keywordTestTaken[
-                                                                      indexReport]
-                                                                  .scoreDiff! >
-                                                              0
-                                                          ? Image.asset(
-                                                              "assets/images/un_fav.png",
-                                                              color:
-                                                                  Colors.green,
-                                                              width: 25,
-                                                            )
-                                                          : SvgPicture.asset(
-                                                              "assets/images/fav.svg",
-                                                              width: 25,
-                                                            ),
-                                                      SizedBox(
-                                                        width: 12,
-                                                      ),
-                                                      sText(
-                                                        "${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!}",
-                                                        color: Colors.white,
-                                                        weight: FontWeight.bold,
-                                                        size: 16,
-                                                      )
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 28,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                sText(
-                                                  "${keywordTestTaken[indexReport].total_test_taken}",
-                                                  size: 34,
-                                                  weight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(
-                                                  height: 6,
-                                                ),
-                                                sText(
-                                                  "times taken",
-                                                  size: 12,
-                                                  color: Colors.white
-                                                      .withOpacity(0.7),
-                                                  weight: FontWeight.w300,
-                                                  style: FontStyle.italic,
-                                                ),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                sText(
-                                                  "${keywordTestTaken[indexReport].score!.round()}%",
-                                                  size: 34,
-                                                  weight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(
-                                                  height: 6,
-                                                ),
-                                                sText(
-                                                  "mastery",
-                                                  size: 12,
-                                                  color: Colors.white
-                                                      .withOpacity(0.7),
-                                                  weight: FontWeight.w300,
-                                                  style: FontStyle.italic,
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              child: Column(
-                                                children: [
-                                                  AdeoSignalStrengthIndicator(
-                                                    strength: keywordTestTaken[
-                                                            indexReport]
-                                                        .score!,
-                                                    size: Sizes.small,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 26,
-                                                  ),
-                                                  sText(
-                                                    "strength",
-                                                    size: 12,
-                                                    color: Colors.white
-                                                        .withOpacity(0.7),
-                                                    weight: FontWeight.w300,
-                                                    style: FontStyle.italic,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Container(
-                                          clipBehavior: Clip.hardEdge,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          child: LinearProgressIndicator(
-                                            color: Color(0XFF00C9B9),
-                                            backgroundColor: Color(0XFF0367B4),
-                                            value: (keywordTestTaken[
-                                                            indexReport]
-                                                        .correct! +
-                                                    keywordTestTaken[
-                                                            indexReport]
-                                                        .wrong!) /
-                                                keywordTestTaken[indexReport]
-                                                    .totalQuestions,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            sText(
-                                              "exposure",
-                                              size: 12,
-                                              color:
-                                                  Colors.white.withOpacity(0.7),
-                                              weight: FontWeight.w300,
-                                              style: FontStyle.italic,
-                                            ),
-                                            Row(
-                                              children: [
-                                                sText(
-                                                  "${keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!}",
-                                                  color: Colors.white,
-                                                  weight: FontWeight.bold,
-                                                  size: 12,
-                                                ),
-                                                sText(
-                                                  " / ${keywordTestTaken[indexReport].totalQuestions} Q",
-                                                  color: Colors.white
-                                                      .withOpacity(0.7),
-                                                  size: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 24,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                stateSetter(() {
-                                                  if (showGraph) {
-                                                    showGraph = false;
-                                                  } else {
-                                                    showGraph = true;
-                                                  }
-                                                });
-                                              },
-                                              child: Image.asset(
-                                                  "assets/images/pencil.png"),
-                                            ),
-                                            Spacer(),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                stateSetter(() {
-                                                  searchKeyword =
-                                                      keywordTestTaken[
-                                                              indexReport]
-                                                          .testname!
-                                                          .toLowerCase();
-                                                });
-                                                await getTest(
-                                                    context, TestCategory.NONE,
-                                                    currentQuestionCount:
-                                                        keywordTestTaken[
-                                                                    indexReport]
-                                                                .correct! +
-                                                            keywordTestTaken[
-                                                                    indexReport]
-                                                                .wrong!);
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 20,
-                                                  vertical: 14,
-                                                ),
-                                                child: sText(
-                                                  "Take Test",
-                                                  color: Colors.white,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: kAdeoGreen4,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ],
-                        ),
+                      // if (searchTap && keywordTestTaken.isNotEmpty)
+
+                      //   Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       SizedBox(
+                      //         height: 20,
+                      //       ),
+                      //       CarouselSlider.builder(
+                      //         options: CarouselOptions(
+                      //           height: showGraph ? 200 : 300,
+                      //           autoPlay: false,
+                      //           enableInfiniteScroll: false,
+                      //           autoPlayAnimationDuration: Duration(seconds: 1),
+                      //           enlargeCenterPage: false,
+                      //           viewportFraction: 1,
+                      //           aspectRatio: 2.0,
+                      //           pageSnapping: true,
+                      //           onPageChanged: (index, reason) {
+                      //             setState(() {
+                      //               _currentSlide = index;
+                      //             });
+                      //           },
+                      //         ),
+                      //         itemCount: keywordTestTaken.length,
+                      //         itemBuilder: (BuildContext context,
+                      //             int indexReport, int index2) {
+                      //           if (showGraph) {
+                      //             return MaterialButton(
+                      //               onPressed: () {
+                      //                 stateSetter(() {
+                      //                   showGraph = false;
+                      //                 });
+                      //               },
+                      //               child: KeywordGraph(
+                      //                 course: widget.course,
+                      //                 keyword: keywordTestTaken[indexReport]
+                      //                     .testname!,
+                      //                 changeState: true,
+                      //               ),
+                      //             );
+                      //           } else {
+                      //             return Container(
+                      //               padding: EdgeInsets.all(26),
+                      //               margin: EdgeInsets.symmetric(
+                      //                 horizontal: 10,
+                      //               ),
+                      //               decoration: BoxDecoration(
+                      //                 image: DecorationImage(
+                      //                   image: AssetImage(
+                      //                       "assets/images/oval-pattern.png"),
+                      //                   fit: BoxFit.cover,
+                      //                 ),
+                      //                 color: Color(0XFF0ff0364AE),
+                      //                 gradient: LinearGradient(
+                      //                   begin: Alignment.topCenter,
+                      //                   end: Alignment.bottomCenter,
+                      //                   colors: <Color>[
+                      //                     Color(0xFF0364AE),
+                      //                     Color(0xFF023760),
+                      //                   ],
+                      //                 ),
+                      //                 borderRadius: BorderRadius.circular(24),
+                      //               ),
+                      //               child: Column(
+                      //                 mainAxisSize: MainAxisSize.max,
+                      //                 mainAxisAlignment:
+                      //                     MainAxisAlignment.spaceBetween,
+                      //                 children: [
+                      //                   Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.spaceBetween,
+                      //                     children: [
+                      //                       Container(
+                      //                         child: Column(
+                      //                           mainAxisAlignment:
+                      //                               MainAxisAlignment
+                      //                                   .spaceBetween,
+                      //                           crossAxisAlignment:
+                      //                               CrossAxisAlignment.start,
+                      //                           children: [
+                      //                             Row(
+                      //                               children: [
+                      //                                 Container(
+                      //                                   padding:
+                      //                                       EdgeInsets.all(5),
+                      //                                   child: Icon(
+                      //                                     Icons.trending_up,
+                      //                                     color: Colors.black,
+                      //                                   ),
+                      //                                   decoration: BoxDecoration(
+                      //                                       color: Colors.white,
+                      //                                       borderRadius:
+                      //                                           BorderRadius
+                      //                                               .circular(
+                      //                                                   8),
+                      //                                       shape: BoxShape
+                      //                                           .rectangle),
+                      //                                 ),
+                      //                                 SizedBox(
+                      //                                   width: 12,
+                      //                                 ),
+                      //                                 sText(
+                      //                                   "${properCase(keywordTestTaken[indexReport].testname!)}",
+                      //                                   color: Colors.white,
+                      //                                   weight: FontWeight.bold,
+                      //                                   size: 16,
+                      //                                 ),
+                      //                               ],
+                      //                             ),
+                      //                           ],
+                      //                         ),
+                      //                       ),
+                      //                       Container(
+                      //                         child: Column(
+                      //                           mainAxisAlignment:
+                      //                               MainAxisAlignment
+                      //                                   .spaceBetween,
+                      //                           crossAxisAlignment:
+                      //                               CrossAxisAlignment.end,
+                      //                           children: [
+                      //                             Row(
+                      //                               children: [
+                      //                                 keywordTestTaken[
+                      //                                                 indexReport]
+                      //                                             .scoreDiff! >
+                      //                                         0
+                      //                                     ? Image.asset(
+                      //                                         "assets/images/un_fav.png",
+                      //                                         color:
+                      //                                             Colors.green,
+                      //                                         width: 25,
+                      //                                       )
+                      //                                     : SvgPicture.asset(
+                      //                                         "assets/images/fav.svg",
+                      //                                         width: 25,
+                      //                                       ),
+                      //                                 SizedBox(
+                      //                                   width: 12,
+                      //                                 ),
+                      //                                 sText(
+                      //                                   "${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!}",
+                      //                                   color: Colors.white,
+                      //                                   weight: FontWeight.bold,
+                      //                                   size: 16,
+                      //                                 )
+                      //                               ],
+                      //                             ),
+                      //                           ],
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                   SizedBox(
+                      //                     height: 28,
+                      //                   ),
+                      //                   Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.spaceBetween,
+                      //                     children: [
+                      //                       Column(
+                      //                         children: [
+                      //                           sText(
+                      //                             "${keywordTestTaken[indexReport].total_test_taken}",
+                      //                             size: 34,
+                      //                             weight: FontWeight.w600,
+                      //                             color: Colors.white,
+                      //                           ),
+                      //                           SizedBox(
+                      //                             height: 6,
+                      //                           ),
+                      //                           sText(
+                      //                             "times taken",
+                      //                             size: 12,
+                      //                             color: Colors.white
+                      //                                 .withOpacity(0.7),
+                      //                             weight: FontWeight.w300,
+                      //                             style: FontStyle.italic,
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                       Column(
+                      //                         children: [
+                      //                           sText(
+                      //                             "${keywordTestTaken[indexReport].score!.round()}%",
+                      //                             size: 34,
+                      //                             weight: FontWeight.w600,
+                      //                             color: Colors.white,
+                      //                           ),
+                      //                           SizedBox(
+                      //                             height: 6,
+                      //                           ),
+                      //                           sText(
+                      //                             "mastery",
+                      //                             size: 12,
+                      //                             color: Colors.white
+                      //                                 .withOpacity(0.7),
+                      //                             weight: FontWeight.w300,
+                      //                             style: FontStyle.italic,
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                       Container(
+                      //                         child: Column(
+                      //                           children: [
+                      //                             AdeoSignalStrengthIndicator(
+                      //                               strength: keywordTestTaken[
+                      //                                       indexReport]
+                      //                                   .score!,
+                      //                               size: Sizes.small,
+                      //                             ),
+                      //                             SizedBox(
+                      //                               height: 26,
+                      //                             ),
+                      //                             sText(
+                      //                               "strength",
+                      //                               size: 12,
+                      //                               color: Colors.white
+                      //                                   .withOpacity(0.7),
+                      //                               weight: FontWeight.w300,
+                      //                               style: FontStyle.italic,
+                      //                             ),
+                      //                           ],
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                   SizedBox(
+                      //                     height: 20,
+                      //                   ),
+                      //                   Container(
+                      //                     clipBehavior: Clip.hardEdge,
+                      //                     decoration: BoxDecoration(
+                      //                       borderRadius:
+                      //                           BorderRadius.circular(12),
+                      //                     ),
+                      //                     child: LinearProgressIndicator(
+                      //                       color: Color(0XFF00C9B9),
+                      //                       backgroundColor: Color(0XFF0367B4),
+                      //                       value: (keywordTestTaken[
+                      //                                       indexReport]
+                      //                                   .correct! +
+                      //                               keywordTestTaken[
+                      //                                       indexReport]
+                      //                                   .wrong!) /
+                      //                           keywordTestTaken[indexReport]
+                      //                               .totalQuestions,
+                      //                     ),
+                      //                   ),
+                      //                   SizedBox(
+                      //                     height: 10,
+                      //                   ),
+                      //                   Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.spaceBetween,
+                      //                     children: [
+                      //                       sText(
+                      //                         "exposure",
+                      //                         size: 12,
+                      //                         color:
+                      //                             Colors.white.withOpacity(0.7),
+                      //                         weight: FontWeight.w300,
+                      //                         style: FontStyle.italic,
+                      //                       ),
+                      //                       Row(
+                      //                         children: [
+                      //                           sText(
+                      //                             "${keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!}",
+                      //                             color: Colors.white,
+                      //                             weight: FontWeight.bold,
+                      //                             size: 12,
+                      //                           ),
+                      //                           sText(
+                      //                             " / ${keywordTestTaken[indexReport].totalQuestions} Q",
+                      //                             color: Colors.white
+                      //                                 .withOpacity(0.7),
+                      //                             size: 12,
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                   SizedBox(
+                      //                     height: 24,
+                      //                   ),
+                      //                   Row(
+                      //                     mainAxisAlignment:
+                      //                         MainAxisAlignment.spaceBetween,
+                      //                     children: [
+                      //                       GestureDetector(
+                      //                         onTap: () {
+                      //                           stateSetter(() {
+                      //                             if (showGraph) {
+                      //                               showGraph = false;
+                      //                             } else {
+                      //                               showGraph = true;
+                      //                             }
+                      //                           });
+                      //                         },
+                      //                         child: Image.asset(
+                      //                             "assets/images/pencil.png"),
+                      //                       ),
+                      //                       Spacer(),
+                      //                       GestureDetector(
+                      //                         onTap: () async {
+                      //                           stateSetter(() {
+                      //                             searchKeyword =
+                      //                                 keywordTestTaken[
+                      //                                         indexReport]
+                      //                                     .testname!
+                      //                                     .toLowerCase();
+                      //                           });
+                      //                           await getTest(
+                      //                               context, TestCategory.NONE,
+                      //                               currentQuestionCount:
+                      //                                   keywordTestTaken[
+                      //                                               indexReport]
+                      //                                           .correct! +
+                      //                                       keywordTestTaken[
+                      //                                               indexReport]
+                      //                                           .wrong!);
+                      //                         },
+                      //                         child: Container(
+                      //                           padding: EdgeInsets.symmetric(
+                      //                             horizontal: 20,
+                      //                             vertical: 14,
+                      //                           ),
+                      //                           child: sText(
+                      //                             "Take Test",
+                      //                             color: Colors.white,
+                      //                           ),
+                      //                           decoration: BoxDecoration(
+                      //                             color: kAdeoGreen4,
+                      //                             borderRadius:
+                      //                                 BorderRadius.circular(8),
+                      //                           ),
+                      //                         ),
+                      //                       )
+                      //                     ],
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             );
+                      //           }
+                      //         },
+                      //       ),
+                      //     ],
+                      //   ),
+
                       // Container(
                       //   height: 50,
                       //   child: ListView.builder(
@@ -1055,7 +1059,6 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             stateSetter(() {
                               searchKeyword = value.trim();
                               listQuestions.clear();
-
                             });
                             if (searchKeyword.isNotEmpty) {
                               for (int i = 0;
@@ -1113,6 +1116,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                           ),
                         ),
                       ),
+
                       if (!searchTap)
                         Expanded(
                             child: Padding(
@@ -1133,119 +1137,15 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                             children: [
                                               Container(
                                                 padding: EdgeInsets.only(
-                                                  left: 20.0,
-                                                  right: 20
-                                                ),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      sText("Most Popular", weight: FontWeight.w600),
-                                                      Column(children: [
-                                                        Icon(
-                                                          Icons.trending_up,
-                                                          size: 15,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 4,
-                                                        ),
-                                                        Icon(
-                                                          Icons.numbers,
-                                                          size: 15,
-                                                        ),
-                                                        SizedBox(
-                                                          height: 4,
-                                                        ),
-                                                        sText("")
-
-                                                      ]),
-                                                    ],
-                                                  ),
-                                              ),
-                                              SizedBox(
-                                                height: 14,
-                                              ),
-                                              for (var entry in groupedCourseKeywordsLists.entries)
-                                                if(entry.value.isNotEmpty)
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  // Text(entry.key),
-                                                  for (int i = 0; i < entry.value.length; i++)
-                                                    if (properCase("${entry.value[i].keyword}").isNotEmpty)
-                                                      MaterialButton(
-                                                        padding: EdgeInsets.zero,
-                                                        onPressed: () async {
-                                                          stateSetter(() {
-                                                            searchKeyword =
-                                                            "${entry.value[i].keyword}";
-                                                          });
-                                                          await getTest(context,
-                                                              TestCategory.NONE);
-                                                        },
-                                                        child: Column(
-                                                          children: [
-                                                            Container(
-                                                              padding: EdgeInsets.only(
-                                                                left: 20.0,
-                                                                right: 0.0,
-
-                                                              ),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(Icons
-                                                                      .trending_up),
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Column(
-                                                                    crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                    children: [
-                                                                      Container(
-                                                                        width: appWidth(context) * 0.75,
-                                                                        child: Row(
-                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          children: [
-                                                                            sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
-                                                                            Expanded(child: Container()),
-                                                                            if(i == 0)
-
-                                                                            Text(entry.key),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      sText(
-                                                                          "${entry.value[i].total} appearances",
-                                                                          size: 12,
-                                                                          color:
-                                                                          kAdeoGray3),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                ],
-                                              )
-                                            ],
-                                          )
-                                        : Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 20),
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    left: 20.0, right: 20),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    sText("Search Result", weight: FontWeight.w600),
+                                                    sText("Most Popular",
+                                                        weight:
+                                                            FontWeight.w600),
                                                     Column(children: [
                                                       Icon(
                                                         Icons.trending_up,
@@ -1261,7 +1161,131 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                       SizedBox(
                                                         height: 4,
                                                       ),
-
+                                                      sText("")
+                                                    ]),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 14,
+                                              ),
+                                              for (var entry
+                                                  in groupedCourseKeywordsLists
+                                                      .entries)
+                                                if (entry.value.isNotEmpty)
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      // Text(entry.key),
+                                                      for (int i = 0;
+                                                          i <
+                                                              entry
+                                                                  .value.length;
+                                                          i++)
+                                                        if (properCase(
+                                                                "${entry.value[i].keyword}")
+                                                            .isNotEmpty)
+                                                          MaterialButton(
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            onPressed:
+                                                                () async {
+                                                              stateSetter(() {
+                                                                searchKeyword =
+                                                                    "${entry.value[i].keyword}";
+                                                              });
+                                                              await getTest(
+                                                                  context,
+                                                                  TestCategory
+                                                                      .NONE);
+                                                            },
+                                                            child: Column(
+                                                              children: [
+                                                                Container(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .only(
+                                                                    left: 20.0,
+                                                                    right: 0.0,
+                                                                  ),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(Icons
+                                                                          .trending_up),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Container(
+                                                                            width:
+                                                                                appWidth(context) * 0.75,
+                                                                            child:
+                                                                                Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                              children: [
+                                                                                sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
+                                                                                Expanded(child: Container()),
+                                                                                if (i == 0) Text(entry.key),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                          sText(
+                                                                              "${entry.value[i].total} appearances",
+                                                                              size: 12,
+                                                                              color: kAdeoGray3),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                    ],
+                                                  )
+                                            ],
+                                          )
+                                        : Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 20),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    sText("Search Result",
+                                                        weight:
+                                                            FontWeight.w600),
+                                                    Column(children: [
+                                                      Icon(
+                                                        Icons.trending_up,
+                                                        size: 15,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
+                                                      Icon(
+                                                        Icons.numbers,
+                                                        size: 15,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
                                                     ]),
                                                   ],
                                                 ),
@@ -1279,19 +1303,38 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                     children: [
                                                       Row(
                                                         children: [
-                                                          Icon(Icons.trending_up),
+                                                          Icon(Icons
+                                                              .trending_up),
                                                           SizedBox(
                                                             width: 10,
                                                           ),
                                                           Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: [
-                                                              sText("${properCase("$searchKeyword")}", weight: FontWeight.bold),
-                                                              sText("${listQuestions.length} appearances", size: 12, color: kAdeoGray3),
+                                                              sText(
+                                                                  "${properCase("$searchKeyword")}",
+                                                                  weight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                              sText(
+                                                                  "${listQuestions.length} appearances",
+                                                                  size: 12,
+                                                                  color:
+                                                                      kAdeoGray3),
                                                             ],
                                                           ),
-                                                          Expanded(child: Container()),
-                                                          sText(searchKeyword.isNotEmpty ? "${searchKeyword.split('').first.toUpperCase()}" : "",color: Colors.black)
+                                                          Expanded(
+                                                              child:
+                                                                  Container()),
+                                                          sText(
+                                                              searchKeyword
+                                                                      .isNotEmpty
+                                                                  ? "${searchKeyword.split('').first.toUpperCase()}"
+                                                                  : "",
+                                                              color:
+                                                                  Colors.black)
                                                         ],
                                                       ),
                                                     ],
@@ -1299,7 +1342,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                 )
                                               ],
                                             ),
-                                        ),
+                                          ),
                                   ),
                                 ),
                               ),
@@ -1336,6 +1379,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             ],
                           ),
                         )),
+                      if (searchTap) Spacer(),
                       Container(
                         margin: EdgeInsets.only(
                           top: 14,
