@@ -70,6 +70,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   bool progressCodeAll = true;
   bool showGraph = false;
   List listReportData = [true];
+  TextEditingController searchKeywordController = TextEditingController();
    Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
     'A':[],
     'B':[],
@@ -561,6 +562,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
       'Y':[],
       'Z':[]
     };
+    searchKeywordController.text = searchKeyword;
     setState(() {});
     searchTap = true;
     double sheetHeight = appHeight(context) * 0.60;
@@ -1043,9 +1045,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                       Container(
                         padding: EdgeInsets.only(left: 10, right: 10, top: 0),
                         child: TextFormField(
+                          controller: searchKeywordController,
                           onChanged: (String value) async {
                             stateSetter(() {
-                              searchKeyword = value;
+                              searchKeyword = value.trim();
                             });
                             listQuestions.clear();
                             if (searchKeyword.isNotEmpty) {
@@ -1108,8 +1111,6 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                         Expanded(
                             child: Padding(
                           padding: EdgeInsets.only(
-                            left: 20.0,
-                            right: 14.0,
                             top: 26,
                             bottom: 14,
                           ),
@@ -1124,17 +1125,46 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              sText("Most Popular",
-                                                  weight: FontWeight.w600),
+                                              Container(
+                                                padding: EdgeInsets.only(
+                                                  left: 20.0,
+                                                  right: 20
+                                                ),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      sText("Most Popular", weight: FontWeight.w600),
+                                                      Column(children: [
+                                                        Icon(
+                                                          Icons.trending_up,
+                                                          size: 15,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 4,
+                                                        ),
+                                                        Icon(
+                                                          Icons.numbers,
+                                                          size: 15,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 4,
+                                                        ),
+                                                        sText("")
+
+                                                      ]),
+                                                    ],
+                                                  ),
+                                              ),
                                               SizedBox(
                                                 height: 14,
                                               ),
                                               for (var entry in groupedCourseKeywordsLists.entries)
+                                                if(entry.value.isNotEmpty)
                                               Column(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(entry.key),
+                                                  // Text(entry.key),
                                                   for (int i = 0; i < entry.value.length; i++)
                                                     if (properCase("${entry.value[i].keyword}").isNotEmpty)
                                                       MaterialButton(
@@ -1149,31 +1179,46 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                         },
                                                         child: Column(
                                                           children: [
-                                                            Row(
-                                                              children: [
-                                                                Icon(Icons
-                                                                    .trending_up),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                                  children: [
-                                                                    sText(
-                                                                        "${properCase("${entry.value[i].keyword}")}",
-                                                                        weight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                                    sText(
-                                                                        "${entry.value[i].total} appearances",
-                                                                        size: 12,
-                                                                        color:
-                                                                        kAdeoGray3),
-                                                                  ],
-                                                                ),
-                                                              ],
+                                                            Container(
+                                                              padding: EdgeInsets.only(
+                                                                left: 20.0,
+                                                                right: 0.0,
+
+                                                              ),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .trending_up),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                    children: [
+                                                                      Container(
+                                                                        width: appWidth(context) * 0.75,
+                                                                        child: Row(
+                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
+                                                                            Expanded(child: Container()),
+                                                                            if(i == 0)
+
+                                                                            Text(entry.key),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      sText(
+                                                                          "${entry.value[i].total} appearances",
+                                                                          size: 12,
+                                                                          color:
+                                                                          kAdeoGray3),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                             SizedBox(
                                                               height: 10,
@@ -1185,82 +1230,103 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                               )
                                             ],
                                           )
-                                        : Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              sText("Search Result",
-                                                  weight: FontWeight.w600),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              MaterialButton(
-                                                padding: EdgeInsets.zero,
-                                                onPressed: () async {
-                                                  stateSetter(() {});
-                                                  await getTest(context,
-                                                      TestCategory.NONE);
-                                                },
-                                                child: Column(
+                                        : Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 20),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        Icon(Icons.trending_up),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            sText(
-                                                                "${properCase("$searchKeyword")}",
-                                                                weight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                            sText(
-                                                                "${listQuestions.length} appearances",
-                                                                size: 12,
-                                                                color:
-                                                                    kAdeoGray3),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
+                                                    sText("Search Result", weight: FontWeight.w600),
+                                                    Column(children: [
+                                                      Icon(
+                                                        Icons.trending_up,
+                                                        size: 15,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
+                                                      Icon(
+                                                        Icons.numbers,
+                                                        size: 15,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
+
+                                                    ]),
                                                   ],
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                MaterialButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () async {
+                                                    stateSetter(() {});
+                                                    await getTest(context,
+                                                        TestCategory.NONE);
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Icon(Icons.trending_up),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              sText("${properCase("$searchKeyword")}", weight: FontWeight.bold),
+                                                              sText("${listQuestions.length} appearances", size: 12, color: kAdeoGray3),
+                                                            ],
+                                                          ),
+                                                          Expanded(child: Container()),
+                                                          sText(searchKeyword.isNotEmpty ? "${searchKeyword.split('').first.toUpperCase()}" : "",color: Colors.black)
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                        ),
                                   ),
                                 ),
                               ),
-                              Container(
-                                child: Column(children: [
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      child: Column(children: [
-                                        Icon(
-                                          Icons.trending_up,
-                                          size: 15,
-                                        ),
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-                                        Icon(
-                                          Icons.numbers,
-                                          size: 15,
-                                        ),
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-
-                                      ]),
-                                    ),
-                                  )
-                                ]),
-                              )
+                              // Container(
+                              //   padding: EdgeInsets.only(
+                              //     right: 20.0,
+                              //
+                              //   ),
+                              //   child: Column(children: [
+                              //     Expanded(
+                              //       child: SingleChildScrollView(
+                              //         child: Column(children: [
+                              //           Icon(
+                              //             Icons.trending_up,
+                              //             size: 15,
+                              //           ),
+                              //           SizedBox(
+                              //             height: 4,
+                              //           ),
+                              //           Icon(
+                              //             Icons.numbers,
+                              //             size: 15,
+                              //           ),
+                              //           SizedBox(
+                              //             height: 4,
+                              //           ),
+                              //           sText(searchKeyword.isNotEmpty ? "${searchKeyword.split('').first}" : "")
+                              //
+                              //         ]),
+                              //       ),
+                              //     )
+                              //   ]),
+                              // )
                             ],
                           ),
                         )),
