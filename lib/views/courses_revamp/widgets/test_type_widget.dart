@@ -534,34 +534,39 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   knowledgeTestModalBottomSheet(
     context,
   ) async {
-    groupedCourseKeywordsLists = {
-      'A':[],
-      'B':[],
-      'C':[],
-      'D':[],
-      'E':[],
-      'F':[],
-      'G':[],
-      'H':[],
-      'I':[],
-      'J':[],
-      'K':[],
-      'L':[],
-      'M':[],
-      'N':[],
-      'O':[],
-      'P':[],
-      'Q':[],
-      'R':[],
-      'S':[],
-      'T':[],
-      'U':[],
-      'V':[],
-      'W':[],
-      'X':[],
-      'Y':[],
-      'Z':[]
-    };
+    if(widget.listCourseKeywordsData.isNotEmpty){
+      groupedCourseKeywordsLists = {
+        'A':[],
+        'B':[],
+        'C':[],
+        'D':[],
+        'E':[],
+        'F':[],
+        'G':[],
+        'H':[],
+        'I':[],
+        'J':[],
+        'K':[],
+        'L':[],
+        'M':[],
+        'N':[],
+        'O':[],
+        'P':[],
+        'Q':[],
+        'R':[],
+        'S':[],
+        'T':[],
+        'U':[],
+        'V':[],
+        'W':[],
+        'X':[],
+        'Y':[],
+        'Z':[]
+      };
+    }else{
+      groupedCourseKeywordsLists.clear();
+    }
+
     searchKeywordController.text = searchKeyword;
     setState(() {});
     searchTap = true;
