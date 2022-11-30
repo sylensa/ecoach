@@ -36,6 +36,7 @@ import 'package:ecoach/views/treadmill/treadmill_welcome.dart';
 import 'package:ecoach/widgets/adeo_dialog.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
+import 'package:ecoach/widgets/cards/hero_card.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -70,33 +71,33 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   bool progressCodeAll = true;
   bool showGraph = false;
   List listReportData = [true];
-   Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
-    'A':[],
-    'B':[],
-    'C':[],
-    'D':[],
-    'E':[],
-    'F':[],
-    'G':[],
-    'H':[],
-    'I':[],
-    'J':[],
-    'K':[],
-    'L':[],
-    'M':[],
-    'N':[],
-    'O':[],
-    'P':[],
-    'Q':[],
-    'R':[],
-    'S':[],
-    'T':[],
-    'U':[],
-    'V':[],
-    'W':[],
-    'X':[],
-    'Y':[],
-    'Z':[]
+  Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+    'A': [],
+    'B': [],
+    'C': [],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': [],
+    'H': [],
+    'I': [],
+    'J': [],
+    'K': [],
+    'L': [],
+    'M': [],
+    'N': [],
+    'O': [],
+    'P': [],
+    'Q': [],
+    'R': [],
+    'S': [],
+    'T': [],
+    'U': [],
+    'V': [],
+    'W': [],
+    'X': [],
+    'Y': [],
+    'Z': []
   };
 
   List<T> map<T>(int listLength, Function handler) {
@@ -529,47 +530,49 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         });
   }
 
-
   knowledgeTestModalBottomSheet(
     context,
   ) async {
     groupedCourseKeywordsLists = {
-      'A':[],
-      'B':[],
-      'C':[],
-      'D':[],
-      'E':[],
-      'F':[],
-      'G':[],
-      'H':[],
-      'I':[],
-      'J':[],
-      'K':[],
-      'L':[],
-      'M':[],
-      'N':[],
-      'O':[],
-      'P':[],
-      'Q':[],
-      'R':[],
-      'S':[],
-      'T':[],
-      'U':[],
-      'V':[],
-      'W':[],
-      'X':[],
-      'Y':[],
-      'Z':[]
+      'A': [],
+      'B': [],
+      'C': [],
+      'D': [],
+      'E': [],
+      'F': [],
+      'G': [],
+      'H': [],
+      'I': [],
+      'J': [],
+      'K': [],
+      'L': [],
+      'M': [],
+      'N': [],
+      'O': [],
+      'P': [],
+      'Q': [],
+      'R': [],
+      'S': [],
+      'T': [],
+      'U': [],
+      'V': [],
+      'W': [],
+      'X': [],
+      'Y': [],
+      'Z': []
     };
     setState(() {});
     searchTap = true;
     double sheetHeight = appHeight(context) * 0.60;
     widget.listCourseKeywordsData.forEach((courseKeyword) {
-      if (groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] == null) {
-        groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
+      if (groupedCourseKeywordsLists[
+              '${courseKeyword.keyword![0]}'.toUpperCase()] ==
+          null) {
+        groupedCourseKeywordsLists[
+            '${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
       }
-      groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!.add(courseKeyword);
-
+      groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!
+          .add(courseKeyword);
     });
     showModalBottomSheet(
         context: context,
@@ -708,28 +711,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                     ),
                                   );
                                 } else {
-                                  return Container(
-                                    padding: EdgeInsets.all(26),
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/images/oval-pattern.png"),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      color: Color(0XFF0ff0364AE),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: <Color>[
-                                          Color(0xFF0364AE),
-                                          Color(0xFF023760),
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
+                                  return HeroCard(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -1129,60 +1111,71 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                               SizedBox(
                                                 height: 14,
                                               ),
-                                              for (var entry in groupedCourseKeywordsLists.entries)
-                                              Column(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(entry.key),
-                                                  for (int i = 0; i < entry.value.length; i++)
-                                                    if (properCase("${entry.value[i].keyword}").isNotEmpty)
-                                                      MaterialButton(
-                                                        padding: EdgeInsets.zero,
-                                                        onPressed: () async {
-                                                          stateSetter(() {
-                                                            searchKeyword =
-                                                            "${entry.value[i].keyword}";
-                                                          });
-                                                          await getTest(context,
-                                                              TestCategory.NONE);
-                                                        },
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              children: [
-                                                                Icon(Icons
-                                                                    .trending_up),
-                                                                SizedBox(
-                                                                  width: 10,
-                                                                ),
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                                  children: [
-                                                                    sText(
-                                                                        "${properCase("${entry.value[i].keyword}")}",
-                                                                        weight:
-                                                                        FontWeight
-                                                                            .bold),
-                                                                    sText(
-                                                                        "${entry.value[i].total} appearances",
-                                                                        size: 12,
-                                                                        color:
-                                                                        kAdeoGray3),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                ],
-                                              )
+                                              for (var entry
+                                                  in groupedCourseKeywordsLists
+                                                      .entries)
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(entry.key),
+                                                    for (int i = 0;
+                                                        i < entry.value.length;
+                                                        i++)
+                                                      if (properCase(
+                                                              "${entry.value[i].keyword}")
+                                                          .isNotEmpty)
+                                                        MaterialButton(
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          onPressed: () async {
+                                                            stateSetter(() {
+                                                              searchKeyword =
+                                                                  "${entry.value[i].keyword}";
+                                                            });
+                                                            await getTest(
+                                                                context,
+                                                                TestCategory
+                                                                    .NONE);
+                                                          },
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .trending_up),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      sText(
+                                                                          "${properCase("${entry.value[i].keyword}")}",
+                                                                          weight:
+                                                                              FontWeight.bold),
+                                                                      sText(
+                                                                          "${entry.value[i].total} appearances",
+                                                                          size:
+                                                                              12,
+                                                                          color:
+                                                                              kAdeoGray3),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                  ],
+                                                )
                                             ],
                                           )
                                         : Column(
@@ -1255,7 +1248,6 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                         SizedBox(
                                           height: 4,
                                         ),
-
                                       ]),
                                     ),
                                   )
