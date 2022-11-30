@@ -108,7 +108,6 @@ class _MainHomePageState extends State<MainHomePage>
   }
 
   checkSubscription() {
-    print("hey am here");
     mainController.checkSubscription((success) {
       UserPreferences().getUser().then((user) {
         setState(() {

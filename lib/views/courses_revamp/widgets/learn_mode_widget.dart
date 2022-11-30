@@ -12,7 +12,9 @@ import 'package:ecoach/models/study.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/new_learn_mode/screens/revision/widget/revision_bottom_sheet_content.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/learn/learn_mastery_improvement.dart';
@@ -119,9 +121,8 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
       progress = await StudyDB().getCurrentProgress(study.id!);
     }
 
-     Provider.of<LearnModeProvider>(context, listen: false)
+    Provider.of<LearnModeProvider>(context, listen: false)
         .setCurrentProgress(progress!);
-
 
     return progress;
   }
@@ -135,7 +136,8 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
         if (progress == null) {
           return;
         }
-        view = LearnRevision(widget.user, widget.course, progress);
+        // view = LearnRevision(widget.user, widget.course, progress);
+        showRevisionBottomSheet(progress);
         break;
 
       case StudyType.COURSE_COMPLETION:
@@ -186,15 +188,20 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
     //     MaterialPageRoute(builder: (context) {
     //       return view!;
     //     }));
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        settings: RouteSettings(name: CoursesDetailsPage.routeName),
-        builder: (context) {
-          return view!;
-        },
-      ),
-    );
+    switch (studyType) {
+      case StudyType.REVISION:
+        break;
+      default:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            settings: RouteSettings(name: CoursesDetailsPage.routeName),
+            builder: (context) {
+              return view!;
+            },
+          ),
+        );
+    }
     // Navigator.push(
     //   context,
     //   MaterialPageRoute(
@@ -204,6 +211,37 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
     //     },
     //   ),
     // );
+  }
+
+  showRevisionBottomSheet(StudyProgress? progress) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return RevisionBottomSheetContent(
+          user: widget.user,
+          course: widget.course,
+          progress: progress!,
+          // newRevisionCallback: () {
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       settings: RouteSettings(name: CoursesDetailsPage.routeName),
+          //       builder: (context) {
+          //         return LearnRevision(
+          //           widget.user,
+          //           widget.course,
+          //           widget.progress,
+          //         );
+          //       },
+          //     ),
+          //   );
+          // },
+        );
+      },
+    );
   }
 
   List<CourseDetail> learnModeDetails = [
@@ -228,6 +266,7 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
       iconURL: 'assets/icons/courses/learn.png',
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -241,24 +280,24 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[0],
                     onTap: () async {
-                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                      if(questions.isNotEmpty){
+                      List<Question> questions = await QuestionDB()
+                          .getQuestionsByCourseId(widget.course.id!);
+                      if (questions.isNotEmpty) {
                         setState(() {
                           studyType = StudyType.REVISION;
                         });
                         await letGo();
-                      }
-                      else{
+                      } else {
                         showDialogYesNo(
                             context: context,
-                            message: "Download questions for ${widget.course.name}",
+                            message:
+                                "Download questions for ${widget.course.name}",
                             target: BuyBundlePage(
                               widget.user,
                               controller: widget.controller,
                               bundle: widget.subscription,
                             ));
                       }
-
                     },
                   ),
                 ),
@@ -267,17 +306,18 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[1],
                     onTap: () async {
-                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                      if(questions.isNotEmpty){
+                      List<Question> questions = await QuestionDB()
+                          .getQuestionsByCourseId(widget.course.id!);
+                      if (questions.isNotEmpty) {
                         setState(() {
                           studyType = StudyType.COURSE_COMPLETION;
                         });
                         await letGo();
-                      }
-                      else{
+                      } else {
                         showDialogYesNo(
                             context: context,
-                            message: "Download questions for ${widget.course.name}",
+                            message:
+                                "Download questions for ${widget.course.name}",
                             target: BuyBundlePage(
                               widget.user,
                               controller: widget.controller,
@@ -292,24 +332,24 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[2],
                     onTap: () async {
-                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                      if(questions.isNotEmpty){
+                      List<Question> questions = await QuestionDB()
+                          .getQuestionsByCourseId(widget.course.id!);
+                      if (questions.isNotEmpty) {
                         setState(() {
                           studyType = StudyType.SPEED_ENHANCEMENT;
                         });
                         await letGo();
-                      }
-                      else{
+                      } else {
                         showDialogYesNo(
                             context: context,
-                            message: "Download questions for ${widget.course.name}",
+                            message:
+                                "Download questions for ${widget.course.name}",
                             target: BuyBundlePage(
                               widget.user,
                               controller: widget.controller,
                               bundle: widget.subscription,
                             ));
                       }
-
                     },
                   ),
                 ),
@@ -318,24 +358,24 @@ class _LearnModeWidgetState extends State<LearnModeWidget> {
                   child: CourseDetailCard(
                     courseDetail: learnModeDetails[3],
                     onTap: () async {
-                      List<Question> questions = await  QuestionDB().getQuestionsByCourseId(widget.course.id!);
-                      if(questions.isNotEmpty){
+                      List<Question> questions = await QuestionDB()
+                          .getQuestionsByCourseId(widget.course.id!);
+                      if (questions.isNotEmpty) {
                         setState(() {
                           studyType = StudyType.MASTERY_IMPROVEMENT;
                         });
                         await letGo();
-                      }
-                      else{
+                      } else {
                         showDialogYesNo(
                             context: context,
-                            message: "Download questions for ${widget.course.name}",
+                            message:
+                                "Download questions for ${widget.course.name}",
                             target: BuyBundlePage(
                               widget.user,
                               controller: widget.controller,
                               bundle: widget.subscription,
                             ));
                       }
-
                     },
                   ),
                 ),
