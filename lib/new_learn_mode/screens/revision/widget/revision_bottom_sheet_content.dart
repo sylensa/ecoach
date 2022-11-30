@@ -51,7 +51,6 @@ class _RevisionBottomSheetContentState
 
   @override
   Widget build(BuildContext context) {
-    print("ShowIntro: ${_showIntro}");
     return AnimatedContainer(
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: _sheetHeight,

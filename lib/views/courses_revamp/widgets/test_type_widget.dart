@@ -19,6 +19,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/conquest/conquest_onboarding.dart';
+import 'package:ecoach/views/courses_revamp/widgets/knowledge_test/topic_test.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
 import 'package:ecoach/views/keyword/keyword_assessment.dart';
 import 'package:ecoach/views/keyword/keyword_graph.dart';
@@ -272,117 +273,121 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         futureList = TestController().getBankTest(widget.course);
     }
 
-    futureList.then(
-      (data) async {
-        Navigator.pop(context);
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              Widget? widgetView;
-              switch (testCategory) {
-                case TestCategory.MOCK:
-                  List<Question> questions = data as List<Question>;
-                  widgetView = testType == TestType.SPEED
-                      ? SpeedQuizCover(
-                          widget.user,
-                          testType,
-                          questions,
-                          course: widget.course,
-                          theme: QuizTheme.ORANGE,
-                          category: testCategory,
-                          time: questions.length * 60,
-                          name: "Mock Test",
-                        )
-                      : QuizCover(
-                          widget.user,
-                          questions,
-                          course: widget.course,
-                          type: testType,
-                          theme: QuizTheme.BLUE,
-                          category: testCategory,
-                          time: questions.length * 60,
-                          name: "Mock Test",
-                        );
-                  break;
-                case TestCategory.EXAM:
-                  widgetView = TestTypeListView(
-                    widget.user,
-                    widget.course,
-                    data,
-                    testType,
-                    title: "Exams",
-                    testCategory: TestCategory.EXAM,
-                  );
-                  break;
-                case TestCategory.TOPIC:
-                  widgetView = TestTypeListView(
-                    widget.user,
-                    widget.course,
-                    data,
-                    testType,
-                    title: "Topic",
-                    multiSelect: true,
-                    testCategory: TestCategory.TOPIC,
-                  );
-                  break;
-                case TestCategory.ESSAY:
-                  widgetView = TestTypeListView(
-                    widget.user,
-                    widget.course,
-                    data,
-                    testType,
-                    title: "Essays",
-                    testCategory: TestCategory.ESSAY,
-                  );
-                  break;
-                case TestCategory.SAVED:
-                  List<Question> questions = data as List<Question>;
-                  widgetView = QuizCover(
-                    widget.user,
-                    questions,
-                    category: testCategory,
-                    course: widget.course,
-                    theme: QuizTheme.BLUE,
-                    time: questions.length * 60,
-                    name: "Saved Test",
-                  );
-                  break;
-                case TestCategory.NONE:
-                  List<Question> questions = data as List<Question>;
+    if (testCategory != TestCategory.TOPIC) {
+      futureList.then(
+        (data) async {
+          Navigator.pop(context);
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                Widget? widgetView;
+                switch (testCategory) {
+                  case TestCategory.MOCK:
+                    List<Question> questions = data as List<Question>;
+                    widgetView = testType == TestType.SPEED
+                        ? SpeedQuizCover(
+                            widget.user,
+                            testType,
+                            questions,
+                            course: widget.course,
+                            theme: QuizTheme.ORANGE,
+                            category: testCategory,
+                            time: questions.length * 60,
+                            name: "Mock Test",
+                          )
+                        : QuizCover(
+                            widget.user,
+                            questions,
+                            course: widget.course,
+                            type: testType,
+                            theme: QuizTheme.BLUE,
+                            category: testCategory,
+                            time: questions.length * 60,
+                            name: "Mock Test",
+                          );
+                    break;
+                  case TestCategory.EXAM:
+                    widgetView = TestTypeListView(
+                      widget.user,
+                      widget.course,
+                      data,
+                      testType,
+                      title: "Exams",
+                      testCategory: TestCategory.EXAM,
+                    );
+                    break;
+                  case TestCategory.TOPIC:
+                    widgetView = TestTypeListView(
+                      widget.user,
+                      widget.course,
+                      data,
+                      testType,
+                      title: "Topic",
+                      multiSelect: true,
+                      testCategory: TestCategory.TOPIC,
+                    );
 
-                  widgetView = KeywordAssessment(
-                    quizCover: KeywordQuizCover(
+                    break;
+                  case TestCategory.ESSAY:
+                    widgetView = TestTypeListView(
+                      widget.user,
+                      widget.course,
+                      data,
+                      testType,
+                      title: "Essays",
+                      testCategory: TestCategory.ESSAY,
+                    );
+                    break;
+                  case TestCategory.SAVED:
+                    List<Question> questions = data as List<Question>;
+                    widgetView = QuizCover(
                       widget.user,
                       questions,
                       category: testCategory,
                       course: widget.course,
                       theme: QuizTheme.BLUE,
                       time: questions.length * 60,
-                      name: searchKeyword,
-                    ),
-                    questionCount: questions.length,
-                  );
-                  break;
-                case TestCategory.BANK:
-                  widgetView = TestTypeListView(
-                    widget.user,
-                    widget.course,
-                    data,
-                    testType,
-                    title: "Bank",
-                    testCategory: TestCategory.BANK,
-                  );
-                  break;
-                default:
-                  widgetView = null;
-              }
-              return widgetView!;
-            },
-          ),
-        );
-      },
-    );
+                      name: "Saved Test",
+                    );
+                    break;
+                  case TestCategory.NONE:
+                    List<Question> questions = data as List<Question>;
+
+                    widgetView = KeywordAssessment(
+                      quizCover: KeywordQuizCover(
+                        widget.user,
+                        questions,
+                        category: testCategory,
+                        course: widget.course,
+                        theme: QuizTheme.BLUE,
+                        time: questions.length * 60,
+                        name: searchKeyword,
+                      ),
+                      questionCount: questions.length,
+                    );
+                    break;
+                  case TestCategory.BANK:
+                    widgetView = TestTypeListView(
+                      widget.user,
+                      widget.course,
+                      data,
+                      testType,
+                      title: "Bank",
+                      testCategory: TestCategory.BANK,
+                    );
+                    break;
+                  default:
+                    widgetView = null;
+                }
+
+                return widgetView!;
+              },
+            ),
+          );
+        },
+      );
+    }
   }
 
   conquestModalBottomSheet(
@@ -567,8 +572,12 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
     }
     searchKeywordController.text = searchKeyword.trim();
     setState(() {});
-    searchTap = true;
+    searchTap = false;
     double sheetHeight = appHeight(context) * 0.56;
+    bool isActiveTopicMenu = false;
+    bool sheetHeightIncreased = false;
+    late TestCategory activeMenu = TestCategory.NONE;
+
     widget.listCourseKeywordsData.forEach((courseKeyword) {
       if (groupedCourseKeywordsLists[
               '${courseKeyword.keyword![0]}'.toUpperCase()] ==
@@ -579,6 +588,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
       groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!
           .add(courseKeyword);
     });
+
     showModalBottomSheet(
         context: context,
         isDismissible: true,
@@ -587,13 +597,30 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         builder: (BuildContext context) {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter stateSetter) {
-              // if (searchTap && keywordTestTaken.isNotEmpty) {
-              //   sheetHeight += 320;
-              // }
-
               return AnimatedContainer(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   height: sheetHeight,
+                  onEnd: (() {
+                    switch (activeMenu) {
+                      case TestCategory.TOPIC:
+                        isActiveTopicMenu = true;
+                        sheetHeightIncreased = true;
+                        break;
+                      case TestCategory.MOCK:
+                        break;
+                      case TestCategory.EXAM:
+                        break;
+                      case TestCategory.ESSAY:
+                        break;
+                      case TestCategory.SAVED:
+                        break;
+                      case TestCategory.BANK:
+                        break;
+                      case TestCategory.NONE:
+                        break;
+                    }
+                    stateSetter(() {});
+                  }),
                   decoration: BoxDecoration(
                     color: kAdeoGray4,
                     borderRadius: BorderRadius.only(
@@ -601,7 +628,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                       topRight: Radius.circular(24),
                     ),
                   ),
-                  duration: Duration(milliseconds: 200),
+                  duration: Duration(milliseconds: 20),
                   curve: Curves.easeInOut,
                   child: Column(
                     children: [
@@ -675,355 +702,25 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             ),
                         ],
                       ),
-                      // if (searchTap && keywordTestTaken.isNotEmpty)
 
-                      //   Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: [
-                      //       SizedBox(
-                      //         height: 20,
-                      //       ),
-                      //       CarouselSlider.builder(
-                      //         options: CarouselOptions(
-                      //           height: showGraph ? 200 : 300,
-                      //           autoPlay: false,
-                      //           enableInfiniteScroll: false,
-                      //           autoPlayAnimationDuration: Duration(seconds: 1),
-                      //           enlargeCenterPage: false,
-                      //           viewportFraction: 1,
-                      //           aspectRatio: 2.0,
-                      //           pageSnapping: true,
-                      //           onPageChanged: (index, reason) {
-                      //             setState(() {
-                      //               _currentSlide = index;
-                      //             });
-                      //           },
-                      //         ),
-                      //         itemCount: keywordTestTaken.length,
-                      //         itemBuilder: (BuildContext context,
-                      //             int indexReport, int index2) {
-                      //           if (showGraph) {
-                      //             return MaterialButton(
-                      //               onPressed: () {
-                      //                 stateSetter(() {
-                      //                   showGraph = false;
-                      //                 });
-                      //               },
-                      //               child: KeywordGraph(
-                      //                 course: widget.course,
-                      //                 keyword: keywordTestTaken[indexReport]
-                      //                     .testname!,
-                      //                 changeState: true,
-                      //               ),
-                      //             );
-                      //           } else {
-                      //             return Container(
-                      //               padding: EdgeInsets.all(26),
-                      //               margin: EdgeInsets.symmetric(
-                      //                 horizontal: 10,
-                      //               ),
-                      //               decoration: BoxDecoration(
-                      //                 image: DecorationImage(
-                      //                   image: AssetImage(
-                      //                       "assets/images/oval-pattern.png"),
-                      //                   fit: BoxFit.cover,
-                      //                 ),
-                      //                 color: Color(0XFF0ff0364AE),
-                      //                 gradient: LinearGradient(
-                      //                   begin: Alignment.topCenter,
-                      //                   end: Alignment.bottomCenter,
-                      //                   colors: <Color>[
-                      //                     Color(0xFF0364AE),
-                      //                     Color(0xFF023760),
-                      //                   ],
-                      //                 ),
-                      //                 borderRadius: BorderRadius.circular(24),
-                      //               ),
-                      //               child: Column(
-                      //                 mainAxisSize: MainAxisSize.max,
-                      //                 mainAxisAlignment:
-                      //                     MainAxisAlignment.spaceBetween,
-                      //                 children: [
-                      //                   Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.spaceBetween,
-                      //                     children: [
-                      //                       Container(
-                      //                         child: Column(
-                      //                           mainAxisAlignment:
-                      //                               MainAxisAlignment
-                      //                                   .spaceBetween,
-                      //                           crossAxisAlignment:
-                      //                               CrossAxisAlignment.start,
-                      //                           children: [
-                      //                             Row(
-                      //                               children: [
-                      //                                 Container(
-                      //                                   padding:
-                      //                                       EdgeInsets.all(5),
-                      //                                   child: Icon(
-                      //                                     Icons.trending_up,
-                      //                                     color: Colors.black,
-                      //                                   ),
-                      //                                   decoration: BoxDecoration(
-                      //                                       color: Colors.white,
-                      //                                       borderRadius:
-                      //                                           BorderRadius
-                      //                                               .circular(
-                      //                                                   8),
-                      //                                       shape: BoxShape
-                      //                                           .rectangle),
-                      //                                 ),
-                      //                                 SizedBox(
-                      //                                   width: 12,
-                      //                                 ),
-                      //                                 sText(
-                      //                                   "${properCase(keywordTestTaken[indexReport].testname!)}",
-                      //                                   color: Colors.white,
-                      //                                   weight: FontWeight.bold,
-                      //                                   size: 16,
-                      //                                 ),
-                      //                               ],
-                      //                             ),
-                      //                           ],
-                      //                         ),
-                      //                       ),
-                      //                       Container(
-                      //                         child: Column(
-                      //                           mainAxisAlignment:
-                      //                               MainAxisAlignment
-                      //                                   .spaceBetween,
-                      //                           crossAxisAlignment:
-                      //                               CrossAxisAlignment.end,
-                      //                           children: [
-                      //                             Row(
-                      //                               children: [
-                      //                                 keywordTestTaken[
-                      //                                                 indexReport]
-                      //                                             .scoreDiff! >
-                      //                                         0
-                      //                                     ? Image.asset(
-                      //                                         "assets/images/un_fav.png",
-                      //                                         color:
-                      //                                             Colors.green,
-                      //                                         width: 25,
-                      //                                       )
-                      //                                     : SvgPicture.asset(
-                      //                                         "assets/images/fav.svg",
-                      //                                         width: 25,
-                      //                                       ),
-                      //                                 SizedBox(
-                      //                                   width: 12,
-                      //                                 ),
-                      //                                 sText(
-                      //                                   "${keywordTestTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${keywordTestTaken[indexReport].scoreDiff!}",
-                      //                                   color: Colors.white,
-                      //                                   weight: FontWeight.bold,
-                      //                                   size: 16,
-                      //                                 )
-                      //                               ],
-                      //                             ),
-                      //                           ],
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                   SizedBox(
-                      //                     height: 28,
-                      //                   ),
-                      //                   Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.spaceBetween,
-                      //                     children: [
-                      //                       Column(
-                      //                         children: [
-                      //                           sText(
-                      //                             "${keywordTestTaken[indexReport].total_test_taken}",
-                      //                             size: 34,
-                      //                             weight: FontWeight.w600,
-                      //                             color: Colors.white,
-                      //                           ),
-                      //                           SizedBox(
-                      //                             height: 6,
-                      //                           ),
-                      //                           sText(
-                      //                             "times taken",
-                      //                             size: 12,
-                      //                             color: Colors.white
-                      //                                 .withOpacity(0.7),
-                      //                             weight: FontWeight.w300,
-                      //                             style: FontStyle.italic,
-                      //                           ),
-                      //                         ],
-                      //                       ),
-                      //                       Column(
-                      //                         children: [
-                      //                           sText(
-                      //                             "${keywordTestTaken[indexReport].score!.round()}%",
-                      //                             size: 34,
-                      //                             weight: FontWeight.w600,
-                      //                             color: Colors.white,
-                      //                           ),
-                      //                           SizedBox(
-                      //                             height: 6,
-                      //                           ),
-                      //                           sText(
-                      //                             "mastery",
-                      //                             size: 12,
-                      //                             color: Colors.white
-                      //                                 .withOpacity(0.7),
-                      //                             weight: FontWeight.w300,
-                      //                             style: FontStyle.italic,
-                      //                           ),
-                      //                         ],
-                      //                       ),
-                      //                       Container(
-                      //                         child: Column(
-                      //                           children: [
-                      //                             AdeoSignalStrengthIndicator(
-                      //                               strength: keywordTestTaken[
-                      //                                       indexReport]
-                      //                                   .score!,
-                      //                               size: Sizes.small,
-                      //                             ),
-                      //                             SizedBox(
-                      //                               height: 26,
-                      //                             ),
-                      //                             sText(
-                      //                               "strength",
-                      //                               size: 12,
-                      //                               color: Colors.white
-                      //                                   .withOpacity(0.7),
-                      //                               weight: FontWeight.w300,
-                      //                               style: FontStyle.italic,
-                      //                             ),
-                      //                           ],
-                      //                         ),
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                   SizedBox(
-                      //                     height: 20,
-                      //                   ),
-                      //                   Container(
-                      //                     clipBehavior: Clip.hardEdge,
-                      //                     decoration: BoxDecoration(
-                      //                       borderRadius:
-                      //                           BorderRadius.circular(12),
-                      //                     ),
-                      //                     child: LinearProgressIndicator(
-                      //                       color: Color(0XFF00C9B9),
-                      //                       backgroundColor: Color(0XFF0367B4),
-                      //                       value: (keywordTestTaken[
-                      //                                       indexReport]
-                      //                                   .correct! +
-                      //                               keywordTestTaken[
-                      //                                       indexReport]
-                      //                                   .wrong!) /
-                      //                           keywordTestTaken[indexReport]
-                      //                               .totalQuestions,
-                      //                     ),
-                      //                   ),
-                      //                   SizedBox(
-                      //                     height: 10,
-                      //                   ),
-                      //                   Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.spaceBetween,
-                      //                     children: [
-                      //                       sText(
-                      //                         "exposure",
-                      //                         size: 12,
-                      //                         color:
-                      //                             Colors.white.withOpacity(0.7),
-                      //                         weight: FontWeight.w300,
-                      //                         style: FontStyle.italic,
-                      //                       ),
-                      //                       Row(
-                      //                         children: [
-                      //                           sText(
-                      //                             "${keywordTestTaken[indexReport].correct! + keywordTestTaken[indexReport].wrong!}",
-                      //                             color: Colors.white,
-                      //                             weight: FontWeight.bold,
-                      //                             size: 12,
-                      //                           ),
-                      //                           sText(
-                      //                             " / ${keywordTestTaken[indexReport].totalQuestions} Q",
-                      //                             color: Colors.white
-                      //                                 .withOpacity(0.7),
-                      //                             size: 12,
-                      //                           ),
-                      //                         ],
-                      //                       ),
-                      //                     ],
-                      //                   ),
-                      //                   SizedBox(
-                      //                     height: 24,
-                      //                   ),
-                      //                   Row(
-                      //                     mainAxisAlignment:
-                      //                         MainAxisAlignment.spaceBetween,
-                      //                     children: [
-                      //                       GestureDetector(
-                      //                         onTap: () {
-                      //                           stateSetter(() {
-                      //                             if (showGraph) {
-                      //                               showGraph = false;
-                      //                             } else {
-                      //                               showGraph = true;
-                      //                             }
-                      //                           });
-                      //                         },
-                      //                         child: Image.asset(
-                      //                             "assets/images/pencil.png"),
-                      //                       ),
-                      //                       Spacer(),
-                      //                       GestureDetector(
-                      //                         onTap: () async {
-                      //                           stateSetter(() {
-                      //                             searchKeyword =
-                      //                                 keywordTestTaken[
-                      //                                         indexReport]
-                      //                                     .testname!
-                      //                                     .toLowerCase();
-                      //                           });
-                      //                           await getTest(
-                      //                               context, TestCategory.NONE,
-                      //                               currentQuestionCount:
-                      //                                   keywordTestTaken[
-                      //                                               indexReport]
-                      //                                           .correct! +
-                      //                                       keywordTestTaken[
-                      //                                               indexReport]
-                      //                                           .wrong!);
-                      //                         },
-                      //                         child: Container(
-                      //                           padding: EdgeInsets.symmetric(
-                      //                             horizontal: 20,
-                      //                             vertical: 14,
-                      //                           ),
-                      //                           child: sText(
-                      //                             "Take Test",
-                      //                             color: Colors.white,
-                      //                           ),
-                      //                           decoration: BoxDecoration(
-                      //                             color: kAdeoGreen4,
-                      //                             borderRadius:
-                      //                                 BorderRadius.circular(8),
-                      //                           ),
-                      //                         ),
-                      //                       )
-                      //                     ],
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             );
-                      //           }
-                      //         },
-                      //       ),
-                      //     ],
-                      //   ),
-
+                      if (isActiveTopicMenu && keywordTestTaken.isNotEmpty)
+                        KnowledgeTopicTestWidget(
+                          course: widget.course,
+                          showGraph: showGraph,
+                          getTest: (
+                            BuildContext context,
+                            TestCategory testCategory,
+                            int currentQuestionCount,
+                          ) async {
+                            await getTest(
+                              context,
+                              testCategory,
+                              currentQuestionCount: currentQuestionCount,
+                            );
+                          },
+                        ),
+                      if (isActiveTopicMenu && keywordTestTaken.isNotEmpty)
+                        Spacer(),
                       // Container(
                       //   height: 50,
                       //   child: ListView.builder(
@@ -1092,7 +789,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                           onTap: () {
                             stateSetter(() {
                               sheetHeight = appHeight(context) * 0.90;
-                              searchTap = false;
+                              sheetHeightIncreased = true;
+                              isActiveTopicMenu = false;
+                              searchTap = true;
                             });
                           },
                           decoration: textDecorSuffix(
@@ -1117,7 +816,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                         ),
                       ),
 
-                      if (!searchTap)
+                      if (searchTap)
                         Expanded(
                           child: SingleChildScrollView(
                               child: Padding(
@@ -1327,6 +1026,15 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             MaterialButton(
                               onPressed: () {
                                 getTest(context, TestCategory.TOPIC);
+                                if (!isActiveTopicMenu || searchTap) {
+                                  if (searchTap) searchTap = false;
+                                  sheetHeight = appHeight(context) * 0.90;
+                                  activeMenu = TestCategory.TOPIC;
+                                  if (sheetHeightIncreased)
+                                    isActiveTopicMenu = true;
+                                }
+                                stateSetter(() {});
+                                print("Mommyy: $activeMenu");
                               },
                               padding: EdgeInsets.zero,
                               child: Column(

@@ -18,10 +18,12 @@ class KnowledgeTopicTestWidget extends StatefulWidget {
 
   final bool showGraph;
   final Course course;
-  final Function() getTest;
-  
+  final Future Function(BuildContext context, TestCategory testCategory,
+      int currentQuestionCount) getTest;
+
   @override
-  State<KnowledgeTopicTestWidget> createState() => _KnowledgeTopicTestWidgetState();
+  State<KnowledgeTopicTestWidget> createState() =>
+      _KnowledgeTopicTestWidgetState();
 }
 
 class _KnowledgeTopicTestWidgetState extends State<KnowledgeTopicTestWidget> {
@@ -308,11 +310,12 @@ class _KnowledgeTopicTestWidgetState extends State<KnowledgeTopicTestWidget> {
                                   .testname!
                                   .toLowerCase();
                             });
-                            await widget.getTest;
-                            // getTest(context, TestCategory.NONE,
-                            //     currentQuestionCount:
-                            //         keywordTestTaken[indexReport].correct! +
-                            //             keywordTestTaken[indexReport].wrong!);
+                            await widget.getTest(
+                              context,
+                              TestCategory.NONE,
+                              keywordTestTaken[indexReport].correct! +
+                                  keywordTestTaken[indexReport].wrong!,
+                            );
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
