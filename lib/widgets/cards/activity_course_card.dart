@@ -104,7 +104,7 @@ class ActivityCourseCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: LinearProgressIndicator(
-                      backgroundColor: Color(0xFFEBEBEB),
+                      backgroundColor: kAdeoGray4,
                       color: kAdeoGreen4,
                       minHeight: 7,
                       value: _percentageCompleted,

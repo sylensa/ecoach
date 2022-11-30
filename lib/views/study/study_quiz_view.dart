@@ -14,6 +14,7 @@ import 'package:ecoach/new_learn_mode/controllers/revision_progress_controller.d
 import 'package:ecoach/new_learn_mode/providers/learn_mode_provider.dart';
 import 'package:ecoach/new_learn_mode/providers/revision_attempts_provider.dart';
 import 'package:ecoach/new_learn_mode/screens/revision/successful_revision.dart';
+import 'package:ecoach/views/courses_revamp/course_details_page.dart';
 import 'package:ecoach/views/learn/learn_mastery_feedback.dart';
 import 'package:ecoach/views/learn/learn_mode.dart';
 import 'package:ecoach/views/study/study_cc_results.dart';
@@ -1556,7 +1557,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                 onPressed: () {
                   canExit = true;
                   Navigator.popUntil(
-                      context, ModalRoute.withName(LearnMode.routeName));
+                      context, ModalRoute.withName(CoursesDetailsPage.routeName));
                 },
               ),
               Button(
@@ -1588,7 +1589,7 @@ class _StudyQuizViewState extends State<StudyQuizView> {
                     controller.timerController!.resume();
                   } else if (action == "quit") {
                     Navigator.popUntil(
-                        context, ModalRoute.withName(LearnMode.routeName));
+                        context, ModalRoute.withName(CoursesDetailsPage.routeName));
                   }
                 },
               );

@@ -20,7 +20,7 @@ class BulletRule extends StatelessWidget {
             Flexible(child: Text(rule, style: const TextStyle(color: Colors.white70, fontSize: 15),))
           ],
         ),
-        const SizedBox(height: 10,)
+        const SizedBox(height: 14,)
       ],
     );
   }
