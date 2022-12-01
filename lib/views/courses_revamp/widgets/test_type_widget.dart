@@ -573,7 +573,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
     searchKeywordController.text = searchKeyword.trim();
     setState(() {});
     searchTap = false;
-    double sheetHeight = appHeight(context) * 0.56;
+    double sheetHeight = appHeight(context) * 0.60;
     bool isActiveTopicMenu = false;
     bool sheetHeightIncreased = false;
     late TestCategory activeMenu = TestCategory.NONE;
@@ -966,28 +966,30 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                           ),
                                   ),
                                 ),
-                                Container(
-                                  child: Column(children: [
-                                    Icon(
-                                      Icons.trending_up,
-                                      size: 15,
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Icon(
-                                      Icons.numbers,
-                                      size: 15,
-                                    ),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    if (listQuestions.isEmpty)
-                                      for (var entry
-                                          in groupedCourseKeywordsLists.entries)
-                                        if (entry.value.isNotEmpty)
-                                          Text(entry.key),
-                                  ]),
+                                SingleChildScrollView(
+                                  child: Container(
+                                    child: Column(children: [
+                                      Icon(
+                                        Icons.trending_up,
+                                        size: 15,
+                                      ),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      Icon(
+                                        Icons.numbers,
+                                        size: 15,
+                                      ),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      if (listQuestions.isEmpty)
+                                        for (var entry
+                                            in groupedCourseKeywordsLists.entries)
+                                          if (entry.value.isNotEmpty)
+                                            Text(entry.key),
+                                    ]),
+                                  ),
                                 )
                               ],
                             ),
