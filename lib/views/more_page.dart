@@ -7,6 +7,8 @@ import 'package:ecoach/models/get_agent_code.dart';
 import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_test_controller.dart';
+import 'package:ecoach/revamp/features/knowledge_tests/index.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
@@ -61,6 +63,7 @@ class _MorePageState extends State<MorePage> {
       toastMessage("Failed");
     }
   }
+
   getGroupList() async {
     final bool isConnected = await InternetConnectionChecker().hasConnection;
     if (isConnected) {
@@ -83,6 +86,7 @@ class _MorePageState extends State<MorePage> {
       showNoConnectionToast(context);
     }
   }
+
   getGroupPackList() async {
     listGroupPackageData.clear();
     try {
@@ -95,9 +99,9 @@ class _MorePageState extends State<MorePage> {
           listGroupPackageData.add(groupPackageData);
         }
       }
-      if(viewedGroup){
+      if (viewedGroup) {
         await getGroupList();
-      }else{
+      } else {
         Navigator.pop(context);
         goTo(context, ContentEditor());
       }
@@ -120,9 +124,9 @@ class _MorePageState extends State<MorePage> {
         if (listGroupPackageData.isEmpty) {
           await getGroupPackList();
         } else {
-          if(viewedGroup){
+          if (viewedGroup) {
             await getGroupList();
-          }else{
+          } else {
             Navigator.pop(context);
             goTo(context, ContentEditor());
           }
@@ -140,7 +144,7 @@ class _MorePageState extends State<MorePage> {
   }
 
   @override
- void initState(){
+  void initState() {
     super.initState();
   }
 
@@ -463,13 +467,11 @@ class _MorePageState extends State<MorePage> {
                   MaterialButton(
                     padding: EdgeInsets.zero,
                     onPressed: () async {
-                        listActivePackageData.clear();
-                        showLoaderDialog(context, message: "Loading...");
-                        viewedGroup =  await UserPreferences().getViewGroup();
-                          setState((){
-
-                          });
-                        await getActivePackage();
+                      listActivePackageData.clear();
+                      showLoaderDialog(context, message: "Loading...");
+                      viewedGroup = await UserPreferences().getViewGroup();
+                      setState(() {});
+                      await getActivePackage();
                     },
                     child: Container(
                       padding: EdgeInsets.only(
@@ -546,6 +548,43 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
+                  // MaterialButton(
+                  //   padding: EdgeInsets.zero,
+                  //   onPressed: () {
+                  //     KnowledgeTestController knowledgeTestController =
+                  //         KnowledgeTestController();
+                  //     knowledgeTestController
+                  //         .knowledgeTestModalBottomSheet(context);
+                  //   },
+                  //   child: Container(
+                  //     padding: EdgeInsets.only(
+                  //         left: 10, right: 20, top: 20, bottom: 20),
+                  //     child: Row(
+                  //       children: [
+                  //         SizedBox(
+                  //           width: 20,
+                  //         ),
+                  //         Text(
+                  //           "UI - Knowledge Test",
+                  //           softWrap: true,
+                  //           textAlign: TextAlign.center,
+                  //           style: TextStyle(
+                  //               fontSize: 18.0,
+                  //               fontWeight: FontWeight.w500,
+                  //               color: Color(0XFF2D3E50),
+                  //               height: 1.1,
+                  //               fontFamily: "Poppins"),
+                  //         ),
+                  //         Expanded(child: Container()),
+                  //         Icon(
+                  //           Icons.arrow_forward_ios,
+                  //           color: Colors.grey[400],
+                  //           size: 16,
+                  //         )
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
