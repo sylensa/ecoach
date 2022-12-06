@@ -431,6 +431,7 @@ class _HomePage2ContentState extends State<DashboardContent>
       } else {
         getSubscriptionItem();
       }
+      if(mounted)
       setState(() {
         progressCode = false;
       });
