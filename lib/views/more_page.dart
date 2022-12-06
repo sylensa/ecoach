@@ -8,7 +8,6 @@ import 'package:ecoach/models/group_packages_model.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_test_controller.dart';
-import 'package:ecoach/revamp/features/knowledge_tests/index.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
