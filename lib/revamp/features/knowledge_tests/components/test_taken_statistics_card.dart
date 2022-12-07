@@ -57,7 +57,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     isActiveGraphSide = widget.showGraph;
     flipCardController._state = this;
     animationController = AnimationController(
-      duration: Duration(milliseconds: 300),
+      duration: Duration(milliseconds: 600),
       vsync: this,
     );
 
@@ -163,14 +163,14 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                 final angle = animationController.value * -math.pi;
                 final transform = Matrix4.identity()
                   ..setEntry(3, 2, 0.001)
-                  ..rotateX(angle);
+                  ..rotateY(angle);
 
                 return Transform(
                   transform: transform,
                   alignment: Alignment.center,
                   child: !isFrontCard(angle.abs())
                       ? Transform(
-                          transform: Matrix4.identity()..rotateX(math.pi),
+                          transform: Matrix4.identity()..rotateY(math.pi),
                           alignment: Alignment.center,
                           child: Container(
                             padding: EdgeInsets.all(26),
@@ -317,7 +317,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                           ),
                         )
                       : Transform(
-                          transform: Matrix4.identity()..rotateX(angle),
+                          transform: Matrix4.identity()..rotateY(angle),
                           alignment: Alignment.center,
                           child: Container(
                             padding: EdgeInsets.all(26),
