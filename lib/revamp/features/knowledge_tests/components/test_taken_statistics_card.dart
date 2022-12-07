@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -29,17 +31,28 @@ class TestTakenStatisticCard extends StatefulWidget {
   State<TestTakenStatisticCard> createState() => _TestTakenStatisticCardState();
 }
 
-class _TestTakenStatisticCardState extends State<TestTakenStatisticCard> {
+class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
+    with TickerProviderStateMixin {
   int _currentSlide = 0;
   String searchKeyword = '';
-  late bool _showGraph;
+  late bool isActiveGraphSide;
+  bool isActiveStatisticsSide = true;
   List<TestTaken> topicTestsTaken = [];
   String activeMenuIcon = "assets/icons/courses/";
+  double verticalDrag = 0;
+  late AnimationController animationController;
+  late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
-    _showGraph = widget.showGraph;
+    isActiveGraphSide = widget.showGraph;
+
+    animationController = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+
     topicTestsTaken = [
       TestTaken(
         testname: "ICT",
@@ -93,6 +106,14 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard> {
     }
   }
 
+  setCardSide() {
+    if (verticalDrag <= 90 || verticalDrag >= 270) {
+      isActiveGraphSide = false;
+    } else {
+      isActiveGraphSide = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -119,171 +140,96 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard> {
           ),
           itemCount: topicTestsTaken.length, //Topc Tests Length
           itemBuilder: (BuildContext context, int indexReport, int index2) {
-            if (_showGraph) {
-              return Container(
-                padding: EdgeInsets.all(26),
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[
-                      Color(0xFFFFFFFF),
-                      Color(0xFFEEEEEE),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(6),
-                          width: 28,
-                          height: 28,
-                          child: Image.asset(
-                            activeMenuIcon,
-                            width: 18,
+            double rotateFrontXAngle = verticalDrag / 180 * pi;
+            double rotateBackXAngle = pi;
+
+            return GestureDetector(
+              onVerticalDragStart: (details) {
+                animationController.reset();
+                setState(() {
+                  verticalDrag = 0;
+                });
+              },
+              onVerticalDragUpdate: (details) {
+                setState(() {
+                  verticalDrag += details.delta.dy;
+                  verticalDrag %= 360;
+
+                  if (isActiveStatisticsSide) {
+                    if (verticalDrag <= 90) {
+                      isActiveGraphSide = false;
+                    } else if (verticalDrag >= 270) {
+                      isActiveGraphSide = false;
+                    } else {
+                      isActiveGraphSide = true;
+                    }
+                  } else {
+                    if (verticalDrag <= 90 || verticalDrag >= 270) {
+                      isActiveGraphSide = true;
+                    } else {
+                      isActiveGraphSide = false;
+                    }
+                  }
+                });
+              },
+              onVerticalDragEnd: (details) {
+                final double end;
+
+                if (verticalDrag >= 270 && verticalDrag <= 360) {
+                  end = 360;
+                } else {
+                  end = 0;
+                }
+
+                animation = Tween<double>(begin: verticalDrag, end: end)
+                    .animate(animationController)
+                  ..addListener(() {
+                    setState(() {
+                      verticalDrag = animation.value;
+                    });
+                  });
+
+                if (verticalDrag > 95) {
+                  isActiveStatisticsSide = isActiveGraphSide ? false : true;
+                } else if (verticalDrag <= 180) {
+                  isActiveStatisticsSide = isActiveGraphSide ? false : true;
+                } else {
+                  isActiveGraphSide && isActiveStatisticsSide
+                      ? isActiveGraphSide = false
+                      : isActiveGraphSide = true;
+                }
+
+                animationController.forward();
+              },
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateX(rotateFrontXAngle),
+                alignment: Alignment.center,
+                child: isActiveGraphSide
+                    ? Transform(
+                        transform: Matrix4.identity(),
+                        alignment: Alignment.center,
+                        child: Container(
+                          padding: EdgeInsets.all(26),
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFFEAEAEA),
-                            borderRadius: BorderRadius.circular(8),
-                            shape: BoxShape.rectangle,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        sText(
-                          "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
-                          color: Colors.black,
-                          weight: FontWeight.w500,
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 18,
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(26),
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFEAEAEA),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Graph goes here",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black38,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 18,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (_showGraph) {
-                                _showGraph = false;
-                              } else {
-                                _showGraph = true;
-                              }
-                            });
-                          },
-                          child: Image.asset("assets/icons/courses/exchange.png", width: 30,),
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () async {
-                            setState(() {
-                              searchKeyword = topicTestsTaken[indexReport]
-                                  .testname!
-                                  .toLowerCase();
-                            });
-                            await widget.getTest(
-                              context,
-                              TestCategory.NONE,
-                              topicTestsTaken[indexReport].correct! +
-                                  topicTestsTaken[indexReport].wrong!,
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
-                            ),
-                            child: Row(
-                              children: [
-                                Image.asset("assets/icons/courses/right-arrow.png"),
-                                SizedBox(width: 8,),
-                                sText("Analysis",
-                                    color: Colors.black, weight: FontWeight.normal),
+                            color: Colors.white,
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: <Color>[
+                                Color(0xFFFFFFFF),
+                                Color(0xFFEEEEEE),
                               ],
                             ),
-                            decoration: BoxDecoration(
-                              color: kAdeoBlue2.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: kAdeoBlue,
-                              ),
-                            ),
+                            borderRadius: BorderRadius.circular(24),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              );
-
-            } else {
-              return Container(
-                padding: EdgeInsets.all(26),
-                margin: EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/images/oval-pattern.png"),
-                    fit: BoxFit.cover,
-                  ),
-                  color: Color(0XFF0ff0364AE),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[
-                      Color(0xFF0364AE),
-                      Color(0xFF023760),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
                           child: Column(
+                            mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
@@ -296,7 +242,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard> {
                                       width: 18,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Color(0xFFEAEAEA),
                                       borderRadius: BorderRadius.circular(8),
                                       shape: BoxShape.rectangle,
                                     ),
@@ -306,216 +252,378 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard> {
                                   ),
                                   sText(
                                     "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
-                                    color: Colors.white,
-                                    weight: FontWeight.bold,
+                                    color: Colors.black,
+                                    weight: FontWeight.w500,
                                     size: 16,
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  topicTestsTaken[indexReport].scoreDiff! > 0
-                                      ? Image.asset(
-                                          "assets/images/un_fav.png",
-                                          color: Colors.green,
-                                          width: 25,
-                                        )
-                                      : SvgPicture.asset(
-                                          "assets/images/fav.svg",
-                                          width: 25,
-                                        ),
-                                  SizedBox(
-                                    width: 12,
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.all(26),
+                                  width: double.maxFinite,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFEAEAEA),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
-                                  sText(
-                                    "${topicTestsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${topicTestsTaken[indexReport].scoreDiff!}",
-                                    color: Colors.white,
-                                    weight: FontWeight.bold,
-                                    size: 16,
+                                  child: Center(
+                                    child: Text(
+                                      "Graph goes here",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black38,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 18,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isActiveGraphSide) {
+                                          isActiveGraphSide = false;
+                                        } else {
+                                          isActiveGraphSide = true;
+                                        }
+                                      });
+                                    },
+                                    child: Image.asset(
+                                      "assets/icons/courses/exchange.png",
+                                      width: 30,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      setState(() {
+                                        searchKeyword =
+                                            topicTestsTaken[indexReport]
+                                                .testname!
+                                                .toLowerCase();
+                                      });
+                                      await widget.getTest(
+                                        context,
+                                        TestCategory.NONE,
+                                        topicTestsTaken[indexReport].correct! +
+                                            topicTestsTaken[indexReport].wrong!,
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 12,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                              "assets/icons/courses/right-arrow.png"),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          sText("Analysis",
+                                              color: Colors.black,
+                                              weight: FontWeight.normal),
+                                        ],
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: kAdeoBlue2.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: kAdeoBlue,
+                                        ),
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 28,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            sText(
-                              "${topicTestsTaken[indexReport].total_test_taken}",
-                              size: 34,
-                              weight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            sText(
-                              "times taken",
-                              size: 12,
-                              color: Colors.white.withOpacity(0.7),
-                              weight: FontWeight.w300,
-                              style: FontStyle.italic,
-                            ),
-                          ],
+                      )
+                    : Container(
+                        padding: EdgeInsets.all(26),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 10,
                         ),
-                        Column(
-                          children: [
-                            sText(
-                              "${topicTestsTaken[indexReport].score!.round()}%",
-                              size: 34,
-                              weight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            sText(
-                              "mastery",
-                              size: 12,
-                              color: Colors.white.withOpacity(0.7),
-                              weight: FontWeight.w300,
-                              style: FontStyle.italic,
-                            ),
-                          ],
-                        ),
-                        Container(
-                          child: Column(
-                            children: [
-                              AdeoSignalStrengthIndicator(
-                                strength: topicTestsTaken[indexReport].score!,
-                                size: Sizes.small,
-                              ),
-                              SizedBox(
-                                height: 26,
-                              ),
-                              sText(
-                                "strength",
-                                size: 12,
-                                color: Colors.white.withOpacity(0.7),
-                                weight: FontWeight.w300,
-                                style: FontStyle.italic,
-                              ),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("assets/images/oval-pattern.png"),
+                            fit: BoxFit.cover,
+                          ),
+                          color: Color(0XFF0ff0364AE),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              Color(0xFF0364AE),
+                              Color(0xFF023760),
                             ],
                           ),
+                          borderRadius: BorderRadius.circular(24),
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: LinearProgressIndicator(
-                        color: Color(0XFF00C9B9),
-                        backgroundColor: Color(0XFF0367B4),
-                        value: (topicTestsTaken[indexReport].correct! +
-                                topicTestsTaken[indexReport].wrong!) /
-                            topicTestsTaken[indexReport].totalQuestions,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        sText(
-                          "exposure",
-                          size: 12,
-                          color: Colors.white.withOpacity(0.7),
-                          weight: FontWeight.w300,
-                          style: FontStyle.italic,
-                        ),
-                        Row(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            sText(
-                              "${topicTestsTaken[indexReport].correct! + topicTestsTaken[indexReport].wrong!}",
-                              color: Colors.white,
-                              weight: FontWeight.bold,
-                              size: 12,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(6),
+                                            width: 28,
+                                            height: 28,
+                                            child: Image.asset(
+                                              activeMenuIcon,
+                                              width: 18,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              shape: BoxShape.rectangle,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 12,
+                                          ),
+                                          sText(
+                                            "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
+                                            color: Colors.white,
+                                            weight: FontWeight.bold,
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          topicTestsTaken[indexReport]
+                                                      .scoreDiff! >
+                                                  0
+                                              ? Image.asset(
+                                                  "assets/images/un_fav.png",
+                                                  color: Colors.green,
+                                                  width: 25,
+                                                )
+                                              : SvgPicture.asset(
+                                                  "assets/images/fav.svg",
+                                                  width: 25,
+                                                ),
+                                          SizedBox(
+                                            width: 12,
+                                          ),
+                                          sText(
+                                            "${topicTestsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${topicTestsTaken[indexReport].scoreDiff!}",
+                                            color: Colors.white,
+                                            weight: FontWeight.bold,
+                                            size: 16,
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            sText(
-                              " / ${topicTestsTaken[indexReport].totalQuestions} Q",
-                              color: Colors.white.withOpacity(0.7),
-                              size: 12,
+                            SizedBox(
+                              height: 28,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    sText(
+                                      "${topicTestsTaken[indexReport].total_test_taken}",
+                                      size: 34,
+                                      weight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    sText(
+                                      "times taken",
+                                      size: 12,
+                                      color: Colors.white.withOpacity(0.7),
+                                      weight: FontWeight.w300,
+                                      style: FontStyle.italic,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    sText(
+                                      "${topicTestsTaken[indexReport].score!.round()}%",
+                                      size: 34,
+                                      weight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    sText(
+                                      "mastery",
+                                      size: 12,
+                                      color: Colors.white.withOpacity(0.7),
+                                      weight: FontWeight.w300,
+                                      style: FontStyle.italic,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      AdeoSignalStrengthIndicator(
+                                        strength:
+                                            topicTestsTaken[indexReport].score!,
+                                        size: Sizes.small,
+                                      ),
+                                      SizedBox(
+                                        height: 26,
+                                      ),
+                                      sText(
+                                        "strength",
+                                        size: 12,
+                                        color: Colors.white.withOpacity(0.7),
+                                        weight: FontWeight.w300,
+                                        style: FontStyle.italic,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: LinearProgressIndicator(
+                                color: Color(0XFF00C9B9),
+                                backgroundColor: Color(0XFF0367B4),
+                                value: (topicTestsTaken[indexReport].correct! +
+                                        topicTestsTaken[indexReport].wrong!) /
+                                    topicTestsTaken[indexReport].totalQuestions,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                sText(
+                                  "exposure",
+                                  size: 12,
+                                  color: Colors.white.withOpacity(0.7),
+                                  weight: FontWeight.w300,
+                                  style: FontStyle.italic,
+                                ),
+                                Row(
+                                  children: [
+                                    sText(
+                                      "${topicTestsTaken[indexReport].correct! + topicTestsTaken[indexReport].wrong!}",
+                                      color: Colors.white,
+                                      weight: FontWeight.bold,
+                                      size: 12,
+                                    ),
+                                    sText(
+                                      " / ${topicTestsTaken[indexReport].totalQuestions} Q",
+                                      color: Colors.white.withOpacity(0.7),
+                                      size: 12,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 24,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (isActiveGraphSide) {
+                                        isActiveGraphSide = false;
+                                      } else {
+                                        isActiveGraphSide = true;
+                                      }
+                                    });
+                                  },
+                                  child:
+                                      Image.asset("assets/images/pencil.png"),
+                                ),
+                                Spacer(),
+                                GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      searchKeyword =
+                                          topicTestsTaken[indexReport]
+                                              .testname!
+                                              .toLowerCase();
+                                    });
+                                    await widget.getTest(
+                                      context,
+                                      TestCategory.NONE,
+                                      topicTestsTaken[indexReport].correct! +
+                                          topicTestsTaken[indexReport].wrong!,
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 12,
+                                    ),
+                                    child: sText(
+                                      "Take Test",
+                                      color: Colors.white,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: kAdeoGreen4,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (_showGraph) {
-                                _showGraph = false;
-                              } else {
-                                _showGraph = true;
-                              }
-                            });
-                          },
-                          child: Image.asset("assets/images/pencil.png"),
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () async {
-                            setState(() {
-                              searchKeyword = topicTestsTaken[indexReport]
-                                  .testname!
-                                  .toLowerCase();
-                            });
-                            await widget.getTest(
-                              context,
-                              TestCategory.NONE,
-                              topicTestsTaken[indexReport].correct! +
-                                  topicTestsTaken[indexReport].wrong!,
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
-                            ),
-                            child: sText(
-                              "Take Test",
-                              color: Colors.white,
-                            ),
-                            decoration: BoxDecoration(
-                              color: kAdeoGreen4,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }
+                      ),
+              ),
+            );
           },
         ),
       ],
