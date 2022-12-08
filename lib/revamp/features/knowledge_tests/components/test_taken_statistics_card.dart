@@ -4,12 +4,14 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_test_controller.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/keyword/keyword_graph.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class FlipCardController {
   _TestTakenStatisticCardState? _state;
@@ -24,11 +26,13 @@ class TestTakenStatisticCard extends StatefulWidget {
     required this.course,
     required this.getTest,
     this.activeMenu = TestCategory.NONE,
+    required this.knowledgeTestControllerModel,
   }) : super(key: key);
 
   final bool showGraph;
   final Course course;
   final TestCategory activeMenu;
+  final KnowledgeTestControllerModel knowledgeTestControllerModel;
 
   final Future Function(BuildContext context, TestCategory testCategory,
       int currentQuestionCount) getTest;
@@ -42,7 +46,9 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   int _currentSlide = 0;
   String searchKeyword = '';
   late bool isActiveGraphSide;
-  bool isActiveStatisticsSide = true;
+  bool isActiveStatisticsSide = false;
+
+  TestCategory analysisTestType = TestCategory.NONE;
   List<TestTaken> topicTestsTaken = [];
   String activeMenuIcon = "assets/icons/courses/";
 
@@ -115,7 +121,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   }
 
   Future flipCard() async {
-    isActiveStatisticsSide = !isActiveStatisticsSide;
+    print("hey: $isActiveStatisticsSide");
     if (animationController.isAnimating) return;
 
     if (isActiveStatisticsSide) {
@@ -123,6 +129,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     } else {
       await animationController.forward();
     }
+      isActiveStatisticsSide = !isActiveStatisticsSide;
   }
 
   bool isFrontCard(double angle) {
@@ -139,187 +146,269 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
         SizedBox(
           height: 20,
         ),
-        CarouselSlider.builder(
-          options: CarouselOptions(
-            height: 300,
-            autoPlay: false,
-            enableInfiniteScroll: false,
-            autoPlayAnimationDuration: Duration(seconds: 1),
-            enlargeCenterPage: false,
-            viewportFraction: 1,
-            aspectRatio: 2.0,
-            pageSnapping: true,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentSlide = index;
-              });
-            },
-          ),
-          itemCount: topicTestsTaken.length, //Topc Tests Length
-          itemBuilder: (BuildContext context, int indexReport, int index2) {
-            return AnimatedBuilder(
-              animation: animationController,
-              builder: (BuildContext context, Widget? child) {
-                final angle = animationController.value * -math.pi;
-                final transform = Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(angle);
+        SingleChildScrollView(
+          physics: widget.knowledgeTestControllerModel.isShowAnalysisBox
+              ? BouncingScrollPhysics()
+              : NeverScrollableScrollPhysics(),
+          child: CarouselSlider.builder(
+            options: CarouselOptions(
+              height: widget.knowledgeTestControllerModel.isShowAnalysisBox
+                  ? 600
+                  : 300,
+              autoPlay: false,
+              enableInfiniteScroll: false,
+              autoPlayAnimationDuration: Duration(seconds: 1),
+              enlargeCenterPage: false,
+              viewportFraction: 1,
+              aspectRatio: 2.0,
+              pageSnapping: true,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentSlide = index;
+                });
+              },
+            ),
+            itemCount: topicTestsTaken.length, //Topc Tests Length
+            itemBuilder: (BuildContext context, int indexReport, int index2) {
+              return AnimatedBuilder(
+                animation: animationController,
+                builder: (BuildContext context, Widget? child) {
+                  final angle = animationController.value * -math.pi;
+                  final transform = Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(angle);
 
-                return Transform(
-                  transform: transform,
-                  alignment: Alignment.center,
-                  child: !isFrontCard(angle.abs())
-                      ? Transform(
-                          transform: Matrix4.identity()..rotateY(math.pi),
-                          alignment: Alignment.center,
-                          child: Container(
-                            padding: EdgeInsets.all(26),
-                            margin: EdgeInsets.symmetric(
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: <Color>[
-                                  Color(0xFFFFFFFF),
-                                  Color(0xFFEEEEEE),
-                                ],
+                  return Transform(
+                    transform: transform,
+                    alignment: Alignment.center,
+                    child: !isFrontCard(angle.abs())
+                        ? Transform(
+                            transform: Matrix4.identity()..rotateY(math.pi),
+                            alignment: Alignment.center,
+                            child: Container(
+                              padding: EdgeInsets.all(26),
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 10,
                               ),
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(6),
-                                      width: 28,
-                                      height: 28,
-                                      child: Image.asset(
-                                        activeMenuIcon,
-                                        width: 18,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFEAEAEA),
-                                        borderRadius: BorderRadius.circular(8),
-                                        shape: BoxShape.rectangle,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 12,
-                                    ),
-                                    sText(
-                                      "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
-                                      color: Colors.black,
-                                      weight: FontWeight.w500,
-                                      size: 16,
-                                    ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: <Color>[
+                                    Color(0xFFFFFFFF),
+                                    Color(0xFFEEEEEE),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 18,
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.all(26),
-                                    width: double.maxFinite,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFEAEAEA),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Graph goes here",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black38,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 18,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        flipCardController.flipCard();
-                                        // setState(() {
-                                        //   if (isActiveGraphSide) {
-                                        //     isActiveGraphSide = false;
-                                        //   } else {
-                                        //     isActiveGraphSide = true;
-                                        //   }
-                                        // });
-                                      },
-                                      child: Image.asset(
-                                        "assets/icons/courses/exchange.png",
-                                        width: 30,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        setState(() {
-                                          searchKeyword =
-                                              topicTestsTaken[indexReport]
-                                                  .testname!
-                                                  .toLowerCase();
-                                        });
-                                        await widget.getTest(
-                                          context,
-                                          TestCategory.NONE,
-                                          topicTestsTaken[indexReport]
-                                                  .correct! +
-                                              topicTestsTaken[indexReport]
-                                                  .wrong!,
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 14,
-                                          vertical: 12,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                                "assets/icons/courses/right-arrow.png"),
-                                            SizedBox(
-                                              width: 8,
-                                            ),
-                                            sText("Analysis",
-                                                color: Colors.black,
-                                                weight: FontWeight.normal),
-                                          ],
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(6),
+                                        width: 28,
+                                        height: 28,
+                                        child: Image.asset(
+                                          activeMenuIcon,
+                                          width: 18,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: kAdeoBlue2.withOpacity(0.1),
+                                          color: Color(0xFFEAEAEA),
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: kAdeoBlue,
-                                          ),
+                                          shape: BoxShape.rectangle,
                                         ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              ],
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      sText(
+                                        "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
+                                        color: Colors.black,
+                                        weight: FontWeight.w500,
+                                        size: 16,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 14,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        AnimatedContainer(
+                                          padding: EdgeInsets.all(16),
+                                          width: double.maxFinite,
+                                          constraints: BoxConstraints(
+                                            minHeight: widget
+                                                    .knowledgeTestControllerModel
+                                                    .isShowAnalysisBox
+                                                ? 56
+                                                : 146,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFFEAEAEA),
+                                            borderRadius: BorderRadius.circular(
+                                              widget.knowledgeTestControllerModel
+                                                      .isShowAnalysisBox
+                                                  ? 12
+                                                  : 16,
+                                            ),
+                                          ),
+                                          duration: Duration(milliseconds: 600),
+                                          curve: Curves.linearToEaseOut,
+                                          child: Center(
+                                            child: widget
+                                                    .knowledgeTestControllerModel
+                                                    .isShowAnalysisBox
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {},
+                                                        child: Image.asset(
+                                                          "assets/images/pencil.png",
+                                                          width: 20,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "Graph",
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.black38,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )
+                                                : Text(
+                                                    "Graph goes here",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black38,
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                        if (widget.knowledgeTestControllerModel
+                                            .isShowAnalysisBox)
+                                          Expanded(
+                                            child: AnimatedContainer(
+                                              margin: EdgeInsets.only(
+                                                  top: 18, bottom: 18),
+                                              padding: EdgeInsets.all(16),
+                                              width: double.maxFinite,
+                                              constraints: BoxConstraints(
+                                                minHeight: widget
+                                                        .knowledgeTestControllerModel
+                                                        .isShowAnalysisBox
+                                                    ? 146
+                                                    : 56,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    kAdeoBlue2.withOpacity(0.1),
+                                                border: Border.all(
+                                                  color: kAdeoBlue,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                  widget.knowledgeTestControllerModel
+                                                          .isShowAnalysisBox
+                                                      ? 16
+                                                      : 12,
+                                                ),
+                                              ),
+                                              duration:
+                                                  Duration(milliseconds: 600),
+                                              curve: Curves.linearToEaseOut,
+                                              child: Column(
+                                                children: [],
+                                              ),
+                                            ),
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 14,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (widget
+                                              .knowledgeTestControllerModel
+                                              .isShowAnalysisBox) {
+                                            widget.knowledgeTestControllerModel
+                                                .isShowAnalysisBox = false;
+                                          }
+                                          flipCardController.flipCard();
+                                        },
+                                        child: Image.asset(
+                                          "assets/icons/courses/exchange.png",
+                                          width: 30,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          setState(() {
+                                            widget.knowledgeTestControllerModel
+                                                    .isShowAnalysisBox =
+                                                !widget
+                                                    .knowledgeTestControllerModel
+                                                    .isShowAnalysisBox;
+
+                                            analysisTestType = widget
+                                                    .knowledgeTestControllerModel
+                                                    .isShowAnalysisBox
+                                                ? TestCategory.TOPIC
+                                                : TestCategory.NONE;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 12,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Image.asset(
+                                                  "assets/icons/courses/right-arrow.png"),
+                                              SizedBox(
+                                                width: 8,
+                                              ),
+                                              sText("Analysis",
+                                                  color: Colors.black,
+                                                  weight: FontWeight.normal),
+                                            ],
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: kAdeoBlue2.withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                              color: kAdeoBlue,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                      : Transform(
-                          transform: Matrix4.identity()..rotateY(angle),
-                          alignment: Alignment.center,
-                          child: Container(
+                          )
+                        : Container(
                             padding: EdgeInsets.all(26),
                             margin: EdgeInsets.symmetric(
                               horizontal: 10,
@@ -556,13 +645,13 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     GestureDetector(
                                       onTap: () {
                                         flipCardController.flipCard();
-                                        setState(() {
-                                          if (isActiveGraphSide) {
-                                            isActiveGraphSide = false;
-                                          } else {
-                                            isActiveGraphSide = true;
-                                          }
-                                        });
+                                        // setState(() {
+                                        //   if (isActiveGraphSide) {
+                                        //     isActiveGraphSide = false;
+                                        //   } else {
+                                        //     isActiveGraphSide = true;
+                                        //   }
+                                        // });
                                       },
                                       child: Image.asset(
                                           "assets/images/pencil.png"),
@@ -606,11 +695,11 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                               ],
                             ),
                           ),
-                        ),
-                );
-              },
-            );
-          },
+                  );
+                },
+              );
+            },
+          ),
         ),
       ],
     );
