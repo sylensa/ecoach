@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_test_controller.dart';
+import 'package:ecoach/revamp/features/knowledge_tests/widgets/topic_analysis_table.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/keyword/keyword_graph.dart';
@@ -129,7 +131,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     } else {
       await animationController.forward();
     }
-      isActiveStatisticsSide = !isActiveStatisticsSide;
+    isActiveStatisticsSide = !isActiveStatisticsSide;
   }
 
   bool isFrontCard(double angle) {
@@ -241,59 +243,67 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                   Expanded(
                                     child: Column(
                                       children: [
-                                        AnimatedContainer(
-                                          padding: EdgeInsets.all(16),
-                                          width: double.maxFinite,
-                                          constraints: BoxConstraints(
-                                            minHeight: widget
-                                                    .knowledgeTestControllerModel
-                                                    .isShowAnalysisBox
-                                                ? 56
-                                                : 146,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFFEAEAEA),
-                                            borderRadius: BorderRadius.circular(
-                                              widget.knowledgeTestControllerModel
+                                        GestureDetector(
+                                          onTap: (() {
+                                            if (widget
+                                                .knowledgeTestControllerModel
+                                                .isShowAnalysisBox)
+                                              toggleAnalysis();
+                                          }),
+                                          child: AnimatedContainer(
+                                            padding: EdgeInsets.all(16),
+                                            width: double.maxFinite,
+                                            constraints: BoxConstraints(
+                                              minHeight: widget
+                                                      .knowledgeTestControllerModel
                                                       .isShowAnalysisBox
-                                                  ? 12
-                                                  : 16,
+                                                  ? 56
+                                                  : 146,
                                             ),
-                                          ),
-                                          duration: Duration(milliseconds: 600),
-                                          curve: Curves.linearToEaseOut,
-                                          child: Center(
-                                            child: widget
-                                                    .knowledgeTestControllerModel
-                                                    .isShowAnalysisBox
-                                                ? Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      GestureDetector(
-                                                        onTap: () {},
-                                                        child: Image.asset(
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFEAEAEA),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                widget.knowledgeTestControllerModel
+                                                        .isShowAnalysisBox
+                                                    ? 12
+                                                    : 16,
+                                              ),
+                                            ),
+                                            duration:
+                                                Duration(milliseconds: 600),
+                                            curve: Curves.linearToEaseOut,
+                                            child: Center(
+                                              child: widget
+                                                      .knowledgeTestControllerModel
+                                                      .isShowAnalysisBox
+                                                  ? Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Image.asset(
                                                           "assets/images/pencil.png",
                                                           width: 20,
                                                         ),
+                                                        Text(
+                                                          "Graph",
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.black38,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    )
+                                                  : Text(
+                                                      "Graph goes here",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.black38,
                                                       ),
-                                                      Text(
-                                                        "Graph",
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.black38,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  )
-                                                : Text(
-                                                    "Graph goes here",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.black38,
                                                     ),
-                                                  ),
+                                            ),
                                           ),
                                         ),
                                         if (widget.knowledgeTestControllerModel
@@ -328,8 +338,10 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                               duration:
                                                   Duration(milliseconds: 600),
                                               curve: Curves.linearToEaseOut,
-                                              child: Column(
-                                                children: [],
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: AnalyticsTable(),
                                               ),
                                             ),
                                           )
@@ -361,19 +373,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                       Spacer(),
                                       GestureDetector(
                                         onTap: () async {
-                                          setState(() {
-                                            widget.knowledgeTestControllerModel
-                                                    .isShowAnalysisBox =
-                                                !widget
-                                                    .knowledgeTestControllerModel
-                                                    .isShowAnalysisBox;
-
-                                            analysisTestType = widget
-                                                    .knowledgeTestControllerModel
-                                                    .isShowAnalysisBox
-                                                ? TestCategory.TOPIC
-                                                : TestCategory.NONE;
-                                          });
+                                          toggleAnalysis();
                                         },
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
@@ -654,7 +654,8 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         // });
                                       },
                                       child: Image.asset(
-                                          "assets/images/pencil.png"),
+                                        "assets/images/pencil.png",
+                                      ),
                                     ),
                                     Spacer(),
                                     GestureDetector(
@@ -709,5 +710,16 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   void dispose() {
     super.dispose();
     animationController.dispose();
+  }
+
+  void toggleAnalysis() {
+    setState(() {
+      widget.knowledgeTestControllerModel.isShowAnalysisBox =
+          !widget.knowledgeTestControllerModel.isShowAnalysisBox;
+
+      analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
+          ? TestCategory.TOPIC
+          : TestCategory.NONE;
+    });
   }
 }
