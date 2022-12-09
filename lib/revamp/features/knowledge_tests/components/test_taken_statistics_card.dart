@@ -123,7 +123,6 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   }
 
   Future flipCard() async {
-    print("hey: $isActiveStatisticsSide");
     if (animationController.isAnimating) return;
 
     if (isActiveStatisticsSide) {

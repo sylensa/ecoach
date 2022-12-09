@@ -264,7 +264,9 @@ class KnowledgeTestController {
                                       ? 600
                                       : isActiveAnyMenu
                                           ? 666
-                                          : 346,
+                                          : !smallHeightDevice && searchTap
+                                              ? 660
+                                              : 346,
                                   width: double.maxFinite,
                                   child: Column(
                                     children: [
@@ -345,156 +347,166 @@ class KnowledgeTestController {
                                                 if (searchTap)
                                                   Expanded(
                                                     child: Container(
-                                                        child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                        left: 20.0,
-                                                        right: 14.0,
-                                                        top: 26,
-                                                        bottom: 14,
-                                                      ),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SingleChildScrollView(
-                                                            child: Container(
-                                                              child:
-                                                                  listQuestions
-                                                                          .isEmpty
-                                                                      ? Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            sText("Most Popular",
-                                                                                weight: FontWeight.w600),
-                                                                            SizedBox(
-                                                                              height: 14,
-                                                                            ),
-                                                                            for (var entry
-                                                                                in groupedCourseKeywordsLists.entries)
-                                                                              if (entry.value.isNotEmpty)
-                                                                                Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Text(entry.key),
-                                                                                    for (int i = 0; i < entry.value.length; i++)
-                                                                                      if (properCase("${entry.value[i].keyword}").isNotEmpty)
-                                                                                        MaterialButton(
-                                                                                          padding: EdgeInsets.zero,
-                                                                                          onPressed: () async {},
-                                                                                          child: Column(
-                                                                                            children: [
-                                                                                              Row(
-                                                                                                children: [
-                                                                                                  Icon(Icons.trending_up),
-                                                                                                  SizedBox(
-                                                                                                    width: 10,
-                                                                                                  ),
-                                                                                                  Column(
-                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                    children: [
-                                                                                                      sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
-                                                                                                      sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
-                                                                                                    ],
-                                                                                                  ),
-                                                                                                ],
-                                                                                              ),
-                                                                                              SizedBox(
-                                                                                                height: 10,
-                                                                                              ),
-                                                                                            ],
-                                                                                          ),
-                                                                                        )
-                                                                                  ],
-                                                                                )
-                                                                          ],
-                                                                        )
-                                                                      : Column(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            sText("Search Result",
-                                                                                weight: FontWeight.w600),
-                                                                            SizedBox(
-                                                                              height: 10,
-                                                                            ),
-                                                                            MaterialButton(
-                                                                              padding: EdgeInsets.zero,
-                                                                              onPressed: () async {
-                                                                                // stateSetter(() {});
-                                                                                // await getTest(context,
-                                                                                //     TestCategory.NONE);
-                                                                              },
-                                                                              child: Column(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 20.0,
+                                                          right: 14.0,
+                                                          top: 26,
+                                                          bottom: 14,
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            SingleChildScrollView(
+                                                              child: Container(
+                                                                child: listQuestions
+                                                                        .isEmpty
+                                                                    ? Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          sText(
+                                                                              "Most Popular",
+                                                                              weight: FontWeight.w600),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                14,
+                                                                          ),
+                                                                          for (var entry
+                                                                              in groupedCourseKeywordsLists.entries)
+                                                                            if (entry.value.isNotEmpty)
+                                                                              Column(
+                                                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                                                 children: [
-                                                                                  Row(
-                                                                                    children: [
-                                                                                      Icon(Icons.trending_up),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      Column(
-                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                        children: [
-                                                                                          sText("${properCase("")}", weight: FontWeight.bold),
-                                                                                          sText("${listQuestions.length} appearances", size: 12, color: kAdeoGray3),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ],
-                                                                                  ),
+                                                                                  Text(entry.key),
+                                                                                  for (int i = 0; i < entry.value.length; i++)
+                                                                                    if (properCase("${entry.value[i].keyword}").isNotEmpty)
+                                                                                      MaterialButton(
+                                                                                        padding: EdgeInsets.zero,
+                                                                                        onPressed: () async {},
+                                                                                        child: Column(
+                                                                                          children: [
+                                                                                            Row(
+                                                                                              children: [
+                                                                                                Icon(Icons.trending_up),
+                                                                                                SizedBox(
+                                                                                                  width: 10,
+                                                                                                ),
+                                                                                                Column(
+                                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                  children: [
+                                                                                                    sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
+                                                                                                    sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                            SizedBox(
+                                                                                              height: 10,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      )
                                                                                 ],
-                                                                              ),
-                                                                            )
-                                                                          ],
-                                                                        ),
+                                                                              )
+                                                                        ],
+                                                                      )
+                                                                    : Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          sText(
+                                                                              "Search Result",
+                                                                              weight: FontWeight.w600),
+                                                                          SizedBox(
+                                                                            height:
+                                                                                10,
+                                                                          ),
+                                                                          MaterialButton(
+                                                                            padding:
+                                                                                EdgeInsets.zero,
+                                                                            onPressed:
+                                                                                () async {
+                                                                              // stateSetter(() {});
+                                                                              // await getTest(context,
+                                                                              //     TestCategory.NONE);
+                                                                            },
+                                                                            child:
+                                                                                Column(
+                                                                              children: [
+                                                                                Row(
+                                                                                  children: [
+                                                                                    Icon(Icons.trending_up),
+                                                                                    SizedBox(
+                                                                                      width: 10,
+                                                                                    ),
+                                                                                    Column(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        sText("${properCase("")}", weight: FontWeight.bold),
+                                                                                        sText("${listQuestions.length} appearances", size: 12, color: kAdeoGray3),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                          SingleChildScrollView(
-                                                            child: Container(
-                                                              child: Column(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .trending_up,
-                                                                      size: 15,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 4,
-                                                                    ),
-                                                                    Icon(
-                                                                      Icons
-                                                                          .numbers,
-                                                                      size: 15,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height: 4,
-                                                                    ),
-                                                                    if (listQuestions
-                                                                        .isEmpty)
-                                                                      for (var entry
-                                                                          in groupedCourseKeywordsLists
-                                                                              .entries)
-                                                                        if (entry
-                                                                            .value
-                                                                            .isNotEmpty)
-                                                                          Text(entry
-                                                                              .key),
-                                                                  ]),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )),
+                                                            SingleChildScrollView(
+                                                              child: Container(
+                                                                child: Column(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .trending_up,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            4,
+                                                                      ),
+                                                                      Icon(
+                                                                        Icons
+                                                                            .numbers,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            4,
+                                                                      ),
+                                                                      if (listQuestions
+                                                                          .isEmpty)
+                                                                        for (var entry
+                                                                            in groupedCourseKeywordsLists
+                                                                                .entries)
+                                                                          if (entry
+                                                                              .value
+                                                                              .isNotEmpty)
+                                                                            Text(entry.key),
+                                                                    ]),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )),
                                                   ),
-                                                if (!searchTap &&
-                                                    !keywordTestTaken
-                                                        .isNotEmpty)
-                                                  Spacer(),
+                                                // if (!searchTap &&
+                                                //     !keywordTestTaken
+                                                //         .isNotEmpty)
+                                                //   Spacer(),
+
+                                                // MENUS
                                                 Container(
                                                   margin: EdgeInsets.only(
                                                     top: 14,
