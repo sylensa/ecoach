@@ -1,12 +1,81 @@
+import 'dart:math' as math;
+
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/revamp/features/knowledge_tests/components/alphabet_scroll_slider.dart';
 import 'package:ecoach/revamp/features/knowledge_tests/components/test_taken_statistics_card.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+class CustomSliderThumbCircle extends SliderComponentShape {
+  final double thumbRadius;
+  final int min;
+  final int max;
+  final double elevation;
+
+  const CustomSliderThumbCircle({
+    required this.thumbRadius,
+    this.min = 0,
+    this.max = 10,
+    this.elevation = 1.0,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size.fromRadius(thumbRadius);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final Canvas canvas = context.canvas;
+
+    final fillPaint = Paint()
+      ..color = sliderTheme.thumbColor!
+      ..style = PaintingStyle.fill;
+
+    final borderPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = thumbRadius
+      ..style = PaintingStyle.stroke;
+
+    final Path shadowPath = Path()
+      ..addArc(
+        Rect.fromCenter(
+          center: center,
+          width: 3 * thumbRadius,
+          height: 3 * thumbRadius,
+        ),
+        0,
+        math.pi * 2,
+      );
+
+    canvas.drawShadow(
+        shadowPath, Colors.black.withOpacity(0.3), elevation, true);
+    canvas.drawCircle(center, thumbRadius, borderPaint);
+    canvas.drawCircle(center, thumbRadius * 0.7, fillPaint);
+  }
+
+  String getValue(double value) {
+    return (min + (max - min) * value).round().toString();
+  }
+}
 
 class KnowledgeTestControllerModel extends ChangeNotifier {
   bool _isShowAnalysisBox = false;
@@ -135,6 +204,7 @@ class KnowledgeTestController {
     bool isActiveTopicMenu = false;
     bool sheetHeightIncreased = false;
     late TestCategory activeMenu = TestCategory.NONE;
+    bool isShowAlphaScroll = false;
 
     // listCourseKeywordsData.forEach((courseKeyword) {
     //   if (groupedCourseKeywordsLists[
@@ -265,7 +335,7 @@ class KnowledgeTestController {
                                     maxHeight: smallHeightDevice && searchTap
                                         ? 600
                                         : isActiveAnyMenu
-                                            ? 666
+                                            ? 674
                                             : !smallHeightDevice && searchTap
                                                 ? 660
                                                 : 346,
@@ -298,52 +368,97 @@ class KnowledgeTestController {
                                                 SizedBox(
                                                   height: 20,
                                                 ),
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10,
-                                                      right: 10,
-                                                      top: 0),
-                                                  child: TextFormField(
-                                                    controller:
-                                                        searchKeywordController,
-                                                    onChanged:
-                                                        (String value) async {},
-                                                    onTap: () {
-                                                      stateSetter(() {
-                                                        if (isActiveAnyMenu) {
-                                                          activeMenu =
-                                                              TestCategory.NONE;
-                                                          isActiveAnyMenu =
-                                                              false;
-                                                        }
-                                                        sheetHeight =
-                                                            appHeight(context) *
-                                                                0.90;
-                                                        sheetHeightIncreased =
-                                                            true;
-                                                        searchTap = true;
-                                                      });
-                                                    },
-                                                    decoration: textDecorSuffix(
-                                                      fillColor:
-                                                          Color(0xFFEEEEEE),
-                                                      showBorder: false,
-                                                      size: 60,
-                                                      icon: IconButton(
-                                                          onPressed: () async {
-                                                            knowledgeTestControllerModel
-                                                                    .isShowAnalysisBox =
-                                                                !knowledgeTestControllerModel
-                                                                    .isShowAnalysisBox;
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.search,
-                                                            color: Colors.grey,
-                                                          )),
-                                                      suffIcon: null,
-                                                      label: "Search Keywords",
-                                                      enabled: true,
-                                                    ),
+                                                Dismissible(
+                                                  key: UniqueKey(),
+                                                  direction: DismissDirection
+                                                      .horizontal,
+                                                  confirmDismiss: (direction) {
+                                                    if (isActiveAnyMenu) {
+                                                      if (direction ==
+                                                              DismissDirection
+                                                                  .endToStart ||
+                                                          direction ==
+                                                              DismissDirection
+                                                                  .startToEnd) {
+                                                        stateSetter(
+                                                          (() {
+                                                            isShowAlphaScroll =
+                                                                !isShowAlphaScroll;
+                                                          }),
+                                                        );
+                                                      }
+                                                    }
+                                                    return Future.value(false);
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      isShowAlphaScroll
+                                                          ? AlphabetScrollSlider(
+                                                              callback:
+                                                                  (selectedAlphabet) =>
+                                                                      print(
+                                                                          "Selected: $selectedAlphabet"),
+                                                            )
+                                                          : Container(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .only(
+                                                                left: 10,
+                                                                right: 10,
+                                                                top: 0,
+                                                              ),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    searchKeywordController,
+                                                                onChanged: (String
+                                                                    value) async {},
+                                                                onTap: () {
+                                                                  stateSetter(
+                                                                      () {
+                                                                    if (isActiveAnyMenu) {
+                                                                      activeMenu =
+                                                                          TestCategory
+                                                                              .NONE;
+                                                                      isActiveAnyMenu =
+                                                                          false;
+                                                                    }
+                                                                    sheetHeight =
+                                                                        appHeight(context) *
+                                                                            0.90;
+                                                                    sheetHeightIncreased =
+                                                                        true;
+                                                                    searchTap =
+                                                                        true;
+                                                                  });
+                                                                },
+                                                                decoration:
+                                                                    textDecorSuffix(
+                                                                  fillColor: Color(
+                                                                      0xFFEEEEEE),
+                                                                  showBorder:
+                                                                      false,
+                                                                  size: 60,
+                                                                  icon: IconButton(
+                                                                      onPressed: () async {
+                                                                        knowledgeTestControllerModel.isShowAnalysisBox =
+                                                                            !knowledgeTestControllerModel.isShowAnalysisBox;
+                                                                      },
+                                                                      icon: Icon(
+                                                                        Icons
+                                                                            .search,
+                                                                        color: Colors
+                                                                            .grey,
+                                                                      )),
+                                                                  suffIcon:
+                                                                      null,
+                                                                  label:
+                                                                      "Search Keywords",
+                                                                  enabled: true,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                    ],
                                                   ),
                                                 ),
                                                 if (!searchTap) Spacer(),
