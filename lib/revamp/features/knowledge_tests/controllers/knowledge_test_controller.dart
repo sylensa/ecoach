@@ -287,14 +287,16 @@ class KnowledgeTestController {
                                           controller: searchKeywordController,
                                           onChanged: (String value) async {},
                                           onTap: () {
-                                            if (activeMenu != TestCategory.NONE)
-                                              activeMenu = TestCategory.NONE;
-                                            sheetHeight =
-                                                appHeight(context) * 0.90;
-                                            sheetHeightIncreased = true;
-                                            isActiveTopicMenu = false;
-                                            searchTap = true;
-                                            stateSetter(() {});
+                                            stateSetter(() {
+                                              if (isActiveAnyMenu) {
+                                                activeMenu = TestCategory.NONE;
+                                                isActiveAnyMenu = false;
+                                              }
+                                              sheetHeight =
+                                                  appHeight(context) * 0.90;
+                                              sheetHeightIncreased = true;
+                                              searchTap = true;
+                                            });
                                           },
                                           decoration: textDecorSuffix(
                                             fillColor: Color(0xFFEEEEEE),
@@ -460,30 +462,32 @@ class KnowledgeTestController {
                                                           ),
                                                   ),
                                                 ),
-                                                Container(
-                                                  child: Column(children: [
-                                                    Icon(
-                                                      Icons.trending_up,
-                                                      size: 15,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Icon(
-                                                      Icons.numbers,
-                                                      size: 15,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    if (listQuestions.isEmpty)
-                                                      for (var entry
-                                                          in groupedCourseKeywordsLists
-                                                              .entries)
-                                                        if (entry
-                                                            .value.isNotEmpty)
-                                                          Text(entry.key),
-                                                  ]),
+                                                SingleChildScrollView(
+                                                  child: Container(
+                                                    child: Column(children: [
+                                                      Icon(
+                                                        Icons.trending_up,
+                                                        size: 15,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
+                                                      Icon(
+                                                        Icons.numbers,
+                                                        size: 15,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 4,
+                                                      ),
+                                                      if (listQuestions.isEmpty)
+                                                        for (var entry
+                                                            in groupedCourseKeywordsLists
+                                                                .entries)
+                                                          if (entry
+                                                              .value.isNotEmpty)
+                                                            Text(entry.key),
+                                                    ]),
+                                                  ),
                                                 )
                                               ],
                                             ),
@@ -530,25 +534,31 @@ class KnowledgeTestController {
                                             MaterialButton(
                                               onPressed: () {
                                                 // getTest(context, TestCategory.TOPIC);
-                                                if (isActiveTopicMenu) {
+                                                if (activeMenu ==
+                                                    TestCategory.TOPIC) {
+                                                  print(
+                                                      "Active Category: $activeMenu");
+
                                                   sheetHeight =
                                                       appHeight(context) * 0.55;
                                                   activeMenu =
                                                       TestCategory.NONE;
                                                   sheetHeightIncreased = false;
-                                                  isActiveAnyMenu = false;
-                                                  if (!sheetHeightIncreased)
+                                                  if (!sheetHeightIncreased) {
+                                                    isActiveAnyMenu = false;
                                                     isActiveTopicMenu = false;
-                                                } else if (!isActiveTopicMenu ||
+                                                  }
+                                                } else if (!isActiveAnyMenu ||
                                                     searchTap) {
-                                                  if (searchTap)
-                                                    searchTap = false;
+                                                  searchTap = false;
                                                   sheetHeight =
                                                       appHeight(context) * 0.90;
                                                   activeMenu =
                                                       TestCategory.TOPIC;
-                                                  if (sheetHeightIncreased)
+                                                  if (sheetHeightIncreased) {
+                                                    isActiveAnyMenu = true;
                                                     isActiveTopicMenu = true;
+                                                  }
                                                 }
 
                                                 stateSetter(() {});
