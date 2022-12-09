@@ -260,13 +260,16 @@ class KnowledgeTestController {
                             Expanded(
                               child: SingleChildScrollView(
                                 child: Container(
-                                  height: smallHeightDevice && searchTap
-                                      ? 600
-                                      : isActiveAnyMenu
-                                          ? 666
-                                          : !smallHeightDevice && searchTap
-                                              ? 660
-                                              : 346,
+                                  // height:
+                                  constraints: BoxConstraints(
+                                    maxHeight: smallHeightDevice && searchTap
+                                        ? 600
+                                        : isActiveAnyMenu
+                                            ? 666
+                                            : !smallHeightDevice && searchTap
+                                                ? 660
+                                                : 346,
+                                  ),
                                   width: double.maxFinite,
                                   child: Column(
                                     children: [
