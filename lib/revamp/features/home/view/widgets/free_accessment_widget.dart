@@ -29,7 +29,7 @@ class _FreeAccessmentWidgetState extends State<FreeAccessmentWidget> {
       },
       child: Container(
         padding: EdgeInsets.all(2.h),
-        height: 150,
+        height: 155,
         decoration: BoxDecoration(
           // color: kHomeAccessmentColor,
           gradient: LinearGradient(
