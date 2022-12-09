@@ -400,6 +400,7 @@ InputDecoration textDecorSuffix(
     double top = 12.0,
     double radius = 0}) {
   return new InputDecoration(
+    floatingLabelBehavior: FloatingLabelBehavior.never,
     suffixIcon: suffIcon != null ? Container(
       child: suffIcon,
       decoration: BoxDecoration(
