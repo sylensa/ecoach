@@ -1,8 +1,22 @@
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/keywords_model.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class GlossaryInstruction extends StatefulWidget {
-  const GlossaryInstruction({Key? key}) : super(key: key);
+  GlossaryInstruction({
+    required this.user,
+    required this.course,
+    required this.listCourseKeywordsData,
+
+    Key? key,
+  }) : super(key: key);
+  final User user;
+  final Course course;
+  List<CourseKeywords> listCourseKeywordsData;
 
   @override
   State<GlossaryInstruction> createState() => _GlossaryInstructionState();
@@ -126,12 +140,17 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
           Positioned(
             bottom: 20,
             left: appWidth(context) * 0.3,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),
-              child: sText("Start",color: Colors.white,weight: FontWeight.w500),
-              decoration: BoxDecoration(
-                  color: Color(0XFF15996B),
-                  borderRadius: BorderRadius.circular(30)
+            child: GestureDetector(
+              onTap: (){
+                Get.to(() => GlossaryView(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),
+                child: sText("Start",color: Colors.white,weight: FontWeight.w500),
+                decoration: BoxDecoration(
+                    color: Color(0XFF15996B),
+                    borderRadius: BorderRadius.circular(30)
+                ),
               ),
             ),
           ),

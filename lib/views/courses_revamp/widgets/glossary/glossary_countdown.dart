@@ -2,12 +2,14 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/review_taken.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_instruction.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/review/review_questions.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
@@ -20,10 +22,14 @@ class GlossaryCountdown extends StatefulWidget {
   GlossaryCountdown({
     required this.user,
     required this.course,
+    required this.listCourseKeywordsData,
+
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
+  List<CourseKeywords> listCourseKeywordsData;
+
 
   @override
   State<GlossaryCountdown> createState() => _GlossaryCountdowneState();
@@ -72,7 +78,7 @@ class _GlossaryCountdowneState extends State<GlossaryCountdown> {
           Future.delayed(
             const Duration(seconds: 1),
                 () {
-              Navigator.pop(context);
+             Get.off(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
               // Get.off(() => const CreateAccountPage(),
               //     fullscreenDialog: true,
               //     duration: const Duration(

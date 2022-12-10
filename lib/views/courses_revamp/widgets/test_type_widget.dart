@@ -845,8 +845,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                 height: 14,
                                               ),
                                               for (var entry
-                                                  in groupedCourseKeywordsLists
-                                                      .entries)
+                                                  in groupedCourseKeywordsLists.entries)
                                                 if (entry.value.isNotEmpty)
                                                   Column(
                                                     mainAxisAlignment:
@@ -984,8 +983,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                         height: 4,
                                       ),
                                       if (listQuestions.isEmpty)
-                                        for (var entry
-                                            in groupedCourseKeywordsLists.entries)
+                                        for (var entry in groupedCourseKeywordsLists.entries)
                                           if (entry.value.isNotEmpty)
                                             Text(entry.key),
                                     ]),

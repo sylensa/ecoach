@@ -53,7 +53,8 @@ class GlossaryWidget extends StatefulWidget {
         required this.user,
         required this.subscription,
         required this.controller,
-        required this.listCourseKeywordsData})
+        required this.listCourseKeywordsData
+      })
       : super(key: key);
   Course course;
   User user;
@@ -256,7 +257,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            continueSelected = true;
                          });
-                            goTo(context, GlossaryCountdown(user: widget.user,course: widget.course,));
+                            Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -277,7 +278,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            continueSelected = false;
                          });
-                         goTo(context, GlossaryInstruction());
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -371,7 +372,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            scoreSelected = true;
                          });
-                         goTo(context, GlossaryInstruction());
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -392,7 +393,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            scoreSelected = false;
                          });
-                         goTo(context, GlossaryInstruction());
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
