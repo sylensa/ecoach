@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:data_table_2/data_table_2.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -9,11 +8,9 @@ import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_tes
 import 'package:ecoach/revamp/features/knowledge_tests/widgets/topic_analysis_table.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/keyword/keyword_graph.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 class FlipCardController {
   _TestTakenStatisticCardState? _state;
