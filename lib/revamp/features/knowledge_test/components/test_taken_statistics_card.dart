@@ -25,11 +25,15 @@ class TestTakenStatisticCard extends StatefulWidget {
     required this.course,
     required this.getTest,
     required this.knowledgeTestControllerModel,
-    required this.topicTestsTaken,
+    required this.testsTaken,
     this.activeMenu = TestCategory.NONE,
+    this.currentSlide = 0,
+    this.carouselController,
   }) : super(key: key);
 
-  final List<TestTaken> topicTestsTaken;
+  final int currentSlide;
+  final CarouselController? carouselController;
+  final List<TestTaken> testsTaken;
   final bool showGraph;
   final Course course;
   final TestCategory activeMenu;
@@ -43,15 +47,14 @@ class TestTakenStatisticCard extends StatefulWidget {
 
 class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     with TickerProviderStateMixin {
-  int _currentSlide = 0;
   String searchKeyword = '';
-  late bool isActiveGraphSide;
   bool isActiveStatisticsSide = false;
-
   TestCategory analysisTestType = TestCategory.NONE;
-
   String activeMenuIcon = "assets/icons/courses/";
-
+  
+  late bool isActiveGraphSide;
+  late int _currentSlide;
+  late CarouselController? _carouselController;
   late FlipCardController flipCardController;
   late AnimationController animationController;
   late Animation<double> animation;
@@ -61,7 +64,10 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   @override
   void initState() {
     super.initState();
+    _currentSlide = widget.currentSlide;
+    _carouselController = widget.carouselController;
     flipCardController = FlipCardController();
+
     isActiveGraphSide = widget.showGraph;
     flipCardController._state = this;
 
@@ -70,7 +76,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
       vsync: this,
     );
 
-    _topicTestsTaken = widget.topicTestsTaken;
+    _topicTestsTaken = widget.testsTaken;
 
     switch (widget.activeMenu) {
       case TestCategory.TOPIC:
@@ -117,8 +123,6 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     return angle <= degrees90 || angle >= degrees270;
   }
 
-  CarouselController carouselController = CarouselController();
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -132,7 +136,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
               ? BouncingScrollPhysics()
               : NeverScrollableScrollPhysics(),
           child: CarouselSlider.builder(
-            carouselController: carouselController,
+            carouselController: _carouselController,
             options: CarouselOptions(
               height: widget.knowledgeTestControllerModel.isShowAnalysisBox
                   ? 600
@@ -144,6 +148,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
               viewportFraction: 1,
               aspectRatio: 2.0,
               pageSnapping: true,
+              initialPage: _currentSlide,
               onPageChanged: (index, reason) {
                 setState(() {
                   _currentSlide = index;

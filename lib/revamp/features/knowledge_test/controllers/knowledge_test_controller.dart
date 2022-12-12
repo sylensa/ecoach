@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
@@ -113,36 +114,13 @@ class KnowledgeTestController extends ChangeNotifier {
   bool _emptyTestTakenList = true;
 
   bool get emptyTestTakenList => _emptyTestTakenList;
-
-  List<TestTaken> topicTestsTaken = [
-    TestTaken(
-      testname: "ICT",
-      scoreDiff: 4,
-      score: 60,
-      totalQuestions: 14,
-      responses: '',
-      correct: 10,
-      wrong: 0,
-      total_test_taken: 5,
-      userId: 3334,
-    ),
-    TestTaken(
-      testname: "Psychology",
-      scoreDiff: -1,
-      score: 80,
-      totalQuestions: 50,
-      responses: '',
-      correct: 10,
-      wrong: 3,
-      total_test_taken: 12,
-      userId: 3334,
-    ),
-  ];
-  // List<TestTaken> topicTestsTaken = [];
-
   set emptyTestTakenList(bool value) {
     _emptyTestTakenList = value;
   }
+
+  List<TestTaken> testsTaken = [];
+  CarouselController alphaSliderToStatisticsCardController =
+      CarouselController();
 
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [
@@ -240,11 +218,30 @@ class KnowledgeTestController extends ChangeNotifier {
     bool isActiveTopicMenu = false;
 
     List<String> scrollListAlphabets = [];
-    groupedCourseKeywordsMap.forEach((key, value) {
-      if (groupedCourseKeywordsMap[key]!.isNotEmpty) {
-        scrollListAlphabets.add(key);
-      }
-    });
+    List<TestTaken> topicTestsTaken = [
+      TestTaken(
+        testname: "ICT",
+        scoreDiff: 4,
+        score: 60,
+        totalQuestions: 14,
+        responses: '',
+        correct: 10,
+        wrong: 0,
+        total_test_taken: 5,
+        userId: 3334,
+      ),
+      TestTaken(
+        testname: "Psychology",
+        scoreDiff: -1,
+        score: 80,
+        totalQuestions: 50,
+        responses: '',
+        correct: 10,
+        wrong: 3,
+        total_test_taken: 12,
+        userId: 3334,
+      ),
+    ];
 
     showModalBottomSheet(
         context: context,
@@ -267,7 +264,17 @@ class KnowledgeTestController extends ChangeNotifier {
                               isActiveTopicMenu = true;
                               isActiveAnyMenu = true;
                               sheetHeightIncreased = true;
-                              emptyTestTakenList = topicTestsTaken.isEmpty;
+                              testsTaken = topicTestsTaken;
+                              emptyTestTakenList = testsTaken.isEmpty;
+
+                              if (!emptyTestTakenList) {
+                                scrollListAlphabets = testsTaken.map((test) {
+                                  return test.testname![0]
+                                      .toString()
+                                      .toUpperCase();
+                                }).toList();
+                                scrollListAlphabets.sort();
+                              }
 
                               break;
                             case TestCategory.MOCK:
@@ -342,14 +349,12 @@ class KnowledgeTestController extends ChangeNotifier {
                                 size: 24,
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
                                   child: sText("Select your category",
                                       color: kAdeoGray3,
                                       weight: FontWeight.w400,
@@ -415,8 +420,10 @@ class KnowledgeTestController extends ChangeNotifier {
                                                 ),
                                               )
                                             : TestTakenStatisticCard(
-                                                topicTestsTaken:
-                                                    topicTestsTaken,
+                                                carouselController:
+                                                    alphaSliderToStatisticsCardController,
+                                                currentSlide: 0,
+                                                testsTaken: testsTaken,
                                                 course: Course(),
                                                 showGraph: showGraph,
                                                 activeMenu: activeMenu,
@@ -468,12 +475,25 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               alphabets:
                                                                   scrollListAlphabets,
                                                               selectedAlphabet:
-                                                                  scrollListAlphabets
-                                                                      .first,
+                                                                  testsTaken
+                                                                      .first
+                                                                      .testname![0],
                                                               callback:
                                                                   (selectedAlphabet) {
+                                                                int selectedIndex =
+                                                                    testsTaken.indexWhere((testTaken) => testTaken
+                                                                        .testname!
+                                                                        .toUpperCase()
+                                                                        .startsWith(
+                                                                          selectedAlphabet,
+                                                                        ));
+
+                                                                alphaSliderToStatisticsCardController
+                                                                    .animateToPage(
+                                                                  selectedIndex,
+                                                                );
                                                                 print(
-                                                                    "Selected: $selectedAlphabet");
+                                                                    "Selected: $selectedAlphabet  -  Index: $selectedIndex");
                                                               },
                                                             )
                                                           : Container(
