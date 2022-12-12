@@ -1,4 +1,4 @@
-import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_test_controller.dart';
+import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
 import 'package:flutter/material.dart';
 
 class AlphabetScrollSlider extends StatefulWidget {
