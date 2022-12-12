@@ -1,17 +1,92 @@
+import 'dart:math' as math;
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
-import 'package:ecoach/revamp/features/knowledge_tests/components/test_taken_statistics_card.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
+import 'package:ecoach/revamp/features/knowledge_test/components/test_taken_statistics_card.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class CustomSliderThumbCircle extends SliderComponentShape {
+  final double thumbRadius;
+  final int min;
+  final int max;
+  final double elevation;
+
+  const CustomSliderThumbCircle({
+    required this.thumbRadius,
+    this.min = 0,
+    this.max = 10,
+    this.elevation = 1.0,
+  });
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size.fromRadius(thumbRadius);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final Canvas canvas = context.canvas;
+
+    final fillPaint = Paint()
+      ..color = sliderTheme.thumbColor!
+      ..style = PaintingStyle.fill;
+
+    final borderPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = thumbRadius
+      ..style = PaintingStyle.stroke;
+
+    final Path shadowPath = Path()
+      ..addArc(
+        Rect.fromCenter(
+          center: center,
+          width: 3 * thumbRadius,
+          height: 3 * thumbRadius,
+        ),
+        0,
+        math.pi * 2,
+      );
+
+    canvas.drawShadow(
+        shadowPath, Colors.black.withOpacity(0.3), elevation, true);
+    canvas.drawCircle(center, thumbRadius, borderPaint);
+    canvas.drawCircle(center, thumbRadius * 0.7, fillPaint);
+  }
+
+  String getValue(double value) {
+    return (min + (max - min) * value).round().toString();
+  }
+}
+
 class KnowledgeTestControllerModel extends ChangeNotifier {
   bool _isShowAnalysisBox = false;
+  List<String> _scrollListAlphabets = [];
+  String _currentAlphabet = '';
 
   bool get isShowAnalysisBox => _isShowAnalysisBox;
+  List<String> get scrollListAlphabets => _scrollListAlphabets;
+  String get currentAlphabet => _currentAlphabet;
 
   set isShowAnalysisBox(bool value) {
     if (value != _isShowAnalysisBox) {
@@ -19,17 +94,43 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  set scrollListAlphabets(List<String> alphaList) {
+    _scrollListAlphabets = alphaList;
+    notifyListeners();
+  }
+
+  set currentAlphabet(String value) {
+    _currentAlphabet = value;
+    notifyListeners();
+  }
 }
 
-class KnowledgeTestController {
+class KnowledgeTestController extends ChangeNotifier {
   TextEditingController searchKeywordController = TextEditingController();
   String searchKeyword = '';
   bool searchTap = false;
   bool showGraph = false;
   List<CourseKeywords> listCourseKeywordsData = [];
   List<Question> listQuestions = [];
+  bool isActiveAnyMenu = false;
+  bool sheetHeightIncreased = false;
+  late double sheetHeight;
+  late TestCategory activeMenu = TestCategory.NONE;
+  bool isShowAlphaScroll = false;
+  bool _emptyTestTakenList = true;
 
-  Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+  bool get emptyTestTakenList => _emptyTestTakenList;
+  set emptyTestTakenList(bool value) {
+    _emptyTestTakenList = value;
+  }
+
+  List<TestTaken> testsTaken = [];
+  CarouselController alphaSliderToStatisticsCardController =
+      CarouselController();
+  String currentAlphabet = '';
+
+  Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [
       CourseKeywords(
         keyword: "Animal",
@@ -66,7 +167,12 @@ class KnowledgeTestController {
         total: 6,
       ),
     ],
-    'C': [],
+    'C': [
+      CourseKeywords(
+        keyword: "Commercial Law",
+        total: 12,
+      ),
+    ],
     'D': [],
     'E': [],
     'F': [],
@@ -92,60 +198,77 @@ class KnowledgeTestController {
     'Z': []
   };
 
+  void slideToActiveAlphabet({String selectedAlphabet = ''}) {
+    int _selectedIndex;
+    if (selectedAlphabet.isNotEmpty) {
+      _selectedIndex = testsTaken.indexWhere(
+          (testTaken) => testTaken.testname!.toUpperCase().startsWith(
+                selectedAlphabet,
+              ));
+      alphaSliderToStatisticsCardController.animateToPage(
+        _selectedIndex,
+      );
+    }
+
+    print("Selected: $selectedAlphabet ");
+  }
+
+  void slideToActiveAlphabetIndex({int selectedIndex = 0}) {
+    currentAlphabet = testsTaken[selectedIndex].testname![0];
+  }
+
+  toggleKnowledgeTestMenus(BuildContext context, bool smallHeightDevice) {
+    if (activeMenu != TestCategory.NONE) {
+      sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
+      activeMenu = TestCategory.NONE;
+      sheetHeightIncreased = false;
+      isActiveAnyMenu = false;
+      isShowAlphaScroll = false;
+    } else if (!isActiveAnyMenu || searchTap) {
+      searchTap = false;
+      sheetHeight = appHeight(context) * 0.90;
+      activeMenu = TestCategory.TOPIC;
+      if (sheetHeightIncreased) {
+        isActiveAnyMenu = true;
+      }
+    }
+    return isActiveAnyMenu;
+  }
+
   knowledgeTestModalBottomSheet(
     context,
   ) async {
-    // if (listCourseKeywordsData.isNotEmpty) {
-    //   groupedCourseKeywordsLists = {
-    //     'A': [],
-    //     'B': [],
-    //     'C': [],
-    //     'D': [],
-    //     'E': [],
-    //     'F': [],
-    //     'G': [],
-    //     'H': [],
-    //     'I': [],
-    //     'J': [],
-    //     'K': [],
-    //     'L': [],
-    //     'M': [],
-    //     'N': [],
-    //     'O': [],
-    //     'P': [],
-    //     'Q': [],
-    //     'R': [],
-    //     'S': [],
-    //     'T': [],
-    //     'U': [],
-    //     'V': [],
-    //     'W': [],
-    //     'X': [],
-    //     'Y': [],
-    //     'Z': []
-    //   };
-    // } else {
-    //   groupedCourseKeywordsLists.clear();
-    // }
     searchKeywordController.text = searchKeyword.trim();
     searchTap = false;
     bool smallHeightDevice = appHeight(context) < 890 ? true : false;
-    double sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
-    bool isActiveAnyMenu = false;
+    sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
-    bool sheetHeightIncreased = false;
-    late TestCategory activeMenu = TestCategory.NONE;
 
-    // listCourseKeywordsData.forEach((courseKeyword) {
-    //   if (groupedCourseKeywordsLists[
-    //           '${courseKeyword.keyword![0]}'.toUpperCase()] ==
-    //       null) {
-    //     groupedCourseKeywordsLists[
-    //         '${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
-    //   }
-    //   groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!
-    //       .add(courseKeyword);
-    // });
+    List<String> scrollListAlphabets = [];
+    List<TestTaken> topicTestsTaken = [
+      TestTaken(
+        testname: "ICT",
+        scoreDiff: 4,
+        score: 60,
+        totalQuestions: 14,
+        responses: '',
+        correct: 10,
+        wrong: 0,
+        total_test_taken: 5,
+        userId: 3334,
+      ),
+      TestTaken(
+        testname: "Psychology",
+        scoreDiff: -1,
+        score: 80,
+        totalQuestions: 50,
+        responses: '',
+        correct: 10,
+        wrong: 3,
+        total_test_taken: 12,
+        userId: 3334,
+      ),
+    ];
 
     showModalBottomSheet(
         context: context,
@@ -158,7 +281,7 @@ class KnowledgeTestController {
               return ChangeNotifierProvider(
                 create: (_) => KnowledgeTestControllerModel(),
                 child: Consumer<KnowledgeTestControllerModel>(
-                  builder: (context, knowledgeTestControllerModel, child) {
+                  builder: (context, model, child) {
                     return AnimatedContainer(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         height: sheetHeight,
@@ -168,6 +291,19 @@ class KnowledgeTestController {
                               isActiveTopicMenu = true;
                               isActiveAnyMenu = true;
                               sheetHeightIncreased = true;
+                              testsTaken = topicTestsTaken;
+                              emptyTestTakenList = testsTaken.isEmpty;
+                              currentAlphabet = testsTaken.first.testname![0];
+
+                              if (!emptyTestTakenList) {
+                                scrollListAlphabets = testsTaken.map((test) {
+                                  return test.testname![0]
+                                      .toString()
+                                      .toUpperCase();
+                                }).toList();
+                                scrollListAlphabets.sort();
+                              }
+
                               break;
                             case TestCategory.MOCK:
                               isActiveAnyMenu = true;
@@ -241,14 +377,12 @@ class KnowledgeTestController {
                                 size: 24,
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
                                   child: sText("Select your category",
                                       color: kAdeoGray3,
                                       weight: FontWeight.w400,
@@ -260,12 +394,13 @@ class KnowledgeTestController {
                             Expanded(
                               child: SingleChildScrollView(
                                 child: Container(
-                                  // height:
                                   constraints: BoxConstraints(
                                     maxHeight: smallHeightDevice && searchTap
                                         ? 600
                                         : isActiveAnyMenu
-                                            ? 666
+                                            ? emptyTestTakenList
+                                                ? 496
+                                                : 674
                                             : !smallHeightDevice && searchTap
                                                 ? 660
                                                 : 346,
@@ -274,20 +409,61 @@ class KnowledgeTestController {
                                   child: Column(
                                     children: [
                                       if (isActiveAnyMenu)
-                                        TestTakenStatisticCard(
-                                          course: Course(),
-                                          showGraph: showGraph,
-                                          activeMenu: activeMenu,
-                                          knowledgeTestControllerModel:
-                                              knowledgeTestControllerModel,
-                                          getTest: (
-                                            BuildContext context,
-                                            TestCategory testCategory,
-                                            int currentQuestionCount,
-                                          ) async {},
-                                        ),
-                                      if (!knowledgeTestControllerModel
-                                          .isShowAnalysisBox)
+                                        emptyTestTakenList
+                                            ? Container(
+                                                height: smallHeightDevice
+                                                    ? 150
+                                                    : 300,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                        "You have no Topic Knowledge Tests"),
+                                                    SizedBox(
+                                                      height: 12,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () async {},
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 18,
+                                                          vertical: 12,
+                                                        ),
+                                                        child: sText(
+                                                          "Take New Test",
+                                                          color: Colors.white,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: kAdeoGreen4,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            : TestTakenStatisticCard(
+                                                carouselController:
+                                                    alphaSliderToStatisticsCardController,
+                                                currentSlide: 0,
+                                                testsTaken: testsTaken,
+                                                course: Course(),
+                                                showGraph: showGraph,
+                                                activeMenu: activeMenu,
+                                                knowledgeTestControllerModel:
+                                                    model,
+                                                getTest: (
+                                                  BuildContext context,
+                                                  TestCategory testCategory,
+                                                  int currentQuestionCount,
+                                                ) async {},
+                                              ),
+                                      if (!model.isShowAnalysisBox)
                                         Expanded(
                                           child: Container(
                                             child: Column(
@@ -298,55 +474,113 @@ class KnowledgeTestController {
                                                 SizedBox(
                                                   height: 20,
                                                 ),
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10,
-                                                      right: 10,
-                                                      top: 0),
-                                                  child: TextFormField(
-                                                    controller:
-                                                        searchKeywordController,
-                                                    onChanged:
-                                                        (String value) async {},
-                                                    onTap: () {
-                                                      stateSetter(() {
-                                                        if (isActiveAnyMenu) {
-                                                          activeMenu =
-                                                              TestCategory.NONE;
-                                                          isActiveAnyMenu =
-                                                              false;
-                                                        }
-                                                        sheetHeight =
-                                                            appHeight(context) *
-                                                                0.90;
-                                                        sheetHeightIncreased =
-                                                            true;
-                                                        searchTap = true;
-                                                      });
-                                                    },
-                                                    decoration: textDecorSuffix(
-                                                      fillColor:
-                                                          Color(0xFFEEEEEE),
-                                                      showBorder: false,
-                                                      size: 60,
-                                                      icon: IconButton(
-                                                          onPressed: () async {
-                                                            knowledgeTestControllerModel
-                                                                    .isShowAnalysisBox =
-                                                                !knowledgeTestControllerModel
-                                                                    .isShowAnalysisBox;
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.search,
-                                                            color: Colors.grey,
-                                                          )),
-                                                      suffIcon: null,
-                                                      label: "Search Keywords",
-                                                      enabled: true,
-                                                    ),
+                                                Dismissible(
+                                                  key: UniqueKey(),
+                                                  direction: DismissDirection
+                                                      .horizontal,
+                                                  confirmDismiss: (direction) {
+                                                    if (isActiveAnyMenu) {
+                                                      if (direction ==
+                                                              DismissDirection
+                                                                  .endToStart ||
+                                                          direction ==
+                                                              DismissDirection
+                                                                  .startToEnd) {
+                                                        stateSetter(
+                                                          (() {
+                                                            isShowAlphaScroll =
+                                                                !isShowAlphaScroll;
+                                                          }),
+                                                        );
+                                                      }
+                                                    }
+                                                    return Future.value(false);
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      isShowAlphaScroll
+                                                          ? AlphabetScrollSlider(
+                                                              alphabets:
+                                                                  scrollListAlphabets,
+                                                              initialSelectedAlphabet: model
+                                                                      .currentAlphabet
+                                                                      .isEmpty
+                                                                  ? currentAlphabet
+                                                                  : model
+                                                                      .currentAlphabet,
+                                                              callback:
+                                                                  (selectedAlphabet) {
+                                                                slideToActiveAlphabet(
+                                                                  selectedAlphabet:
+                                                                      selectedAlphabet,
+                                                                );
+                                                              },
+                                                            )
+                                                          : Container(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .only(
+                                                                left: 10,
+                                                                right: 10,
+                                                                top: 0,
+                                                              ),
+                                                              child:
+                                                                  TextFormField(
+                                                                controller:
+                                                                    searchKeywordController,
+                                                                onChanged: (String
+                                                                    value) async {},
+                                                                onTap: () {
+                                                                  stateSetter(
+                                                                      () {
+                                                                    if (isActiveAnyMenu) {
+                                                                      activeMenu =
+                                                                          TestCategory
+                                                                              .NONE;
+                                                                      isActiveAnyMenu =
+                                                                          false;
+                                                                    }
+                                                                    sheetHeight =
+                                                                        appHeight(context) *
+                                                                            0.90;
+                                                                    sheetHeightIncreased =
+                                                                        true;
+                                                                    searchTap =
+                                                                        true;
+                                                                  });
+                                                                },
+                                                                decoration:
+                                                                    textDecorSuffix(
+                                                                  fillColor: Color(
+                                                                      0xFFEEEEEE),
+                                                                  showBorder:
+                                                                      false,
+                                                                  size: 60,
+                                                                  icon: IconButton(
+                                                                      onPressed: () async {
+                                                                        model.isShowAnalysisBox =
+                                                                            !model.isShowAnalysisBox;
+                                                                      },
+                                                                      icon: Icon(
+                                                                        Icons
+                                                                            .search,
+                                                                        color: Colors
+                                                                            .grey,
+                                                                      )),
+                                                                  suffIcon:
+                                                                      null,
+                                                                  label:
+                                                                      "Search Keywords",
+                                                                  enabled: true,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                    ],
                                                   ),
                                                 ),
-                                                if (!searchTap) Spacer(),
+                                                if (!searchTap &&
+                                                    !emptyTestTakenList)
+                                                  Spacer(),
                                                 if (searchTap)
                                                   Expanded(
                                                     child: Container(
@@ -381,7 +615,7 @@ class KnowledgeTestController {
                                                                                 14,
                                                                           ),
                                                                           for (var entry
-                                                                              in groupedCourseKeywordsLists.entries)
+                                                                              in groupedCourseKeywordsMap.entries)
                                                                             if (entry.value.isNotEmpty)
                                                                               Column(
                                                                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -492,7 +726,7 @@ class KnowledgeTestController {
                                                                       if (listQuestions
                                                                           .isEmpty)
                                                                         for (var entry
-                                                                            in groupedCourseKeywordsLists
+                                                                            in groupedCourseKeywordsMap
                                                                                 .entries)
                                                                           if (entry
                                                                               .value
@@ -504,10 +738,6 @@ class KnowledgeTestController {
                                                           ],
                                                         )),
                                                   ),
-                                                // if (!searchTap &&
-                                                //     !keywordTestTaken
-                                                //         .isNotEmpty)
-                                                //   Spacer(),
 
                                                 // MENUS
                                                 Container(
@@ -551,45 +781,10 @@ class KnowledgeTestController {
                                                       ),
                                                       MaterialButton(
                                                         onPressed: () {
-                                                          // getTest(context, TestCategory.TOPIC);
-                                                          if (activeMenu ==
-                                                              TestCategory
-                                                                  .TOPIC) {
-                                                            sheetHeight =
-                                                                smallHeightDevice
-                                                                    ? 500
-                                                                    : appHeight(
-                                                                            context) *
-                                                                        0.56;
-                                                            activeMenu =
-                                                                TestCategory
-                                                                    .NONE;
-                                                            sheetHeightIncreased =
-                                                                false;
-                                                            if (!sheetHeightIncreased) {
-                                                              isActiveAnyMenu =
-                                                                  false;
-                                                              isActiveTopicMenu =
-                                                                  false;
-                                                            }
-                                                          } else if (!isActiveAnyMenu ||
-                                                              searchTap) {
-                                                            searchTap = false;
-                                                            sheetHeight =
-                                                                appHeight(
-                                                                        context) *
-                                                                    0.90;
-                                                            activeMenu =
-                                                                TestCategory
-                                                                    .TOPIC;
-                                                            if (sheetHeightIncreased) {
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              isActiveTopicMenu =
-                                                                  true;
-                                                            }
-                                                          }
-
+                                                          toggleKnowledgeTestMenus(
+                                                            context,
+                                                            smallHeightDevice,
+                                                          );
                                                           stateSetter(() {});
                                                         },
                                                         padding:

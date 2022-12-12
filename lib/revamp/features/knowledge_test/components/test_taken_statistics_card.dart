@@ -1,19 +1,16 @@
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:data_table_2/data_table_2.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
-import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_test_controller.dart';
-import 'package:ecoach/revamp/features/knowledge_tests/widgets/topic_analysis_table.dart';
+import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
+import 'package:ecoach/revamp/features/knowledge_test/widgets/topic_analysis_table.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
-import 'package:ecoach/views/keyword/keyword_graph.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
 class FlipCardController {
   _TestTakenStatisticCardState? _state;
@@ -27,15 +24,20 @@ class TestTakenStatisticCard extends StatefulWidget {
     required this.showGraph,
     required this.course,
     required this.getTest,
-    this.activeMenu = TestCategory.NONE,
     required this.knowledgeTestControllerModel,
+    required this.testsTaken,
+    this.activeMenu = TestCategory.NONE,
+    this.currentSlide = 0,
+    this.carouselController,
   }) : super(key: key);
 
+  final int currentSlide;
+  final CarouselController? carouselController;
+  final List<TestTaken> testsTaken;
   final bool showGraph;
   final Course course;
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
-
   final Future Function(BuildContext context, TestCategory testCategory,
       int currentQuestionCount) getTest;
 
@@ -45,54 +47,36 @@ class TestTakenStatisticCard extends StatefulWidget {
 
 class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     with TickerProviderStateMixin {
-  int _currentSlide = 0;
   String searchKeyword = '';
-  late bool isActiveGraphSide;
   bool isActiveStatisticsSide = false;
-
   TestCategory analysisTestType = TestCategory.NONE;
-  List<TestTaken> topicTestsTaken = [];
   String activeMenuIcon = "assets/icons/courses/";
 
+  late bool isActiveGraphSide;
+  late int _currentSlide;
+  late CarouselController? _carouselController;
   late FlipCardController flipCardController;
   late AnimationController animationController;
   late Animation<double> animation;
+  late List<TestTaken> _testsTaken;
+  late bool smallHeightDevice;
 
   @override
   void initState() {
     super.initState();
+    _currentSlide = widget.currentSlide;
+    _carouselController = widget.carouselController;
     flipCardController = FlipCardController();
+
     isActiveGraphSide = widget.showGraph;
     flipCardController._state = this;
+
     animationController = AnimationController(
       duration: Duration(milliseconds: 600),
       vsync: this,
     );
 
-    topicTestsTaken = [
-      TestTaken(
-        testname: "ICT",
-        scoreDiff: 4,
-        score: 60,
-        totalQuestions: 14,
-        responses: '',
-        correct: 10,
-        wrong: 0,
-        total_test_taken: 5,
-        userId: 3334,
-      ),
-      TestTaken(
-        testname: "Psychology",
-        scoreDiff: -1,
-        score: 80,
-        totalQuestions: 50,
-        responses: '',
-        correct: 10,
-        wrong: 3,
-        total_test_taken: 12,
-        userId: 3334,
-      ),
-    ];
+    _testsTaken = widget.testsTaken;
 
     switch (widget.activeMenu) {
       case TestCategory.TOPIC:
@@ -152,6 +136,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
               ? BouncingScrollPhysics()
               : NeverScrollableScrollPhysics(),
           child: CarouselSlider.builder(
+            carouselController: _carouselController,
             options: CarouselOptions(
               height: widget.knowledgeTestControllerModel.isShowAnalysisBox
                   ? 600
@@ -163,13 +148,16 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
               viewportFraction: 1,
               aspectRatio: 2.0,
               pageSnapping: true,
+              initialPage: _currentSlide,
               onPageChanged: (index, reason) {
                 setState(() {
                   _currentSlide = index;
                 });
+                widget.knowledgeTestControllerModel.currentAlphabet =
+                    _testsTaken[_currentSlide].testname![0];
               },
             ),
-            itemCount: topicTestsTaken.length, //Topc Tests Length
+            itemCount: _testsTaken.length, //Topc Tests Length
             itemBuilder: (BuildContext context, int indexReport, int index2) {
               return AnimatedBuilder(
                 animation: animationController,
@@ -229,7 +217,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         width: 12,
                                       ),
                                       sText(
-                                        "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
+                                        "${properCase(_testsTaken[indexReport].testname!)}", //Name of Topic Test Taken
                                         color: Colors.black,
                                         weight: FontWeight.w500,
                                         size: 16,
@@ -465,7 +453,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                                 width: 12,
                                               ),
                                               sText(
-                                                "${properCase(topicTestsTaken[indexReport].testname!)}", //Name of Topic Test Taken
+                                                "${properCase(_testsTaken[indexReport].testname!)}", //Name of Topic Test Taken
                                                 color: Colors.white,
                                                 weight: FontWeight.bold,
                                                 size: 16,
@@ -484,7 +472,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         children: [
                                           Row(
                                             children: [
-                                              topicTestsTaken[indexReport]
+                                              _testsTaken[indexReport]
                                                           .scoreDiff! >
                                                       0
                                                   ? Image.asset(
@@ -500,7 +488,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                                 width: 12,
                                               ),
                                               sText(
-                                                "${topicTestsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${topicTestsTaken[indexReport].scoreDiff!}",
+                                                "${_testsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${_testsTaken[indexReport].scoreDiff!}",
                                                 color: Colors.white,
                                                 weight: FontWeight.bold,
                                                 size: 16,
@@ -522,7 +510,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     Column(
                                       children: [
                                         sText(
-                                          "${topicTestsTaken[indexReport].total_test_taken}",
+                                          "${_testsTaken[indexReport].total_test_taken}",
                                           size: 34,
                                           weight: FontWeight.w600,
                                           color: Colors.white,
@@ -542,7 +530,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     Column(
                                       children: [
                                         sText(
-                                          "${topicTestsTaken[indexReport].score!.round()}%",
+                                          "${_testsTaken[indexReport].score!.round()}%",
                                           size: 34,
                                           weight: FontWeight.w600,
                                           color: Colors.white,
@@ -564,7 +552,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         children: [
                                           AdeoSignalStrengthIndicator(
                                             strength:
-                                                topicTestsTaken[indexReport]
+                                                _testsTaken[indexReport]
                                                     .score!,
                                             size: Sizes.small,
                                           ),
@@ -595,12 +583,12 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                   child: LinearProgressIndicator(
                                     color: Color(0XFF00C9B9),
                                     backgroundColor: Color(0XFF0367B4),
-                                    value:
-                                        (topicTestsTaken[indexReport].correct! +
-                                                topicTestsTaken[indexReport]
-                                                    .wrong!) /
-                                            topicTestsTaken[indexReport]
-                                                .totalQuestions,
+                                    value: (_testsTaken[indexReport]
+                                                .correct! +
+                                            _testsTaken[indexReport]
+                                                .wrong!) /
+                                        _testsTaken[indexReport]
+                                            .totalQuestions,
                                   ),
                                 ),
                                 SizedBox(
@@ -620,13 +608,13 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     Row(
                                       children: [
                                         sText(
-                                          "${topicTestsTaken[indexReport].correct! + topicTestsTaken[indexReport].wrong!}",
+                                          "${_testsTaken[indexReport].correct! + _testsTaken[indexReport].wrong!}",
                                           color: Colors.white,
                                           weight: FontWeight.bold,
                                           size: 12,
                                         ),
                                         sText(
-                                          " / ${topicTestsTaken[indexReport].totalQuestions} Q",
+                                          " / ${_testsTaken[indexReport].totalQuestions} Q",
                                           color: Colors.white.withOpacity(0.7),
                                           size: 12,
                                         ),
@@ -661,16 +649,16 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                       onTap: () async {
                                         setState(() {
                                           searchKeyword =
-                                              topicTestsTaken[indexReport]
+                                              _testsTaken[indexReport]
                                                   .testname!
                                                   .toLowerCase();
                                         });
                                         await widget.getTest(
                                           context,
                                           TestCategory.NONE,
-                                          topicTestsTaken[indexReport]
+                                          _testsTaken[indexReport]
                                                   .correct! +
-                                              topicTestsTaken[indexReport]
+                                              _testsTaken[indexReport]
                                                   .wrong!,
                                         );
                                       },
