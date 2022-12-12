@@ -4,6 +4,7 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/test_taken_statistics_card.dart';
 import 'package:ecoach/utils/constants.dart';
@@ -79,13 +80,20 @@ class CustomSliderThumbCircle extends SliderComponentShape {
 
 class KnowledgeTestControllerModel extends ChangeNotifier {
   bool _isShowAnalysisBox = false;
+  List<String> _scrollListAlphabets = [];
 
   bool get isShowAnalysisBox => _isShowAnalysisBox;
+  List<String> get scrollListAlphabets => _scrollListAlphabets;
 
   set isShowAnalysisBox(bool value) {
     if (value != _isShowAnalysisBox) {
       _isShowAnalysisBox = value;
     }
+    notifyListeners();
+  }
+
+  set scrollListAlphabets(List<String> alphaList) {
+    _scrollListAlphabets = alphaList;
     notifyListeners();
   }
 }
@@ -102,6 +110,39 @@ class KnowledgeTestController extends ChangeNotifier {
   late double sheetHeight;
   late TestCategory activeMenu = TestCategory.NONE;
   bool isShowAlphaScroll = false;
+  bool _emptyTestTakenList = true;
+
+  bool get emptyTestTakenList => _emptyTestTakenList;
+
+  List<TestTaken> topicTestsTaken = [
+    TestTaken(
+      testname: "ICT",
+      scoreDiff: 4,
+      score: 60,
+      totalQuestions: 14,
+      responses: '',
+      correct: 10,
+      wrong: 0,
+      total_test_taken: 5,
+      userId: 3334,
+    ),
+    TestTaken(
+      testname: "Psychology",
+      scoreDiff: -1,
+      score: 80,
+      totalQuestions: 50,
+      responses: '',
+      correct: 10,
+      wrong: 3,
+      total_test_taken: 12,
+      userId: 3334,
+    ),
+  ];
+  // List<TestTaken> topicTestsTaken = [];
+
+  set emptyTestTakenList(bool value) {
+    _emptyTestTakenList = value;
+  }
 
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [
@@ -226,6 +267,8 @@ class KnowledgeTestController extends ChangeNotifier {
                               isActiveTopicMenu = true;
                               isActiveAnyMenu = true;
                               sheetHeightIncreased = true;
+                              emptyTestTakenList = topicTestsTaken.isEmpty;
+
                               break;
                             case TestCategory.MOCK:
                               isActiveAnyMenu = true;
@@ -318,12 +361,13 @@ class KnowledgeTestController extends ChangeNotifier {
                             Expanded(
                               child: SingleChildScrollView(
                                 child: Container(
-                                  // height:
                                   constraints: BoxConstraints(
                                     maxHeight: smallHeightDevice && searchTap
                                         ? 600
                                         : isActiveAnyMenu
-                                            ? 674
+                                            ? emptyTestTakenList
+                                                ? 496
+                                                : 674
                                             : !smallHeightDevice && searchTap
                                                 ? 660
                                                 : 346,
@@ -332,17 +376,58 @@ class KnowledgeTestController extends ChangeNotifier {
                                   child: Column(
                                     children: [
                                       if (isActiveAnyMenu)
-                                        TestTakenStatisticCard(
-                                          course: Course(),
-                                          showGraph: showGraph,
-                                          activeMenu: activeMenu,
-                                          knowledgeTestControllerModel: model,
-                                          getTest: (
-                                            BuildContext context,
-                                            TestCategory testCategory,
-                                            int currentQuestionCount,
-                                          ) async {},
-                                        ),
+                                        emptyTestTakenList
+                                            ? Container(
+                                                height: smallHeightDevice
+                                                    ? 150
+                                                    : 300,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                        "You have no Topic Knowledge Tests"),
+                                                    SizedBox(
+                                                      height: 12,
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () async {},
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 18,
+                                                          vertical: 12,
+                                                        ),
+                                                        child: sText(
+                                                          "Take New Test",
+                                                          color: Colors.white,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: kAdeoGreen4,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            : TestTakenStatisticCard(
+                                                topicTestsTaken:
+                                                    topicTestsTaken,
+                                                course: Course(),
+                                                showGraph: showGraph,
+                                                activeMenu: activeMenu,
+                                                knowledgeTestControllerModel:
+                                                    model,
+                                                getTest: (
+                                                  BuildContext context,
+                                                  TestCategory testCategory,
+                                                  int currentQuestionCount,
+                                                ) async {},
+                                              ),
                                       if (!model.isShowAnalysisBox)
                                         Expanded(
                                           child: Container(
@@ -383,11 +468,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               alphabets:
                                                                   scrollListAlphabets,
                                                               selectedAlphabet:
-                                                                  scrollListAlphabets.first,
+                                                                  scrollListAlphabets
+                                                                      .first,
                                                               callback:
-                                                                  (selectedAlphabet) =>
-                                                                      print(
-                                                                          "Selected: $selectedAlphabet"),
+                                                                  (selectedAlphabet) {
+                                                                print(
+                                                                    "Selected: $selectedAlphabet");
+                                                              },
                                                             )
                                                           : Container(
                                                               padding:
@@ -451,7 +538,9 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ],
                                                   ),
                                                 ),
-                                                if (!searchTap) Spacer(),
+                                                if (!searchTap &&
+                                                    !emptyTestTakenList)
+                                                  Spacer(),
                                                 if (searchTap)
                                                   Expanded(
                                                     child: Container(
