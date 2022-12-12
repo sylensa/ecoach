@@ -2,9 +2,11 @@ import 'package:ecoach/revamp/features/knowledge_tests/controllers/knowledge_tes
 import 'package:flutter/material.dart';
 
 class AlphabetScrollSlider extends StatefulWidget {
-  const AlphabetScrollSlider({Key? key, required this.callback})
+  const AlphabetScrollSlider(
+      {Key? key, required this.callback, this.selectedAlphabet = "P"})
       : super(key: key);
   final Function(String selectedAlphabet) callback;
+  final String selectedAlphabet;
 
   @override
   State<AlphabetScrollSlider> createState() => _AlphabetScrollSliderState();
@@ -49,7 +51,8 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
   @override
   void initState() {
     super.initState();
-    selectedAlphaScrollValue = alphaScrollSliderLabels.indexOf("P").toDouble();
+    selectedAlphaScrollValue =
+        alphaScrollSliderLabels.indexOf(widget.selectedAlphabet).toDouble();
     max = alphaScrollSliderLabels.length - 1;
     divisions = alphaScrollSliderLabels.length - 1;
   }

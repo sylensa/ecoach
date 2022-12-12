@@ -97,6 +97,11 @@ class KnowledgeTestController {
   bool showGraph = false;
   List<CourseKeywords> listCourseKeywordsData = [];
   List<Question> listQuestions = [];
+  bool isActiveAnyMenu = false;
+  bool sheetHeightIncreased = false;
+  late double sheetHeight;
+  late TestCategory activeMenu = TestCategory.NONE;
+  bool isShowAlphaScroll = false;
 
   Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
     'A': [
@@ -161,61 +166,32 @@ class KnowledgeTestController {
     'Z': []
   };
 
+  toggleKnowledgeTestMenus(BuildContext context, bool smallHeightDevice) {
+    if (activeMenu != TestCategory.NONE) {
+      sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
+      activeMenu = TestCategory.NONE;
+      sheetHeightIncreased = false;
+      isActiveAnyMenu = false;
+      isShowAlphaScroll = false;
+    } else if (!isActiveAnyMenu || searchTap) {
+      searchTap = false;
+      sheetHeight = appHeight(context) * 0.90;
+      activeMenu = TestCategory.TOPIC;
+      if (sheetHeightIncreased) {
+        isActiveAnyMenu = true;
+      }
+    }
+    return isActiveAnyMenu;
+  }
+
   knowledgeTestModalBottomSheet(
     context,
   ) async {
-    // if (listCourseKeywordsData.isNotEmpty) {
-    //   groupedCourseKeywordsLists = {
-    //     'A': [],
-    //     'B': [],
-    //     'C': [],
-    //     'D': [],
-    //     'E': [],
-    //     'F': [],
-    //     'G': [],
-    //     'H': [],
-    //     'I': [],
-    //     'J': [],
-    //     'K': [],
-    //     'L': [],
-    //     'M': [],
-    //     'N': [],
-    //     'O': [],
-    //     'P': [],
-    //     'Q': [],
-    //     'R': [],
-    //     'S': [],
-    //     'T': [],
-    //     'U': [],
-    //     'V': [],
-    //     'W': [],
-    //     'X': [],
-    //     'Y': [],
-    //     'Z': []
-    //   };
-    // } else {
-    //   groupedCourseKeywordsLists.clear();
-    // }
     searchKeywordController.text = searchKeyword.trim();
     searchTap = false;
     bool smallHeightDevice = appHeight(context) < 890 ? true : false;
-    double sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
-    bool isActiveAnyMenu = false;
+    sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
-    bool sheetHeightIncreased = false;
-    late TestCategory activeMenu = TestCategory.NONE;
-    bool isShowAlphaScroll = false;
-
-    // listCourseKeywordsData.forEach((courseKeyword) {
-    //   if (groupedCourseKeywordsLists[
-    //           '${courseKeyword.keyword![0]}'.toUpperCase()] ==
-    //       null) {
-    //     groupedCourseKeywordsLists[
-    //         '${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
-    //   }
-    //   groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!
-    //       .add(courseKeyword);
-    // });
 
     showModalBottomSheet(
         context: context,
@@ -394,6 +370,8 @@ class KnowledgeTestController {
                                                     children: [
                                                       isShowAlphaScroll
                                                           ? AlphabetScrollSlider(
+                                                              selectedAlphabet:
+                                                                  "A",
                                                               callback:
                                                                   (selectedAlphabet) =>
                                                                       print(
@@ -619,10 +597,6 @@ class KnowledgeTestController {
                                                           ],
                                                         )),
                                                   ),
-                                                // if (!searchTap &&
-                                                //     !keywordTestTaken
-                                                //         .isNotEmpty)
-                                                //   Spacer(),
 
                                                 // MENUS
                                                 Container(
@@ -666,45 +640,10 @@ class KnowledgeTestController {
                                                       ),
                                                       MaterialButton(
                                                         onPressed: () {
-                                                          // getTest(context, TestCategory.TOPIC);
-                                                          if (activeMenu ==
-                                                              TestCategory
-                                                                  .TOPIC) {
-                                                            sheetHeight =
-                                                                smallHeightDevice
-                                                                    ? 500
-                                                                    : appHeight(
-                                                                            context) *
-                                                                        0.56;
-                                                            activeMenu =
-                                                                TestCategory
-                                                                    .NONE;
-                                                            sheetHeightIncreased =
-                                                                false;
-                                                            if (!sheetHeightIncreased) {
-                                                              isActiveAnyMenu =
-                                                                  false;
-                                                              isActiveTopicMenu =
-                                                                  false;
-                                                            }
-                                                          } else if (!isActiveAnyMenu ||
-                                                              searchTap) {
-                                                            searchTap = false;
-                                                            sheetHeight =
-                                                                appHeight(
-                                                                        context) *
-                                                                    0.90;
-                                                            activeMenu =
-                                                                TestCategory
-                                                                    .TOPIC;
-                                                            if (sheetHeightIncreased) {
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              isActiveTopicMenu =
-                                                                  true;
-                                                            }
-                                                          }
-
+                                                          toggleKnowledgeTestMenus(
+                                                            context,
+                                                            smallHeightDevice,
+                                                          );
                                                           stateSetter(() {});
                                                         },
                                                         padding:
