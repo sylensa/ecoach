@@ -82,9 +82,11 @@ class CustomSliderThumbCircle extends SliderComponentShape {
 class KnowledgeTestControllerModel extends ChangeNotifier {
   bool _isShowAnalysisBox = false;
   List<String> _scrollListAlphabets = [];
+  String _currentAlphabet = '';
 
   bool get isShowAnalysisBox => _isShowAnalysisBox;
   List<String> get scrollListAlphabets => _scrollListAlphabets;
+  String get currentAlphabet => _currentAlphabet;
 
   set isShowAnalysisBox(bool value) {
     if (value != _isShowAnalysisBox) {
@@ -95,6 +97,11 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
 
   set scrollListAlphabets(List<String> alphaList) {
     _scrollListAlphabets = alphaList;
+    notifyListeners();
+  }
+
+  set currentAlphabet(String value) {
+    _currentAlphabet = value;
     notifyListeners();
   }
 }
@@ -121,6 +128,7 @@ class KnowledgeTestController extends ChangeNotifier {
   List<TestTaken> testsTaken = [];
   CarouselController alphaSliderToStatisticsCardController =
       CarouselController();
+  String currentAlphabet = '';
 
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [
@@ -189,6 +197,25 @@ class KnowledgeTestController extends ChangeNotifier {
     'Y': [],
     'Z': []
   };
+
+  void slideToActiveAlphabet({String selectedAlphabet = ''}) {
+    int _selectedIndex;
+    if (selectedAlphabet.isNotEmpty) {
+      _selectedIndex = testsTaken.indexWhere(
+          (testTaken) => testTaken.testname!.toUpperCase().startsWith(
+                selectedAlphabet,
+              ));
+      alphaSliderToStatisticsCardController.animateToPage(
+        _selectedIndex,
+      );
+    }
+
+    print("Selected: $selectedAlphabet ");
+  }
+
+  void slideToActiveAlphabetIndex({int selectedIndex = 0}) {
+    currentAlphabet = testsTaken[selectedIndex].testname![0];
+  }
 
   toggleKnowledgeTestMenus(BuildContext context, bool smallHeightDevice) {
     if (activeMenu != TestCategory.NONE) {
@@ -266,6 +293,7 @@ class KnowledgeTestController extends ChangeNotifier {
                               sheetHeightIncreased = true;
                               testsTaken = topicTestsTaken;
                               emptyTestTakenList = testsTaken.isEmpty;
+                              currentAlphabet = testsTaken.first.testname![0];
 
                               if (!emptyTestTakenList) {
                                 scrollListAlphabets = testsTaken.map((test) {
@@ -474,26 +502,18 @@ class KnowledgeTestController extends ChangeNotifier {
                                                           ? AlphabetScrollSlider(
                                                               alphabets:
                                                                   scrollListAlphabets,
-                                                              selectedAlphabet:
-                                                                  testsTaken
-                                                                      .first
-                                                                      .testname![0],
+                                                              initialSelectedAlphabet: model
+                                                                      .currentAlphabet
+                                                                      .isEmpty
+                                                                  ? currentAlphabet
+                                                                  : model
+                                                                      .currentAlphabet,
                                                               callback:
                                                                   (selectedAlphabet) {
-                                                                int selectedIndex =
-                                                                    testsTaken.indexWhere((testTaken) => testTaken
-                                                                        .testname!
-                                                                        .toUpperCase()
-                                                                        .startsWith(
-                                                                          selectedAlphabet,
-                                                                        ));
-
-                                                                alphaSliderToStatisticsCardController
-                                                                    .animateToPage(
-                                                                  selectedIndex,
+                                                                slideToActiveAlphabet(
+                                                                  selectedAlphabet:
+                                                                      selectedAlphabet,
                                                                 );
-                                                                print(
-                                                                    "Selected: $selectedAlphabet  -  Index: $selectedIndex");
                                                               },
                                                             )
                                                           : Container(

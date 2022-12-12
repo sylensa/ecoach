@@ -6,10 +6,10 @@ class AlphabetScrollSlider extends StatefulWidget {
     Key? key,
     required this.callback,
     required this.alphabets,
-    this.selectedAlphabet = "P",
+    this.initialSelectedAlphabet = "P",
   }) : super(key: key);
-  final Function(String selectedAlphabet) callback;
-  final String selectedAlphabet;
+  final Function(String initialSelectedAlphabet) callback;
+  final String initialSelectedAlphabet;
   final List<String> alphabets;
 
   @override
@@ -29,7 +29,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
     super.initState();
     alphaScrollSliderLabels = widget.alphabets;
     selectedAlphaScrollValue =
-        alphaScrollSliderLabels.indexOf(widget.selectedAlphabet).toDouble();
+        alphaScrollSliderLabels.indexOf(widget.initialSelectedAlphabet).toDouble();
     max = alphaScrollSliderLabels.length - 1;
     divisions = alphaScrollSliderLabels.length - 1;
   }
