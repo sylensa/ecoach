@@ -2,46 +2,22 @@ import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test
 import 'package:flutter/material.dart';
 
 class AlphabetScrollSlider extends StatefulWidget {
-  const AlphabetScrollSlider(
-      {Key? key, required this.callback, this.selectedAlphabet = "P"})
-      : super(key: key);
+  const AlphabetScrollSlider({
+    Key? key,
+    required this.callback,
+    required this.alphabets,
+    this.selectedAlphabet = "P",
+  }) : super(key: key);
   final Function(String selectedAlphabet) callback;
   final String selectedAlphabet;
+  final List<String> alphabets;
 
   @override
   State<AlphabetScrollSlider> createState() => _AlphabetScrollSliderState();
 }
 
 class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
-  List<String> alphaScrollSliderLabels = [
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-  ];
-
+  late List<String> alphaScrollSliderLabels;
   late double selectedAlphaScrollValue;
   late double max;
   late int divisions;
@@ -51,6 +27,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
   @override
   void initState() {
     super.initState();
+    alphaScrollSliderLabels = widget.alphabets;
     selectedAlphaScrollValue =
         alphaScrollSliderLabels.indexOf(widget.selectedAlphabet).toDouble();
     max = alphaScrollSliderLabels.length - 1;
@@ -71,7 +48,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
             child: Container(
               margin: EdgeInsets.only(bottom: 4),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ...alphaScrollSliderLabels.map((alphabetLabel) {
                     int index = alphaScrollSliderLabels.indexOf(alphabetLabel);
@@ -85,7 +62,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
 
                     return Padding(
                       padding: EdgeInsets.only(
-                        right: isLastAlphabet ? 0 : 0,
+                        right: isLastAlphabet ? 0 : 12,
                       ),
                       child: Text(
                         alphabetLabel,

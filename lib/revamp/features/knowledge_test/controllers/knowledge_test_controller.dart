@@ -103,17 +103,7 @@ class KnowledgeTestController extends ChangeNotifier {
   late TestCategory activeMenu = TestCategory.NONE;
   bool isShowAlphaScroll = false;
 
-  bool _isShowAnalysisBox = false;
-  bool get isShowAnalysisBox => _isShowAnalysisBox;
-
-  set isShowAnalysisBox(bool value) {
-    if (value != _isShowAnalysisBox) {
-      _isShowAnalysisBox = value;
-    }
-    notifyListeners();
-  }
-
-  Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+  Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [
       CourseKeywords(
         keyword: "Animal",
@@ -150,7 +140,12 @@ class KnowledgeTestController extends ChangeNotifier {
         total: 6,
       ),
     ],
-    'C': [],
+    'C': [
+      CourseKeywords(
+        keyword: "Commercial Law",
+        total: 12,
+      ),
+    ],
     'D': [],
     'E': [],
     'F': [],
@@ -202,6 +197,13 @@ class KnowledgeTestController extends ChangeNotifier {
     bool smallHeightDevice = appHeight(context) < 890 ? true : false;
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
+
+    List<String> scrollListAlphabets = [];
+    groupedCourseKeywordsMap.forEach((key, value) {
+      if (groupedCourseKeywordsMap[key]!.isNotEmpty) {
+        scrollListAlphabets.add(key);
+      }
+    });
 
     showModalBottomSheet(
         context: context,
@@ -341,8 +343,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                             int currentQuestionCount,
                                           ) async {},
                                         ),
-                                      if (!model
-                                          .isShowAnalysisBox)
+                                      if (!model.isShowAnalysisBox)
                                         Expanded(
                                           child: Container(
                                             child: Column(
@@ -379,8 +380,10 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     children: [
                                                       isShowAlphaScroll
                                                           ? AlphabetScrollSlider(
+                                                              alphabets:
+                                                                  scrollListAlphabets,
                                                               selectedAlphabet:
-                                                                  "A",
+                                                                  scrollListAlphabets.first,
                                                               callback:
                                                                   (selectedAlphabet) =>
                                                                       print(
@@ -483,7 +486,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                                 14,
                                                                           ),
                                                                           for (var entry
-                                                                              in groupedCourseKeywordsLists.entries)
+                                                                              in groupedCourseKeywordsMap.entries)
                                                                             if (entry.value.isNotEmpty)
                                                                               Column(
                                                                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -594,7 +597,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                       if (listQuestions
                                                                           .isEmpty)
                                                                         for (var entry
-                                                                            in groupedCourseKeywordsLists
+                                                                            in groupedCourseKeywordsMap
                                                                                 .entries)
                                                                           if (entry
                                                                               .value
