@@ -90,7 +90,7 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
   }
 }
 
-class KnowledgeTestController {
+class KnowledgeTestController extends ChangeNotifier {
   TextEditingController searchKeywordController = TextEditingController();
   String searchKeyword = '';
   bool searchTap = false;
@@ -102,6 +102,16 @@ class KnowledgeTestController {
   late double sheetHeight;
   late TestCategory activeMenu = TestCategory.NONE;
   bool isShowAlphaScroll = false;
+
+  bool _isShowAnalysisBox = false;
+  bool get isShowAnalysisBox => _isShowAnalysisBox;
+
+  set isShowAnalysisBox(bool value) {
+    if (value != _isShowAnalysisBox) {
+      _isShowAnalysisBox = value;
+    }
+    notifyListeners();
+  }
 
   Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
     'A': [
@@ -204,7 +214,7 @@ class KnowledgeTestController {
               return ChangeNotifierProvider(
                 create: (_) => KnowledgeTestControllerModel(),
                 child: Consumer<KnowledgeTestControllerModel>(
-                  builder: (context, knowledgeTestControllerModel, child) {
+                  builder: (context, model, child) {
                     return AnimatedContainer(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         height: sheetHeight,
@@ -324,15 +334,14 @@ class KnowledgeTestController {
                                           course: Course(),
                                           showGraph: showGraph,
                                           activeMenu: activeMenu,
-                                          knowledgeTestControllerModel:
-                                              knowledgeTestControllerModel,
+                                          knowledgeTestControllerModel: model,
                                           getTest: (
                                             BuildContext context,
                                             TestCategory testCategory,
                                             int currentQuestionCount,
                                           ) async {},
                                         ),
-                                      if (!knowledgeTestControllerModel
+                                      if (!model
                                           .isShowAnalysisBox)
                                         Expanded(
                                           child: Container(
@@ -419,8 +428,8 @@ class KnowledgeTestController {
                                                                   size: 60,
                                                                   icon: IconButton(
                                                                       onPressed: () async {
-                                                                        knowledgeTestControllerModel.isShowAnalysisBox =
-                                                                            !knowledgeTestControllerModel.isShowAnalysisBox;
+                                                                        model.isShowAnalysisBox =
+                                                                            !model.isShowAnalysisBox;
                                                                       },
                                                                       icon: Icon(
                                                                         Icons
