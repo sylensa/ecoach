@@ -136,11 +136,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
       subTitle: 'Self-explanatory notes on various topics',
       iconURL: 'assets/icons/courses/notes.png',
     ),
-    CourseDetail(
-      title: 'Glossary',
-      subTitle: 'Self-explanatory notes on various topics',
-      iconURL: 'assets/icons/courses/glossary.png',
-    ),
+    // CourseDetail(
+    //   title: 'Glossary',
+    //   subTitle: 'Self-explanatory notes on various topics',
+    //   iconURL: 'assets/icons/courses/glossary.png',
+    // ),
     CourseDetail(
       title: 'Tests',
       subTitle: 'Different test modes to get you exam-ready',
@@ -481,13 +481,13 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     course: course!,
                     topics: topics,
                   ),
-                  GlossaryWidget(
-                    controller: widget.controller,
-                    subscription: widget.subscription,
-                    user: widget.user,
-                    course: course!,
-                    listCourseKeywordsData: listCourseKeywordsData,
-                  ),
+                  // GlossaryWidget(
+                  //   controller: widget.controller,
+                  //   subscription: widget.subscription,
+                  //   user: widget.user,
+                  //   course: course!,
+                  //   listCourseKeywordsData: listCourseKeywordsData,
+                  // ),
                   TestTypeWidget(
                     controller: widget.controller,
                     subscription: widget.subscription,

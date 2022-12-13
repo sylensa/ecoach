@@ -520,7 +520,7 @@ class _ActivityState extends State<Activity> {
         if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Question"){
           countDown = groupNotificationData.notificationtable!.configurations!.countDown! * 10;
         }else if(groupNotificationData.notificationtable!.configurations!.timing! == "Time per Quiz"){
-          countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown! * 10;
+          countDown = 60 * groupNotificationData.notificationtable!.configurations!.countDown!;
         }
         DateTime startTime = groupNotificationData.notificationtable!.configurations!.startDatetime!;
         // countDown = countDown - DateTime.now().difference(startTime).inSeconds;
