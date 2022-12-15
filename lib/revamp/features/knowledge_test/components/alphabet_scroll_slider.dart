@@ -67,9 +67,9 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
                       child: Text(
                         alphabetLabel,
                         style: TextStyle(
-                          fontSize: isSelectedAlphabet ? 16 : 10,
+                          fontSize: isSelectedAlphabet ? 16 : 14,
                           color: Color(0xFF0367B4).withOpacity(
-                            isSelectedAlphabet ? 1 : 0.4,
+                            isSelectedAlphabet ? 1 : 0.8
                           ),
                           fontWeight: isSelectedAlphabet
                               ? FontWeight.w600

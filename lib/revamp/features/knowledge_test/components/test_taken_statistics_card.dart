@@ -22,7 +22,6 @@ class TestTakenStatisticCard extends StatefulWidget {
   const TestTakenStatisticCard({
     Key? key,
     required this.showGraph,
-    required this.course,
     required this.getTest,
     required this.knowledgeTestControllerModel,
     required this.testsTaken,
@@ -35,7 +34,6 @@ class TestTakenStatisticCard extends StatefulWidget {
   final CarouselController? carouselController;
   final List<TestTaken> testsTaken;
   final bool showGraph;
-  final Course course;
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
   final Future Function(BuildContext context, TestCategory testCategory,

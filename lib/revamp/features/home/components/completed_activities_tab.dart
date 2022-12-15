@@ -22,6 +22,7 @@ import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -265,12 +266,13 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                             );
                           } else {
                             print("Download course first");
+
                             // showDialogYesNo(
                             //     context: context,
                             //     message:
                             //         "Download questions for ${completedActivity.treadmill!.courseName}",
                             //     target: BuyBundlePage(
-                            //       user,
+                            //       widget.user,
                             //       controller:
                             //           widget.mainController,
                             //       bundle: widget.subscription,

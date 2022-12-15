@@ -63,7 +63,6 @@ class _CoursesPageState extends State<CoursesPage> {
       });
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -118,8 +117,13 @@ class _CoursesPageState extends State<CoursesPage> {
                               });
                               print("object");
 
-                              showLoaderDialog(context, message: "Loading courses");
-                              List<Course> courses = await SubscriptionItemDB().subscriptionCourses(context.read<DownloadUpdate>().plans[index].planId!);
+                              showLoaderDialog(context,
+                                  message: "Loading courses");
+                              List<Course> courses = await SubscriptionItemDB()
+                                  .subscriptionCourses(context
+                                      .read<DownloadUpdate>()
+                                      .plans[index]
+                                      .planId!);
 
                               Plan newPlan = Plan(
                                 id: context
@@ -188,7 +192,8 @@ class _CoursesPageState extends State<CoursesPage> {
                                       name: CoursesDetailsPage.routeName,
                                     ),
                                     builder: (context) {
-                                      print("Route Name: ${CoursesDetailsPage.routeName}");
+                                      print(
+                                          "Route Name: ${CoursesDetailsPage.routeName}");
                                       return CoursesDetailsPage(
                                         courses: courses,
                                         user: widget.user,
@@ -198,8 +203,8 @@ class _CoursesPageState extends State<CoursesPage> {
                                     },
                                   ),
                                 );
-                              }
-                              else {
+                              } else {
+                                print("hhmmmm");
                                 showDialogYesNo(
                                     context: context,
                                     message: "Download course for this bundle",

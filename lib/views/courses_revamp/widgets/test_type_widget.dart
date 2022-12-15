@@ -985,7 +985,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                       ),
                                       if (listQuestions.isEmpty)
                                         for (var entry
-                                            in groupedCourseKeywordsLists.entries)
+                                            in groupedCourseKeywordsLists
+                                                .entries)
                                           if (entry.value.isNotEmpty)
                                             Text(entry.key),
                                     ]),
