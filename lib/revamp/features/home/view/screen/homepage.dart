@@ -697,7 +697,6 @@ class _HomePage2ContentState extends State<DashboardContent>
 
     _tabController = TabController(length: 3, vsync: this);
     _tabController.animation?.addListener(() {
-      print("Offset: ${_tabController.offset}");
       if (_tabController.offset >= 0.5 || _tabController.offset <= -0.5) {
         _swipeIsInProgress = true;
       } else {

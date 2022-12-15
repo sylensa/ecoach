@@ -444,8 +444,8 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                 controller: pageController,
                 onPageChanged: (page) {
                   setState(() {
-                    print("currentPageNumber:$currentPageNumber");
-                    print("page:$page");
+                    // print("currentPageNumber:$currentPageNumber");
+                    // print("page:$page");
                     if (page >= currentPageNumber) {
                       pageControllerView.animateTo(appWidth(context) / 10,
                           duration: new Duration(microseconds: 1),

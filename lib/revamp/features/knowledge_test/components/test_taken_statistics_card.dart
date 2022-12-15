@@ -75,7 +75,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     );
 
     _testsTaken = widget.testsTaken;
-
+    print(widget.activeMenu);
     switch (widget.activeMenu) {
       case TestCategory.TOPIC:
         activeMenuIcon += "topic.png";
@@ -550,8 +550,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         children: [
                                           AdeoSignalStrengthIndicator(
                                             strength:
-                                                _testsTaken[indexReport]
-                                                    .score!,
+                                                _testsTaken[indexReport].score!,
                                             size: Sizes.small,
                                           ),
                                           SizedBox(
@@ -581,12 +580,9 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                   child: LinearProgressIndicator(
                                     color: Color(0XFF00C9B9),
                                     backgroundColor: Color(0XFF0367B4),
-                                    value: (_testsTaken[indexReport]
-                                                .correct! +
-                                            _testsTaken[indexReport]
-                                                .wrong!) /
-                                        _testsTaken[indexReport]
-                                            .totalQuestions,
+                                    value: (_testsTaken[indexReport].correct! +
+                                            _testsTaken[indexReport].wrong!) /
+                                        _testsTaken[indexReport].totalQuestions,
                                   ),
                                 ),
                                 SizedBox(
@@ -654,10 +650,8 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         await widget.getTest(
                                           context,
                                           TestCategory.NONE,
-                                          _testsTaken[indexReport]
-                                                  .correct! +
-                                              _testsTaken[indexReport]
-                                                  .wrong!,
+                                          _testsTaken[indexReport].correct! +
+                                              _testsTaken[indexReport].wrong!,
                                         );
                                       },
                                       child: Container(

@@ -305,7 +305,7 @@ class KnowledgeTestController extends ChangeNotifier {
                               testsTaken = topicTestsTaken;
                               emptyTestTakenList = testsTaken.isEmpty;
                               currentAlphabet = testsTaken.first.testname![0];
-
+                             
                               if (!emptyTestTakenList) {
                                 scrollListAlphabets = testsTaken.map((test) {
                                   return test.testname![0]
@@ -332,9 +332,11 @@ class KnowledgeTestController extends ChangeNotifier {
                               isActiveAnyMenu = true;
                               break;
                             case TestCategory.NONE:
+                               print("List Empty: $emptyTestTakenList");
                               break;
                             default:
                               // sheetHeightIncreased = false;
+
                               break;
                           }
                           stateSetter(() {});
@@ -409,7 +411,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                     maxHeight: smallHeightDevice && searchTap
                                         ? 600
                                         : isActiveAnyMenu
-                                            ?  674
+                                            ? 674
                                             : !smallHeightDevice && searchTap
                                                 ? 660
                                                 : 346,
@@ -484,8 +486,8 @@ class KnowledgeTestController extends ChangeNotifier {
                                               ),
                                               Dismissible(
                                                 key: UniqueKey(),
-                                                direction: DismissDirection
-                                                    .horizontal,
+                                                direction:
+                                                    DismissDirection.horizontal,
                                                 confirmDismiss: (direction) {
                                                   if (isActiveAnyMenu) {
                                                     if (direction ==
@@ -527,8 +529,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                           )
                                                         : Container(
                                                             padding:
-                                                                EdgeInsets
-                                                                    .only(
+                                                                EdgeInsets.only(
                                                               left: 10,
                                                               right: 10,
                                                               top: 0,
@@ -540,8 +541,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               onChanged: (String
                                                                   value) async {},
                                                               onTap: () {
-                                                                stateSetter(
-                                                                    () {
+                                                                stateSetter(() {
                                                                   if (isActiveAnyMenu) {
                                                                     activeMenu =
                                                                         TestCategory
@@ -550,7 +550,8 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                         false;
                                                                   }
                                                                   sheetHeight =
-                                                                      appHeight(context) *
+                                                                      appHeight(
+                                                                              context) *
                                                                           0.90;
                                                                   sheetHeightIncreased =
                                                                       true;
@@ -565,19 +566,21 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                 showBorder:
                                                                     false,
                                                                 size: 60,
-                                                                icon: IconButton(
-                                                                    onPressed: () async {
-                                                                      model.isShowAnalysisBox =
-                                                                          !model.isShowAnalysisBox;
-                                                                    },
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .search,
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    )),
-                                                                suffIcon:
-                                                                    null,
+                                                                icon:
+                                                                    IconButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          model.isShowAnalysisBox =
+                                                                              !model.isShowAnalysisBox;
+                                                                        },
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .search,
+                                                                          color:
+                                                                              Colors.grey,
+                                                                        )),
+                                                                suffIcon: null,
                                                                 label:
                                                                     "Search Keywords",
                                                                 enabled: true,
@@ -593,8 +596,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                               if (searchTap)
                                                 Expanded(
                                                   child: Container(
-                                                      padding:
-                                                          EdgeInsets.only(
+                                                      padding: EdgeInsets.only(
                                                         left: 20.0,
                                                         right: 14.0,
                                                         top: 26,
@@ -610,102 +612,96 @@ class KnowledgeTestController extends ChangeNotifier {
                                                         children: [
                                                           SingleChildScrollView(
                                                             child: Container(
-                                                              child: listQuestions
-                                                                      .isEmpty
-                                                                  ? Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment.start,
-                                                                      children: [
-                                                                        sText(
-                                                                            "Most Popular",
-                                                                            weight: FontWeight.w600),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              14,
-                                                                        ),
-                                                                        for (var entry
-                                                                            in groupedCourseKeywordsMap.entries)
-                                                                          if (entry.value.isNotEmpty)
-                                                                            Column(
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(entry.key),
-                                                                                for (int i = 0; i < entry.value.length; i++)
-                                                                                  if (properCase("${entry.value[i].keyword}").isNotEmpty)
-                                                                                    MaterialButton(
-                                                                                      padding: EdgeInsets.zero,
-                                                                                      onPressed: () async {},
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          Row(
+                                                              child:
+                                                                  listQuestions
+                                                                          .isEmpty
+                                                                      ? Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            sText("Most Popular",
+                                                                                weight: FontWeight.w600),
+                                                                            SizedBox(
+                                                                              height: 14,
+                                                                            ),
+                                                                            for (var entry
+                                                                                in groupedCourseKeywordsMap.entries)
+                                                                              if (entry.value.isNotEmpty)
+                                                                                Column(
+                                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text(entry.key),
+                                                                                    for (int i = 0; i < entry.value.length; i++)
+                                                                                      if (properCase("${entry.value[i].keyword}").isNotEmpty)
+                                                                                        MaterialButton(
+                                                                                          padding: EdgeInsets.zero,
+                                                                                          onPressed: () async {},
+                                                                                          child: Column(
                                                                                             children: [
-                                                                                              Icon(Icons.trending_up),
-                                                                                              SizedBox(
-                                                                                                width: 10,
-                                                                                              ),
-                                                                                              Column(
-                                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                              Row(
                                                                                                 children: [
-                                                                                                  sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
-                                                                                                  sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
+                                                                                                  Icon(Icons.trending_up),
+                                                                                                  SizedBox(
+                                                                                                    width: 10,
+                                                                                                  ),
+                                                                                                  Column(
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                    children: [
+                                                                                                      sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
+                                                                                                      sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
+                                                                                                    ],
+                                                                                                  ),
                                                                                                 ],
+                                                                                              ),
+                                                                                              SizedBox(
+                                                                                                height: 10,
                                                                                               ),
                                                                                             ],
                                                                                           ),
-                                                                                          SizedBox(
-                                                                                            height: 10,
-                                                                                          ),
+                                                                                        )
+                                                                                  ],
+                                                                                )
+                                                                          ],
+                                                                        )
+                                                                      : Column(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            sText("Search Result",
+                                                                                weight: FontWeight.w600),
+                                                                            SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            MaterialButton(
+                                                                              padding: EdgeInsets.zero,
+                                                                              onPressed: () async {
+                                                                                // stateSetter(() {});
+                                                                                // await getTest(context,
+                                                                                //     TestCategory.NONE);
+                                                                              },
+                                                                              child: Column(
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      Icon(Icons.trending_up),
+                                                                                      SizedBox(
+                                                                                        width: 10,
+                                                                                      ),
+                                                                                      Column(
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                        children: [
+                                                                                          sText("${properCase("")}", weight: FontWeight.bold),
+                                                                                          sText("${listQuestions.length} appearances", size: 12, color: kAdeoGray3),
                                                                                         ],
                                                                                       ),
-                                                                                    )
-                                                                              ],
-                                                                            )
-                                                                      ],
-                                                                    )
-                                                                  : Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment.start,
-                                                                      children: [
-                                                                        sText(
-                                                                            "Search Result",
-                                                                            weight: FontWeight.w600),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              10,
-                                                                        ),
-                                                                        MaterialButton(
-                                                                          padding:
-                                                                              EdgeInsets.zero,
-                                                                          onPressed:
-                                                                              () async {
-                                                                            // stateSetter(() {});
-                                                                            // await getTest(context,
-                                                                            //     TestCategory.NONE);
-                                                                          },
-                                                                          child:
-                                                                              Column(
-                                                                            children: [
-                                                                              Row(
-                                                                                children: [
-                                                                                  Icon(Icons.trending_up),
-                                                                                  SizedBox(
-                                                                                    width: 10,
-                                                                                  ),
-                                                                                  Column(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                    children: [
-                                                                                      sText("${properCase("")}", weight: FontWeight.bold),
-                                                                                      sText("${listQuestions.length} appearances", size: 12, color: kAdeoGray3),
                                                                                     ],
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      ],
-                                                                    ),
+                                                                            )
+                                                                          ],
+                                                                        ),
                                                             ),
                                                           ),
                                                           SingleChildScrollView(
@@ -715,22 +711,18 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                     Icon(
                                                                       Icons
                                                                           .trending_up,
-                                                                      size:
-                                                                          15,
+                                                                      size: 15,
                                                                     ),
                                                                     SizedBox(
-                                                                      height:
-                                                                          4,
+                                                                      height: 4,
                                                                     ),
                                                                     Icon(
                                                                       Icons
                                                                           .numbers,
-                                                                      size:
-                                                                          15,
+                                                                      size: 15,
                                                                     ),
                                                                     SizedBox(
-                                                                      height:
-                                                                          4,
+                                                                      height: 4,
                                                                     ),
                                                                     if (listQuestions
                                                                         .isEmpty)
@@ -740,7 +732,8 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                         if (entry
                                                                             .value
                                                                             .isNotEmpty)
-                                                                          Text(entry.key),
+                                                                          Text(entry
+                                                                              .key),
                                                                   ]),
                                                             ),
                                                           )
@@ -759,8 +752,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                 decoration: BoxDecoration(
                                                   color: kAdeoWhiteAlpha81,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          12),
+                                                      BorderRadius.circular(12),
                                                 ),
                                                 height: 240,
                                                 child: GridView.count(
@@ -781,8 +773,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                           height: 10,
                                                         ),
                                                         sText("Diagnostic ",
-                                                            color:
-                                                                Colors.grey,
+                                                            color: Colors.grey,
                                                             align: TextAlign
                                                                 .center,
                                                             size: 12),
@@ -796,8 +787,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                         );
                                                         stateSetter(() {});
                                                       },
-                                                      padding:
-                                                          EdgeInsets.zero,
+                                                      padding: EdgeInsets.zero,
                                                       child: Stack(
                                                         children: [
                                                           Column(
@@ -834,8 +824,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               bottom: 20,
                                                               left: 0,
                                                               right: 0,
-                                                              child:
-                                                                  Container(
+                                                              child: Container(
                                                                 height: 2,
                                                                 width: 46,
                                                                 color: Color(
@@ -849,8 +838,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       onPressed: () {
                                                         // getTest(context, TestCategory.EXAM);
                                                       },
-                                                      padding:
-                                                          EdgeInsets.zero,
+                                                      padding: EdgeInsets.zero,
                                                       child: Stack(
                                                         children: [
                                                           Column(
@@ -879,14 +867,12 @@ class KnowledgeTestController extends ChangeNotifier {
                                                             ],
                                                           ),
                                                           if (activeMenu ==
-                                                              TestCategory
-                                                                  .EXAM)
+                                                              TestCategory.EXAM)
                                                             Positioned(
                                                               bottom: 20,
                                                               left: 0,
                                                               right: 0,
-                                                              child:
-                                                                  Container(
+                                                              child: Container(
                                                                 height: 2,
                                                                 width: 46,
                                                                 color: Color(
@@ -900,8 +886,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       onPressed: () {
                                                         // getTest(context, TestCategory.BANK);
                                                       },
-                                                      padding:
-                                                          EdgeInsets.zero,
+                                                      padding: EdgeInsets.zero,
                                                       child: Center(
                                                         child: Container(
                                                           child: Column(
@@ -931,8 +916,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       onPressed: () {
                                                         // getTest(context, TestCategory.SAVED);
                                                       },
-                                                      padding:
-                                                          EdgeInsets.zero,
+                                                      padding: EdgeInsets.zero,
                                                       child: Container(
                                                         // padding: EdgeInsets.only(
                                                         //     top: 10, bottom: 10, left: 0),
@@ -949,8 +933,8 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               height: 10,
                                                             ),
                                                             sText("Saved",
-                                                                color: Colors
-                                                                    .grey,
+                                                                color:
+                                                                    Colors.grey,
                                                                 align: TextAlign
                                                                     .center,
                                                                 size: 12),
@@ -962,8 +946,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       onPressed: () {
                                                         // getTest(context, TestCategory.ESSAY);
                                                       },
-                                                      padding:
-                                                          EdgeInsets.zero,
+                                                      padding: EdgeInsets.zero,
                                                       child: Container(
                                                         child: Column(
                                                           mainAxisAlignment:

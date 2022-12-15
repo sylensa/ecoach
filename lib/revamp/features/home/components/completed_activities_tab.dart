@@ -150,6 +150,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   @override
   void initState() {
     _allCompletedActivities = widget.allCompletedActivities;
+    print("Activities: $_allCompletedActivities");
 
     super.initState();
   }
@@ -204,7 +205,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
               scrollDirection: Axis.vertical,
               itemBuilder: ((context, index) {
                 TestActivity completedActivity = _allCompletedActivities[index];
-
                 bool isLastItem = index == _allCompletedActivities.length - 1;
                 String activityTitle;
 
@@ -240,6 +240,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                     activityTitle =
                         completedActivity.treadmill!.testname.toString();
                     ;
+                    // hasCourseDownloadedQuestions(completedActivity)
                     return Container(
                       margin: EdgeInsets.only(
                         bottom: isLastItem ? 0 : 12,
@@ -265,7 +266,7 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               user: widget.user,
                             );
                           } else {
-                            print("Download course first");
+                            print("Download questions");
 
                             // showDialogYesNo(
                             //     context: context,
@@ -344,6 +345,14 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
               }),
             ),
     );
+  }
+
+  hasCourseDownloadedQuestions(TestActivity completedActivity) async {
+    List<Question> questions = await QuestionDB().getQuestionsByCourseId(
+      completedActivity.courseId!,
+    );
+
+    return questions.isNotEmpty;
   }
 
   Future<Course> getAutopilotCourse(courseId) async {

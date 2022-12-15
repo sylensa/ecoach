@@ -192,8 +192,6 @@ class _CoursesPageState extends State<CoursesPage> {
                                       name: CoursesDetailsPage.routeName,
                                     ),
                                     builder: (context) {
-                                      print(
-                                          "Route Name: ${CoursesDetailsPage.routeName}");
                                       return CoursesDetailsPage(
                                         courses: courses,
                                         user: widget.user,
@@ -204,7 +202,6 @@ class _CoursesPageState extends State<CoursesPage> {
                                   ),
                                 );
                               } else {
-                                print("hhmmmm");
                                 showDialogYesNo(
                                     context: context,
                                     message: "Download course for this bundle",
