@@ -1226,8 +1226,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Accuracy matters , don\'t let the clock run down',
           iconURL: 'assets/icons/courses/speed.png',
           onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            List<Question> questions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
               Navigator.push(
                 context,

@@ -271,7 +271,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Image.asset("assets/images/objective.png",),
-                                  SizedBox(width: 50,),
+                                  SizedBox(width: 30,),
                                   Column(
                                     children: [
                                       Container(

@@ -4,7 +4,9 @@ import 'dart:io';
 
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/api/package_downloader.dart';
+import 'package:ecoach/controllers/glossary_controller.dart';
 import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -212,6 +214,7 @@ class MainController {
           Batch batch = txn.batch();
           print("subscriptionItem.course!:${subscriptionItem.course != null ? subscriptionItem.course!.toJson() : "null"}");
           await CourseDB().insert(batch, subscriptionItem.course!);
+          await GlossaryController().getGlossariesList(batch,subscriptionItem.course!.id!);
           provider.updateMessage("saving $filename quizzes");
           await QuizDB().insertAll(batch, subscriptionItem.quizzes!);
           provider.updateMessage("saving $filename topics");

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/autopilot_db.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/marathon_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -58,6 +59,8 @@ class _HomePage2State extends State<HomePage2> {
   @override
   void initState() {
     super.initState();
+     GlossaryDB().getGlossariesById(146);
+
   }
 
   @override

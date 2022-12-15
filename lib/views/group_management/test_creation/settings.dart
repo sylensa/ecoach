@@ -1551,7 +1551,6 @@ class _SettingsState extends State<Settings> {
                                                     child:  TextFormField(
                                                       textAlign: TextAlign.center,
                                                       controller: textEditingController[i],
-                                                      keyboardType: TextInputType.number,
                                                       maxLines: 1,
                                                       onChanged: (value){
                                                         setState((){
