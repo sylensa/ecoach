@@ -22,6 +22,7 @@ import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/shared_preference.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -203,7 +204,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
               scrollDirection: Axis.vertical,
               itemBuilder: ((context, index) {
                 TestActivity completedActivity = _allCompletedActivities[index];
-
                 bool isLastItem = index == _allCompletedActivities.length - 1;
                 String activityTitle;
 
@@ -238,7 +238,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                   case TestActivityType.TREADMILL:
                     activityTitle =
                         completedActivity.treadmill!.testname.toString();
-                    ;
                     return Container(
                       margin: EdgeInsets.only(
                         bottom: isLastItem ? 0 : 12,
@@ -264,13 +263,14 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                               user: widget.user,
                             );
                           } else {
-                            print("Download course first");
+                            print("Download questions");
+
                             // showDialogYesNo(
                             //     context: context,
                             //     message:
                             //         "Download questions for ${completedActivity.treadmill!.courseName}",
                             //     target: BuyBundlePage(
-                            //       user,
+                            //       widget.user,
                             //       controller:
                             //           widget.mainController,
                             //       bundle: widget.subscription,

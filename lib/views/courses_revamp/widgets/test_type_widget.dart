@@ -14,6 +14,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -213,6 +214,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             title: "Essays",
                             testCategory: TestCategory.ESSAY,
                           );
+
                           break;
                         case TestCategory.SAVED:
                           List<Question> questions = data as List<Question>;
@@ -845,7 +847,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                                 height: 14,
                                               ),
                                               for (var entry
-                                                  in groupedCourseKeywordsLists.entries)
+                                                  in groupedCourseKeywordsLists
+                                                      .entries)
                                                 if (entry.value.isNotEmpty)
                                                   Column(
                                                     mainAxisAlignment:
@@ -983,7 +986,9 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                                         height: 4,
                                       ),
                                       if (listQuestions.isEmpty)
-                                        for (var entry in groupedCourseKeywordsLists.entries)
+                                        for (var entry
+                                            in groupedCourseKeywordsLists
+                                                .entries)
                                           if (entry.value.isNotEmpty)
                                             Text(entry.key),
                                     ]),
@@ -1203,7 +1208,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   }
 
   getKeywordTestTaken() async {
-    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(widget.course.id!);
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken();
     setState(() {
       print("am back");
     });
@@ -1226,7 +1231,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Accuracy matters , don\'t let the clock run down',
           iconURL: 'assets/icons/courses/speed.png',
           onTap: () async {
-            List<Question> questions = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            List<Question> questions =
+                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
               Navigator.push(
                 context,
@@ -1259,8 +1265,14 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             List<Question> questions =
                 await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-              setState(() {});
-              knowledgeTestModalBottomSheet(context);
+              // knowledgeTestModalBottomSheet(context);
+              KnowledgeTestController knowledgeTestController =
+                  KnowledgeTestController();
+
+              knowledgeTestController.knowledgeTestModalBottomSheet(
+                context,
+                course: widget.course,
+              );
             } else {
               showDialogYesNo(
                   context: context,

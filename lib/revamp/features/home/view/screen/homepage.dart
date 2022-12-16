@@ -297,7 +297,7 @@ class _HomePage2ContentState extends State<DashboardContent>
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    sText("Apply code",
+                                    sText("Apply codes",
                                         color: Colors.white,
                                         align: TextAlign.center,
                                         weight: FontWeight.bold),
@@ -697,7 +697,6 @@ class _HomePage2ContentState extends State<DashboardContent>
 
     _tabController = TabController(length: 3, vsync: this);
     _tabController.animation?.addListener(() {
-      print("Offset: ${_tabController.offset}");
       if (_tabController.offset >= 0.5 || _tabController.offset <= -0.5) {
         _swipeIsInProgress = true;
       } else {
@@ -757,7 +756,7 @@ class _HomePage2ContentState extends State<DashboardContent>
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 164.0),
+          padding: const EdgeInsets.only(top: 146.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -935,52 +934,51 @@ class _HomePage2ContentState extends State<DashboardContent>
                         ),
                       ),
                     ),
-                    SizedBox(height: 18),
+                    SizedBox(height: 8),
                     //  TabBar
                     Container(
                       width: double.infinity,
-                      height: 60,
-                      padding: EdgeInsets.symmetric(horizontal: 2),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: TabBar(
-                          controller: _tabController,
-                          isScrollable: true,
-                          labelColor: kAdeoGreen4,
-                          labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                          labelPadding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 1,
-                          ),
-                          unselectedLabelColor: Colors.black87,
-                          unselectedLabelStyle:
-                              TextStyle(fontWeight: FontWeight.w500),
-                          splashFactory: NoSplash.splashFactory,
-                          overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.transparent,
-                          ),
-                          onTap: (x) {
-                            setState(() {
-                              // isActiveTab = _tabController.index == x;
-                            });
-                          },
-                          indicatorColor: Colors.transparent,
-                          tabs: _tabs.map((tab) {
-                            isActiveTab =
-                                _tabController.index == _tabs.indexOf(tab);
-                            if (isActiveTab) {
-                              _activeTab = tab;
-                              setState(() {});
-                            }
-                            return Tab(
-                              child: UnselectedTabIndicator(
-                                label: tab,
-                                isActive: isActiveTab,
-                                indicatorWidth: currentIndicatorLineWidth,
-                              ),
-                            );
-                          }).toList(),
+                      height: 50,
+                      padding: EdgeInsets.symmetric(horizontal: 3, vertical: 4,),
+                      child: TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        labelColor: kAdeoGreen4,
+                        labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                        labelPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          // vertical: 1,
                         ),
+                        unselectedLabelColor: Colors.black87,
+                        unselectedLabelStyle:
+                            TextStyle(fontWeight: FontWeight.w500),
+                        splashFactory: NoSplash.splashFactory,
+                        overlayColor: MaterialStateProperty.all<Color>(
+                          Colors.transparent,
+                        ),
+                        onTap: (x) {
+                          setState(() {
+                            // isActiveTab = _tabController.index == x;
+                          });
+                        },
+                        indicatorColor: kAdeoGreen4,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicatorWeight: 1.5,
+                        tabs: _tabs.map((tab) {
+                          isActiveTab =
+                              _tabController.index == _tabs.indexOf(tab);
+                          if (isActiveTab) {
+                            _activeTab = tab;
+                            setState(() {});
+                          }
+                          return Tab(
+                            child: UnselectedTabIndicator(
+                              label: tab,
+                              isActive: isActiveTab,
+                              indicatorWidth: currentIndicatorLineWidth,
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
                   ],
@@ -1025,46 +1023,46 @@ class _UnselectedTabIndicatorState extends State<UnselectedTabIndicator> {
             style: TextStyle(fontFamily: "Poppins", fontSize: 16),
           ),
         ),
-        widget.isActive
-            ? Column(
-                children: [
-                  SizedBox(
-                    height: 6,
-                  ),
-                  AnimatedContainer(
-                    curve: Curves.easeInOut,
-                    duration: Duration(milliseconds: 20),
-                    width: widget.indicatorWidth,
-                    height: 2,
-                    constraints: BoxConstraints(
-                      minWidth: 0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: kAdeoGreen4,
-                      borderRadius: BorderRadius.circular(
-                        8,
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  SizedBox(
-                    height: 3,
-                  ),
-                  Container(
-                    width: 4,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(
-                        8,
-                      ),
-                    ),
-                  ),
-                ],
-              )
+        // widget.isActive
+        //     ? Column(
+        //         children: [
+        //           SizedBox(
+        //             height: 6,
+        //           ),
+        //           AnimatedContainer(
+        //             curve: Curves.easeInOut,
+        //             duration: Duration(milliseconds: 20),
+        //             width: widget.indicatorWidth,
+        //             height: 2,
+        //             constraints: BoxConstraints(
+        //               minWidth: 0,
+        //             ),
+        //             decoration: BoxDecoration(
+        //               color: kAdeoGreen4,
+        //               borderRadius: BorderRadius.circular(
+        //                 8,
+        //               ),
+        //             ),
+        //           ),
+        //         ],
+        //       )
+        //     : Column(
+        //         children: [
+        //           SizedBox(
+        //             height: 3,
+        //           ),
+        //           Container(
+        //             width: 4,
+        //             height: 4,
+        //             decoration: BoxDecoration(
+        //               color: Colors.black87,
+        //               borderRadius: BorderRadius.circular(
+        //                 8,
+        //               ),
+        //             ),
+        //           ),
+        //         ],
+        //       )
       ],
     );
   }
