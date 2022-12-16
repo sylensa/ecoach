@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -36,6 +38,8 @@ class _GlossaryViewState extends State<GlossaryView> {
   List<GlossaryData> glossaryData = [];
   String selectedCharacter = '';
   int currentIndex = 1;
+  String termKeyword = '';
+  List<Question> listQuestions = [];
   Map<String, List<GlossaryData>> glossaryDataListsResult = {
     'A': [],
     'B': [],
@@ -146,6 +150,7 @@ class _GlossaryViewState extends State<GlossaryView> {
     print("groupedCourseKeywordsResult:${glossaryDataListsResult}");
 
     glossaryData =  glossaryDataListsResult.entries.first.value;
+    termKeyword = glossaryData.first.term!;
     selectedCharacter =  glossaryDataListsResult.entries.first.key;
   }
   @override
@@ -166,28 +171,41 @@ class _GlossaryViewState extends State<GlossaryView> {
                     controller: pageControllerView,
                   children: [
                     for(var entries in glossaryDataListsResult.entries)
-                      Row(
-                        children: [
-                          Center(
-                            child: SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: Stack(
-                                children:  [
-                                  if(selectedCharacter.toLowerCase() == entries.key.toLowerCase())
-                                  CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                    value: currentIndex/glossaryData.length,
-                                  ),
-                                  Center(
-                                    child: sText(entries.key.toLowerCase(),color: Colors.white,align: TextAlign.center,size: 18,weight: FontWeight.w500),
-                                  ),
-                                ],
+                      GestureDetector(
+                        onTap: ()async{
+                            currentIndex = 1;
+                            glossaryData = entries.value;
+                            selectedCharacter = entries.key;
+                            termKeyword = glossaryData.first.term!;
+                          listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
+                          setState(() {
+                            print("listQuestions:${listQuestions.length}");
+                          });
+
+                        },
+                        child: Row(
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: Stack(
+                                  children:  [
+                                    if(selectedCharacter.toLowerCase() == entries.key.toLowerCase())
+                                    CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                      value: currentIndex/glossaryData.length,
+                                    ),
+                                    Center(
+                                      child: sText(entries.key.toLowerCase(),color: Colors.white,align: TextAlign.center,size: 18,weight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
 
                   ],
@@ -205,12 +223,13 @@ class _GlossaryViewState extends State<GlossaryView> {
                     viewportFraction: 0.85,
                     aspectRatio: 2.0,
                     pageSnapping: true,
-                    onPageChanged: (index, reason) {
-                      setState(
-                              () {
-                                currentIndex  = index +1;
-                              print(index);
-                          });
+                    onPageChanged: (index, reason) async{
+                      currentIndex  = index +1;
+                      termKeyword = glossaryData[index].term!;
+                      listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
+                      setState(() {
+                        print("listQuestions:${listQuestions.length}");
+                      });
                     },
                   ),
                   itemCount:glossaryData.length,
@@ -351,12 +370,15 @@ class _GlossaryViewState extends State<GlossaryView> {
                   children: [
                     sText("Questions",color: Colors.white,weight: FontWeight.w600,size: 20),
                     SizedBox(height: 10,),
-                    sText('These contain the word "Atom".',color: Colors.white,weight: FontWeight.normal,size: 20),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: sText('These contain the word "$termKeyword".',color: Colors.white,weight: FontWeight.normal,size: 20),
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 20,),
-
+              for(int i =0; i <listQuestions.length; i++)
               Container(
                 width: appWidth(context),
                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
