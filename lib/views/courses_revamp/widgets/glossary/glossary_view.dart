@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
@@ -8,6 +11,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -153,9 +157,13 @@ class _GlossaryViewState extends State<GlossaryView> {
     termKeyword = glossaryData.first.term!;
     selectedCharacter =  glossaryDataListsResult.entries.first.key;
   }
+  GlobalKey<ScaffoldState> scaffold = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      key: scaffold,
       backgroundColor: Color(0xFF00D289),
       body: SingleChildScrollView(
         child: Container(
@@ -178,6 +186,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                             selectedCharacter = entries.key;
                             termKeyword = glossaryData.first.term!;
                           listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
+                             scaffold = GlobalKey();
                           setState(() {
                             print("listQuestions:${listQuestions.length}");
                           });
@@ -253,7 +262,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                   height: 20.0,
                                   valueFontSize: 10.0,
                                   toggleSize: 15.0,
-                                  value: switchValue,
+                                  value: glossaryData[indexReport].isLiked! == 1 ? true : false,
                                   borderRadius: 30.0,
                                   padding: 2.0,
                                   showOnOff: false,
@@ -261,11 +270,20 @@ class _GlossaryViewState extends State<GlossaryView> {
                                   inactiveColor: Color(0xFFD1D1D1),
                                   inactiveTextColor: Colors.red,
                                   inactiveToggleColor: Color(0xFF555555),
-                                  onToggle: (val) {
+                                  onToggle: (val) async{
                                     setState(() {
                                       switchValue = val;
-                                      print(switchValue);
+                                      if(switchValue){
+                                        glossaryData[indexReport].isLiked = 1;
+                                      }else{
+                                        glossaryData[indexReport].isLiked = 0;
+                                      }
+                                      var res = jsonDecode(glossaryData[indexReport].glossary!);
+                                      res["is_liked"] =  glossaryData[indexReport].isLiked;
+                                      glossaryData[indexReport].glossary = jsonEncode(res);
                                     });
+
+                                   await GlossaryDB().update(glossaryData[indexReport]);
                                   },
                                 ),
                               ],
@@ -379,81 +397,135 @@ class _GlossaryViewState extends State<GlossaryView> {
               ),
               SizedBox(height: 20,),
               for(int i =0; i <listQuestions.length; i++)
-              Container(
-                width: appWidth(context),
-                padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    sText("What is rent income ratio?",color: Colors.white,size: 20,weight: FontWeight.w500),
-                    Icon(Icons.add,color: Colors.white,)
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white,width: 2)
-                ),
-              ),
-              SizedBox(height: 20,),
-              Container(
-                width: appWidth(context),
-                margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 30),
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          sText("What is rent income ratio?",color: Colors.black,size: 20,weight: FontWeight.w500),
-                          Icon(Icons.horizontal_rule,color: Colors.black,)
-                        ],
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      height: 20,
-                      width: appWidth(context),
-                    ),
-                    SizedBox(height: 20,),
-                   Column(
-                     children: [
-                       for(int i = 0; i < 4; i++)
-                         i == 2 ?
+             Column(
+               children: [
+                 if(!listQuestions[i].viewQuestions!)
+                 MaterialButton(
+                   onPressed: (){
+                     setState(() {
+                       listQuestions[i].viewQuestions = true;
+                     });
+                   },
+                   child: Container(
+                     width: appWidth(context),
+                     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 20),
+                     margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                     child: Row(
+                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                       children: [
+                         Expanded(
+                           child: AdeoHtmlTex(
+                             widget.user,
+                             listQuestions[i].text!.replaceAll("https", "http"),
+                             // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                             useLocalImage: true,
+                             fontWeight: FontWeight.w500,
+                             textColor: Colors.black,
+                           ),
+                         ),
+                         // sText("${listQuestions[i].text}",color: Colors.white,size: 20,weight: FontWeight.w500),
+                         Icon(Icons.add,color: Colors.white,)
+                       ],
+                     ),
+                     decoration: BoxDecoration(
+                         borderRadius: BorderRadius.circular(10),
+                         border: Border.all(color: Colors.white,width: 2)
+                     ),
+                   ),
+                 ),
+                 SizedBox(height: 20,),
+                if(listQuestions[i].viewQuestions!)
+                 MaterialButton(
+                   padding: EdgeInsets.zero,
+                   onPressed: (){
+                     setState(() {
+                       listQuestions[i].viewQuestions = false;
+                     });
+                   },
+                   child: Container(
+                     width: appWidth(context),
+                     margin: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
                          Container(
-                           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                           width: appWidth(context),
-                           color: Colors.white,
+                           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 30),
+
                            child: Row(
                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                              children: [
-                               sText("Sokoto",size: 25,weight: FontWeight.w500,color: Colors.black,align: TextAlign.left),
-                               Image.asset("assets/images/correct.png")
+                               Expanded(
+                                 child: AdeoHtmlTex(
+                                   widget.user,
+                                   listQuestions[i].text!.replaceAll("https", "http"),
+                                   // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                   useLocalImage: true,
+                                   fontWeight: FontWeight.w500,
+                                   textColor: Colors.black,
+                                 ),
+                               ),
+                               Icon(Icons.horizontal_rule,color: Colors.black,)
                              ],
                            ),
-                         )
-                             :
-                         Container(
-                           width: appWidth(context),
-
-                           padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-                           child: sText("Sokoto",size: 25,weight: FontWeight.w500,color: Colors.black,align: TextAlign.left),
                          ),
+                         Container(
+                           color: Colors.white,
+                           height: 20,
+                           width: appWidth(context),
+                         ),
+                         SizedBox(height: 20,),
+                         Column(
+                           children: [
+                             for(int t = 0; t < listQuestions[i].answers!.length; t++)
+                               listQuestions[i].answers![t].value == 1 ?
+                               Container(
+                                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                 width: appWidth(context),
+                                 color: Colors.white,
+                                 child: Row(
+                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                   children: [
+                                     Expanded(
+                                       child: AdeoHtmlTex(
+                                         widget.user,
+                                         listQuestions[i].answers![t].text!.replaceAll("https", "http"),
+                                         // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                         useLocalImage: true,
+                                         fontWeight: FontWeight.w500,
+                                         textColor: Colors.black,
+                                       ),
+                                     ),
+                                     Image.asset("assets/images/correct.png")
+                                   ],
+                                 ),
+                               )
+                                   :
+                               Container(
+                                 width: appWidth(context),
+                                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                                 child:    AdeoHtmlTex(
+                                   widget.user,
+                                   listQuestions[i].answers![t].text!.replaceAll("https", "http"),
+                                   // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
+                                   useLocalImage: true,
+                                   fontWeight: FontWeight.w500,
+                                   textColor: Colors.black,
+                                 ),
+                               ),
 
-                     ],
+                           ],
+                         ),
+                         SizedBox(height: 10,),
+                       ],
+                     ),
+                     decoration: BoxDecoration(
+                       color: Colors.grey[200],
+                       borderRadius: BorderRadius.circular(10),
+                     ),
                    ),
-                    SizedBox(height: 10,),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              SizedBox(height: 20,)
+                 ),
+               ],
+             )
             ],
           ),
         ),

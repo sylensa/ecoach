@@ -11,8 +11,10 @@ class GlossaryController{
   
   
   getGlossariesList(Batch batch,int courseId)async{
+    // await GlossaryDB().deleteAll();
     var response = await  doGet("${AppUrl.glossaries}?course_id=$courseId");
     print("glossary response:${response}");
+
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);

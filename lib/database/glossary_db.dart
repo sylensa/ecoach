@@ -26,6 +26,7 @@ class GlossaryDB {
     print("response glossary course id:$courseId : $response");
     for(int i =0; i < response.length; i++){
       GlossaryData glossaryData = GlossaryData.fromJson(jsonDecode(response[i]["glossary"].toString()));
+      glossaryData.glossary = response[i]["glossary"].toString();
       glossaries.add(glossaryData);
     }
     return glossaries;
@@ -99,7 +100,7 @@ class GlossaryDB {
     );
   }
 
-  deleteAll(int id) async {
+  deleteAll() async {
     final db = await DBProvider.database;
     db!.delete('glossary');
   }
