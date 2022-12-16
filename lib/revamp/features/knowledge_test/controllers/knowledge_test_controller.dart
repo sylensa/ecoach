@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
@@ -249,6 +250,7 @@ class KnowledgeTestController extends ChangeNotifier {
 
   Future<List<TestNameAndCount>> getTopics(Course course) async {
     List<TestNameAndCount> topics = await TestController().getTopics(course);
+
     return topics;
   }
 
@@ -264,11 +266,12 @@ class KnowledgeTestController extends ChangeNotifier {
     List<String> scrollListAlphabets = [];
     List<TestTaken> topicTestsTaken = [];
 
-    await TestController()
-        .getTestTaken(course!.id!.toString())
-        .then((takenTests) {
-      testsTaken = takenTests;
-    });
+    // await TestController()
+    //     .getTestTaken(course!.id!.toString())
+    //     .then((takenTests) {
+    //   testsTaken = takenTests;
+    // });
+
 
     showModalBottomSheet(
         context: context,
@@ -812,7 +815,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
-                                                        await getTopics(course)
+                                                        await getTopics(course!)
                                                             .then((value) {
                                                           topics = value;
                                                         });

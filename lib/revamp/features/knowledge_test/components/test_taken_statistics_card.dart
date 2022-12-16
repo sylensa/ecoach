@@ -82,6 +82,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
 
     _tests = widget.tests;
     _testsTaken = widget.testsTaken!;
+    print("_testsTaken: ${_testsTaken.length}");
     print("_testsTaken: ${_testsTaken[0].toJson()}");
     var testResponses = jsonDecode(_testsTaken[0].responses);
 
