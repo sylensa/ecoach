@@ -122,26 +122,11 @@ class _CoursesPageState extends State<CoursesPage> {
                               List<Course> courses = await SubscriptionItemDB().subscriptionCourses(context.read<DownloadUpdate>().plans[index].planId!);
 
                               Plan newPlan = Plan(
-                                id: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .planId,
-                                updatedAt: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .updatedAt,
-                                name: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .name,
-                                createdAt: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .createdAt,
-                                currency: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .currency,
+                                id: context.read<DownloadUpdate>().plans[index].planId,
+                                updatedAt: context.read<DownloadUpdate>().plans[index].updatedAt,
+                                name: context.read<DownloadUpdate>().plans[index].name,
+                                createdAt: context.read<DownloadUpdate>().plans[index].createdAt,
+                                currency: context.read<DownloadUpdate>().plans[index].currency,
                                 description: context
                                     .read<DownloadUpdate>()
                                     .plans[index]

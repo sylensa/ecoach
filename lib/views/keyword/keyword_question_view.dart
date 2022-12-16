@@ -253,8 +253,8 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
       print("listQuestions.length :${listQuestions.length }");
       await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
     }
-    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken);
-    keywordTestTaken = await TestTakenDB().getKeywordTestTaken();
+    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken,controller.course.id!);
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(controller.course.id!);
     ApiCall<TestTaken>(AppUrl.testTaken,
         user: controller.user,
         isList: false,
