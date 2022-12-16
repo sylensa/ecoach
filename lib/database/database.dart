@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 38, onOpen: (db) {},
+    return await openDatabase(path, version: 39, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -628,11 +628,13 @@ class DBProvider {
       await db.execute("""CREATE TABLE 'glossary' (
         'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
       await db.execute("""CREATE TABLE 'glossary_topic' (
            'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
 
@@ -1144,12 +1146,14 @@ class DBProvider {
           await db.execute("""CREATE TABLE 'glossary' (
         'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
         }catch(e){
           await db.execute("""CREATE TABLE 'glossary' (
         'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
         }
@@ -1158,12 +1162,14 @@ class DBProvider {
           await db.execute("""CREATE TABLE 'glossary_topic' (
             'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
         }catch(e){
           await db.execute("""CREATE TABLE 'glossary_topic' (
             'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
         }

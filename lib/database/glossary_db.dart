@@ -37,10 +37,17 @@ class GlossaryDB {
     }
     return glossaries;
   }
-  Future<List<GlossaryData>> getGlossariesByTopicId(int topicId) async {
+  Future<List<GlossaryData>> getGlossariesByTopicId(int courseId,List topicId) async {
+    String ids = "";
+    for (int i = 0; i < topicId.length; i++) {
+      ids += "${topicId[i]}";
+      if (i < topicId.length - 1) {
+        ids += ",";
+      }
+    }
     List<GlossaryData> glossaries = [];
     final db = await DBProvider.database;
-    var  response = await db!.rawQuery("Select * from glossary where course_id = $topicId");
+    var  response = await db!.rawQuery("Select * from glossary where course_id = $courseId and topic_id in ($ids)");
     print("response glossary course id:$topicId : $response");
     for(int i =0; i < response.length; i++){
       GlossaryData glossaryData = GlossaryData.fromJson(jsonDecode(response[i]["glossary_topic"].toString()));
@@ -49,7 +56,6 @@ class GlossaryDB {
     }
     return glossaries;
   }
-
   Future<void> update(GlossaryData glossaryData) async {
     // ignore: unused_local_variable
     final db = await DBProvider.database;

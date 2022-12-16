@@ -90,6 +90,7 @@ class GlossaryData {
     var mapping = Map<String, dynamic>();
     mapping['id'] = id;
     mapping['course_id'] = courseId;
+    mapping['topic_id'] = topicId;
     mapping['glossary'] = glossary;
     return mapping;
   }
