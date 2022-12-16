@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/performance_gragh.dart';
@@ -16,6 +18,7 @@ import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
+import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/autopilot/autopilot_introit.dart';
@@ -419,7 +422,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    GlossaryDB().getGlossariesById(widget.course.id!);
+    // GlossaryDB().getGlossariesById(widget.course.id!);
+
  }
 
   @override

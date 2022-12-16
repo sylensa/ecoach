@@ -18,6 +18,12 @@ class GlossaryDB {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+  Future<void> insertTopicGlossary(Batch batch,GlossaryData glossaryData) async {
+    batch.insert(
+      'glossary_topic', glossaryData.glossaryDataDataMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 
   Future<List<GlossaryData>> getGlossariesById(int courseId) async {
     List<GlossaryData> glossaries = [];
@@ -31,52 +37,17 @@ class GlossaryDB {
     }
     return glossaries;
   }
-
-
-
-  Future<List<Course>> courses() async {
-    final Database? db = await DBProvider.database;
-
-    final List<Map<String, dynamic>> maps =
-    await db!.query('courses', orderBy: "created_at DESC");
-
-    return List.generate(maps.length, (i) {
-      return Course(
-        id: maps[i]["id"],
-        name: maps[i]["name"],
-        courseId: maps[i]["courseID"],
-        author: maps[i]["author"],
-        packageCode: maps[i]["package_code"],
-        category: maps[i]["category"],
-        confirmed: maps[i]["confirmed"],
-        description: maps[i]["description"],
-        time: maps[i]["time"],
-      );
-    });
-  }
-
-
-  Future<List<Course>> coursesByCourseID(List<String> courseId) async {
-    final Database? db = await DBProvider.database;
-    List<Course> courses = [];
-    for(int i = 0 ; i < courseId.length; i++){
-      print("courseId:${courseId[i]}");
-      final List<Map<String, dynamic>> maps = await db!.rawQuery('SELECT * FROM courses WHERE  courseID like "${courseId[i]}%"');
-      print("maps:$maps");
-      if(maps.isNotEmpty){
-        for(int i = 0; i < maps.length; i++){
-          Course course = Course.fromJson(maps[i]);
-          print(course.toJson());
-          if (course != null) {
-            print(course.toJson());
-            courses.add(course);
-          }
-        }
-
-      }
-
+  Future<List<GlossaryData>> getGlossariesByTopicId(int topicId) async {
+    List<GlossaryData> glossaries = [];
+    final db = await DBProvider.database;
+    var  response = await db!.rawQuery("Select * from glossary where course_id = $topicId");
+    print("response glossary course id:$topicId : $response");
+    for(int i =0; i < response.length; i++){
+      GlossaryData glossaryData = GlossaryData.fromJson(jsonDecode(response[i]["glossary_topic"].toString()));
+      glossaryData.glossary = response[i]["glossary"].toString();
+      glossaries.add(glossaryData);
     }
-    return courses;
+    return glossaries;
   }
 
   Future<void> update(GlossaryData glossaryData) async {
@@ -85,6 +56,17 @@ class GlossaryDB {
 
     await db!.update(
       'glossary',
+      glossaryData.glossaryDataDataMap(),
+      where: "id = ?",
+      whereArgs: [glossaryData.id],
+    );
+  }
+  Future<void> updateGlossaryTopic(GlossaryData glossaryData) async {
+    // ignore: unused_local_variable
+    final db = await DBProvider.database;
+
+    await db!.update(
+      'glossary_topic',
       glossaryData.glossaryDataDataMap(),
       where: "id = ?",
       whereArgs: [glossaryData.id],
@@ -99,9 +81,21 @@ class GlossaryDB {
       whereArgs: [id],
     );
   }
+  deleteGLossaryTopic(int id) async {
+    final db = await DBProvider.database;
+    db!.delete(
+      'glossary_topic',
+      where: "course_id = ?",
+      whereArgs: [id],
+    );
+  }
 
   deleteAll() async {
     final db = await DBProvider.database;
     db!.delete('glossary');
+  }
+  deleteAllGlossaryTopic() async {
+    final db = await DBProvider.database;
+    db!.delete('glossary_topic');
   }
 }

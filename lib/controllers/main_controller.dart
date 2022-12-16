@@ -219,6 +219,11 @@ class MainController {
           await QuizDB().insertAll(batch, subscriptionItem.quizzes!);
           provider.updateMessage("saving $filename topics");
           await TopicDB().insertAll(batch, subscriptionItem.topics!);
+          List topicIds = [];
+          for(int i =0; i < subscriptionItem.topics!.length; i++){
+            topicIds.add( subscriptionItem.topics![i].id);
+          }
+          await GlossaryController().getGlossariesTopicList(batch,subscriptionItem.course!.id!, topicIds);
 
           batch.commit(noResult: true);
         });

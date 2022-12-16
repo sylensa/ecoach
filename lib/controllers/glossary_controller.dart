@@ -25,6 +25,26 @@ class GlossaryController{
       print("Nothing");
     }
   }
+  getGlossariesTopicList(Batch batch,var courseId,List topicIds)async{
+    // await GlossaryDB().deleteAll();
+    Map<String, dynamic> body = {
+      "course_id" :"$courseId",
+      "topic_ids":jsonEncode(topicIds)
+    };
+    String urlString = AppUrl.glossaries + '?' + Uri(queryParameters: body).query;
+    print(jsonEncode(body));
+    var response = await  doGet("$urlString");
+    print("glossary topicx response:${response["data"].length}");
+    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
+      for(int i =0; i < response["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
+        glossaryData.glossary = jsonEncode(response["data"][i]);
+        await GlossaryDB().insertTopicGlossary(batch,glossaryData);
+      }
+    }else{
+      print("Nothing");
+    }
+  }
   getUserSavedGlossariesList(Batch batch,int courseId)async{
     var response = await  doGet("${AppUrl.savedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
