@@ -41,7 +41,7 @@ class TestTakenStatisticCard extends StatefulWidget {
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
   final Future Function(BuildContext context, TestCategory testCategory,
-      int currentQuestionCount) getTest;
+      TestNameAndCount selectedTopic) getTest;
 
   @override
   State<TestTakenStatisticCard> createState() => _TestTakenStatisticCardState();
@@ -82,6 +82,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
 
     _tests = widget.tests;
     _testsTaken = widget.testsTaken!;
+    print("_testsTaken: ${_testsTaken[0].toJson()}");
     var testResponses = jsonDecode(_testsTaken[0].responses);
 
     if (testResponses != null) {
@@ -169,10 +170,19 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                     _tests[_currentSlide].name[0];
               },
             ),
-            itemCount: _tests.length, //Tests Length
+            itemCount: _tests.length, 
             itemBuilder: (BuildContext context, int indexReport, int index2) {
-              isTestTaken = _testsTaken
-                  .any((testTaken) => topicId == _tests[indexReport].id);
+              late TestTaken testTaken;
+
+              // Check tests taken
+              isTestTaken = _testsTaken.any((testTaken) {
+                return topicId == _tests[indexReport].id;
+              });
+              if (isTestTaken) {
+                testTaken = _testsTaken.firstWhere((testTaken) {
+                  return topicId == _tests[indexReport].id;
+                });
+              }
 
               return AnimatedBuilder(
                 animation: animationController,
@@ -496,9 +506,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                           children: [
                                             Row(
                                               children: [
-                                                _testsTaken[indexReport]
-                                                            .scoreDiff! >
-                                                        0
+                                                testTaken.scoreDiff! > 0
                                                     ? Image.asset(
                                                         "assets/images/un_fav.png",
                                                         color: Colors.green,
@@ -512,7 +520,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                                   width: 12,
                                                 ),
                                                 sText(
-                                                  "${_testsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${_testsTaken[indexReport].scoreDiff!}",
+                                                  "${testTaken.scoreDiff! > 0 ? "+" : ""}${testTaken.scoreDiff!}",
                                                   color: Colors.white,
                                                   weight: FontWeight.bold,
                                                   size: 16,
@@ -535,7 +543,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                       children: [
                                         isTestTaken
                                             ? sText(
-                                                "${_testsTaken[indexReport].total_test_taken}",
+                                                "${testTaken.total_test_taken}",
                                                 size: 34,
                                                 weight: FontWeight.w600,
                                                 color: Colors.white,
@@ -562,7 +570,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                       children: [
                                         isTestTaken
                                             ? sText(
-                                                "${_testsTaken[indexReport].score!.round()}%",
+                                                "${testTaken.score!.round()}%",
                                                 size: 34,
                                                 weight: FontWeight.w600,
                                                 color: Colors.white,
@@ -590,9 +598,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         children: [
                                           isTestTaken
                                               ? AdeoSignalStrengthIndicator(
-                                                  strength:
-                                                      _testsTaken[indexReport]
-                                                          .score!,
+                                                  strength: testTaken.score!,
                                                   size: Sizes.small,
                                                 )
                                               : AdeoSignalStrengthIndicator(
@@ -628,11 +634,9 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     color: Color(0XFF00C9B9),
                                     backgroundColor: Color(0XFF0367B4),
                                     value: isTestTaken
-                                        ? (_testsTaken[indexReport].correct! +
-                                                _testsTaken[indexReport]
-                                                    .wrong!) /
-                                            _testsTaken[indexReport]
-                                                .totalQuestions
+                                        ? (testTaken.correct! +
+                                                testTaken.wrong!) /
+                                            testTaken.totalQuestions
                                         : _tests[indexReport].progress,
                                   ),
                                 ),
@@ -653,13 +657,13 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     Row(
                                       children: [
                                         sText(
-                                          "${isTestTaken ? _testsTaken[indexReport].correct! + _testsTaken[indexReport].wrong! : _tests[indexReport].count}",
+                                          "${isTestTaken ? testTaken.correct! + testTaken.wrong! : _tests[indexReport].count}",
                                           color: Colors.white,
                                           weight: FontWeight.bold,
                                           size: 12,
                                         ),
                                         sText(
-                                          " / ${isTestTaken ? _testsTaken[indexReport].totalQuestions : _tests[indexReport].totalCount} Q",
+                                          " / ${isTestTaken ? testTaken.totalQuestions : _tests[indexReport].totalCount} Q",
                                           color: Colors.white.withOpacity(0.7),
                                           size: 12,
                                         ),
@@ -698,14 +702,12 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                               .name
                                               .toLowerCase();
                                         });
-                                        if (isTestTaken) {
-                                          await widget.getTest(
-                                            context,
-                                            TestCategory.NONE,
-                                            _testsTaken[indexReport].correct! +
-                                                _testsTaken[indexReport].wrong!,
-                                          );
-                                        }
+
+                                        await widget.getTest(
+                                          context,
+                                          TestCategory.TOPIC,
+                                          _tests[indexReport],
+                                        );
                                       },
                                       child: Container(
                                         padding: EdgeInsets.symmetric(

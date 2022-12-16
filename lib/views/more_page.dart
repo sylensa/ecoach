@@ -547,43 +547,7 @@ class _MorePageState extends State<MorePage> {
                       ),
                     ),
                   ),
-                  MaterialButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      KnowledgeTestController knowledgeTestController =
-                          KnowledgeTestController();
-                      knowledgeTestController
-                          .knowledgeTestModalBottomSheet(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          left: 10, right: 20, top: 20, bottom: 20),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            "UI - Knowledge Test",
-                            softWrap: true,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF2D3E50),
-                                height: 1.1,
-                                fontFamily: "Poppins"),
-                          ),
-                          Expanded(child: Container()),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.grey[400],
-                            size: 16,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                 
                 ],
               ),
             ),

@@ -214,6 +214,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                             title: "Essays",
                             testCategory: TestCategory.ESSAY,
                           );
+
                           break;
                         case TestCategory.SAVED:
                           List<Question> questions = data as List<Question>;
@@ -1264,13 +1265,14 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             List<Question> questions =
                 await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-              // setState(() {});
               // knowledgeTestModalBottomSheet(context);
               KnowledgeTestController knowledgeTestController =
                   KnowledgeTestController();
 
-              knowledgeTestController.knowledgeTestModalBottomSheet(context,
-                  course: widget.course);
+              knowledgeTestController.knowledgeTestModalBottomSheet(
+                context,
+                course: widget.course,
+              );
             } else {
               showDialogYesNo(
                   context: context,

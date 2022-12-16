@@ -10,6 +10,7 @@ import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/test_taken_statistics_card.dart';
+import 'package:ecoach/revamp/features/knowledge_test/view/test_instruction_screen.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
@@ -463,8 +464,42 @@ class KnowledgeTestController extends ChangeNotifier {
                                                 getTest: (
                                                   BuildContext context,
                                                   TestCategory testCategory,
-                                                  int currentQuestionCount,
-                                                ) async {},
+                                                  TestNameAndCount
+                                                      selectedTopic,
+                                                ) async {
+                                                  late Widget navigateTo;
+                                                  switch (testCategory) {
+                                                    case TestCategory.TOPIC:
+                                                      // widgetView =
+                                                      //     TestTypeListView(
+                                                      //   widget.user,
+                                                      //   widget.course,
+                                                      //   data,
+                                                      //   testType,
+                                                      //   title: "Topic",
+                                                      //   multiSelect: true,
+                                                      //   testCategory:
+                                                      //       TestCategory.TOPIC,
+                                                      // );
+                                                      navigateTo =
+                                                          TestInstruction(
+                                                        topic: selectedTopic,
+                                                        questionCount:
+                                                            selectedTopic
+                                                                .totalCount,
+                                                      );
+                                                      break;
+                                                    default:
+                                                      navigateTo = Container();
+                                                  }
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: ((context) =>
+                                                          navigateTo),
+                                                    ),
+                                                  );
+                                                },
                                               ),
                                       if (!model.isShowAnalysisBox)
                                         Expanded(
@@ -777,7 +812,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
-                                                        await getTopics(course!)
+                                                        await getTopics(course)
                                                             .then((value) {
                                                           topics = value;
                                                         });
