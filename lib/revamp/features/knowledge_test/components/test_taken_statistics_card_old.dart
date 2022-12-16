@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
-import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
 import 'package:ecoach/revamp/features/knowledge_test/widgets/topic_analysis_table.dart';
@@ -26,8 +24,7 @@ class TestTakenStatisticCard extends StatefulWidget {
     required this.showGraph,
     required this.getTest,
     required this.knowledgeTestControllerModel,
-    required this.tests,
-    this.testsTaken,
+    required this.testsTaken,
     this.activeMenu = TestCategory.NONE,
     this.currentSlide = 0,
     this.carouselController,
@@ -35,8 +32,7 @@ class TestTakenStatisticCard extends StatefulWidget {
 
   final int currentSlide;
   final CarouselController? carouselController;
-  final List<TestTaken>? testsTaken;
-  final List<TestNameAndCount> tests;
+  final List<TestTaken> testsTaken;
   final bool showGraph;
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
@@ -60,11 +56,9 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   late FlipCardController flipCardController;
   late AnimationController animationController;
   late Animation<double> animation;
-  late List<TestNameAndCount> _tests;
   late List<TestTaken> _testsTaken;
-  late bool isTestTaken = false;
   late bool smallHeightDevice;
-  late int? topicId;
+
   @override
   void initState() {
     super.initState();
@@ -80,16 +74,8 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
       vsync: this,
     );
 
-    _tests = widget.tests;
-    _testsTaken = widget.testsTaken!;
-    var testResponses = jsonDecode(_testsTaken[0].responses);
-
-    if (testResponses != null) {
-      topicId = testResponses["Q1"]["topic_id"];
-    } else {
-      topicId = null;
-    }
-
+    _testsTaken = widget.testsTaken;
+    print(widget.activeMenu);
     switch (widget.activeMenu) {
       case TestCategory.TOPIC:
         activeMenuIcon += "topic.png";
@@ -166,14 +152,11 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                   _currentSlide = index;
                 });
                 widget.knowledgeTestControllerModel.currentAlphabet =
-                    _tests[_currentSlide].name[0];
+                    _testsTaken[_currentSlide].testname![0];
               },
             ),
-            itemCount: _tests.length, //Tests Length
+            itemCount: _testsTaken.length, //Topc Tests Length
             itemBuilder: (BuildContext context, int indexReport, int index2) {
-              isTestTaken = _testsTaken
-                  .any((testTaken) => topicId == _tests[indexReport].id);
-
               return AnimatedBuilder(
                 animation: animationController,
                 builder: (BuildContext context, Widget? child) {
@@ -232,7 +215,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                         width: 12,
                                       ),
                                       sText(
-                                        "${properCase(_tests[indexReport].name)}", //Name of Test
+                                        "${properCase(_testsTaken[indexReport].testname!)}", //Name of Topic Test Taken
                                         color: Colors.black,
                                         weight: FontWeight.w500,
                                         size: 16,
@@ -448,7 +431,6 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                             CrossAxisAlignment.start,
                                         children: [
                                           Row(
-                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Container(
                                                 padding: EdgeInsets.all(6),
@@ -468,60 +450,52 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                               SizedBox(
                                                 width: 12,
                                               ),
-                                              SizedBox(
-                                                width: isTestTaken ? 220 : 280,
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: sText(
-                                                    "${properCase(_tests[indexReport].name)}",
-                                                    color: Colors.white,
-                                                    weight: FontWeight.bold,
-                                                    size: 16,
-                                                  ),
-                                                ),
+                                              sText(
+                                                "${properCase(_testsTaken[indexReport].testname!)}", //Name of Topic Test Taken
+                                                color: Colors.white,
+                                                weight: FontWeight.bold,
+                                                size: 16,
                                               ),
                                             ],
                                           ),
                                         ],
                                       ),
                                     ),
-                                    if (isTestTaken)
-                                      Container(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                _testsTaken[indexReport]
-                                                            .scoreDiff! >
-                                                        0
-                                                    ? Image.asset(
-                                                        "assets/images/un_fav.png",
-                                                        color: Colors.green,
-                                                        width: 25,
-                                                      )
-                                                    : SvgPicture.asset(
-                                                        "assets/images/fav.svg",
-                                                        width: 25,
-                                                      ),
-                                                SizedBox(
-                                                  width: 12,
-                                                ),
-                                                sText(
-                                                  "${_testsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${_testsTaken[indexReport].scoreDiff!}",
-                                                  color: Colors.white,
-                                                  weight: FontWeight.bold,
-                                                  size: 16,
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                    Container(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              _testsTaken[indexReport]
+                                                          .scoreDiff! >
+                                                      0
+                                                  ? Image.asset(
+                                                      "assets/images/un_fav.png",
+                                                      color: Colors.green,
+                                                      width: 25,
+                                                    )
+                                                  : SvgPicture.asset(
+                                                      "assets/images/fav.svg",
+                                                      width: 25,
+                                                    ),
+                                              SizedBox(
+                                                width: 12,
+                                              ),
+                                              sText(
+                                                "${_testsTaken[indexReport].scoreDiff! > 0 ? "+" : ""}${_testsTaken[indexReport].scoreDiff!}",
+                                                color: Colors.white,
+                                                weight: FontWeight.bold,
+                                                size: 16,
+                                              )
+                                            ],
+                                          ),
+                                        ],
                                       ),
+                                    ),
                                   ],
                                 ),
                                 SizedBox(
@@ -533,26 +507,19 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                   children: [
                                     Column(
                                       children: [
-                                        isTestTaken
-                                            ? sText(
-                                                "${_testsTaken[indexReport].total_test_taken}",
-                                                size: 34,
-                                                weight: FontWeight.w600,
-                                                color: Colors.white,
-                                              )
-                                            : sText(
-                                                "${_tests[indexReport].count}",
-                                                size: 34,
-                                                weight: FontWeight.w600,
-                                                color: Colors.white,
-                                              ),
+                                        sText(
+                                          "${_testsTaken[indexReport].total_test_taken}",
+                                          size: 34,
+                                          weight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
                                         SizedBox(
                                           height: 6,
                                         ),
                                         sText(
                                           "times taken",
                                           size: 12,
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: Colors.white.withOpacity(0.7),
                                           weight: FontWeight.w300,
                                           style: FontStyle.italic,
                                         ),
@@ -560,19 +527,12 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     ),
                                     Column(
                                       children: [
-                                        isTestTaken
-                                            ? sText(
-                                                "${_testsTaken[indexReport].score!.round()}%",
-                                                size: 34,
-                                                weight: FontWeight.w600,
-                                                color: Colors.white,
-                                              )
-                                            : sText(
-                                                "${_tests[indexReport].averageScore!.round()}%",
-                                                size: 34,
-                                                weight: FontWeight.w600,
-                                                color: Colors.white,
-                                              ),
+                                        sText(
+                                          "${_testsTaken[indexReport].score!.round()}%",
+                                          size: 34,
+                                          weight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
                                         SizedBox(
                                           height: 6,
                                         ),
@@ -588,18 +548,11 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     Container(
                                       child: Column(
                                         children: [
-                                          isTestTaken
-                                              ? AdeoSignalStrengthIndicator(
-                                                  strength:
-                                                      _testsTaken[indexReport]
-                                                          .score!,
-                                                  size: Sizes.small,
-                                                )
-                                              : AdeoSignalStrengthIndicator(
-                                                  strength: _tests[indexReport]
-                                                      .averageScore!,
-                                                  size: Sizes.small,
-                                                ),
+                                          AdeoSignalStrengthIndicator(
+                                            strength:
+                                                _testsTaken[indexReport].score!,
+                                            size: Sizes.small,
+                                          ),
                                           SizedBox(
                                             height: 26,
                                           ),
@@ -627,13 +580,9 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                   child: LinearProgressIndicator(
                                     color: Color(0XFF00C9B9),
                                     backgroundColor: Color(0XFF0367B4),
-                                    value: isTestTaken
-                                        ? (_testsTaken[indexReport].correct! +
-                                                _testsTaken[indexReport]
-                                                    .wrong!) /
-                                            _testsTaken[indexReport]
-                                                .totalQuestions
-                                        : _tests[indexReport].progress,
+                                    value: (_testsTaken[indexReport].correct! +
+                                            _testsTaken[indexReport].wrong!) /
+                                        _testsTaken[indexReport].totalQuestions,
                                   ),
                                 ),
                                 SizedBox(
@@ -653,13 +602,13 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                     Row(
                                       children: [
                                         sText(
-                                          "${isTestTaken ? _testsTaken[indexReport].correct! + _testsTaken[indexReport].wrong! : _tests[indexReport].count}",
+                                          "${_testsTaken[indexReport].correct! + _testsTaken[indexReport].wrong!}",
                                           color: Colors.white,
                                           weight: FontWeight.bold,
                                           size: 12,
                                         ),
                                         sText(
-                                          " / ${isTestTaken ? _testsTaken[indexReport].totalQuestions : _tests[indexReport].totalCount} Q",
+                                          " / ${_testsTaken[indexReport].totalQuestions} Q",
                                           color: Colors.white.withOpacity(0.7),
                                           size: 12,
                                         ),
@@ -674,38 +623,36 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    if (isTestTaken)
-                                      GestureDetector(
-                                        onTap: () {
-                                          flipCardController.flipCard();
-                                          // setState(() {
-                                          //   if (isActiveGraphSide) {
-                                          //     isActiveGraphSide = false;
-                                          //   } else {
-                                          //     isActiveGraphSide = true;
-                                          //   }
-                                          // });
-                                        },
-                                        child: Image.asset(
-                                          "assets/images/pencil.png",
-                                        ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        flipCardController.flipCard();
+                                        // setState(() {
+                                        //   if (isActiveGraphSide) {
+                                        //     isActiveGraphSide = false;
+                                        //   } else {
+                                        //     isActiveGraphSide = true;
+                                        //   }
+                                        // });
+                                      },
+                                      child: Image.asset(
+                                        "assets/images/pencil.png",
                                       ),
+                                    ),
                                     Spacer(),
                                     GestureDetector(
                                       onTap: () async {
                                         setState(() {
-                                          searchKeyword = _tests[indexReport]
-                                              .name
-                                              .toLowerCase();
+                                          searchKeyword =
+                                              _testsTaken[indexReport]
+                                                  .testname!
+                                                  .toLowerCase();
                                         });
-                                        if (isTestTaken) {
-                                          await widget.getTest(
-                                            context,
-                                            TestCategory.NONE,
-                                            _testsTaken[indexReport].correct! +
-                                                _testsTaken[indexReport].wrong!,
-                                          );
-                                        }
+                                        await widget.getTest(
+                                          context,
+                                          TestCategory.NONE,
+                                          _testsTaken[indexReport].correct! +
+                                              _testsTaken[indexReport].wrong!,
+                                        );
                                       },
                                       child: Container(
                                         padding: EdgeInsets.symmetric(

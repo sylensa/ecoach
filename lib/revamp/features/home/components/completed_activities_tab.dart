@@ -150,7 +150,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
   @override
   void initState() {
     _allCompletedActivities = widget.allCompletedActivities;
-    print("Activities: $_allCompletedActivities");
 
     super.initState();
   }
@@ -239,8 +238,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
                   case TestActivityType.TREADMILL:
                     activityTitle =
                         completedActivity.treadmill!.testname.toString();
-                    ;
-                    // hasCourseDownloadedQuestions(completedActivity)
                     return Container(
                       margin: EdgeInsets.only(
                         bottom: isLastItem ? 0 : 12,
@@ -345,14 +342,6 @@ class _CompletedActivitiesTabState extends State<CompletedActivitiesTab> {
               }),
             ),
     );
-  }
-
-  hasCourseDownloadedQuestions(TestActivity completedActivity) async {
-    List<Question> questions = await QuestionDB().getQuestionsByCourseId(
-      completedActivity.courseId!,
-    );
-
-    return questions.isNotEmpty;
   }
 
   Future<Course> getAutopilotCourse(courseId) async {

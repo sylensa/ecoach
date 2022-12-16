@@ -8,7 +8,7 @@ class AlphabetScrollSlider extends StatefulWidget {
     required this.alphabets,
     this.initialSelectedAlphabet = "P",
   }) : super(key: key);
-  final Function(String initialSelectedAlphabet) callback;
+  final Function(String initialSelectedAlphabet, int index) callback;
   final String initialSelectedAlphabet;
   final List<String> alphabets;
 
@@ -57,7 +57,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
                     bool isSelectedAlphabet = selectedAlphaScrollValue == index;
 
                     if (isSelectedAlphabet) {
-                      widget.callback(alphabetLabel);
+                      widget.callback(alphabetLabel, index);
                     }
 
                     return Padding(

@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/test_taken_statistics_card.dart';
@@ -125,6 +127,7 @@ class KnowledgeTestController extends ChangeNotifier {
     _emptyTestTakenList = value;
   }
 
+  List<TestTaken> tests = [];
   List<TestTaken> testsTaken = [];
   CarouselController alphaSliderToStatisticsCardController =
       CarouselController();
@@ -198,16 +201,24 @@ class KnowledgeTestController extends ChangeNotifier {
     'Z': []
   };
 
-  void slideToActiveAlphabet({String selectedAlphabet = ''}) {
+  void slideToActiveAlphabet(List<TestNameAndCount> tests, int index,
+      {String selectedAlphabet = ''}) {
     int _selectedIndex;
+    List<TestNameAndCount> _selectedTests;
     if (selectedAlphabet.isNotEmpty) {
-      _selectedIndex = testsTaken.indexWhere(
-          (testTaken) => testTaken.testname!.toUpperCase().startsWith(
+      _selectedTests = tests
+          .where((testTaken) => testTaken.name.toUpperCase().startsWith(
                 selectedAlphabet,
-              ));
-      alphaSliderToStatisticsCardController.animateToPage(
-        _selectedIndex,
-      );
+              ))
+          .toList();
+      if (_selectedTests.length == 1) {
+        _selectedIndex = tests.indexOf(_selectedTests[0]);
+        alphaSliderToStatisticsCardController.animateToPage(
+          _selectedIndex,
+        );
+      } else {
+        // _selectedIndex = tests.indexOf(_selectedTest);
+      }
     }
 
     print("Selected: $selectedAlphabet ");
@@ -235,51 +246,28 @@ class KnowledgeTestController extends ChangeNotifier {
     return isActiveAnyMenu;
   }
 
-  knowledgeTestModalBottomSheet(
-    context,
-  ) async {
+  Future<List<TestNameAndCount>> getTopics(Course course) async {
+    List<TestNameAndCount> topics = await TestController().getTopics(course);
+    return topics;
+  }
+
+  knowledgeTestModalBottomSheet(context, {Course? course}) async {
     searchKeywordController.text = searchKeyword.trim();
     searchTap = false;
     bool smallHeightDevice = appHeight(context) < 890 ? true : false;
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
+    List<TestNameAndCount> topics = [];
+    List<TestNameAndCount> tests = [];
 
     List<String> scrollListAlphabets = [];
-    List<TestTaken> topicTestsTaken = [
-      TestTaken(
-        testname: "Bacteria",
-        scoreDiff: 4,
-        score: 60,
-        totalQuestions: 14,
-        responses: '',
-        correct: 10,
-        wrong: 0,
-        total_test_taken: 5,
-        userId: 3334,
-      ),
-      TestTaken(
-        testname: "ICT",
-        scoreDiff: 4,
-        score: 60,
-        totalQuestions: 14,
-        responses: '',
-        correct: 10,
-        wrong: 0,
-        total_test_taken: 5,
-        userId: 3334,
-      ),
-      TestTaken(
-        testname: "Psychology",
-        scoreDiff: -1,
-        score: 80,
-        totalQuestions: 50,
-        responses: '',
-        correct: 10,
-        wrong: 3,
-        total_test_taken: 12,
-        userId: 3334,
-      ),
-    ];
+    List<TestTaken> topicTestsTaken = [];
+
+    await TestController()
+        .getTestTaken(course!.id!.toString())
+        .then((takenTests) {
+      testsTaken = takenTests;
+    });
 
     showModalBottomSheet(
         context: context,
@@ -302,16 +290,19 @@ class KnowledgeTestController extends ChangeNotifier {
                               isActiveTopicMenu = true;
                               isActiveAnyMenu = true;
                               sheetHeightIncreased = true;
-                              testsTaken = topicTestsTaken;
-                              emptyTestTakenList = testsTaken.isEmpty;
-                              currentAlphabet = testsTaken.first.testname![0];
-                             
+                              // testsTaken = topicTestsTaken;
+                              emptyTestTakenList = tests.isEmpty;
+                              currentAlphabet = tests.first.name[0];
+
                               if (!emptyTestTakenList) {
-                                scrollListAlphabets = testsTaken.map((test) {
-                                  return test.testname![0]
-                                      .toString()
-                                      .toUpperCase();
-                                }).toList();
+                                scrollListAlphabets = topics
+                                    .map((topic) {
+                                      return topic.name[0]
+                                          .toString()
+                                          .toUpperCase();
+                                    })
+                                    .toSet()
+                                    .toList();
                                 scrollListAlphabets.sort();
                               }
 
@@ -332,9 +323,10 @@ class KnowledgeTestController extends ChangeNotifier {
                               isActiveAnyMenu = true;
                               break;
                             case TestCategory.NONE:
-                               print("List Empty: $emptyTestTakenList");
+                              print("List Empty: $emptyTestTakenList");
                               break;
                             default:
+
                               // sheetHeightIncreased = false;
 
                               break;
@@ -462,6 +454,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                 carouselController:
                                                     alphaSliderToStatisticsCardController,
                                                 currentSlide: 0,
+                                                tests: tests,
                                                 testsTaken: testsTaken,
                                                 showGraph: showGraph,
                                                 activeMenu: activeMenu,
@@ -520,8 +513,11 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                 : model
                                                                     .currentAlphabet,
                                                             callback:
-                                                                (selectedAlphabet) {
+                                                                (selectedAlphabet,
+                                                                    index) {
                                                               slideToActiveAlphabet(
+                                                                tests,
+                                                                index,
                                                                 selectedAlphabet:
                                                                     selectedAlphabet,
                                                               );
@@ -780,7 +776,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       ],
                                                     ),
                                                     MaterialButton(
-                                                      onPressed: () {
+                                                      onPressed: () async {
+                                                        await getTopics(course!)
+                                                            .then((value) {
+                                                          topics = value;
+                                                        });
+                                                        tests = topics;
+
                                                         toggleKnowledgeTestMenus(
                                                           context,
                                                           smallHeightDevice,

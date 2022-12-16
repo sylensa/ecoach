@@ -14,6 +14,7 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/treadmill.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
 import 'package:ecoach/revamp/features/payment/views/screens/buy_bundle.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
@@ -1263,8 +1264,13 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             List<Question> questions =
                 await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-              setState(() {});
-              knowledgeTestModalBottomSheet(context);
+              // setState(() {});
+              // knowledgeTestModalBottomSheet(context);
+              KnowledgeTestController knowledgeTestController =
+                  KnowledgeTestController();
+
+              knowledgeTestController.knowledgeTestModalBottomSheet(context,
+                  course: widget.course);
             } else {
               showDialogYesNo(
                   context: context,
