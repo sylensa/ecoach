@@ -1208,7 +1208,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
   }
 
   getKeywordTestTaken() async {
-    keywordTestTaken = await TestTakenDB().getKeywordTestTaken();
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(widget.course.id!);
     setState(() {
       print("am back");
     });
