@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
@@ -14,13 +15,13 @@ class GlossaryView extends StatefulWidget {
   GlossaryView({
     required this.user,
     required this.course,
-    required this.listCourseKeywordsData,
+    required this.listGlossaryData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
-  List<CourseKeywords> listCourseKeywordsData;
+  List<GlossaryData> listGlossaryData;
 
   @override
   State<GlossaryView> createState() => _GlossaryViewState();
@@ -32,7 +33,10 @@ class _GlossaryViewState extends State<GlossaryView> {
   int _currentPage = 0;
   bool switchValue = false;
   List<CourseKeywords> courseKeywords = [];
-  Map<String, List<CourseKeywords>> groupedCourseKeywordsResult = {
+  List<GlossaryData> glossaryData = [];
+  String selectedCharacter = '';
+  int currentIndex = 1;
+  Map<String, List<GlossaryData>> glossaryDataListsResult = {
     'A': [],
     'B': [],
     'C': [],
@@ -60,7 +64,7 @@ class _GlossaryViewState extends State<GlossaryView> {
     'Y': [],
     'Z': []
   };
-  Map<String, List<CourseKeywords>> groupedCourseKeywordsLists = {
+  Map<String, List<GlossaryData>> glossaryDataLists = {
     'A': [],
     'B': [],
     'C': [],
@@ -92,8 +96,8 @@ class _GlossaryViewState extends State<GlossaryView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.listCourseKeywordsData.isNotEmpty) {
-      groupedCourseKeywordsLists = {
+    if (widget.listGlossaryData.isNotEmpty) {
+      glossaryDataLists = {
         'A': [],
         'B': [],
         'C': [],
@@ -122,24 +126,27 @@ class _GlossaryViewState extends State<GlossaryView> {
         'Z': []
       };
     } else {
-      groupedCourseKeywordsLists.clear();
+      glossaryDataLists.clear();
     }
-    widget.listCourseKeywordsData.forEach((courseKeyword) {
-      if (groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] == null) {
-        groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()] = <CourseKeywords>[];
+    widget.listGlossaryData.forEach((courseKeyword) {
+      if (glossaryDataLists['${courseKeyword.term![0]}'.toUpperCase()] == null) {
+        glossaryDataLists['${courseKeyword.term![0]}'.toUpperCase()] = <GlossaryData>[];
       }
-      groupedCourseKeywordsLists['${courseKeyword.keyword![0]}'.toUpperCase()]!.add(courseKeyword);
+      glossaryDataLists['${courseKeyword.term![0]}'.toUpperCase()]!.add(courseKeyword);
     });
-    groupedCourseKeywordsResult.clear();
-    for (var entry in groupedCourseKeywordsLists.entries)
+    glossaryDataListsResult.clear();
+    for (var entry in glossaryDataLists.entries)
       if (entry.value.isNotEmpty){
-        Map<String, List<CourseKeywords>> groupedCourse = {
+        Map<String, List<GlossaryData>> groupedCourse = {
           entry.key.toUpperCase() : entry.value
         };
-        groupedCourseKeywordsResult.addAll(groupedCourse);
+        glossaryDataListsResult.addAll(groupedCourse);
       }
 
-    print("groupedCourseKeywordsResult:${groupedCourseKeywordsResult}");
+    print("groupedCourseKeywordsResult:${glossaryDataListsResult}");
+
+    glossaryData =  glossaryDataListsResult.entries.first.value;
+    selectedCharacter =  glossaryDataListsResult.entries.first.key;
   }
   @override
   Widget build(BuildContext context) {
@@ -158,33 +165,30 @@ class _GlossaryViewState extends State<GlossaryView> {
                     scrollDirection: Axis.horizontal,
                     controller: pageControllerView,
                   children: [
-                    for(var entries in groupedCourseKeywordsResult.entries)
-                      GestureDetector(
-                        onTap: () {
-
-                        },
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                              child: Container(
-                                  padding: EdgeInsets.all(7.0),
-                                  height: 50,
-                                  width: 50,
-                                  child: sText(entries.key.toLowerCase(),color: Colors.white,align: TextAlign.center,size: 30,weight: FontWeight.w500)
+                    for(var entries in glossaryDataListsResult.entries)
+                      Row(
+                        children: [
+                          Center(
+                            child: SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: Stack(
+                                children:  [
+                                  if(selectedCharacter.toLowerCase() == entries.key.toLowerCase())
+                                  CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                    value: currentIndex/glossaryData.length,
+                                  ),
+                                  Center(
+                                    child: sText(entries.key.toLowerCase(),color: Colors.white,align: TextAlign.center,size: 18,weight: FontWeight.w500),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                      )
-
-
+                          ),
+                        ],
+                      ),
 
                   ],
                    ),
@@ -195,7 +199,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                   CarouselOptions(
                     height:  680,
                     autoPlay: false,
-                    enableInfiniteScroll: true,
+                    enableInfiniteScroll: false,
                     autoPlayAnimationDuration: Duration(seconds: 1),
                     enlargeCenterPage: true,
                     viewportFraction: 0.85,
@@ -204,11 +208,12 @@ class _GlossaryViewState extends State<GlossaryView> {
                     onPageChanged: (index, reason) {
                       setState(
                               () {
-
+                                currentIndex  = index +1;
+                              print(index);
                           });
                     },
                   ),
-                  itemCount:5,
+                  itemCount:glossaryData.length,
                   itemBuilder: (BuildContext context, int indexReport, int index2) {
                     return  SingleChildScrollView(
                       child: Container(
@@ -247,15 +252,15 @@ class _GlossaryViewState extends State<GlossaryView> {
                               ],
                             ),
                             SizedBox(height: 20,),
-                            sText("Photosynthesis",color: Colors.black,size: 25,weight: FontWeight.w500),
+                            sText("${glossaryData[indexReport].topic!.name}",color: Colors.black,size: 25,weight: FontWeight.w500),
                             SizedBox(height: 20,),
                             sText("Topic",color: Colors.grey,size: 12,weight: FontWeight.w500),
                             SizedBox(height: 10,),
-                            sText("Matter",color: Colors.black,size: 16,weight: FontWeight.w500),
+                            sText("${glossaryData[indexReport].term}",color: Colors.black,size: 16,weight: FontWeight.w500),
                             SizedBox(height: 40,),
                             sText("Definition",color: Colors.grey,size: 12,weight: FontWeight.w500),
                             SizedBox(height: 10,),
-                            sText("The smallest particle of an element that can take part in a chemical reaction.",color: Colors.black,size: 16,weight: FontWeight.w500),
+                            sText("${glossaryData[indexReport].definition}",color: Colors.black,size: 16,weight: FontWeight.w500),
                             SizedBox(height: 70,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -279,7 +284,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            sText("250th",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
+                                            sText("${glossaryData[indexReport].keywordRank}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
                                           ],
                                         ),
                                       ),
@@ -300,7 +305,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          sText("200",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
+                                          sText("${glossaryData[indexReport].keywordAppearance}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
                                         ],
                                       ),
                                     ),
@@ -323,7 +328,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          sText("125",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center,),
+                                          sText("${glossaryData[indexReport].userSavesCount}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center,),
                                         ],
                                       ),
                                     ),

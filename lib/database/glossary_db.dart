@@ -22,7 +22,7 @@ class GlossaryDB {
   Future<List<GlossaryData>> getGlossariesById(int courseId) async {
     List<GlossaryData> glossaries = [];
     final db = await DBProvider.database;
-    var  response = await db!.rawQuery("Select * from glossary where course_id = $courseId limit 10");
+    var  response = await db!.rawQuery("Select * from glossary where course_id = $courseId");
     print("response glossary course id:$courseId : $response");
     for(int i =0; i < response.length; i++){
       GlossaryData glossaryData = GlossaryData.fromJson(jsonDecode(response[i]["glossary"].toString()));

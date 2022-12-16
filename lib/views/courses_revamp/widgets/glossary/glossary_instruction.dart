@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
@@ -23,6 +27,7 @@ class GlossaryInstruction extends StatefulWidget {
 }
 
 class _GlossaryInstructionState extends State<GlossaryInstruction> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,8 +146,13 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
             bottom: 20,
             left: appWidth(context) * 0.3,
             child: GestureDetector(
-              onTap: (){
-                Get.to(() => GlossaryView(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+              onTap: ()async{
+                print(widget.course.id!);
+                List<GlossaryData> listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
+
+                print("listGlossaryData:${listGlossaryData[0].toJson()}");
+
+                Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),

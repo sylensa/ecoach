@@ -4,6 +4,7 @@ import 'package:ecoach/controllers/performance_gragh.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/controllers/treadmill_controller.dart';
 import 'package:ecoach/database/conquest_test_taken_db.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -418,6 +419,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    GlossaryDB().getGlossariesById(widget.course.id!);
  }
 
   @override

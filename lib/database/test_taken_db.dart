@@ -27,7 +27,6 @@ class TestTakenDB {
       'keyword_test_taken',
       testTaken.toJson(),
     );
-
     return id;
   }
 

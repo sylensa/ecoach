@@ -12,13 +12,15 @@ class GlossaryController{
   
   getGlossariesList(Batch batch,int courseId)async{
     var response = await  doGet("${AppUrl.glossaries}?course_id=$courseId");
+    print("glossary response:${response}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
-      await GlossaryDB().delete(courseId);
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
         glossaryData.glossary = jsonEncode(response["data"][i]);
         await GlossaryDB().insert(batch,glossaryData);
       }
+    }else{
+      print("Nothing");
     }
   }
   getUserSavedGlossariesList(Batch batch,int courseId)async{
@@ -53,6 +55,8 @@ class GlossaryController{
         glossaryData.glossary = jsonEncode(response["data"][i]);
         await GlossaryDB().insert(batch,glossaryData);
       }
+    }else{
+      print("nothing");
     }
   }
   saveGlossariesList(GlossaryData glossaryData)async{
