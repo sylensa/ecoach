@@ -60,6 +60,7 @@ class GlossaryData {
     this.definitions,
     this.resources,
     this.glossary,
+    this.isPinned,
   });
 
   int? id;
@@ -77,6 +78,7 @@ class GlossaryData {
   int? likesCount;
   int? dislikesCount;
   int? isSaved;
+  int? isPinned;
   int? isLiked;
   int? keywordAppearance;
   String? keywordRank;
@@ -100,6 +102,7 @@ class GlossaryData {
     term: json["term"] == null ? null : json["term"],
     definition: json["definition"] == null ? null : json["definition"],
     topicId: json["topic_id"] == null ? null : json["topic_id"],
+    isPinned: json["is_pinned"] == null ? 0 : json["is_pinned"],
     courseId: json["course_id"] == null ? null : json["course_id"],
     editorId: json["editor_id"] == null ? null : json["editor_id"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
@@ -124,6 +127,7 @@ class GlossaryData {
     "term": term == null ? null : term,
     "definition": definition == null ? null : definition,
     "topic_id": topicId == null ? null : topicId,
+    "is_pinned": isPinned == null ? 0 : isPinned,
     "course_id": courseId == null ? null : courseId,
     "editor_id": editorId == null ? null : editorId,
     "created_at": createdAt == null ? null : createdAt!.toIso8601String(),

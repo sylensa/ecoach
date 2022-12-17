@@ -1,9 +1,13 @@
 import 'package:ecoach/controllers/glossary_controller.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
+import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class PersonalisedPage extends StatefulWidget {
@@ -20,35 +24,423 @@ class PersonalisedPage extends StatefulWidget {
 }
 
 class _PersonalisedPageState extends State<PersonalisedPage> {
+  Topic? selectedTopic;
   List<GlossaryData> glossaryData = [];
+  List<Topic> listTopics = [];
   bool progressCode = true;
+
+  onSelectModalBottomSheet(context,GlossaryData glossary,int index) {
+    double sheetHeight = 400;
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: sText("${glossary.term}",
+                            color: Colors.black,
+                            weight: FontWeight.bold,
+                            align: TextAlign.center,
+                            size: 20),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: sText("What action will you like to perform",
+                            color: kAdeoGray3,
+                            weight: FontWeight.normal,
+                            align: TextAlign.center,),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          MaterialButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: ()async{
+                              Navigator.pop(context);
+                              showLoaderDialog(context);
+                           var res =  await  GlossaryController().deleteGlossaries(glossary.id!);
+                           stateSetter(() {
+                            if(res){
+                              glossaryData.removeAt(index);
+                            }else{
+                              toastMessage("Deletion failed, try again later");
+                            }
+                          });
+                              Navigator.pop(context);
+                            },
+                            child: Column(
+                              children: [
+                                Container(
+                                    padding: EdgeInsets.all(7.0),
+                                    height: 70,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Image.asset("assets/images/delete.png")
+                                ),
+                                SizedBox(height: 10,),
+                                sText("Delete",color: Colors.grey[400]!)
+                              ],
+                            ),
+                          ),
+                          MaterialButton(
+                            onPressed: ()async{
+                              Navigator.pop(context);
+                              showLoaderDialog(context);
+                              var res =  await  GlossaryController().pinUnPinGlossaries(glossary,glossary.isPinned! == 1 ? false : true);
+                              if(res){
+                                toastMessage("Pinned successfully");
+                              }else{
+                                toastMessage("Failed try again");
+                              }
+                              Navigator.pop(context);
+                            },
+                            child: Column(
+                              children: [
+                                Container(
+                                    padding: EdgeInsets.all(7.0),
+                                    height: 70,
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Image.asset("assets/images/push-pin.png")
+                                ),
+                                SizedBox(height: 10,),
+                                sText("Pin",color: Colors.grey[400]!)
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                  padding: EdgeInsets.all(7.0),
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.asset("assets/images/edit.png")
+                              ),
+                              SizedBox(height: 10,),
+                              sText("Edit",color: Colors.grey[400]!)
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                  padding: EdgeInsets.all(7.0),
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.asset("assets/images/send.png")
+                              ),
+                              SizedBox(height: 10,),
+                              sText("Share",color: Colors.grey[400]!)
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ));
+            },
+          );
+        });
+  }
+
+  createDialogModalBottomSheet(
+      context,
+      ) {
+    double sheetHeight = appHeight(context) * 0.90;
+    TextEditingController termController = TextEditingController();
+    TextEditingController meaningController = TextEditingController();
+
+    showModalBottomSheet(
+        context: context,
+        isDismissible: true,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(left: 20,right:20),
+
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  sText("Word",color: kAdeoGray3),
+                                  SizedBox(height: 10,),
+                                  Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            controller: termController,
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return 'Please check that you\'ve entered group_management email';
+                                              }
+                                              return null;
+                                            },
+                                            decoration: textDecorNoBorder(
+                                              radius: 10,
+                                              hintColor: Color(0xFFB9B9B9),
+                                              borderColor: Colors.white,
+                                              fill: Color(0xFFEDF3F7),
+                                              padding: EdgeInsets.only(left: 10, right: 10),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 20,right:20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  sText("Topic",color: kAdeoGray3),
+                                  SizedBox(height: 10,),
+                                  if(listTopics.isNotEmpty)
+                                  Container(
+                                    width: appWidth(context),
+                                    decoration: BoxDecoration(
+                                        color: Color(0xFFEDF3F7),
+                                        border: Border.all(color: Colors.white),
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    padding: EdgeInsets.only(left: 12, right: 12),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<Topic>(
+                                        value: selectedTopic ?? listTopics[0],
+                                        itemHeight: 60,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: kDefaultBlack,
+                                        ),
+                                        onChanged: (Topic? value){
+                                          stateSetter((){
+                                            selectedTopic = value;
+                                          });
+                                        },
+                                        items: listTopics.map(
+                                              (item) => DropdownMenuItem<Topic>(
+                                            value: item,
+                                            child: Text(
+                                              "${item.name}",
+                                              style: TextStyle(
+                                                color: kDefaultBlack,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                           Container(
+                             padding: EdgeInsets.only(left: 20,right:20),
+
+                             child: Column(
+                               crossAxisAlignment: CrossAxisAlignment.start,
+                               children: [
+                                 sText("Meaning",color: kAdeoGray3),
+                                 SizedBox(height: 10,),
+                                 Container(
+                                   // padding: EdgeInsets.only(left: 20, right: 20),
+                                   child: Row(
+                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                     children: [
+                                       Expanded(
+                                         child: TextFormField(
+                                           controller: meaningController,
+                                           validator: (value) {
+                                             if (value == null || value.isEmpty) {
+                                               return 'Please check that you\'ve entered your group description';
+                                             }
+                                             return null;
+                                           },
+                                           maxLines: 10,
+                                           decoration: textDecorNoBorder(
+                                             radius: 10,
+                                             hintColor: Color(0xFFB9B9B9),
+                                             borderColor: Colors.white,
+                                             fill: Color(0xFFEDF3F7),
+                                             padding: EdgeInsets.only(left: 10, right: 10),
+                                           ),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           )
+
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async{
+                          Map body = {
+                            "course_id":widget.course.id,
+                            "topic_id": selectedTopic!.id,
+                            "term":termController.text,
+                            "definition":meaningController.text,
+                          };
+                          if(termController.text.isNotEmpty && meaningController.text.isNotEmpty){
+                            Navigator.pop(context);
+                            showLoaderDialog(context);
+                            GlossaryData? glossary = await GlossaryController().createGlossary(body);
+                            if(glossary != null){
+                              glossaryData.add(glossary);
+                            }else{
+                              toastMessage("Failed try again later");
+                            }
+                          }else{
+                            toastMessage("All fields are required");
+                          }
+                          Navigator.pop(context);
+
+                        },
+                        child: Container(
+                          width: appWidth(context),
+                          color: Color(0xFF1D4859),
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                          child: sText("Create",
+                              color: Colors.white,
+                              weight: FontWeight.w500,
+                              align: TextAlign.center,
+                              size: 18),
+                        ),
+                      ),
+                    ],
+                  ));
+            },
+          );
+        });
+  }
+
   getPersonalisedData()async{
     try{
       glossaryData = await GlossaryController().getPersonalisedGlossariesList();
-    }
-    catch(e){
-
+    }catch(e){
+      print(e.toString());
     }
     setState(() {
       progressCode = false;
     });
   }
+  getTopics()async{
+    listTopics = await  TopicDB().allCourseTopics(widget.course);
+    setState(() {
+      if(listTopics.isNotEmpty){
+        selectedTopic = listTopics[0];
+      }
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getPersonalisedData();
+    getTopics();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      floatingActionButton: Container(
-        padding: EdgeInsets.all(10),
-        child: Icon(Icons.add,color: Colors.white,),
-        decoration: BoxDecoration(
-            color: Colors.black,
-            shape: BoxShape.circle
+      floatingActionButton:
+      GestureDetector(
+        onTap: (){
+          createDialogModalBottomSheet(context);
+        },
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Icon(Icons.add,color: Colors.white,),
+          decoration: BoxDecoration(
+              color: Colors.black,
+              shape: BoxShape.circle
+          ),
         ),
       ),
       body: Container(
@@ -81,7 +473,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                       title: '${glossaryData[index].term}',
                       subTitle: 'Create and view definitions',
                       onTap: () async {
-
+                        onSelectModalBottomSheet(context,glossaryData[index],index);
                       },
                     );
 

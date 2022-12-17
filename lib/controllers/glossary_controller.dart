@@ -166,17 +166,17 @@ class GlossaryController{
     });
     if(response["status"] && response["code"] == "200"){
       toastMessage(response["message"]);
-      glossaryData.isLiked = 0;
-      await GlossaryDB().update(glossaryData);
+      return true;
     }
 
-    return glossaryData;
+    return false;
   }
 
   deleteGlossaries(int glossaryId)async{
     var response = await  doDelete("${AppUrl.deleteGlossaries}/$glossaryId");
     if(response["status"] && response["code"] == "200"){
-     toastMessage(response["message"]);
+     return true;
     }
+    return false;
   }
 }
