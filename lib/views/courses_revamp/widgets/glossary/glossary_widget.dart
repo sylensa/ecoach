@@ -439,6 +439,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
             List<Question> questions =
             await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
+              isTopicSelected = false;
               studyTryModalBottomSheet(context);
             } else {
               showDialogYesNo(
@@ -460,7 +461,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
             List<Question> questions =
             await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-              setState(() {});
+              isTopicSelected = true;
+              studyTryModalBottomSheet(context);
             } else {
               showDialogYesNo(
                   context: context,

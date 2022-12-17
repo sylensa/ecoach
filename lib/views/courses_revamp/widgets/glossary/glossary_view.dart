@@ -10,6 +10,7 @@ import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/questions_widgets/adeo_html_tex.dart';
 import 'package:flutter/material.dart';
@@ -282,8 +283,12 @@ class _GlossaryViewState extends State<GlossaryView> {
                                       res["is_liked"] =  glossaryData[indexReport].isLiked;
                                       glossaryData[indexReport].glossary = jsonEncode(res);
                                     });
+                                  if(isTopicSelected){
+                                    await GlossaryDB().updateGlossaryTopic(glossaryData[indexReport]);
+                                  }else{
+                                    await GlossaryDB().update(glossaryData[indexReport]);
 
-                                   await GlossaryDB().update(glossaryData[indexReport]);
+                                  }
                                   },
                                 ),
                               ],

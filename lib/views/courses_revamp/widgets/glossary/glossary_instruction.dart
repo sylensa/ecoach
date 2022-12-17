@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:ecoach/database/glossary_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -148,11 +151,24 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
             child: GestureDetector(
               onTap: ()async{
                 print(widget.course.id!);
-                List<GlossaryData> listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
+                List<GlossaryData> listGlossaryData = [];
+                List topicIds = [];
+                if(isTopicSelected){
+                  List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
+                  for(int i = 0; i < listTopics.length; i++){
+                    topicIds.add(listTopics[i].id);
+                  }
+                  listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
+                }else{
+                  listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
+                }
+                print("listGlossaryData:${listGlossaryData.length}");
+                if(listGlossaryData.isEmpty){
+                  toastMessage("No glossary for this course");
+                }else{
+                  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,));
+                }
 
-                print("listGlossaryData:${listGlossaryData[0].toJson()}");
-
-                Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),

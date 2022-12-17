@@ -57,3 +57,4 @@ List<TestTaken> keywordTestTaken = [];
 const double kAdeoPaddingValue = 40;
 const double kAdeoBorderRadiusValue = 10;
 const double kAdeoBorderRadiusValueLg = 15;
+bool isTopicSelected = false;
