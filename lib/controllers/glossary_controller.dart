@@ -46,13 +46,14 @@ class GlossaryController{
       print("Nothing");
     }
   }
-  getUserSavedGlossariesList(Batch batch,int courseId)async{
+  getUserSavedGlossariesList()async{
+    List<GlossaryData> listGlossaryData = [];
     var response = await  doGet("${AppUrl.savedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
         glossaryData.glossary = jsonEncode(response["data"][i]);
-        await GlossaryDB().insert(batch,glossaryData);
+        listGlossaryData.add(glossaryData);
       }
     }
   }
@@ -67,13 +68,14 @@ class GlossaryController{
     }
   }
 
-  getPersonalisedGlossariesList(Batch batch,int courseId)async{
+  getPersonalisedGlossariesList()async{
+    List<GlossaryData> listGlossaryData = [];
     var response = await  doGet("${AppUrl.personalizedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
         glossaryData.glossary = jsonEncode(response["data"][i]);
-        await GlossaryDB().insert(batch,glossaryData);
+        listGlossaryData.add(glossaryData);
       }
     }else{
       print("nothing");

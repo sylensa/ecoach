@@ -1,15 +1,39 @@
+import 'package:ecoach/controllers/glossary_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 
 class SavedPage extends StatefulWidget {
-  const SavedPage({Key? key}) : super(key: key);
-
+  SavedPage(
+      {Key? key,
+        required this.course,
+        required this.user,
+      })
+      : super(key: key);
+  Course course;
+  User user;
   @override
   State<SavedPage> createState() => _SavedPageState();
 }
 
 class _SavedPageState extends State<SavedPage> {
+  List<GlossaryData> glossaryData = [];
+  bool progressCode = true;
+  getSavedData()async{
+    glossaryData = await GlossaryController().getUserSavedGlossariesList();
+    setState(() {
+      progressCode = false;
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getSavedData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,19 +60,20 @@ class _SavedPageState extends State<SavedPage> {
                     children: [
                       Image.asset("assets/images/dictionary.png"),
                       SizedBox(width: 10,),
-                      sText("200")
+                      sText("${glossaryData.length}")
                     ],
                   )
                 ],
               ),
             ),
             SizedBox(height: 10,),
+            glossaryData.isNotEmpty ?
             Expanded(
               child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: glossaryData.length,
                   itemBuilder: (BuildContext context, int index){
                     return   MultiPurposeCourseCard(
-                      title: 'Photosynthesis',
+                      title: '${glossaryData[index].term}',
                       subTitle: 'Create and view definitions',
                       onTap: () async {
 
@@ -56,7 +81,10 @@ class _SavedPageState extends State<SavedPage> {
                     );
 
                   }),
-            )
+            ) :
+            progressCode ?
+                Expanded(child: Center(child: progress(),)) :
+            Expanded(child: Center(child: sText("Empty data"),))
           ],
         ),
       ),

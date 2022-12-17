@@ -1,11 +1,22 @@
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/personalised_saved/personalised_page.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/personalised_saved/saved_page.dart';
 import 'package:flutter/material.dart';
 
 
 class PersonalisedSavedPage extends StatefulWidget {
+  PersonalisedSavedPage(
+      {Key? key,
+        required this.currentIndex,
+        required this.course,
+        required this.user,
+      })
+      : super(key: key);
+  Course course;
   int currentIndex;
-  PersonalisedSavedPage({required this.currentIndex });
+  User user;
+
   @override
   _PersonalisedSavedPageState createState() => _PersonalisedSavedPageState();
 }
@@ -49,8 +60,8 @@ class _PersonalisedSavedPageState extends State<PersonalisedSavedPage> {
           ),
           body:  TabBarView(
             children: [
-                PersonalisedPage(),
-              SavedPage()
+                PersonalisedPage(user: widget.user,course: widget.course,),
+              SavedPage(user: widget.user,course: widget.course,)
             ],
           ),
         )

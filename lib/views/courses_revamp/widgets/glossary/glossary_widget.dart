@@ -484,7 +484,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
             List<Question> questions =
             await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-              Get.to(() => PersonalisedSavedPage(currentIndex: 1,));
+              Get.to(() => PersonalisedSavedPage(currentIndex: 1,course: widget.course,user: widget.user,));
             } else {
               showDialogYesNo(
                   context: context,
@@ -505,7 +505,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
             List<Question> questions =
             await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-             Get.to(() => PersonalisedSavedPage(currentIndex: 0,));
+             Get.to(() => PersonalisedSavedPage(currentIndex: 0,course: widget.course,user: widget.user,));
             } else {
               showDialogYesNo(
                   context: context,
