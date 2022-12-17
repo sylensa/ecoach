@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 34, onOpen: (db) {},
+    return await openDatabase(path, version: 35, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -624,6 +624,13 @@ class DBProvider {
         'name' varchar(255) NOT NULL,
         'base64' text NOT NULL
       )""");
+
+      await db.execute("""CREATE TABLE 'glossary' (
+        'id' varchar(255) NULL DEFAULT NULL,
+        'course_id' int NOT NULL,
+        'glossary' varchar(255) NOT NULL
+        )""");
+
       await db.execute("""CREATE TABLE 'flag' (
         id INTEGER PRIMARY KEY, 
         'reason' varchar(255) NOT NULL,
@@ -1125,6 +1132,21 @@ class DBProvider {
         'flagged' int NOT NULL DEFAULT '0',
         'deleted' int NOT NULL DEFAULT '0'
       ) """);
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'glossary'""");
+          await db.execute("""CREATE TABLE 'glossary' (
+        'id' varchar(255) NULL DEFAULT NULL,
+        'course_id' int NOT NULL,
+        'glossary' varchar(255) NOT NULL
+        )""");
+        }catch(e){
+          await db.execute("""CREATE TABLE 'glossary' (
+        'id' varchar(255) NULL DEFAULT NULL,
+        'course_id' int NOT NULL,
+        'glossary' varchar(255) NOT NULL
+        )""");
         }
       }
     });

@@ -1,0 +1,145 @@
+import 'dart:convert';
+
+import 'package:ecoach/database/database.dart';
+import 'package:ecoach/database/glossary_db.dart';
+import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/utils/app_url.dart';
+import 'package:sqflite/sqflite.dart';
+
+class GlossaryController{
+  
+  
+  getGlossariesList(Batch batch,int courseId)async{
+    var response = await  doGet("${AppUrl.glossaries}?course_id=$courseId");
+    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
+      await GlossaryDB().delete(courseId);
+      for(int i =0; i < response["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
+        glossaryData.glossary = jsonEncode(response["data"][i]);
+        await GlossaryDB().insert(batch,glossaryData);
+      }
+    }
+  }
+  getUserSavedGlossariesList(Batch batch,int courseId)async{
+    var response = await  doGet("${AppUrl.savedGlossaries}");
+    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
+      await GlossaryDB().delete(courseId);
+      for(int i =0; i < response["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
+        glossaryData.glossary = jsonEncode(response["data"][i]);
+        await GlossaryDB().insert(batch,glossaryData);
+      }
+    }
+  }
+  getUserLikedGlossariesList(Batch batch,int courseId)async{
+    var response = await  doGet("${AppUrl.likedGlossaries}");
+    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
+      await GlossaryDB().delete(courseId);
+      for(int i =0; i < response["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
+        glossaryData.glossary = jsonEncode(response["data"][i]);
+        await GlossaryDB().insert(batch,glossaryData);
+      }
+    }
+  }
+
+  getPersonalisedGlossariesList(Batch batch,int courseId)async{
+    var response = await  doGet("${AppUrl.personalizedGlossaries}");
+    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
+      await GlossaryDB().delete(courseId);
+      for(int i =0; i < response["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
+        glossaryData.glossary = jsonEncode(response["data"][i]);
+        await GlossaryDB().insert(batch,glossaryData);
+      }
+    }
+  }
+  saveGlossariesList(GlossaryData glossaryData)async{
+    var response = await  doPost("${AppUrl.saveGlossaries}",{
+      "glossary_id" : glossaryData.id
+    });
+    if(response["status"] && response["code"] == "200"){
+      toastMessage(response["message"]);
+        glossaryData.isSaved = 1;
+      await GlossaryDB().update(glossaryData);
+    }
+
+    return glossaryData;
+  }
+  unSaveGlossariesList(GlossaryData glossaryData)async{
+    var response = await  doPost("${AppUrl.unSaveGlossaries}",{
+      "glossary_id" : glossaryData.id
+    });
+    if(response["status"] && response["code"] == "200"){
+      toastMessage(response["message"]);
+        glossaryData.isSaved = 0;
+
+      await GlossaryDB().update(glossaryData);
+    }
+
+    return glossaryData;
+  }
+
+  likeGlossariesList(GlossaryData glossaryData)async{
+    var response = await  doPost("${AppUrl.likeGlossaries}",{
+      "glossary_id" : glossaryData.id
+    });
+    if(response["status"] && response["code"] == "200"){
+      toastMessage(response["message"]);
+      glossaryData.isLiked = 1;
+      await GlossaryDB().update(glossaryData);
+    }
+
+    return glossaryData;
+  }
+  unLikeGlossariesList(GlossaryData glossaryData)async{
+    var response = await  doPost("${AppUrl.unLikeGlossaries}",{
+      "glossary_id" : glossaryData.id
+    });
+    if(response["status"] && response["code"] == "200"){
+      toastMessage(response["message"]);
+      glossaryData.isLiked = 0;
+      await GlossaryDB().update(glossaryData);
+    }
+
+    return glossaryData;
+  }
+  createGlossary(Map body)async{
+    GlossaryData? glossaryData;
+    var response = await  doPost("${AppUrl.createGlossaries}",body);
+    if(response["status"] && response["code"] == "200"){
+      glossaryData = GlossaryData.fromJson(response["data"]);
+    }
+    return glossaryData;
+  }
+  updateGlossary(Map body)async{
+    GlossaryData? glossaryData;
+    var response = await  doPost("${AppUrl.updateGlossaries}",body);
+    if(response["status"] && response["code"] == "200"){
+      glossaryData = GlossaryData.fromJson(response["data"]);
+    }
+    return glossaryData;
+  }
+
+  pinUnPinGlossaries(GlossaryData glossaryData,bool pin)async{
+    var response = await  doPost("${AppUrl.pinUnPinGlossaries}",{
+      "glossary_id" : glossaryData.id,
+      "is_pinned" : pin,
+    });
+    if(response["status"] && response["code"] == "200"){
+      toastMessage(response["message"]);
+      glossaryData.isLiked = 0;
+      await GlossaryDB().update(glossaryData);
+    }
+
+    return glossaryData;
+  }
+
+  deleteGlossaries(int glossaryId)async{
+    var response = await  doDelete("${AppUrl.deleteGlossaries}/$glossaryId");
+    if(response["status"] && response["code"] == "200"){
+     toastMessage(response["message"]);
+    }
+  }
+}

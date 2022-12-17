@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ecoach/controllers/glossary_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/level.dart';
@@ -46,6 +47,7 @@ class CourseDB {
         // await Future.delayed(Duration(milliseconds: 90));
       }
     }
+
   }
 
   Future<Course?> getCourseById(int id) async {

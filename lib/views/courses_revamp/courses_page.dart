@@ -126,26 +126,11 @@ class _CoursesPageState extends State<CoursesPage> {
                                       .planId!);
 
                               Plan newPlan = Plan(
-                                id: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .planId,
-                                updatedAt: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .updatedAt,
-                                name: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .name,
-                                createdAt: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .createdAt,
-                                currency: context
-                                    .read<DownloadUpdate>()
-                                    .plans[index]
-                                    .currency,
+                                id: context.read<DownloadUpdate>().plans[index].planId,
+                                updatedAt: context.read<DownloadUpdate>().plans[index].updatedAt,
+                                name: context.read<DownloadUpdate>().plans[index].name,
+                                createdAt: context.read<DownloadUpdate>().plans[index].createdAt,
+                                currency: context.read<DownloadUpdate>().plans[index].currency,
                                 description: context
                                     .read<DownloadUpdate>()
                                     .plans[index]

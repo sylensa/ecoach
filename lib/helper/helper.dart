@@ -617,12 +617,12 @@ showDialogYesNo(
   );
 }
 
-appWidth(con) {
-  return MediaQuery.of(con).size.width;
+appWidth(context) {
+  return MediaQuery.of(context).size.width;
 }
 
-appHeight(con) {
-  return MediaQuery.of(con).size.height;
+appHeight(context) {
+  return MediaQuery.of(context).size.height;
 }
 
 List<BoxShadow> appShadow(

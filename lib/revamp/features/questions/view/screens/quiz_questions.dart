@@ -678,6 +678,7 @@ class _QuizQuestionState extends State<QuizQuestion> {
                             textColor: Colors.white,
                             iconColor: kAdeoGray3,
                             initiallyExpanded: true,
+
                             collapsedIconColor: kAdeoGray3,
                             backgroundColor: Color(0xFFEFEFEF),
                             title: Text(

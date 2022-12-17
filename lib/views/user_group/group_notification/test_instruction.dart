@@ -196,7 +196,7 @@ class _TestInstructionState extends State<TestInstruction> {
                             if(widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Question"){
                               countDown = widget.groupNotificationData!.notificationtable!.configurations!.countDown! * 10;
                             }else if(widget.groupNotificationData!.notificationtable!.configurations!.timing! == "Time per Quiz"){
-                              countDown = 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown! * 10;
+                              countDown = 60 * widget.groupNotificationData!.notificationtable!.configurations!.countDown!;
                             }
                             DateTime startTime = widget.groupNotificationData!.notificationtable!.configurations!.startDatetime!;
                             // countDown = countDown - DateTime.now().difference(startTime).inSeconds;

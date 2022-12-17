@@ -17,6 +17,7 @@ import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/widgets/games_widget.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/learn_mode_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/live_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/note_widget.dart';
@@ -134,6 +135,11 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
       title: 'Notes',
       subTitle: 'Self-explanatory notes on various topics',
       iconURL: 'assets/icons/courses/notes.png',
+    ),
+    CourseDetail(
+      title: 'Glossary',
+      subTitle: 'Self-explanatory notes on various topics',
+      iconURL: 'assets/icons/courses/glossary.png',
     ),
     CourseDetail(
       title: 'Tests',
@@ -474,6 +480,13 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     user: widget.user,
                     course: course!,
                     topics: topics,
+                  ),
+                  GlossaryWidget(
+                    controller: widget.controller,
+                    subscription: widget.subscription,
+                    user: widget.user,
+                    course: course!,
+                    listCourseKeywordsData: listCourseKeywordsData,
                   ),
                   TestTypeWidget(
                     controller: widget.controller,

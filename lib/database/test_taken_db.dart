@@ -38,21 +38,21 @@ class TestTakenDB {
 
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
   }
-  Future< List<TestTaken>> getKeywordTestTaken() async {
+  Future< List<TestTaken>> getKeywordTestTaken(int courseId) async {
 
     List<Map<String, dynamic>> result = [];
     List<Map<String, dynamic>> response = [];
     List<Map<String, dynamic>> responseTotalQuestion = [];
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
-     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken");
+     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken where course_id = $courseId");
       // print("result:${result[0]["test_name"]}");
       print("result:${result.length}");
     List<TestTaken> tests = [];
     for (int i = 0; i < result.length; i++) {
       TestTaken test = TestTaken.fromJson(result[i]);
-      response = await db.rawQuery("Select correct from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id desc limit 2");
-      responseTotalQuestion = await db.rawQuery("Select * from keyword_test_taken where test_name = '" '${test.testname}'"' ORDER by id asc limit 1");
+      response = await db.rawQuery("Select correct from keyword_test_taken where test_name = '" '${test.testname}'"' and course_id = $courseId ORDER by id desc limit 2");
+      responseTotalQuestion = await db.rawQuery("Select * from keyword_test_taken where test_name = '" '${test.testname}'"' and course_id = $courseId ORDER by id asc limit 1");
       int scoreDiff ;
       if(response.length > 1){
         scoreDiff = response[1]["correct"] -  response[0]["correct"];

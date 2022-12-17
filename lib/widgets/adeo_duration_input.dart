@@ -68,8 +68,7 @@ class _AdeoDurationInputState extends State<AdeoDurationInput> {
         String mins = digits[0].toString() + digits[1].toString();
         String secs = digits[2].toString() + digits[3].toString();
 
-        widget.onDurationChange(
-            Duration(minutes: int.parse(mins), seconds: int.parse(secs)));
+        widget.onDurationChange(Duration(minutes: int.parse(mins), seconds: int.parse(secs)));
       },
     );
 

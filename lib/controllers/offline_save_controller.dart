@@ -39,9 +39,9 @@ class OfflineSaveController {
     await OfflineDataDB().insert(OfflineData(dataId: id, dataType: "test_taken"));
   }
 
-  saveKeywordTestTaken(TestTaken test) async {
+  saveKeywordTestTaken(TestTaken test,int courseId) async {
     await TestTakenDB().insertKeywordTestTaken(test);
-    var res = await TestTakenDB().getKeywordTestTaken();
+    var res = await TestTakenDB().getKeywordTestTaken(courseId);
     print("keyword res:$res");
   }
 
