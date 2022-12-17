@@ -578,7 +578,7 @@ class KnowledgeTestController extends ChangeNotifier {
                               currentAlphabet = tests.first.name[0];
 
                               if (!emptyTestTakenList) {
-                                scrollListAlphabets = topics
+                                scrollListAlphabets = tests
                                     .map((topic) {
                                       return topic.name[0]
                                           .toString()
