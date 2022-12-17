@@ -23,7 +23,12 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   List<GlossaryData> glossaryData = [];
   bool progressCode = true;
   getPersonalisedData()async{
-    glossaryData = await GlossaryController().getPersonalisedGlossariesList();
+    try{
+      glossaryData = await GlossaryController().getPersonalisedGlossariesList();
+    }
+    catch(e){
+
+    }
     setState(() {
       progressCode = false;
     });

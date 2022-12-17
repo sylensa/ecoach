@@ -49,13 +49,15 @@ class GlossaryController{
   getUserSavedGlossariesList()async{
     List<GlossaryData> listGlossaryData = [];
     var response = await  doGet("${AppUrl.savedGlossaries}");
-    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
-      for(int i =0; i < response["data"].length; i++){
-        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
-        glossaryData.glossary = jsonEncode(response["data"][i]);
+    if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
+      for(int i =0; i < response["data"]["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"]["data"][i]["glossary"]);
+        glossaryData.glossary = jsonEncode(response["data"]["data"][i]["glossary"]);
         listGlossaryData.add(glossaryData);
       }
     }
+
+    return listGlossaryData;
   }
   getUserLikedGlossariesList(Batch batch,int courseId)async{
     var response = await  doGet("${AppUrl.likedGlossaries}");
@@ -71,15 +73,16 @@ class GlossaryController{
   getPersonalisedGlossariesList()async{
     List<GlossaryData> listGlossaryData = [];
     var response = await  doGet("${AppUrl.personalizedGlossaries}");
-    if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
-      for(int i =0; i < response["data"].length; i++){
-        GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
-        glossaryData.glossary = jsonEncode(response["data"][i]);
+    if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
+      for(int i =0; i < response["data"]["data"].length; i++){
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"]["data"][i]["glossary"]);
+        glossaryData.glossary = jsonEncode(response["data"]["data"][i]["glossary"]);
         listGlossaryData.add(glossaryData);
       }
     }else{
       print("nothing");
     }
+    return listGlossaryData;
   }
   saveGlossariesList(GlossaryData glossaryData)async{
     if(isTopicSelected){
