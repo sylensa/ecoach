@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/glossary_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -283,11 +284,10 @@ class _GlossaryViewState extends State<GlossaryView> {
                                       res["is_liked"] =  glossaryData[indexReport].isLiked;
                                       glossaryData[indexReport].glossary = jsonEncode(res);
                                     });
-                                  if(isTopicSelected){
-                                    await GlossaryDB().updateGlossaryTopic(glossaryData[indexReport]);
+                                  if(switchValue){
+                                     GlossaryController().saveGlossariesList(glossaryData[indexReport]);
                                   }else{
-                                    await GlossaryDB().update(glossaryData[indexReport]);
-
+                                     GlossaryController().unSaveGlossariesList(glossaryData[indexReport]);
                                   }
                                   },
                                 ),

@@ -47,10 +47,10 @@ class GlossaryDB {
     }
     List<GlossaryData> glossaries = [];
     final db = await DBProvider.database;
-    var  response = await db!.rawQuery("Select * from glossary where course_id = $courseId and topic_id in ($ids)");
+    var  response = await db!.rawQuery("Select * from glossary_topic where course_id = $courseId and topic_id in ($ids)");
     print("response glossary course id:$topicId : $response");
     for(int i =0; i < response.length; i++){
-      GlossaryData glossaryData = GlossaryData.fromJson(jsonDecode(response[i]["glossary_topic"].toString()));
+      GlossaryData glossaryData = GlossaryData.fromJson(jsonDecode(response[i]["glossary"].toString()));
       glossaryData.glossary = response[i]["glossary"].toString();
       glossaries.add(glossaryData);
     }
@@ -79,17 +79,17 @@ class GlossaryDB {
     );
   }
 
-  delete(int id) async {
+  delete(Batch batch,int id) async {
     final db = await DBProvider.database;
-    db!.delete(
+    batch.delete(
       'glossary',
       where: "course_id = ?",
       whereArgs: [id],
     );
   }
-  deleteGLossaryTopic(int id) async {
+  deleteGlossaryTopic(Batch batch,int id) async {
     final db = await DBProvider.database;
-    db!.delete(
+    batch.delete(
       'glossary_topic',
       where: "course_id = ?",
       whereArgs: [id],
@@ -102,6 +102,6 @@ class GlossaryDB {
   }
   deleteAllGlossaryTopic() async {
     final db = await DBProvider.database;
-    db!.delete('glossary_topic');
+    await db!.rawQuery('Delete from glossary_topic');
   }
 }

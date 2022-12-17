@@ -422,7 +422,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // GlossaryDB().getGlossariesById(widget.course.id!);
+    GlossaryDB().getGlossariesById(widget.course.id!);
 
  }
 

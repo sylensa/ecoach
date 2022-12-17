@@ -153,16 +153,21 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                 print(widget.course.id!);
                 List<GlossaryData> listGlossaryData = [];
                 List topicIds = [];
+               print("isTopicSelected:$isTopicSelected");
                 if(isTopicSelected){
+                  // await GlossaryDB().deleteAllGlossaryTopic();
+                  // await GlossaryDB().deleteAll();
+
                   List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
                   for(int i = 0; i < listTopics.length; i++){
                     topicIds.add(listTopics[i].id);
                   }
                   listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
+                  print("listGlossaryData:${listGlossaryData.length}");
+
                 }else{
                   listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
                 }
-                print("listGlossaryData:${listGlossaryData.length}");
                 if(listGlossaryData.isEmpty){
                   toastMessage("No glossary for this course");
                 }else{

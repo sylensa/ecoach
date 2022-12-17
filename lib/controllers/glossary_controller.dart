@@ -5,6 +5,7 @@ import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:sqflite/sqflite.dart';
 
 class GlossaryController{
@@ -48,7 +49,6 @@ class GlossaryController{
   getUserSavedGlossariesList(Batch batch,int courseId)async{
     var response = await  doGet("${AppUrl.savedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
-      await GlossaryDB().delete(courseId);
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
         glossaryData.glossary = jsonEncode(response["data"][i]);
@@ -59,7 +59,6 @@ class GlossaryController{
   getUserLikedGlossariesList(Batch batch,int courseId)async{
     var response = await  doGet("${AppUrl.likedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
-      await GlossaryDB().delete(courseId);
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
         glossaryData.glossary = jsonEncode(response["data"][i]);
@@ -71,7 +70,6 @@ class GlossaryController{
   getPersonalisedGlossariesList(Batch batch,int courseId)async{
     var response = await  doGet("${AppUrl.personalizedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"].isNotEmpty){
-      await GlossaryDB().delete(courseId);
       for(int i =0; i < response["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"][i]);
         glossaryData.glossary = jsonEncode(response["data"][i]);
@@ -82,26 +80,34 @@ class GlossaryController{
     }
   }
   saveGlossariesList(GlossaryData glossaryData)async{
+    if(isTopicSelected){
+      await GlossaryDB().updateGlossaryTopic(glossaryData);
+    }else{
+      await GlossaryDB().update(glossaryData);
+    }
     var response = await  doPost("${AppUrl.saveGlossaries}",{
       "glossary_id" : glossaryData.id
     });
     if(response["status"] && response["code"] == "200"){
       toastMessage(response["message"]);
-        glossaryData.isSaved = 1;
-      await GlossaryDB().update(glossaryData);
+        // glossaryData.isSaved = 1;
+
     }
 
     return glossaryData;
   }
   unSaveGlossariesList(GlossaryData glossaryData)async{
+    if(isTopicSelected){
+      await GlossaryDB().updateGlossaryTopic(glossaryData);
+    }else{
+      await GlossaryDB().update(glossaryData);
+    }
     var response = await  doPost("${AppUrl.unSaveGlossaries}",{
       "glossary_id" : glossaryData.id
     });
     if(response["status"] && response["code"] == "200"){
       toastMessage(response["message"]);
-        glossaryData.isSaved = 0;
-
-      await GlossaryDB().update(glossaryData);
+        // glossaryData.isSaved = 0;
     }
 
     return glossaryData;
