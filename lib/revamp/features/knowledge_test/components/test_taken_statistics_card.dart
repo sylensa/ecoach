@@ -36,7 +36,7 @@ class TestTakenStatisticCard extends StatefulWidget {
   final int currentSlide;
   final CarouselController? carouselController;
   final List<TestTaken>? testsTaken;
-  final List<TestNameAndCount> tests;
+  final List<dynamic> tests;
   final bool showGraph;
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
@@ -60,7 +60,7 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
   late FlipCardController flipCardController;
   late AnimationController animationController;
   late Animation<double> animation;
-  late List<TestNameAndCount> _tests;
+  late List<dynamic> _tests;
   late List<TestTaken> _testsTaken;
   late bool isTestTaken = false;
   late bool smallHeightDevice;
@@ -83,14 +83,14 @@ class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
     _tests = widget.tests;
     _testsTaken = widget.testsTaken!;
     print("_testsTaken: ${_testsTaken.length}");
-    print("_testsTaken: ${_testsTaken[0].toJson()}");
-    var testResponses = jsonDecode(_testsTaken[0].responses);
 
-    if (testResponses != null) {
-      topicId = testResponses["Q1"]["topic_id"];
-    } else {
-      topicId = null;
-    }
+    // var testResponses = jsonDecode(_testsTaken[0].responses);
+
+    // if (testResponses != null) {
+    //   topicId = testResponses["Q1"]["topic_id"];
+    // } else {
+    //   topicId = null;
+    // }
 
     switch (widget.activeMenu) {
       case TestCategory.TOPIC:

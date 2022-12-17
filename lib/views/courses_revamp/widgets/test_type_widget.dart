@@ -119,6 +119,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
     ListNames(name: "Unanswered", id: "2"),
     ListNames(name: "Wrong answered", id: "3"),
   ];
+  
   getTest(BuildContext context, TestCategory testCategory,
       {int currentQuestionCount = 0}) {
     Future futureList;
@@ -1272,6 +1273,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
               knowledgeTestController.knowledgeTestModalBottomSheet(
                 context,
                 course: widget.course,
+                user: widget.user
               );
             } else {
               showDialogYesNo(
