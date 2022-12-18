@@ -238,20 +238,20 @@ class KnowledgeTestController extends ChangeNotifier {
   }
 
   toggleKnowledgeTestMenus(BuildContext context, bool smallHeightDevice) {
-    if (activeMenu != TestCategory.NONE) {
-      sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
-      activeMenu = TestCategory.NONE;
-      sheetHeightIncreased = false;
-      isActiveAnyMenu = false;
-      isShowAlphaScroll = false;
-    } else if (!isActiveAnyMenu || searchTap) {
+    if (!isActiveAnyMenu || searchTap) {
       searchTap = false;
       sheetHeight = appHeight(context) * 0.90;
       activeMenu = TestCategory.TOPIC;
       if (sheetHeightIncreased) {
         isActiveAnyMenu = true;
       }
-    }
+    } else {
+      sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
+      activeMenu = TestCategory.NONE;
+      sheetHeightIncreased = false;
+      isActiveAnyMenu = false;
+      isShowAlphaScroll = false;
+    } 
     return isActiveAnyMenu;
   }
 
@@ -563,56 +563,55 @@ class KnowledgeTestController extends ChangeNotifier {
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         height: sheetHeight,
                         onEnd: (() async {
-                          switch (activeMenu) {
-                            case TestCategory.TOPIC:
-                              isActiveTopicMenu = true;
-                              isActiveAnyMenu = true;
-                              sheetHeightIncreased = true;
-                              tests = await getTest(
-                                context,
-                                TestCategory.TOPIC,
-                                course!,
-                                user!,
-                              );
-                              emptyTestTakenList = tests.isEmpty;
-                              currentAlphabet = tests.first.name[0];
+                          if (!sheetHeightIncreased) {
+                            switch (activeMenu) {
+                              case TestCategory.TOPIC:
+                                isActiveTopicMenu = true;
+                                isActiveAnyMenu = true;
+                                sheetHeightIncreased = true;
+                                tests = await getTest(
+                                  context,
+                                  TestCategory.TOPIC,
+                                  course!,
+                                  user!,
+                                );
+                                emptyTestTakenList = tests.isEmpty;
+                                currentAlphabet = tests.first.name[0];
 
-                              if (!emptyTestTakenList) {
-                                scrollListAlphabets = tests
-                                    .map((topic) {
-                                      return topic.name[0]
-                                          .toString()
-                                          .toUpperCase();
-                                    })
-                                    .toSet()
-                                    .toList();
-                                scrollListAlphabets.sort();
-                              }
+                                if (!emptyTestTakenList) {
+                                  scrollListAlphabets = tests
+                                      .map((topic) {
+                                        return topic.name[0]
+                                            .toString()
+                                            .toUpperCase();
+                                      })
+                                      .toSet()
+                                      .toList();
+                                  scrollListAlphabets.sort();
+                                }
 
-                              break;
-                            case TestCategory.MOCK:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.EXAM:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.ESSAY:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.SAVED:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.BANK:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.NONE:
-                              print("List Empty: $emptyTestTakenList");
-                              break;
-                            default:
-
-                              // sheetHeightIncreased = false;
-
-                              break;
+                                break;
+                              case TestCategory.EXAM:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.MOCK:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.ESSAY:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.SAVED:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.BANK:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.NONE:
+                                break;
+                              default:
+                                // sheetHeightIncreased = false;
+                                break;
+                            }
                           }
                           stateSetter(() {});
                         }),
@@ -1069,20 +1068,81 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
-                                                        // await getTopics(course!)
-                                                        //     .then((value) {
-                                                        //   topics = value;
-                                                        // });
-                                                        await getTest(
-                                                          context,
-                                                          TestCategory.TOPIC,
-                                                          course!,
-                                                          user!,
-                                                          // currentQuestionCount:
-                                                          //     selectedTopic
-                                                          //         .totalCount,
-                                                        );
-                                                        tests = topics;
+                                                        activeMenu =
+                                                            TestCategory.TOPIC;
+                                                        if (sheetHeightIncreased) {
+                                                          switch (activeMenu) {
+                                                            case TestCategory
+                                                                .TOPIC:
+                                                              print(
+                                                                  "TEsts: $activeMenu");
+                                                              isActiveTopicMenu =
+                                                                  true;
+                                                              isActiveAnyMenu =
+                                                                  true;
+                                                              tests =
+                                                                  await getTest(
+                                                                context,
+                                                                activeMenu,
+                                                                course!,
+                                                                user!,
+                                                              );
+                                                              emptyTestTakenList =
+                                                                  tests.isEmpty;
+                                                              currentAlphabet =
+                                                                  tests.first
+                                                                      .name[0];
+
+                                                              if (!emptyTestTakenList) {
+                                                                scrollListAlphabets =
+                                                                    tests
+                                                                        .map(
+                                                                            (topic) {
+                                                                          return topic
+                                                                              .name[0]
+                                                                              .toString()
+                                                                              .toUpperCase();
+                                                                        })
+                                                                        .toSet()
+                                                                        .toList();
+                                                                scrollListAlphabets
+                                                                    .sort();
+                                                              }
+
+                                                              break;
+                                                            case TestCategory
+                                                                .EXAM:
+                                                              isActiveAnyMenu =
+                                                                  true;
+                                                              break;
+                                                            case TestCategory
+                                                                .MOCK:
+                                                              isActiveAnyMenu =
+                                                                  true;
+                                                              break;
+                                                            case TestCategory
+                                                                .ESSAY:
+                                                              isActiveAnyMenu =
+                                                                  true;
+                                                              break;
+                                                            case TestCategory
+                                                                .SAVED:
+                                                              isActiveAnyMenu =
+                                                                  true;
+                                                              break;
+                                                            case TestCategory
+                                                                .BANK:
+                                                              isActiveAnyMenu =
+                                                                  true;
+                                                              break;
+                                                            case TestCategory
+                                                                .NONE:
+                                                              break;
+                                                            default:
+                                                              // sheetHeightIncreased = false;
+                                                              break;
+                                                          }
+                                                        }
 
                                                         toggleKnowledgeTestMenus(
                                                           context,
