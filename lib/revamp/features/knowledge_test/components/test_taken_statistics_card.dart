@@ -421,6 +421,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       testTaken!.scoreDiff! > 0
                                           ? Image.asset(
@@ -433,10 +434,10 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                               width: 25,
                                             ),
                                       SizedBox(
-                                        width: 12,
+                                        width: 4,
                                       ),
                                       sText(
-                                        "${testTaken!.scoreDiff! > 0 ? "+" : ""}${testTaken!.scoreDiff!}",
+                                        "${testTaken!.scoreDiff! > 0 ? "+" : ""}${testTaken!.scoreDiff!.round()}",
                                         color: Colors.white,
                                         weight: FontWeight.bold,
                                         size: 16,
@@ -479,7 +480,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                         sText(
                                           "times taken",
                                           size: 12,
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: Colors.white.withOpacity(0.7),
                                           weight: FontWeight.w300,
                                           style: FontStyle.italic,
                                         ),
