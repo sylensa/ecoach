@@ -64,7 +64,6 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
       vsync: this,
     );
 
-
     switch (widget.activeMenu) {
       case TestCategory.TOPIC:
         activeMenuIcon += "topic.png";
@@ -421,7 +420,8 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       testTaken!.scoreDiff! > 0
                                           ? Image.asset(

@@ -135,79 +135,13 @@ class KnowledgeTestController extends ChangeNotifier {
     _emptyTestTakenList = value;
   }
 
+  TestType testType = TestType.KNOWLEDGE;
+
   List<TestTaken> tests = [];
   List<TestTaken> testsTaken = [];
   CarouselController alphaSliderToStatisticsCardController =
       CarouselController();
   String currentAlphabet = '';
-
-  // Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
-  //   'A': [
-  //     CourseKeywords(
-  //       keyword: "Animal",
-  //       total: 12,
-  //     ),
-  //     CourseKeywords(
-  //       keyword: "Anonymous",
-  //       total: 1,
-  //     ),
-  //     CourseKeywords(
-  //       keyword: "Abstract",
-  //       total: 3,
-  //     ),
-  //   ],
-  //   'B': [
-  //     CourseKeywords(
-  //       keyword: "Bat",
-  //       total: 4,
-  //     ),
-  //     CourseKeywords(
-  //       keyword: "Banter",
-  //       total: 100,
-  //     ),
-  //     CourseKeywords(
-  //       keyword: "Bible",
-  //       total: 2,
-  //     ),
-  //     CourseKeywords(
-  //       keyword: "Boat",
-  //       total: 16,
-  //     ),
-  //     CourseKeywords(
-  //       keyword: "Bootstap",
-  //       total: 6,
-  //     ),
-  //   ],
-  //   'C': [
-  //     CourseKeywords(
-  //       keyword: "Commercial Law",
-  //       total: 12,
-  //     ),
-  //   ],
-  //   'D': [],
-  //   'E': [],
-  //   'F': [],
-  //   'G': [],
-  //   'H': [],
-  //   'I': [],
-  //   'J': [],
-  //   'K': [],
-  //   'L': [],
-  //   'M': [],
-  //   'N': [],
-  //   'O': [],
-  //   'P': [],
-  //   'Q': [],
-  //   'R': [],
-  //   'S': [],
-  //   'T': [],
-  //   'U': [],
-  //   'V': [],
-  //   'W': [],
-  //   'X': [],
-  //   'Y': [],
-  //   'Z': []
-  // };
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [],
     'B': [],
@@ -236,9 +170,9 @@ class KnowledgeTestController extends ChangeNotifier {
     'Y': [],
     'Z': []
   };
-  List<TestTaken> typeSpecificTopicTestsTaken = [];
+  List<TestTaken> typeSpecificTestsTaken = [];
   late int testTakenIndex;
-  late TestTaken testTaken;
+  late TestTaken? testTaken = null;
   late bool isTestTaken = false;
 
   void slideToActiveAlphabet(List<dynamic> tests, int index,
@@ -264,23 +198,31 @@ class KnowledgeTestController extends ChangeNotifier {
     print("Selected: $selectedAlphabet ");
   }
 
-   filterAndSetTestsTaken({
+  filterAndSetKnowledgeTestsTaken({
     required Course course,
     required int topicId,
     required TestCategory testCategory,
   }) async {
     testsTaken = await TestController().getTestTaken(course.id!.toString());
 
-    typeSpecificTopicTestsTaken = testsTaken
-        .where((element) => element.challengeType == testCategory.toString())
+    typeSpecificTestsTaken = testsTaken
+        .where((element) =>
+            element.challengeType == testCategory.toString() &&
+            element.testType == testType.toString())
         .toList();
 
-    testTakenIndex = typeSpecificTopicTestsTaken.indexWhere((takenTest) {
-      return jsonDecode(takenTest.responses)["Q1"]["topic_id"] == topicId;
-    });
-    if (testTakenIndex != -1) {
-      isTestTaken = true;
-      testTaken = typeSpecificTopicTestsTaken[testTakenIndex];
+    if (typeSpecificTestsTaken.length > 0) {
+      testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
+        // Find a better way to get the topicId for a testTaken //
+        return jsonDecode(takenTest.responses)["Q1"]["topic_id"] == topicId;
+      });
+
+      if (testTakenIndex != -1) {
+        isTestTaken = true;
+        testTaken = typeSpecificTestsTaken[testTakenIndex];
+      } else {
+        isTestTaken = false;
+      }
     } else {
       isTestTaken = false;
     }
@@ -341,6 +283,7 @@ class KnowledgeTestController extends ChangeNotifier {
             questions,
             category: testCategory,
             course: course,
+            type: testType,
             theme: QuizTheme.BLUE,
             time: questions.length * 60,
             name: searchKeyword,
@@ -409,8 +352,6 @@ class KnowledgeTestController extends ChangeNotifier {
       ),
     );
   }
-
-  TestType testType = TestType.NONE;
 
   getTest(
       BuildContext context, TestCategory testCategory, Course course, User user,
@@ -580,6 +521,7 @@ class KnowledgeTestController extends ChangeNotifier {
                           questions,
                           category: testCategory,
                           course: course,
+                          type: testType,
                           theme: QuizTheme.BLUE,
                           time: questions.length * 60,
                           name: searchKeyword,
@@ -699,7 +641,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                 currentAlphabet = tests.first.name[0];
                                 topicId = tests[_currentSlide].id;
 
-                                filterAndSetTestsTaken(
+                                filterAndSetKnowledgeTestsTaken(
                                   testCategory: TestCategory.TOPIC,
                                   course: course,
                                   topicId: topicId!,
@@ -862,7 +804,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                   _currentSlide]
                                                               .id;
                                                           testTakenIndex =
-                                                              typeSpecificTopicTestsTaken
+                                                              typeSpecificTestsTaken
                                                                   .indexWhere(
                                                                       (takenTest) {
                                                             return jsonDecode(
@@ -876,7 +818,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               -1) {
                                                             isTestTaken = true;
                                                             testTaken =
-                                                                typeSpecificTopicTestsTaken[
+                                                                typeSpecificTestsTaken[
                                                                     testTakenIndex];
                                                           } else {
                                                             isTestTaken = false;
@@ -1327,7 +1269,7 @@ class KnowledgeTestController extends ChangeNotifier {
 
                                                         topicId = tests[0].id;
 
-                                                       await filterAndSetTestsTaken(
+                                                        await filterAndSetKnowledgeTestsTaken(
                                                           testCategory:
                                                               TestCategory
                                                                   .TOPIC,
