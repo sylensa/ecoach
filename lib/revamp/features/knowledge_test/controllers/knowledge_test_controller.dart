@@ -119,8 +119,6 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
 }
 
 class KnowledgeTestController extends ChangeNotifier {
-  TextEditingController searchKeywordController = TextEditingController();
-  String searchKeyword = '';
   bool searchTap = false;
   bool showGraph = false;
   List<CourseKeywords> listCourseKeywordsData = [];
@@ -312,13 +310,9 @@ class KnowledgeTestController extends ChangeNotifier {
     return topics;
   }
 
-  goToInstructions(
-    BuildContext context,
-    dynamic test,
-    TestCategory testCategory,
-    User user,
-    Course course,
-  ) async {
+  goToInstructions(BuildContext context, dynamic test,
+      TestCategory testCategory, User user, Course course,
+      {String searchKeyword = ''}) async {
     Navigator.pop(context);
     Widget? widgetView;
     List<Question> questions = [];
@@ -420,7 +414,7 @@ class KnowledgeTestController extends ChangeNotifier {
 
   getTest(
       BuildContext context, TestCategory testCategory, Course course, User user,
-      {int currentQuestionCount = 0}) {
+      {int currentQuestionCount = 0, String searchKeyword = ''}) {
     Future futureList;
     switch (testCategory) {
       case TestCategory.MOCK:
@@ -454,7 +448,7 @@ class KnowledgeTestController extends ChangeNotifier {
                     keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
             futureList.then(
               (data) async {
-                Navigator.pop(context);
+                // Navigator.pop(context);
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -570,7 +564,39 @@ class KnowledgeTestController extends ChangeNotifier {
         futureList = TestController().getKeywordQuestions(
             searchKeyword.toLowerCase(), course.id!,
             currentQuestionCount: currentQuestionCount);
+        futureList.then(
+          (data) async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  Widget? widgetView;
+                  switch (testCategory) {
+                    case TestCategory.NONE:
+                      List<Question> questions = data as List<Question>;
+                      widgetView = KeywordAssessment(
+                        quizCover: KeywordQuizCover(
+                          user,
+                          questions,
+                          category: testCategory,
+                          course: course,
+                          theme: QuizTheme.BLUE,
+                          time: questions.length * 60,
+                          name: searchKeyword,
+                        ),
+                        questionCount: questions.length,
+                      );
+                      break;
+                    default:
+                      widgetView = null;
+                  }
 
+                  return widgetView!;
+                },
+              ),
+            );
+          },
+        );
         break;
       default:
         futureList = TestController().getBankTest(course);
@@ -580,6 +606,9 @@ class KnowledgeTestController extends ChangeNotifier {
   }
 
   knowledgeTestModalBottomSheet(context, {Course? course, User? user}) async {
+    TextEditingController searchKeywordController = TextEditingController();
+    String searchKeyword = '';
+
     if (listCourseKeywordsData.isNotEmpty) {
       groupedCourseKeywordsMap = {
         'A': [],
@@ -896,12 +925,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                             selectedTopic,
                                                       ) async {
                                                         goToInstructions(
-                                                          context,
-                                                          selectedTopic,
-                                                          testCategory,
-                                                          user!,
-                                                          course!,
-                                                        );
+                                                            context,
+                                                            selectedTopic,
+                                                            testCategory,
+                                                            user!,
+                                                            course!,
+                                                            searchKeyword:
+                                                                searchKeyword);
                                                       },
                                                     );
                                                   }),
@@ -977,16 +1007,56 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               controller:
                                                                   searchKeywordController,
                                                               onChanged: (String
-                                                                  value) async {},
+                                                                  value) async {
+                                                                stateSetter(() {
+                                                                  searchKeyword =
+                                                                      value
+                                                                          .trim();
+                                                                  listQuestions
+                                                                      .clear();
+                                                                });
+
+                                                                if (searchKeyword
+                                                                    .isNotEmpty) {
+                                                                  for (int i =
+                                                                          0;
+                                                                      i <
+                                                                          keywordTestTaken
+                                                                              .length;
+                                                                      i++) {
+                                                                    if (keywordTestTaken[i]
+                                                                            .testname!
+                                                                            .toLowerCase() ==
+                                                                        searchKeyword
+                                                                            .toLowerCase()) {
+                                                                      listQuestions = await TestController().getKeywordQuestions(
+                                                                          searchKeyword
+                                                                              .toLowerCase(),
+                                                                          course!
+                                                                              .id!,
+                                                                          currentQuestionCount:
+                                                                              keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+                                                                      stateSetter(
+                                                                          () {});
+                                                                      return;
+                                                                    }
+                                                                  }
+                                                                }
+                                                                if (searchKeyword
+                                                                    .isNotEmpty) {
+                                                                  listQuestions = await TestController().getKeywordQuestions(
+                                                                      searchKeyword
+                                                                          .toLowerCase(),
+                                                                      course!
+                                                                          .id!,
+                                                                      currentQuestionCount:
+                                                                          0);
+                                                                }
+                                                                stateSetter(
+                                                                    () {});
+                                                              },
                                                               onTap: () {
                                                                 stateSetter(() {
-                                                                  if (isActiveAnyMenu) {
-                                                                    activeMenu =
-                                                                        TestCategory
-                                                                            .NONE;
-                                                                    isActiveAnyMenu =
-                                                                        false;
-                                                                  }
                                                                   sheetHeight =
                                                                       appHeight(
                                                                               context) *
@@ -995,6 +1065,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                       true;
                                                                   searchTap =
                                                                       true;
+                                                                  if (isActiveAnyMenu) {
+                                                                    activeMenu =
+                                                                        TestCategory
+                                                                            .NONE;
+                                                                    isActiveAnyMenu =
+                                                                        false;
+                                                                  }
                                                                 });
                                                               },
                                                               decoration:
@@ -1008,8 +1085,17 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                     IconButton(
                                                                         onPressed:
                                                                             () async {
-                                                                          model.isShowAnalysisBox =
-                                                                              !model.isShowAnalysisBox;
+                                                                          // model.isShowAnalysisBox =
+                                                                          //     !model.isShowAnalysisBox;
+
+                                                                          await getTest(
+                                                                            context,
+                                                                            TestCategory.NONE,
+                                                                            course!,
+                                                                            user!,
+                                                                            searchKeyword:
+                                                                                searchKeyword,
+                                                                          );
                                                                         },
                                                                         icon:
                                                                             Icon(
@@ -1073,7 +1159,15 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                                       if (properCase("${entry.value[i].keyword}").isNotEmpty)
                                                                                         MaterialButton(
                                                                                           padding: EdgeInsets.zero,
-                                                                                          onPressed: () async {},
+                                                                                          onPressed: () async {
+                                                                                            await getTest(
+                                                                                              context,
+                                                                                              TestCategory.NONE,
+                                                                                              course!,
+                                                                                              user!,
+                                                                                              searchKeyword: "${entry.value[i].keyword}",
+                                                                                            );
+                                                                                          },
                                                                                           child: Column(
                                                                                             children: [
                                                                                               Row(
@@ -1113,9 +1207,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                             MaterialButton(
                                                                               padding: EdgeInsets.zero,
                                                                               onPressed: () async {
-                                                                                // stateSetter(() {});
-                                                                                // await getTest(context,
-                                                                                //     TestCategory.NONE);
+                                                                                stateSetter(() {});
+                                                                                await getTest(
+                                                                                  context,
+                                                                                  TestCategory.NONE,
+                                                                                  course!,
+                                                                                  user!,
+                                                                                );
                                                                               },
                                                                               child: Column(
                                                                                 children: [
