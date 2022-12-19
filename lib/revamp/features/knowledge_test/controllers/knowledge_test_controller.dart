@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -131,8 +132,8 @@ class KnowledgeTestController extends ChangeNotifier {
   bool isShowAlphaScroll = false;
   bool _emptyTestTakenList = true;
 
-  bool get emptyTestTakenList => _emptyTestTakenList;
-  set emptyTestTakenList(bool value) {
+  bool get emptyTestList => _emptyTestTakenList;
+  set emptyTestList(bool value) {
     _emptyTestTakenList = value;
   }
 
@@ -142,49 +143,77 @@ class KnowledgeTestController extends ChangeNotifier {
       CarouselController();
   String currentAlphabet = '';
 
+  // Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
+  //   'A': [
+  //     CourseKeywords(
+  //       keyword: "Animal",
+  //       total: 12,
+  //     ),
+  //     CourseKeywords(
+  //       keyword: "Anonymous",
+  //       total: 1,
+  //     ),
+  //     CourseKeywords(
+  //       keyword: "Abstract",
+  //       total: 3,
+  //     ),
+  //   ],
+  //   'B': [
+  //     CourseKeywords(
+  //       keyword: "Bat",
+  //       total: 4,
+  //     ),
+  //     CourseKeywords(
+  //       keyword: "Banter",
+  //       total: 100,
+  //     ),
+  //     CourseKeywords(
+  //       keyword: "Bible",
+  //       total: 2,
+  //     ),
+  //     CourseKeywords(
+  //       keyword: "Boat",
+  //       total: 16,
+  //     ),
+  //     CourseKeywords(
+  //       keyword: "Bootstap",
+  //       total: 6,
+  //     ),
+  //   ],
+  //   'C': [
+  //     CourseKeywords(
+  //       keyword: "Commercial Law",
+  //       total: 12,
+  //     ),
+  //   ],
+  //   'D': [],
+  //   'E': [],
+  //   'F': [],
+  //   'G': [],
+  //   'H': [],
+  //   'I': [],
+  //   'J': [],
+  //   'K': [],
+  //   'L': [],
+  //   'M': [],
+  //   'N': [],
+  //   'O': [],
+  //   'P': [],
+  //   'Q': [],
+  //   'R': [],
+  //   'S': [],
+  //   'T': [],
+  //   'U': [],
+  //   'V': [],
+  //   'W': [],
+  //   'X': [],
+  //   'Y': [],
+  //   'Z': []
+  // };
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
-    'A': [
-      CourseKeywords(
-        keyword: "Animal",
-        total: 12,
-      ),
-      CourseKeywords(
-        keyword: "Anonymous",
-        total: 1,
-      ),
-      CourseKeywords(
-        keyword: "Abstract",
-        total: 3,
-      ),
-    ],
-    'B': [
-      CourseKeywords(
-        keyword: "Bat",
-        total: 4,
-      ),
-      CourseKeywords(
-        keyword: "Banter",
-        total: 100,
-      ),
-      CourseKeywords(
-        keyword: "Bible",
-        total: 2,
-      ),
-      CourseKeywords(
-        keyword: "Boat",
-        total: 16,
-      ),
-      CourseKeywords(
-        keyword: "Bootstap",
-        total: 6,
-      ),
-    ],
-    'C': [
-      CourseKeywords(
-        keyword: "Commercial Law",
-        total: 12,
-      ),
-    ],
+    'A': [],
+    'B': [],
+    'C': [],
     'D': [],
     'E': [],
     'F': [],
@@ -209,6 +238,10 @@ class KnowledgeTestController extends ChangeNotifier {
     'Y': [],
     'Z': []
   };
+  List<TestTaken> typeSpecificTopicTestsTaken = [];
+  late int testTakenIndex;
+  late TestTaken testTaken;
+  late bool isTestTaken = false;
 
   void slideToActiveAlphabet(List<dynamic> tests, int index,
       {String selectedAlphabet = ''}) {
@@ -216,7 +249,7 @@ class KnowledgeTestController extends ChangeNotifier {
     List<dynamic> _selectedTests;
     if (selectedAlphabet.isNotEmpty) {
       _selectedTests = tests
-          .where((testTaken) => testTaken.name.toUpperCase().startsWith(
+          .where((test) => test.name.toUpperCase().startsWith(
                 selectedAlphabet,
               ))
           .toList();
@@ -233,8 +266,26 @@ class KnowledgeTestController extends ChangeNotifier {
     print("Selected: $selectedAlphabet ");
   }
 
-  void slideToActiveAlphabetIndex({int selectedIndex = 0}) {
-    currentAlphabet = testsTaken[selectedIndex].testname![0];
+  void filterAndSetTestsTaken({
+    required Course course,
+    required int topicId,
+    required TestCategory testCategory,
+  }) async {
+    testsTaken = await TestController().getTestTaken(course.id!.toString());
+
+    typeSpecificTopicTestsTaken = testsTaken
+        .where((element) => element.challengeType == testCategory.toString())
+        .toList();
+
+    testTakenIndex = typeSpecificTopicTestsTaken.indexWhere((takenTest) {
+      return jsonDecode(takenTest.responses)["Q1"]["topic_id"] == topicId;
+    });
+    if (testTakenIndex != -1) {
+      isTestTaken = true;
+      testTaken = typeSpecificTopicTestsTaken[testTakenIndex];
+    } else {
+      isTestTaken = false;
+    }
   }
 
   toggleKnowledgeTestMenus(BuildContext context, bool smallHeightDevice) {
@@ -251,7 +302,7 @@ class KnowledgeTestController extends ChangeNotifier {
       sheetHeightIncreased = false;
       isActiveAnyMenu = false;
       isShowAlphaScroll = false;
-    } 
+    }
     return isActiveAnyMenu;
   }
 
@@ -529,23 +580,60 @@ class KnowledgeTestController extends ChangeNotifier {
   }
 
   knowledgeTestModalBottomSheet(context, {Course? course, User? user}) async {
+    if (listCourseKeywordsData.isNotEmpty) {
+      groupedCourseKeywordsMap = {
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+        'E': [],
+        'F': [],
+        'G': [],
+        'H': [],
+        'I': [],
+        'J': [],
+        'K': [],
+        'L': [],
+        'M': [],
+        'N': [],
+        'O': [],
+        'P': [],
+        'Q': [],
+        'R': [],
+        'S': [],
+        'T': [],
+        'U': [],
+        'V': [],
+        'W': [],
+        'X': [],
+        'Y': [],
+        'Z': []
+      };
+    } else {
+      groupedCourseKeywordsMap.clear();
+    }
     searchKeywordController.text = searchKeyword.trim();
     searchTap = false;
     bool smallHeightDevice = appHeight(context) < 890 ? true : false;
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
-    List<TestNameAndCount> topics = [];
     List<dynamic> tests = [];
 
     List<String> scrollListAlphabets = [];
-    List<TestTaken> topicTestsTaken = [];
-    late Future testsList;
 
-    // await TestController()
-    //     .getTestTaken(course!.id!.toString())
-    //     .then((takenTests) {
-    //   testsTaken = takenTests;
-    // });
+    int _currentSlide = 0;
+    late int? topicId;
+
+    listCourseKeywordsData.forEach((courseKeyword) {
+      if (groupedCourseKeywordsMap[
+              '${courseKeyword.keyword![0]}'.toUpperCase()] ==
+          null) {
+        groupedCourseKeywordsMap['${courseKeyword.keyword![0]}'.toUpperCase()] =
+            <CourseKeywords>[];
+      }
+      groupedCourseKeywordsMap['${courseKeyword.keyword![0]}'.toUpperCase()]!
+          .add(courseKeyword);
+    });
 
     showModalBottomSheet(
         context: context,
@@ -563,6 +651,9 @@ class KnowledgeTestController extends ChangeNotifier {
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         height: sheetHeight,
                         onEnd: (() async {
+                          testsTaken = await TestController()
+                              .getTestTaken(course!.id!.toString());
+
                           if (!sheetHeightIncreased) {
                             switch (activeMenu) {
                               case TestCategory.TOPIC:
@@ -572,13 +663,20 @@ class KnowledgeTestController extends ChangeNotifier {
                                 tests = await getTest(
                                   context,
                                   TestCategory.TOPIC,
-                                  course!,
+                                  course,
                                   user!,
                                 );
-                                emptyTestTakenList = tests.isEmpty;
+                                emptyTestList = tests.isEmpty;
                                 currentAlphabet = tests.first.name[0];
+                                topicId = tests[_currentSlide].id;
 
-                                if (!emptyTestTakenList) {
+                                filterAndSetTestsTaken(
+                                  testCategory: TestCategory.TOPIC,
+                                  course: course,
+                                  topicId: topicId!,
+                                );
+
+                                if (!emptyTestList) {
                                   scrollListAlphabets = tests
                                       .map((topic) {
                                         return topic.name[0]
@@ -694,69 +792,122 @@ class KnowledgeTestController extends ChangeNotifier {
                                   child: Column(
                                     children: [
                                       if (isActiveAnyMenu)
-                                        emptyTestTakenList
-                                            ? Container(
-                                                height: smallHeightDevice
-                                                    ? 150
-                                                    : 300,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                        "You have no Topic Knowledge Tests"),
-                                                    SizedBox(
-                                                      height: 12,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () async {},
-                                                      child: Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 18,
-                                                          vertical: 12,
-                                                        ),
-                                                        child: sText(
-                                                          "Take New Test",
-                                                          color: Colors.white,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: kAdeoGreen4,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            : TestTakenStatisticCard(
-                                                carouselController:
-                                                    alphaSliderToStatisticsCardController,
-                                                currentSlide: 0,
-                                                tests: tests,
-                                                testsTaken: testsTaken,
-                                                showGraph: showGraph,
-                                                activeMenu: activeMenu,
-                                                knowledgeTestControllerModel:
-                                                    model,
-                                                getTest: (
-                                                  BuildContext context,
-                                                  TestCategory testCategory,
-                                                  TestNameAndCount
-                                                      selectedTopic,
-                                                ) async {
-                                                  goToInstructions(
-                                                    context,
-                                                    selectedTopic,
-                                                    testCategory,
-                                                    user!,
-                                                    course!,
-                                                  );
-                                                },
-                                              ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            SingleChildScrollView(
+                                              physics: model.isShowAnalysisBox
+                                                  ? BouncingScrollPhysics()
+                                                  : NeverScrollableScrollPhysics(),
+                                              child: CarouselSlider.builder(
+                                                  carouselController:
+                                                      alphaSliderToStatisticsCardController,
+                                                  options: CarouselOptions(
+                                                    height:
+                                                        model.isShowAnalysisBox
+                                                            ? 600
+                                                            : 300,
+                                                    autoPlay: false,
+                                                    enableInfiniteScroll: false,
+                                                    autoPlayAnimationDuration:
+                                                        Duration(seconds: 1),
+                                                    enlargeCenterPage: false,
+                                                    viewportFraction: 1,
+                                                    aspectRatio: 2.0,
+                                                    pageSnapping: true,
+                                                    initialPage: _currentSlide,
+                                                    onPageChanged:
+                                                        (index, reason) {
+                                                      _currentSlide = index;
+                                                      model.currentAlphabet =
+                                                          tests[_currentSlide]
+                                                              .name[0];
+
+                                                      switch (activeMenu) {
+                                                        case TestCategory.TOPIC:
+                                                          topicId = tests[
+                                                                  _currentSlide]
+                                                              .id;
+                                                          testTakenIndex =
+                                                              typeSpecificTopicTestsTaken
+                                                                  .indexWhere(
+                                                                      (takenTest) {
+                                                            return jsonDecode(
+                                                                        takenTest
+                                                                            .responses)["Q1"]
+                                                                    [
+                                                                    "topic_id"] ==
+                                                                topicId;
+                                                          });
+                                                          if (testTakenIndex !=
+                                                              -1) {
+                                                            isTestTaken = true;
+                                                            testTaken =
+                                                                typeSpecificTopicTestsTaken[
+                                                                    testTakenIndex];
+                                                          } else {
+                                                            isTestTaken = false;
+                                                          }
+
+                                                          break;
+                                                        case TestCategory.EXAM:
+                                                          break;
+                                                        case TestCategory.MOCK:
+                                                          break;
+                                                        case TestCategory.ESSAY:
+                                                          break;
+                                                        case TestCategory.SAVED:
+                                                          break;
+                                                        case TestCategory.BANK:
+                                                          break;
+                                                        case TestCategory.NONE:
+                                                          break;
+                                                        default:
+                                                          // sheetHeightIncreased = false;
+                                                          break;
+                                                      }
+                                                      ;
+
+                                                      stateSetter(() {});
+                                                    },
+                                                  ),
+                                                  itemCount: tests.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int indexReport,
+                                                          int index2) {
+                                                    return TestsStatisticCard(
+                                                      test: tests[indexReport],
+                                                      isTestTaken: isTestTaken,
+                                                      testTaken: testTaken,
+                                                      showGraph: showGraph,
+                                                      activeMenu: activeMenu,
+                                                      knowledgeTestControllerModel:
+                                                          model,
+                                                      getTest: (
+                                                        BuildContext context,
+                                                        TestCategory
+                                                            testCategory,
+                                                        TestNameAndCount
+                                                            selectedTopic,
+                                                      ) async {
+                                                        goToInstructions(
+                                                          context,
+                                                          selectedTopic,
+                                                          testCategory,
+                                                          user!,
+                                                          course!,
+                                                        );
+                                                      },
+                                                    );
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
                                       if (!model.isShowAnalysisBox)
                                         Expanded(
                                           child: Column(
@@ -793,7 +944,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                 child: Column(
                                                   children: [
                                                     isShowAlphaScroll &&
-                                                            !emptyTestTakenList
+                                                            !emptyTestList
                                                         ? AlphabetScrollSlider(
                                                             alphabets:
                                                                 scrollListAlphabets,
@@ -877,8 +1028,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                   ],
                                                 ),
                                               ),
-                                              if (!searchTap &&
-                                                  !emptyTestTakenList)
+                                              if (!searchTap && !emptyTestList)
                                                 Spacer(),
                                               if (searchTap)
                                                 Expanded(
@@ -1070,77 +1220,50 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       onPressed: () async {
                                                         activeMenu =
                                                             TestCategory.TOPIC;
+                                                        tests = await getTest(
+                                                          context,
+                                                          activeMenu,
+                                                          course!,
+                                                          user!,
+                                                        );
+
+                                                        topicId = tests[0].id;
+
+                                                        filterAndSetTestsTaken(
+                                                          testCategory:
+                                                              TestCategory
+                                                                  .TOPIC,
+                                                          course: course,
+                                                          topicId: topicId!,
+                                                        );
+
                                                         if (sheetHeightIncreased) {
-                                                          switch (activeMenu) {
-                                                            case TestCategory
-                                                                .TOPIC:
-                                                              print(
-                                                                  "TEsts: $activeMenu");
-                                                              isActiveTopicMenu =
-                                                                  true;
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              tests =
-                                                                  await getTest(
-                                                                context,
-                                                                activeMenu,
-                                                                course!,
-                                                                user!,
-                                                              );
-                                                              emptyTestTakenList =
-                                                                  tests.isEmpty;
-                                                              currentAlphabet =
-                                                                  tests.first
-                                                                      .name[0];
+                                                          isActiveTopicMenu =
+                                                              true;
+                                                          isActiveAnyMenu =
+                                                              true;
 
-                                                              if (!emptyTestTakenList) {
-                                                                scrollListAlphabets =
-                                                                    tests
-                                                                        .map(
-                                                                            (topic) {
-                                                                          return topic
-                                                                              .name[0]
-                                                                              .toString()
-                                                                              .toUpperCase();
-                                                                        })
-                                                                        .toSet()
-                                                                        .toList();
-                                                                scrollListAlphabets
-                                                                    .sort();
-                                                              }
+                                                          emptyTestList =
+                                                              tests.isEmpty;
+                                                          currentAlphabet =
+                                                              tests.first
+                                                                  .name[0];
 
-                                                              break;
-                                                            case TestCategory
-                                                                .EXAM:
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              break;
-                                                            case TestCategory
-                                                                .MOCK:
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              break;
-                                                            case TestCategory
-                                                                .ESSAY:
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              break;
-                                                            case TestCategory
-                                                                .SAVED:
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              break;
-                                                            case TestCategory
-                                                                .BANK:
-                                                              isActiveAnyMenu =
-                                                                  true;
-                                                              break;
-                                                            case TestCategory
-                                                                .NONE:
-                                                              break;
-                                                            default:
-                                                              // sheetHeightIncreased = false;
-                                                              break;
+                                                          if (!emptyTestList) {
+                                                            scrollListAlphabets =
+                                                                tests
+                                                                    .map(
+                                                                        (topic) {
+                                                                      return topic
+                                                                          .name[
+                                                                              0]
+                                                                          .toString()
+                                                                          .toUpperCase();
+                                                                    })
+                                                                    .toSet()
+                                                                    .toList();
+                                                            scrollListAlphabets
+                                                                .sort();
                                                           }
                                                         }
 

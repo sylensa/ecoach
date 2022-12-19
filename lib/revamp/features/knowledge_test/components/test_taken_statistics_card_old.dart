@@ -18,8 +18,8 @@ class FlipCardController {
   Future flipCard() async => _state?.flipCard();
 }
 
-class TestTakenStatisticCard extends StatefulWidget {
-  const TestTakenStatisticCard({
+class TestsStatisticCard extends StatefulWidget {
+  const TestsStatisticCard({
     Key? key,
     required this.showGraph,
     required this.getTest,
@@ -40,10 +40,10 @@ class TestTakenStatisticCard extends StatefulWidget {
       int currentQuestionCount) getTest;
 
   @override
-  State<TestTakenStatisticCard> createState() => _TestTakenStatisticCardState();
+  State<TestsStatisticCard> createState() => _TestTakenStatisticCardState();
 }
 
-class _TestTakenStatisticCardState extends State<TestTakenStatisticCard>
+class _TestTakenStatisticCardState extends State<TestsStatisticCard>
     with TickerProviderStateMixin {
   String searchKeyword = '';
   bool isActiveStatisticsSide = false;
