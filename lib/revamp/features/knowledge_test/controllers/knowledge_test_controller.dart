@@ -264,7 +264,7 @@ class KnowledgeTestController extends ChangeNotifier {
     print("Selected: $selectedAlphabet ");
   }
 
-  void filterAndSetTestsTaken({
+   filterAndSetTestsTaken({
     required Course course,
     required int topicId,
     required TestCategory testCategory,
@@ -1327,13 +1327,14 @@ class KnowledgeTestController extends ChangeNotifier {
 
                                                         topicId = tests[0].id;
 
-                                                        filterAndSetTestsTaken(
+                                                       await filterAndSetTestsTaken(
                                                           testCategory:
                                                               TestCategory
                                                                   .TOPIC,
                                                           course: course,
                                                           topicId: topicId!,
                                                         );
+                                                        stateSetter(() {});
 
                                                         if (sheetHeightIncreased) {
                                                           isActiveTopicMenu =
