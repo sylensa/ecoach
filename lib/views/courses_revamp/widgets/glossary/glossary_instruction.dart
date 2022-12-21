@@ -5,6 +5,7 @@ import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
@@ -18,11 +19,13 @@ class GlossaryInstruction extends StatefulWidget {
     required this.user,
     required this.course,
     required this.listCourseKeywordsData,
+    required this.glossaryProgressData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
+  GlossaryProgressData? glossaryProgressData ;
   List<CourseKeywords> listCourseKeywordsData;
 
   @override

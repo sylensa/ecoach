@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 39, onOpen: (db) {},
+    return await openDatabase(path, version: 40, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -46,6 +46,15 @@ class DBProvider {
         'category' varchar(50) NOT NULL,
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'glossary_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'offline_data' (
@@ -1174,6 +1183,27 @@ class DBProvider {
         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'glossary_progress'""");
+          await db.execute("""CREATE TABLE 'glossary_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'glossary_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
         }
       }
     });
