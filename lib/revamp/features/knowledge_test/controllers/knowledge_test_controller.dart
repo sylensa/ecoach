@@ -293,7 +293,7 @@ class KnowledgeTestController extends ChangeNotifier {
               course,
               questions: questions,
               topicId: _test.id,
-              name: searchKeyword,
+              name: _test.name,
               time: questions.length * 60,
               type: TestType.KNOWLEDGE,
               challengeType: testCategory,
