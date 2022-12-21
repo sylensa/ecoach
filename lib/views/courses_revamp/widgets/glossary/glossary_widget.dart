@@ -84,9 +84,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
  var scoreSelected;
 
 
-  studyTryModalBottomSheet(
-      context,
-      ) {
+  studyTryModalBottomSheet(context,) async{
+    widget.glossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
     double sheetHeight = 400;
     showModalBottomSheet(
         context: context,
@@ -273,9 +272,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                            stateSetter(() {
                              continueSelected = true;
                            });
-
                            Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
-
                          }else{
                            toastMessage("You've no save progress");
                          }
@@ -372,7 +369,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                                    weight: FontWeight.w500,
                                    align: TextAlign.center,
                                    size: 20),
-                               sText("2000 terms",
+                               sText("${ widget.glossaryData.length} terms",
                                    color: kAdeoGray3,
                                    weight: FontWeight.bold,
                                    align: TextAlign.center,

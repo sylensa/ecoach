@@ -48,7 +48,10 @@ class GlossaryDB {
     final db = await DBProvider.database;
     var  response = await db!.rawQuery("Select * from glossary_progress where course_id = $courseId");
     print("response glossary_progress course id:$courseId : $response");
-    glossaryProgressData = GlossaryProgressData.fromJson(response.last);
+    if(response.isNotEmpty){
+      glossaryProgressData = GlossaryProgressData.fromJson(response.last);
+      return glossaryProgressData;
+    }
     return glossaryProgressData;
   }
   Future<void> insertTopicGlossary(Batch batch,GlossaryData glossaryData) async {
@@ -146,5 +149,10 @@ class GlossaryDB {
   deleteAllGlossaryTopic() async {
     final db = await DBProvider.database;
     await db!.rawQuery('Delete from glossary_topic');
+  }
+
+  deleteAllGlossaryProgress() async {
+    final db = await DBProvider.database;
+    await db!.rawQuery('Delete from glossary_progress');
   }
 }

@@ -157,6 +157,7 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                 List<GlossaryData> listGlossaryData = [];
                 List topicIds = [];
                print("isTopicSelected:$isTopicSelected");
+                widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
                 if(isTopicSelected){
                   // await GlossaryDB().deleteAllGlossaryTopic();
                   // await GlossaryDB().deleteAll();
@@ -168,13 +169,14 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                   listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
                   print("listGlossaryData:${listGlossaryData.length}");
 
-                }else{
+                }
+                else{
                   listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
                 }
                 if(listGlossaryData.isEmpty){
                   toastMessage("No glossary for this course");
                 }else{
-                  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,));
+                  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
                 }
 
               },

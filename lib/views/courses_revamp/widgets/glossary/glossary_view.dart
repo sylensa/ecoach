@@ -25,12 +25,14 @@ class GlossaryView extends StatefulWidget {
     required this.user,
     required this.course,
     required this.listGlossaryData,
+    required this.glossaryProgressData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
   List<GlossaryData> listGlossaryData;
+  GlossaryProgressData? glossaryProgressData ;
 
   @override
   State<GlossaryView> createState() => _GlossaryViewState();
@@ -136,7 +138,8 @@ class _GlossaryViewState extends State<GlossaryView> {
         'Y': [],
         'Z': []
       };
-    } else {
+    }
+    else {
       glossaryDataLists.clear();
     }
     widget.listGlossaryData.forEach((courseKeyword) {
@@ -146,19 +149,32 @@ class _GlossaryViewState extends State<GlossaryView> {
       glossaryDataLists['${courseKeyword.term![0]}'.toUpperCase()]!.add(courseKeyword);
     });
     glossaryDataListsResult.clear();
-    for (var entry in glossaryDataLists.entries)
+    for (var entry in glossaryDataLists.entries){
       if (entry.value.isNotEmpty){
         Map<String, List<GlossaryData>> groupedCourse = {
           entry.key.toUpperCase() : entry.value
         };
         glossaryDataListsResult.addAll(groupedCourse);
       }
+    }
+
 
     print("groupedCourseKeywordsResult:${glossaryDataListsResult}");
+    if(widget.glossaryProgressData == null){
+      glossaryData =  glossaryDataListsResult.entries.first.value;
+      termKeyword = glossaryData.first.term!;
+      selectedCharacter =  glossaryDataListsResult.entries.first.key;
+    }else{
+      termKeyword = widget.glossaryProgressData!.searchTerm!;
+      selectedCharacter = widget.glossaryProgressData!.selectedCharacter!.toLowerCase();
+      currentIndex = widget.glossaryProgressData!.progressIndex! + 1;
+      for (var entry in glossaryDataLists.entries){
+        if (entry.key.toLowerCase() == selectedCharacter.toLowerCase()){
+          glossaryData = entry.value;
+        }
+      }
+    }
 
-    glossaryData =  glossaryDataListsResult.entries.first.value;
-    termKeyword = glossaryData.first.term!;
-    selectedCharacter =  glossaryDataListsResult.entries.first.key;
   }
   GlobalKey<ScaffoldState> scaffold = GlobalKey();
 
@@ -244,6 +260,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                     viewportFraction: 0.85,
                     aspectRatio: 2.0,
                     pageSnapping: true,
+                    initialPage: currentIndex -1,
                     onPageChanged: (index, reason) async{
                       currentIndex  = index +1;
                       termKeyword = glossaryData[index].term!;
