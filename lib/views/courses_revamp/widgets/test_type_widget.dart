@@ -148,10 +148,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         for (int i = 0; i < keywordTestTaken.length; i++) {
           if (keywordTestTaken[i].testname!.toLowerCase() ==
               searchKeyword.toLowerCase()) {
-            futureList = TestController().getKeywordQuestions(
-                searchKeyword.toLowerCase(), widget.course.id!,
-                currentQuestionCount:
-                    keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+            futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(), widget.course.id!, currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
             futureList.then(
               (data) async {
                 Navigator.pop(context);

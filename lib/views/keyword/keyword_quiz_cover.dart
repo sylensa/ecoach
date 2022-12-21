@@ -291,7 +291,7 @@ class KeywordQuizCover extends StatelessWidget {
                                             level: level,
                                             name: name,
                                             time: time,
-                                            topicId: topic.id,
+                                            topicId: topic != null ? topic.id : null,
                                             type: type,
                                             challengeType: category,
                                           ),

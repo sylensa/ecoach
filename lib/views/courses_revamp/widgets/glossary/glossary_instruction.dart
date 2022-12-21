@@ -1,7 +1,15 @@
+import 'dart:convert';
+
+import 'package:ecoach/database/glossary_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,11 +19,13 @@ class GlossaryInstruction extends StatefulWidget {
     required this.user,
     required this.course,
     required this.listCourseKeywordsData,
+    required this.glossaryProgressData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
+  GlossaryProgressData? glossaryProgressData ;
   List<CourseKeywords> listCourseKeywordsData;
 
   @override
@@ -23,6 +33,7 @@ class GlossaryInstruction extends StatefulWidget {
 }
 
 class _GlossaryInstructionState extends State<GlossaryInstruction> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,8 +152,33 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
             bottom: 20,
             left: appWidth(context) * 0.3,
             child: GestureDetector(
-              onTap: (){
-                Get.to(() => GlossaryView(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+              onTap: ()async{
+                print(widget.course.id!);
+                List<GlossaryData> listGlossaryData = [];
+                List topicIds = [];
+               print("isTopicSelected:$isTopicSelected");
+                widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
+                if(isTopicSelected){
+                  // await GlossaryDB().deleteAllGlossaryTopic();
+                  // await GlossaryDB().deleteAll();
+
+                  List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
+                  for(int i = 0; i < listTopics.length; i++){
+                    topicIds.add(listTopics[i].id);
+                  }
+                  listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
+                  print("listGlossaryData:${listGlossaryData.length}");
+
+                }
+                else{
+                  listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
+                }
+                if(listGlossaryData.isEmpty){
+                  toastMessage("No glossary for this course");
+                }else{
+                  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                }
+
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),

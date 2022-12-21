@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 35, onOpen: (db) {},
+    return await openDatabase(path, version: 42, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -46,6 +46,15 @@ class DBProvider {
         'category' varchar(50) NOT NULL,
         'created_at' timestamp NULL DEFAULT NULL,
         'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'glossary_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
       ) """);
 
       await db.execute("""CREATE TABLE 'offline_data' (
@@ -342,6 +351,7 @@ class DBProvider {
         'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,
         'course_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
         'test_name' varchar(255) DEFAULT NULL,
         'test_type' varchar(255) DEFAULT NULL,
         'challenge_type' varchar(255) DEFAULT NULL,
@@ -630,6 +640,13 @@ class DBProvider {
       await db.execute("""CREATE TABLE 'glossary' (
         'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
+        'glossary' varchar(255) NOT NULL
+        )""");
+      await db.execute("""CREATE TABLE 'glossary_topic' (
+           'id' varchar(255) NULL DEFAULT NULL,
+        'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
 
@@ -655,7 +672,33 @@ class DBProvider {
         // you can execute drop table and create table
 
         try {
-          await db.execute("""ALTER TABLE 'tests_taken' ADD COLUMN group_id int DEFAULT NULL """);
+          await db.execute("""DROP TABLE 'conquest_tests_taken'""");
+          await db.execute("""CREATE TABLE 'conquest_tests_taken' (
+            'id' INTEGER PRIMARY KEY,
+            'user_id' int NOT NULL,
+            'group_id' int DEFAULT NULL,
+            'date_time' varchar(255) NOT NULL,
+            'course_id' int NOT NULL,
+            'topic_id' int DEFAULT NULL,
+            'test_name' varchar(255) DEFAULT NULL,
+            'test_type' varchar(255) DEFAULT NULL,
+            'challenge_type' varchar(255) DEFAULT NULL,
+            'test_id' int DEFAULT NULL,
+            'test_time' int DEFAULT NULL,
+            'used_time' int DEFAULT NULL,
+            'pause_duration' int DEFAULT NULL,
+            'total_questions' int NOT NULL,
+            'score' double NOT NULL,
+            'correct' int NOT NULL,
+            'wrong' int NOT NULL,
+            'unattempted' int NOT NULL,
+            'responses' LONGTEXT NOT NULL,
+            'comment' text DEFAULT NULL,
+            'user_rank' int NULL,
+            'total_rank' int NULL,
+            'created_at' timestamp NULL DEFAULT NULL,
+            'updated_at' timestamp NULL DEFAULT NULL
+          ) """);
         } catch (e) {
         }
         try {
@@ -665,6 +708,7 @@ class DBProvider {
             'group_id' int DEFAULT NULL,
             'date_time' varchar(255) NOT NULL,
             'course_id' int NOT NULL,
+            'topic_id' int DEFAULT NULL,
             'test_name' varchar(255) DEFAULT NULL,
             'test_type' varchar(255) DEFAULT NULL,
             'challenge_type' varchar(255) DEFAULT NULL,
@@ -688,6 +732,62 @@ class DBProvider {
 
         }
 
+        try{
+          await db.execute("""DROP TABLE 'tests_taken'""");
+          await db.execute("""CREATE TABLE 'tests_taken' (
+        'id' INTEGER PRIMARY KEY,
+        'user_id' int NOT NULL,
+        'group_id' int DEFAULT NULL,
+        'date_time' varchar(255) NOT NULL,
+        'course_id' int NOT NULL,
+        'test_name' varchar(255) DEFAULT NULL,
+        'test_type' varchar(255) DEFAULT NULL,
+        'challenge_type' varchar(255) DEFAULT NULL,
+        'topic_id' int DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'test_time' int DEFAULT NULL,
+        'used_time' int DEFAULT NULL,
+        'pause_duration' int DEFAULT NULL,
+        'total_questions' int NOT NULL,
+        'score' double NOT NULL,
+        'correct' int NOT NULL,
+        'wrong' int NOT NULL,
+        'unattempted' int NOT NULL,
+        'responses' LONGTEXT NOT NULL,
+        'comment' text DEFAULT NULL,
+        'user_rank' int NULL,
+        'total_rank' int NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'tests_taken' (
+        'id' INTEGER PRIMARY KEY,
+        'user_id' int NOT NULL,
+        'group_id' int DEFAULT NULL,
+        'date_time' varchar(255) NOT NULL,
+        'course_id' int NOT NULL,
+        'test_name' varchar(255) DEFAULT NULL,
+        'test_type' varchar(255) DEFAULT NULL,
+        'challenge_type' varchar(255) DEFAULT NULL,
+        'topic_id' int DEFAULT NULL,
+        'test_id' int DEFAULT NULL,
+        'test_time' int DEFAULT NULL,
+        'used_time' int DEFAULT NULL,
+        'pause_duration' int DEFAULT NULL,
+        'total_questions' int NOT NULL,
+        'score' double NOT NULL,
+        'correct' int NOT NULL,
+        'wrong' int NOT NULL,
+        'unattempted' int NOT NULL,
+        'responses' LONGTEXT NOT NULL,
+        'comment' text DEFAULT NULL,
+        'user_rank' int NULL,
+        'total_rank' int NULL,
+        'created_at' timestamp NULL DEFAULT NULL,
+        'updated_at' timestamp NULL DEFAULT NULL
+      ) """);
+        }
 
         try {
           await db.execute("""DROP TABLE 'test_saved_questions'""");
@@ -741,6 +841,7 @@ class DBProvider {
         'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,
         'course_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
         'test_name' varchar(255) DEFAULT NULL,
         'test_type' varchar(255) DEFAULT NULL,
         'challenge_type' varchar(255) DEFAULT NULL,
@@ -767,6 +868,7 @@ class DBProvider {
         'group_id' int DEFAULT NULL,
         'date_time' varchar(255) NOT NULL,
         'course_id' int NOT NULL,
+        'topic_id' int DEFAULT NULL,
         'test_name' varchar(255) DEFAULT NULL,
         'test_type' varchar(255) DEFAULT NULL,
         'challenge_type' varchar(255) DEFAULT NULL,
@@ -1141,14 +1243,53 @@ class DBProvider {
           await db.execute("""CREATE TABLE 'glossary' (
         'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
         }catch(e){
           await db.execute("""CREATE TABLE 'glossary' (
         'id' varchar(255) NULL DEFAULT NULL,
         'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
         'glossary' varchar(255) NOT NULL
         )""");
+        }
+        try{
+          await db.execute("""DROP TABLE 'glossary_topic'""");
+          await db.execute("""CREATE TABLE 'glossary_topic' (
+            'id' varchar(255) NULL DEFAULT NULL,
+        'course_id' int NOT NULL,
+         'topic_id' int NOT NULL,
+        'glossary' varchar(255) NOT NULL
+        )""");
+        }catch(e){
+          await db.execute("""CREATE TABLE 'glossary_topic' (
+            'id' varchar(255) NULL DEFAULT NULL,
+        'course_id' int NOT NULL,
+        'topic_id' int NOT NULL,
+        'glossary' varchar(255) NOT NULL
+        )""");
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'glossary_progress'""");
+          await db.execute("""CREATE TABLE 'glossary_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'glossary_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
         }
       }
     });

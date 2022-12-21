@@ -49,8 +49,7 @@ class TopicDB {
       }
     }
 
-    final List<Map<String, dynamic>> maps = await db!
-        .rawQuery("SELECT * FROM topics WHERE id IN ($ids) ORDER BY name");
+    final List<Map<String, dynamic>> maps = await db!.rawQuery("SELECT * FROM topics WHERE id IN ($ids) ORDER BY name");
 
     List<Topic> topics = [];
     for (int i = 0; i < maps.length; i++) {

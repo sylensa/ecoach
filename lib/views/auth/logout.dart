@@ -1,5 +1,6 @@
 import 'package:ecoach/api/google_signin_call.dart';
 import 'package:ecoach/database/conquest_test_taken_db.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/plan.dart';
 import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/subscription_db.dart';
@@ -35,6 +36,9 @@ class _LogoutState extends State<Logout> {
       await QuestionDB().deleteAllConquestTest();
       await TestTakenDB().deleteAll();
       await TestTakenDB().deleteAllKeywordTestTaken();
+      await GlossaryDB().deleteAll();
+      await GlossaryDB().deleteAllGlossaryTopic();
+      await GlossaryDB().deleteAllGlossaryProgress();
       var status = await UserPreferences().getLoginWith() ;
        await UserPreferences().removeUser();
       if(status){

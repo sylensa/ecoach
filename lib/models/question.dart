@@ -23,6 +23,7 @@ class Question {
     this.answers,
     this.topic,
     this.time,
+    this.viewQuestions,
   });
 
   int? key;
@@ -44,6 +45,7 @@ class Question {
   int? public;
   int? flagged;
   int? deleted;
+  bool? viewQuestions;
   List<Answer>? answers;
   Answer? selectedAnswer;
   Topic? topic;
@@ -90,6 +92,7 @@ class Question {
       public: json["public"],
       flagged: json["flagged"],
       deleted: json["deleted"],
+      viewQuestions: json["view_questions"] == null ? false : json["view_questions"],
       time: json["time"] ?? 0,
       answers: json["answers"] == null
           ? []

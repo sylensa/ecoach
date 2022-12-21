@@ -16,7 +16,7 @@ class AppUrl {
   static String resend_pin = baseURL + "pin/resend";
   static String forgotPassword = baseURL + "password/forgot";
   static String glossaries = baseURL + "course/glossaries";
-  static String personalizedGlossaries = baseURL + "/user/personalized/glossary";
+  static String personalizedGlossaries = baseURL + "user/personalized/glossary";
   static String savedGlossaries = baseURL + "user/saved/glossaries";
   static String deleteGlossaries = baseURL + "user/personalized/glossary/delete";
   static String likedGlossaries = baseURL + "user/liked/glossaries";

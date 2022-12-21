@@ -214,11 +214,18 @@ class MainController {
           Batch batch = txn.batch();
           print("subscriptionItem.course!:${subscriptionItem.course != null ? subscriptionItem.course!.toJson() : "null"}");
           await CourseDB().insert(batch, subscriptionItem.course!);
+          await GlossaryDB().delete(batch,subscriptionItem.course!.id!);
           await GlossaryController().getGlossariesList(batch,subscriptionItem.course!.id!);
           provider.updateMessage("saving $filename quizzes");
           await QuizDB().insertAll(batch, subscriptionItem.quizzes!);
           provider.updateMessage("saving $filename topics");
           await TopicDB().insertAll(batch, subscriptionItem.topics!);
+          await GlossaryDB().deleteGlossaryTopic(batch,subscriptionItem.course!.id!);
+          List topicIds = [];
+          for(int i =0; i < subscriptionItem.topics!.length; i++){
+            topicIds.add( subscriptionItem.topics![i].id);
+          }
+          await GlossaryController().getGlossariesTopicList(batch,subscriptionItem.course!.id!, topicIds);
 
           batch.commit(noResult: true);
         });

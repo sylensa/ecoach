@@ -258,19 +258,16 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
       updatedAt: DateTime.now(),
     );
 
-    print("testing connection ${jsonEncode(testTaken)}");
+    print("testing connection ${testTaken.toJson()}");
     // print("testing connection courseName ${testTaken.testname!.toLowerCase()}");
     // List<Question> listQuestions = await TestController().getTotalKeywordQuestions(testTaken.testname!,widget.controller.course.id!);
     //   if(listQuestions.length <= widget.controller.questions.length ){
     //     print("listQuestions.length :${listQuestions.length }");
     //     await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
     //   }
-    await OfflineSaveController(context, controller.user)
-        .saveKeywordTestTaken(testTaken, controller.course.id!, topicId: controller.topicId);
+    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken, controller.course.id!, topicId: controller.topicId);
 
-    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(
-      controller.course.id!,
-    );
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(controller.course.id!,);
     ApiCall<TestTaken>(AppUrl.testTaken,
         user: controller.user,
         isList: false,
