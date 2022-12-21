@@ -75,8 +75,8 @@ class GlossaryController{
     var response = await  doGet("${AppUrl.personalizedGlossaries}");
     if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
       for(int i =0; i < response["data"]["data"].length; i++){
-        GlossaryData glossaryData = GlossaryData.fromJson(response["data"]["data"][i]["glossary"]);
-        glossaryData.glossary = jsonEncode(response["data"]["data"][i]["glossary"]);
+        GlossaryData glossaryData = GlossaryData.fromJson(response["data"]["data"][i]);
+        glossaryData.glossary = jsonEncode(response["data"]["data"][i]);
         listGlossaryData.add(glossaryData);
       }
     }else{
@@ -160,16 +160,18 @@ class GlossaryController{
   }
 
   pinUnPinGlossaries(GlossaryData glossaryData,bool pin)async{
+    GlossaryData? glossary;
     var response = await  doPost("${AppUrl.pinUnPinGlossaries}",{
       "glossary_id" : glossaryData.id,
       "is_pinned" : pin,
     });
     if(response["status"] && response["code"] == "200"){
       toastMessage(response["message"]);
-      return true;
+      glossary = GlossaryData.fromJson(response["data"]);
+      return glossary;
     }
 
-    return false;
+    return glossary;
   }
 
   deleteGlossaries(int glossaryId)async{

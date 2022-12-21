@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/level.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/topic.dart';
@@ -18,12 +19,45 @@ class GlossaryDB {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+  Future<void> insertGlossaryProgress(GlossaryProgressData glossaryProgressData) async {
+    final db = await DBProvider.database;
+    db!.insert(
+      'glossary_progress',
+      glossaryProgressData.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // Future<GlossaryProgressData?> getGlossaryProgressByTopicId(int courseId,List topicId) async {
+  //   String ids = "";
+  //   for (int i = 0; i < topicId.length; i++) {
+  //     ids += "${topicId[i]}";
+  //     if (i < topicId.length - 1) {
+  //       ids += ",";
+  //     }
+  //   }
+  //   GlossaryProgressData? glossaryProgressData;
+  //   final db = await DBProvider.database;
+  //   var  response = await db!.rawQuery("Select * from glossary_progress where course_id = $courseId and topic_id = $topicId");
+  //   print("response glossary_progress topic id:$topicId : $response");
+  //    glossaryProgressData = GlossaryProgressData.fromJson(response.first);
+  //   return glossaryProgressData;
+  // }
+  Future<GlossaryProgressData?> getGlossaryProgressByCourseId(int courseId) async {
+    GlossaryProgressData? glossaryProgressData;
+    final db = await DBProvider.database;
+    var  response = await db!.rawQuery("Select * from glossary_progress where course_id = $courseId");
+    print("response glossary_progress course id:$courseId : $response");
+    glossaryProgressData = GlossaryProgressData.fromJson(response.last);
+    return glossaryProgressData;
+  }
   Future<void> insertTopicGlossary(Batch batch,GlossaryData glossaryData) async {
     batch.insert(
       'glossary_topic', glossaryData.glossaryDataDataMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
 
   Future<List<GlossaryData>> getGlossariesById(int courseId) async {
     List<GlossaryData> glossaries = [];
@@ -91,6 +125,15 @@ class GlossaryDB {
     final db = await DBProvider.database;
     batch.delete(
       'glossary_topic',
+      where: "course_id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  deleteGlossaryProgress(int id) async {
+    final db = await DBProvider.database;
+  db!.delete(
+      'glossary_progress',
       where: "course_id = ?",
       whereArgs: [id],
     );

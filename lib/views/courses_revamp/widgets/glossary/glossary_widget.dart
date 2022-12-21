@@ -11,6 +11,8 @@ import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/plan.dart';
 import 'package:ecoach/models/question.dart';
@@ -57,13 +59,19 @@ class GlossaryWidget extends StatefulWidget {
         required this.user,
         required this.subscription,
         required this.controller,
-        required this.listCourseKeywordsData
+        required this.listCourseKeywordsData,
+        required this.questions,
+        required this.glossaryData,
+        required this.glossaryProgressData,
       })
       : super(key: key);
   Course course;
   User user;
   Plan subscription;
+  List<Question> questions = [];
+  List<GlossaryData> glossaryData = [];
   List<CourseKeywords> listCourseKeywordsData;
+  GlossaryProgressData? glossaryProgressData ;
   final MainController controller;
 
   @override
@@ -74,6 +82,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
  var studySelected;
  var continueSelected;
  var scoreSelected;
+
+
   studyTryModalBottomSheet(
       context,
       ) {
@@ -124,7 +134,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                                     weight: FontWeight.w500,
                                     align: TextAlign.center,
                                     size: 20),
-                                sText("2000 terms",
+                                sText("${widget.glossaryData.length} terms",
                                     color: kAdeoGray3,
                                     weight: FontWeight.bold,
                                     align: TextAlign.center,
@@ -239,7 +249,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                                    weight: FontWeight.w500,
                                    align: TextAlign.center,
                                    size: 20),
-                               sText("2000 terms",
+                               sText("${widget.glossaryData.length} terms",
                                    color: kAdeoGray3,
                                    weight: FontWeight.bold,
                                    align: TextAlign.center,
@@ -257,11 +267,19 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                      ),
 
                      MaterialButton(
-                       onPressed: (){
-                         stateSetter(() {
-                           continueSelected = true;
-                         });
-                            Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+                       onPressed: ()async{
+                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
+                         if(widget.glossaryProgressData != null){
+                           stateSetter(() {
+                             continueSelected = true;
+                           });
+
+                           Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+
+                         }else{
+                           toastMessage("You've no save progress");
+                         }
+
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -282,7 +300,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            continueSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -376,7 +394,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            scoreSelected = true;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -397,7 +415,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            scoreSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -418,13 +436,15 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
          );
        });
  }
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    GlossaryDB().getGlossariesById(widget.course.id!);
 
- }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -436,9 +456,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'from A-Z, all terms throughout the course',
           iconURL: 'assets/icons/courses/sort-az.png',
           onTap: () async {
-            List<Question> questions =
-            await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if (widget.questions.isNotEmpty) {
               isTopicSelected = false;
               studyTryModalBottomSheet(context);
             } else {
@@ -458,9 +477,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Terms based on topics',
           iconURL: 'assets/icons/courses/alphabet.png',
           onTap: () async {
-            List<Question> questions =
-            await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if (widget.questions.isNotEmpty) {
               isTopicSelected = true;
               studyTryModalBottomSheet(context);
             } else {
@@ -481,9 +499,9 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Definitions that matter to you',
           iconURL: 'assets/icons/courses/quest.png',
           onTap: () async {
-            List<Question> questions =
-            await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+
+            if (widget.questions.isNotEmpty) {
               Get.to(() => PersonalisedSavedPage(currentIndex: 1,course: widget.course,user: widget.user,));
             } else {
               showDialogYesNo(
@@ -502,9 +520,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Create and view definitions',
           iconURL: 'assets/icons/courses/idea.png',
           onTap: () async {
-            List<Question> questions =
-            await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            if (widget.questions.isNotEmpty) {
              Get.to(() => PersonalisedSavedPage(currentIndex: 0,course: widget.course,user: widget.user,));
             } else {
               showDialogYesNo(
@@ -523,9 +540,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Create and view definitions',
           iconURL: 'assets/icons/courses/search.png',
           onTap: () async {
-            List<Question> questions =
-            await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            if (widget.questions.isNotEmpty) {
               Navigator.push(
                 context,
                 MaterialPageRoute(

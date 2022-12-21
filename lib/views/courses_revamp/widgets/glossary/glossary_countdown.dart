@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
@@ -23,11 +24,13 @@ class GlossaryCountdown extends StatefulWidget {
     required this.user,
     required this.course,
     required this.listCourseKeywordsData,
+    required this.glossaryProgressData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
+  GlossaryProgressData? glossaryProgressData ;
   List<CourseKeywords> listCourseKeywordsData;
 
 
@@ -78,7 +81,7 @@ class _GlossaryCountdowneState extends State<GlossaryCountdown> {
           Future.delayed(
             const Duration(seconds: 1),
                 () {
-             Get.off(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,));
+             Get.off(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
               // Get.off(() => const CreateAccountPage(),
               //     fullscreenDialog: true,
               //     duration: const Duration(

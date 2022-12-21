@@ -7,6 +7,7 @@ import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/user.dart';
@@ -187,6 +188,15 @@ class _GlossaryViewState extends State<GlossaryView> {
                             glossaryData = entries.value;
                             selectedCharacter = entries.key;
                             termKeyword = glossaryData.first.term!;
+                            GlossaryProgressData glossaryProgressData = GlossaryProgressData(
+                                topicId: glossaryData.first.topic!.id,
+                                courseId: glossaryData.first.courseId!,
+                                searchTerm: termKeyword,
+                                selectedCharacter: selectedCharacter,
+                                progressIndex: currentIndex -1
+                            );
+                            await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+                            await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
                           listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
                              scaffold = GlobalKey();
                           setState(() {
@@ -237,6 +247,15 @@ class _GlossaryViewState extends State<GlossaryView> {
                     onPageChanged: (index, reason) async{
                       currentIndex  = index +1;
                       termKeyword = glossaryData[index].term!;
+                      GlossaryProgressData glossaryProgressData = GlossaryProgressData(
+                        topicId: glossaryData[index].topic!.id,
+                        courseId: glossaryData[index].courseId!,
+                        searchTerm: termKeyword,
+                        selectedCharacter: selectedCharacter,
+                        progressIndex: index
+                      );
+                      await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+                      await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
                       listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
                       setState(() {
                         print("listQuestions:${listQuestions.length}");
@@ -264,7 +283,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                   height: 20.0,
                                   valueFontSize: 10.0,
                                   toggleSize: 15.0,
-                                  value: glossaryData[indexReport].isLiked! == 1 ? true : false,
+                                  value: glossaryData[indexReport].isSaved! == 1 ? true : false,
                                   borderRadius: 30.0,
                                   padding: 2.0,
                                   showOnOff: false,
@@ -276,12 +295,12 @@ class _GlossaryViewState extends State<GlossaryView> {
                                     setState(() {
                                       switchValue = val;
                                       if(switchValue){
-                                        glossaryData[indexReport].isLiked = 1;
+                                        glossaryData[indexReport].isSaved = 1;
                                       }else{
-                                        glossaryData[indexReport].isLiked = 0;
+                                        glossaryData[indexReport].isSaved = 0;
                                       }
                                       var res = jsonDecode(glossaryData[indexReport].glossary!);
-                                      res["is_liked"] =  glossaryData[indexReport].isLiked;
+                                      res["is_saved"] =  glossaryData[indexReport].isSaved;
                                       glossaryData[indexReport].glossary = jsonEncode(res);
                                     });
                                   if(switchValue){
@@ -296,7 +315,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                             SizedBox(height: 20,),
                             sText("${glossaryData[indexReport].topic!.name}",color: Colors.black,size: 25,weight: FontWeight.w500),
                             SizedBox(height: 20,),
-                            sText("Topic",color: Colors.grey,size: 12,weight: FontWeight.w500),
+                            sText("Term",color: Colors.grey,size: 12,weight: FontWeight.w500),
                             SizedBox(height: 10,),
                             sText("${glossaryData[indexReport].term}",color: Colors.black,size: 16,weight: FontWeight.w500),
                             SizedBox(height: 40,),

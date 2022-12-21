@@ -3,11 +3,16 @@ import 'dart:convert';
 import 'package:ecoach/api/api_call.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/glossary_db.dart';
+import 'package:ecoach/database/questions_db.dart';
 import 'package:ecoach/database/subscription_item_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
+import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/plan.dart';
+import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/report.dart';
 import 'package:ecoach/models/subscription_item.dart';
 import 'package:ecoach/models/topic.dart';
@@ -60,70 +65,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   PageController pageControllerView = PageController(initialPage: 0);
   List<CourseKeywords> listCourseKeywordsData = [];
   Future? stats;
-  Map<String, Widget> getPage() {
-    switch (_currentPage) {
-      case 0:
-        return {
-          'Learn Mode': LearnModeWidget(
-            controller: widget.controller,
-            subscription: widget.subscription,
-            user: widget.user,
-            course: course!,
-          )
-        };
-      case 1:
-        return {
-          'Note': NoteWidget(
-            controller: widget.controller,
-            subscription: widget.subscription,
-            user: widget.user,
-            course: course!,
-            topics: topics,
-          )
-        };
-
-      case 2:
-        return {
-          'Test Type': TestTypeWidget(
-              controller: widget.controller,
-              subscription: widget.subscription,
-              user: widget.user,
-              course: course!,
-              listCourseKeywordsData: listCourseKeywordsData)
-        };
-
-      case 3:
-        return {
-          'Live': LiveWidget(
-            controller: widget.controller,
-            subscription: widget.subscription,
-            user: widget.user,
-            course: course!,
-          )
-        };
-      case 4:
-        return {
-          'Games': GameWidget(
-            controller: widget.controller,
-            subscription: widget.subscription,
-            user: widget.user,
-            course: course!,
-          )
-        };
-
-      case 5:
-        return {
-          'Progress': ProgressWidget(
-            controller: widget.controller,
-            subscription: widget.subscription,
-            user: widget.user,
-            course: course!,
-            stats: stats,
-          )
-        };
-    }
-    return {'': Container()};
-  }
+  List<Question> questions = [];
+  List<GlossaryData> glossaryData = [];
+  GlossaryProgressData? glossaryProgressData ;
 
   List<CourseDetail> courseDetails = [
     CourseDetail(
@@ -251,6 +195,14 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     welcomeProvider.setCurrentUser(widget.user);
   }
 
+  fetchQuestionByCourse()async{
+    questions = await QuestionDB().getQuestionsByCourseId(course!.id!);
+    glossaryData =   await GlossaryDB().getGlossariesById(course!.id!);
+    setState(() {
+
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -261,6 +213,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     // setProviderValues(course!);
     getAnalysisStats();
     getCourseKeywords();
+    fetchQuestionByCourse();
   }
 
   @override
@@ -312,6 +265,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                               setProviderValues(course!);
                               getAnalysisStats();
                               getCourseKeywords();
+                              fetchQuestionByCourse();
                             });
                             await getNotesTopics(course!);
                           },
@@ -487,6 +441,9 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     user: widget.user,
                     course: course!,
                     listCourseKeywordsData: listCourseKeywordsData,
+                    questions: questions,
+                    glossaryData: glossaryData,
+                    glossaryProgressData: glossaryProgressData
                   ),
                   TestTypeWidget(
                     controller: widget.controller,
