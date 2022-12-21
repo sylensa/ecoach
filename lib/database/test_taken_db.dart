@@ -37,49 +37,81 @@ class TestTakenDB {
 
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
   }
-  Future< List<TestTaken>> getKeywordTestTaken(int courseId) async {
 
+  Future<List<TestTaken>> getKeywordTestTaken(int courseId) async {
     List<Map<String, dynamic>> result = [];
     List<Map<String, dynamic>> response = [];
     List<Map<String, dynamic>> responseTotalQuestion = [];
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
-     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken where course_id = $courseId");
-      // print("result:${result[0]["test_name"]}");
-      print("result:${result.length}");
+    result = await db!.rawQuery(
+        "Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken where course_id = $courseId");
+    // print("result:${result[0]["test_name"]}");
+    print("result:${result.length}");
     List<TestTaken> tests = [];
+
     for (int i = 0; i < result.length; i++) {
+      if (result[i]["id"] == null) {
+        continue;
+      }
       TestTaken test = TestTaken.fromJson(result[i]);
-      response = await db.rawQuery("Select correct from keyword_test_taken where test_name = '" '${test.testname}'"' and course_id = $courseId ORDER by id desc limit 2");
-      responseTotalQuestion = await db.rawQuery("Select * from keyword_test_taken where test_name = '" '${test.testname}'"' and course_id = $courseId ORDER by id asc limit 1");
-      int scoreDiff ;
-      if(response.length > 1){
-        scoreDiff = response[1]["correct"] -  response[0]["correct"];
-      }else{
+      response = await db
+          .rawQuery("Select correct from keyword_test_taken where test_name = '"
+              '${test.testname}'
+              "' and course_id = $courseId ORDER by id desc limit 2");
+      responseTotalQuestion = await db
+          .rawQuery("Select * from keyword_test_taken where test_name = '"
+              '${test.testname}'
+              "' and course_id = $courseId ORDER by id asc limit 1");
+      int scoreDiff;
+      if (response.length > 1) {
+        scoreDiff = response[1]["correct"] - response[0]["correct"];
+      } else {
         scoreDiff = response[0]["correct"];
       }
       test.totalQuestions = responseTotalQuestion[0]["total_questions"];
-      test.score = result[i]["avg_score"]/result[i]["total_test_taken"];
-      test.total_test_taken =  result[i]["total_test_taken"];
-      test.scoreDiff =  scoreDiff;
+      test.score = result[i]["avg_score"] / result[i]["total_test_taken"];
+      test.total_test_taken = result[i]["total_test_taken"];
+      test.scoreDiff = scoreDiff;
       tests.add(test);
       print("object maps:${test.unattempted}");
     }
 
-
     return tests;
   }
-  Future<List<TestTaken>> getKeywordTestTakenPeriod(String courseId,String period,String keyword  ) async {
+
+  Future<List<TestTaken>> getKeywordTestTakenPeriod(
+      String courseId, String period, String keyword) async {
     final Database? db = await DBProvider.database;
     List<Map<String, dynamic>> maps = [];
     if (period.toLowerCase() == 'all') {
-        maps = await db!.rawQuery("Select *, score as avg_score from keyword_test_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "'");
+      maps = await db!.rawQuery(
+          "Select *, score as avg_score from keyword_test_taken where course_id = '" +
+              courseId +
+              "' and test_name = '" +
+              keyword +
+              "'");
     } else if (period.toLowerCase() == 'daily') {
-      maps = await db!.rawQuery("Select *, AVG(score) as avg_score from tests_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "' and challenge_type IS NOT NULL  GROUP by Date(created_at)");
+      maps = await db!.rawQuery(
+          "Select *, AVG(score) as avg_score from tests_taken where course_id = '" +
+              courseId +
+              "' and test_name = '" +
+              keyword +
+              "' and challenge_type IS NOT NULL  GROUP by Date(created_at)");
     } else if (period.toLowerCase() == 'weekly') {
-      maps = await db!.rawQuery("SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
+      maps = await db!.rawQuery(
+          "SELECT *, strftime('%Y-%W', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '" +
+              courseId +
+              "' and test_name = '" +
+              keyword +
+              "' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%W', created_at ) ORDER BY AVG(score) desc");
     } else if (period.toLowerCase() == 'monthly') {
-      maps = await db!.rawQuery("SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '" + courseId + "' and test_name = '" + keyword + "' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
+      maps = await db!.rawQuery(
+          "SELECT *, strftime('%Y-%M', created_at ), AVG(score) as avg_score FROM tests_taken where course_id = '" +
+              courseId +
+              "' and test_name = '" +
+              keyword +
+              "' and challenge_type IS NOT NULL GROUP BY strftime('%Y-%M', Date(created_at) ) ORDER BY AVG(score) desc");
     }
     print("object maps:${maps.length}");
     List<TestTaken> tests = [];
@@ -202,6 +234,7 @@ class TestTakenDB {
     }
     return tests;
   }
+
   Future<List<TestTaken>> ongoingCourseTestsTaken({int? courseId}) async {
     final Database? db = await DBProvider.database;
     final List<Map<String, dynamic>> maps;
@@ -229,14 +262,19 @@ class TestTakenDB {
     return tests;
   }
 
-  Future<List<TestTaken>> getAllAverageScore({String courseId = "0",int offset = 0}) async {
+  Future<List<TestTaken>> getAllAverageScore(
+      {String courseId = "0", int offset = 0}) async {
     final Database? db = await DBProvider.database;
     List<Map<String, dynamic>> maps = [];
     print("courseId:$courseId");
     if (courseId == "0") {
-      maps = await db!.rawQuery("Select *, score as avg_score from tests_taken limit 10 offset $offset");
+      maps = await db!.rawQuery(
+          "Select *, score as avg_score from tests_taken limit 10 offset $offset");
     } else {
-      maps = await db!.rawQuery("Select *, score as avg_score from tests_taken where course_id = '" + courseId + "' limit 10 offset $offset");
+      maps = await db!.rawQuery(
+          "Select *, score as avg_score from tests_taken where course_id = '" +
+              courseId +
+              "' limit 10 offset $offset");
     }
     // print("object maps len:${maps}");
     List<TestTaken> tests = [];
@@ -443,16 +481,18 @@ class TestTakenDB {
       'tests_taken',
     );
   }
+
   deleteAllKeywordTestTaken() async {
     final db = await DBProvider.database;
     db!.delete(
       'keyword_test_taken',
     );
-
   }
+
   deleteAllKeywordTestTakenByName(String testname) async {
     final db = await DBProvider.database;
-    db!.rawQuery('delete from keyword_test_taken where test_name = '" '$testname'"'');
+    db!.rawQuery(
+        'delete from keyword_test_taken where test_name = ' " '$testname'" '');
   }
 
   Future<int> insertReviewTest(ReviewTestTaken reviewTestTaken) async {

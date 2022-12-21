@@ -1,18 +1,29 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/test_taken_statistics_card.dart';
 import 'package:ecoach/revamp/features/knowledge_test/view/test_instruction_screen.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/keyword/keyword_assessment.dart';
+import 'package:ecoach/views/keyword/keyword_question_view.dart';
+import 'package:ecoach/views/keyword/keyword_quiz_cover.dart';
+import 'package:ecoach/views/quiz/quiz_cover.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
+import 'package:ecoach/views/speed/speed_quiz_cover.dart';
+import 'package:ecoach/views/test/test_type_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -110,8 +121,6 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
 }
 
 class KnowledgeTestController extends ChangeNotifier {
-  TextEditingController searchKeywordController = TextEditingController();
-  String searchKeyword = '';
   bool searchTap = false;
   bool showGraph = false;
   List<CourseKeywords> listCourseKeywordsData = [];
@@ -123,60 +132,22 @@ class KnowledgeTestController extends ChangeNotifier {
   bool isShowAlphaScroll = false;
   bool _emptyTestTakenList = true;
 
-  bool get emptyTestTakenList => _emptyTestTakenList;
-  set emptyTestTakenList(bool value) {
+  bool get emptyTestList => _emptyTestTakenList;
+  set emptyTestList(bool value) {
     _emptyTestTakenList = value;
   }
+
+  TestType testType = TestType.KNOWLEDGE;
 
   List<TestTaken> tests = [];
   List<TestTaken> testsTaken = [];
   CarouselController alphaSliderToStatisticsCardController =
       CarouselController();
   String currentAlphabet = '';
-
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
-    'A': [
-      CourseKeywords(
-        keyword: "Animal",
-        total: 12,
-      ),
-      CourseKeywords(
-        keyword: "Anonymous",
-        total: 1,
-      ),
-      CourseKeywords(
-        keyword: "Abstract",
-        total: 3,
-      ),
-    ],
-    'B': [
-      CourseKeywords(
-        keyword: "Bat",
-        total: 4,
-      ),
-      CourseKeywords(
-        keyword: "Banter",
-        total: 100,
-      ),
-      CourseKeywords(
-        keyword: "Bible",
-        total: 2,
-      ),
-      CourseKeywords(
-        keyword: "Boat",
-        total: 16,
-      ),
-      CourseKeywords(
-        keyword: "Bootstap",
-        total: 6,
-      ),
-    ],
-    'C': [
-      CourseKeywords(
-        keyword: "Commercial Law",
-        total: 12,
-      ),
-    ],
+    'A': [],
+    'B': [],
+    'C': [],
     'D': [],
     'E': [],
     'F': [],
@@ -201,14 +172,18 @@ class KnowledgeTestController extends ChangeNotifier {
     'Y': [],
     'Z': []
   };
+  List<TestTaken> typeSpecificTestsTaken = [];
+  late int testTakenIndex;
+  late TestTaken? testTaken = null;
+  late bool isTestTaken = false;
 
-  void slideToActiveAlphabet(List<TestNameAndCount> tests, int index,
+  void slideToActiveAlphabet(List<dynamic> tests, int index,
       {String selectedAlphabet = ''}) {
     int _selectedIndex;
-    List<TestNameAndCount> _selectedTests;
+    List<dynamic> _selectedTests;
     if (selectedAlphabet.isNotEmpty) {
       _selectedTests = tests
-          .where((testTaken) => testTaken.name.toUpperCase().startsWith(
+          .where((test) => test.name.toUpperCase().startsWith(
                 selectedAlphabet,
               ))
           .toList();
@@ -222,52 +197,434 @@ class KnowledgeTestController extends ChangeNotifier {
       }
     }
 
-    print("Selected: $selectedAlphabet ");
+    // print("Selected: $selectedAlphabet ");
   }
 
-  void slideToActiveAlphabetIndex({int selectedIndex = 0}) {
-    currentAlphabet = testsTaken[selectedIndex].testname![0];
+  filterAndSetKnowledgeTestsTaken({
+    required Course course,
+    required int topicId,
+    required TestCategory testCategory,
+  }) async {
+    testsTaken = await TestController().keywordTestsTaken(course.id!, topicId: topicId);
+    // testsTaken = await TestController().getTestTaken(course.id!.toString());
+    typeSpecificTestsTaken = testsTaken
+        .where((element) =>
+            element.challengeType == testCategory.toString() &&
+            element.testType == testType.toString())
+        .toList();
+
+    print("Tests taken: ${testsTaken.length}");
+    if (typeSpecificTestsTaken.length > 0) {
+      testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
+        // Find a better way to get the topicId for a testTaken //
+        return jsonDecode(takenTest.responses)["Q1"]["topic_id"] == topicId;
+      });
+
+      if (testTakenIndex != -1) {
+        isTestTaken = true;
+        testTaken = typeSpecificTestsTaken[testTakenIndex];
+      } else {
+        isTestTaken = false;
+      }
+    } else {
+      isTestTaken = false;
+    }
   }
 
   toggleKnowledgeTestMenus(BuildContext context, bool smallHeightDevice) {
-    if (activeMenu != TestCategory.NONE) {
-      sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
-      activeMenu = TestCategory.NONE;
-      sheetHeightIncreased = false;
-      isActiveAnyMenu = false;
-      isShowAlphaScroll = false;
-    } else if (!isActiveAnyMenu || searchTap) {
+    if (!isActiveAnyMenu || searchTap) {
       searchTap = false;
       sheetHeight = appHeight(context) * 0.90;
       activeMenu = TestCategory.TOPIC;
       if (sheetHeightIncreased) {
         isActiveAnyMenu = true;
       }
+    } else {
+      sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
+      activeMenu = TestCategory.NONE;
+      sheetHeightIncreased = false;
+      isActiveAnyMenu = false;
+      isShowAlphaScroll = false;
     }
     return isActiveAnyMenu;
   }
 
   Future<List<TestNameAndCount>> getTopics(Course course) async {
     List<TestNameAndCount> topics = await TestController().getTopics(course);
+
     return topics;
   }
 
-  knowledgeTestModalBottomSheet(context, {Course? course}) async {
+  goToInstructions(
+    BuildContext context,
+    dynamic test,
+    TestCategory testCategory,
+    User user,
+    Course course, {
+    String searchKeyword = '',
+  }) async {
+    Navigator.pop(context);
+    Widget? widgetView;
+    List<Question> questions = [];
+
+    switch (testCategory) {
+      case TestCategory.EXAM:
+        widgetView = TestTypeListView(
+          user,
+          course,
+          test,
+          testType,
+          title: "Exams",
+          testCategory: TestCategory.EXAM,
+        );
+        break;
+      case TestCategory.TOPIC:
+        TestNameAndCount _test = test as TestNameAndCount;
+        // print("topic id : ${_test.id}");
+
+        questions = await TestController().getTopicQuestions(
+          [_test.id!],
+        );
+        // return;
+        widgetView = KeywordAssessment(
+          questionView: KeywordQuestionView(
+            controller: QuizController(
+              user,
+              course,
+              questions: questions,
+              topicId: _test.id,
+              name: searchKeyword,
+              time: questions.length * 60,
+              type: TestType.KNOWLEDGE,
+              challengeType: testCategory,
+            ),
+            theme: QuizTheme.BLUE,
+            numberOfQuestionSelected: questions.length,
+          ),
+          questionCount: questions.length,
+        );
+        break;
+      case TestCategory.ESSAY:
+        widgetView = TestTypeListView(
+          user,
+          course,
+          test,
+          testType,
+          title: "Essays",
+          testCategory: TestCategory.ESSAY,
+        );
+        break;
+      case TestCategory.SAVED:
+        List<Question> questions = test as List<Question>;
+        widgetView = QuizCover(
+          user,
+          questions,
+          category: testCategory,
+          course: course,
+          theme: QuizTheme.BLUE,
+          time: questions.length * 60,
+          name: "Saved Test",
+        );
+        break;
+      case TestCategory.BANK:
+        widgetView = TestTypeListView(
+          user,
+          course,
+          test,
+          testType,
+          title: "Bank",
+          testCategory: TestCategory.BANK,
+        );
+        break;
+      case TestCategory.NONE:
+        var _test = test;
+        List<Question> questions = test as List<Question>;
+        widgetView = KeywordAssessment(
+          quizCover: KeywordQuizCover(
+            user,
+            questions,
+            category: testCategory,
+            course: course,
+            type: testType,
+            topic: _test,
+            theme: QuizTheme.BLUE,
+            time: questions.length * 60,
+            name: searchKeyword,
+          ),
+          questionCount: questions.length,
+        );
+
+        break;
+      default:
+        widgetView = null;
+    }
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return widgetView!;
+        },
+      ),
+    );
+  }
+
+  getTest(
+    BuildContext context,
+    TestCategory testCategory,
+    Course course,
+    User user, {
+    int currentQuestionCount = 0,
+    String searchKeyword = '',
+  }) {
+    Future futureList;
+    switch (testCategory) {
+      case TestCategory.MOCK:
+        Question? q;
+        futureList = TestController().getMockTests(course);
+        break;
+      case TestCategory.EXAM:
+        futureList = TestController().getExamTests(course);
+        break;
+      case TestCategory.TOPIC:
+        futureList = TestController().getTopics(course);
+
+        break;
+      case TestCategory.ESSAY:
+        // futureList = TestController().getEssays(course, 5);
+        futureList = TestController().getEssayTests(course);
+        break;
+      case TestCategory.SAVED:
+        futureList = TestController().getSavedTests(course, limit: 10);
+        break;
+      case TestCategory.BANK:
+        futureList = TestController().getBankTest(course);
+        break;
+      case TestCategory.NONE:
+        for (int i = 0; i < keywordTestTaken.length; i++) {
+          if (keywordTestTaken[i].testname!.toLowerCase() ==
+              searchKeyword.toLowerCase()) {
+            futureList = TestController().getKeywordQuestions(
+                searchKeyword.toLowerCase(), course.id!,
+                currentQuestionCount:
+                    keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+            futureList.then(
+              (data) async {
+                // Navigator.pop(context);
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      Widget? widgetView;
+                      switch (testCategory) {
+                        case TestCategory.MOCK:
+                          List<Question> questions = data as List<Question>;
+                          widgetView = testType == TestType.SPEED
+                              ? SpeedQuizCover(
+                                  user,
+                                  testType,
+                                  questions,
+                                  course: course,
+                                  theme: QuizTheme.ORANGE,
+                                  category: testCategory,
+                                  time: questions.length * 60,
+                                  name: "Mock Test",
+                                )
+                              : QuizCover(
+                                  user,
+                                  questions,
+                                  course: course,
+                                  type: testType,
+                                  theme: QuizTheme.BLUE,
+                                  category: testCategory,
+                                  time: questions.length * 60,
+                                  name: "Mock Test",
+                                );
+                          break;
+                        case TestCategory.EXAM:
+                          widgetView = TestTypeListView(
+                            user,
+                            course,
+                            data,
+                            testType,
+                            title: "Exams",
+                            testCategory: TestCategory.EXAM,
+                          );
+                          break;
+                        case TestCategory.TOPIC:
+                          widgetView = TestTypeListView(
+                            user,
+                            course,
+                            data,
+                            testType,
+                            title: "Topic",
+                            multiSelect: true,
+                            testCategory: TestCategory.TOPIC,
+                          );
+                          break;
+                        case TestCategory.ESSAY:
+                          widgetView = TestTypeListView(
+                            user,
+                            course,
+                            data,
+                            testType,
+                            title: "Essays",
+                            testCategory: TestCategory.ESSAY,
+                          );
+
+                          break;
+                        case TestCategory.SAVED:
+                          List<Question> questions = data as List<Question>;
+                          widgetView = QuizCover(
+                            user,
+                            questions,
+                            category: testCategory,
+                            course: course,
+                            theme: QuizTheme.BLUE,
+                            time: questions.length * 60,
+                            name: "Saved Test",
+                          );
+                          break;
+                        case TestCategory.NONE:
+                          List<Question> questions = data as List<Question>;
+
+                          widgetView = KeywordAssessment(
+                            quizCover: KeywordQuizCover(
+                              user,
+                              questions,
+                              category: testCategory,
+                              course: course,
+                              theme: QuizTheme.BLUE,
+                              time: questions.length * 60,
+                              name: searchKeyword,
+                            ),
+                            questionCount: questions.length,
+                          );
+                          break;
+                        case TestCategory.BANK:
+                          widgetView = TestTypeListView(
+                            user,
+                            course,
+                            data,
+                            testType,
+                            title: "Bank",
+                            testCategory: TestCategory.BANK,
+                          );
+                          break;
+                        default:
+                          widgetView = null;
+                      }
+                      return widgetView!;
+                    },
+                  ),
+                );
+              },
+            );
+            return;
+          }
+        }
+        futureList = TestController().getKeywordQuestions(
+            searchKeyword.toLowerCase(), course.id!,
+            currentQuestionCount: currentQuestionCount);
+        futureList.then(
+          (data) async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  Widget? widgetView;
+                  switch (testCategory) {
+                    case TestCategory.NONE:
+                      List<Question> questions = data as List<Question>;
+
+                      widgetView = KeywordAssessment(
+                        quizCover: KeywordQuizCover(
+                          user,
+                          questions,
+                          category: testCategory,
+                          course: course,
+                          type: testType,
+                          theme: QuizTheme.BLUE,
+                          time: questions.length * 60,
+                          name: searchKeyword,
+                        ),
+                        questionCount: questions.length,
+                      );
+                      break;
+                    default:
+                      widgetView = null;
+                  }
+
+                  return widgetView!;
+                },
+              ),
+            );
+          },
+        );
+        break;
+      default:
+        futureList = TestController().getBankTest(course);
+    }
+
+    return futureList;
+  }
+
+  knowledgeTestModalBottomSheet(context, {Course? course, User? user}) async {
+    TextEditingController searchKeywordController = TextEditingController();
+    String searchKeyword = '';
+
+    if (listCourseKeywordsData.isNotEmpty) {
+      groupedCourseKeywordsMap = {
+        'A': [],
+        'B': [],
+        'C': [],
+        'D': [],
+        'E': [],
+        'F': [],
+        'G': [],
+        'H': [],
+        'I': [],
+        'J': [],
+        'K': [],
+        'L': [],
+        'M': [],
+        'N': [],
+        'O': [],
+        'P': [],
+        'Q': [],
+        'R': [],
+        'S': [],
+        'T': [],
+        'U': [],
+        'V': [],
+        'W': [],
+        'X': [],
+        'Y': [],
+        'Z': []
+      };
+    } else {
+      groupedCourseKeywordsMap.clear();
+    }
     searchKeywordController.text = searchKeyword.trim();
     searchTap = false;
     bool smallHeightDevice = appHeight(context) < 890 ? true : false;
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
-    List<TestNameAndCount> topics = [];
-    List<TestNameAndCount> tests = [];
+    List<dynamic> tests = [];
 
     List<String> scrollListAlphabets = [];
-    List<TestTaken> topicTestsTaken = [];
 
-    await TestController()
-        .getTestTaken(course!.id!.toString())
-        .then((takenTests) {
-      testsTaken = takenTests;
+    int _currentSlide = 0;
+    late int? topicId;
+
+    listCourseKeywordsData.forEach((courseKeyword) {
+      if (groupedCourseKeywordsMap[
+              '${courseKeyword.keyword![0]}'.toUpperCase()] ==
+          null) {
+        groupedCourseKeywordsMap['${courseKeyword.keyword![0]}'.toUpperCase()] =
+            <CourseKeywords>[];
+      }
+      groupedCourseKeywordsMap['${courseKeyword.keyword![0]}'.toUpperCase()]!
+          .add(courseKeyword);
     });
 
     showModalBottomSheet(
@@ -285,52 +642,66 @@ class KnowledgeTestController extends ChangeNotifier {
                     return AnimatedContainer(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         height: sheetHeight,
-                        onEnd: (() {
-                          switch (activeMenu) {
-                            case TestCategory.TOPIC:
-                              isActiveTopicMenu = true;
-                              isActiveAnyMenu = true;
-                              sheetHeightIncreased = true;
-                              // testsTaken = topicTestsTaken;
-                              emptyTestTakenList = tests.isEmpty;
-                              currentAlphabet = tests.first.name[0];
+                        onEnd: (() async {
+                          testsTaken = await TestController()
+                              .getTestTaken(course!.id!.toString());
 
-                              if (!emptyTestTakenList) {
-                                scrollListAlphabets = topics
-                                    .map((topic) {
-                                      return topic.name[0]
-                                          .toString()
-                                          .toUpperCase();
-                                    })
-                                    .toSet()
-                                    .toList();
-                                scrollListAlphabets.sort();
-                              }
+                          if (!sheetHeightIncreased) {
+                            switch (activeMenu) {
+                              case TestCategory.TOPIC:
+                                isActiveTopicMenu = true;
+                                isActiveAnyMenu = true;
+                                sheetHeightIncreased = true;
+                                tests = await getTest(
+                                  context,
+                                  TestCategory.TOPIC,
+                                  course,
+                                  user!,
+                                );
+                                emptyTestList = tests.isEmpty;
+                                currentAlphabet = tests.first.name[0];
+                                topicId = tests[_currentSlide].id;
 
-                              break;
-                            case TestCategory.MOCK:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.EXAM:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.ESSAY:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.SAVED:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.BANK:
-                              isActiveAnyMenu = true;
-                              break;
-                            case TestCategory.NONE:
-                              print("List Empty: $emptyTestTakenList");
-                              break;
-                            default:
+                                filterAndSetKnowledgeTestsTaken(
+                                  testCategory: TestCategory.TOPIC,
+                                  course: course,
+                                  topicId: topicId!,
+                                );
 
-                              // sheetHeightIncreased = false;
+                                if (!emptyTestList) {
+                                  scrollListAlphabets = tests
+                                      .map((topic) {
+                                        return topic.name[0]
+                                            .toString()
+                                            .toUpperCase();
+                                      })
+                                      .toSet()
+                                      .toList();
+                                  scrollListAlphabets.sort();
+                                }
 
-                              break;
+                                break;
+                              case TestCategory.EXAM:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.MOCK:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.ESSAY:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.SAVED:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.BANK:
+                                isActiveAnyMenu = true;
+                                break;
+                              case TestCategory.NONE:
+                                break;
+                              default:
+                                // sheetHeightIncreased = false;
+                                break;
+                            }
                           }
                           stateSetter(() {});
                         }),
@@ -413,94 +784,123 @@ class KnowledgeTestController extends ChangeNotifier {
                                   child: Column(
                                     children: [
                                       if (isActiveAnyMenu)
-                                        emptyTestTakenList
-                                            ? Container(
-                                                height: smallHeightDevice
-                                                    ? 150
-                                                    : 300,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                        "You have no Topic Knowledge Tests"),
-                                                    SizedBox(
-                                                      height: 12,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () async {},
-                                                      child: Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 18,
-                                                          vertical: 12,
-                                                        ),
-                                                        child: sText(
-                                                          "Take New Test",
-                                                          color: Colors.white,
-                                                        ),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: kAdeoGreen4,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            : TestTakenStatisticCard(
-                                                carouselController:
-                                                    alphaSliderToStatisticsCardController,
-                                                currentSlide: 0,
-                                                tests: tests,
-                                                testsTaken: testsTaken,
-                                                showGraph: showGraph,
-                                                activeMenu: activeMenu,
-                                                knowledgeTestControllerModel:
-                                                    model,
-                                                getTest: (
-                                                  BuildContext context,
-                                                  TestCategory testCategory,
-                                                  TestNameAndCount
-                                                      selectedTopic,
-                                                ) async {
-                                                  late Widget navigateTo;
-                                                  switch (testCategory) {
-                                                    case TestCategory.TOPIC:
-                                                      // widgetView =
-                                                      //     TestTypeListView(
-                                                      //   widget.user,
-                                                      //   widget.course,
-                                                      //   data,
-                                                      //   testType,
-                                                      //   title: "Topic",
-                                                      //   multiSelect: true,
-                                                      //   testCategory:
-                                                      //       TestCategory.TOPIC,
-                                                      // );
-                                                      navigateTo =
-                                                          TestInstruction(
-                                                        topic: selectedTopic,
-                                                        questionCount:
-                                                            selectedTopic
-                                                                .totalCount,
-                                                      );
-                                                      break;
-                                                    default:
-                                                      navigateTo = Container();
-                                                  }
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: ((context) =>
-                                                          navigateTo),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            SingleChildScrollView(
+                                              physics: model.isShowAnalysisBox
+                                                  ? BouncingScrollPhysics()
+                                                  : NeverScrollableScrollPhysics(),
+                                              child: CarouselSlider.builder(
+                                                  carouselController:
+                                                      alphaSliderToStatisticsCardController,
+                                                  options: CarouselOptions(
+                                                    height:
+                                                        model.isShowAnalysisBox
+                                                            ? 600
+                                                            : 300,
+                                                    autoPlay: false,
+                                                    enableInfiniteScroll: false,
+                                                    autoPlayAnimationDuration:
+                                                        Duration(seconds: 1),
+                                                    enlargeCenterPage: false,
+                                                    viewportFraction: 1,
+                                                    aspectRatio: 2.0,
+                                                    pageSnapping: true,
+                                                    initialPage: _currentSlide,
+                                                    onPageChanged:
+                                                        (index, reason) {
+                                                      _currentSlide = index;
+                                                      model.currentAlphabet =
+                                                          tests[_currentSlide]
+                                                              .name[0];
+
+                                                      switch (activeMenu) {
+                                                        case TestCategory.TOPIC:
+                                                          topicId = tests[
+                                                                  _currentSlide]
+                                                              .id;
+                                                          testTakenIndex =
+                                                              typeSpecificTestsTaken
+                                                                  .indexWhere(
+                                                                      (takenTest) {
+                                                            return jsonDecode(
+                                                                        takenTest
+                                                                            .responses)["Q1"]
+                                                                    [
+                                                                    "topic_id"] ==
+                                                                topicId;
+                                                          });
+                                                          if (testTakenIndex !=
+                                                              -1) {
+                                                            isTestTaken = true;
+                                                            testTaken =
+                                                                typeSpecificTestsTaken[
+                                                                    testTakenIndex];
+                                                          } else {
+                                                            isTestTaken = false;
+                                                          }
+
+                                                          break;
+                                                        case TestCategory.EXAM:
+                                                          break;
+                                                        case TestCategory.MOCK:
+                                                          break;
+                                                        case TestCategory.ESSAY:
+                                                          break;
+                                                        case TestCategory.SAVED:
+                                                          break;
+                                                        case TestCategory.BANK:
+                                                          break;
+                                                        case TestCategory.NONE:
+                                                          break;
+                                                        default:
+                                                          // sheetHeightIncreased = false;
+                                                          break;
+                                                      }
+                                                      ;
+
+                                                      stateSetter(() {});
+                                                    },
+                                                  ),
+                                                  itemCount: tests.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int indexReport,
+                                                          int index2) {
+                                                    return TestsStatisticCard(
+                                                      test: tests[indexReport],
+                                                      isTestTaken: isTestTaken,
+                                                      testTaken: testTaken,
+                                                      showGraph: showGraph,
+                                                      activeMenu: activeMenu,
+                                                      knowledgeTestControllerModel:
+                                                          model,
+                                                      getTest: (
+                                                        BuildContext context,
+                                                        TestCategory
+                                                            testCategory,
+                                                        TestNameAndCount
+                                                            selectedTopic,
+                                                      ) async {
+                                                        goToInstructions(
+                                                            context,
+                                                            selectedTopic,
+                                                            testCategory,
+                                                            user!,
+                                                            course!,
+                                                            searchKeyword:
+                                                                searchKeyword);
+                                                      },
+                                                    );
+                                                  }),
+                                            ),
+                                          ],
+                                        ),
                                       if (!model.isShowAnalysisBox)
                                         Expanded(
                                           child: Column(
@@ -537,7 +937,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                 child: Column(
                                                   children: [
                                                     isShowAlphaScroll &&
-                                                            !emptyTestTakenList
+                                                            !emptyTestList
                                                         ? AlphabetScrollSlider(
                                                             alphabets:
                                                                 scrollListAlphabets,
@@ -570,16 +970,56 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               controller:
                                                                   searchKeywordController,
                                                               onChanged: (String
-                                                                  value) async {},
+                                                                  value) async {
+                                                                stateSetter(() {
+                                                                  searchKeyword =
+                                                                      value
+                                                                          .trim();
+                                                                  listQuestions
+                                                                      .clear();
+                                                                });
+
+                                                                if (searchKeyword
+                                                                    .isNotEmpty) {
+                                                                  for (int i =
+                                                                          0;
+                                                                      i <
+                                                                          keywordTestTaken
+                                                                              .length;
+                                                                      i++) {
+                                                                    if (keywordTestTaken[i]
+                                                                            .testname!
+                                                                            .toLowerCase() ==
+                                                                        searchKeyword
+                                                                            .toLowerCase()) {
+                                                                      listQuestions = await TestController().getKeywordQuestions(
+                                                                          searchKeyword
+                                                                              .toLowerCase(),
+                                                                          course!
+                                                                              .id!,
+                                                                          currentQuestionCount:
+                                                                              keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+                                                                      stateSetter(
+                                                                          () {});
+                                                                      return;
+                                                                    }
+                                                                  }
+                                                                }
+                                                                if (searchKeyword
+                                                                    .isNotEmpty) {
+                                                                  listQuestions = await TestController().getKeywordQuestions(
+                                                                      searchKeyword
+                                                                          .toLowerCase(),
+                                                                      course!
+                                                                          .id!,
+                                                                      currentQuestionCount:
+                                                                          0);
+                                                                }
+                                                                stateSetter(
+                                                                    () {});
+                                                              },
                                                               onTap: () {
                                                                 stateSetter(() {
-                                                                  if (isActiveAnyMenu) {
-                                                                    activeMenu =
-                                                                        TestCategory
-                                                                            .NONE;
-                                                                    isActiveAnyMenu =
-                                                                        false;
-                                                                  }
                                                                   sheetHeight =
                                                                       appHeight(
                                                                               context) *
@@ -588,6 +1028,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                       true;
                                                                   searchTap =
                                                                       true;
+                                                                  if (isActiveAnyMenu) {
+                                                                    activeMenu =
+                                                                        TestCategory
+                                                                            .NONE;
+                                                                    isActiveAnyMenu =
+                                                                        false;
+                                                                  }
                                                                 });
                                                               },
                                                               decoration:
@@ -601,8 +1048,17 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                     IconButton(
                                                                         onPressed:
                                                                             () async {
-                                                                          model.isShowAnalysisBox =
-                                                                              !model.isShowAnalysisBox;
+                                                                          // model.isShowAnalysisBox =
+                                                                          //     !model.isShowAnalysisBox;
+
+                                                                          await getTest(
+                                                                            context,
+                                                                            TestCategory.NONE,
+                                                                            course!,
+                                                                            user!,
+                                                                            searchKeyword:
+                                                                                searchKeyword,
+                                                                          );
                                                                         },
                                                                         icon:
                                                                             Icon(
@@ -621,8 +1077,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                   ],
                                                 ),
                                               ),
-                                              if (!searchTap &&
-                                                  !emptyTestTakenList)
+                                              if (!searchTap && !emptyTestList)
                                                 Spacer(),
                                               if (searchTap)
                                                 Expanded(
@@ -667,7 +1122,15 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                                       if (properCase("${entry.value[i].keyword}").isNotEmpty)
                                                                                         MaterialButton(
                                                                                           padding: EdgeInsets.zero,
-                                                                                          onPressed: () async {},
+                                                                                          onPressed: () async {
+                                                                                            await getTest(
+                                                                                              context,
+                                                                                              TestCategory.NONE,
+                                                                                              course!,
+                                                                                              user!,
+                                                                                              searchKeyword: "${entry.value[i].keyword}",
+                                                                                            );
+                                                                                          },
                                                                                           child: Column(
                                                                                             children: [
                                                                                               Row(
@@ -707,9 +1170,13 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                             MaterialButton(
                                                                               padding: EdgeInsets.zero,
                                                                               onPressed: () async {
-                                                                                // stateSetter(() {});
-                                                                                // await getTest(context,
-                                                                                //     TestCategory.NONE);
+                                                                                stateSetter(() {});
+                                                                                await getTest(
+                                                                                  context,
+                                                                                  TestCategory.NONE,
+                                                                                  course!,
+                                                                                  user!,
+                                                                                );
                                                                               },
                                                                               child: Column(
                                                                                 children: [
@@ -812,11 +1279,55 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
-                                                        await getTopics(course)
-                                                            .then((value) {
-                                                          topics = value;
-                                                        });
-                                                        tests = topics;
+                                                        activeMenu =
+                                                            TestCategory.TOPIC;
+                                                        tests = await getTest(
+                                                          context,
+                                                          activeMenu,
+                                                          course!,
+                                                          user!,
+                                                        );
+
+                                                        topicId = tests[0].id;
+
+                                                        await filterAndSetKnowledgeTestsTaken(
+                                                          testCategory:
+                                                              TestCategory
+                                                                  .TOPIC,
+                                                          course: course,
+                                                          topicId: topicId!,
+                                                        );
+                                                        stateSetter(() {});
+
+                                                        if (sheetHeightIncreased) {
+                                                          isActiveTopicMenu =
+                                                              true;
+                                                          isActiveAnyMenu =
+                                                              true;
+
+                                                          emptyTestList =
+                                                              tests.isEmpty;
+                                                          currentAlphabet =
+                                                              tests.first
+                                                                  .name[0];
+
+                                                          if (!emptyTestList) {
+                                                            scrollListAlphabets =
+                                                                tests
+                                                                    .map(
+                                                                        (topic) {
+                                                                      return topic
+                                                                          .name[
+                                                                              0]
+                                                                          .toString()
+                                                                          .toUpperCase();
+                                                                    })
+                                                                    .toSet()
+                                                                    .toList();
+                                                            scrollListAlphabets
+                                                                .sort();
+                                                          }
+                                                        }
 
                                                         toggleKnowledgeTestMenus(
                                                           context,

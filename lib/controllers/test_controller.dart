@@ -466,6 +466,10 @@ class TestController {
   Future<List<TestTaken>> getTestTaken(String tag) {
     return TestTakenDB().courseTestsTaken(courseId: int.parse(tag));
   }
+  
+  Future<List<TestTaken>> keywordTestsTaken(int courseId, {int? topicId}) {
+    return TestTakenDB().getKeywordTestTaken(courseId);
+  }
 
   Future<List<Question>> getCustomizedQuestions(
       Course course, int numberOfQuestions) async {

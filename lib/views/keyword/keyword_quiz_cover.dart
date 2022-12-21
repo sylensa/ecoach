@@ -19,19 +19,20 @@ import 'package:intl/intl.dart';
 
 class KeywordQuizCover extends StatelessWidget {
   KeywordQuizCover(
-      this.user,
-      this.questions, {
-        Key? key,
-        this.level,
-        required this.name,
-        this.type = TestType.NONE,
-        this.category = TestCategory.NONE,
-        this.theme = QuizTheme.GREEN,
-        this.course,
-        this.time = 300,
-        this.count = 10,
-        this.diagnostic = false,
-      }) : super(key: key);
+    this.user,
+    this.questions, {
+    Key? key,
+    this.level,
+    required this.name,
+    this.type = TestType.NONE,
+    this.category = TestCategory.NONE,
+    this.theme = QuizTheme.GREEN,
+    this.course,
+    this.topic,
+    this.time = 300,
+    this.count = 10,
+    this.diagnostic = false,
+  }) : super(key: key);
 
   User user;
   Level? level;
@@ -41,6 +42,7 @@ class KeywordQuizCover extends StatelessWidget {
   String name;
   final TestCategory category;
   final TestType type;
+  final dynamic topic;
   int time;
   int count;
   QuizTheme theme;
@@ -59,9 +61,14 @@ class KeywordQuizCover extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: backgroundColor,
-        leading: IconButton(onPressed: (){
-          Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back_ios,color: Colors.white,)),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+            )),
         elevation: 0,
       ),
       body: Container(
@@ -76,255 +83,255 @@ class KeywordQuizCover extends StatelessWidget {
                 height: 500,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: questions.length == 0
-                          ? AssetImage('assets/images/deep_pool_gray_raw.png')
-                          : theme == QuizTheme.GREEN
+                  fit: BoxFit.cover,
+                  image: questions.length == 0
+                      ? AssetImage('assets/images/deep_pool_gray_raw.png')
+                      : theme == QuizTheme.GREEN
                           ? AssetImage('assets/images/deep_pool_green.png')
                           : AssetImage('assets/images/deep_pool_blue.png'),
-                    )),
+                )),
               ),
             ),
             Positioned(
               child: Container(
                 child: questions.length == 0
                     ? Column(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 24),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 180, width: double.infinity),
-                            Text(
-                              "There are no questions\nfor your selection",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 32),
-                            Text(
-                              TestCategory.SAVED == category ?"Ensure you have save questions for this the course package" : "Ensure you have downloaded the course package",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (questions.length == 0)
-
-                      AdeoFilledButton(
-                        label: TestCategory.SAVED == category ? "You haven't saved any questions yet" : 'Download Package',
-                        fontSize: 16,
-                        size: Sizes.large,
-
-                        onPressed: () {
-                          if(TestCategory.SAVED == category ){
-                            Navigator.pop(context);
-                          }else{
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MainHomePage(
-                                  user,
-                                  index: 2,
-                                ),
-                              ),
-                                  (Route<dynamic> route) => true,
-                            );
-                          }
-
-                        },
-                      )
-                    else if (theme == QuizTheme.GREEN)
-                      AdeoOutlinedButton(
-                        label: 'Back',
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      )
-                    else if (theme == QuizTheme.BLUE)
-                        AdeoFilledButton(
-                          label: 'Back',
-                          background: kAdeoBlue2,
-                          size: Sizes.large,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                    SizedBox(height: 56),
-                  ],
-                )
-                    : Column(
-                  children: [
-                    SizedBox(
-                      height: 120,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 130,
-                          child: Text("Keyword",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                        SizedBox(
-                          width: 160,
-                          child: Text(
-                            ":${properCase(name)}",
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 130,
-                          child: Text(
-                            "Questions",
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 160,
-                          child: Text(
-                            type != TestType.SPEED
-                                ? ":${count}"
-                                : "---",
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 130,
-                          child: Text("Time",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                        SizedBox(
-                          width: 160,
-                          child: type != TestType.UNTIMED
-                              ? Text(
-                              ":${NumberFormat('00').format(Duration(seconds: time).inMinutes)}:${NumberFormat('00').format(Duration(seconds: time).inSeconds % 60)}",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold))
-                              : Text("Untimed",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 100,
-                    ),
-                    Text(
-                      "answer all questions",
-                      style: TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 170,
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          OutlinedButton(
-                            onPressed: () {
-                              goTo(context,
-                                  KeywordQuestionView(
-                                    controller: QuizController(
-                                      user,
-                                      course!,
-                                      questions: questions,
-                                      level: level,
-                                      name: name,
-                                      time: time,
-                                      type: type,
-                                      challengeType: category,
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 180, width: double.infinity),
+                                  Text(
+                                    "There are no questions\nfor your selection",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w700,
                                     ),
-                                    theme: theme,
-                                    diagnostic: diagnostic,
-                                    numberOfQuestionSelected: count,
+                                    textAlign: TextAlign.center,
                                   ),
-                                  replace: true
-                              );
-                            },
-                            child: Text(
-                              "Let's go",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
+                                  SizedBox(height: 32),
+                                  Text(
+                                    TestCategory.SAVED == category
+                                        ? "Ensure you have save questions for this the course package"
+                                        : "Ensure you have downloaded the course package",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
                             ),
-                            style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
-                                  EdgeInsets.fromLTRB(35, 10, 35, 10)),
-                              side: MaterialStateProperty.all(
-                                BorderSide(
-                                  color: Colors.white,
-                                  width: 1,
-                                  style: BorderStyle.solid,
-                                ),
+                          ),
+                          if (questions.length == 0)
+                            AdeoFilledButton(
+                              label: TestCategory.SAVED == category
+                                  ? "You haven't saved any questions yet"
+                                  : 'Download Package',
+                              fontSize: 16,
+                              size: Sizes.large,
+                              onPressed: () {
+                                if (TestCategory.SAVED == category) {
+                                  Navigator.pop(context);
+                                } else {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MainHomePage(
+                                        user,
+                                        index: 2,
+                                      ),
+                                    ),
+                                    (Route<dynamic> route) => true,
+                                  );
+                                }
+                              },
+                            )
+                          else if (theme == QuizTheme.GREEN)
+                            AdeoOutlinedButton(
+                              label: 'Back',
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          else if (theme == QuizTheme.BLUE)
+                            AdeoFilledButton(
+                              label: 'Back',
+                              background: kAdeoBlue2,
+                              size: Sizes.large,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          SizedBox(height: 56),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          SizedBox(
+                            height: 120,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 130,
+                                child: Text("Keyword",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
                               ),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    30.0,
+                              SizedBox(
+                                width: 160,
+                                child: Text(
+                                  ":${properCase(name)}",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 130,
+                                child: Text(
+                                  "Questions",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 160,
+                                child: Text(
+                                  type != TestType.SPEED ? ":${count}" : "---",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 130,
+                                child: Text("Time",
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 160,
+                                child: type != TestType.UNTIMED
+                                    ? Text(
+                                        ":${NumberFormat('00').format(Duration(seconds: time).inMinutes)}:${NumberFormat('00').format(Duration(seconds: time).inSeconds % 60)}",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold))
+                                    : Text("Untimed",
+                                        style: TextStyle(
+                                            fontSize: 22,
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 100,
+                          ),
+                          Text(
+                            "answer all questions",
+                            style: TextStyle(
+                              fontSize: 22,
+                              color: Colors.white,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 170,
+                          ),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                OutlinedButton(
+                                  onPressed: () {
+                                    goTo(
+                                        context,
+                                        KeywordQuestionView(
+                                          controller: QuizController(
+                                            user,
+                                            course!,
+                                            questions: questions,
+                                            level: level,
+                                            name: name,
+                                            time: time,
+                                            topicId: topic.id,
+                                            type: type,
+                                            challengeType: category,
+                                          ),
+                                          theme: theme,
+                                          diagnostic: diagnostic,
+                                          numberOfQuestionSelected: count,
+                                        ),
+                                        replace: true);
+                                  },
+                                  child: Text(
+                                    "Let's go",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                    ),
+                                  ),
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all(
+                                        EdgeInsets.fromLTRB(35, 10, 35, 10)),
+                                    side: MaterialStateProperty.all(
+                                      BorderSide(
+                                        color: Colors.white,
+                                        width: 1,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          30.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ],

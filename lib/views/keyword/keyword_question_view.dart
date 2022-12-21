@@ -42,9 +42,10 @@ import 'package:validators/validators.dart';
 class KeywordQuestionView extends StatefulWidget {
   KeywordQuestionView(
       {Key? key,
-        required this.controller,
-        this.theme = QuizTheme.GREEN,
-        this.diagnostic = false,this.numberOfQuestionSelected = 0})
+      required this.controller,
+      this.theme = QuizTheme.GREEN,
+      this.diagnostic = false,
+      this.numberOfQuestionSelected = 0})
       : super(key: key);
 
   QuizController controller;
@@ -122,7 +123,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
   }
 
   nextButton() async {
-    if (currentQuestion == widget.numberOfQuestionSelected -1) {
+    if (currentQuestion == widget.numberOfQuestionSelected - 1) {
       await completeQuiz();
       return;
     }
@@ -132,8 +133,8 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
     setState(() {
       currentQuestion++;
 
-      pageController.nextPage(duration: Duration(milliseconds: 1), curve: Curves.ease);
-
+      pageController.nextPage(
+          duration: Duration(milliseconds: 1), curve: Curves.ease);
     });
   }
 
@@ -161,7 +162,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
 
   int get unattempted {
     int unattempted = 0;
-    for(int i =0; i < widget.numberOfQuestionSelected; i++){
+    for (int i = 0; i < widget.numberOfQuestionSelected; i++) {
       if (!controller.questions[i].unattempted) unattempted++;
     }
     return unattempted;
@@ -170,7 +171,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
   String get responses {
     Map<String, dynamic> responses = Map();
     int i = 1;
-    for(int t =0; t < widget.numberOfQuestionSelected; t++){
+    for (int t = 0; t < widget.numberOfQuestionSelected; t++) {
       print(controller.questions[t].topicName);
       Map<String, dynamic> answer = {
         "question_id": controller.questions[t].id,
@@ -182,8 +183,8 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
         "status": controller.questions[t].isCorrect
             ? "correct"
             : controller.questions[t].isWrong
-            ? "wrong"
-            : "unattempted",
+                ? "wrong"
+                : "unattempted",
       };
       responses["Q$i"] = answer;
       i++;
@@ -225,51 +226,65 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
     print("count:$count");
     return count.toStringAsFixed(2);
   }
-  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback,{int? groupId,int? testId}) async {
+
+  saveTest(
+    BuildContext context,
+    Function(TestTaken? test, bool success) callback, {
+    int? groupId,
+    int? testId,
+  }) async {
+    print("topic id from questiiion : ${controller.topicId}");
+    // return;
     TestTaken testTaken = TestTaken(
-        userId: controller.user.id,
-        testId: testId,
-        datetime: controller.startTime,
-        totalQuestions: controller.questions.length,
-        courseId: controller.course.id,
-        testname: controller.name.toLowerCase(),
-        testType: controller.type.toString(),
-        challengeType: controller.challengeType.toString(),
-        testTime: controller.duration == null ? -1 : controller.duration!.inSeconds,
-        usedTime: DateTime.now().difference(controller.startTime!).inSeconds,
-        responses: responses,
-        score: score,
-        correct: correct,
-        wrong: wrong,
-        groupId: groupId,
-        unattempted: unattempted,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now());
+      userId: controller.user.id,
+      testId: testId,
+      topicId: controller.topicId,
+      datetime: controller.startTime,
+      totalQuestions: controller.questions.length,
+      courseId: controller.course.id,
+      testname: controller.name.toLowerCase(),
+      testType: controller.type.toString(),
+      challengeType: controller.challengeType.toString(),
+      testTime:
+          controller.duration == null ? -1 : controller.duration!.inSeconds,
+      usedTime: DateTime.now().difference(controller.startTime!).inSeconds,
+      responses: responses,
+      score: score,
+      correct: correct,
+      wrong: wrong,
+      groupId: groupId,
+      unattempted: unattempted,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
 
     print("testing connection ${jsonEncode(testTaken)}");
-    print("testing connection courseName ${testTaken.testname!.toLowerCase()}");
-  // List<Question> listQuestions = await TestController().getTotalKeywordQuestions(testTaken.testname!,widget.controller.course.id!);
-  //   if(listQuestions.length <= widget.controller.questions.length ){
-  //     print("listQuestions.length :${listQuestions.length }");
-  //     await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
-  //   }
-    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken,controller.course.id!);
-    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(controller.course.id!);
+    // print("testing connection courseName ${testTaken.testname!.toLowerCase()}");
+    // List<Question> listQuestions = await TestController().getTotalKeywordQuestions(testTaken.testname!,widget.controller.course.id!);
+    //   if(listQuestions.length <= widget.controller.questions.length ){
+    //     print("listQuestions.length :${listQuestions.length }");
+    //     await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
+    //   }
+    await OfflineSaveController(context, controller.user)
+        .saveKeywordTestTaken(testTaken, controller.course.id!, topicId: controller.topicId);
+
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(
+      controller.course.id!,
+    );
     ApiCall<TestTaken>(AppUrl.testTaken,
         user: controller.user,
         isList: false,
         params: testTaken.toJson(), create: (json) {
-          return TestTaken.fromJson(json);
-        }, onError: (err) {
-          OfflineSaveController(context, controller.user).saveTestTaken(testTaken);
-          callback(testTaken, false);
-        }, onCallback: (data) {
-          print('onCallback');
-          print(data);
-          TestController().saveTestTaken(data!);
-          callback(data, true);
-        }).post(context);
-
+      return TestTaken.fromJson(json);
+    }, onError: (err) {
+      OfflineSaveController(context, controller.user).saveTestTaken(testTaken);
+      callback(testTaken, false);
+    }, onCallback: (data) {
+      print('onCallback');
+      // print(data);
+      TestController().saveTestTaken(data!);
+      callback(data, true);
+    }).post(context);
   }
 
   completeQuiz() async {
@@ -287,8 +302,6 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
     if (controller.speedTest) {
       await Future.delayed(Duration(seconds: 1));
     }
-
-
 
     saveTest(context, (test, success) {
       Navigator.pop(context);
@@ -419,7 +432,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
 
   bool _isBannerAdReady = false;
 
-  currentCorrectScoreState() async{
+  currentCorrectScoreState() async {
     setState(() {
       if (widget.controller.questions[currentQuestion].isCorrect) {
         isCorrect = true;
@@ -541,10 +554,10 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                             color: Colors.black,
                             strokeWidth: 2,
                             value: currentQuestion ==
-                                widget.numberOfQuestionSelected
+                                    widget.numberOfQuestionSelected
                                 ? 1
                                 : currentQuestion /
-                                (widget.numberOfQuestionSelected -1),
+                                    (widget.numberOfQuestionSelected - 1),
                           ),
                           Center(
                             child: Text(
@@ -602,12 +615,12 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                   ),
                   isCorrect
                       ? Image.asset(
-                    "assets/images/un_fav.png",
-                    color: Colors.green,
-                  )
+                          "assets/images/un_fav.png",
+                          color: Colors.green,
+                        )
                       : SvgPicture.asset(
-                    "assets/images/fav.svg",
-                  ),
+                          "assets/images/fav.svg",
+                        ),
                   const SizedBox(
                     width: 5,
                   ),
@@ -706,7 +719,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                       },
                       child: SvgPicture.asset(
                         savedQuestions.contains(
-                            controller.questions[currentQuestion].id)
+                                controller.questions[currentQuestion].id)
                             ? "assets/images/on_switch.svg"
                             : "assets/images/off_switch.svg",
                       ),
@@ -807,7 +820,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
 
                                   Visibility(
                                     visible: controller.questions[i]
-                                        .instructions!.isNotEmpty
+                                            .instructions!.isNotEmpty
                                         ? true
                                         : false,
                                     child: Card(
@@ -821,7 +834,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                               .replaceAll("https", "http"),
                                           // removeTags: controller.questions[i].instructions!.contains("src") ? false : true,
                                           useLocalImage:
-                                          widget.diagnostic ? false : true,
+                                              widget.diagnostic ? false : true,
                                           fontWeight: FontWeight.normal,
                                           textColor: Colors.black,
                                         )),
@@ -841,7 +854,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                     },
                                     child: Visibility(
                                       visible: controller
-                                          .questions[i].resource!.isNotEmpty
+                                              .questions[i].resource!.isNotEmpty
                                           ? true
                                           : false,
                                       child: Theme(
@@ -851,7 +864,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                           textColor: Colors.white,
                                           iconColor: kAdeoGray3,
                                           collapsedBackgroundColor:
-                                          Colors.white,
+                                              Colors.white,
                                           initiallyExpanded: true,
                                           collapsedIconColor: kAdeoGray3,
                                           backgroundColor: Colors.white,
@@ -885,15 +898,15 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                                     controller
                                                         .questions[i].resource!
                                                         .replaceAll(
-                                                        "https", "http"),
+                                                            "https", "http"),
                                                     // removeTags: controller.questions[i].resource!.contains("src") ? false : true,
                                                     useLocalImage:
-                                                    widget.diagnostic
-                                                        ? false
-                                                        : true,
+                                                        widget.diagnostic
+                                                            ? false
+                                                            : true,
                                                     textColor: Colors.grey,
                                                     fontWeight:
-                                                    FontWeight.normal,
+                                                        FontWeight.normal,
                                                   ),
                                                 ),
                                               ],
@@ -917,105 +930,104 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                   // ************************
                                   ...List.generate(
                                       controller.questions[i].answers!.length,
-                                          (index) {
-                                        return GestureDetector(
-                                          onTap: () async{
-                                            setState(() {
-                                              print(
-                                                  "countdownInSeconds:$countdownInSeconds");
-                                              controller
+                                      (index) {
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        setState(() {
+                                          print(
+                                              "countdownInSeconds:$countdownInSeconds");
+                                          controller
                                                   .questions[i].selectedAnswer =
                                               controller
                                                   .questions[i].answers![index];
-                                              var dateFormat = DateFormat('h:m:s');
-                                              DateTime durationEnd = dateFormat
-                                                  .parse(DateFormat('hh:mm:ss')
+                                          var dateFormat = DateFormat('h:m:s');
+                                          DateTime durationEnd = dateFormat
+                                              .parse(DateFormat('hh:mm:ss')
                                                   .format(DateTime.now()));
-                                              timeSpent = durationEnd
-                                                  .difference(durationStart)
-                                                  .inSeconds;
-                                              controller.questions[i].time =
-                                                  timeSpent;
-                                              durationStart = dateFormat.parse(
-                                                  DateFormat('hh:mm:ss')
-                                                      .format(DateTime.now()));
-
-                                            });
-                                            await  nextButton();
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.only(
-                                                bottom: 10, right: 20, left: 20),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: AdeoHtmlTex(
-                                                    controller.user,
-                                                    controller.questions[i]
-                                                        .answers![index].text!
-                                                        .replaceAll(
+                                          timeSpent = durationEnd
+                                              .difference(durationStart)
+                                              .inSeconds;
+                                          controller.questions[i].time =
+                                              timeSpent;
+                                          durationStart = dateFormat.parse(
+                                              DateFormat('hh:mm:ss')
+                                                  .format(DateTime.now()));
+                                        });
+                                        await nextButton();
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(
+                                            bottom: 10, right: 20, left: 20),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: AdeoHtmlTex(
+                                                controller.user,
+                                                controller.questions[i]
+                                                    .answers![index].text!
+                                                    .replaceAll(
                                                         "https", "http"),
-                                                    // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
-                                                    useLocalImage: widget.diagnostic
-                                                        ? false
-                                                        : true,
-                                                    textColor: controller
-                                                        .questions[i]
-                                                        .selectedAnswer ==
+                                                // removeTags: controller.questions[i].answers![index].text!.contains("src") ? false : true,
+                                                useLocalImage: widget.diagnostic
+                                                    ? false
+                                                    : true,
+                                                textColor: controller
+                                                            .questions[i]
+                                                            .selectedAnswer ==
                                                         controller.questions[i]
                                                             .answers![index]
-                                                        ? Colors.white
-                                                        : kSecondaryTextColor,
-                                                    fontSize: controller
-                                                        .questions[i]
-                                                        .selectedAnswer ==
+                                                    ? Colors.white
+                                                    : kSecondaryTextColor,
+                                                fontSize: controller
+                                                            .questions[i]
+                                                            .selectedAnswer ==
                                                         controller.questions[i]
                                                             .answers![index]
-                                                        ? 25
-                                                        : 16,
-                                                    textAlign: TextAlign.left,
-                                                    fontWeight: FontWeight.bold,
-                                                    removeBr: true,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Icon(
-                                                  Icons.radio_button_off,
-                                                  color: Colors.white,
-                                                )
-                                              ],
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 5),
-                                            decoration: BoxDecoration(
-                                              color: controller.questions[i]
-                                                  .selectedAnswer ==
-                                                  controller.questions[i]
-                                                      .answers![index]
-                                                  ? Color(0xFF0367B4)
-                                                  : Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(14),
-                                              border: Border.all(
-                                                width: controller.questions[i]
-                                                    .selectedAnswer ==
-                                                    controller.questions[i]
-                                                        .answers![index]
-                                                    ? 1
-                                                    : 1,
-                                                color: controller.questions[i]
-                                                    .selectedAnswer ==
-                                                    controller.questions[i]
-                                                        .answers![index]
-                                                    ? Colors.transparent
-                                                    : Color(0xFFC8C8C8),
+                                                    ? 25
+                                                    : 16,
+                                                textAlign: TextAlign.left,
+                                                fontWeight: FontWeight.bold,
+                                                removeBr: true,
                                               ),
                                             ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Icon(
+                                              Icons.radio_button_off,
+                                              color: Colors.white,
+                                            )
+                                          ],
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 5),
+                                        decoration: BoxDecoration(
+                                          color: controller.questions[i]
+                                                      .selectedAnswer ==
+                                                  controller.questions[i]
+                                                      .answers![index]
+                                              ? Color(0xFF0367B4)
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
+                                            width: controller.questions[i]
+                                                        .selectedAnswer ==
+                                                    controller.questions[i]
+                                                        .answers![index]
+                                                ? 1
+                                                : 1,
+                                            color: controller.questions[i]
+                                                        .selectedAnswer ==
+                                                    controller.questions[i]
+                                                        .answers![index]
+                                                ? Colors.transparent
+                                                : Color(0xFFC8C8C8),
                                           ),
-                                        );
-                                      })
+                                        ),
+                                      ),
+                                    );
+                                  })
                                   // ***********************
                                   // answers end
                                   // ************************
@@ -1038,7 +1050,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  if (currentQuestion < widget.numberOfQuestionSelected -1 &&
+                  if (currentQuestion < widget.numberOfQuestionSelected - 1 &&
                       !(!enabled &&
                           controller.speedTest &&
                           currentQuestion == finalQuestion))
@@ -1047,7 +1059,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                         onTap: () {
                           // Get.to(() => const QuizReviewPage());
                           if (currentQuestion ==
-                              widget.numberOfQuestionSelected -1) {
+                              widget.numberOfQuestionSelected - 1) {
                             return;
                           }
                           setState(() {
@@ -1085,7 +1097,8 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                       ),
                     ),
                   if (!savedTest &&
-                      currentQuestion == widget.numberOfQuestionSelected -1 ||
+                          currentQuestion ==
+                              widget.numberOfQuestionSelected - 1 ||
                       (enabled &&
                           controller.speedTest &&
                           currentQuestion == finalQuestion))
@@ -1166,13 +1179,13 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
               ),
 
               side: MaterialStateProperty.resolveWith(
-                    (Set<MaterialState> states) {
+                (Set<MaterialState> states) {
                   return states.contains(MaterialState.pressed)
                       ? BorderSide.none
                       : const BorderSide(
-                    color: Color(0xFF707070),
-                    width: 1,
-                  );
+                          color: Color(0xFF707070),
+                          width: 1,
+                        );
                 },
               ),
               // backgroundColor: MaterialStateProperty.resolveWith(
@@ -1181,12 +1194,12 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
               //       : Colors.white,
               // ),
               foregroundColor: MaterialStateProperty.resolveWith(
-                    (states) => states.contains(MaterialState.pressed)
+                (states) => states.contains(MaterialState.pressed)
                     ? Colors.white
                     : Colors.black,
               ),
               overlayColor: MaterialStateProperty.resolveWith(
-                    (states) => states.contains(MaterialState.pressed)
+                (states) => states.contains(MaterialState.pressed)
                     ? Color(0xFFFF6060)
                     : Colors.white,
               ),
@@ -1217,13 +1230,13 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
               ),
 
               side: MaterialStateProperty.resolveWith(
-                    (Set<MaterialState> states) {
+                (Set<MaterialState> states) {
                   return states.contains(MaterialState.pressed)
                       ? BorderSide.none
                       : const BorderSide(
-                    color: Color(0xFF707070),
-                    width: 1,
-                  );
+                          color: Color(0xFF707070),
+                          width: 1,
+                        );
                 },
               ),
               // backgroundColor: MaterialStateProperty.resolveWith(
@@ -1232,12 +1245,12 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
               //       : Colors.white,
               // ),
               foregroundColor: MaterialStateProperty.resolveWith(
-                    (states) => states.contains(MaterialState.pressed)
+                (states) => states.contains(MaterialState.pressed)
                     ? Colors.white
                     : Colors.black,
               ),
               overlayColor: MaterialStateProperty.resolveWith(
-                    (states) => states.contains(MaterialState.pressed)
+                (states) => states.contains(MaterialState.pressed)
                     ? Color(0xFF00C664)
                     : Colors.white,
               ),
@@ -1336,7 +1349,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                             ),
                             Padding(
                               padding:
-                              const EdgeInsets.symmetric(horizontal: 24.0),
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
                               child: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
@@ -1371,16 +1384,16 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                     items: listReportsTypes
                                         .map(
                                           (item) => DropdownMenuItem<ListNames>(
-                                        value: item,
-                                        child: Text(
-                                          item.name,
-                                          style: TextStyle(
-                                            color: kDefaultBlack,
-                                            fontSize: 16,
+                                            value: item,
+                                            child: Text(
+                                              item.name,
+                                              style: TextStyle(
+                                                color: kDefaultBlack,
+                                                fontSize: 16,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    )
+                                        )
                                         .toList(),
                                   ),
                                 ),
@@ -1393,7 +1406,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                               padding: EdgeInsets.only(left: 20, right: 20),
                               child: Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: TextFormField(
@@ -1450,9 +1463,10 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                                     type: reportTypes!.name,
                                     questionId: question!.id);
                                 var res = await QuizController(
-                                    controller.user, controller.course,
-                                    name: "")
-                                    .saveFlagQuestion(
+                                  controller.user,
+                                  controller.course,
+                                  name: "",
+                                ).saveFlagQuestion(
                                     context, flagData, question.id!);
                                 print("final res:$res");
                                 if (res) {
@@ -1562,7 +1576,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border:
-                              Border.all(color: Colors.green, width: 15),
+                                  Border.all(color: Colors.green, width: 15),
                               shape: BoxShape.circle),
                           child: Icon(
                             Icons.check,
@@ -1670,102 +1684,102 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
   getTimerWidget() {
     return controller.speedTest
         ? Row(
-      children: [
-        Image(image: AssetImage('assets/images/watch.png')),
-        SizedBox(width: 4),
-        GestureDetector(
-          onTap: Feedback.wrapForTap(() {
-            showPauseDialog();
-          }, context),
-          child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: Color(0xFF222E3B),
-                  width: 1,
-                ),
+            children: [
+              Image(image: AssetImage('assets/images/watch.png')),
+              SizedBox(width: 4),
+              GestureDetector(
+                onTap: Feedback.wrapForTap(() {
+                  showPauseDialog();
+                }, context),
+                child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Color(0xFF222E3B),
+                        width: 1,
+                      ),
+                    ),
+                    child: AdeoTimer(
+                        controller: timerController,
+                        startDuration: controller.duration!,
+                        callbackWidget: (time) {
+                          if (controller.disableTime) {
+                            return Image(
+                                image:
+                                    AssetImage("assets/images/infinite.png"));
+                          }
+
+                          Duration remaining = Duration(seconds: time.toInt());
+                          controller.duration = remaining;
+                          countdownInSeconds = remaining.inSeconds;
+                          if (remaining.inSeconds == 0) {
+                            return Text("Time Up",
+                                style: TextStyle(
+                                    color: backgroundColor, fontSize: 12));
+                          }
+
+                          return Text(
+                              "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                              style: TextStyle(
+                                  color: backgroundColor, fontSize: 12));
+                        },
+                        onFinish: () {
+                          onEnd();
+                        })),
               ),
-              child: AdeoTimer(
-                  controller: timerController,
-                  startDuration: controller.duration!,
-                  callbackWidget: (time) {
-                    if (controller.disableTime) {
-                      return Image(
-                          image:
-                          AssetImage("assets/images/infinite.png"));
-                    }
-
-                    Duration remaining = Duration(seconds: time.toInt());
-                    controller.duration = remaining;
-                    countdownInSeconds = remaining.inSeconds;
-                    if (remaining.inSeconds == 0) {
-                      return Text("Time Up",
-                          style: TextStyle(
-                              color: backgroundColor, fontSize: 12));
-                    }
-
-                    return Text(
-                        "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-                        style: TextStyle(
-                            color: backgroundColor, fontSize: 12));
-                  },
-                  onFinish: () {
-                    onEnd();
-                  })),
-        ),
-      ],
-    )
+            ],
+          )
         : AdeoTimer(
-        controller: timerController,
-        startDuration: controller.duration!,
-        callbackWidget: (time) {
-          if (controller.disableTime) {
-            return Image(image: AssetImage("assets/images/infinite.png"));
-          }
-          Duration remaining = Duration(seconds: time.toInt());
-          controller.duration = remaining;
-          countdownInSeconds = remaining.inSeconds;
+            controller: timerController,
+            startDuration: controller.duration!,
+            callbackWidget: (time) {
+              if (controller.disableTime) {
+                return Image(image: AssetImage("assets/images/infinite.png"));
+              }
+              Duration remaining = Duration(seconds: time.toInt());
+              controller.duration = remaining;
+              countdownInSeconds = remaining.inSeconds;
 
-          if (remaining.inSeconds == 0) {
-            return Text("Time Up",
-                style: TextStyle(color: backgroundColor, fontSize: 14));
-          }
+              if (remaining.inSeconds == 0) {
+                return Text("Time Up",
+                    style: TextStyle(color: backgroundColor, fontSize: 14));
+              }
 
-          return Text(
-              "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
-              style: TextStyle(color: backgroundColor, fontSize: 14));
-        },
-        onFinish: () {
-          onEnd();
-        });
+              return Text(
+                  "${remaining.inHours}:${remaining.inMinutes}:${remaining.inSeconds % 60}",
+                  style: TextStyle(color: backgroundColor, fontSize: 14));
+            },
+            onFinish: () {
+              onEnd();
+            });
   }
 
   Future<bool> showPauseDialog() async {
     return (await showDialog<bool>(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return PauseDialog(
-            backgroundColor: backgroundColor,
-            backgroundColor2: backgroundColor2,
-            time: countdownInSeconds,
-            callback: (action) {
-              Navigator.pop(context);
-              if (action == "resume") {
-                startTimer();
-              } else if (action == "quit") {
-                // Navigator.pushAndRemoveUntil(context,
-                //     MaterialPageRoute(builder: (context) {
-                //   return MainHomePage(controller.user, index: 2);
-                // }), (route) => false);
-                Navigator.pop(context);
-              } else if (action == "end") {
-                completeQuiz();
-              }
-            },
-          );
-        })) ??
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return PauseDialog(
+                backgroundColor: backgroundColor,
+                backgroundColor2: backgroundColor2,
+                time: countdownInSeconds,
+                callback: (action) {
+                  Navigator.pop(context);
+                  if (action == "resume") {
+                    startTimer();
+                  } else if (action == "quit") {
+                    // Navigator.pushAndRemoveUntil(context,
+                    //     MaterialPageRoute(builder: (context) {
+                    //   return MainHomePage(controller.user, index: 2);
+                    // }), (route) => false);
+                    Navigator.pop(context);
+                  } else if (action == "end") {
+                    completeQuiz();
+                  }
+                },
+              );
+            })) ??
         false;
   }
 }
