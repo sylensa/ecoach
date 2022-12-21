@@ -25,6 +25,7 @@ class QuizController {
     this.user,
     this.course, {
     this.level,
+    this.topicId,
     this.type = TestType.NONE,
     this.challengeType = TestCategory.NONE,
     this.questions = const [],
@@ -45,6 +46,7 @@ class QuizController {
 
   final User user;
   final Course course;
+  final int? topicId;
   Level? level;
   List<Question> questions;
   final String name;
@@ -144,10 +146,11 @@ class QuizController {
     return jsonEncode(responses);
   }
 
-  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback,{int? groupId,int? testId}) async {
+  saveTest(BuildContext context, Function(TestTaken? test, bool success) callback,{int? groupId,int? testId, int? topicId}) async {
     TestTaken testTaken = TestTaken(
         id :user.id,
         userId: user.id,
+        topicId: topicId ?? null,
         testId: testId,
         datetime: startTime,
         totalQuestions: questions.length,

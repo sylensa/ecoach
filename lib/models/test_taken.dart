@@ -11,6 +11,7 @@ class TestTaken {
     this.testname,
     this.testType,
     this.challengeType,
+    this.topicId,
     this.testId,
     this.testTime,
     this.usedTime,
@@ -41,6 +42,7 @@ class TestTaken {
   String? testname;
   String? testType;
   String? challengeType;
+  int? topicId;
   int? testId;
   int? testTime;
   int? usedTime;
@@ -94,6 +96,7 @@ class TestTaken {
         groupId: json["group_id"],
         datetime: DateTime.parse(json["date_time"]),
         courseId: json["course_id"],
+        topicId: json["topic_id"],
         testname: json["test_name"],
         testType: json["test_type"],
         challengeType: json['challenge_type'],
@@ -104,8 +107,9 @@ class TestTaken {
         totalQuestions: json["total_questions"],
         score: json["score"] != null ? double.parse("${json['score']}") : 0,
         correct: json["correct"],
-        total_test_taken: json["total_test_taken"] == null ? 0 : json["total_test_taken"],
-       scoreDiff: json["scoreDiff"] == null ? 0 : json["scoreDiff"],
+        total_test_taken:
+            json["total_test_taken"] == null ? 0 : json["total_test_taken"],
+        scoreDiff: json["scoreDiff"] == null ? 0 : json["scoreDiff"],
         wrong: json["wrong"],
         unattempted: json["unattempted"],
         responses: json["responses"],
@@ -123,12 +127,13 @@ class TestTaken {
   Map<String, dynamic> toJson() => {
         "id": id,
         "user_id": userId,
-        "group_id": groupId ,
+        "group_id": groupId,
         "date_time": datetime!.toIso8601String(),
         "course_id": courseId,
         "test_name": testname,
         "test_type": testType,
         "challenge_type": challengeType,
+        "topic_id": topicId,
         "test_id": testId,
         "test_time": testTime,
         "used_time": usedTime,
@@ -147,12 +152,13 @@ class TestTaken {
       };
   Map<String, dynamic> toJsonKeyword() => {
         "user_id": userId,
-        "group_id": groupId ,
+        "group_id": groupId,
         "date_time": datetime!.toIso8601String(),
         "course_id": courseId,
         "test_name": testname,
         "test_type": testType,
         "challenge_type": challengeType,
+        "topic_id": topicId,
         "test_id": testId,
         "test_time": testTime,
         "used_time": usedTime,

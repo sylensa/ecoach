@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -17,6 +18,7 @@ import 'package:ecoach/revamp/features/knowledge_test/view/test_instruction_scre
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/keyword/keyword_assessment.dart';
+import 'package:ecoach/views/keyword/keyword_question_view.dart';
 import 'package:ecoach/views/keyword/keyword_quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
@@ -195,7 +197,7 @@ class KnowledgeTestController extends ChangeNotifier {
       }
     }
 
-    print("Selected: $selectedAlphabet ");
+    // print("Selected: $selectedAlphabet ");
   }
 
   filterAndSetKnowledgeTestsTaken({
@@ -203,14 +205,15 @@ class KnowledgeTestController extends ChangeNotifier {
     required int topicId,
     required TestCategory testCategory,
   }) async {
-    testsTaken = await TestController().getTestTaken(course.id!.toString());
-
+    testsTaken = await TestController().keywordTestsTaken(course.id!, topicId: topicId);
+    // testsTaken = await TestController().getTestTaken(course.id!.toString());
     typeSpecificTestsTaken = testsTaken
         .where((element) =>
             element.challengeType == testCategory.toString() &&
             element.testType == testType.toString())
         .toList();
 
+    print("Tests taken: ${testsTaken.length}");
     if (typeSpecificTestsTaken.length > 0) {
       testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
         // Find a better way to get the topicId for a testTaken //
@@ -252,9 +255,14 @@ class KnowledgeTestController extends ChangeNotifier {
     return topics;
   }
 
-  goToInstructions(BuildContext context, dynamic test,
-      TestCategory testCategory, User user, Course course,
-      {String searchKeyword = ''}) async {
+  goToInstructions(
+    BuildContext context,
+    dynamic test,
+    TestCategory testCategory,
+    User user,
+    Course course, {
+    String searchKeyword = '',
+  }) async {
     Navigator.pop(context);
     Widget? widgetView;
     List<Question> questions = [];
@@ -272,25 +280,29 @@ class KnowledgeTestController extends ChangeNotifier {
         break;
       case TestCategory.TOPIC:
         TestNameAndCount _test = test as TestNameAndCount;
-        print(_test.id);
+        // print("topic id : ${_test.id}");
 
         questions = await TestController().getTopicQuestions(
           [_test.id!],
         );
+        // return;
         widgetView = KeywordAssessment(
-          quizCover: KeywordQuizCover(
-            user,
-            questions,
-            category: testCategory,
-            course: course,
-            type: testType,
+          questionView: KeywordQuestionView(
+            controller: QuizController(
+              user,
+              course,
+              questions: questions,
+              topicId: _test.id,
+              name: searchKeyword,
+              time: questions.length * 60,
+              type: TestType.KNOWLEDGE,
+              challengeType: testCategory,
+            ),
             theme: QuizTheme.BLUE,
-            time: questions.length * 60,
-            name: searchKeyword,
+            numberOfQuestionSelected: questions.length,
           ),
           questionCount: questions.length,
         );
-
         break;
       case TestCategory.ESSAY:
         widgetView = TestTypeListView(
@@ -325,20 +337,23 @@ class KnowledgeTestController extends ChangeNotifier {
         );
         break;
       case TestCategory.NONE:
+        var _test = test;
         List<Question> questions = test as List<Question>;
-
         widgetView = KeywordAssessment(
           quizCover: KeywordQuizCover(
             user,
             questions,
             category: testCategory,
             course: course,
+            type: testType,
+            topic: _test,
             theme: QuizTheme.BLUE,
             time: questions.length * 60,
             name: searchKeyword,
           ),
           questionCount: questions.length,
         );
+
         break;
       default:
         widgetView = null;
@@ -354,8 +369,13 @@ class KnowledgeTestController extends ChangeNotifier {
   }
 
   getTest(
-      BuildContext context, TestCategory testCategory, Course course, User user,
-      {int currentQuestionCount = 0, String searchKeyword = ''}) {
+    BuildContext context,
+    TestCategory testCategory,
+    Course course,
+    User user, {
+    int currentQuestionCount = 0,
+    String searchKeyword = '',
+  }) {
     Future futureList;
     switch (testCategory) {
       case TestCategory.MOCK:
@@ -515,6 +535,7 @@ class KnowledgeTestController extends ChangeNotifier {
                   switch (testCategory) {
                     case TestCategory.NONE:
                       List<Question> questions = data as List<Question>;
+
                       widgetView = KeywordAssessment(
                         quizCover: KeywordQuizCover(
                           user,
