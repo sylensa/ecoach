@@ -854,6 +854,11 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     initialPage: _currentSlide,
                                                     onPageChanged:
                                                         (index, reason) async {
+                                                      if (model
+                                                          .isShowAnalysisBox) {
+                                                        model.isShowAnalysisBox =
+                                                            false;
+                                                      }
                                                       if (isShowAlphaScroll) {
                                                         model.currentAlphabet =
                                                             tests[_currentSlide]
@@ -881,11 +886,12 @@ class KnowledgeTestController extends ChangeNotifier {
                                                         testTakenIndex =
                                                             typeSpecificTestsTaken
                                                                 .indexWhere(
-                                                                    (takenTest) {
-                                                          return takenTest
-                                                                  .topicId ==
-                                                              topicId;
-                                                        });
+                                                          (takenTest) {
+                                                            return takenTest
+                                                                    .topicId ==
+                                                                topicId;
+                                                          },
+                                                        );
                                                         TestController()
                                                             .getAllTestTakenByTopic(
                                                                 topicId!)
