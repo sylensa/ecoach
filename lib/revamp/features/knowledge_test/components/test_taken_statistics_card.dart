@@ -30,7 +30,7 @@ class TestsStatisticCard extends StatefulWidget {
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
   final Future Function(BuildContext context, TestCategory testCategory,
-      TestNameAndCount selectedTopic) getTest;
+      TestNameAndCount selectedTest) getTest;
 
   @override
   State<TestsStatisticCard> createState() => _TestTakenStatisticCardState();
@@ -622,7 +622,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
 
                               await widget.getTest(
                                 context,
-                                TestCategory.TOPIC,
+                                widget.activeMenu,
                                 _test,
                               );
                             },

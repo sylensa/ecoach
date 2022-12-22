@@ -856,9 +856,11 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     initialPage: _currentSlide,
                                                     onPageChanged:
                                                         (index, reason) {
-                                                      model.currentAlphabet =
-                                                          tests[_currentSlide]
-                                                              .name[0];
+                                                      if (isShowAlphaScroll) {
+                                                        model.currentAlphabet =
+                                                            tests[_currentSlide]
+                                                                .name[0];
+                                                      }
                                                     },
                                                   ),
                                                   itemCount: tests.length,
@@ -1318,7 +1320,6 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
-                                                        _currentSlide = 0;
                                                         if (activeMenu !=
                                                             TestCategory
                                                                 .TOPIC) {
@@ -1326,6 +1327,12 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               TestCategory
                                                                   .TOPIC;
                                                           if (sheetHeightIncreased) {
+                                                            if (_currentSlide !=
+                                                                0) {
+                                                              alphaSliderToStatisticsCardController
+                                                                  .animateToPage(
+                                                                      0);
+                                                            }
                                                             tests =
                                                                 await getTest(
                                                               context,
@@ -1435,14 +1442,17 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
-                                                        _currentSlide = 0;
                                                         if (activeMenu !=
                                                             TestCategory.EXAM) {
                                                           activeMenu =
                                                               TestCategory.EXAM;
-                                                          selectedMenu =
-                                                              TestCategory.EXAM;
                                                           if (sheetHeightIncreased) {
+                                                            if (_currentSlide !=
+                                                                0) {
+                                                              alphaSliderToStatisticsCardController
+                                                                  .animateToPage(
+                                                                      0);
+                                                            }
                                                             tests =
                                                                 await getTest(
                                                               context,
@@ -1584,8 +1594,6 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       },
                                                       padding: EdgeInsets.zero,
                                                       child: Container(
-                                                        // padding: EdgeInsets.only(
-                                                        //     top: 10, bottom: 10, left: 0),
                                                         child: Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -1609,9 +1617,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                       ),
                                                     ),
                                                     MaterialButton(
-                                                      onPressed: () {
-                                                        // getTest(context, TestCategory.ESSAY);
-                                                      },
+                                                      onPressed: () {},
                                                       padding: EdgeInsets.zero,
                                                       child: Container(
                                                         child: Column(
