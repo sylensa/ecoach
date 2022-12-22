@@ -15,7 +15,7 @@ class AnalyticsTable extends StatelessWidget {
     return DataTable2(
       columnSpacing: 16,
       horizontalMargin: 0,
-      headingRowHeight: 48,
+      headingRowHeight: 30,
       minWidth: 200,
       headingTextStyle: TextStyle(
         fontSize: 12,
@@ -45,9 +45,11 @@ class AnalyticsTable extends StatelessWidget {
         (index) => DataRow(
           cells: [
             DataCell(Text(testsTaken[index].testname!.toCapitalized())),
-            DataCell(Text(
-              "${testsTaken[index].correct!}/${testsTaken[index].totalQuestions}",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            DataCell(Center(
+              child: Text(
+                "${testsTaken[index].correct!}/${testsTaken[index].totalQuestions}",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             )),
             DataCell(
               AdeoSignalStrengthIndicator(

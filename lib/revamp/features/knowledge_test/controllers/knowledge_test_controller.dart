@@ -174,6 +174,8 @@ class KnowledgeTestController extends ChangeNotifier {
     'Z': []
   };
   List<TestTaken> typeSpecificTestsTaken = [];
+  List<TestTaken> allTestsTakenForAnalysis = [];
+
   late int testTakenIndex;
   late TestTaken? testTaken = null;
   late bool isTestTaken = false;
@@ -575,6 +577,14 @@ class KnowledgeTestController extends ChangeNotifier {
     );
   }
 
+  getAllTestTakenByTopic(int topicId) async {
+    await TestController().getAllTestTakenByTopic(topicId).then(
+      (topicTestsTaken) {
+        allTestsTakenForAnalysis = topicTestsTaken;
+      },
+    );
+  }
+
   knowledgeTestModalBottomSheet(context, {Course? course, User? user}) async {
     TextEditingController searchKeywordController = TextEditingController();
     String searchKeyword = '';
@@ -617,7 +627,6 @@ class KnowledgeTestController extends ChangeNotifier {
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
     List<dynamic> tests = [];
-    List<TestTaken> allTestsTakenForAnalysis = [];
     dynamic test;
 
     List<String> scrollListAlphabets = [];
@@ -883,6 +892,9 @@ class KnowledgeTestController extends ChangeNotifier {
                                                         topicId =
                                                             tests[_currentSlide]
                                                                 .id;
+                                                        getAllTestTakenByTopic(
+                                                            topicId!);
+                                                            
                                                         testTakenIndex =
                                                             typeSpecificTestsTaken
                                                                 .indexWhere(
@@ -890,15 +902,6 @@ class KnowledgeTestController extends ChangeNotifier {
                                                             return takenTest
                                                                     .topicId ==
                                                                 topicId;
-                                                          },
-                                                        );
-                                                        TestController()
-                                                            .getAllTestTakenByTopic(
-                                                                topicId!)
-                                                            .then(
-                                                          (topicTestsTaken) {
-                                                            allTestsTakenForAnalysis =
-                                                                topicTestsTaken;
                                                           },
                                                         );
 
