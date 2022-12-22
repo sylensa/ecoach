@@ -45,8 +45,8 @@ class TestTakenDB {
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
     result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken where course_id = $courseId group by test_name");
-    print("result test_name:${result.last["test_name"]}");
-    print("result:${result.length}");
+    // print("result test_name:${result.last["test_name"]}");
+    // print("result:${result.length}");
     List<TestTaken> tests = [];
 
     for (int i = 0; i < result.length; i++) {

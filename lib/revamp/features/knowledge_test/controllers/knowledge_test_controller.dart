@@ -216,8 +216,7 @@ class KnowledgeTestController extends ChangeNotifier {
     print("Tests taken: ${testsTaken.length}");
     if (typeSpecificTestsTaken.length > 0) {
       testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
-        // Find a better way to get the topicId for a testTaken //
-        return jsonDecode(takenTest.responses)["Q1"]["topic_id"] == topicId;
+        return takenTest.topicId == topicId;
       });
 
       if (testTakenIndex != -1) {
