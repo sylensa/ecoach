@@ -38,13 +38,32 @@ class TestTakenDB {
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
   }
 
+  Future<List<TestTaken>> keywordTestsTakenByTopic(int topicId) async {
+    final Database? db = await DBProvider.database;
+    List<Map<String, dynamic>> results = [];
+
+    results = await db!.query('keyword_test_taken',
+        orderBy: "created_at DESC",
+        where: "topic_id = ?",
+        whereArgs: [topicId]);
+
+    List<TestTaken> tests = [];
+    for (int i = 0; i < results.length; i++) {
+      TestTaken test = TestTaken.fromJson(results[i]);
+      // print(test.toJson().toString().substring(0, 100));
+      tests.add(test);
+    }
+    return tests;
+  }
+
   Future<List<TestTaken>> getKeywordTestTaken(int courseId) async {
     List<Map<String, dynamic>> result = [];
     List<Map<String, dynamic>> response = [];
     List<Map<String, dynamic>> responseTotalQuestion = [];
     final db = await DBProvider.database;
     // var result = await db!.rawQuery("select keyword_test_taken");
-    result = await db!.rawQuery("Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken where course_id = $courseId group by test_name");
+    result = await db!.rawQuery(
+        "Select *, SUM(score) as avg_score, count(*) total_test_taken,SUM(correct) correct,SUM(wrong) wrong,unattempted from keyword_test_taken where course_id = $courseId group by test_name");
     // print("result test_name:${result.last["test_name"]}");
     // print("result:${result.length}");
     List<TestTaken> tests = [];

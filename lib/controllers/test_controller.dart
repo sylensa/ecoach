@@ -135,13 +135,15 @@ class TestController {
     return QuizDB().getQuestions(quizId, limit!);
   }
 
-  Future<List<Question>> getKeywordQuestions(String keyword,int courseId,{int currentQuestionCount = 0}) {
-    return QuestionDB().getQuestionByKeyword(keyword.toLowerCase(),courseId,currentQuestionCount: currentQuestionCount);
+  Future<List<Question>> getKeywordQuestions(String keyword, int courseId,
+      {int currentQuestionCount = 0}) {
+    return QuestionDB().getQuestionByKeyword(keyword.toLowerCase(), courseId,
+        currentQuestionCount: currentQuestionCount);
   }
 
-
-  Future<List<Question>> getTotalKeywordQuestions(String keyword, int courseId) {
-    return QuestionDB().getTotalQuestionByKeyword(keyword,courseId);
+  Future<List<Question>> getTotalKeywordQuestions(
+      String keyword, int courseId) {
+    return QuestionDB().getTotalQuestionByKeyword(keyword, courseId);
   }
 
   Future<List<Question>> getMockQuestions(int courseId, {int? limit = 40}) {
@@ -466,7 +468,11 @@ class TestController {
   Future<List<TestTaken>> getTestTaken(String tag) {
     return TestTakenDB().courseTestsTaken(courseId: int.parse(tag));
   }
-  
+
+  Future<List<TestTaken>> getAllTestTakenByTopic(int topicId) {
+    return TestTakenDB().keywordTestsTakenByTopic(topicId);
+  }
+
   Future<List<TestTaken>> keywordTestsTaken(int courseId, {int? topicId}) {
     return TestTakenDB().getKeywordTestTaken(courseId);
   }
@@ -489,6 +495,7 @@ class TestController {
     Treadmill? treadmill = await TreadmillDB().getCurrentTreadmill(course);
     return treadmill;
   }
+
   Future<List<Treadmill>> getOngoingTreadmill() async {
     List<Treadmill> treadmills = await TreadmillDB().getOngoingTreadmill();
     return treadmills;

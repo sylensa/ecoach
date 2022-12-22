@@ -1,9 +1,14 @@
-
-import 'package:data_table_2/paginated_data_table_2.dart';
+// import 'package:data_table_2/paginated_data_table_2.dart';
+import 'package:data_table_2/data_table_2.dart';
+import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/utils/manip.dart';
+import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:flutter/material.dart';
 
 class AnalyticsTable extends StatelessWidget {
-  AnalyticsTable({Key? key}) : super(key: key);
+  AnalyticsTable({Key? key, required this.testsTaken}) : super(key: key);
+  final List<TestTaken> testsTaken;
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +41,20 @@ class AnalyticsTable extends StatelessWidget {
         ),
       ],
       rows: List<DataRow>.generate(
-        5,
+        testsTaken.length,
         (index) => DataRow(
           cells: [
-            DataCell(Text('A' * (10 - index % 10))),
-            DataCell(Text('B' * (10 - (index + 5) % 10))),
-            DataCell(Text('C' * (15 - (index + 5) % 10))),
+            DataCell(Text(testsTaken[index].testname!.toCapitalized())),
+            DataCell(Text(
+              "${testsTaken[index].correct!}/${testsTaken[index].totalQuestions}",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )),
+            DataCell(
+              AdeoSignalStrengthIndicator(
+                strength: testsTaken[index].score!,
+                size: Sizes.small,
+              ),
+            ),
           ],
         ),
       ),

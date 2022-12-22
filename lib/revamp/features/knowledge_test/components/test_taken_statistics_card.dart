@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
@@ -21,9 +22,11 @@ class TestsStatisticCard extends StatefulWidget {
     this.activeMenu = TestCategory.NONE,
     this.testTaken,
     this.isTestTaken = false,
+    this.allTestsTakenForAnalysis,
   }) : super(key: key);
 
   final TestTaken? testTaken;
+  final List<TestTaken>? allTestsTakenForAnalysis;
   final dynamic test;
   final bool showGraph;
   final bool isTestTaken;
@@ -50,7 +53,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   late dynamic _test;
   late bool isTestTaken;
   late bool smallHeightDevice;
-  late int? topicId;
+  late List<TestTaken>? testsTakenByTopic = [];
   late TestTaken? testTaken;
 
   @override
@@ -107,6 +110,17 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
     final degrees90 = math.pi / 2;
     final degrees270 = 3 * math.pi / 2;
     return angle <= degrees90 || angle >= degrees270;
+  }
+
+  void toggleAnalysis() async {
+    widget.knowledgeTestControllerModel.isShowAnalysisBox =
+        !widget.knowledgeTestControllerModel.isShowAnalysisBox;
+
+    analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
+        ? TestCategory.TOPIC
+        : TestCategory.NONE;
+   
+    setState(() {});
   }
 
   @override
@@ -277,7 +291,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                     curve: Curves.linearToEaseOut,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: AnalyticsTable(),
+                                      child: AnalyticsTable(
+                                        testsTaken: widget.allTestsTakenForAnalysis!,
+                                      ),
                                     ),
                                   ),
                                 )
@@ -655,17 +671,6 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   void dispose() {
     super.dispose();
     animationController.dispose();
-  }
-
-  void toggleAnalysis() {
-    setState(() {
-      widget.knowledgeTestControllerModel.isShowAnalysisBox =
-          !widget.knowledgeTestControllerModel.isShowAnalysisBox;
-
-      analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
-          ? TestCategory.TOPIC
-          : TestCategory.NONE;
-    });
   }
 }
 

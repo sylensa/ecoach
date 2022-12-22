@@ -617,6 +617,7 @@ class KnowledgeTestController extends ChangeNotifier {
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
     List<dynamic> tests = [];
+    List<TestTaken> allTestsTakenForAnalysis = [];
     dynamic test;
 
     List<String> scrollListAlphabets = [];
@@ -654,8 +655,7 @@ class KnowledgeTestController extends ChangeNotifier {
                           stateSetter(() {
                             _currentSlide = 0;
                           });
-                          // testsTaken = await TestController()
-                          //     .getTestTaken(course!.id!.toString());
+
                           if (!sheetHeightIncreased) {
                             switch (activeMenu) {
                               case TestCategory.TOPIC:
@@ -668,7 +668,6 @@ class KnowledgeTestController extends ChangeNotifier {
                                   course!,
                                   user!,
                                 );
-                                // test = tests[_currentSlide];
 
                                 emptyTestList = tests.isEmpty;
                                 currentAlphabet = tests.first.name[0];
@@ -702,7 +701,6 @@ class KnowledgeTestController extends ChangeNotifier {
                                   course!,
                                   user!,
                                 );
-                                // test = tests[_currentSlide];
                                 emptyTestList = tests.isEmpty;
                                 currentAlphabet = tests.first.name[0];
                                 topicId = tests[_currentSlide].id;
@@ -855,7 +853,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     pageSnapping: true,
                                                     initialPage: _currentSlide,
                                                     onPageChanged:
-                                                        (index, reason) {
+                                                        (index, reason) async {
                                                       if (isShowAlphaScroll) {
                                                         model.currentAlphabet =
                                                             tests[_currentSlide]
@@ -870,7 +868,11 @@ class KnowledgeTestController extends ChangeNotifier {
                                                           int pageViewIndex) {
                                                     _currentSlide = itemIndex;
 
-                                                    test = tests[_currentSlide];
+                                                    if (tests.isNotEmpty) {
+                                                      test =
+                                                          tests[_currentSlide];
+                                                    }
+
                                                     switch (activeMenu) {
                                                       case TestCategory.TOPIC:
                                                         topicId =
@@ -884,6 +886,16 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                   .topicId ==
                                                               topicId;
                                                         });
+                                                        TestController()
+                                                            .getAllTestTakenByTopic(
+                                                                topicId!)
+                                                            .then(
+                                                          (topicTestsTaken) {
+                                                            allTestsTakenForAnalysis =
+                                                                topicTestsTaken;
+                                                          },
+                                                        );
+
                                                         if (testTakenIndex !=
                                                             -1) {
                                                           isTestTaken = true;
@@ -912,11 +924,12 @@ class KnowledgeTestController extends ChangeNotifier {
                                                         break;
                                                     }
 
-                                                    // stateSetter(() {});
                                                     return TestsStatisticCard(
                                                       test: test,
                                                       isTestTaken: isTestTaken,
                                                       testTaken: testTaken,
+                                                      allTestsTakenForAnalysis:
+                                                          allTestsTakenForAnalysis,
                                                       showGraph: showGraph,
                                                       activeMenu: activeMenu,
                                                       knowledgeTestControllerModel:
