@@ -617,6 +617,7 @@ class KnowledgeTestController extends ChangeNotifier {
     sheetHeight = smallHeightDevice ? 500 : appHeight(context) * 0.56;
     bool isActiveTopicMenu = false;
     List<dynamic> tests = [];
+    dynamic test;
 
     List<String> scrollListAlphabets = [];
 
@@ -650,9 +651,11 @@ class KnowledgeTestController extends ChangeNotifier {
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         height: sheetHeight,
                         onEnd: (() async {
-                          testsTaken = await TestController()
-                              .getTestTaken(course!.id!.toString());
-
+                          stateSetter(() {
+                            _currentSlide = 0;
+                          });
+                          // testsTaken = await TestController()
+                          //     .getTestTaken(course!.id!.toString());
                           if (!sheetHeightIncreased) {
                             switch (activeMenu) {
                               case TestCategory.TOPIC:
@@ -662,9 +665,11 @@ class KnowledgeTestController extends ChangeNotifier {
                                 tests = await getTest(
                                   context,
                                   TestCategory.TOPIC,
-                                  course,
+                                  course!,
                                   user!,
                                 );
+                                // test = tests[_currentSlide];
+
                                 emptyTestList = tests.isEmpty;
                                 currentAlphabet = tests.first.name[0];
                                 topicId = tests[_currentSlide].id;
@@ -694,9 +699,10 @@ class KnowledgeTestController extends ChangeNotifier {
                                 tests = await getTest(
                                   context,
                                   TestCategory.EXAM,
-                                  course,
+                                  course!,
                                   user!,
                                 );
+                                // test = tests[_currentSlide];
                                 emptyTestList = tests.isEmpty;
                                 currentAlphabet = tests.first.name[0];
                                 topicId = tests[_currentSlide].id;
@@ -738,8 +744,8 @@ class KnowledgeTestController extends ChangeNotifier {
                                 // sheetHeightIncreased = false;
                                 break;
                             }
+                            stateSetter(() {});
                           }
-                          stateSetter(() {});
                         }),
                         decoration: BoxDecoration(
                           color: kAdeoGray4,
@@ -850,66 +856,63 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     initialPage: _currentSlide,
                                                     onPageChanged:
                                                         (index, reason) {
-                                                      _currentSlide = index;
                                                       model.currentAlphabet =
                                                           tests[_currentSlide]
                                                               .name[0];
-
-                                                      switch (activeMenu) {
-                                                        case TestCategory.TOPIC:
-                                                          topicId = tests[
-                                                                  _currentSlide]
-                                                              .id;
-                                                          testTakenIndex =
-                                                              typeSpecificTestsTaken
-                                                                  .indexWhere(
-                                                                      (takenTest) {
-                                                            return jsonDecode(
-                                                                        takenTest
-                                                                            .responses)["Q1"]
-                                                                    [
-                                                                    "topic_id"] ==
-                                                                topicId;
-                                                          });
-                                                          if (testTakenIndex !=
-                                                              -1) {
-                                                            isTestTaken = true;
-                                                            testTaken =
-                                                                typeSpecificTestsTaken[
-                                                                    testTakenIndex];
-                                                          } else {
-                                                            isTestTaken = false;
-                                                          }
-
-                                                          break;
-                                                        case TestCategory.EXAM:
-                                                          break;
-                                                        case TestCategory.MOCK:
-                                                          break;
-                                                        case TestCategory.ESSAY:
-                                                          break;
-                                                        case TestCategory.SAVED:
-                                                          break;
-                                                        case TestCategory.BANK:
-                                                          break;
-                                                        case TestCategory.NONE:
-                                                          break;
-                                                        default:
-                                                          // sheetHeightIncreased = false;
-                                                          break;
-                                                      }
-                                                      ;
-
-                                                      stateSetter(() {});
                                                     },
                                                   ),
                                                   itemCount: tests.length,
                                                   itemBuilder:
                                                       (BuildContext context,
-                                                          int indexReport,
-                                                          int index2) {
+                                                          int itemIndex,
+                                                          int pageViewIndex) {
+                                                    _currentSlide = itemIndex;
+
+                                                    test = tests[_currentSlide];
+                                                    switch (activeMenu) {
+                                                      case TestCategory.TOPIC:
+                                                        topicId =
+                                                            tests[_currentSlide]
+                                                                .id;
+                                                        testTakenIndex =
+                                                            typeSpecificTestsTaken
+                                                                .indexWhere(
+                                                                    (takenTest) {
+                                                          return takenTest
+                                                                  .topicId ==
+                                                              topicId;
+                                                        });
+                                                        if (testTakenIndex !=
+                                                            -1) {
+                                                          isTestTaken = true;
+                                                          testTaken =
+                                                              typeSpecificTestsTaken[
+                                                                  testTakenIndex];
+                                                        } else {
+                                                          isTestTaken = false;
+                                                        }
+
+                                                        break;
+                                                      case TestCategory.EXAM:
+                                                        break;
+                                                      case TestCategory.MOCK:
+                                                        break;
+                                                      case TestCategory.ESSAY:
+                                                        break;
+                                                      case TestCategory.SAVED:
+                                                        break;
+                                                      case TestCategory.BANK:
+                                                        break;
+                                                      case TestCategory.NONE:
+                                                        break;
+                                                      default:
+                                                        // sheetHeightIncreased = false;
+                                                        break;
+                                                    }
+
+                                                    // stateSetter(() {});
                                                     return TestsStatisticCard(
-                                                      test: tests[indexReport],
+                                                      test: test,
                                                       isTestTaken: isTestTaken,
                                                       testTaken: testTaken,
                                                       showGraph: showGraph,
@@ -1315,6 +1318,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
+                                                        _currentSlide = 0;
                                                         if (activeMenu !=
                                                             TestCategory
                                                                 .TOPIC) {
@@ -1332,6 +1336,7 @@ class KnowledgeTestController extends ChangeNotifier {
 
                                                             topicId =
                                                                 tests[0].id;
+                                                            test = tests[0];
 
                                                             await filterAndSetKnowledgeTestsTaken(
                                                               testCategory:
@@ -1430,6 +1435,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     ),
                                                     MaterialButton(
                                                       onPressed: () async {
+                                                        _currentSlide = 0;
                                                         if (activeMenu !=
                                                             TestCategory.EXAM) {
                                                           activeMenu =
@@ -1447,6 +1453,7 @@ class KnowledgeTestController extends ChangeNotifier {
 
                                                             topicId =
                                                                 tests[0].id;
+                                                            test = tests[0];
 
                                                             await filterAndSetKnowledgeTestsTaken(
                                                               testCategory:

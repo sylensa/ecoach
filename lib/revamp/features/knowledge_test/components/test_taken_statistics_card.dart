@@ -72,7 +72,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
         activeMenuIcon += "mock.png";
         break;
       case TestCategory.EXAM:
-        activeMenuIcon += "bank.png";
+        activeMenuIcon += "exam.png";
         break;
       case TestCategory.ESSAY:
         activeMenuIcon += "essay.png";
@@ -84,7 +84,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
         activeMenuIcon += "bank.png";
         break;
       case TestCategory.NONE:
-        activeMenuIcon = "";
+        activeMenuIcon += "topic.png";
         break;
       default:
         activeMenuIcon = "";
