@@ -43,7 +43,6 @@ class TestTakenDB {
     List<Map<String, dynamic>> results = [];
 
     results = await db!.query('keyword_test_taken',
-        orderBy: "created_at DESC",
         where: "topic_id = ?",
         whereArgs: [topicId]);
 

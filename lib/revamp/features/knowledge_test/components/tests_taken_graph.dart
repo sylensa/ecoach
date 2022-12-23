@@ -192,7 +192,6 @@ class _TestTakenGraphState extends State<TestTakenGraph> {
                           bottomTitles: SideTitles(
                             showTitles: true,
                             getTitles: (double value) {
-                              debugPrint(value.toInt().toString());
                               return value.toInt().toString();
                               // return widget
                               //     .testData![(value - 1).toInt()].testname!;

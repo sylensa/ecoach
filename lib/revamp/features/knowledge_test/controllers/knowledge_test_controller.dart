@@ -210,7 +210,7 @@ class KnowledgeTestController extends ChangeNotifier {
   }) async {
     testsTaken =
         await TestController().keywordTestsTaken(course.id!, topicId: topicId);
-    // testsTaken = await TestController().getTestTaken(course.id!.toString());
+
     typeSpecificTestsTaken = testsTaken
         .where((element) =>
             element.challengeType == testCategory.toString() &&
