@@ -208,16 +208,14 @@ class KnowledgeTestController extends ChangeNotifier {
     required int topicId,
     required TestCategory testCategory,
   }) async {
-    testsTaken =
-        await TestController().keywordTestsTaken(course.id!, topicId: topicId);
+    testsTaken = await TestController().keywordTestsTaken(course.id!);
 
-    typeSpecificTestsTaken = testsTaken
+    typeSpecificTestsTaken = await testsTaken
         .where((element) =>
             element.challengeType == testCategory.toString() &&
             element.testType == testType.toString())
         .toList();
 
-    print("Tests taken: ${testsTaken.length}");
     if (typeSpecificTestsTaken.length > 0) {
       testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
         return takenTest.topicId == topicId;
@@ -1350,60 +1348,59 @@ class KnowledgeTestController extends ChangeNotifier {
                                                           activeMenu =
                                                               TestCategory
                                                                   .TOPIC;
-                                                          if (sheetHeightIncreased) {
-                                                            if (_currentSlide !=
-                                                                0) {
-                                                              alphaSliderToStatisticsCardController
-                                                                  .animateToPage(
-                                                                      0);
-                                                            }
-                                                            tests =
-                                                                await getTest(
-                                                              context,
-                                                              activeMenu,
-                                                              course!,
-                                                              user!,
-                                                            );
 
-                                                            if (tests
-                                                                .isNotEmpty) {
-                                                              topicId = tests
-                                                                  .first.id;
-                                                              test =
-                                                                  tests.first;
-                                                              await filterAndSetKnowledgeTestsTaken(
-                                                                testCategory:
-                                                                    activeMenu,
-                                                                course: course,
-                                                                topicId:
-                                                                    topicId!,
-                                                              );
-                                                            }
-
-                                                            // stateSetter(() {});
-
-                                                            emptyTestList =
-                                                                tests.isEmpty;
-                                                            currentAlphabet =
-                                                                tests.first
-                                                                    .name[0];
-
-                                                            if (!emptyTestList) {
-                                                              scrollListAlphabets =
-                                                                  tests
-                                                                      .map(
-                                                                          (topic) {
-                                                                        return topic
-                                                                            .name[0]
-                                                                            .toString()
-                                                                            .toUpperCase();
-                                                                      })
-                                                                      .toSet()
-                                                                      .toList();
-                                                              scrollListAlphabets
-                                                                  .sort();
-                                                            }
+                                                          if (_currentSlide !=
+                                                              0) {
+                                                            alphaSliderToStatisticsCardController
+                                                                .animateToPage(
+                                                                    0);
                                                           }
+                                                          tests = await getTest(
+                                                            context,
+                                                            activeMenu,
+                                                            course!,
+                                                            user!,
+                                                          );
+
+                                                          if (tests
+                                                              .isNotEmpty) {
+                                                            topicId =
+                                                                tests.first.id;
+                                                            test = tests.first;
+
+                                                            await filterAndSetKnowledgeTestsTaken(
+                                                              testCategory:
+                                                                  activeMenu,
+                                                              course: course,
+                                                              topicId: topicId!,
+                                                            );
+                                                          }
+
+                                                          // stateSetter(() {});
+
+                                                          emptyTestList =
+                                                              tests.isEmpty;
+                                                          currentAlphabet =
+                                                              tests.first
+                                                                  .name[0];
+
+                                                          if (!emptyTestList) {
+                                                            scrollListAlphabets =
+                                                                tests
+                                                                    .map(
+                                                                        (topic) {
+                                                                      return topic
+                                                                          .name[
+                                                                              0]
+                                                                          .toString()
+                                                                          .toUpperCase();
+                                                                    })
+                                                                    .toSet()
+                                                                    .toList();
+                                                            scrollListAlphabets
+                                                                .sort();
+                                                          }
+
                                                           openKnowledgeTestMenus(
                                                               context,
                                                               smallHeightDevice,

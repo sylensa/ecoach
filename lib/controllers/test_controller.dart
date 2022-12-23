@@ -473,7 +473,7 @@ class TestController {
     return TestTakenDB().keywordTestsTakenByTopic(topicId);
   }
 
-  Future<List<TestTaken>> keywordTestsTaken(int courseId, {int? topicId}) {
+  Future<List<TestTaken>> keywordTestsTaken(int courseId) {
     return TestTakenDB().getKeywordTestTaken(courseId);
   }
 

@@ -148,7 +148,10 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         for (int i = 0; i < keywordTestTaken.length; i++) {
           if (keywordTestTaken[i].testname!.toLowerCase() ==
               searchKeyword.toLowerCase()) {
-            futureList = TestController().getKeywordQuestions(searchKeyword.toLowerCase(), widget.course.id!, currentQuestionCount: keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+            futureList = TestController().getKeywordQuestions(
+                searchKeyword.toLowerCase(), widget.course.id!,
+                currentQuestionCount:
+                    keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
             futureList.then(
               (data) async {
                 Navigator.pop(context);
@@ -1267,7 +1270,8 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
               // knowledgeTestModalBottomSheet(context);
               KnowledgeTestController knowledgeTestController =
                   KnowledgeTestController();
-                  knowledgeTestController.listCourseKeywordsData = widget.listCourseKeywordsData;
+              knowledgeTestController.listCourseKeywordsData =
+                  widget.listCourseKeywordsData;
 
               knowledgeTestController.knowledgeTestModalBottomSheet(context,
                   course: widget.course, user: widget.user);
@@ -1281,18 +1285,6 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                     bundle: widget.subscription,
                   ));
             }
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) {
-            //       return TestChallengeList(
-            //         testType: TestType.KNOWLEDGE,
-            //         course: widget.course,
-            //         user: widget.user,
-            //       );
-            //     },
-            //   ),
-            // );
           },
         ),
         MultiPurposeCourseCard(
