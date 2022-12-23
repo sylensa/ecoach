@@ -10,6 +10,7 @@ import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_quiz_view.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,7 +34,7 @@ class GlossaryInstruction extends StatefulWidget {
 }
 
 class _GlossaryInstructionState extends State<GlossaryInstruction> {
-
+  bool isViewed = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,7 +158,9 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                 List<GlossaryData> listGlossaryData = [];
                 List topicIds = [];
                print("isTopicSelected:$isTopicSelected");
-                widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
+               if(isViewed){
+                 widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
+               }
                 if(isTopicSelected){
                   // await GlossaryDB().deleteAllGlossaryTopic();
                   // await GlossaryDB().deleteAll();
@@ -176,7 +179,17 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                 if(listGlossaryData.isEmpty){
                   toastMessage("No glossary for this course");
                 }else{
-                  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                  if(studySelected){
+                  await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: null,));
+                  setState(() {
+                    isViewed = true;
+                  });
+                  }else{
+                 await   Get.to(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                 setState(() {
+                   isViewed = true;
+                 });
+                  }
                 }
 
               },

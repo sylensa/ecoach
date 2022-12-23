@@ -79,7 +79,7 @@ class GlossaryWidget extends StatefulWidget {
 }
 
 class _GlossaryWidgetState extends State<GlossaryWidget> {
- var studySelected;
+
  var continueSelected;
  var scoreSelected;
 
@@ -155,7 +155,10 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                           stateSetter(() {
                             studySelected = true;
                           });
+                          Navigator.pop(context);
+
                           continueRestartModalBottomSheet(context);
+
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -176,6 +179,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                           stateSetter(() {
                             studySelected = false;
                           });
+                          Navigator.pop(context);
                           scoreNonScoreModalBottomSheet(context);
                         },
                         child: Container(
@@ -297,7 +301,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            continueSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: null,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -388,11 +392,11 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
 
                      MaterialButton(
                        onPressed: (){
+                         print("object");
                          stateSetter(() {
                            scoreSelected = true;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
-                       },
+                         continueRestartModalBottomSheet(context);                       },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -412,8 +416,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            scoreSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
-                       },
+                         continueRestartModalBottomSheet(context);
+                         },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
