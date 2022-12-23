@@ -894,7 +894,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                                 .id;
                                                         getAllTestTakenByTopic(
                                                             topicId!);
-                                                            
+
                                                         testTakenIndex =
                                                             typeSpecificTestsTaken
                                                                 .indexWhere(
@@ -934,6 +934,7 @@ class KnowledgeTestController extends ChangeNotifier {
                                                     }
 
                                                     return TestsStatisticCard(
+                                                      course: course!,
                                                       test: test,
                                                       isTestTaken: isTestTaken,
                                                       testTaken: testTaken,
@@ -951,13 +952,14 @@ class KnowledgeTestController extends ChangeNotifier {
                                                             selectedTopic,
                                                       ) async {
                                                         goToInstructions(
-                                                            context,
-                                                            selectedTopic,
-                                                            testCategory,
-                                                            user!,
-                                                            course!,
-                                                            searchKeyword:
-                                                                searchKeyword);
+                                                          context,
+                                                          selectedTopic,
+                                                          testCategory,
+                                                          user!,
+                                                          course,
+                                                          searchKeyword:
+                                                              searchKeyword,
+                                                        );
                                                       },
                                                     );
                                                   }),
@@ -1363,22 +1365,22 @@ class KnowledgeTestController extends ChangeNotifier {
                                                               user!,
                                                             );
 
-                                                            topicId =
-                                                                tests[0].id;
-                                                            test = tests[0];
+                                                            if (tests
+                                                                .isNotEmpty) {
+                                                              topicId = tests
+                                                                  .first.id;
+                                                              test =
+                                                                  tests.first;
+                                                              await filterAndSetKnowledgeTestsTaken(
+                                                                testCategory:
+                                                                    activeMenu,
+                                                                course: course,
+                                                                topicId:
+                                                                    topicId!,
+                                                              );
+                                                            }
 
-                                                            await filterAndSetKnowledgeTestsTaken(
-                                                              testCategory:
-                                                                  activeMenu,
-                                                              course: course,
-                                                              topicId: topicId!,
-                                                            );
-                                                            stateSetter(() {});
-
-                                                            // isActiveTopicMenu =
-                                                            //     true;
-                                                            // isActiveAnyMenu =
-                                                            //     true;
+                                                            // stateSetter(() {});
 
                                                             emptyTestList =
                                                                 tests.isEmpty;
