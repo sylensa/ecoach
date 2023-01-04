@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/main_controller.dart';
 import 'package:ecoach/controllers/performance_gragh.dart';
@@ -538,7 +540,7 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
         });
   }
 
-  knowledgeTestModalBottomSheet(
+  openKnowledgeTestBottomSheet(
     context,
   ) async {
     if (widget.listCourseKeywordsData.isNotEmpty) {
@@ -1267,14 +1269,14 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
             List<Question> questions =
                 await QuestionDB().getQuestionsByCourseId(widget.course.id!);
             if (questions.isNotEmpty) {
-              // knowledgeTestModalBottomSheet(context);
-              KnowledgeTestController knowledgeTestController =
-                  KnowledgeTestController();
-              knowledgeTestController.listCourseKeywordsData =
-                  widget.listCourseKeywordsData;
+              // openKnowledgeTestBottomSheet(context);
 
-              knowledgeTestController.knowledgeTestModalBottomSheet(context,
-                  course: widget.course, user: widget.user);
+              KnowledgeTestController().openKnowledgeTestBottomSheet(
+                context,
+                course: widget.course,
+                user: widget.user,
+                listCourseKeywordsData: widget.listCourseKeywordsData,
+              );
             } else {
               showDialogYesNo(
                   context: context,
@@ -1599,3 +1601,4 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
 //     );
 //   }
 // }
+
