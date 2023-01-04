@@ -34,12 +34,14 @@ class KnowledgeTestBottomSheet extends StatefulWidget {
 }
 
 class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   late Course _course;
   late User _user;
   late bool smallHeightDevice;
   late int? topicId;
-  KnowledgeTestController _knowledgeTestController = KnowledgeTestController();
+
   TextEditingController searchKeywordController = TextEditingController();
+  KnowledgeTestController _knowledgeTestController = KnowledgeTestController();
   int _currentSlide = 0;
   String searchKeyword = '';
   bool isActiveTopicMenu = false;
@@ -47,8 +49,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
   List<String> scrollListAlphabets = [];
   List<dynamic> tests = [];
   List<CourseKeywords> _listCourseKeywordsData = [];
-  List<Question> listQuestions = [];
-
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [],
     'B': [],
@@ -133,7 +133,27 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
     super.initState();
   }
 
-  runKeywordSearch(String value) {}
+  runKeywordSearch(String keyword, KnowledgeTestControllerModel model) async {
+    if (keyword.isNotEmpty) {
+      for (int i = 0; i < keywordTestTaken.length; i++) {
+        if (keywordTestTaken[i].testname!.toLowerCase() ==
+            keyword.toLowerCase()) {
+          model.listQuestions = await TestController().getKeywordQuestions(
+              keyword.toLowerCase(), _course.id!,
+              currentQuestionCount:
+                  keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
+          setState(() {});
+          return;
+        }
+      }
+    }
+    if (keyword.isNotEmpty) {
+      model.listQuestions = await TestController().getKeywordQuestions(
+          keyword.toLowerCase(), _course.id!,
+          currentQuestionCount: 0);
+    }
+    setState(() {});
+  }
 
   @override
   void didChangeDependencies() {
@@ -141,6 +161,12 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
     _knowledgeTestController.sheetHeight =
         smallHeightDevice ? 500 : appHeight(context) * 0.56;
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    searchKeywordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -523,159 +549,81 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   right: 10,
                                                   top: 0,
                                                 ),
-                                                child:
-                                                    // _knowledgeTestController
-                                                    //         .showKeywordTextField
-                                                    //     ?
-
-                                                    TextFormField(
-                                                  controller:
-                                                      searchKeywordController,
-                                                  onChanged:
-                                                      (String value) async {
-                                                    // setState(() {
-                                                    searchKeyword =
-                                                        value.trim();
-                                                    listQuestions.clear();
-                                                    // });
-
-                                                   
-                                                  },
-                                                  onTap: (() {
-                                                    if (_knowledgeTestController
-                                                            .searchTap ==
-                                                        false) {
-                                                      _knowledgeTestController
-                                                              .sheetHeight =
-                                                          appHeight(context) *
-                                                              0.90;
-                                                      _knowledgeTestController
-                                                              .showKeywordTextField =
-                                                          true;
-                                                      _knowledgeTestController
-                                                              .sheetHeightIncreased =
-                                                          true;
+                                                child: Form(
+                                                  key: _formKey,
+                                                  child: TextField(
+                                                    controller:
+                                                        searchKeywordController,
+                                                    onChanged:
+                                                        (String value) async {
+                                                      searchKeyword =
+                                                          value.trim();
+                                                      model.listQuestions
+                                                          .clear();
+                                                      await runKeywordSearch(
+                                                        searchKeyword,
+                                                        model,
+                                                      );
+                                                    },
+                                                    onTap: (() {
                                                       if (_knowledgeTestController
-                                                          .isActiveAnyMenu) {
-                                                        _knowledgeTestController
-                                                                .activeMenu =
-                                                            TestCategory.NONE;
-                                                        _knowledgeTestController
-                                                                .isActiveAnyMenu =
-                                                            false;
+                                                              .searchTap ==
+                                                          false) {
+                                                        setState(() {
+                                                          _knowledgeTestController
+                                                                  .sheetHeight =
+                                                              appHeight(
+                                                                      context) *
+                                                                  0.90;
+                                                          _knowledgeTestController
+                                                                  .showKeywordTextField =
+                                                              true;
+                                                          _knowledgeTestController
+                                                                  .sheetHeightIncreased =
+                                                              true;
+                                                          if (_knowledgeTestController
+                                                              .isActiveAnyMenu) {
+                                                            _knowledgeTestController
+                                                                    .activeMenu =
+                                                                TestCategory
+                                                                    .NONE;
+                                                            _knowledgeTestController
+                                                                    .isActiveAnyMenu =
+                                                                false;
+                                                          }
+                                                          _knowledgeTestController
+                                                              .searchTap = true;
+                                                        });
                                                       }
-                                                      _knowledgeTestController
-                                                          .searchTap = true;
-                                                      setState(() {});
-                                                    }
-                                                  }),
-                                                  decoration: textDecorSuffix(
-                                                    fillColor:
-                                                        Color(0xFFEEEEEE),
-                                                    showBorder: false,
-                                                    size: 60,
-                                                    icon: IconButton(
-                                                        onPressed: () async {
-                                                          // model.isShowAnalysisBox =
-                                                          //     !model.isShowAnalysisBox;
-
-                                                          await _knowledgeTestController
-                                                              .getTest(
-                                                            context,
-                                                            TestCategory.NONE,
-                                                            _course,
-                                                            _user,
-                                                            searchKeyword:
-                                                                searchKeyword,
-                                                          );
-                                                        },
-                                                        icon: Icon(
-                                                          Icons.search,
-                                                          color: Colors.grey,
-                                                        )),
-                                                    suffIcon: null,
-                                                    label: "Search Keywords",
-                                                    enabled: true,
+                                                    }),
+                                                    decoration: textDecorSuffix(
+                                                      fillColor:
+                                                          Color(0xFFEEEEEE),
+                                                      showBorder: false,
+                                                      size: 60,
+                                                      icon: IconButton(
+                                                          onPressed: () async {
+                                                            await _knowledgeTestController
+                                                                .getTest(
+                                                              context,
+                                                              TestCategory.NONE,
+                                                              _course,
+                                                              _user,
+                                                              searchKeyword:
+                                                                  searchKeyword,
+                                                            );
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.search,
+                                                            color: Colors.grey,
+                                                          )),
+                                                      suffIcon: null,
+                                                      label: "Search Keywords",
+                                                      enabled: true,
+                                                    ),
                                                   ),
-                                                )
-                                                // : GestureDetector(
-                                                //     onTap: (() {
-                                                //       setState(() {
-                                                //         _knowledgeTestController
-                                                //                 .showKeywordTextField =
-                                                //             true;
-                                                //         _knowledgeTestController
-                                                //                 .sheetHeight =
-                                                //             appHeight(
-                                                //                     context) *
-                                                //                 0.90;
-                                                //         _knowledgeTestController
-                                                //                 .sheetHeightIncreased =
-                                                //             true;
-                                                //         _knowledgeTestController
-                                                //                 .searchTap =
-                                                //             true;
-                                                //         if (_knowledgeTestController
-                                                //             .isActiveAnyMenu) {
-                                                //           _knowledgeTestController
-                                                //                   .activeMenu =
-                                                //               TestCategory
-                                                //                   .NONE;
-                                                //           _knowledgeTestController
-                                                //                   .isActiveAnyMenu =
-                                                //               false;
-                                                //         }
-                                                //       });
-                                                //       _knowledgeTestController
-                                                //           .keywordSearchFocusNode
-                                                //           .requestFocus();
-                                                //     }),
-                                                //     child: Container(
-                                                //       padding: EdgeInsets
-                                                //           .symmetric(
-                                                //               horizontal:
-                                                //                   16),
-                                                //       height: 46,
-                                                //       width:
-                                                //           double.maxFinite,
-                                                //       decoration: BoxDecoration(
-                                                //           color: Color(
-                                                //               0xFFEEEEEE),
-                                                //           border: Border.all(
-                                                //               color: Colors
-                                                //                   .grey
-                                                //                   .withOpacity(
-                                                //                       0.3)),
-                                                //           borderRadius:
-                                                //               BorderRadius
-                                                //                   .circular(
-                                                //                       40)),
-                                                //       child: Row(
-                                                //         crossAxisAlignment:
-                                                //             CrossAxisAlignment
-                                                //                 .center,
-                                                //         children: [
-                                                //           Icon(
-                                                //             Icons.search,
-                                                //             color:
-                                                //                 Colors.grey,
-                                                //           ),
-                                                //           SizedBox(
-                                                //             width: 14,
-                                                //           ),
-                                                //           Text(
-                                                //             "Search Keywords",
-                                                //             style:
-                                                //                 TextStyle(
-                                                //               color: Colors
-                                                //                   .grey,
-                                                //             ),
-                                                //           ),
-                                                //         ],
-                                                //       ),
-                                                //     ),
-                                                //   ),
                                                 ),
+                                              ),
                                       ],
                                     ),
                                   ),
@@ -699,144 +647,136 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                             children: [
                                               SingleChildScrollView(
                                                 child: Container(
-                                                  child: listQuestions.isEmpty
-                                                      ? Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            sText(
-                                                                "Most Popular",
-                                                                weight:
-                                                                    FontWeight
-                                                                        .w600),
-                                                            SizedBox(
-                                                              height: 14,
-                                                            ),
-                                                            for (var entry
-                                                                in groupedCourseKeywordsMap
-                                                                    .entries)
-                                                              if (entry.value
-                                                                  .isNotEmpty)
-                                                                Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text(entry
-                                                                        .key),
-                                                                    for (int i =
-                                                                            0;
-                                                                        i <
-                                                                            entry
-                                                                                .value.length;
-                                                                        i++)
-                                                                      if (properCase(
-                                                                              "${entry.value[i].keyword}")
-                                                                          .isNotEmpty)
-                                                                        MaterialButton(
-                                                                          padding:
-                                                                              EdgeInsets.zero,
-                                                                          onPressed:
-                                                                              () async {
-                                                                            await _knowledgeTestController.getTest(
-                                                                              context,
-                                                                              TestCategory.NONE,
-                                                                              _course,
-                                                                              _user,
-                                                                              searchKeyword: "${entry.value[i].keyword}",
-                                                                            );
-                                                                          },
-                                                                          child:
-                                                                              Column(
-                                                                            children: [
-                                                                              Row(
+                                                  child:
+                                                      model.listQuestions
+                                                              .isEmpty
+                                                          ? Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                sText(
+                                                                    "Most Popular",
+                                                                    weight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                                SizedBox(
+                                                                  height: 14,
+                                                                ),
+                                                                for (var entry
+                                                                    in groupedCourseKeywordsMap
+                                                                        .entries)
+                                                                  if (entry
+                                                                      .value
+                                                                      .isNotEmpty)
+                                                                    Column(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(entry
+                                                                            .key),
+                                                                        for (int i =
+                                                                                0;
+                                                                            i < entry.value.length;
+                                                                            i++)
+                                                                          if (properCase("${entry.value[i].keyword}").isNotEmpty)
+                                                                            MaterialButton(
+                                                                              padding: EdgeInsets.zero,
+                                                                              onPressed: () async {
+                                                                                await _knowledgeTestController.getTest(
+                                                                                  context,
+                                                                                  TestCategory.NONE,
+                                                                                  _course,
+                                                                                  _user,
+                                                                                  searchKeyword: "${entry.value[i].keyword}",
+                                                                                );
+                                                                              },
+                                                                              child: Column(
                                                                                 children: [
-                                                                                  Icon(Icons.trending_up),
-                                                                                  SizedBox(
-                                                                                    width: 10,
-                                                                                  ),
-                                                                                  Column(
-                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  Row(
                                                                                     children: [
-                                                                                      sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
-                                                                                      sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
+                                                                                      Icon(Icons.trending_up),
+                                                                                      SizedBox(
+                                                                                        width: 10,
+                                                                                      ),
+                                                                                      Column(
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                        children: [
+                                                                                          sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
+                                                                                          sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
+                                                                                        ],
+                                                                                      ),
                                                                                     ],
+                                                                                  ),
+                                                                                  SizedBox(
+                                                                                    height: 10,
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              SizedBox(
-                                                                                height: 10,
-                                                                              ),
+                                                                            )
+                                                                      ],
+                                                                    )
+                                                              ],
+                                                            )
+                                                          : Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                sText(
+                                                                    "Search Result",
+                                                                    weight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                                SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                MaterialButton(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  onPressed:
+                                                                      () async {
+                                                                    setState(
+                                                                        () {});
+                                                                    await _knowledgeTestController
+                                                                        .getTest(
+                                                                      context,
+                                                                      TestCategory
+                                                                          .NONE,
+                                                                      _course,
+                                                                      _user,
+                                                                    );
+                                                                  },
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          Icon(Icons
+                                                                              .trending_up),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                10,
+                                                                          ),
+                                                                          Column(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              sText("${properCase("$searchKeyword")}", weight: FontWeight.bold),
+                                                                              sText("${model.listQuestions.length} appearances", size: 12, color: kAdeoGray3),
                                                                             ],
                                                                           ),
-                                                                        )
-                                                                  ],
-                                                                )
-                                                          ],
-                                                        )
-                                                      : Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            sText(
-                                                                "Search Result",
-                                                                weight:
-                                                                    FontWeight
-                                                                        .w600),
-                                                            SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                            MaterialButton(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero,
-                                                              onPressed:
-                                                                  () async {
-                                                                setState(() {});
-                                                                await _knowledgeTestController
-                                                                    .getTest(
-                                                                  context,
-                                                                  TestCategory
-                                                                      .NONE,
-                                                                  _course,
-                                                                  _user,
-                                                                );
-                                                              },
-                                                              child: Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Icon(Icons
-                                                                          .trending_up),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          sText(
-                                                                              "${properCase("$searchKeyword")}",
-                                                                              weight: FontWeight.bold),
-                                                                          sText(
-                                                                              "${listQuestions.length} appearances",
-                                                                              size: 12,
-                                                                              color: kAdeoGray3),
                                                                         ],
                                                                       ),
                                                                     ],
                                                                   ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
+                                                                )
+                                                              ],
+                                                            ),
                                                 ),
                                               ),
                                               SingleChildScrollView(
@@ -856,7 +796,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                     SizedBox(
                                                       height: 4,
                                                     ),
-                                                    if (listQuestions.isEmpty)
+                                                    if (model
+                                                        .listQuestions.isEmpty)
                                                       for (var entry
                                                           in groupedCourseKeywordsMap
                                                               .entries)

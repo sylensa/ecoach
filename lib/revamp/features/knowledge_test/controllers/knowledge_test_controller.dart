@@ -96,12 +96,21 @@ class CustomSliderThumbCircle extends SliderComponentShape {
 
 class KnowledgeTestControllerModel extends ChangeNotifier {
   bool _isShowAnalysisBox = false;
-  List<String> _scrollListAlphabets = [];
   String _currentAlphabet = '';
+  List<String> _scrollListAlphabets = [];
+  List<Question> _listQuestions = [];
 
   bool get isShowAnalysisBox => _isShowAnalysisBox;
-  List<String> get scrollListAlphabets => _scrollListAlphabets;
   String get currentAlphabet => _currentAlphabet;
+  List<String> get scrollListAlphabets => _scrollListAlphabets;
+  List<Question> get listQuestions => _listQuestions;
+
+  set listQuestions(List<Question> value) {
+    if (value != _listQuestions) {
+      _listQuestions = value;
+    }
+    notifyListeners();
+  }
 
   set isShowAnalysisBox(bool value) {
     if (value != _isShowAnalysisBox) {
@@ -590,7 +599,6 @@ class KnowledgeTestController extends ChangeNotifier {
     User? user,
     List<CourseKeywords>? listCourseKeywordsData,
   }) async {
-
     showModalBottomSheet(
       context: context,
       isDismissible: true,
