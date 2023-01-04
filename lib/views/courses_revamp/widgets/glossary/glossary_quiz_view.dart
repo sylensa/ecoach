@@ -226,7 +226,6 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                         });
                                         showFailedDialog(context: context);
                                       }
-
                                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
                                           topicId: widget.listGlossaryData[indexReport].topic!.id,
                                           courseId: widget.listGlossaryData[indexReport].courseId!,
