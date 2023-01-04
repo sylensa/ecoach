@@ -441,7 +441,6 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     user: widget.user,
                     course: course!,
                     listCourseKeywordsData: listCourseKeywordsData,
-                    questions: questions,
                     glossaryData: glossaryData,
                     glossaryProgressData: glossaryProgressData
                   ),

@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 42, onOpen: (db) {},
+    return await openDatabase(path, version: 43, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -53,6 +53,9 @@ class DBProvider {
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
+       'correct' INTEGER NOT NULL,
+        'wrong' INTEGER NOT NULL,
+        'count' INTEGER NOT NULL,
         'progress_index' INTEGER NOT NULL,
         'topic_id' INTEGER NULL DEFAULT NULL
       ) """);
@@ -1278,6 +1281,9 @@ class DBProvider {
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
+        'correct' INTEGER NOT NULL,
+        'wrong' INTEGER NOT NULL,
+        'count' INTEGER NOT NULL,
         'progress_index' INTEGER NOT NULL,
         'topic_id' INTEGER NULL DEFAULT NULL
       ) """);
@@ -1287,6 +1293,9 @@ class DBProvider {
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
+        'correct' INTEGER NOT NULL,
+        'wrong' INTEGER NOT NULL,
+        'count' INTEGER NOT NULL,
         'progress_index' INTEGER NOT NULL,
         'topic_id' INTEGER NULL DEFAULT NULL
       ) """);

@@ -1,16 +1,22 @@
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/test_taken_db.dart';
+import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/glossary_progress_model.dart';
 import 'package:ecoach/models/keywords_model.dart';
 import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/review_taken.dart';
+import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_instruction.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_quiz_view.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/review/review_questions.dart';
 import 'package:ecoach/widgets/adeo_timer.dart';
@@ -78,10 +84,32 @@ class _GlossaryCountdowneState extends State<GlossaryCountdown> {
           setState(() {
             _currentPage = 1;
           });
-          Future.delayed(
-            const Duration(seconds: 1),
-                () {
-             Get.off(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+          Future.delayed(const Duration(seconds: 1), () async{
+            List<GlossaryData> listGlossaryData = [];
+            List topicIds = [];
+                  if(isTopicSelected){
+
+                    List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
+                    for(int i = 0; i < listTopics.length; i++){
+                      topicIds.add(listTopics[i].id);
+                    }
+                    listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
+                    print("listGlossaryData:${listGlossaryData.length}");
+
+                  }
+                  else{
+                    listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
+                  }
+                  if(listGlossaryData.isEmpty){
+                    toastMessage("No glossary for this course");
+                  }else{
+                    if(studySelected){
+                      Get.off(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                    }else{
+                      Get.off(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                    }
+                  }
+             // Get.off(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
               // Get.off(() => const CreateAccountPage(),
               //     fullscreenDialog: true,
               //     duration: const Duration(

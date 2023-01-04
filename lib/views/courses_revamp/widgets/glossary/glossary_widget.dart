@@ -27,6 +27,7 @@ import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/conquest/conquest_onboarding.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_countdown.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_instruction.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/personalised_saved/index.dart';
 import 'package:ecoach/views/courses_revamp/widgets/knowledge_test/topic_test.dart';
 import 'package:ecoach/views/customized_test/customized_test_introit.dart';
@@ -60,7 +61,6 @@ class GlossaryWidget extends StatefulWidget {
         required this.subscription,
         required this.controller,
         required this.listCourseKeywordsData,
-        required this.questions,
         required this.glossaryData,
         required this.glossaryProgressData,
       })
@@ -68,7 +68,7 @@ class GlossaryWidget extends StatefulWidget {
   Course course;
   User user;
   Plan subscription;
-  List<Question> questions = [];
+ 
   List<GlossaryData> glossaryData = [];
   List<CourseKeywords> listCourseKeywordsData;
   GlossaryProgressData? glossaryProgressData ;
@@ -79,10 +79,19 @@ class GlossaryWidget extends StatefulWidget {
 }
 
 class _GlossaryWidgetState extends State<GlossaryWidget> {
- var studySelected;
- var continueSelected;
- var scoreSelected;
 
+ var continueSelected;
+ TextEditingController searchGlossaryController = TextEditingController();
+ String searchGlossary = '';
+ bool searchTap = false;
+ List<GlossaryData> searchGlossaryData = [];
+ getAllGlossaryData()async{
+   allGlossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
+   setState(() {
+      print("allGlossaryData:${allGlossaryData.length}");
+   });
+
+ }
 
   studyTryModalBottomSheet(context,) async{
     widget.glossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
@@ -155,7 +164,10 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                           stateSetter(() {
                             studySelected = true;
                           });
-                          continueRestartModalBottomSheet(context);
+                          Navigator.pop(context);
+                          Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: null,));
+
+                          // continueRestartModalBottomSheet(context);
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -176,6 +188,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                           stateSetter(() {
                             studySelected = false;
                           });
+                          Navigator.pop(context);
                           scoreNonScoreModalBottomSheet(context);
                         },
                         child: Container(
@@ -198,9 +211,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
         });
   }
 
- continueRestartModalBottomSheet(
-     context,
-     ) {
+ continueRestartModalBottomSheet(context,) {
    double sheetHeight = 400;
    showModalBottomSheet(
        context: context,
@@ -297,7 +308,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            continueSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: null,));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -385,14 +396,22 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                      SizedBox(
                        height: 20,
                      ),
-
                      MaterialButton(
-                       onPressed: (){
+                       onPressed: ()async{
+                         print("object");
+                         showLoaderDialog(context);
+                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
+                        Navigator.pop(context);
                          stateSetter(() {
                            scoreSelected = true;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
-                       },
+                         if(widget.glossaryProgressData != null){
+                           continueRestartModalBottomSheet(context);
+                         }else{
+                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                         }
+
+                          },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -412,8 +431,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            scoreSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
-                       },
+                         continueRestartModalBottomSheet(context);
+                         },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -434,12 +453,227 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
        });
  }
 
+ searchGlossaryModalBottomSheet(
+     context,
+     ) async {
+   searchGlossaryDefinition(String definition)async{
+     if(allGlossaryData.isEmpty){
+       allGlossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
+     }
+     searchGlossaryData.clear();
+     for(int i =0; i < allGlossaryData.length; i++){
+       if(allGlossaryData[i].term!.toLowerCase().contains(definition.toLowerCase())){
+         searchGlossaryData.add(allGlossaryData[i]);
+       }
+     }
+
+
+   }
+   showModalBottomSheet(
+       context: context,
+       isDismissible: true,
+       backgroundColor: Colors.transparent,
+       isScrollControlled: true,
+       builder: (BuildContext context) {
+         return StatefulBuilder(
+           builder: (BuildContext context, StateSetter stateSetter) {
+             return AnimatedContainer(
+                 padding: EdgeInsets.symmetric(horizontal: 10),
+                 height: appHeight(context) * 0.7,
+
+                 decoration: BoxDecoration(
+                   color: kAdeoGray4,
+                   borderRadius: BorderRadius.only(
+                     topLeft: Radius.circular(24),
+                     topRight: Radius.circular(24),
+                   ),
+                 ),
+                 duration: Duration(milliseconds: 20),
+                 curve: Curves.easeInOut,
+                 child: Column(
+                   children: [
+                     SizedBox(
+                       height: 20,
+                     ),
+                     Container(
+                       color: Colors.grey,
+                       height: 3,
+                       width: 84,
+                     ),
+                     SizedBox(
+                       height: 20,
+                     ),
+                     Row(
+                       mainAxisAlignment: MainAxisAlignment.end,
+                       children: [
+                         Container(
+                           padding: EdgeInsets.symmetric(horizontal: 20),
+                           child: Center(
+                               child: Image.asset(
+                                 'assets/icons/courses/glossary.png',
+                                 width: 30,
+                                 height: 30,
+                               )),
+                         ),
+                       ],
+                     ),
+                     SizedBox(
+                       height: 10,
+                     ),
+                     Container(
+                       padding: EdgeInsets.symmetric(horizontal: 20),
+                       child: sText(
+                         "Glossary Search",
+                         color: Colors.black,
+                         weight: FontWeight.w400,
+                         align: TextAlign.center,
+                         size: 24,
+                       ),
+                     ),
+                     SizedBox(
+                       height: 20,
+                     ),
+                     Container(
+                       padding: EdgeInsets.only(left: 10, right: 10, top: 0),
+                       child: TextFormField(
+                         controller: searchGlossaryController,
+                         onChanged: (String value) async {
+                           stateSetter(() {
+                             if(value.isEmpty){
+                               searchGlossaryData.clear();
+                               searchGlossary = '';
+                             }else{
+                               searchGlossary = value.trim();
+
+                             }
+
+                           });
+                          await searchGlossaryDefinition(searchGlossary);
+                           stateSetter(() {
+
+                           });
+                         },
+                         decoration: textDecorSuffix(
+                           fillColor: Color(0xFFEEEEEE),
+                           showBorder: false,
+                           size: 60,
+                           icon: IconButton(
+                               onPressed: () async {
+
+                               },
+                               icon: Icon(
+                                 Icons.search,
+                                 color: Colors.grey,
+                               )),
+                           suffIcon: null,
+                           label: "Search definitions",
+                           enabled: true,
+                         ),
+                       ),
+                     ),
+
+
+                       Expanded(
+                         child: Container(
+                             child: Padding(
+                               padding: EdgeInsets.only(
+                                 left: 20.0,
+                                 right: 15.0,
+                                 top: 26,
+                                 bottom: 14,
+                               ),
+                               child: Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                 children: [
+                                   SingleChildScrollView(
+                                     child: Container(
+                                       child: searchGlossary.isEmpty
+                                           ?
+                                       Column(
+                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                         children: [
+                                           sText("Recent Searches", weight: FontWeight.w600),
+                                           SizedBox(
+                                             height: 10,
+                                           ),
+                                          Container(
+                                            color: Colors.grey[400],
+                                            width: appWidth(context) * 0.85,
+                                            height: 2,
+                                          ),
+                                           SizedBox(
+                                             height: 20,
+                                           ),
+                                            for(int i =0; i <allGlossaryData.length; i++)
+                                              GestureDetector(
+                                                onTap: ()async{
+                                                  await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: [allGlossaryData[i]],glossaryProgressData: null,));
+
+                                                },
+                                                child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  sText("${properCase(allGlossaryData[i].term!)}",color: Colors.black,weight: FontWeight.bold),
+                                                  sText("${allGlossaryData[i].keywordAppearance} appearances",color: Colors.grey,weight: FontWeight.w500),
+                                                  SizedBox(height: 10,),
+                                                ],
+                                            ),
+                                              )
+                                         ],
+                                       )
+                                           :
+                                       Column(
+                                         crossAxisAlignment: CrossAxisAlignment.start,
+                                         children: [
+                                           sText("Searches Results", weight: FontWeight.w600),
+                                           SizedBox(
+                                             height: 10,
+                                           ),
+                                           Container(
+                                             color: Colors.grey[400],
+                                             width: appWidth(context) * 0.85,
+                                             height: 2,
+                                           ),
+                                           SizedBox(
+                                             height: 20,
+                                           ),
+                                           for(int i =0; i <searchGlossaryData.length; i++)
+                                             GestureDetector(
+                                               onTap: ()async{
+                                                 await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: [searchGlossaryData[i]],glossaryProgressData: null,));
+                                               },
+                                               child: Column(
+                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                 children: [
+                                                   sText("${properCase(searchGlossaryData[i].term!)}",color: Colors.black,weight: FontWeight.bold),
+                                                   sText("${searchGlossaryData[i].keywordAppearance} appearances",color: Colors.grey,weight: FontWeight.w500),
+                                                   SizedBox(height: 10,),
+                                                 ],
+                                               ),
+                                             )
+                                         ],
+                                       )
+                                     ),
+                                   ),
+
+                                 ],
+                               ),
+                             )),
+                       ),
+
+                   ],
+                 ));
+           },
+         );
+       });
+ }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    getAllGlossaryData();
 
   }
 
@@ -453,20 +687,29 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'from A-Z, all terms throughout the course',
           iconURL: 'assets/icons/courses/sort-az.png',
           onTap: () async {
-            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (widget.questions.isNotEmpty) {
+            if(checkQuestions.isEmpty){
+              showLoaderDialog(context);
+              checkQuestions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                isTopicSelected = false;
+                studyTryModalBottomSheet(context);
+              }
+              else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            }else{
               isTopicSelected = false;
               studyTryModalBottomSheet(context);
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
+
           },
         ),
         MultiPurposeCourseCard(
@@ -474,20 +717,29 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Terms based on topics',
           iconURL: 'assets/icons/courses/alphabet.png',
           onTap: () async {
-            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (widget.questions.isNotEmpty) {
+            if(checkQuestions.isEmpty){
+              showLoaderDialog(context);
+              checkQuestions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                isTopicSelected = true;
+                studyTryModalBottomSheet(context);
+              }
+              else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            }else{
               isTopicSelected = true;
               studyTryModalBottomSheet(context);
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
+
 
           },
         ),
@@ -496,20 +748,27 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Definitions that matter to you',
           iconURL: 'assets/icons/courses/quest.png',
           onTap: () async {
-            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-
-            if (widget.questions.isNotEmpty) {
+            if(checkQuestions.isEmpty){
+              showLoaderDialog(context);
+              checkQuestions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Get.to(() => PersonalisedSavedPage(currentIndex: 1,course: widget.course,user: widget.user,));
+              }
+              else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            }else{
               Get.to(() => PersonalisedSavedPage(currentIndex: 1,course: widget.course,user: widget.user,));
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
+
           },
         ),
         MultiPurposeCourseCard(
@@ -517,19 +776,27 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Create and view definitions',
           iconURL: 'assets/icons/courses/idea.png',
           onTap: () async {
-            widget.questions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (widget.questions.isNotEmpty) {
-             Get.to(() => PersonalisedSavedPage(currentIndex: 0,course: widget.course,user: widget.user,));
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
+            if(checkQuestions.isEmpty){
+              showLoaderDialog(context);
+              checkQuestions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Get.to(() => PersonalisedSavedPage(currentIndex: 0,course: widget.course,user: widget.user,));
+              }
+              else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            }else{
+              Get.to(() => PersonalisedSavedPage(currentIndex: 0,course: widget.course,user: widget.user,));
             }
+
           },
         ),
         MultiPurposeCourseCard(
@@ -537,25 +804,27 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
           subTitle: 'Create and view definitions',
           iconURL: 'assets/icons/courses/search.png',
           onTap: () async {
-            if (widget.questions.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return AutopilotIntroit(widget.user, widget.course);
-                  },
-                ),
-              );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
+            if(checkQuestions.isEmpty){
+              showLoaderDialog(context);
+              checkQuestions  = await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                searchGlossaryModalBottomSheet(context);
+              }
+              else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            }else{
+              searchGlossaryModalBottomSheet(context);
             }
+
           },
         ),
 
