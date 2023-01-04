@@ -376,7 +376,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                         enableInfiniteScroll: false,
                                         autoPlayAnimationDuration:
                                             Duration(seconds: 1),
-                                        enlargeCenterPage: false,
+                                        enlargeCenterPage: true,
                                         viewportFraction: 1,
                                         aspectRatio: 2.0,
                                         pageSnapping: true,

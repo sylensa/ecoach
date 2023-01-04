@@ -482,7 +482,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                           ? Column(
                               children: [
                                 SizedBox(
-                                  height: 28,
+                                  height: 4,
                                 ),
                                 Row(
                                   mainAxisAlignment:
@@ -620,7 +620,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                   ],
                                 ),
                                 SizedBox(
-                                  height: 24,
+                                  height: 4,
                                 ),
                               ],
                             )
@@ -648,7 +648,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                               setState(() {
                                 searchKeyword = _test.name.toLowerCase();
                               });
-
+                  
                               await widget.getTest(
                                 context,
                                 widget.activeMenu,
