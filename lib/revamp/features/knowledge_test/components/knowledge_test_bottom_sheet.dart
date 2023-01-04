@@ -39,12 +39,14 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
   late User _user;
   late bool smallHeightDevice;
   late int? topicId;
+  late FocusNode fnOne;
 
   TextEditingController searchKeywordController = TextEditingController();
   KnowledgeTestController _knowledgeTestController = KnowledgeTestController();
   int _currentSlide = 0;
   String searchKeyword = '';
   bool isActiveTopicMenu = false;
+  bool isShowAlphaScroll = false;
   dynamic test;
   List<String> scrollListAlphabets = [];
   List<dynamic> tests = [];
@@ -84,6 +86,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
     _user = widget.user;
     _knowledgeTestController.searchTap = false;
     _listCourseKeywordsData = widget.listCourseKeywordsData;
+
     if (_listCourseKeywordsData.isNotEmpty) {
       groupedCourseKeywordsMap = {
         'A': [],
@@ -129,7 +132,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
       groupedCourseKeywordsMap['${courseKeyword.keyword![0]}'.toUpperCase()]!
           .add(courseKeyword);
     });
-
+    fnOne = FocusNode();
     super.initState();
   }
 
@@ -166,6 +169,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
   @override
   void dispose() {
     searchKeywordController.dispose();
+    fnOne.dispose();
     super.dispose();
   }
 
@@ -381,8 +385,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                           if (model.isShowAnalysisBox) {
                                             model.isShowAnalysisBox = false;
                                           }
-                                          if (_knowledgeTestController
-                                              .isShowAlphaScroll) {
+                                          if (isShowAlphaScroll) {
                                             model.currentAlphabet =
                                                 tests[_currentSlide].name[0];
                                           }
@@ -509,10 +512,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 DismissDirection.startToEnd) {
                                           setState(
                                             (() {
-                                              _knowledgeTestController
-                                                      .isShowAlphaScroll =
-                                                  !_knowledgeTestController
-                                                      .isShowAlphaScroll;
+                                              isShowAlphaScroll =
+                                                  !isShowAlphaScroll;
                                             }),
                                           );
                                         }
@@ -521,8 +522,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                     },
                                     child: Column(
                                       children: [
-                                        _knowledgeTestController
-                                                    .isShowAlphaScroll &&
+                                        isShowAlphaScroll &&
                                                 !_knowledgeTestController
                                                     .emptyTestList
                                             ? AlphabetScrollSlider(
@@ -552,6 +552,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 child: Form(
                                                   key: _formKey,
                                                   child: TextField(
+                                                    focusNode: fnOne,
                                                     controller:
                                                         searchKeywordController,
                                                     onChanged:
@@ -910,6 +911,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 _knowledgeTestController
                                                     .activeMenu,
                                               );
+                                              fnOne.unfocus();
                                               setState(() {});
                                             } else {
                                               _knowledgeTestController
