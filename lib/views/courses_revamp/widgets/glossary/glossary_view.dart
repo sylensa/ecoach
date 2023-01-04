@@ -105,6 +105,15 @@ class _GlossaryViewState extends State<GlossaryView> {
     'Y': [],
     'Z': []
   };
+
+  getQuestions()async{
+    // listQuestions.clear();
+    listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
+    setState(() {
+    print("listQuestions:${listQuestions.length}");
+    });
+
+  }
   @override
   void initState() {
     // TODO: implement initState
@@ -175,6 +184,9 @@ class _GlossaryViewState extends State<GlossaryView> {
       }
     }
 
+    getQuestions();
+
+
   }
   GlobalKey<ScaffoldState> scaffold = GlobalKey();
 
@@ -211,9 +223,10 @@ class _GlossaryViewState extends State<GlossaryView> {
                                 selectedCharacter: selectedCharacter,
                                 progressIndex: currentIndex -1
                             );
-                            await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                            await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
+                            // await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+                            // await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
                           listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
+                          print(listQuestions.length);
                              scaffold = GlobalKey();
                           setState(() {
                             print("listQuestions:${listQuestions.length}");
@@ -271,8 +284,8 @@ class _GlossaryViewState extends State<GlossaryView> {
                         selectedCharacter: selectedCharacter,
                         progressIndex: index
                       );
-                      await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                      await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
+                      // await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+                      // await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
                       listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
                       setState(() {
                         print("listQuestions:${listQuestions.length}");
@@ -300,7 +313,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                   height: 20.0,
                                   valueFontSize: 10.0,
                                   toggleSize: 15.0,
-                                  value: glossaryData[indexReport].isSaved! == 1 ? true : false,
+                                  value: glossaryData[indexReport].isSaved != null ? glossaryData[indexReport].isSaved! == 1 ? true : false :false,
                                   borderRadius: 30.0,
                                   padding: 2.0,
                                   showOnOff: false,

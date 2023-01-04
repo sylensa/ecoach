@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/controllers/glossary_controller.dart';
+import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -8,9 +9,11 @@ import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:get/get.dart';
 
 class SavedPage extends StatefulWidget {
   SavedPage(
@@ -30,8 +33,14 @@ class _SavedPageState extends State<SavedPage> {
   bool progressCode = true;
   Topic? selectedTopic;
   List<Topic> listTopics = [];
+  int savedCount = 0;
   getSavedData()async{
-    glossaryData = await GlossaryController().getUserSavedGlossariesList();
+    glossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
+    for(int i =0; i < glossaryData.length; i++){
+      if(glossaryData[i].isSaved == 1){
+        savedCount++;
+      }
+    }
     setState(() {
       progressCode = false;
     });
@@ -270,7 +279,7 @@ class _SavedPageState extends State<SavedPage> {
                     children: [
                       Image.asset("assets/images/dictionary.png"),
                       SizedBox(width: 10,),
-                      sText("${glossaryData.length}")
+                      sText("$savedCount")
                     ],
                   )
                 ],
@@ -282,39 +291,46 @@ class _SavedPageState extends State<SavedPage> {
               child: ListView.builder(
                   itemCount: glossaryData.length,
                   itemBuilder: (BuildContext context, int index){
-                    return   MultiPurposeCourseCard(
-                      title: '${glossaryData[index].term}',
-                      rightWidget:   FlutterSwitch(
-                        width: 50.0,
-                        height: 20.0,
-                        valueFontSize: 10.0,
-                        toggleSize: 15.0,
-                        value:  true,
-                        borderRadius: 30.0,
-                        padding: 2.0,
-                        showOnOff: false,
-                        activeColor: Color(0xFF555555),
-                        inactiveColor: Color(0xFFD1D1D1),
-                        inactiveTextColor: Colors.red,
-                        inactiveToggleColor: Color(0xFF555555),
-                        onToggle: (val) async{
-                          glossaryData[index].isSaved = 0;
-                          var res = jsonDecode(glossaryData[index].glossary!);
-                          res["is_saved"] =  glossaryData[index].isSaved;
-                          glossaryData[index].glossary = jsonEncode(res);
-                          GlossaryController().unSaveGlossariesList(glossaryData[index]);
-                          setState(() {
-                            glossaryData.removeAt(index);
-                          });
+                    if(glossaryData[index].isSaved == 1){
+                      return   MultiPurposeCourseCard(
+                        title: '${glossaryData[index].term}',
+                        rightWidget:   FlutterSwitch(
+                          width: 50.0,
+                          height: 20.0,
+                          valueFontSize: 10.0,
+                          toggleSize: 15.0,
+                          value:  true,
+                          borderRadius: 30.0,
+                          padding: 2.0,
+                          showOnOff: false,
+                          activeColor: Color(0xFF555555),
+                          inactiveColor: Color(0xFFD1D1D1),
+                          inactiveTextColor: Colors.red,
+                          inactiveToggleColor: Color(0xFF555555),
+                          onToggle: (val) async{
+                            glossaryData[index].isSaved = 0;
+                            var res = jsonDecode(glossaryData[index].glossary!);
+                            res["is_saved"] =  glossaryData[index].isSaved;
+                            glossaryData[index].glossary = jsonEncode(res);
+                            GlossaryController().unSaveGlossariesList(glossaryData[index]);
+                            setState(() {
+                              glossaryData.removeAt(index);
+                            });
 
+                          },
+                        ),
+                        subTitle: 'Create and view definitions',
+
+                        onTap: () async {
+                          await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: [glossaryData[index]],glossaryProgressData: null,));
+
+                          // editDialogModalBottomSheet(context,glossaryData[index],index);
                         },
-                      ),
-                      subTitle: 'Create and view definitions',
+                      );
+                    }else{
+                      return SizedBox.shrink();
+                    }
 
-                      onTap: () async {
-                        editDialogModalBottomSheet(context,glossaryData[index],index);
-                      },
-                    );
 
                   }),
             ) :

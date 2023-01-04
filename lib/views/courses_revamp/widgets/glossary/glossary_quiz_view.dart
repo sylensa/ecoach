@@ -42,6 +42,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
   PageController pageControllerView = PageController(initialPage: 0);
   PageController pageController = PageController(initialPage: 0);
   bool switchValue = false;
+  bool isSkipped = true;
   int correct = 0;
   int wrong = 0;
   int initialIndex = 0;
@@ -57,6 +58,16 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
     if(widget.glossaryProgressData != null){
       initialIndex = widget.glossaryProgressData!.progressIndex!;
       initialIndex++;
+      print("initialIndex:${initialIndex}");
+      correct = widget.glossaryProgressData!.correct!;
+      wrong = widget.glossaryProgressData!.wrong!;
+      totalGlossary = widget.glossaryProgressData!.count!;
+      if((correct + wrong) != totalGlossary || (correct + wrong) < totalGlossary){
+        for(int i = 0 ; i < correct + wrong; i++){
+          widget.listGlossaryData.removeAt(i);
+        }
+      }
+
     }
     for(int i = 0; i < widget.listGlossaryData.length; i++){
       textEditingController.add(TextEditingController());
@@ -76,10 +87,26 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
           padding: EdgeInsets.only(top: 8.h,left: 20,right: 20),
           child: Column(
             children: [
-              Container(
-                child:LinearProgressIndicator(
-                  value: correct/totalGlossary,
-                )
+              Row(
+                children: [
+
+                ],
+              ),
+              Row(
+                children: [
+                  sText("${correct + wrong}",color: Colors.white,weight: FontWeight.w500),
+                  SizedBox(width: 10,),
+                  Expanded(
+                    child: Container(
+                      child:LinearProgressIndicator(
+                        value: (correct + wrong)/totalGlossary,
+
+                      )
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  sText("${totalGlossary}",color: Colors.white,weight: FontWeight.w500),
+                ],
               ),
               SizedBox(height: 20,),
               CarouselSlider.builder(
@@ -96,19 +123,26 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                     aspectRatio: 2.0,
                     pageSnapping: true,
                     onPageChanged: (index, reason) async{
-                      GlossaryProgressData glossaryProgressData = GlossaryProgressData(
-                          topicId: widget.listGlossaryData[index].topic!.id,
-                          courseId: widget.listGlossaryData[index].courseId!,
-                          searchTerm: widget.listGlossaryData[index].term,
-                          selectedCharacter: "a",
-                          progressIndex: index
-                      );
-                      await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                      await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
-                    print(index);
-                    // setState(() {
-                    //   initialIndex = index;
-                    // });
+                      if(!isSkipped){
+                        GlossaryProgressData glossaryProgressData = GlossaryProgressData(
+                            topicId: widget.listGlossaryData[index].topic!.id,
+                            courseId: widget.listGlossaryData[index].courseId!,
+                            searchTerm: widget.listGlossaryData[index].term,
+                            selectedCharacter: "a",
+                            progressIndex: index,
+                            correct: correct,
+                            wrong:  isSkipped ? wrong + 1 : wrong ,
+                            count: totalGlossary
+                        );
+                        await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+                        await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
+
+                      }
+
+                      setState(() {
+                        print("wrong:$wrong");
+                      });
+
                     },
                   ),
                   itemCount:widget.listGlossaryData.length,
@@ -178,20 +212,19 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                     controller: textEditingController[indexReport],
                                     keyboardType: TextInputType.emailAddress,
                                     onSubmitted: (String value)async{
+                                      setState(() {
+                                        isSkipped = false;
+                                      });
                                       if(value.toLowerCase() == widget.listGlossaryData[indexReport].term!.toLowerCase()){
                                        setState(() {
                                          correct++;
-                                         // initialIndex++;
-                                         widget.listGlossaryData.removeAt(indexReport);
-                                         textEditingController.removeAt(indexReport);
                                        });
+                                       showSuccessDialog(context: context);
                                       }else{
                                         setState(() {
                                           wrong++;
-                                          // initialIndex++;
-                                          widget.listGlossaryData.removeAt(indexReport);
-                                          textEditingController.removeAt(indexReport);
                                         });
+                                        showFailedDialog(context: context);
                                       }
 
                                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
@@ -199,10 +232,18 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                           courseId: widget.listGlossaryData[indexReport].courseId!,
                                           searchTerm: widget.listGlossaryData[indexReport].term,
                                           selectedCharacter: "a",
-                                          progressIndex: indexReport
+                                          progressIndex: indexReport,
+                                        count:  totalGlossary,
+                                        correct: correct,
+                                        wrong: wrong
                                       );
                                       await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
                                       await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
+                                      setState(() {
+                                        isSkipped = true;
+                                        widget.listGlossaryData.removeAt(indexReport);
+                                        textEditingController.removeAt(indexReport);
+                                      });
                                     },
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(
@@ -225,6 +266,69 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
           ),
         ),
       ),
+    );
+  }
+
+  showSuccessDialog({BuildContext? context}) {
+    // flutter defined function
+    showDialog(
+      context: context!,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          titlePadding: EdgeInsets.only(top: 40,right: 20),
+          backgroundColor: Color(0xFF00D289),
+          title: Column(
+            children: [
+              Container(
+                  child: Icon(Icons.check_circle_outline,color: Colors.white,size: 150,)
+              ),
+            ],
+          ),
+          content:   Container(
+            height: 100,
+            child: Column(
+              children: [
+                sText("Great Job,",weight: FontWeight.w400,color: Colors.black,align: TextAlign.center),
+                sText("Let's move on to the next one,",weight: FontWeight.w400,color: Colors.black,align: TextAlign.center),
+              ],
+            ),
+          ),
+
+        );
+      },
+    );
+  }
+  showFailedDialog({BuildContext? context}) {
+    // flutter defined function
+    showDialog(
+      context: context!,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          titlePadding: EdgeInsets.only(top: 40,right: 20),
+          backgroundColor: Colors.red,
+          title: Column(
+            children: [
+              Container(
+                  child: Icon(Icons.cancel,color: Colors.white,size: 150,)
+              ),
+            ],
+          ),
+          content:   Container(
+            height: 100,
+            child: Column(
+              children: [
+                sText("Aww wrong answer,",weight: FontWeight.w400,color: Colors.white,align: TextAlign.center),
+                sText("Let's move on to the next one,",weight: FontWeight.w400,color: Colors.white,align: TextAlign.center),
+              ],
+            ),
+          ),
+
+        );
+      },
     );
   }
 }

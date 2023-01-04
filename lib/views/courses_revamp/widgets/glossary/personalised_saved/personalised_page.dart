@@ -5,6 +5,7 @@ import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/glossary_model.dart';
 import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
@@ -25,7 +26,7 @@ class PersonalisedPage extends StatefulWidget {
 
 class _PersonalisedPageState extends State<PersonalisedPage> {
   Topic? selectedTopic;
-  List<GlossaryData> glossaryData = [];
+
   List<Topic> listTopics = [];
   bool progressCode = true;
 
@@ -93,7 +94,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                            var res =  await  GlossaryController().deleteGlossaries(glossary.id!);
                            setState(() {
                             if(res){
-                              glossaryData.removeAt(index);
+                              personaliseGlossaryData.removeAt(index);
                             }else{
                               toastMessage("Deletion failed, try again later");
                             }
@@ -125,7 +126,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                               GlossaryData? res =  await  GlossaryController().pinUnPinGlossaries(glossary,glossary.isPinned! == 1 ? false : true);
                               if(res != null){
                                 setState(() {
-                                  glossaryData[index] = res;
+                                  personaliseGlossaryData[index] = res;
                                 });
                                 toastMessage("Pinned successfully");
                               }else{
@@ -382,7 +383,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                             GlossaryData? glossary = await GlossaryController().createGlossary(body);
                             if(glossary != null){
                              setState(() {
-                               glossaryData.add(glossary);
+                               personaliseGlossaryData.add(glossary);
                              });
                             }else{
                               toastMessage("Failed try again later");
@@ -604,8 +605,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                            showLoaderDialog(context);
                            GlossaryData? glossary = await GlossaryController().updateGlossary(body);
                            if(glossary != null){
-                             glossaryData.removeAt(index);
-                             glossaryData.insert(index, glossary);
+                             personaliseGlossaryData.removeAt(index);
+                             personaliseGlossaryData.insert(index, glossary);
                              setState(() {
 
                              });
@@ -648,7 +649,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
 
   getPersonalisedData()async{
     try{
-      glossaryData = await GlossaryController().getPersonalisedGlossariesList();
+      personaliseGlossaryData = await GlossaryController().getPersonalisedGlossariesList();
     }catch(e){
       print(e.toString());
     }
@@ -669,7 +670,9 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getPersonalisedData();
+    if(personaliseGlossaryData.isEmpty){
+      getPersonalisedData();
+    }
     getTopics();
   }
   @override
@@ -704,23 +707,23 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                     children: [
                       Image.asset("assets/images/dictionary.png"),
                       SizedBox(width: 10,),
-                      sText("${glossaryData.length}")
+                      sText("${personaliseGlossaryData.length}")
                     ],
                   )
                 ],
               ),
             ),
             SizedBox(height: 10,),
-            glossaryData.isNotEmpty ?
+            personaliseGlossaryData.isNotEmpty ?
             Expanded(
               child: ListView.builder(
-                  itemCount: glossaryData.length,
+                  itemCount: personaliseGlossaryData.length,
                   itemBuilder: (BuildContext context, int index){
                     return   MultiPurposeCourseCard(
-                      title: '${glossaryData[index].term}',
+                      title: '${personaliseGlossaryData[index].term}',
                       subTitle: 'Create and view definitions',
                       onTap: () async {
-                        onSelectModalBottomSheet(context,glossaryData[index],index);
+                        onSelectModalBottomSheet(context,personaliseGlossaryData[index],index);
                       },
                     );
 

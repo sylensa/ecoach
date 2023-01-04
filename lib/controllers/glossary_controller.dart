@@ -53,6 +53,8 @@ class GlossaryController{
       for(int i =0; i < response["data"]["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"]["data"][i]["glossary"]);
         glossaryData.glossary = jsonEncode(response["data"]["data"][i]["glossary"]);
+        glossaryData.definition = response["data"]["data"][i]["glossary"]["definitions"][0]["definition"];
+        glossaryData.courseId = response["data"]["data"][i]["glossary"]["course_id"];
         listGlossaryData.add(glossaryData);
       }
     }

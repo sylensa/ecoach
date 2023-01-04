@@ -158,20 +158,19 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                 List<GlossaryData> listGlossaryData = [];
                 List topicIds = [];
                print("isTopicSelected:$isTopicSelected");
+                // await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+
                if(isViewed){
                  widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
                }
                 if(isTopicSelected){
                   // await GlossaryDB().deleteAllGlossaryTopic();
                   // await GlossaryDB().deleteAll();
-
                   List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
                   for(int i = 0; i < listTopics.length; i++){
                     topicIds.add(listTopics[i].id);
                   }
                   listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
-                  print("listGlossaryData:${listGlossaryData.length}");
-
                 }
                 else{
                   listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
