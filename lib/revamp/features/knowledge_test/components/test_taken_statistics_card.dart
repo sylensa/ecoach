@@ -58,6 +58,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   late bool isTestTaken;
   late bool smallHeightDevice;
   late List<TestTaken>? testsTakenByTopic = [];
+  late List<TestTaken>? testsTakenForAnalysis = [];
   late TestTaken? testTaken;
 
   @override
@@ -92,6 +93,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
         break;
       case TestCategory.NONE:
         activeMenuIcon += "topic.png";
+
         break;
       default:
         activeMenuIcon = "";
@@ -119,11 +121,26 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   void toggleAnalysis() async {
     widget.knowledgeTestControllerModel.isShowAnalysisBox =
         !widget.knowledgeTestControllerModel.isShowAnalysisBox;
-    
+
     analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
         ? TestCategory.TOPIC
         : TestCategory.NONE;
+    setDataForKeywordTestAnalysisTable();
 
+    setState(() {});
+  }
+
+  setDataForKeywordTestAnalysisTable() async {
+    if (widget.activeMenu == TestCategory.NONE) {
+      await TestController()
+          .getAllKeywordTestTakenByTestName(
+              widget.testTaken!.testname!.toLowerCase())
+          .then((value) {
+        setState(() {
+          testsTakenForAnalysis = value;
+        });
+      });
+    }
     setState(() {});
   }
 
@@ -132,7 +149,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
     _test = widget.test ?? null;
     testTaken = widget.testTaken ?? null;
     isTestTaken = widget.isTestTaken;
-    print("isTestTaken: ${isTestTaken}");
+    if (widget.activeMenu != TestCategory.NONE) {
+      testsTakenForAnalysis = widget.allTestsTakenForAnalysis;
+    }
 
     return AnimatedBuilder(
       animation: animationController,
@@ -215,7 +234,6 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                       .isShowAnalysisBox) toggleAnalysis();
                                 }),
                                 child: AnimatedContainer(
-                                  // padding: EdgeInsets.only(r16),
                                   width: double.maxFinite,
                                   constraints: BoxConstraints(
                                     minHeight: widget
@@ -304,8 +322,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: AnalyticsTable(
-                                        testsTaken:
-                                            widget.allTestsTakenForAnalysis!,
+                                        testsTaken: testsTakenForAnalysis!,
                                       ),
                                     ),
                                   ),
@@ -646,8 +663,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                           GestureDetector(
                             onTap: () async {
                               setState(() {
-                                searchKeyword = _test.name.toLowerCase() ??
-                                    testTaken!.testname!.toLowerCase();
+                                searchKeyword = _test != null
+                                    ? _test.name.toLowerCase()
+                                    : testTaken!.testname!.toLowerCase();
                               });
 
                               await widget.getTest(

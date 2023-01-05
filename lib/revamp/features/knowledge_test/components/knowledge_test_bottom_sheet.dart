@@ -387,14 +387,15 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                             TestCategory testCategory,
                                             TestNameAndCount? selectedTopic,
                                           ) async {
-                                            _knowledgeTestController
-                                                .goToInstructions(
+                                            await _knowledgeTestController
+                                                .getTest(
                                               context,
-                                              selectedTopic,
-                                              testCategory,
-                                              _user,
+                                              TestCategory.NONE,
                                               _course,
-                                              searchKeyword: searchKeyword,
+                                              _user,
+                                              searchKeyword:
+                                                  _knowledgeTestController
+                                                      .testTaken!.testname!,
                                             );
                                           },
                                         ),
@@ -811,7 +812,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                       //     .clear();
                                                                       focusNodeKeywordSearchField
                                                                           .unfocus();
-                                                                      setState(() {});
+                                                                      setState(
+                                                                          () {});
                                                                     }
                                                                   },
                                                                   child: Column(
@@ -972,6 +974,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 _knowledgeTestController
                                                     .activeMenu,
                                               );
+                                              searchKeywordController.clear();
                                               focusNodeKeywordSearchField
                                                   .unfocus();
                                               setState(() {});

@@ -2,6 +2,7 @@ import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
 import 'package:ecoach/widgets/adeo_analysis_graph.dart';
 import 'package:ecoach/widgets/cards/stats_slider_card.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -30,6 +31,7 @@ class _TestTakenGraphState extends State<TestTakenGraph> {
   List<TestTaken> testData = [];
   String dropdownValue = 'All';
   List<FlSpot> testdata = [];
+  KnowledgeTestController _knowledgeTestController = KnowledgeTestController();
 
   Future<List<TestTaken>> getAllTestTakenByTopic(int topicId) async {
     return await TestController().getAllTestTakenByTopic(topicId);
@@ -42,14 +44,15 @@ class _TestTakenGraphState extends State<TestTakenGraph> {
     if (widget.topicId != null) {
       testData = await getAllTestTakenByTopic(widget.topicId!);
     } else {
-      testData = await TestController().keywordTestsTaken(widget.course.id!);
+      testData = await TestController()
+          .getAllKeywordTestTakenByTestName(widget.keyword);
       testData = testData
           .where((data) => data.testname == widget.keyword.toLowerCase())
           .toList();
     }
 
     graphResultData = testData;
-    
+
     for (int i = 0; i < graphResultData.length; i++) {
       final test = graphResultData[i];
       testdata.add(

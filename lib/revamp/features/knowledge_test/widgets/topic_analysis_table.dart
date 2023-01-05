@@ -6,10 +6,18 @@ import 'package:ecoach/utils/manip.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
 import 'package:flutter/material.dart';
 
-class AnalyticsTable extends StatelessWidget {
-  AnalyticsTable({Key? key, required this.testsTaken}) : super(key: key);
+class AnalyticsTable extends StatefulWidget {
+  const AnalyticsTable({
+    Key? key,
+    required this.testsTaken,
+  }) : super(key: key);
   final List<TestTaken> testsTaken;
 
+  @override
+  State<AnalyticsTable> createState() => _AnalyticsTableState();
+}
+
+class _AnalyticsTableState extends State<AnalyticsTable> {
   @override
   Widget build(BuildContext context) {
     return DataTable2(
@@ -41,19 +49,19 @@ class AnalyticsTable extends StatelessWidget {
         ),
       ],
       rows: List<DataRow>.generate(
-        testsTaken.length,
+        widget.testsTaken.length,
         (index) => DataRow(
           cells: [
-            DataCell(Text(testsTaken[index].testname!.toCapitalized())),
+            DataCell(Text(widget.testsTaken[index].testname!.toCapitalized())),
             DataCell(Center(
               child: Text(
-                "${testsTaken[index].correct!}/${testsTaken[index].totalQuestions}",
+                "${widget.testsTaken[index].correct!}/${widget.testsTaken[index].totalQuestions}",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             )),
             DataCell(
               AdeoSignalStrengthIndicator(
-                strength: testsTaken[index].score!,
+                strength: widget.testsTaken[index].score!,
                 size: Sizes.small,
               ),
             ),

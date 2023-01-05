@@ -53,6 +53,20 @@ class TestTakenDB {
     }
     return tests;
   }
+  Future<List<TestTaken>> getKeywordTestsTakenByTestName(String testName) async {
+    final Database? db = await DBProvider.database;
+    List<Map<String, dynamic>> results = [];
+
+    results = await db!.query('keyword_test_taken',
+        where: "test_name = ?", whereArgs: [testName]);
+
+    List<TestTaken> tests = [];
+    for (int i = 0; i < results.length; i++) {
+      TestTaken test = TestTaken.fromJson(results[i]);
+      tests.add(test);
+    }
+    return tests;
+  }
 
   Future<List<TestTaken>> getKeywordTestTaken(int courseId) async {
     List<Map<String, dynamic>> result = [];
@@ -90,7 +104,6 @@ class TestTakenDB {
       test.total_test_taken = result[i]["total_test_taken"];
       test.scoreDiff = scoreDiff;
       tests.add(test);
-      print("object maps:${test.unattempted}");
     }
     return tests;
   }
