@@ -189,7 +189,6 @@ class KnowledgeTestController extends ChangeNotifier {
   late TestTaken? testTaken = null;
   late bool isTestTaken = false;
   late bool showKeywordTextField = false;
-  // final FocusNode keywordSearchFocusNode = FocusNode();
 
   void slideToActiveAlphabet(List<dynamic> tests, int index,
       {String selectedAlphabet = ''}) {
@@ -209,6 +208,41 @@ class KnowledgeTestController extends ChangeNotifier {
       } else {
         // _selectedIndex = tests.indexOf(_selectedTest);
       }
+    }
+  }
+
+  loadKeywordTest(BuildContext context,
+      {required Course course,
+      required String testName,
+      required User user,
+      bool smallHeightDevice = true}) async {
+    // 1. check whether keyword test taken exists for the selected
+    //    keyword.
+    await filterAndSetKnowledgeTestsTaken(
+      testCategory: TestCategory.NONE,
+      course: course,
+      testName: testName.toLowerCase(),
+    );
+
+    // 2. if yes, show stats card, else proceed to assesment page
+    if (isTestTaken) {
+      if (activeMenu != TestCategory.NONE) {
+        activeMenu = TestCategory.NONE;
+        isActiveAnyMenu = true;
+      }
+      openKnowledgeTestMenus(
+        context,
+        smallHeightDevice,
+        activeMenu,
+      );
+    } else {
+      await getTest(
+        context,
+        TestCategory.NONE,
+        course,
+        user,
+        searchKeyword: testName,
+      );
     }
   }
 

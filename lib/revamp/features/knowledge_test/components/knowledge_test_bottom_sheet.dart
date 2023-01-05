@@ -738,36 +738,15 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                             MaterialButton(
                                                                               padding: EdgeInsets.zero,
                                                                               onPressed: () async {
-                                                                                // 1. check whether keyword test taken exists for the selected
-                                                                                //    keyword.
-                                                                                await _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
-                                                                                  testCategory: TestCategory.NONE,
+                                                                                await _knowledgeTestController.loadKeywordTest(
+                                                                                  context,
                                                                                   course: _course,
-                                                                                  testName: entry.value[i].keyword!.toLowerCase(),
+                                                                                  testName: entry.value[i].keyword!,
+                                                                                  user: _user,
                                                                                 );
-
-                                                                                // 2. if yes, show stats card, else proceed to assesment page
                                                                                 if (_knowledgeTestController.isTestTaken) {
-                                                                                  if (_knowledgeTestController.activeMenu != TestCategory.NONE) {
-                                                                                    _knowledgeTestController.activeMenu = TestCategory.NONE;
-                                                                                    _knowledgeTestController.isActiveAnyMenu = true;
-                                                                                  }
-                                                                                  _knowledgeTestController.openKnowledgeTestMenus(
-                                                                                    context,
-                                                                                    smallHeightDevice,
-                                                                                    _knowledgeTestController.activeMenu,
-                                                                                  );
                                                                                   focusNodeKeywordSearchField.unfocus();
                                                                                   setState(() {});
-
-                                                                                } else {
-                                                                                  await _knowledgeTestController.getTest(
-                                                                                    context,
-                                                                                    TestCategory.NONE,
-                                                                                    _course,
-                                                                                    _user,
-                                                                                    searchKeyword: "${entry.value[i].keyword}",
-                                                                                  );
                                                                                 }
                                                                               },
                                                                               child: Column(
@@ -816,16 +795,24 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                           .zero,
                                                                   onPressed:
                                                                       () async {
-                                                                    setState(
-                                                                        () {});
                                                                     await _knowledgeTestController
-                                                                        .getTest(
+                                                                        .loadKeywordTest(
                                                                       context,
-                                                                      TestCategory
-                                                                          .NONE,
-                                                                      _course,
-                                                                      _user,
+                                                                      course:
+                                                                          _course,
+                                                                      testName:
+                                                                          searchKeyword,
+                                                                      user:
+                                                                          _user,
                                                                     );
+                                                                    if (_knowledgeTestController
+                                                                        .isTestTaken) {
+                                                                      // searchKeywordController
+                                                                      //     .clear();
+                                                                      focusNodeKeywordSearchField
+                                                                          .unfocus();
+                                                                      setState(() {});
+                                                                    }
                                                                   },
                                                                   child: Column(
                                                                     children: [
