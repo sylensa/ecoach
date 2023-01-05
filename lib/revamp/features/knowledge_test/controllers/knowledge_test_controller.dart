@@ -210,36 +210,52 @@ class KnowledgeTestController extends ChangeNotifier {
         // _selectedIndex = tests.indexOf(_selectedTest);
       }
     }
-
-    // print("Selected: $selectedAlphabet ");
   }
 
   filterAndSetKnowledgeTestsTaken({
     required Course course,
-    required int topicId,
     required TestCategory testCategory,
+    int? topicId,
+    String? testName,
   }) async {
     testsTaken = await TestController().keywordTestsTaken(course.id!);
 
     typeSpecificTestsTaken = await testsTaken
-        .where((element) =>
-            element.challengeType == testCategory.toString() &&
-            element.testType == testType.toString())
+        .where((e) =>
+            e.challengeType == testCategory.toString() &&
+            e.testType == testType.toString())
         .toList();
 
-    if (typeSpecificTestsTaken.length > 0) {
-      testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
-        return takenTest.topicId == topicId;
-      });
+    if (topicId != null) {
+      if (typeSpecificTestsTaken.length > 0) {
+        testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
+          return takenTest.topicId == topicId;
+        });
 
-      if (testTakenIndex != -1) {
-        isTestTaken = true;
-        testTaken = typeSpecificTestsTaken[testTakenIndex];
+        if (testTakenIndex != -1) {
+          isTestTaken = true;
+          testTaken = typeSpecificTestsTaken[testTakenIndex];
+        } else {
+          isTestTaken = false;
+        }
       } else {
         isTestTaken = false;
       }
     } else {
-      isTestTaken = false;
+      if (typeSpecificTestsTaken.length > 0) {
+        testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
+          return takenTest.testname == testName;
+        });
+
+        if (testTakenIndex != -1) {
+          isTestTaken = true;
+          testTaken = typeSpecificTestsTaken[testTakenIndex];
+        } else {
+          isTestTaken = false;
+        }
+      } else {
+        isTestTaken = false;
+      }
     }
   }
 
@@ -429,8 +445,10 @@ class KnowledgeTestController extends ChangeNotifier {
           }
         }
         futureList = TestController().getKeywordQuestions(
-            searchKeyword.toLowerCase(), course.id!,
-            currentQuestionCount: currentQuestionCount);
+          searchKeyword.toLowerCase(),
+          course.id!,
+          currentQuestionCount: currentQuestionCount,
+        );
         futureList.then(
           (data) async {
             await Navigator.push(

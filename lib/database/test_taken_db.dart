@@ -43,8 +43,7 @@ class TestTakenDB {
     List<Map<String, dynamic>> results = [];
 
     results = await db!.query('keyword_test_taken',
-        where: "topic_id = ?",
-        whereArgs: [topicId]);
+        where: "topic_id = ?", whereArgs: [topicId]);
 
     List<TestTaken> tests = [];
     for (int i = 0; i < results.length; i++) {
@@ -93,7 +92,6 @@ class TestTakenDB {
       tests.add(test);
       print("object maps:${test.unattempted}");
     }
-
     return tests;
   }
 

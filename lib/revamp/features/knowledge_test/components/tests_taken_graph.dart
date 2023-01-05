@@ -1,9 +1,7 @@
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/test_taken_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/test_taken.dart';
-import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/widgets/adeo_analysis_graph.dart';
 import 'package:ecoach/widgets/cards/stats_slider_card.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -15,12 +13,12 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 class TestTakenGraph extends StatefulWidget {
   String keyword;
   final Course course;
-  final int topicId;
+  final int? topicId;
   bool changeState;
   TestTakenGraph({
     required this.keyword,
     required this.course,
-    required this.topicId,
+    this.topicId,
     this.changeState = false,
   });
 
@@ -39,11 +37,19 @@ class _TestTakenGraphState extends State<TestTakenGraph> {
 
   getAverageStats(String period) async {
     testData.clear();
-    testdata.clear();
     List<TestTaken> graphResultData = [];
-    testData = await getAllTestTakenByTopic(widget.topicId);
+
+    if (widget.topicId != null) {
+      testData = await getAllTestTakenByTopic(widget.topicId!);
+    } else {
+      testData = await TestController().keywordTestsTaken(widget.course.id!);
+      testData = testData
+          .where((data) => data.testname == widget.keyword.toLowerCase())
+          .toList();
+    }
 
     graphResultData = testData;
+    
     for (int i = 0; i < graphResultData.length; i++) {
       final test = graphResultData[i];
       testdata.add(
@@ -84,7 +90,6 @@ class _TestTakenGraphState extends State<TestTakenGraph> {
         setState(() {
           dropdownValue = newValue!;
           getStat();
-          print(dropdownValue);
         });
       },
       items: <String>[

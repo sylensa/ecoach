@@ -20,7 +20,7 @@ class TestsStatisticCard extends StatefulWidget {
     required this.showGraph,
     required this.getTest,
     required this.knowledgeTestControllerModel,
-    required this.test,
+    this.test,
     this.activeMenu = TestCategory.NONE,
     this.testTaken,
     this.isTestTaken = false,
@@ -37,7 +37,7 @@ class TestsStatisticCard extends StatefulWidget {
   final TestCategory activeMenu;
   final KnowledgeTestControllerModel knowledgeTestControllerModel;
   final Future Function(BuildContext context, TestCategory testCategory,
-      TestNameAndCount selectedTest) getTest;
+      TestNameAndCount? selectedTest) getTest;
 
   @override
   State<TestsStatisticCard> createState() => _TestTakenStatisticCardState();
@@ -119,7 +119,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   void toggleAnalysis() async {
     widget.knowledgeTestControllerModel.isShowAnalysisBox =
         !widget.knowledgeTestControllerModel.isShowAnalysisBox;
-
+    
     analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
         ? TestCategory.TOPIC
         : TestCategory.NONE;
@@ -129,9 +129,10 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
 
   @override
   Widget build(BuildContext context) {
-    _test = widget.test;
+    _test = widget.test ?? null;
     testTaken = widget.testTaken ?? null;
     isTestTaken = widget.isTestTaken;
+    print("isTestTaken: ${isTestTaken}");
 
     return AnimatedBuilder(
       animation: animationController,
@@ -193,7 +194,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: sText(
-                                  "${properCase(_test.name)}",
+                                  "${properCase(_test != null ? _test.name : testTaken!.testname)}",
                                   color: Colors.black,
                                   weight: FontWeight.w500,
                                   size: 16,
@@ -238,10 +239,12 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                     child: widget.knowledgeTestControllerModel
                                             .isShowAnalysisBox
                                         ? Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                          child: Row(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Image.asset(
                                                   "assets/images/pencil.png",
@@ -256,19 +259,16 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                                 )
                                               ],
                                             ),
-                                        )
+                                          )
                                         : TestTakenGraph(
-                                            topicId: _test.id,
-                                            keyword: _test.name,
+                                            topicId: _test != null
+                                                ? _test.id
+                                                : testTaken!.topicId,
+                                            keyword: _test != null
+                                                ? _test.name
+                                                : testTaken!.testname,
                                             course: widget.course,
                                           ),
-                                    //  Text(
-                                    //     "Graph goes here",
-                                    //     style: TextStyle(
-                                    //       fontSize: 16,
-                                    //       color: Colors.black38,
-                                    //     ),
-                                    //   ),
                                   ),
                                 ),
                               ),
@@ -429,7 +429,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: sText(
-                                          "${properCase(_test.name)}",
+                                          "${properCase(_test != null ? _test.name : testTaken!.testname)}",
                                           color: Colors.white,
                                           weight: FontWeight.bold,
                                           size: 16,
@@ -646,9 +646,10 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                           GestureDetector(
                             onTap: () async {
                               setState(() {
-                                searchKeyword = _test.name.toLowerCase();
+                                searchKeyword = _test.name.toLowerCase() ??
+                                    testTaken!.testname!.toLowerCase();
                               });
-                  
+
                               await widget.getTest(
                                 context,
                                 widget.activeMenu,
