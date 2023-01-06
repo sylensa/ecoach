@@ -425,13 +425,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.all(6),
                                       width: 28,
                                       height: 28,
-                                      child: Image.asset(
-                                        activeMenuIcon,
-                                        width: 18,
-                                      ),
+                                      child: Center(child: Icon(Icons.trending_up)),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
@@ -446,7 +442,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: sText(
-                                          "${properCase(_test != null ? _test.name : testTaken!.testname)}",
+                                          "#${properCase(_test != null ? _test.name : testTaken!.testname)}",
                                           color: Colors.white,
                                           weight: FontWeight.bold,
                                           size: 16,
