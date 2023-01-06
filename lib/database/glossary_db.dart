@@ -19,10 +19,18 @@ class GlossaryDB {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-  Future<void> insertGlossaryProgress(GlossaryProgressData glossaryProgressData) async {
+  Future<void> insertGlossaryTryProgress(GlossaryProgressData glossaryProgressData) async {
     final db = await DBProvider.database;
     db!.insert(
-      'glossary_progress',
+      'glossary_try_progress',
+      glossaryProgressData.toJson(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  Future<void> insertGlossaryStudyProgress(GlossaryProgressData glossaryProgressData) async {
+    final db = await DBProvider.database;
+    db!.insert(
+      'glossary_study_progress',
       glossaryProgressData.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -43,10 +51,21 @@ class GlossaryDB {
   //    glossaryProgressData = GlossaryProgressData.fromJson(response.first);
   //   return glossaryProgressData;
   // }
-  Future<GlossaryProgressData?> getGlossaryProgressByCourseId(int courseId) async {
+  Future<GlossaryProgressData?> getGlossaryTryProgressByCourseId(int courseId) async {
     GlossaryProgressData? glossaryProgressData;
     final db = await DBProvider.database;
-    var  response = await db!.rawQuery("Select * from glossary_progress where course_id = $courseId");
+    var  response = await db!.rawQuery("Select * from glossary_try_progress where course_id = $courseId");
+    print("response glossary_progress course id:$courseId : $response");
+    if(response.isNotEmpty){
+      glossaryProgressData = GlossaryProgressData.fromJson(response.last);
+      return glossaryProgressData;
+    }
+    return glossaryProgressData;
+  }
+  Future<GlossaryProgressData?> getGlossaryStudyProgressByCourseId(int courseId) async {
+    GlossaryProgressData? glossaryProgressData;
+    final db = await DBProvider.database;
+    var  response = await db!.rawQuery("Select * from glossary_study_progress where course_id = $courseId");
     print("response glossary_progress course id:$courseId : $response");
     if(response.isNotEmpty){
       glossaryProgressData = GlossaryProgressData.fromJson(response.last);
@@ -133,10 +152,18 @@ class GlossaryDB {
     );
   }
 
-  deleteGlossaryProgress(int id) async {
+  deleteGlossaryTryProgress(int id) async {
     final db = await DBProvider.database;
   db!.delete(
-      'glossary_progress',
+      'glossary_try_progress',
+      where: "course_id = ?",
+      whereArgs: [id],
+    );
+  }
+  deleteGlossaryStudyProgress(int id) async {
+    final db = await DBProvider.database;
+  db!.delete(
+      'glossary_study_progress',
       where: "course_id = ?",
       whereArgs: [id],
     );
@@ -151,7 +178,11 @@ class GlossaryDB {
     await db!.rawQuery('Delete from glossary_topic');
   }
 
-  deleteAllGlossaryProgress() async {
+  deleteAllGlossaryTryProgress() async {
+    final db = await DBProvider.database;
+    await db!.rawQuery('Delete from glossary_progress');
+  }
+  deleteAllGlossaryStudyProgress() async {
     final db = await DBProvider.database;
     await db!.rawQuery('Delete from glossary_progress');
   }

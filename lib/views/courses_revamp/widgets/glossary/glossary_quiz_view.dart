@@ -47,27 +47,22 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
   int wrong = 0;
   int initialIndex = 0;
   int totalGlossary = 0;
-
+  int answeredQuestionCount = 0;
+  List<GlossaryData> listGlossaryData = [];
   List<TextEditingController> textEditingController = [];
   CarouselController carouselController = CarouselController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    listGlossaryData =  widget.listGlossaryData;
     totalGlossary = widget.listGlossaryData.length;
     if(widget.glossaryProgressData != null){
-      initialIndex = widget.glossaryProgressData!.progressIndex!;
-      initialIndex++;
-      print("initialIndex:${initialIndex}");
+      initialIndex = widget.glossaryProgressData!.progressIndex! + 1;
+      print("initialIndex:$initialIndex");
       correct = widget.glossaryProgressData!.correct!;
       wrong = widget.glossaryProgressData!.wrong!;
       totalGlossary = widget.glossaryProgressData!.count!;
-      if((correct + wrong) != totalGlossary || (correct + wrong) < totalGlossary){
-        for(int i = 0 ; i < correct + wrong; i++){
-          widget.listGlossaryData.removeAt(i);
-        }
-      }
-
     }
     for(int i = 0; i < widget.listGlossaryData.length; i++){
       textEditingController.add(TextEditingController());
@@ -109,6 +104,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                 ],
               ),
               SizedBox(height: 20,),
+              widget.listGlossaryData.isNotEmpty ?
               CarouselSlider.builder(
                 carouselController: carouselController,
                   options:
@@ -123,24 +119,9 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                     aspectRatio: 2.0,
                     pageSnapping: true,
                     onPageChanged: (index, reason) async{
-                      if(!isSkipped){
-                        GlossaryProgressData glossaryProgressData = GlossaryProgressData(
-                            topicId: widget.listGlossaryData[index].topic!.id,
-                            courseId: widget.listGlossaryData[index].courseId!,
-                            searchTerm: widget.listGlossaryData[index].term,
-                            selectedCharacter: "a",
-                            progressIndex: index,
-                            correct: correct,
-                            wrong:  isSkipped ? wrong + 1 : wrong ,
-                            count: totalGlossary
-                        );
-                        await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                        await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
-
-                      }
-
                       setState(() {
-                        print("wrong:$wrong");
+                        print("wrong:$index");
+
                       });
 
                     },
@@ -210,21 +191,28 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                 Expanded(
                                   child: TextField(
                                     controller: textEditingController[indexReport],
+                                    enabled: widget.listGlossaryData[indexReport].answered == 1 ? false : true,
                                     keyboardType: TextInputType.emailAddress,
                                     onSubmitted: (String value)async{
-                                      setState(() {
-                                        isSkipped = false;
-                                      });
+                                      isSkipped = true;
+                                       widget.listGlossaryData[indexReport].answered = 1;
+                                       if(value.isEmpty){
+                                         textEditingController[indexReport].text = 'Answered';
+                                       }
                                       if(value.toLowerCase() == widget.listGlossaryData[indexReport].term!.toLowerCase()){
                                        setState(() {
                                          correct++;
                                        });
-                                       showSuccessDialog(context: context);
+                                       if(scoreSelected){
+                                         showSuccessDialog(context: context);
+                                       }
                                       }else{
                                         setState(() {
                                           wrong++;
                                         });
-                                        showFailedDialog(context: context);
+                                        if(scoreSelected){
+                                          showFailedDialog(context: context);
+                                        }
                                       }
                                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
                                           topicId: widget.listGlossaryData[indexReport].topic!.id,
@@ -232,16 +220,15 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                           searchTerm: widget.listGlossaryData[indexReport].term,
                                           selectedCharacter: "a",
                                           progressIndex: indexReport,
-                                        count:  totalGlossary,
-                                        correct: correct,
-                                        wrong: wrong
+                                          count:  totalGlossary,
+                                          correct: correct,
+                                          wrong: wrong
                                       );
-                                      await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                                      await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
+                                      await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
+                                      await GlossaryDB().insertGlossaryTryProgress(glossaryProgressData);
+                                      carouselController.animateToPage(indexReport + 1,duration: Duration(seconds: 1),curve: Curves.easeIn);
                                       setState(() {
                                         isSkipped = true;
-                                        widget.listGlossaryData.removeAt(indexReport);
-                                        textEditingController.removeAt(indexReport);
                                       });
                                     },
                                     decoration: InputDecoration(
@@ -259,7 +246,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                         ),
                       ),
                     );
-                  }),
+                  }) : Center(child: sText("Answered all terms"),),
 
             ],
           ),

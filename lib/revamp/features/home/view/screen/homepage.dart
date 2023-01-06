@@ -858,7 +858,7 @@ class _HomePage2ContentState extends State<DashboardContent>
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                      width: appWidth(context) * 0.6,
+                                      width: appWidth(context) * 0.58,
                                       child: RichText(
                                         text: TextSpan(
                                           children: [

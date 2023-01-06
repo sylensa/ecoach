@@ -160,14 +160,19 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                       ),
 
                       MaterialButton(
-                        onPressed: (){
+                        onPressed: ()async{
+                          print("object");
                           stateSetter(() {
                             studySelected = true;
                           });
+                          showLoaderDialog(context);
+                          widget.glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
                           Navigator.pop(context);
-                          Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: null,));
-
-                          // continueRestartModalBottomSheet(context);
+                          if(widget.glossaryProgressData != null){
+                            continueRestartModalBottomSheet(context);
+                          }else{
+                            Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                          }
                         },
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -278,15 +283,28 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
 
                      MaterialButton(
                        onPressed: ()async{
-                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
-                         if(widget.glossaryProgressData != null){
-                           stateSetter(() {
-                             continueSelected = true;
-                           });
-                           Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                         if(studySelected){
+                           widget.glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
+                           if(widget.glossaryProgressData != null){
+                             stateSetter(() {
+                               continueSelected = true;
+                             });
+                             Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                           }else{
+                             toastMessage("You've no save progress");
+                           }
                          }else{
-                           toastMessage("You've no save progress");
+                           widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                           if(widget.glossaryProgressData != null){
+                             stateSetter(() {
+                               continueSelected = true;
+                             });
+                             Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                           }else{
+                             toastMessage("You've no save progress");
+                           }
                          }
+
 
                        },
                        child: Container(
@@ -304,7 +322,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                      ),
 
                      MaterialButton(
-                       onPressed: (){
+                       onPressed: ()async{
+                         await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
                          stateSetter(() {
                            continueSelected = false;
                          });
@@ -399,12 +418,12 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                      MaterialButton(
                        onPressed: ()async{
                          print("object");
-                         showLoaderDialog(context);
-                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryProgressByCourseId(widget.course.id!);
-                        Navigator.pop(context);
                          stateSetter(() {
                            scoreSelected = true;
                          });
+                         showLoaderDialog(context);
+                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                        Navigator.pop(context);
                          if(widget.glossaryProgressData != null){
                            continueRestartModalBottomSheet(context);
                          }else{
@@ -427,11 +446,19 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                      ),
 
                      MaterialButton(
-                       onPressed: (){
+                       onPressed: ()async{
                          stateSetter(() {
                            scoreSelected = false;
                          });
-                         continueRestartModalBottomSheet(context);
+                         print("object");
+                         showLoaderDialog(context);
+                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                         Navigator.pop(context);
+                         if(widget.glossaryProgressData != null){
+                           continueRestartModalBottomSheet(context);
+                         }else{
+                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                         }
                          },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -674,7 +701,6 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
     // TODO: implement initState
     super.initState();
     getAllGlossaryData();
-
   }
 
   @override
