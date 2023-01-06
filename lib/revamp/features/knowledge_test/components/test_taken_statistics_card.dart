@@ -48,8 +48,8 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   String searchKeyword = '';
   bool isActiveStatisticsSide = false;
   TestCategory analysisTestType = TestCategory.NONE;
-  String activeMenuIcon = "assets/icons/courses/";
 
+  late String activeMenuIcon;
   late bool isActiveGraphSide;
   late FlipCardController flipCardController;
   late AnimationController animationController;
@@ -71,34 +71,6 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
       duration: Duration(milliseconds: 600),
       vsync: this,
     );
-
-    switch (widget.activeMenu) {
-      case TestCategory.TOPIC:
-        activeMenuIcon += "topic.png";
-        break;
-      case TestCategory.MOCK:
-        activeMenuIcon += "mock.png";
-        break;
-      case TestCategory.EXAM:
-        activeMenuIcon += "exam.png";
-        break;
-      case TestCategory.ESSAY:
-        activeMenuIcon += "essay.png";
-        break;
-      case TestCategory.SAVED:
-        activeMenuIcon += "saved.png";
-        break;
-      case TestCategory.BANK:
-        activeMenuIcon += "bank.png";
-        break;
-      case TestCategory.NONE:
-        activeMenuIcon += "topic.png";
-
-        break;
-      default:
-        activeMenuIcon = "";
-        break;
-    }
   }
 
   Future flipCard() async {
@@ -151,6 +123,33 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
     isTestTaken = widget.isTestTaken;
     if (widget.activeMenu != TestCategory.NONE) {
       testsTakenForAnalysis = widget.allTestsTakenForAnalysis;
+    }
+    switch (widget.activeMenu) {
+      case TestCategory.TOPIC:
+        activeMenuIcon = "assets/icons/courses/topic.png";
+        break;
+      case TestCategory.MOCK:
+        activeMenuIcon = "assets/icons/courses/mock.png";
+        break;
+      case TestCategory.EXAM:
+        activeMenuIcon = "assets/icons/courses/exam.png";
+        break;
+      case TestCategory.ESSAY:
+        activeMenuIcon = "assets/icons/courses/essay.png";
+        break;
+      case TestCategory.SAVED:
+        activeMenuIcon = "assets/icons/courses/saved.png";
+        break;
+      case TestCategory.BANK:
+        activeMenuIcon = "assets/icons/courses/bank.png";
+        break;
+      case TestCategory.NONE:
+        activeMenuIcon = "assets/icons/courses/topic.png";
+
+        break;
+      default:
+        activeMenuIcon = "";
+        break;
     }
 
     return AnimatedBuilder(
@@ -427,7 +426,17 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                     Container(
                                       width: 28,
                                       height: 28,
-                                      child: Center(child: Icon(Icons.trending_up)),
+                                      child: widget.activeMenu !=
+                                              TestCategory.NONE
+                                          ? Center(
+                                              child: Image.asset(
+                                                activeMenuIcon,
+                                                width: 18,
+                                              ),
+                                            )
+                                          : Center(
+                                              child: Icon(Icons.trending_up),
+                                            ),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
@@ -441,12 +450,20 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                       width: isTestTaken ? 220 : 280,
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
-                                        child: sText(
-                                          "#${properCase(_test != null ? _test.name : testTaken!.testname)}",
-                                          color: Colors.white,
-                                          weight: FontWeight.bold,
-                                          size: 16,
-                                        ),
+                                        child: widget.activeMenu !=
+                                                TestCategory.NONE
+                                            ? sText(
+                                                "${properCase(_test != null ? _test.name : testTaken!.testname)}",
+                                                color: Colors.white,
+                                                weight: FontWeight.bold,
+                                                size: 16,
+                                              )
+                                            : sText(
+                                                "#${properCase(_test != null ? _test.name : testTaken!.testname)}",
+                                                color: Colors.white,
+                                                weight: FontWeight.bold,
+                                                size: 16,
+                                              ),
                                       ),
                                     ),
                                   ],
