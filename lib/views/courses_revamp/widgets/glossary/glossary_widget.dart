@@ -169,8 +169,10 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                           widget.glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
                           Navigator.pop(context);
                           if(widget.glossaryProgressData != null){
+                            Navigator.pop(context);
                             continueRestartModalBottomSheet(context);
                           }else{
+                            Navigator.pop(context);
                             Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
                           }
                         },
@@ -423,7 +425,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          });
                          showLoaderDialog(context);
                          widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
-                        Navigator.pop(context);
+                         Navigator.pop(context);
+                         Navigator.pop(context);
                          if(widget.glossaryProgressData != null){
                            continueRestartModalBottomSheet(context);
                          }else{
@@ -453,6 +456,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          print("object");
                          showLoaderDialog(context);
                          widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                         Navigator.pop(context);
                          Navigator.pop(context);
                          if(widget.glossaryProgressData != null){
                            continueRestartModalBottomSheet(context);
