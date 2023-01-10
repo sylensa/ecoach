@@ -153,6 +153,7 @@ class KnowledgeTestController extends ChangeNotifier {
   List<TestTaken> testsTaken = [];
   CarouselController alphaSliderToStatisticsCardController =
       CarouselController();
+
   String currentAlphabet = '';
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
     'A': [],

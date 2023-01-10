@@ -407,137 +407,157 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                         physics: model.isShowAnalysisBox
                                             ? BouncingScrollPhysics()
                                             : NeverScrollableScrollPhysics(),
-                                        child: CarouselSlider.builder(
-                                          carouselController:
-                                              _knowledgeTestController
-                                                  .alphaSliderToStatisticsCardController,
-                                          options: CarouselOptions(
-                                            height: model.isShowAnalysisBox
-                                                ? 600
-                                                : 300,
-                                            autoPlay: false,
-                                            enableInfiniteScroll: false,
-                                            autoPlayAnimationDuration:
-                                                Duration(seconds: 1),
-                                            enlargeCenterPage: true,
-                                            viewportFraction: 1,
-                                            aspectRatio: 2.0,
-                                            pageSnapping: true,
-                                            initialPage: _currentSlide,
-                                            onPageChanged:
-                                                (index, reason) async {
-                                              if (model.isShowAnalysisBox) {
-                                                model.isShowAnalysisBox = false;
-                                              }
-                                              if (isShowAlphaScroll) {
-                                                model.currentAlphabet =
-                                                    tests[_currentSlide]
-                                                        .name[0];
-                                              }
-                                            },
-                                          ),
-                                          itemCount: tests.length,
-                                          itemBuilder: (BuildContext context,
-                                              int itemIndex,
-                                              int pageViewIndex) {
-                                            _currentSlide = itemIndex;
-
-                                            if (tests.isNotEmpty) {
-                                              test = tests[_currentSlide];
-                                            }
-
-                                            switch (_knowledgeTestController
-                                                .activeMenu) {
-                                              case TestCategory.TOPIC:
-                                                topicId =
-                                                    tests[_currentSlide].id;
-                                                _knowledgeTestController
-                                                    .getAllTestTakenByTopic(
-                                                        topicId!);
-
-                                                _knowledgeTestController
-                                                        .testTakenIndex =
+                                        child: tests.isNotEmpty
+                                            ? CarouselSlider.builder(
+                                                carouselController:
                                                     _knowledgeTestController
-                                                        .typeSpecificTestsTaken
-                                                        .indexWhere(
-                                                  (takenTest) {
-                                                    return takenTest.topicId ==
-                                                        topicId;
+                                                        .alphaSliderToStatisticsCardController,
+                                                options: CarouselOptions(
+                                                  height:
+                                                      model.isShowAnalysisBox
+                                                          ? 600
+                                                          : 300,
+                                                  autoPlay: false,
+                                                  enableInfiniteScroll: false,
+                                                  autoPlayAnimationDuration:
+                                                      Duration(seconds: 1),
+                                                  enlargeCenterPage: true,
+                                                  viewportFraction: 1,
+                                                  aspectRatio: 2.0,
+                                                  pageSnapping: true,
+                                                  initialPage: _currentSlide,
+                                                  onPageChanged:
+                                                      (index, reason) async {
+                                                    if (model
+                                                        .isShowAnalysisBox) {
+                                                      model.isShowAnalysisBox =
+                                                          false;
+                                                    }
+                                                    if (isShowAlphaScroll) {
+                                                      model.currentAlphabet =
+                                                          tests[_currentSlide]
+                                                              .name[0];
+                                                    }
                                                   },
-                                                );
+                                                ),
+                                                itemCount: tests.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int itemIndex,
+                                                        int pageViewIndex) {
+                                                  _currentSlide = itemIndex;
 
-                                                if (_knowledgeTestController
-                                                        .testTakenIndex !=
-                                                    -1) {
-                                                  _knowledgeTestController
-                                                      .isTestTaken = true;
-                                                  _knowledgeTestController
-                                                          .testTaken =
+                                                  if (tests.isNotEmpty) {
+                                                    test = tests[_currentSlide];
+                                                  }
+
+                                                  switch (
                                                       _knowledgeTestController
-                                                              .typeSpecificTestsTaken[
+                                                          .activeMenu) {
+                                                    case TestCategory.TOPIC:
+                                                      topicId =
+                                                          tests[_currentSlide]
+                                                              .id;
+                                                      _knowledgeTestController
+                                                          .getAllTestTakenByTopic(
+                                                              topicId!);
+
+                                                      _knowledgeTestController
+                                                              .testTakenIndex =
                                                           _knowledgeTestController
-                                                              .testTakenIndex];
-                                                } else {
-                                                  _knowledgeTestController
-                                                      .isTestTaken = false;
-                                                }
+                                                              .typeSpecificTestsTaken
+                                                              .indexWhere(
+                                                        (takenTest) {
+                                                          return takenTest
+                                                                  .topicId ==
+                                                              topicId;
+                                                        },
+                                                      );
 
-                                                break;
-                                              case TestCategory.EXAM:
-                                                break;
-                                              case TestCategory.MOCK:
-                                                break;
-                                              case TestCategory.ESSAY:
-                                                break;
-                                              case TestCategory.SAVED:
-                                                break;
-                                              case TestCategory.BANK:
-                                                break;
-                                              case TestCategory.NONE:
-                                                break;
-                                              default:
-                                                // sheetHeightIncreased = false;
-                                                break;
-                                            }
+                                                      if (_knowledgeTestController
+                                                              .testTakenIndex !=
+                                                          -1) {
+                                                        _knowledgeTestController
+                                                            .isTestTaken = true;
+                                                        _knowledgeTestController
+                                                                .testTaken =
+                                                            _knowledgeTestController
+                                                                    .typeSpecificTestsTaken[
+                                                                _knowledgeTestController
+                                                                    .testTakenIndex];
+                                                      } else {
+                                                        _knowledgeTestController
+                                                                .isTestTaken =
+                                                            false;
+                                                      }
 
-                                            return TestsStatisticCard(
-                                              course: _course,
-                                              test: test,
-                                              isTestTaken:
-                                                  _knowledgeTestController
-                                                      .isTestTaken,
-                                              testTaken:
-                                                  _knowledgeTestController
-                                                      .testTaken,
-                                              allTestsTakenForAnalysis:
-                                                  _knowledgeTestController
-                                                      .allTestsTakenForAnalysis,
-                                              showGraph:
-                                                  _knowledgeTestController
-                                                      .showGraph,
-                                              activeMenu:
-                                                  _knowledgeTestController
-                                                      .activeMenu,
-                                              knowledgeTestControllerModel:
-                                                  model,
-                                              getTest: (
-                                                BuildContext context,
-                                                TestCategory testCategory,
-                                                TestNameAndCount? selectedTopic,
-                                              ) async {
-                                                _knowledgeTestController
-                                                    .goToInstructions(
-                                                  context,
-                                                  selectedTopic,
-                                                  testCategory,
-                                                  _user,
-                                                  _course,
-                                                  searchKeyword: searchKeyword,
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
+                                                      break;
+                                                    case TestCategory.EXAM:
+                                                      break;
+                                                    case TestCategory.MOCK:
+                                                      break;
+                                                    case TestCategory.ESSAY:
+                                                      break;
+                                                    case TestCategory.SAVED:
+                                                      break;
+                                                    case TestCategory.BANK:
+                                                      break;
+                                                    case TestCategory.NONE:
+                                                      break;
+                                                    default:
+                                                      // sheetHeightIncreased = false;
+                                                      break;
+                                                  }
+
+                                                  return TestsStatisticCard(
+                                                    course: _course,
+                                                    test: test,
+                                                    isTestTaken:
+                                                        _knowledgeTestController
+                                                            .isTestTaken,
+                                                    testTaken:
+                                                        _knowledgeTestController
+                                                            .testTaken,
+                                                    allTestsTakenForAnalysis:
+                                                        _knowledgeTestController
+                                                            .allTestsTakenForAnalysis,
+                                                    showGraph:
+                                                        _knowledgeTestController
+                                                            .showGraph,
+                                                    activeMenu:
+                                                        _knowledgeTestController
+                                                            .activeMenu,
+                                                    knowledgeTestControllerModel:
+                                                        model,
+                                                    getTest: (
+                                                      BuildContext context,
+                                                      TestCategory testCategory,
+                                                      TestNameAndCount?
+                                                          selectedTopic,
+                                                    ) async {
+                                                      _knowledgeTestController
+                                                          .goToInstructions(
+                                                        context,
+                                                        selectedTopic,
+                                                        testCategory,
+                                                        _user,
+                                                        _course,
+                                                        searchKeyword:
+                                                            searchKeyword,
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                              )
+                                            : SizedBox(
+                                                height: 300,
+                                                child: Center(
+                                                  child: Text(
+                                                    "No ${_knowledgeTestController.activeMenu.name} found for\n${_course.name}",
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
                                       ),
                               ],
                             ),
