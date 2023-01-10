@@ -49,6 +49,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
               margin: EdgeInsets.only(bottom: 4),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ...alphaScrollSliderLabels.map((alphabetLabel) {
                     int index = alphaScrollSliderLabels.indexOf(alphabetLabel);
@@ -67,7 +68,7 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
                       child: Text(
                         alphabetLabel,
                         style: TextStyle(
-                          fontSize: isSelectedAlphabet ? 16 : 14,
+                          fontSize: isSelectedAlphabet ? 20 : 14,
                           color: Color(0xFF0367B4).withOpacity(
                             isSelectedAlphabet ? 1 : 0.8
                           ),

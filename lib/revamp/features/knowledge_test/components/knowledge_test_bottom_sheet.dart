@@ -15,6 +15,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quiver/collection.dart';
 
 class KnowledgeTestBottomSheet extends StatefulWidget {
   KnowledgeTestBottomSheet({
@@ -192,6 +193,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                 switch (_knowledgeTestController.activeMenu) {
                   case TestCategory.TOPIC:
                     isActiveTopicMenu = true;
+
                     _knowledgeTestController.isActiveAnyMenu = true;
                     _knowledgeTestController.sheetHeightIncreased = true;
                     tests = await _knowledgeTestController.getTest(
@@ -201,8 +203,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                       _user,
                     );
 
-                    _knowledgeTestController.emptyTestList =
-                        _knowledgeTestController.tests.isEmpty;
+                    _knowledgeTestController.emptyTestList = tests.isEmpty;
+                    print("dfgdf: ${_knowledgeTestController.emptyTestList}");
                     _knowledgeTestController.currentAlphabet =
                         tests.first.name[0];
                     topicId = tests[_currentSlide].id;
@@ -222,7 +224,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                           .toList();
                       scrollListAlphabets.sort();
                     }
-
+                    isShowAlphaScroll = true;
                     break;
                   case TestCategory.EXAM:
                     _knowledgeTestController.isActiveAnyMenu = true;
@@ -233,25 +235,26 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                       _course,
                       _user,
                     );
-                    _knowledgeTestController.emptyTestList = tests.isEmpty;
-                    _knowledgeTestController.currentAlphabet =
-                        tests.first.name[0];
-                    topicId = tests[_currentSlide].id;
 
-                    _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
-                      testCategory: TestCategory.EXAM,
-                      course: _course,
-                      topicId: topicId!,
-                    );
-
-                    if (!_knowledgeTestController.emptyTestList) {
-                      scrollListAlphabets = tests
-                          .map((exam) {
-                            return exam.name[0].toString().toUpperCase();
-                          })
-                          .toSet()
-                          .toList();
-                      scrollListAlphabets.sort();
+                    if (tests.isNotEmpty) {
+                      _knowledgeTestController.emptyTestList = tests.isEmpty;
+                      _knowledgeTestController.currentAlphabet =
+                          tests.first.name[0];
+                      topicId = tests[_currentSlide].id;
+                      _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
+                        testCategory: TestCategory.EXAM,
+                        course: _course,
+                        topicId: topicId!,
+                      );
+                      if (!_knowledgeTestController.emptyTestList) {
+                        scrollListAlphabets = tests
+                            .map((exam) {
+                              return exam.name[0].toString().toUpperCase();
+                            })
+                            .toSet()
+                            .toList();
+                        scrollListAlphabets.sort();
+                      }
                     }
 
                     break;
@@ -548,136 +551,241 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                       keywordTestTaken.isNotEmpty)
                                     Spacer(),
                                   SizedBox(
-                                    height: 20,
+                                    height: 12,
                                   ),
-                                  Dismissible(
-                                    key: UniqueKey(),
-                                    direction: DismissDirection.horizontal,
-                                    confirmDismiss: (direction) {
-                                      if (_knowledgeTestController
-                                          .isActiveAnyMenu) {
-                                        if (direction ==
-                                                DismissDirection.endToStart ||
-                                            direction ==
-                                                DismissDirection.startToEnd) {
-                                          setState(
-                                            (() {
-                                              isShowAlphaScroll =
-                                                  !isShowAlphaScroll;
-                                            }),
-                                          );
-                                        }
-                                      }
-                                      return Future.value(false);
-                                    },
-                                    child: Column(
-                                      children: [
-                                        isShowAlphaScroll &&
-                                                !_knowledgeTestController
-                                                    .emptyTestList
-                                            ? AlphabetScrollSlider(
-                                                alphabets: scrollListAlphabets,
-                                                initialSelectedAlphabet: model
-                                                        .currentAlphabet.isEmpty
-                                                    ? _knowledgeTestController
-                                                        .currentAlphabet
-                                                    : model.currentAlphabet,
-                                                callback:
-                                                    (selectedAlphabet, index) {
-                                                  _knowledgeTestController
-                                                      .slideToActiveAlphabet(
-                                                    tests,
-                                                    index,
-                                                    selectedAlphabet:
-                                                        selectedAlphabet,
-                                                  );
-                                                },
-                                              )
-                                            : Container(
-                                                padding: EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 0,
-                                                ),
-                                                child: Form(
-                                                  key: _formKey,
-                                                  child: TextField(
-                                                    focusNode:
-                                                        focusNodeKeywordSearchField,
-                                                    controller:
-                                                        searchKeywordController,
-                                                    onChanged:
-                                                        (String value) async {
-                                                      searchKeyword =
-                                                          value.trim();
-                                                      model.listQuestions
-                                                          .clear();
-                                                      await runKeywordSearch(
-                                                        searchKeyword,
-                                                        model,
-                                                      );
-                                                    },
-                                                    onTap: (() {
-                                                      if (_knowledgeTestController
-                                                              .searchTap ==
-                                                          false) {
-                                                        setState(() {
-                                                          _knowledgeTestController
-                                                                  .sheetHeight =
-                                                              appHeight(
-                                                                      context) *
-                                                                  0.90;
-                                                          _knowledgeTestController
-                                                                  .showKeywordTextField =
-                                                              true;
-                                                          _knowledgeTestController
-                                                                  .sheetHeightIncreased =
-                                                              true;
-                                                          if (_knowledgeTestController
-                                                              .isActiveAnyMenu) {
-                                                            _knowledgeTestController
-                                                                    .activeMenu =
-                                                                TestCategory
-                                                                    .NONE;
-                                                            _knowledgeTestController
-                                                                    .isActiveAnyMenu =
-                                                                false;
-                                                          }
-                                                          _knowledgeTestController
-                                                              .searchTap = true;
-                                                        });
-                                                      }
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: _knowledgeTestController
+                                                .activeMenu !=
+                                            TestCategory.EXAM
+                                        ? Dismissible(
+                                            key: UniqueKey(),
+                                            direction:
+                                                DismissDirection.horizontal,
+                                            confirmDismiss: (direction) {
+                                              if (_knowledgeTestController
+                                                  .isActiveAnyMenu) {
+                                                if (direction ==
+                                                        DismissDirection
+                                                            .endToStart ||
+                                                    direction ==
+                                                        DismissDirection
+                                                            .startToEnd) {
+                                                  setState(
+                                                    (() {
+                                                      isShowAlphaScroll =
+                                                          !isShowAlphaScroll;
                                                     }),
-                                                    decoration: textDecorSuffix(
-                                                      fillColor:
-                                                          Color(0xFFEEEEEE),
-                                                      showBorder: false,
-                                                      size: 60,
-                                                      icon: IconButton(
-                                                          onPressed: () async {
-                                                            await _knowledgeTestController
-                                                                .getTest(
-                                                              context,
-                                                              TestCategory.NONE,
-                                                              _course,
-                                                              _user,
-                                                              searchKeyword:
-                                                                  searchKeyword,
-                                                            );
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.search,
-                                                            color: Colors.grey,
-                                                          )),
-                                                      suffIcon: null,
-                                                      label: "Search Keywords",
-                                                      enabled: true,
+                                                  );
+                                                }
+                                              }
+                                              return Future.value(false);
+                                            },
+                                            child: Column(
+                                              children: [
+                                                isShowAlphaScroll &&
+                                                        !_knowledgeTestController
+                                                            .emptyTestList
+                                                    ? AlphabetScrollSlider(
+                                                        alphabets:
+                                                            scrollListAlphabets,
+                                                        initialSelectedAlphabet: model
+                                                                .currentAlphabet
+                                                                .isEmpty
+                                                            ? _knowledgeTestController
+                                                                .currentAlphabet
+                                                            : model
+                                                                .currentAlphabet,
+                                                        callback:
+                                                            (selectedAlphabet,
+                                                                index) {
+                                                          _knowledgeTestController
+                                                              .slideToActiveAlphabet(
+                                                            tests,
+                                                            index,
+                                                            selectedAlphabet:
+                                                                selectedAlphabet,
+                                                          );
+                                                        },
+                                                      )
+                                                    : Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 10,
+                                                          right: 10,
+                                                          top: 0,
+                                                        ),
+                                                        child: Form(
+                                                          key: _formKey,
+                                                          child: TextField(
+                                                            focusNode:
+                                                                focusNodeKeywordSearchField,
+                                                            controller:
+                                                                searchKeywordController,
+                                                            onChanged: (String
+                                                                value) async {
+                                                              searchKeyword =
+                                                                  value.trim();
+                                                              model
+                                                                  .listQuestions
+                                                                  .clear();
+                                                              await runKeywordSearch(
+                                                                searchKeyword,
+                                                                model,
+                                                              );
+                                                            },
+                                                            onTap: (() {
+                                                              if (_knowledgeTestController
+                                                                      .searchTap ==
+                                                                  false) {
+                                                                setState(() {
+                                                                  _knowledgeTestController
+                                                                          .sheetHeight =
+                                                                      appHeight(
+                                                                              context) *
+                                                                          0.90;
+                                                                  _knowledgeTestController
+                                                                          .showKeywordTextField =
+                                                                      true;
+                                                                  _knowledgeTestController
+                                                                          .sheetHeightIncreased =
+                                                                      true;
+                                                                  if (_knowledgeTestController
+                                                                      .isActiveAnyMenu) {
+                                                                    _knowledgeTestController
+                                                                            .activeMenu =
+                                                                        TestCategory
+                                                                            .NONE;
+                                                                    _knowledgeTestController
+                                                                            .isActiveAnyMenu =
+                                                                        false;
+                                                                  }
+                                                                  _knowledgeTestController
+                                                                          .searchTap =
+                                                                      true;
+                                                                });
+                                                              }
+                                                            }),
+                                                            decoration:
+                                                                textDecorSuffix(
+                                                              fillColor: Color(
+                                                                  0xFFEEEEEE),
+                                                              showBorder: false,
+                                                              size: 60,
+                                                              icon: IconButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await _knowledgeTestController
+                                                                        .getTest(
+                                                                      context,
+                                                                      TestCategory
+                                                                          .NONE,
+                                                                      _course,
+                                                                      _user,
+                                                                      searchKeyword:
+                                                                          searchKeyword,
+                                                                    );
+                                                                  },
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .search,
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  )),
+                                                              suffIcon: null,
+                                                              label:
+                                                                  "Search Keywords",
+                                                              enabled: true,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                              ],
+                                            ),
+                                          )
+                                        : SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 24.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: tests.map((exam) {
+                                                  TestNameAndCount _exam =
+                                                      exam as TestNameAndCount;
+                                                  int _index =
+                                                      tests.indexOf(exam);
+                                                  bool _selectedExam =
+                                                      _currentSlide == _index;
+
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: _index != 0
+                                                            ? 14.0
+                                                            : 0),
+                                                    child: GestureDetector(
+                                                      onTap: (() {
+                                                        print(_currentSlide);
+                                                        if (_currentSlide !=
+                                                            _index) {
+                                                          setState(() {
+                                                            _currentSlide =
+                                                                _index;
+                                                          });
+                                                          _knowledgeTestController
+                                                              .alphaSliderToStatisticsCardController
+                                                              .animateToPage(
+                                                                  _index);
+                                                        }
+                                                      }),
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          vertical: 8,
+                                                          horizontal: 16,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: _selectedExam
+                                                              ? Color(
+                                                                  0xFF0760A5)
+                                                              : Colors
+                                                                  .transparent,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      100),
+                                                          border: Border.all(
+                                                            color: _selectedExam
+                                                                ? Color(
+                                                                    0xFF0760A5)
+                                                                : Color(
+                                                                    0xFF9AA9BB),
+                                                          ),
+                                                        ),
+                                                        child: Text(
+                                                          _exam.name,
+                                                          style: TextStyle(
+                                                            color: _selectedExam
+                                                                ? Colors.white
+                                                                : Color(
+                                                                    0xFF9AA9BB),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontStyle: FontStyle
+                                                                .italic,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
+                                                  );
+
+                                                  // return Container();
+                                                }).toList(),
                                               ),
-                                      ],
-                                    ),
+                                            ),
+                                          ),
                                   ),
                                   if (!_knowledgeTestController.searchTap &&
                                       !_knowledgeTestController.emptyTestList)
@@ -968,24 +1076,27 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                               }
 
                                               _knowledgeTestController
-                                                  .openKnowledgeTestMenus(
+                                                  .openKnowledgeTestCard(
                                                 context,
                                                 smallHeightDevice,
                                                 _knowledgeTestController
                                                     .activeMenu,
                                               );
+
                                               searchKeywordController.clear();
                                               focusNodeKeywordSearchField
                                                   .unfocus();
+                                              isShowAlphaScroll = true;
                                               setState(() {});
                                             } else {
                                               _knowledgeTestController
-                                                  .closeKnowledgeTestMenus(
+                                                  .closeKnowledgeTestCard(
                                                 context,
                                                 smallHeightDevice,
                                                 _knowledgeTestController
                                                     .activeMenu,
                                               );
+                                              isShowAlphaScroll = false;
                                               setState(() {});
                                             }
                                           },
@@ -1035,6 +1146,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                         ),
                                         MaterialButton(
                                           onPressed: () async {
+                                            isShowAlphaScroll = false;
                                             if (_knowledgeTestController
                                                     .activeMenu !=
                                                 TestCategory.EXAM) {
@@ -1058,19 +1170,20 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   _user,
                                                 );
 
-                                                topicId = tests[0].id;
-                                                test = tests[0];
-
+                                                // topicId = tests[0].id;
                                                 await _knowledgeTestController
                                                     .filterAndSetKnowledgeTestsTaken(
                                                   testCategory:
                                                       _knowledgeTestController
                                                           .activeMenu,
                                                   course: _course,
-                                                  topicId: topicId!,
+                                                  topicId: null,
                                                 );
                                                 setState(() {});
 
+                                                if (tests.isNotEmpty) {
+                                                  test = tests[0];
+                                                }
                                                 // isActiveTopicMenu =
                                                 //     true;
                                                 _knowledgeTestController
@@ -1098,7 +1211,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                               }
 
                                               _knowledgeTestController
-                                                  .openKnowledgeTestMenus(
+                                                  .openKnowledgeTestCard(
                                                 context,
                                                 smallHeightDevice,
                                                 _knowledgeTestController
@@ -1108,7 +1221,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                               setState(() {});
                                             } else {
                                               _knowledgeTestController
-                                                  .closeKnowledgeTestMenus(
+                                                  .closeKnowledgeTestCard(
                                                 context,
                                                 smallHeightDevice,
                                                 _knowledgeTestController

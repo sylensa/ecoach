@@ -202,9 +202,9 @@ class KnowledgeTestController extends ChangeNotifier {
           .toList();
       if (_selectedTests.length == 1) {
         _selectedIndex = tests.indexOf(_selectedTests[0]);
-        alphaSliderToStatisticsCardController.animateToPage(
-          _selectedIndex,
-        );
+        // alphaSliderToStatisticsCardController.animateToPage(
+        //   _selectedIndex,
+        // );
       } else {
         // _selectedIndex = tests.indexOf(_selectedTest);
       }
@@ -230,7 +230,7 @@ class KnowledgeTestController extends ChangeNotifier {
         activeMenu = TestCategory.NONE;
         isActiveAnyMenu = true;
       }
-      openKnowledgeTestMenus(
+      openKnowledgeTestCard(
         context,
         smallHeightDevice,
         activeMenu,
@@ -293,7 +293,7 @@ class KnowledgeTestController extends ChangeNotifier {
     }
   }
 
-  TestCategory openKnowledgeTestMenus(
+  TestCategory openKnowledgeTestCard(
       BuildContext context, bool smallHeightDevice, TestCategory menu) {
     if (!isActiveAnyMenu || searchTap) {
       searchTap = false;
@@ -307,7 +307,7 @@ class KnowledgeTestController extends ChangeNotifier {
     return activeMenu;
   }
 
-  TestCategory closeKnowledgeTestMenus(
+  TestCategory closeKnowledgeTestCard(
       BuildContext context, bool smallHeightDevice, TestCategory menu) {
     sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
     activeMenu = TestCategory.NONE;
@@ -1472,13 +1472,13 @@ class KnowledgeTestController extends ChangeNotifier {
         //                                                       .sort();
         //                                                 }
 
-        //                                                 openKnowledgeTestMenus(
+        //                                                 openKnowledgeTestCard(
         //                                                     context,
         //                                                     smallHeightDevice,
         //                                                     activeMenu);
         //                                                 stateSetter(() {});
         //                                               } else {
-        //                                                 closeKnowledgeTestMenus(
+        //                                                 closeKnowledgeTestCard(
         //                                                     context,
         //                                                     smallHeightDevice,
         //                                                     activeMenu);
@@ -1590,13 +1590,13 @@ class KnowledgeTestController extends ChangeNotifier {
         //                                                   }
         //                                                 }
 
-        //                                                 openKnowledgeTestMenus(
+        //                                                 openKnowledgeTestCard(
         //                                                     context,
         //                                                     smallHeightDevice,
         //                                                     activeMenu);
         //                                                 stateSetter(() {});
         //                                               } else {
-        //                                                 closeKnowledgeTestMenus(
+        //                                                 closeKnowledgeTestCard(
         //                                                     context,
         //                                                     smallHeightDevice,
         //                                                     activeMenu);
