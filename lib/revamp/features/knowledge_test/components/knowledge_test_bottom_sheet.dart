@@ -447,9 +447,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                         int pageViewIndex) {
                                                   _currentSlide = itemIndex;
 
-                                                  if (tests.isNotEmpty) {
-                                                    test = tests[_currentSlide];
-                                                  }
+                                                  test = tests[_currentSlide];
 
                                                   switch (
                                                       _knowledgeTestController
