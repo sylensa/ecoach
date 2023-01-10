@@ -43,38 +43,33 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
   PageController pageController = PageController(initialPage: 0);
   bool switchValue = false;
   bool isSkipped = true;
+  bool isCorrect = true;
   int correct = 0;
   int wrong = 0;
   int initialIndex = 0;
   int totalGlossary = 0;
-
+  int answeredQuestionCount = 0;
+  List<GlossaryData> listGlossaryData = [];
   List<TextEditingController> textEditingController = [];
   CarouselController carouselController = CarouselController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    listGlossaryData =  widget.listGlossaryData;
     totalGlossary = widget.listGlossaryData.length;
     if(widget.glossaryProgressData != null){
-      initialIndex = widget.glossaryProgressData!.progressIndex!;
-      initialIndex++;
-      print("initialIndex:${initialIndex}");
+      initialIndex = widget.glossaryProgressData!.progressIndex! + 1;
+      print("initialIndex:$initialIndex");
       correct = widget.glossaryProgressData!.correct!;
       wrong = widget.glossaryProgressData!.wrong!;
       totalGlossary = widget.glossaryProgressData!.count!;
-      if((correct + wrong) != totalGlossary || (correct + wrong) < totalGlossary){
-        for(int i = 0 ; i < correct + wrong; i++){
-          widget.listGlossaryData.removeAt(i);
-        }
-      }
-
     }
     for(int i = 0; i < widget.listGlossaryData.length; i++){
       textEditingController.add(TextEditingController());
     }
   }
   GlobalKey<ScaffoldState> scaffold = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
 
@@ -84,31 +79,142 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
 
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.only(top: 8.h,left: 20,right: 20),
+          padding: EdgeInsets.only(top: 8.h,left: 0,right: 0),
           child: Column(
             children: [
-              Row(
-                children: [
+              Container(
+                padding: EdgeInsets.only(left: 20,right: 20),
+                color: const Color(0xFF2D3E50),
+                height: 47,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    isCorrect
+                        ? Image.asset(
+                      "assets/images/un_fav.png",
+                      color: Colors.green,
+                    )
+                        : SvgPicture.asset(
+                      "assets/images/fav.svg",
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "${correct != 0 ? ((correct/initialIndex) * 100).toStringAsFixed(2) : 0}%",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF9EE4FF),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6.4,
+                    ),
+                    const SizedBox(
+                      width: 17.6,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      "$correct",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF9EE4FF),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 17,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.cancel,
+                        color: Colors.red,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6.4,
+                    ),
+                    Text(
+                      "$wrong",
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF9EE4FF),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 4.2,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                      child: VerticalDivider(
+                        color: Color(0xFF9EE4FF),
+                        width: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 6.2,
+                    ),
+                    Center(
+                      child: SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: Stack(
+                          children: [
+                            CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                              value: initialIndex/totalGlossary
 
-                ],
+                            ),
+                            Center(
+                              child: Text(
+                                "${initialIndex + 1}",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 children: [
-                  sText("${correct + wrong}",color: Colors.white,weight: FontWeight.w500),
-                  SizedBox(width: 10,),
+
                   Expanded(
                     child: Container(
                       child:LinearProgressIndicator(
                         value: (correct + wrong)/totalGlossary,
-
+                        backgroundColor: Colors.white,
+                        color: Colors.green,
                       )
                     ),
-                  ),
-                  SizedBox(width: 10,),
-                  sText("${totalGlossary}",color: Colors.white,weight: FontWeight.w500),
+                  )
                 ],
               ),
               SizedBox(height: 20,),
+              widget.listGlossaryData.isNotEmpty ?
               CarouselSlider.builder(
                 carouselController: carouselController,
                   options:
@@ -123,24 +229,12 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                     aspectRatio: 2.0,
                     pageSnapping: true,
                     onPageChanged: (index, reason) async{
-                      if(!isSkipped){
-                        GlossaryProgressData glossaryProgressData = GlossaryProgressData(
-                            topicId: widget.listGlossaryData[index].topic!.id,
-                            courseId: widget.listGlossaryData[index].courseId!,
-                            searchTerm: widget.listGlossaryData[index].term,
-                            selectedCharacter: "a",
-                            progressIndex: index,
-                            correct: correct,
-                            wrong:  isSkipped ? wrong + 1 : wrong ,
-                            count: totalGlossary
-                        );
-                        await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                        await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
-
-                      }
-
                       setState(() {
-                        print("wrong:$wrong");
+                        print("wrong:$index");
+                        if(isSkipped){
+                          initialIndex++;
+                          wrong++;
+                        }
                       });
 
                     },
@@ -210,21 +304,25 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                 Expanded(
                                   child: TextField(
                                     controller: textEditingController[indexReport],
+                                    enabled: widget.listGlossaryData[indexReport].answered == 1 ? false : true,
                                     keyboardType: TextInputType.emailAddress,
                                     onSubmitted: (String value)async{
-                                      setState(() {
-                                        isSkipped = false;
-                                      });
+                                      initialIndex++;
+                                      isSkipped = true;
+                                       widget.listGlossaryData[indexReport].answered = 1;
+                                       if(value.isEmpty){
+                                         textEditingController[indexReport].text = 'Answered';
+                                       }
                                       if(value.toLowerCase() == widget.listGlossaryData[indexReport].term!.toLowerCase()){
                                        setState(() {
                                          correct++;
                                        });
-                                       showSuccessDialog(context: context);
+                                         showSuccessDialog(context: context);
                                       }else{
                                         setState(() {
                                           wrong++;
                                         });
-                                        showFailedDialog(context: context);
+                                          showFailedDialog(context: context);
                                       }
                                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
                                           topicId: widget.listGlossaryData[indexReport].topic!.id,
@@ -232,17 +330,20 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                           searchTerm: widget.listGlossaryData[indexReport].term,
                                           selectedCharacter: "a",
                                           progressIndex: indexReport,
-                                        count:  totalGlossary,
-                                        correct: correct,
-                                        wrong: wrong
+                                          count:  totalGlossary,
+                                          correct: correct,
+                                          wrong: wrong
                                       );
-                                      await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
-                                      await GlossaryDB().insertGlossaryProgress(glossaryProgressData);
+                                      await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
+                                      await GlossaryDB().insertGlossaryTryProgress(glossaryProgressData);
+                                      carouselController.animateToPage(indexReport + 1,duration: Duration(seconds: 1),curve: Curves.easeIn);
                                       setState(() {
                                         isSkipped = true;
-                                        widget.listGlossaryData.removeAt(indexReport);
-                                        textEditingController.removeAt(indexReport);
                                       });
+
+                                      if(indexReport == widget.listGlossaryData.length - 1){
+                                        testCompletedModalBottomSheet(context);
+                                      }
                                     },
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(
@@ -259,7 +360,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                         ),
                       ),
                     );
-                  }),
+                  }) : Center(child: sText("Answered all terms"),),
 
             ],
           ),
@@ -329,5 +430,91 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
         );
       },
     );
+  }
+
+  testCompletedModalBottomSheet(context,) async{
+    double sheetHeight = 230;
+    showModalBottomSheet(
+        context: context,
+        isDismissible: false,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter stateSetter) {
+              return Container(
+                  height: sheetHeight,
+                  decoration: BoxDecoration(
+                      color: kAdeoGray,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      )),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        color: Colors.grey,
+                        height: 5,
+                        width: 100,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                sText("Glossary Test Completed",
+                                    color: kAdeoGray3,
+                                    weight: FontWeight.w500,
+                                    align: TextAlign.center,
+                                    size: 20),
+
+                              ],
+                            ),
+                            SizedBox(width: 10,),
+                            Center(
+                                child: Image.asset("assets/icons/courses/sort-az.png")),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+
+                      MaterialButton(
+                        onPressed: ()async{
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                          width: appWidth(context),
+                          child: sText("Ok",color:   Colors.white ,weight: FontWeight.w500,size: 25,align: TextAlign.center),
+                          decoration: BoxDecoration(
+                              color: Colors.green ,
+                              border: Border.all(color:  Colors.black,),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                        ),
+                      ),
+                    ],
+                  ));
+            },
+          );
+        });
   }
 }

@@ -248,7 +248,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                           border: Border.all(color: kHomeBackgroundColor),
                           borderRadius: BorderRadius.circular(10)),
                       padding: EdgeInsets.symmetric(horizontal: 10),
-                      margin: EdgeInsets.only(right: 20),
+                      margin: EdgeInsets.only(right: 14),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<Course>(
                           value: course == null ? widget.courses[0] : course,

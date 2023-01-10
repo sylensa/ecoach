@@ -61,6 +61,7 @@ class GlossaryData {
     this.resources,
     this.glossary,
     this.isPinned,
+    this.answered,
   });
 
   int? id;
@@ -80,6 +81,7 @@ class GlossaryData {
   int? isSaved;
   int? isPinned;
   int? isLiked;
+  int? answered;
   int? keywordAppearance;
   String? keywordRank;
   String? glossary;
@@ -100,6 +102,7 @@ class GlossaryData {
   factory GlossaryData.fromJson(Map<String, dynamic> json) => GlossaryData(
     id: json["id"] == null ? null : json["id"],
     term: json["term"] == null ? null : json["term"],
+    answered: json["answered"] == null ? 0 : json["answered"],
     definition: json["definition"] == null ? null : json["definition"],
     topicId: json["topic_id"] == null ? null : json["topic_id"],
     isPinned: json["is_pinned"] == null ? 0 : json["is_pinned"],

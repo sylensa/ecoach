@@ -38,7 +38,8 @@ class _LogoutState extends State<Logout> {
       await TestTakenDB().deleteAllKeywordTestTaken();
       await GlossaryDB().deleteAll();
       await GlossaryDB().deleteAllGlossaryTopic();
-      await GlossaryDB().deleteAllGlossaryProgress();
+      await GlossaryDB().deleteAllGlossaryStudyProgress();
+      await GlossaryDB().deleteAllGlossaryTryProgress();
       var status = await UserPreferences().getLoginWith() ;
        await UserPreferences().removeUser();
       if(status){

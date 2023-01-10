@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 43, onOpen: (db) {},
+    return await openDatabase(path, version: 44, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -48,12 +48,24 @@ class DBProvider {
         'updated_at' timestamp NULL DEFAULT NULL
       ) """);
 
-      await db.execute("""CREATE TABLE 'glossary_progress' (
+      await db.execute("""CREATE TABLE 'glossary_study_progress' (
         'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
        'correct' INTEGER NOT NULL,
+        'wrong' INTEGER NOT NULL,
+        'count' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
+
+      await db.execute("""CREATE TABLE 'glossary_try_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'correct' INTEGER NOT NULL,
         'wrong' INTEGER NOT NULL,
         'count' INTEGER NOT NULL,
         'progress_index' INTEGER NOT NULL,
@@ -1275,8 +1287,8 @@ class DBProvider {
         }
 
         try{
-          await db.execute("""DROP TABLE 'glossary_progress'""");
-          await db.execute("""CREATE TABLE 'glossary_progress' (
+          await db.execute("""DROP TABLE 'glossary_study_progress'""");
+          await db.execute("""CREATE TABLE 'glossary_study_progress' (
         'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
@@ -1288,7 +1300,34 @@ class DBProvider {
         'topic_id' INTEGER NULL DEFAULT NULL
       ) """);
         }catch(e){
-          await db.execute("""CREATE TABLE 'glossary_progress' (
+          await db.execute("""CREATE TABLE 'glossary_study_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'correct' INTEGER NOT NULL,
+        'wrong' INTEGER NOT NULL,
+        'count' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
+        }
+
+        try{
+          await db.execute("""DROP TABLE 'glossary_try_progress'""");
+          await db.execute("""CREATE TABLE 'glossary_try_progress' (
+        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'search_term' varchar(50) NOT NULL,
+        'selected_character' varchar(50) NOT NULL,
+        'course_id' INTEGER NOT NULL,
+        'correct' INTEGER NOT NULL,
+        'wrong' INTEGER NOT NULL,
+        'count' INTEGER NOT NULL,
+        'progress_index' INTEGER NOT NULL,
+        'topic_id' INTEGER NULL DEFAULT NULL
+      ) """);
+        }catch(e){
+          await db.execute("""CREATE TABLE 'glossary_try_progress' (
         'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
