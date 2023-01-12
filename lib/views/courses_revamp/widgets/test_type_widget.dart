@@ -1266,27 +1266,58 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Standard test',
           iconURL: 'assets/icons/courses/knowledge.png',
           onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
-              // openKnowledgeTestBottomSheet(context);
-
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                KnowledgeTestController().openKnowledgeTestBottomSheet(
+                  context,
+                  course: widget.course,
+                  user: widget.user,
+                  listCourseKeywordsData: widget.listCourseKeywordsData,
+                );
+              } else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            } else {
               KnowledgeTestController().openKnowledgeTestBottomSheet(
                 context,
                 course: widget.course,
                 user: widget.user,
                 listCourseKeywordsData: widget.listCourseKeywordsData,
               );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
+
+            // List<Question> questions =
+            //     await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+            // if (questions.isNotEmpty) {
+            //   // openKnowledgeTestBottomSheet(context);
+
+            //   KnowledgeTestController().openKnowledgeTestBottomSheet(
+            //     context,
+            //     course: widget.course,
+            //     user: widget.user,
+            //     listCourseKeywordsData: widget.listCourseKeywordsData,
+            //   );
+            // } else {
+            //   showDialogYesNo(
+            //       context: context,
+            //       message: "Download questions for ${widget.course.name}",
+            //       target: BuyBundlePage(
+            //         widget.user,
+            //         controller: widget.controller,
+            //         bundle: widget.subscription,
+            //       ));
+            // }
           },
         ),
         MultiPurposeCourseCard(

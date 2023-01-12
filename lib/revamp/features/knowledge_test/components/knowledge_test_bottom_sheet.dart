@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
-import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
@@ -15,10 +12,9 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quiver/collection.dart';
 
 class KnowledgeTestBottomSheet extends StatefulWidget {
-  KnowledgeTestBottomSheet({
+  const KnowledgeTestBottomSheet({
     Key? key,
     required this.course,
     required this.user,
@@ -175,6 +171,17 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
     super.dispose();
   }
 
+  initTests() async {
+    _knowledgeTestController.isActiveAnyMenu = true;
+    _knowledgeTestController.sheetHeightIncreased = true;
+    tests = await _knowledgeTestController.getTest(
+      context,
+      _knowledgeTestController.activeMenu,
+      _course,
+      _user,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -193,18 +200,9 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                 switch (_knowledgeTestController.activeMenu) {
                   case TestCategory.TOPIC:
                     isActiveTopicMenu = true;
-
-                    _knowledgeTestController.isActiveAnyMenu = true;
-                    _knowledgeTestController.sheetHeightIncreased = true;
-                    tests = await _knowledgeTestController.getTest(
-                      context,
-                      TestCategory.TOPIC,
-                      _course,
-                      _user,
-                    );
+                    initTests();
 
                     _knowledgeTestController.emptyTestList = tests.isEmpty;
-                    print("dfgdf: ${_knowledgeTestController.emptyTestList}");
                     _knowledgeTestController.currentAlphabet =
                         tests.first.name[0];
                     topicId = tests[_currentSlide].id;
@@ -212,7 +210,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                     _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
                       testCategory: TestCategory.TOPIC,
                       course: _course,
-                      topicId: topicId!,
+                      testId: topicId!,
                     );
 
                     if (!_knowledgeTestController.emptyTestList) {
@@ -227,34 +225,39 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                     isShowAlphaScroll = true;
                     break;
                   case TestCategory.EXAM:
-                    _knowledgeTestController.isActiveAnyMenu = true;
-                    _knowledgeTestController.sheetHeightIncreased = true;
-                    tests = await _knowledgeTestController.getTest(
-                      context,
-                      TestCategory.EXAM,
-                      _course,
-                      _user,
-                    );
+                    initTests();
+                    // _knowledgeTestController.isActiveAnyMenu = true;
+                    // _knowledgeTestController.sheetHeightIncreased = true;
+                    // tests = await _knowledgeTestController.getTest(
+                    //   context,
+                    //   TestCategory.EXAM,
+                    //   _course,
+                    //   _user,
+                    // );
 
                     if (tests.isNotEmpty) {
                       _knowledgeTestController.emptyTestList = tests.isEmpty;
                       _knowledgeTestController.currentAlphabet =
                           tests.first.name[0];
-                      topicId = tests[_currentSlide].id;
-                      _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
+
+                      await _knowledgeTestController
+                          .filterAndSetKnowledgeTestsTaken(
                         testCategory: TestCategory.EXAM,
                         course: _course,
-                        topicId: topicId!,
+                        testId: null,
+                        testName:
+                            (tests[_currentSlide] as TestNameAndCount).name,
                       );
-                      if (!_knowledgeTestController.emptyTestList) {
-                        scrollListAlphabets = tests
-                            .map((exam) {
-                              return exam.name[0].toString().toUpperCase();
-                            })
-                            .toSet()
-                            .toList();
-                        scrollListAlphabets.sort();
-                      }
+
+                      // if (!_knowledgeTestController.emptyTestList) {
+                      // scrollListAlphabets = tests
+                      //     .map((exam) {
+                      //       return exam.name[0].toString().toUpperCase();
+                      //     })
+                      //     .toSet()
+                      //     .toList();
+                      // scrollListAlphabets.sort();
+                      // }
                     }
 
                     break;
@@ -491,6 +494,42 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
 
                                                       break;
                                                     case TestCategory.EXAM:
+                                                      // _knowledgeTestController
+                                                      //     .getAllTestTakenByExam(
+                                                      //   courseId: _course.id,
+                                                      // );
+                                                      _knowledgeTestController
+                                                              .testTakenIndex =
+                                                          _knowledgeTestController
+                                                              .allTestsTakenForAnalysis
+                                                              .indexWhere(
+                                                        (examTaken) {
+                                                          // ? would be better to check condtion with examId instead of the name of exam taken
+                                                          return examTaken
+                                                                  .testname!
+                                                                  .toLowerCase() ==
+                                                              (test as TestNameAndCount)
+                                                                  .name
+                                                                  .toLowerCase();
+                                                        },
+                                                      );
+
+                                                      if (_knowledgeTestController
+                                                              .testTakenIndex !=
+                                                          -1) {
+                                                        _knowledgeTestController
+                                                            .isTestTaken = true;
+                                                        _knowledgeTestController
+                                                                .testTaken =
+                                                            _knowledgeTestController
+                                                                    .typeSpecificTestsTaken[
+                                                                _knowledgeTestController
+                                                                    .testTakenIndex];
+                                                      } else {
+                                                        _knowledgeTestController
+                                                                .isTestTaken =
+                                                            false;
+                                                      }
                                                       break;
                                                     case TestCategory.MOCK:
                                                       break;
@@ -1069,7 +1108,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       _knowledgeTestController
                                                           .activeMenu,
                                                   course: _course,
-                                                  topicId: topicId!,
+                                                  testId: topicId!,
                                                 );
                                               }
 
@@ -1133,7 +1172,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                     height: 10,
                                                   ),
                                                   sText(
-                                                    "Topic ",
+                                                    "Topic",
                                                     color:
                                                         _knowledgeTestController
                                                                     .activeMenu ==
@@ -1188,44 +1227,29 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   _user,
                                                 );
 
-                                                // topicId = tests[0].id;
-                                                await _knowledgeTestController
-                                                    .filterAndSetKnowledgeTestsTaken(
-                                                  testCategory:
-                                                      _knowledgeTestController
-                                                          .activeMenu,
-                                                  course: _course,
-                                                  topicId: null,
-                                                );
+                                                if (tests.isNotEmpty) {
+                                                  await _knowledgeTestController
+                                                      .filterAndSetKnowledgeTestsTaken(
+                                                    testCategory:
+                                                        _knowledgeTestController
+                                                            .activeMenu,
+                                                    course: _course,
+                                                    testName: (tests[0]
+                                                            as TestNameAndCount)
+                                                        .name,
+                                                  );
+                                                }
                                                 setState(() {});
 
-                                                if (tests.isNotEmpty) {
-                                                  test = tests[0];
-                                                }
-                                                // isActiveTopicMenu =
-                                                //     true;
                                                 _knowledgeTestController
                                                     .isActiveAnyMenu = true;
 
                                                 _knowledgeTestController
                                                         .emptyTestList =
                                                     tests.isEmpty;
-                                                _knowledgeTestController
-                                                        .currentAlphabet =
-                                                    tests.first.name[0];
-
-                                                if (!_knowledgeTestController
-                                                    .emptyTestList) {
-                                                  scrollListAlphabets = tests
-                                                      .map((topic) {
-                                                        return topic.name[0]
-                                                            .toString()
-                                                            .toUpperCase();
-                                                      })
-                                                      .toSet()
-                                                      .toList();
-                                                  scrollListAlphabets.sort();
-                                                }
+                                                // _knowledgeTestController
+                                                //         .currentAlphabet =
+                                                //     tests.first.name[0];
                                               }
 
                                               _knowledgeTestController

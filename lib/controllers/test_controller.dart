@@ -198,7 +198,7 @@ class TestController {
     Map<String, dynamic> res = json.decode(responses);
     // print(res.runtimeType);
     List<TestAnswer>? answers = fromMap(res, (answer) {
-      print("answer:$answer");
+      // print("answer:$answer");
       return TestAnswer.fromJson(answer);
     });
 
@@ -223,7 +223,7 @@ class TestController {
       }
     }
 
-    print("questions:${questions.length}");
+    // print("questions:${questions.length}");
     return questions;
   }
 
@@ -469,9 +469,21 @@ class TestController {
     return TestTakenDB().courseTestsTaken(courseId: int.parse(tag));
   }
 
+  Future<List<TestTaken>> getAllTestTakenByChallengeType(
+      TestCategory challengeType,
+      {int? courseId}) {
+    return courseId != null
+        ? TestTakenDB().keywordTestsTakenByChallengeType(
+            challengeType,
+            courseId: courseId,
+          )
+        : TestTakenDB().keywordTestsTakenByChallengeType(challengeType);
+  }
+
   Future<List<TestTaken>> getAllTestTakenByTopic(int topicId) {
     return TestTakenDB().keywordTestsTakenByTopic(topicId);
   }
+
   Future<List<TestTaken>> getAllKeywordTestTakenByTestName(String testName) {
     return TestTakenDB().getKeywordTestsTakenByTestName(testName);
   }
@@ -479,7 +491,6 @@ class TestController {
   Future<List<TestTaken>> keywordTestsTaken(int courseId) {
     return TestTakenDB().getKeywordTestTaken(courseId);
   }
- 
 
   Future<List<Question>> getCustomizedQuestions(
       Course course, int numberOfQuestions) async {

@@ -88,9 +88,8 @@ class QuizDB {
         orderBy: "name ASC",
         where: "type = ? AND course_id = ?",
         whereArgs: [type, courseId]);
-    print(courseId);
     return List.generate(maps.length, (i) {
-      print(maps[i]);
+      // print(maps[i]);
       return Quiz.fromJson(maps[i]);
     });
   }

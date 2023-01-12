@@ -38,6 +38,32 @@ class TestTakenDB {
     return result.isNotEmpty ? TestTaken.fromJson(result.last) : null;
   }
 
+  Future<List<TestTaken>> keywordTestsTakenByChallengeType(
+      TestCategory challengeType,
+      {int? courseId}) async {
+    final Database? db = await DBProvider.database;
+    List<Map<String, dynamic>> results = [];
+
+    results = courseId != null
+        ? await db!.query(
+            'keyword_test_taken',
+            where: "course_id = ? AND challenge_type = ?",
+            whereArgs: [
+              courseId,
+              challengeType.toString(),
+            ],
+          )
+        : await db!.query('keyword_test_taken',
+            where: "challenge_type = ?", whereArgs: [challengeType.toString()]);
+
+    List<TestTaken> tests = [];
+    for (int i = 0; i < results.length; i++) {
+      TestTaken test = TestTaken.fromJson(results[i]);
+      tests.add(test);
+    }
+    return tests;
+  }
+
   Future<List<TestTaken>> keywordTestsTakenByTopic(int topicId) async {
     final Database? db = await DBProvider.database;
     List<Map<String, dynamic>> results = [];
@@ -53,7 +79,9 @@ class TestTakenDB {
     }
     return tests;
   }
-  Future<List<TestTaken>> getKeywordTestsTakenByTestName(String testName) async {
+
+  Future<List<TestTaken>> getKeywordTestsTakenByTestName(
+      String testName) async {
     final Database? db = await DBProvider.database;
     List<Map<String, dynamic>> results = [];
 

@@ -1,20 +1,38 @@
+import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/helper/helper.dart';
+import 'package:ecoach/models/course.dart';
+import 'package:ecoach/models/question.dart';
+import 'package:ecoach/models/quiz.dart';
+import 'package:ecoach/models/user.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/keyword/keyword_question_view.dart';
 import 'package:ecoach/views/keyword/keyword_quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
+import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:flutter/material.dart';
 
 class KeywordAssessment extends StatefulWidget {
-  KeywordAssessment({
+  const KeywordAssessment({
     Key? key,
     this.quizCover,
     this.questionView,
     this.questionCount = 0,
+    this.user,
+    this.course,
+    this.test,
+    this.questions,
+    this.testCategory,
   }) : super(key: key);
-  KeywordQuizCover? quizCover;
-  KeywordQuestionView? questionView;
-  int questionCount = 0;
+  final User? user;
+  final Course? course;
+  final List<Question>? questions;
+  final TestNameAndCount? test;
+  final TestCategory? testCategory;
+  final KeywordQuizCover? quizCover;
+  final KeywordQuestionView? questionView;
+  final int questionCount;
+
   @override
   State<KeywordAssessment> createState() => _KeywordAssessmentState();
 }
@@ -48,7 +66,6 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     calculateQuestionsCount();
   }
@@ -300,14 +317,44 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
                                             widget.quizCover!.time =
                                                 selectNumberQuestions[0] * 60;
                                             nextScreen = widget.quizCover;
+
+                                            goTo(
+                                              context,
+                                              nextScreen,
+                                              replace: true,
+                                            );
                                           } else {
-                                            nextScreen = widget.questionView;
+                                            // nextScreen = widget.questionView;
+                                            goTo(
+                                                context,
+                                                KeywordQuestionView(
+                                                  controller: QuizController(
+                                                    widget.user!,
+                                                    widget.course!,
+                                                    questions:
+                                                        widget.questions!,
+                                                    name: widget.test!.name,
+                                                    time: widget
+                                                            .questions!.length *
+                                                        60,
+                                                    topicId: widget.test != null
+                                                        ? widget.test!.id
+                                                        : null,
+                                                    type: TestType.KNOWLEDGE,
+                                                    challengeType:
+                                                        widget.testCategory!,
+                                                  ),
+                                                  theme: QuizTheme.BLUE,
+                                                  diagnostic:
+                                                      widget.testCategory! !=
+                                                              TestCategory.MOCK
+                                                          ? false
+                                                          : true,
+                                                  numberOfQuestionSelected:
+                                                      selectNumberQuestions[0],
+                                                ),
+                                                replace: true);
                                           }
-                                          goTo(
-                                            context,
-                                            nextScreen,
-                                            replace: true,
-                                          );
                                         } else {
                                           toastMessage(
                                               "Select number of questions");
