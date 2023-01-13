@@ -246,6 +246,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                     break;
                   case TestCategory.MOCK:
                     _knowledgeTestController.isActiveAnyMenu = true;
+
                     break;
                   case TestCategory.ESSAY:
                     _knowledgeTestController.isActiveAnyMenu = true;
@@ -353,7 +354,9 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                   height: 20,
                                 ),
                                 _knowledgeTestController.activeMenu ==
-                                        TestCategory.NONE
+                                            TestCategory.NONE ||
+                                        _knowledgeTestController.activeMenu ==
+                                            TestCategory.MOCK
                                     ? Container(
                                         height:
                                             model.isShowAnalysisBox ? 600 : 300,
@@ -376,16 +379,29 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                             TestCategory testCategory,
                                             TestNameAndCount? selectedTopic,
                                           ) async {
-                                            await _knowledgeTestController
-                                                .getTest(
-                                              context,
-                                              TestCategory.NONE,
-                                              _course,
-                                              _user,
-                                              searchKeyword:
-                                                  _knowledgeTestController
-                                                      .testTaken!.testname!,
-                                            );
+                                            switch (testCategory) {
+                                              case TestCategory.MOCK:
+                                                await _knowledgeTestController
+                                                    .goToInstructions(
+                                                  context,
+                                                  null,
+                                                  TestCategory.MOCK,
+                                                  _user,
+                                                  _course,
+                                                );
+                                                break;
+                                              default:
+                                                await _knowledgeTestController
+                                                    .getTest(
+                                                  context,
+                                                  TestCategory.NONE,
+                                                  _course,
+                                                  _user,
+                                                  searchKeyword:
+                                                      _knowledgeTestController
+                                                          .testTaken!.testname!,
+                                                );
+                                            }
                                           },
                                         ),
                                       )
@@ -554,29 +570,16 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       TestNameAndCount?
                                                           selectedTopic,
                                                     ) async {
-                                                      switch (testCategory) {
-                                                        case TestCategory.MOCK:
-                                                          _knowledgeTestController
-                                                              .goToInstructions(
-                                                            context,
-                                                            null,
-                                                            TestCategory.MOCK,
-                                                            _user,
-                                                            _course,
-                                                          );
-                                                          break;
-                                                        default:
-                                                          _knowledgeTestController
-                                                              .goToInstructions(
-                                                            context,
-                                                            selectedTopic,
-                                                            testCategory,
-                                                            _user,
-                                                            _course,
-                                                            searchKeyword:
-                                                                searchKeyword,
-                                                          );
-                                                      }
+                                                      _knowledgeTestController
+                                                          .goToInstructions(
+                                                        context,
+                                                        selectedTopic,
+                                                        testCategory,
+                                                        _user,
+                                                        _course,
+                                                        searchKeyword:
+                                                            searchKeyword,
+                                                      );
                                                     },
                                                   );
                                                 },
