@@ -44,6 +44,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
   String searchKeyword = '';
   bool isActiveTopicMenu = false;
   bool isShowAlphaScroll = false;
+  bool showGraph = false;
   dynamic test;
   List<String> scrollListAlphabets = [];
   List<dynamic> tests = [];
@@ -365,8 +366,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                           allTestsTakenForAnalysis:
                                               _knowledgeTestController
                                                   .allTestsTakenForAnalysis,
-                                          showGraph: _knowledgeTestController
-                                              .showGraph,
+                                          showGraph: showGraph,
                                           activeMenu: _knowledgeTestController
                                               .activeMenu,
                                           knowledgeTestControllerModel: model,
@@ -541,9 +541,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                     allTestsTakenForAnalysis:
                                                         _knowledgeTestController
                                                             .allTestsTakenForAnalysis,
-                                                    showGraph:
-                                                        _knowledgeTestController
-                                                            .showGraph,
+                                                    showGraph: showGraph,
                                                     activeMenu:
                                                         _knowledgeTestController
                                                             .activeMenu,
@@ -1059,6 +1057,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                         ),
                                         MaterialButton(
                                           onPressed: () async {
+                                            // model.isShowAnalysisBox = false;
                                             if (_knowledgeTestController
                                                     .activeMenu !=
                                                 TestCategory.TOPIC) {

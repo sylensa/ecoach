@@ -84,7 +84,6 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   void toggleAnalysis() async {
     widget.knowledgeTestControllerModel.isShowAnalysisBox =
         !widget.knowledgeTestControllerModel.isShowAnalysisBox;
-
     // analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
     //     ? TestCategory.TOPIC
     //     : TestCategory.NONE;
@@ -605,58 +604,66 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                     ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Container(
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: LinearProgressIndicator(
-                                    color: Color(0XFF00C9B9),
-                                    backgroundColor: Color(0XFF0367B4),
-                                    value: isTestTaken
-                                        ? (testTaken!.correct! +
-                                                testTaken!.wrong!) /
-                                            testTaken!.totalQuestions
-                                        : _test.progress,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    sText(
-                                      "exposure",
-                                      size: 12,
-                                      color: Colors.white.withOpacity(0.7),
-                                      weight: FontWeight.w300,
-                                      style: FontStyle.italic,
-                                    ),
-                                    Row(
-                                      children: [
-                                        sText(
-                                          "${isTestTaken ? testTaken!.correct! + testTaken!.wrong! : _test.count}",
-                                          color: Colors.white,
-                                          weight: FontWeight.bold,
-                                          size: 12,
+                                if (widget.activeMenu != TestCategory.EXAM)
+                                  Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Container(
+                                        clipBehavior: Clip.hardEdge,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
-                                        sText(
-                                          " / ${isTestTaken ? testTaken!.totalQuestions : _test.totalCount} Q",
-                                          color: Colors.white.withOpacity(0.7),
-                                          size: 12,
+                                        child: LinearProgressIndicator(
+                                          color: Color(0XFF00C9B9),
+                                          backgroundColor: Color(0XFF0367B4),
+                                          value: isTestTaken
+                                              ? (testTaken!.correct! +
+                                                      testTaken!.wrong!) /
+                                                  testTaken!.totalQuestions
+                                              : _test.progress,
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          sText(
+                                            "exposure",
+                                            size: 12,
+                                            color:
+                                                Colors.white.withOpacity(0.7),
+                                            weight: FontWeight.w300,
+                                            style: FontStyle.italic,
+                                          ),
+                                          Row(
+                                            children: [
+                                              sText(
+                                                "${isTestTaken ? testTaken!.correct! + testTaken!.wrong! : _test.count}",
+                                                color: Colors.white,
+                                                weight: FontWeight.bold,
+                                                size: 12,
+                                              ),
+                                              sText(
+                                                " / ${isTestTaken ? testTaken!.totalQuestions : _test.totalCount} Q",
+                                                color: Colors.white
+                                                    .withOpacity(0.7),
+                                                size: 12,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 4,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                               ],
                             )
                           : Center(

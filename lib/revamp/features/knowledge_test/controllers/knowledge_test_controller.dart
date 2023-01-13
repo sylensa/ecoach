@@ -132,7 +132,7 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
 
 class KnowledgeTestController extends ChangeNotifier {
   bool searchTap = false;
-  bool showGraph = false;
+ 
   List<CourseKeywords> listCourseKeywordsData = [];
   bool isActiveAnyMenu = false;
   bool sheetHeightIncreased = false;
