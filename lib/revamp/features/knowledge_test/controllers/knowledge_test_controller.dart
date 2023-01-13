@@ -255,15 +255,15 @@ class KnowledgeTestController extends ChangeNotifier {
   }) async {
     isTestTaken = false;
 
-        testsTaken = await TestController().keywordTestsTaken(course.id!);
+    testsTaken = await TestController().keywordTestsTaken(course.id!);
     switch (testCategory) {
       case TestCategory.EXAM:
-        // await TestController().keywordTestsTaken(course.id!).then((examsTaken) {
-        //   testsTaken = examsTaken;
-        // });
-        //   typeSpecificTestsTaken = examsTaken;
-        // allTestsTakenForAnalysis 
-        // break;
+      // await TestController().keywordTestsTaken(course.id!).then((examsTaken) {
+      //   testsTaken = examsTaken;
+      // });
+      //   typeSpecificTestsTaken = examsTaken;
+      // allTestsTakenForAnalysis
+      // break;
       case TestCategory.NONE:
       case TestCategory.TOPIC:
         typeSpecificTestsTaken = await testsTaken
@@ -633,11 +633,18 @@ class KnowledgeTestController extends ChangeNotifier {
     );
   }
 
-  getAllTestTakenByExam({int? courseId}) async {
+  getExamTestsTaken({int? courseId, String? testName}) async {
     await TestController()
         .getAllTestTakenByChallengeType(TestCategory.EXAM, courseId: courseId)
-        .then((examsTaken) {
-      allTestsTakenForAnalysis = examsTaken;
+        .then((examsTaken) async {
+      if (testName != null) {
+        allTestsTakenForAnalysis = await examsTaken.where((exam) {
+          return exam.testname!.toLowerCase() == testName.toLowerCase();
+        }).toList();
+        
+      } else {
+        allTestsTakenForAnalysis = examsTaken;
+      }
     });
   }
 

@@ -476,8 +476,11 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       break;
                                                     case TestCategory.EXAM:
                                                       _knowledgeTestController
-                                                          .getAllTestTakenByExam(
+                                                          .getExamTestsTaken(
                                                         courseId: _course.id,
+                                                        testName: (test
+                                                                as TestNameAndCount)
+                                                            .name,
                                                       );
 
                                                       _knowledgeTestController

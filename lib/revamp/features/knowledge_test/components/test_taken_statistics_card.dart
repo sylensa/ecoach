@@ -47,7 +47,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
     with TickerProviderStateMixin {
   String searchKeyword = '';
   bool isActiveStatisticsSide = false;
-  TestCategory analysisTestType = TestCategory.NONE;
+  // TestCategory analysisTestType = TestCategory.NONE;
 
   late String activeMenuIcon;
   late bool isActiveGraphSide;
@@ -60,18 +60,6 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   late List<TestTaken>? testsTakenByTopic = [];
   late List<TestTaken>? testsTakenForAnalysis = [];
   late TestTaken? testTaken;
-
-  @override
-  void initState() {
-    super.initState();
-    flipCardController = FlipCardController();
-    isActiveGraphSide = widget.showGraph;
-    flipCardController._state = this;
-    animationController = AnimationController(
-      duration: Duration(milliseconds: 600),
-      vsync: this,
-    );
-  }
 
   Future flipCard() async {
     if (animationController.isAnimating) return;
@@ -94,9 +82,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
     widget.knowledgeTestControllerModel.isShowAnalysisBox =
         !widget.knowledgeTestControllerModel.isShowAnalysisBox;
 
-    analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
-        ? TestCategory.TOPIC
-        : TestCategory.NONE;
+    // analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
+    //     ? TestCategory.TOPIC
+    //     : TestCategory.NONE;
     setDataForKeywordTestAnalysisTable();
 
     setState(() {});
@@ -114,6 +102,18 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
       });
     }
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    flipCardController = FlipCardController();
+    isActiveGraphSide = widget.showGraph;
+    flipCardController._state = this;
+    animationController = AnimationController(
+      duration: Duration(milliseconds: 600),
+      vsync: this,
+    );
   }
 
   @override
