@@ -27,6 +27,8 @@ class AnalyticsTable extends StatefulWidget {
 }
 
 class _AnalyticsTableState extends State<AnalyticsTable> {
+  late int totalQuestionsForTestTaken;
+
   getAll({int? topicId, required TestTaken testTaken}) async {
     reviewQuestionsBack.clear();
     List<Question> questions = [];
@@ -35,14 +37,14 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
         .getAllQuestions(testTaken, topicId: topicId != null ? topicId : null);
 
     for (int i = 0; i < questions.length; i++) {
-      print("hmm:${questions[i].selectedAnswer}");
-      // await  QuestionDB().insertTestQuestion(questions[i]);
       reviewQuestionsBack.add(questions[i]);
     }
+    setState(() {});
+  }
 
-    setState(() {
-      print("again savedQuestions:${reviewQuestionsBack.length}");
-    });
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -117,10 +119,12 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
               DataColumn2(
                 label: Text('Date'),
                 size: ColumnSize.M,
+                fixedWidth: 80
               ),
               DataColumn2(
                 label: Text('Time'),
                 size: ColumnSize.M,
+                fixedWidth: 56
               ),
               DataColumn2(
                 label: Text('Outcome'),
@@ -143,6 +147,9 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
 
                 String _testDate = _dateFormat.format(_dateTime);
                 String _testTime = DateFormat.Hm().format(_dateTime);
+                totalQuestionsForTestTaken = widget.testsTaken[index].correct! +
+                    widget.testsTaken[index].wrong!;
+
                 return DataRow(
                   cells: [
                     DataCell(Text("${_testDate}")),
@@ -151,7 +158,7 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
                     ),
                     DataCell(Center(
                       child: Text(
-                        "${widget.testsTaken[index].correct!}/${widget.testsTaken[index].totalQuestions}",
+                        "${widget.testsTaken[index].correct!}/${totalQuestionsForTestTaken}",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     )),
