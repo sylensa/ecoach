@@ -254,7 +254,6 @@ class KnowledgeTestController extends ChangeNotifier {
     String? testName,
   }) async {
     isTestTaken = false;
-
     testsTaken = await TestController().keywordTestsTaken(course.id!);
     switch (testCategory) {
       case TestCategory.EXAM:
@@ -268,7 +267,6 @@ class KnowledgeTestController extends ChangeNotifier {
         allTestsTakenForAnalysis = typeSpecificTestsTaken;
 
         break;
-
       default:
     }
 
@@ -289,7 +287,7 @@ class KnowledgeTestController extends ChangeNotifier {
       }
     } else {
       if (typeSpecificTestsTaken.length > 0) {
-        testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
+        testTakenIndex = await typeSpecificTestsTaken.indexWhere((takenTest) {
           return takenTest.testname!.toLowerCase() == testName!.toLowerCase();
         });
 
@@ -347,7 +345,6 @@ class KnowledgeTestController extends ChangeNotifier {
     Future futureList;
     switch (testCategory) {
       case TestCategory.MOCK:
-        Question? q;
         futureList = TestController().getMockTests(course);
         break;
       case TestCategory.EXAM:
@@ -587,6 +584,19 @@ class KnowledgeTestController extends ChangeNotifier {
           questionCount: questions.length,
         );
 
+        break;
+      case TestCategory.MOCK:
+        questions = await TestController().getMockQuestions(
+          course.id!,
+        );
+        widgetView = KeywordAssessment(
+          user: user,
+          course: course,
+          questions: questions,
+          testCategory: testCategory,
+          questionCount: questions.length,
+          name: course.name,
+        );
         break;
       case TestCategory.ESSAY:
         break;

@@ -70,6 +70,9 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
   void initState() {
     super.initState();
     calculateQuestionsCount();
+    if (widget.testCategory == TestCategory.MOCK) {
+      selectNumberQuestions.add(40);
+    }
   }
 
   @override
@@ -337,35 +340,35 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
                                           // }
 
                                           goTo(
-                                              context,
-                                              KeywordQuestionView(
-                                                controller: QuizController(
-                                                  widget.user!,
-                                                  widget.course!,
-                                                  questions: widget.questions!,
-                                                  name: widget.test != null
-                                                      ? widget.test!.name
-                                                      : widget.name!,
-                                                  time:
-                                                      widget.questions!.length *
-                                                          60,
-                                                  topicId: widget.test != null
-                                                      ? widget.test!.id
-                                                      : null,
-                                                  type: TestType.KNOWLEDGE,
-                                                  challengeType:
-                                                      widget.testCategory!,
-                                                ),
-                                                theme: QuizTheme.BLUE,
-                                                diagnostic:
-                                                    widget.testCategory! !=
-                                                            TestCategory.MOCK
-                                                        ? false
-                                                        : true,
-                                                numberOfQuestionSelected:
-                                                    selectNumberQuestions[0],
+                                            context,
+                                            KeywordQuestionView(
+                                              controller: QuizController(
+                                                widget.user!,
+                                                widget.course!,
+                                                questions: widget.questions!,
+                                                name: widget.test != null
+                                                    ? widget.test!.name
+                                                    : widget.name!,
+                                                time: widget.questions!.length *
+                                                    60,
+                                                topicId: widget.test != null
+                                                    ? widget.test!.id
+                                                    : null,
+                                                type: TestType.KNOWLEDGE,
+                                                challengeType:
+                                                    widget.testCategory!,
                                               ),
-                                              replace: true);
+                                              theme: QuizTheme.BLUE,
+                                              diagnostic:
+                                                  widget.testCategory! !=
+                                                          TestCategory.MOCK
+                                                      ? false
+                                                      : true,
+                                              numberOfQuestionSelected:
+                                                  selectNumberQuestions[0],
+                                            ),
+                                            replace: true,
+                                          );
                                         } else {
                                           toastMessage(
                                               "Select number of questions");

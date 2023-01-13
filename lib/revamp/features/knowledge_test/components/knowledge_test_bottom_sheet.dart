@@ -208,7 +208,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                         tests.first.name[0];
                     topicId = tests[_currentSlide].id;
 
-                    await _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
+                    await _knowledgeTestController
+                        .filterAndSetKnowledgeTestsTaken(
                       testCategory: TestCategory.TOPIC,
                       course: _course,
                       testId: topicId!,
@@ -430,7 +431,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                     (BuildContext context,
                                                         int itemIndex,
                                                         int pageViewIndex) {
-                                                          
                                                   _currentSlide = itemIndex;
 
                                                   test = tests[_currentSlide];
@@ -1038,22 +1038,47 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                       physics: NeverScrollableScrollPhysics(),
                                       crossAxisCount: 3,
                                       children: [
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              "assets/icons/stethoscope.png",
-                                              height: 35.0,
+                                        MaterialButton(
+                                          onPressed: () async {
+                                            // getTest(context, TestCategory.SAVED);
+                                            _knowledgeTestController
+                                                .activeMenu = TestCategory.MOCK;
+                                            await _knowledgeTestController
+                                                .getTest(
+                                              context,
+                                              TestCategory.MOCK,
+                                              _course,
+                                              _user,
+                                            );
+                                            _knowledgeTestController
+                                                .goToInstructions(
+                                              context,
+                                              null,
+                                              TestCategory.MOCK,
+                                              _user,
+                                              _course,
+                                            );
+                                          },
+                                          padding: EdgeInsets.zero,
+                                          child: Container(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  "assets/icons/stethoscope.png",
+                                                  height: 35.0,
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                sText("Diagnostic ",
+                                                    color: Colors.grey,
+                                                    align: TextAlign.center,
+                                                    size: 12),
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            sText("Diagnostic ",
-                                                color: Colors.grey,
-                                                align: TextAlign.center,
-                                                size: 12),
-                                          ],
+                                          ),
                                         ),
                                         MaterialButton(
                                           onPressed: () async {
