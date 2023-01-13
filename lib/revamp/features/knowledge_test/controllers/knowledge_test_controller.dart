@@ -253,25 +253,25 @@ class KnowledgeTestController extends ChangeNotifier {
     int? testId = null,
     String? testName,
   }) async {
+    isTestTaken = false;
+
+        testsTaken = await TestController().keywordTestsTaken(course.id!);
     switch (testCategory) {
       case TestCategory.EXAM:
-        await TestController()
-            .getAllTestTakenByChallengeType(TestCategory.EXAM,
-                courseId: course.id)
-            .then((examsTaken) {
-          testsTaken = examsTaken;
-          typeSpecificTestsTaken = examsTaken;
-        });
-        // testId = null;
-        break;
+        // await TestController().keywordTestsTaken(course.id!).then((examsTaken) {
+        //   testsTaken = examsTaken;
+        // });
+        //   typeSpecificTestsTaken = examsTaken;
+        // allTestsTakenForAnalysis 
+        // break;
       case TestCategory.NONE:
       case TestCategory.TOPIC:
-        testsTaken = await TestController().keywordTestsTaken(course.id!);
         typeSpecificTestsTaken = await testsTaken
             .where((e) =>
                 e.challengeType == testCategory.toString() &&
                 e.testType == testType.toString())
             .toList();
+        allTestsTakenForAnalysis = typeSpecificTestsTaken;
 
         break;
 
@@ -294,7 +294,6 @@ class KnowledgeTestController extends ChangeNotifier {
         isTestTaken = false;
       }
     } else {
-      print("testName 2: $testName");
       if (typeSpecificTestsTaken.length > 0) {
         testTakenIndex = typeSpecificTestsTaken.indexWhere((takenTest) {
           return takenTest.testname!.toLowerCase() == testName!.toLowerCase();
@@ -639,7 +638,6 @@ class KnowledgeTestController extends ChangeNotifier {
         .getAllTestTakenByChallengeType(TestCategory.EXAM, courseId: courseId)
         .then((examsTaken) {
       allTestsTakenForAnalysis = examsTaken;
-      // print("allTestsTakenForAnalysis Exams: ${allTestsTakenForAnalysis}");
     });
   }
 

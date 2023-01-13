@@ -200,7 +200,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                 switch (_knowledgeTestController.activeMenu) {
                   case TestCategory.TOPIC:
                     isActiveTopicMenu = true;
-                    initTests();
+                    await initTests();
 
                     _knowledgeTestController.emptyTestList = tests.isEmpty;
                     _knowledgeTestController.currentAlphabet =
@@ -225,15 +225,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                     isShowAlphaScroll = true;
                     break;
                   case TestCategory.EXAM:
-                    initTests();
-                    // _knowledgeTestController.isActiveAnyMenu = true;
-                    // _knowledgeTestController.sheetHeightIncreased = true;
-                    // tests = await _knowledgeTestController.getTest(
-                    //   context,
-                    //   TestCategory.EXAM,
-                    //   _course,
-                    //   _user,
-                    // );
+                    await initTests();
 
                     if (tests.isNotEmpty) {
                       _knowledgeTestController.emptyTestList = tests.isEmpty;
@@ -248,18 +240,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                         testName:
                             (tests[_currentSlide] as TestNameAndCount).name,
                       );
-
-                      // if (!_knowledgeTestController.emptyTestList) {
-                      // scrollListAlphabets = tests
-                      //     .map((exam) {
-                      //       return exam.name[0].toString().toUpperCase();
-                      //     })
-                      //     .toSet()
-                      //     .toList();
-                      // scrollListAlphabets.sort();
-                      // }
                     }
-
                     break;
                   case TestCategory.MOCK:
                     _knowledgeTestController.isActiveAnyMenu = true;
@@ -494,25 +475,25 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
 
                                                       break;
                                                     case TestCategory.EXAM:
-                                                      // _knowledgeTestController
-                                                      //     .getAllTestTakenByExam(
-                                                      //   courseId: _course.id,
-                                                      // );
+                                                      _knowledgeTestController
+                                                          .getAllTestTakenByExam(
+                                                        courseId: _course.id,
+                                                      );
+
                                                       _knowledgeTestController
                                                               .testTakenIndex =
                                                           _knowledgeTestController
-                                                              .allTestsTakenForAnalysis
+                                                              .typeSpecificTestsTaken
                                                               .indexWhere(
-                                                        (examTaken) {
-                                                          // ? would be better to check condtion with examId instead of the name of exam taken
-                                                          return examTaken
-                                                                  .testname!
-                                                                  .toLowerCase() ==
-                                                              (test as TestNameAndCount)
-                                                                  .name
-                                                                  .toLowerCase();
-                                                        },
-                                                      );
+                                                                  (examTaken) {
+                                                        // ? would be better to check condtion with examId instead of the name of exam taken
+                                                        return examTaken
+                                                                .testname!
+                                                                .toLowerCase() ==
+                                                            (test as TestNameAndCount)
+                                                                .name
+                                                                .toLowerCase();
+                                                      });
 
                                                       if (_knowledgeTestController
                                                               .testTakenIndex !=
@@ -539,10 +520,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       break;
                                                     case TestCategory.BANK:
                                                       break;
-                                                    case TestCategory.NONE:
-                                                      break;
                                                     default:
-                                                      // sheetHeightIncreased = false;
                                                       break;
                                                   }
 
