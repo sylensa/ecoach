@@ -49,7 +49,6 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
 
   @override
   Widget build(BuildContext context) {
-    print("testCategory: ${widget.testCategory}");
     return widget.testCategory != TestCategory.EXAM
         ? DataTable2(
             columnSpacing: 16,
@@ -79,15 +78,17 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
                 size: ColumnSize.S,
               ),
             ],
-            rows: List<DataRow>.generate(
-              widget.testsTaken.length,
-              (index) => DataRow(
+            rows: List<DataRow>.generate(widget.testsTaken.length, (index) {
+
+              totalQuestionsForTestTaken = widget.testsTaken[index].correct! +
+                  widget.testsTaken[index].wrong!;
+              return DataRow(
                 cells: [
                   DataCell(
                       Text(widget.testsTaken[index].testname!.toCapitalized())),
                   DataCell(Center(
                     child: Text(
-                      "${widget.testsTaken[index].correct!}/${widget.testsTaken[index].totalQuestions}",
+                      "${widget.testsTaken[index].correct!}/${totalQuestionsForTestTaken}",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   )),
@@ -98,8 +99,8 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
                     ),
                   ),
                 ],
-              ),
-            ),
+              );
+            }),
           )
         : DataTable2(
             columnSpacing: 16,
@@ -117,15 +118,9 @@ class _AnalyticsTableState extends State<AnalyticsTable> {
             ),
             columns: [
               DataColumn2(
-                label: Text('Date'),
-                size: ColumnSize.M,
-                fixedWidth: 80
-              ),
+                  label: Text('Date'), size: ColumnSize.M, fixedWidth: 80),
               DataColumn2(
-                label: Text('Time'),
-                size: ColumnSize.M,
-                fixedWidth: 56
-              ),
+                  label: Text('Time'), size: ColumnSize.M, fixedWidth: 56),
               DataColumn2(
                 label: Text('Outcome'),
                 size: ColumnSize.S,

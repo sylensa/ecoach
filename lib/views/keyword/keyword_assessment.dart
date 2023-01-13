@@ -23,11 +23,13 @@ class KeywordAssessment extends StatefulWidget {
     this.test,
     this.questions,
     this.testCategory,
+    this.name,
   }) : super(key: key);
   final User? user;
   final Course? course;
   final List<Question>? questions;
   final TestNameAndCount? test;
+  final String? name;
   final TestCategory? testCategory;
   final KeywordQuizCover? quizCover;
   final KeywordQuestionView? questionView;
@@ -311,50 +313,59 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
                                       var nextScreen;
                                       if (widget.questionCount != 0) {
                                         if (selectNumberQuestions.isNotEmpty) {
-                                          if (widget.quizCover != null) {
-                                            widget.quizCover!.count =
-                                                selectNumberQuestions[0];
-                                            widget.quizCover!.time =
-                                                selectNumberQuestions[0] * 60;
-                                            nextScreen = widget.quizCover;
+                                          // if (widget.quizCover != null) {
+                                          //   widget.quizCover!.count =
+                                          //       selectNumberQuestions[0];
+                                          //   widget.quizCover!.time =
+                                          //       selectNumberQuestions[0] * 60;
+                                          //   nextScreen = widget.quizCover;
 
-                                            goTo(
+                                          //   goTo(
+                                          //     context,
+                                          //     nextScreen,
+                                          //     replace: true,
+                                          //   );
+                                          // if (widget.testCategory ==
+                                          //     TestCategory.NONE) {
+                                          //   widget.quizCover!.count =
+                                          //       selectNumberQuestions[0];
+                                          //   widget.quizCover!.time =
+                                          //       selectNumberQuestions[0] * 60;
+                                          //   nextScreen = widget.quizCover;
+                                          // } else {
+                                          //   // nextScreen = widget.questionView;
+                                          // }
+
+                                          goTo(
                                               context,
-                                              nextScreen,
-                                              replace: true,
-                                            );
-                                          } else {
-                                            // nextScreen = widget.questionView;
-                                            goTo(
-                                                context,
-                                                KeywordQuestionView(
-                                                  controller: QuizController(
-                                                    widget.user!,
-                                                    widget.course!,
-                                                    questions:
-                                                        widget.questions!,
-                                                    name: widget.test!.name,
-                                                    time: widget
-                                                            .questions!.length *
-                                                        60,
-                                                    topicId: widget.test != null
-                                                        ? widget.test!.id
-                                                        : null,
-                                                    type: TestType.KNOWLEDGE,
-                                                    challengeType:
-                                                        widget.testCategory!,
-                                                  ),
-                                                  theme: QuizTheme.BLUE,
-                                                  diagnostic:
-                                                      widget.testCategory! !=
-                                                              TestCategory.MOCK
-                                                          ? false
-                                                          : true,
-                                                  numberOfQuestionSelected:
-                                                      selectNumberQuestions[0],
+                                              KeywordQuestionView(
+                                                controller: QuizController(
+                                                  widget.user!,
+                                                  widget.course!,
+                                                  questions: widget.questions!,
+                                                  name: widget.test != null
+                                                      ? widget.test!.name
+                                                      : widget.name!,
+                                                  time:
+                                                      widget.questions!.length *
+                                                          60,
+                                                  topicId: widget.test != null
+                                                      ? widget.test!.id
+                                                      : null,
+                                                  type: TestType.KNOWLEDGE,
+                                                  challengeType:
+                                                      widget.testCategory!,
                                                 ),
-                                                replace: true);
-                                          }
+                                                theme: QuizTheme.BLUE,
+                                                diagnostic:
+                                                    widget.testCategory! !=
+                                                            TestCategory.MOCK
+                                                        ? false
+                                                        : true,
+                                                numberOfQuestionSelected:
+                                                    selectNumberQuestions[0],
+                                              ),
+                                              replace: true);
                                         } else {
                                           toastMessage(
                                               "Select number of questions");

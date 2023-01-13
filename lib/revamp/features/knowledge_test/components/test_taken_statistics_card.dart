@@ -82,12 +82,13 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   }
 
   void toggleAnalysis() async {
-    widget.knowledgeTestControllerModel.isShowAnalysisBox =
-        !widget.knowledgeTestControllerModel.isShowAnalysisBox;
     // analysisTestType = widget.knowledgeTestControllerModel.isShowAnalysisBox
     //     ? TestCategory.TOPIC
     //     : TestCategory.NONE;
-    setDataForKeywordTestAnalysisTable();
+
+    widget.knowledgeTestControllerModel.isShowAnalysisBox =
+        !widget.knowledgeTestControllerModel.isShowAnalysisBox;
+    await setDataForKeywordTestAnalysisTable();
 
     setState(() {});
   }
@@ -103,12 +104,12 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
         });
       });
     }
-    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
+    
     flipCardController = FlipCardController();
     isActiveGraphSide = widget.showGraph;
     flipCardController._state = this;
@@ -116,6 +117,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
       duration: Duration(milliseconds: 600),
       vsync: this,
     );
+    if (widget.activeMenu != TestCategory.NONE) {
+      testsTakenForAnalysis = widget.allTestsTakenForAnalysis;
+    }
   }
 
   @override
@@ -657,10 +661,10 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                               ),
                                             ],
                                           ),
-                                          SizedBox(
-                                            height: 4,
-                                          ),
                                         ],
+                                      ),
+                                      SizedBox(
+                                        height: 4,
                                       ),
                                     ],
                                   ),

@@ -132,7 +132,7 @@ class KnowledgeTestControllerModel extends ChangeNotifier {
 
 class KnowledgeTestController extends ChangeNotifier {
   bool searchTap = false;
- 
+
   List<CourseKeywords> listCourseKeywordsData = [];
   bool isActiveAnyMenu = false;
   bool sheetHeightIncreased = false;
@@ -258,12 +258,6 @@ class KnowledgeTestController extends ChangeNotifier {
     testsTaken = await TestController().keywordTestsTaken(course.id!);
     switch (testCategory) {
       case TestCategory.EXAM:
-      // await TestController().keywordTestsTaken(course.id!).then((examsTaken) {
-      //   testsTaken = examsTaken;
-      // });
-      //   typeSpecificTestsTaken = examsTaken;
-      // allTestsTakenForAnalysis
-      // break;
       case TestCategory.NONE:
       case TestCategory.TOPIC:
         typeSpecificTestsTaken = await testsTaken
@@ -512,17 +506,25 @@ class KnowledgeTestController extends ChangeNotifier {
                     case TestCategory.NONE:
                       List<Question> questions = data as List<Question>;
 
+                      // widgetView = KeywordAssessment(
+                      //   quizCover: KeywordQuizCover(
+                      //     user,
+                      //     questions,
+                      //     category: testCategory,
+                      //     course: course,
+                      //     type: testType,
+                      //     theme: QuizTheme.BLUE,
+                      //     time: questions.length * 60,
+                      //     name: searchKeyword,
+                      //   ),
+                      //   questionCount: questions.length,
+                      // );
                       widgetView = KeywordAssessment(
-                        quizCover: KeywordQuizCover(
-                          user,
-                          questions,
-                          category: testCategory,
-                          course: course,
-                          type: testType,
-                          theme: QuizTheme.BLUE,
-                          time: questions.length * 60,
-                          name: searchKeyword,
-                        ),
+                        user: user,
+                        course: course,
+                        questions: questions,
+                        name: searchKeyword,
+                        testCategory: testCategory,
                         questionCount: questions.length,
                       );
                       break;
@@ -641,7 +643,6 @@ class KnowledgeTestController extends ChangeNotifier {
         allTestsTakenForAnalysis = await examsTaken.where((exam) {
           return exam.testname!.toLowerCase() == testName.toLowerCase();
         }).toList();
-        
       } else {
         allTestsTakenForAnalysis = examsTaken;
       }

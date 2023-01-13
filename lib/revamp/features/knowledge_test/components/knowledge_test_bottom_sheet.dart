@@ -208,7 +208,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                         tests.first.name[0];
                     topicId = tests[_currentSlide].id;
 
-                    _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
+                    await _knowledgeTestController.filterAndSetKnowledgeTestsTaken(
                       testCategory: TestCategory.TOPIC,
                       course: _course,
                       testId: topicId!,
@@ -430,6 +430,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                     (BuildContext context,
                                                         int itemIndex,
                                                         int pageViewIndex) {
+                                                          
                                                   _currentSlide = itemIndex;
 
                                                   test = tests[_currentSlide];
@@ -764,7 +765,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                             : 0),
                                                     child: GestureDetector(
                                                       onTap: (() {
-                                                        print(_currentSlide);
                                                         if (_currentSlide !=
                                                             _index) {
                                                           setState(() {
