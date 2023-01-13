@@ -356,6 +356,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                         height:
                                             model.isShowAnalysisBox ? 600 : 300,
                                         child: TestsStatisticCard(
+                                          user: _user,
                                           course: _course,
                                           test: null,
                                           isTestTaken: true,
@@ -528,6 +529,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   }
 
                                                   return TestsStatisticCard(
+                                                    user: _user,
                                                     course: _course,
                                                     test: test,
                                                     isTestTaken:

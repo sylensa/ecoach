@@ -5,9 +5,10 @@ import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
+import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/tests_taken_graph.dart';
 import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test_controller.dart';
-import 'package:ecoach/revamp/features/knowledge_test/widgets/topic_analysis_table.dart';
+import 'package:ecoach/revamp/features/knowledge_test/widgets/analysis_table.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/adeo_signal_strength_indicator.dart';
@@ -20,14 +21,16 @@ class TestsStatisticCard extends StatefulWidget {
     required this.showGraph,
     required this.getTest,
     required this.knowledgeTestControllerModel,
+    required this.course,
+    this.user,
     this.test,
     this.activeMenu = TestCategory.NONE,
     this.testTaken,
     this.isTestTaken = false,
     this.allTestsTakenForAnalysis,
-    required this.course,
   }) : super(key: key);
 
+  final User? user;
   final TestTaken? testTaken;
   final List<TestTaken>? allTestsTakenForAnalysis;
   final dynamic test;
@@ -321,6 +324,8 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: AnalyticsTable(
+                                        user: widget.user,
+                                        testCategory: widget.activeMenu,
                                         testsTaken: testsTakenForAnalysis!,
                                       ),
                                     ),

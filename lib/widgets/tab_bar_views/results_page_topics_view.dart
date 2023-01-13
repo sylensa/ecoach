@@ -32,7 +32,7 @@ class TopicsTabPage extends StatefulWidget {
     required this.diagnostic,
     required this.user,
     required this.course,
-        this.testTaken,
+    this.testTaken,
     this.history = false,
     Key? key,
   }) : super(key: key);
@@ -60,9 +60,7 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     );
   }
 
-
-
-  handleSelection(topic) async{
+  handleSelection(topic) async {
     setState(() {
       print("selected:$topic");
       selectAnsweredQuestions.clear();
@@ -72,23 +70,24 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
       else
         selected = topic;
     });
-    if(selected == null){
+    if (selected == null) {
       await getAll(null);
-    }else{
+    } else {
       await getAll(selected["topicId"]);
     }
   }
 
-
-  getAll(int? topicId)async{
+  getAll(int? topicId) async {
     reviewQuestionsBack.clear();
     List<Question> questions = [];
-    if(selected == null){
-    questions = await TestController().getAllQuestions(widget.testTaken!,topicId: null);
-    }else{
-   questions = await TestController().getAllQuestions(widget.testTaken!,topicId: topicId);
+    if (selected == null) {
+      questions = await TestController()
+          .getAllQuestions(widget.testTaken!, topicId: null);
+    } else {
+      questions = await TestController()
+          .getAllQuestions(widget.testTaken!, topicId: topicId);
     }
-    for(int i = 0; i < questions.length; i++){
+    for (int i = 0; i < questions.length; i++) {
       print("hmm:${questions[i].selectedAnswer}");
       // await  QuestionDB().insertTestQuestion(questions[i]);
       reviewQuestionsBack.add(questions[i]);
@@ -97,7 +96,6 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
     setState(() {
       print("again savedQuestions:${reviewQuestionsBack.length}");
     });
-
   }
 
   @override
@@ -203,34 +201,38 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
         Container(
           color: Colors.white,
           padding: EdgeInsets.symmetric(vertical: 15),
-
           child: Row(
             children: [
-              if (selected != null ||  !widget.diagnostic)
+              if (selected != null || !widget.diagnostic)
                 Expanded(
                   child: Row(
                     children: [
                       Expanded(
                         child: Button(
                           label: 'review',
-                          onPressed: ()async {
+                          onPressed: () async {
                             if (widget.history) {
                             } else {
                               // Navigator.pop(context,[0,0]);
-                              if(widget.diagnostic){
+                              if (widget.diagnostic) {
                                 // toastMessage("No reviews for diagnostic test");
-                                await goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,disgnostic: true,));
-                                setState(() {
-
-                                });
-                              }else{
-                                await goTo(context, QuizReviewPage(testTaken: widget.testTaken,user: widget.user,));
-                                setState(() {
-
-                                });
+                                await goTo(
+                                    context,
+                                    QuizReviewPage(
+                                      testTaken: widget.testTaken,
+                                      user: widget.user,
+                                      disgnostic: true,
+                                    ));
+                                setState(() {});
+                              } else {
+                                await goTo(
+                                    context,
+                                    QuizReviewPage(
+                                      testTaken: widget.testTaken,
+                                      user: widget.user,
+                                    ));
+                                setState(() {});
                               }
-
-
                             }
                           },
                         ),
@@ -247,27 +249,26 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                         child: Button(
                           label: 'revise',
                           onPressed: () async {
-                          if(widget.diagnostic){
-                            toastMessage("No revise for diagnostic test");
-                          }
-                          else{
-                            int topicId = selected['topicId']!;
-                            Topic? topic =
-                            await TopicDB().getTopicById(topicId);
-
-                            if (topic != null) {
-                              // print(
-                              //     "_______________________________________________________");
-                              // print(topic.notes);
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return NoteView(widget.user, topic);
-                                  });
+                            if (widget.diagnostic) {
+                              toastMessage("No revise for diagnostic test");
                             } else {
-                              showFeedback(context, "No notes available");
+                              int topicId = selected['topicId']!;
+                              Topic? topic =
+                                  await TopicDB().getTopicById(topicId);
+
+                              if (topic != null) {
+                                // print(
+                                //     "_______________________________________________________");
+                                // print(topic.notes);
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return NoteView(widget.user, topic);
+                                    });
+                              } else {
+                                showFeedback(context, "No notes available");
+                              }
                             }
-                          }
                           },
                         ),
                       ),
@@ -306,7 +307,8 @@ class _TopicsTabPageState extends State<TopicsTabPage> {
                           },
                         ),
                       ),
-              if (widget.diagnostic && context.read<DownloadUpdate>().plans.isEmpty)
+              if (widget.diagnostic &&
+                  context.read<DownloadUpdate>().plans.isEmpty)
                 Expanded(
                   child: Button(
                     label: 'Purchase',
