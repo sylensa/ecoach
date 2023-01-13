@@ -20,6 +20,7 @@ import 'package:ecoach/models/ui/course_detail.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/core/utils/app_colors.dart';
 import 'package:ecoach/utils/app_url.dart';
+import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/widgets/games_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_widget.dart';
@@ -261,6 +262,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                             setState(() {
                               topics.clear();
                               topicsProgressCode = true;
+                              checkQuestions.clear();
                               course = value;
                               setProviderValues(course!);
                               getAnalysisStats();

@@ -1235,9 +1235,34 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Accuracy matters , don\'t let the clock run down',
           iconURL: 'assets/icons/courses/speed.png',
           onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return SpeedTestIntro(
+                        user: widget.user,
+                        course: widget.course,
+                      );
+                    },
+                  ),
+                );
+              } else {
+                showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ));
+              }
+            } else {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -1249,17 +1274,32 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                   },
                 ),
               );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
           },
+
+          // if (questions.isNotEmpty) {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) {
+          //           return SpeedTestIntro(
+          //             user: widget.user,
+          //             course: widget.course,
+          //           );
+          //         },
+          //       ),
+          //     );
+          //   } else {
+          //     showDialogYesNo(
+          //         context: context,
+          //         message: "Download questions for ${widget.course.name}",
+          //         target: BuyBundlePage(
+          //           widget.user,
+          //           controller: widget.controller,
+          //           bundle: widget.subscription,
+          //         ));
+          //   }
+          // },
         ),
         MultiPurposeCourseCard(
           title: 'Knowledge',
@@ -1296,17 +1336,291 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                 listCourseKeywordsData: widget.listCourseKeywordsData,
               );
             }
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Marathon',
+          subTitle: 'Race to complete all questions',
+          iconURL: 'assets/icons/courses/marathon.png',
+          onTap: () async {
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return MarathonIntroit(widget.user, widget.course);
+                    },
+                  ),
+                );
+              } else {
+                showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ),
+                );
+              }
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return MarathonIntroit(widget.user, widget.course);
+                  },
+                ),
+              );
+            }
+          },
+        ),
+        MultiPurposeCourseCard(
+          title: 'Autopilot',
+          subTitle: 'Completing a course one topic at a time',
+          iconURL: 'assets/icons/courses/autopilot.png',
+          onTap: () async {
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return AutopilotIntroit(widget.user, widget.course);
+                    },
+                  ),
+                );
+              } else {
+                showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ),
+                );
+              }
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return AutopilotIntroit(widget.user, widget.course);
+                  },
+                ),
+              );
+            }
+          },
 
-            // List<Question> questions =
-            //     await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+          //   if (questions.isNotEmpty) {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) {
+          //           return AutopilotIntroit(widget.user, widget.course);
+          //         },
+          //       ),
+          //     );
+          //   } else {
+          //     showDialogYesNo(
+          //         context: context,
+          //         message: "Download questions for ${widget.course.name}",
+          //         target: BuyBundlePage(
+          //           widget.user,
+          //           controller: widget.controller,
+          //           bundle: widget.subscription,
+          //         ));
+          //   }
+          // },
+        ),
+        MultiPurposeCourseCard(
+            title: 'Treadmill',
+            subTitle: 'Crank up the speed, how far can you go?',
+            iconURL: 'assets/icons/courses/treadmill.png',
+            onTap: () async {
+              if (checkQuestions.isEmpty) {
+                showLoaderDialog(context);
+                checkQuestions = await QuestionDB()
+                    .getQuestionsByCourseId(widget.course.id!);
+                Navigator.pop(context);
+                if (checkQuestions.isNotEmpty) {
+                  Treadmill? treadmill =
+                      await TestController().getCurrentTreadmill(widget.course);
+                  if (treadmill == null) {
+                    return Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TreadmillWelcome(
+                          user: widget.user,
+                          course: widget.course,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TreadmillSaveResumptionMenu(
+                          controller: TreadmillController(
+                            widget.user,
+                            widget.course,
+                            name: widget.course.name!,
+                            treadmill: treadmill,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                } else {
+                  showDialogYesNo(
+                    context: context,
+                    message: "Download questions for ${widget.course.name}",
+                    target: BuyBundlePage(
+                      widget.user,
+                      controller: widget.controller,
+                      bundle: widget.subscription,
+                    ),
+                  );
+                }
+              } else {
+                Treadmill? treadmill =
+                    await TestController().getCurrentTreadmill(widget.course);
+                if (treadmill == null) {
+                  return Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TreadmillWelcome(
+                        user: widget.user,
+                        course: widget.course,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TreadmillSaveResumptionMenu(
+                        controller: TreadmillController(
+                          widget.user,
+                          widget.course,
+                          name: widget.course.name!,
+                          treadmill: treadmill,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
+            }
+
+            //   if (questions.isNotEmpty) {
+            //     Treadmill? treadmill =
+            //         await TestController().getCurrentTreadmill(widget.course);
+            //     if (treadmill == null) {
+            //       return Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => TreadmillWelcome(
+            //             user: widget.user,
+            //             course: widget.course,
+            //           ),
+            //         ),
+            //       );
+            //     } else {
+            //       return Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => TreadmillSaveResumptionMenu(
+            //             controller: TreadmillController(
+            //               widget.user,
+            //               widget.course,
+            //               name: widget.course.name!,
+            //               treadmill: treadmill,
+            //             ),
+            //           ),
+            //         ),
+            //       );
+            //     }
+            //   } else {
+            //     showDialogYesNo(
+            //         context: context,
+            //         message: "Download questions for ${widget.course.name}",
+            //         target: BuyBundlePage(
+            //           widget.user,
+            //           controller: widget.controller,
+            //           bundle: widget.subscription,
+            //         ));
+            //   }
+            // },
+            ),
+        MultiPurposeCourseCard(
+          title: 'Customised',
+          subTitle: 'Create your own kind of quiz',
+          iconURL: 'assets/icons/courses/customised.png',
+          onTap: () async {
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return CustomizedTestIntroit(
+                        user: widget.user,
+                        course: widget.course,
+                      );
+                    },
+                  ),
+                );
+              } else {
+                showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ),
+                );
+              }
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CustomizedTestIntroit(
+                      user: widget.user,
+                      course: widget.course,
+                    );
+                  },
+                ),
+              );
+            }
+
             // if (questions.isNotEmpty) {
-            //   // openKnowledgeTestBottomSheet(context);
-
-            //   KnowledgeTestController().openKnowledgeTestBottomSheet(
+            //   Navigator.push(
             //     context,
-            //     course: widget.course,
-            //     user: widget.user,
-            //     listCourseKeywordsData: widget.listCourseKeywordsData,
+            //     MaterialPageRoute(
+            //       builder: (context) {
+            //         return CustomizedTestIntroit(
+            //           user: widget.user,
+            //           course: widget.course,
+            //         );
+            //       },
+            //     ),
             //   );
             // } else {
             //   showDialogYesNo(
@@ -1321,147 +1635,40 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           },
         ),
         MultiPurposeCourseCard(
-          title: 'Marathon',
-          subTitle: 'Race to complete all questions',
-          iconURL: 'assets/icons/courses/marathon.png',
-          onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return MarathonIntroit(widget.user, widget.course);
-                  },
-                ),
-              );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
-            }
-          },
-        ),
-        MultiPurposeCourseCard(
-          title: 'Autopilot',
-          subTitle: 'Completing a course one topic at a time',
-          iconURL: 'assets/icons/courses/autopilot.png',
-          onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return AutopilotIntroit(widget.user, widget.course);
-                  },
-                ),
-              );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
-            }
-          },
-        ),
-        MultiPurposeCourseCard(
-          title: 'Treadmill',
-          subTitle: 'Crank up the speed, how far can you go?',
-          iconURL: 'assets/icons/courses/treadmill.png',
-          onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
-              Treadmill? treadmill =
-                  await TestController().getCurrentTreadmill(widget.course);
-              if (treadmill == null) {
-                return Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TreadmillWelcome(
-                      user: widget.user,
-                      course: widget.course,
-                    ),
-                  ),
-                );
-              } else {
-                return Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TreadmillSaveResumptionMenu(
-                      controller: TreadmillController(
-                        widget.user,
-                        widget.course,
-                        name: widget.course.name!,
-                        treadmill: treadmill,
-                      ),
-                    ),
-                  ),
-                );
-              }
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
-            }
-          },
-        ),
-        MultiPurposeCourseCard(
-          title: 'Customised',
-          subTitle: 'Create your own kind of quiz',
-          iconURL: 'assets/icons/courses/customised.png',
-          onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return CustomizedTestIntroit(
-                      user: widget.user,
-                      course: widget.course,
-                    );
-                  },
-                ),
-              );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
-            }
-          },
-        ),
-        MultiPurposeCourseCard(
           title: 'Timeless',
           subTitle: 'Practice mode, no pressure.',
           iconURL: 'assets/icons/courses/untimed.png',
           onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return TestChallengeList(
+                        testType: TestType.UNTIMED,
+                        course: widget.course,
+                        user: widget.user,
+                      );
+                    },
+                  ),
+                );
+              } else {
+                showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ),
+                );
+              }
+            } else {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -1474,16 +1681,31 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                   },
                 ),
               );
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
+
+            // if (questions.isNotEmpty) {
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) {
+            //         return TestChallengeList(
+            //           testType: TestType.UNTIMED,
+            //           course: widget.course,
+            //           user: widget.user,
+            //         );
+            //       },
+            //     ),
+            //   );
+            // } else {
+            //   showDialogYesNo(
+            //       context: context,
+            //       message: "Download questions for ${widget.course.name}",
+            //       target: BuyBundlePage(
+            //         widget.user,
+            //         controller: widget.controller,
+            //         bundle: widget.subscription,
+            //       ));
+            // }
           },
         ),
         MultiPurposeCourseCard(
@@ -1491,9 +1713,31 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Know the answer to every question',
           iconURL: 'assets/icons/courses/review.png',
           onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                goTo(
+                    context,
+                    ReviewOnBoarding(
+                      user: widget.user,
+                      course: widget.course,
+                      testType: TestType.NONE,
+                    ));
+              } else {
+                showDialogYesNo(
+                  context: context,
+                  message: "Download questions for ${widget.course.name}",
+                  target: BuyBundlePage(
+                    widget.user,
+                    controller: widget.controller,
+                    bundle: widget.subscription,
+                  ),
+                );
+              }
+            } else {
               goTo(
                   context,
                   ReviewOnBoarding(
@@ -1501,16 +1745,26 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
                     course: widget.course,
                     testType: TestType.NONE,
                   ));
-            } else {
-              showDialogYesNo(
-                  context: context,
-                  message: "Download questions for ${widget.course.name}",
-                  target: BuyBundlePage(
-                    widget.user,
-                    controller: widget.controller,
-                    bundle: widget.subscription,
-                  ));
             }
+
+            // if (questions.isNotEmpty) {
+            //   goTo(
+            //       context,
+            //       ReviewOnBoarding(
+            //         user: widget.user,
+            //         course: widget.course,
+            //         testType: TestType.NONE,
+            //       ));
+            // } else {
+            //   showDialogYesNo(
+            //       context: context,
+            //       message: "Download questions for ${widget.course.name}",
+            //       target: BuyBundlePage(
+            //         widget.user,
+            //         controller: widget.controller,
+            //         bundle: widget.subscription,
+            //       ));
+            // }
           },
         ),
         MultiPurposeCourseCard(
@@ -1518,20 +1772,40 @@ class _TestTypeWidgetState extends State<TestTypeWidget> {
           subTitle: 'Prepare for battle, attempt everything',
           iconURL: 'assets/icons/courses/conquest.png',
           onTap: () async {
-            List<Question> questions =
-                await QuestionDB().getQuestionsByCourseId(widget.course.id!);
-            if (questions.isNotEmpty) {
-              conquestModalBottomSheet(context);
-            } else {
-              showDialogYesNo(
+            if (checkQuestions.isEmpty) {
+              showLoaderDialog(context);
+              checkQuestions =
+                  await QuestionDB().getQuestionsByCourseId(widget.course.id!);
+              Navigator.pop(context);
+              if (checkQuestions.isNotEmpty) {
+                conquestModalBottomSheet(context);
+              } else {
+                showDialogYesNo(
                   context: context,
                   message: "Download questions for ${widget.course.name}",
                   target: BuyBundlePage(
                     widget.user,
                     controller: widget.controller,
                     bundle: widget.subscription,
-                  ));
+                  ),
+                );
+              }
+            } else {
+              conquestModalBottomSheet(context);
             }
+
+            // if (questions.isNotEmpty) {
+            //   conquestModalBottomSheet(context);
+            // } else {
+            //   showDialogYesNo(
+            //       context: context,
+            //       message: "Download questions for ${widget.course.name}",
+            //       target: BuyBundlePage(
+            //         widget.user,
+            //         controller: widget.controller,
+            //         bundle: widget.subscription,
+            //       ));
+            // }
           },
         ),
       ],
