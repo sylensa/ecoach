@@ -247,6 +247,40 @@ class KnowledgeTestController extends ChangeNotifier {
     }
   }
 
+  loadMockTest(BuildContext context,
+      {required Course course,
+      required String testName,
+      required User user,
+      bool smallHeightDevice = true}) async {
+    // 1. check whether keyword test taken exists for the selected
+    //    keyword.
+    await filterAndSetKnowledgeTestsTaken(
+      testCategory: TestCategory.MOCK,
+      course: course,
+      testName: testName.toLowerCase(),
+    );
+
+    // 2. if yes, show stats card, else proceed to assesment page
+    if (isTestTaken) {
+      if (activeMenu != TestCategory.MOCK) {
+        activeMenu = TestCategory.MOCK;
+      }
+      openKnowledgeTestCard(
+        context,
+        smallHeightDevice,
+        activeMenu,
+      );
+    } else {
+      goToInstructions(
+        context,
+        null,
+        TestCategory.MOCK,
+        user,
+        course,
+      );
+    }
+  }
+
   filterAndSetKnowledgeTestsTaken({
     required Course course,
     required TestCategory testCategory,
@@ -258,6 +292,7 @@ class KnowledgeTestController extends ChangeNotifier {
     switch (testCategory) {
       case TestCategory.EXAM:
       case TestCategory.NONE:
+      case TestCategory.MOCK:
       case TestCategory.TOPIC:
         typeSpecificTestsTaken = await testsTaken
             .where((e) =>
@@ -306,6 +341,7 @@ class KnowledgeTestController extends ChangeNotifier {
   TestCategory openKnowledgeTestCard(
       BuildContext context, bool smallHeightDevice, TestCategory menu) {
     if (!isActiveAnyMenu || searchTap) {
+      print("dhjhd");
       searchTap = false;
       showKeywordTextField = false;
       sheetHeight = appHeight(context) * 0.90;
@@ -313,7 +349,7 @@ class KnowledgeTestController extends ChangeNotifier {
       if (sheetHeightIncreased) {
         isActiveAnyMenu = true;
       }
-    }
+    } 
     return activeMenu;
   }
 

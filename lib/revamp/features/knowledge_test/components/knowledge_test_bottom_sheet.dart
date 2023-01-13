@@ -554,16 +554,29 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       TestNameAndCount?
                                                           selectedTopic,
                                                     ) async {
-                                                      _knowledgeTestController
-                                                          .goToInstructions(
-                                                        context,
-                                                        selectedTopic,
-                                                        testCategory,
-                                                        _user,
-                                                        _course,
-                                                        searchKeyword:
-                                                            searchKeyword,
-                                                      );
+                                                      switch (testCategory) {
+                                                        case TestCategory.MOCK:
+                                                          _knowledgeTestController
+                                                              .goToInstructions(
+                                                            context,
+                                                            null,
+                                                            TestCategory.MOCK,
+                                                            _user,
+                                                            _course,
+                                                          );
+                                                          break;
+                                                        default:
+                                                          _knowledgeTestController
+                                                              .goToInstructions(
+                                                            context,
+                                                            selectedTopic,
+                                                            testCategory,
+                                                            _user,
+                                                            _course,
+                                                            searchKeyword:
+                                                                searchKeyword,
+                                                          );
+                                                      }
                                                     },
                                                   );
                                                 },
@@ -1040,24 +1053,47 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                       children: [
                                         MaterialButton(
                                           onPressed: () async {
-                                            // getTest(context, TestCategory.SAVED);
-                                            _knowledgeTestController
-                                                .activeMenu = TestCategory.MOCK;
-                                            await _knowledgeTestController
-                                                .getTest(
-                                              context,
-                                              TestCategory.MOCK,
-                                              _course,
-                                              _user,
-                                            );
-                                            _knowledgeTestController
-                                                .goToInstructions(
-                                              context,
-                                              null,
-                                              TestCategory.MOCK,
-                                              _user,
-                                              _course,
-                                            );
+                                            // await _knowledgeTestController
+                                            //     .getTest(
+                                            //   context,
+                                            //   TestCategory.MOCK,
+                                            //   _course,
+                                            //   _user,
+                                            // );
+                                            // _knowledgeTestController
+                                            //     .goToInstructions(
+                                            //   context,
+                                            //   null,
+                                            //   TestCategory.MOCK,
+                                            //   _user,
+                                            //   _course,
+                                            // );
+                                            if (_knowledgeTestController
+                                                    .activeMenu !=
+                                                TestCategory.MOCK) {
+                                              await _knowledgeTestController
+                                                  .loadMockTest(
+                                                context,
+                                                course: _course,
+                                                testName: _course.name!,
+                                                user: _user,
+                                              );
+                                              searchKeywordController.clear();
+                                              focusNodeKeywordSearchField
+                                                  .unfocus();
+                                              isShowAlphaScroll = true;
+                                              setState(() {});
+                                            } else {
+                                              _knowledgeTestController
+                                                  .closeKnowledgeTestCard(
+                                                context,
+                                                smallHeightDevice,
+                                                _knowledgeTestController
+                                                    .activeMenu,
+                                              );
+                                              isShowAlphaScroll = false;
+                                              setState(() {});
+                                            }
                                           },
                                           padding: EdgeInsets.zero,
                                           child: Container(
