@@ -1074,6 +1074,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                             if (_knowledgeTestController
                                                     .activeMenu !=
                                                 TestCategory.MOCK) {
+                                              isShowAlphaScroll = false;
                                               await _knowledgeTestController
                                                   .loadMockTest(
                                                 context,
@@ -1084,7 +1085,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                               searchKeywordController.clear();
                                               focusNodeKeywordSearchField
                                                   .unfocus();
-                                              isShowAlphaScroll = true;
                                               setState(() {});
                                             } else {
                                               _knowledgeTestController
@@ -1094,7 +1094,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 _knowledgeTestController
                                                     .activeMenu,
                                               );
-                                              isShowAlphaScroll = false;
+                                              // isShowAlphaScroll = false;
                                               setState(() {});
                                             }
                                           },
