@@ -11,6 +11,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class PersonalisedPage extends StatefulWidget {
   PersonalisedPage(
@@ -30,6 +31,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
 
   List<Topic> listTopics = [];
   bool progressCode = true;
+  FlutterTts flutterTts = FlutterTts();
 
   onSelectModalBottomSheet(context,GlossaryData glossary,int index) {
     double sheetHeight = 400;
@@ -736,13 +738,19 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                         ),
 
                         onPressed: ()async{
-                          setState(() {
-                            personaliseGlossaryData[index].played = true;
-                          });
-                          await TextToSpeechController(text: "Adolf is going to school and after he will visit the market to buy food stuffs for cooking").speak();
-                          setState(() {
-                            personaliseGlossaryData[index].played = false;
-                          });
+                          if(personaliseGlossaryData[index].played){
+                            setState(() {
+                              personaliseGlossaryData[index].played = false;
+                            });
+                            await TextToSpeechController(text: personaliseGlossaryData[index].definition!).stop();
+                          }else{
+                            setState(() {
+                              personaliseGlossaryData[index].played = true;
+                            });
+                            await TextToSpeechController(text: personaliseGlossaryData[index].definition!).speak();
+                          }
+
+
                         },
                         child:personaliseGlossaryData[index].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
                       ),

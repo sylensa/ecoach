@@ -58,6 +58,7 @@ dependencies:
    simple_timer: ^2.0.0
    web_socket_channel: ^2.1.0
    text_to_speech: ^0.2.3
+   flutter_tts: ^3.6.3
 
 
    cupertino_icons: ^1.0.3
