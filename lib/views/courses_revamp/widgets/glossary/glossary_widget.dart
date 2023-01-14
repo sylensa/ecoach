@@ -654,10 +654,11 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                                          ],
                                        )
                                            :
+                               searchGlossaryData.isNotEmpty ?
                                        Column(
                                          crossAxisAlignment: CrossAxisAlignment.start,
                                          children: [
-                                           sText("Searches Results", weight: FontWeight.w600),
+                                           sText("Search Results", weight: FontWeight.w600),
                                            SizedBox(
                                              height: 10,
                                            ),
@@ -684,7 +685,12 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                                                ),
                                              )
                                          ],
-                                       )
+                                       ) :
+
+                                        Container(
+                                          width: appWidth(context) * 0.80,
+                                          child: sText("Empty search results",align: TextAlign.center,weight: FontWeight.w600),
+                                        )
                                      ),
                                    ),
 

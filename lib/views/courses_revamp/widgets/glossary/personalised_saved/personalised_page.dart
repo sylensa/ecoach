@@ -1,4 +1,5 @@
 import 'package:ecoach/controllers/glossary_controller.dart';
+import 'package:ecoach/controllers/text_to_speech_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -86,9 +87,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          MaterialButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: ()async{
+                          GestureDetector(
+                            onTap: ()async{
 
                               showLoaderDialog(context);
                            var res =  await  GlossaryController().deleteGlossaries(glossary.id!);
@@ -106,8 +106,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                               children: [
                                 Container(
                                     padding: EdgeInsets.all(7.0),
-                                    height: 70,
-                                    width: 70,
+                                    height: 50,
+                                    width: 50,
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       shape: BoxShape.circle,
@@ -119,8 +119,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                               ],
                             ),
                           ),
-                          MaterialButton(
-                            onPressed: ()async{
+                          GestureDetector(
+                            onTap: ()async{
 
                               showLoaderDialog(context);
                               GlossaryData? res =  await  GlossaryController().pinUnPinGlossaries(glossary,glossary.isPinned! == 1 ? false : true);
@@ -139,8 +139,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                               children: [
                                 Container(
                                     padding: EdgeInsets.all(7.0),
-                                    height: 70,
-                                    width: 70,
+                                    height: 50,
+                                    width: 50,
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       shape: BoxShape.circle,
@@ -152,8 +152,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                               ],
                             ),
                           ),
-                          MaterialButton(
-                            onPressed: (){
+                          GestureDetector(
+                            onTap: ()async{
                               Navigator.pop(context);
                               editDialogModalBottomSheet(context,glossary,index);
                             },
@@ -161,8 +161,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                               children: [
                                 Container(
                                     padding: EdgeInsets.all(7.0),
-                                    height: 70,
-                                    width: 70,
+                                    height: 50,
+                                    width: 50,
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                       shape: BoxShape.circle,
@@ -178,8 +178,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                             children: [
                               Container(
                                   padding: EdgeInsets.all(7.0),
-                                  height: 70,
-                                  width: 70,
+                                  height: 50,
+                                  width: 50,
                                   decoration: BoxDecoration(
                                     color: Colors.grey[200],
                                     shape: BoxShape.circle,
@@ -202,7 +202,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   createDialogModalBottomSheet(
       context,
       ) {
-    double sheetHeight = appHeight(context) * 0.7;
+    double sheetHeight = appHeight(context) * 0.9;
     TextEditingController termController = TextEditingController();
     TextEditingController meaningController = TextEditingController();
 
@@ -253,6 +253,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                                         Expanded(
                                           child: TextFormField(
                                             controller: termController,
+                                            autofocus: true,
                                             validator: (value) {
                                               if (value == null || value.isEmpty) {
                                                 return 'Please check that you\'ve entered group_management email';
@@ -350,7 +351,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                                              }
                                              return null;
                                            },
-                                           maxLines: 10,
+                                           maxLines: 7,
                                            decoration: textDecorNoBorder(
                                              radius: 10,
                                              hintColor: Color(0xFFB9B9B9),
@@ -414,7 +415,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   }
 
   editDialogModalBottomSheet(context,GlossaryData glossary,int index) {
-    double sheetHeight = appHeight(context) * 0.70;
+    double sheetHeight = appHeight(context) * 0.90;
     TextEditingController termController = TextEditingController();
     TextEditingController meaningController = TextEditingController();
     termController.text = glossary.term!;
@@ -454,138 +455,142 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                         height: 20,
                       ),
                       Expanded(
-                        child: ListView(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(left: 20,right:20),
+                        child: Container(
+                          height: appHeight(context),
+                          child: ListView(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right:20),
 
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  sText("Word",color: kAdeoGray3),
-                                  SizedBox(height: 10,),
-                                  Container(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller: termController,
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'Please check that you\'ve entered group_management email';
-                                              }
-                                              return null;
-                                            },
-                                            decoration: textDecorNoBorder(
-                                              radius: 10,
-                                              hintColor: Color(0xFFB9B9B9),
-                                              borderColor: Colors.white,
-                                              fill: Color(0xFFEDF3F7),
-                                              padding: EdgeInsets.only(left: 10, right: 10),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 20,right:20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  sText("Topic",color: kAdeoGray3),
-                                  SizedBox(height: 10,),
-                                  if(listTopics.isNotEmpty)
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    sText("Word",color: kAdeoGray3),
+                                    SizedBox(height: 10,),
                                     Container(
-                                      width: appWidth(context),
-                                      decoration: BoxDecoration(
-                                          color: Color(0xFFEDF3F7),
-                                          border: Border.all(color: Colors.white),
-                                          borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      padding: EdgeInsets.only(left: 12, right: 12),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<Topic>(
-                                          value: selectedTopic ?? listTopics[0],
-                                          itemHeight: 60,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: kDefaultBlack,
-                                          ),
-                                          onChanged: (Topic? value){
-                                            stateSetter((){
-                                              selectedTopic = value;
-                                            });
-                                          },
-                                          items: listTopics.map(
-                                                (item) => DropdownMenuItem<Topic>(
-                                              value: item,
-                                              child: Text(
-                                                "${item.name}",
-                                                style: TextStyle(
-                                                  color: kDefaultBlack,
-                                                  fontSize: 12,
-                                                ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: TextFormField(
+                                              autofocus: true,
+                                              controller: termController,
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return 'Please check that you\'ve entered group_management email';
+                                                }
+                                                return null;
+                                              },
+                                              decoration: textDecorNoBorder(
+                                                radius: 10,
+                                                hintColor: Color(0xFFB9B9B9),
+                                                borderColor: Colors.white,
+                                                fill: Color(0xFFEDF3F7),
+                                                padding: EdgeInsets.only(left: 10, right: 10),
                                               ),
                                             ),
-                                          )
-                                              .toList(),
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 20,right:20),
-
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  sText("Meaning",color: kAdeoGray3),
-                                  SizedBox(height: 10,),
-                                  Container(
-                                    // padding: EdgeInsets.only(left: 20, right: 20),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller: meaningController,
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return 'Please check that you\'ve entered your group description';
-                                              }
-                                              return null;
-                                            },
-                                            maxLines: 10,
-                                            decoration: textDecorNoBorder(
-                                              radius: 10,
-                                              hintColor: Color(0xFFB9B9B9),
-                                              borderColor: Colors.white,
-                                              fill: Color(0xFFEDF3F7),
-                                              padding: EdgeInsets.only(left: 10, right: 10),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right:20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    sText("Topic",color: kAdeoGray3),
+                                    SizedBox(height: 10,),
+                                    if(listTopics.isNotEmpty)
+                                      Container(
+                                        width: appWidth(context),
+                                        decoration: BoxDecoration(
+                                            color: Color(0xFFEDF3F7),
+                                            border: Border.all(color: Colors.white),
+                                            borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        padding: EdgeInsets.only(left: 12, right: 12),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<Topic>(
+                                            value: selectedTopic ?? listTopics[0],
+                                            itemHeight: 60,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: kDefaultBlack,
                                             ),
+                                            onChanged: (Topic? value){
+                                              stateSetter((){
+                                                selectedTopic = value;
+                                              });
+                                            },
+                                            items: listTopics.map(
+                                                  (item) => DropdownMenuItem<Topic>(
+                                                value: item,
+                                                child: Text(
+                                                  "${item.name}",
+                                                  style: TextStyle(
+                                                    color: kDefaultBlack,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                                .toList(),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                      ),
+                                  ],
+                                ),
                               ),
-                            )
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 20,right:20),
 
-                          ],
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    sText("Meaning",color: kAdeoGray3),
+                                    SizedBox(height: 10,),
+                                    Container(
+                                      // padding: EdgeInsets.only(left: 20, right: 20),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: TextFormField(
+                                              controller: meaningController,
+                                              validator: (value) {
+                                                if (value == null || value.isEmpty) {
+                                                  return 'Please check that you\'ve entered your group description';
+                                                }
+                                                return null;
+                                              },
+                                              maxLines: 7,
+                                              decoration: textDecorNoBorder(
+                                                radius: 10,
+                                                hintColor: Color(0xFFB9B9B9),
+                                                borderColor: Colors.white,
+                                                fill: Color(0xFFEDF3F7),
+                                                padding: EdgeInsets.only(left: 10, right: 10),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+
+                            ],
+                          ),
                         ),
                       ),
                       GestureDetector(
@@ -670,6 +675,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    TextToSpeechController().initialize();
     if(personaliseGlossaryData.isEmpty){
       getPersonalisedData();
     }
@@ -720,8 +726,26 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                   itemCount: personaliseGlossaryData.length,
                   itemBuilder: (BuildContext context, int index){
                     return   MultiPurposeCourseCard(
+                      padding: EdgeInsets.only(left: 15,top: 10,bottom: 10),
                       title: '${personaliseGlossaryData[index].term}',
                       subTitle: 'Create and view definitions',
+                      rightWidget:    ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
+                          elevation: MaterialStateProperty.resolveWith((states) => 0)
+                        ),
+
+                        onPressed: ()async{
+                          setState(() {
+                            personaliseGlossaryData[index].played = true;
+                          });
+                          await TextToSpeechController(text: "Adolf is going to school and after he will visit the market to buy food stuffs for cooking").speak();
+                          setState(() {
+                            personaliseGlossaryData[index].played = false;
+                          });
+                        },
+                        child:personaliseGlossaryData[index].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
+                      ),
                       onTap: () async {
                         onSelectModalBottomSheet(context,personaliseGlossaryData[index],index);
                       },
