@@ -1151,8 +1151,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 await _knowledgeTestController
                                                     .filterAndSetKnowledgeTestsTaken(
                                                   testCategory:
-                                                      _knowledgeTestController
-                                                          .activeMenu,
+                                                      _knowledgeTestController.activeMenu,
                                                   course: _course,
                                                   testId: topicId!,
                                                 );
