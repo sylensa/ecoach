@@ -19,7 +19,8 @@ class MultiPurposeCourseCard extends StatefulWidget {
     this.activeBackground: kAdeoBlue2,
     this.darkenActiveBackgroundOnPress: false,
     this.onTap,
-    this.height = 16
+    this.height = 16,
+    this.padding = const EdgeInsets.all(20.0),
   });
 
   final String title;
@@ -32,6 +33,7 @@ class MultiPurposeCourseCard extends StatefulWidget {
   final String? subscription;
   final bool? hasSmallHeading;
   final Widget? rightWidget;
+  final EdgeInsets? padding;
   final Color activeBackground;
   final bool darkenActiveBackgroundOnPress;
   final onTap;
@@ -59,7 +61,7 @@ class _MultiPurposeCourseCardState extends State<MultiPurposeCourseCard> {
             });
           }, context),
           child: Container(
-            padding: EdgeInsets.all(20.0),
+            padding: widget.padding,
             decoration: BoxDecoration(
               color: isPressedDown
                   ? widget.isActive

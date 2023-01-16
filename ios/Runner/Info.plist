@@ -16,6 +16,8 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>ecoach</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+	<string>Allowing Adeo to access your Speech Recognition, will help you to be able to read text through audio</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
