@@ -79,7 +79,8 @@ class TextToSpeechController{
       tts.setLanguage(languageCode!);
     }
     tts.setPitch(pitch);
-      await tts.speak(text);
+    var res =  await tts.speak(text);
+    print(res);
   }
    stop() async{
     tts.setVolume(volume);

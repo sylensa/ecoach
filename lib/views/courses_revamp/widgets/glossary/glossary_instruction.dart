@@ -20,14 +20,16 @@ class GlossaryInstruction extends StatefulWidget {
     required this.user,
     required this.course,
     required this.listCourseKeywordsData,
-    required this.glossaryProgressData,
+    required this.studyGlossaryProgressData,
+    required this.listTryGlossaryProgressData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
-  GlossaryProgressData? glossaryProgressData ;
   List<CourseKeywords> listCourseKeywordsData;
+  GlossaryProgressData? studyGlossaryProgressData ;
+  List<GlossaryProgressData> listTryGlossaryProgressData ;
 
   @override
   State<GlossaryInstruction> createState() => _GlossaryInstructionState();
@@ -158,13 +160,13 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                 List<GlossaryData> listGlossaryData = [];
                 List topicIds = [];
                print("isTopicSelected:$isTopicSelected");
-                // await GlossaryDB().deleteGlossaryProgress(widget.course.id!);
+                await GlossaryDB().deleteAllGlossaryTryProgress();
 
                if(isViewed){
                  if(studySelected){
-                   widget.glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
+                   widget.studyGlossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
                  }else{
-                   widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                   widget.listTryGlossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
                  }
                }
                 if(isTopicSelected){
@@ -183,12 +185,20 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                   toastMessage("No glossary for this course");
                 }else{
                   if(studySelected){
-                  await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                  await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
                   setState(() {
                     isViewed = true;
                   });
                   }else{
-                 await   Get.to(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                    for(int glossaryIndex = 0; glossaryIndex < listGlossaryData.length; glossaryIndex++){
+                      for(int progressIndex = 0; progressIndex < widget.listTryGlossaryProgressData.length; progressIndex++){
+                        if(listGlossaryData[glossaryIndex].id == widget.listTryGlossaryProgressData[progressIndex].id){
+                          listGlossaryData.removeAt(glossaryIndex);
+                        }
+                      }
+                    }
+
+                 await   Get.to(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.listTryGlossaryProgressData,));
                  setState(() {
                    isViewed = true;
                  });

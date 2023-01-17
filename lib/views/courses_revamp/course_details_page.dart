@@ -444,7 +444,6 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     course: course!,
                     listCourseKeywordsData: listCourseKeywordsData,
                     glossaryData: glossaryData,
-                    glossaryProgressData: glossaryProgressData
                   ),
                   TestTypeWidget(
                     controller: widget.controller,

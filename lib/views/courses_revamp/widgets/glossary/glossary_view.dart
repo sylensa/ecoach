@@ -370,7 +370,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                             Divider(color: Colors.grey,),
                             // SizedBox(height: 20,),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 40),
+                              padding: EdgeInsets.symmetric(horizontal: 30),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
