@@ -291,6 +291,7 @@ class KnowledgeTestController extends ChangeNotifier {
     testsTaken = await TestController().keywordTestsTaken(course.id!);
     switch (testCategory) {
       case TestCategory.EXAM:
+      case TestCategory.BANK:
       case TestCategory.NONE:
       case TestCategory.MOCK:
       case TestCategory.TOPIC:
@@ -349,7 +350,7 @@ class KnowledgeTestController extends ChangeNotifier {
       if (sheetHeightIncreased) {
         isActiveAnyMenu = true;
       }
-    } 
+    }
     return activeMenu;
   }
 
@@ -587,16 +588,17 @@ class KnowledgeTestController extends ChangeNotifier {
     Course course, {
     String searchKeyword = '',
   }) async {
-    // Navigator.pop(context);
     Widget? widgetView;
     List<Question> questions = [];
 
     switch (testCategory) {
       case TestCategory.EXAM:
+      case TestCategory.BANK:
         TestNameAndCount _test = test as TestNameAndCount;
         questions = await TestController().getQuizQuestions(
           _test.id!,
         );
+
         widgetView = KeywordAssessment(
           user: user,
           course: course,
@@ -637,8 +639,6 @@ class KnowledgeTestController extends ChangeNotifier {
       case TestCategory.ESSAY:
         break;
       case TestCategory.SAVED:
-        break;
-      case TestCategory.BANK:
         break;
       case TestCategory.NONE:
         var _test = test;
@@ -681,16 +681,16 @@ class KnowledgeTestController extends ChangeNotifier {
     );
   }
 
-  getExamTestsTaken({int? courseId, String? testName}) async {
+  getTestsTaken({int? courseId, String? testName, TestCategory challengeType = TestCategory.NONE}) async {
     await TestController()
         .getAllTestTakenByChallengeType(TestCategory.EXAM, courseId: courseId)
-        .then((examsTaken) async {
+        .then((testsTaken) async {
       if (testName != null) {
-        allTestsTakenForAnalysis = await examsTaken.where((exam) {
-          return exam.testname!.toLowerCase() == testName.toLowerCase();
+        allTestsTakenForAnalysis = await testsTaken.where((test) {
+          return test.testname!.toLowerCase() == testName.toLowerCase();
         }).toList();
       } else {
-        allTestsTakenForAnalysis = examsTaken;
+        allTestsTakenForAnalysis = testsTaken;
       }
     });
   }

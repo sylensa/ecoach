@@ -339,6 +339,8 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
                                           //   // nextScreen = widget.questionView;
                                           // }
 
+                                          print("user: ${widget.user}");
+
                                           goTo(
                                             context,
                                             KeywordQuestionView(
@@ -370,11 +372,13 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
                                             replace: true,
                                           );
                                         } else {
-                                          toastMessage("Select number of questions");
+                                          toastMessage(
+                                              "Select number of questions");
                                         }
                                       } else {
                                         if (widget.quizCover != null)
-                                          toastMessage("No questions available for ${properCase(widget.quizCover!.name)} keyword");
+                                          toastMessage(
+                                              "No questions available for ${properCase(widget.quizCover!.name)} keyword");
                                       }
                                     },
                                     padding: EdgeInsets.zero,
