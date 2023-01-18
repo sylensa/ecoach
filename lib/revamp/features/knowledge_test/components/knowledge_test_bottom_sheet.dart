@@ -198,86 +198,59 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
               });
 
               if (!_knowledgeTestController.sheetHeightIncreased) {
-                switch (_knowledgeTestController.activeMenu) {
-                  case TestCategory.TOPIC:
-                    isActiveTopicMenu = true;
-                    await initTests();
+                if (_knowledgeTestController.activeMenu != TestCategory.NONE)
+                  await initTests();
+                _knowledgeTestController.emptyTestList = tests.isEmpty;
 
-                    _knowledgeTestController.emptyTestList = tests.isEmpty;
-                    _knowledgeTestController.currentAlphabet =
-                        tests.first.name[0];
-                    topicId = tests[_currentSlide].id;
+                if (tests.isNotEmpty) {
+                  switch (_knowledgeTestController.activeMenu) {
+                    case TestCategory.TOPIC:
+                      isActiveTopicMenu = true;
 
-                    await _knowledgeTestController
-                        .filterAndSetKnowledgeTestsTaken(
-                      testCategory: TestCategory.TOPIC,
-                      course: _course,
-                      testId: topicId!,
-                    );
-
-                    if (!_knowledgeTestController.emptyTestList) {
-                      scrollListAlphabets = tests
-                          .map((topic) {
-                            return topic.name[0].toString().toUpperCase();
-                          })
-                          .toSet()
-                          .toList();
-                      scrollListAlphabets.sort();
-                    }
-                    isShowAlphaScroll = true;
-                    break;
-                  case TestCategory.EXAM:
-                    await initTests();
-
-                    if (tests.isNotEmpty) {
-                      _knowledgeTestController.emptyTestList = tests.isEmpty;
                       _knowledgeTestController.currentAlphabet =
                           tests.first.name[0];
+                      topicId = tests[_currentSlide].id;
 
                       await _knowledgeTestController
                           .filterAndSetKnowledgeTestsTaken(
-                        testCategory: TestCategory.EXAM,
+                        testCategory: _knowledgeTestController.activeMenu,
+                        course: _course,
+                        testId: topicId!,
+                      );
+
+                      if (!_knowledgeTestController.emptyTestList) {
+                        scrollListAlphabets = tests
+                            .map((topic) {
+                              return topic.name[0].toString().toUpperCase();
+                            })
+                            .toSet()
+                            .toList();
+                        scrollListAlphabets.sort();
+                      }
+                      isShowAlphaScroll = true;
+                      break;
+                    case TestCategory.EXAM:
+                    case TestCategory.BANK:
+                    case TestCategory.SAVED:
+                    case TestCategory.ESSAY:
+                      await _knowledgeTestController
+                          .filterAndSetKnowledgeTestsTaken(
+                        testCategory: _knowledgeTestController.activeMenu,
                         course: _course,
                         testId: null,
                         testName:
                             (tests[_currentSlide] as TestNameAndCount).name,
                       );
-                    }
-                    break;
-                  case TestCategory.MOCK:
-                    _knowledgeTestController.isActiveAnyMenu = true;
 
-                    break;
-                  case TestCategory.ESSAY:
-                    _knowledgeTestController.isActiveAnyMenu = true;
-                    break;
-                  case TestCategory.SAVED:
-                    _knowledgeTestController.isActiveAnyMenu = true;
-                    break;
-                  case TestCategory.BANK:
-                    await initTests();
-
-                    if (tests.isNotEmpty) {
-                      _knowledgeTestController.emptyTestList = tests.isEmpty;
-                      _knowledgeTestController.currentAlphabet =
-                          tests.first.name[0];
-
-                      await _knowledgeTestController
-                          .filterAndSetKnowledgeTestsTaken(
-                        testCategory: TestCategory.BANK,
-                        course: _course,
-                        testId: null,
-                        testName:
-                            (tests[_currentSlide] as TestNameAndCount).name,
-                      );
-                    }
-                    break;
-                  case TestCategory.NONE:
-                    break;
-                  default:
-                    // sheetHeightIncreased = false;
-                    break;
+                      break;
+                    case TestCategory.NONE:
+                    case TestCategory.MOCK:
+                      break;
+                    default:
+                      break;
+                  }
                 }
+
                 setState(() {});
               }
             }),
@@ -572,15 +545,16 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                           _knowledgeTestController
                                                               .typeSpecificTestsTaken
                                                               .indexWhere(
-                                                                  (examTaken) {
-                                                        // ? would be better to check condtion with examId instead of the name of exam taken
-                                                        return examTaken
-                                                                .testname!
-                                                                .toLowerCase() ==
-                                                            (test as TestNameAndCount)
-                                                                .name
-                                                                .toLowerCase();
-                                                      });
+                                                        (examTaken) {
+                                                          // ? would be better to check condtion with examId instead of the name of exam taken
+                                                          return examTaken
+                                                                  .testname!
+                                                                  .toLowerCase() ==
+                                                              (test as TestNameAndCount)
+                                                                  .name
+                                                                  .toLowerCase();
+                                                        },
+                                                      );
 
                                                       if (_knowledgeTestController
                                                               .testTakenIndex !=
@@ -646,7 +620,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 height: 300,
                                                 child: Center(
                                                   child: Text(
-                                                    "No ${_knowledgeTestController.activeMenu.name} found for\n${_course.name}",
+                                                    "No ${_knowledgeTestController.activeMenu.name} tests available \nfor ${_course.name}",
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
@@ -659,12 +633,10 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  if (_knowledgeTestController
-                                          .isActiveAnyMenu &&
-                                      keywordTestTaken.isNotEmpty)
+                                  if (_knowledgeTestController.isActiveAnyMenu)
                                     Spacer(),
                                   SizedBox(
-                                    height: 12,
+                                    height: 4,
                                   ),
                                   SizedBox(
                                     width: double.infinity,
@@ -673,7 +645,10 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 TestCategory.BANK ||
                                             _knowledgeTestController
                                                     .activeMenu ==
-                                                TestCategory.EXAM)
+                                                TestCategory.EXAM ||
+                                            _knowledgeTestController
+                                                    .activeMenu ==
+                                                TestCategory.SAVED)
                                         ? SingleChildScrollView(
                                             scrollDirection: Axis.horizontal,
                                             child: Container(
@@ -1157,31 +1132,30 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 SizedBox(
                                                   height: 10,
                                                 ),
-                                                sText("Diagnostic ",
-                                                    color:
-                                                        _knowledgeTestController
-                                                                    .activeMenu ==
-                                                                TestCategory
-                                                                    .MOCK
-                                                            ? Color(0xFF003D6C)
-                                                            : Colors.grey,
-                                                    align: TextAlign.center,
-                                                    size: 12),
+                                                sText(
+                                                  "Diagnostic",
+                                                  color:
+                                                      _knowledgeTestController
+                                                                  .activeMenu ==
+                                                              TestCategory.MOCK
+                                                          ? Color(0xFF003D6C)
+                                                          : Colors.grey,
+                                                  align: TextAlign.center,
+                                                  size: 12,
+                                                ),
                                               ],
                                             ),
-                                            if (_knowledgeTestController
-                                                    .activeMenu ==
-                                                TestCategory.MOCK)
-                                              Positioned(
-                                                bottom: 20,
-                                                left: 0,
-                                                right: 0,
-                                                child: Container(
-                                                  height: 2,
-                                                  width: 46,
-                                                  color: Color(0xFF003D6C),
-                                                ),
-                                              )
+                                            Positioned(
+                                              bottom: 24,
+                                              left: 0,
+                                              right: 0,
+                                              child: ActiveMenuIndicator(
+                                                menu: TestCategory.MOCK,
+                                                activeMenu:
+                                                    _knowledgeTestController
+                                                        .activeMenu,
+                                              ),
+                                            ),
                                           ]),
                                         ),
                                         MaterialButton(
@@ -1194,7 +1168,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   TestCategory.TOPIC;
 
                                               if (_currentSlide != 0) {
-                                                _knowledgeTestController
+                                                await _knowledgeTestController
                                                     .alphaSliderToStatisticsCardController
                                                     .animateToPage(0);
                                               }
@@ -1295,19 +1269,17 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   ),
                                                 ],
                                               ),
-                                              if (_knowledgeTestController
-                                                      .activeMenu ==
-                                                  TestCategory.TOPIC)
-                                                Positioned(
-                                                  bottom: 20,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: Container(
-                                                    height: 2,
-                                                    width: 46,
-                                                    color: Color(0xFF003D6C),
-                                                  ),
-                                                )
+                                              Positioned(
+                                                bottom: 24,
+                                                left: 0,
+                                                right: 0,
+                                                child: ActiveMenuIndicator(
+                                                  menu: TestCategory.TOPIC,
+                                                  activeMenu:
+                                                      _knowledgeTestController
+                                                          .activeMenu,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -1328,7 +1300,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                               if (_knowledgeTestController
                                                   .sheetHeightIncreased) {
                                                 if (_currentSlide != 0) {
-                                                  _knowledgeTestController
+                                                  await _knowledgeTestController
                                                       .alphaSliderToStatisticsCardController
                                                       .animateToPage(0);
                                                 }
@@ -1408,19 +1380,17 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       size: 12),
                                                 ],
                                               ),
-                                              if (_knowledgeTestController
-                                                      .activeMenu ==
-                                                  TestCategory.EXAM)
-                                                Positioned(
-                                                  bottom: 20,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: Container(
-                                                    height: 2,
-                                                    width: 46,
-                                                    color: Color(0xFF003D6C),
-                                                  ),
-                                                )
+                                              Positioned(
+                                                bottom: 24,
+                                                left: 0,
+                                                right: 0,
+                                                child: ActiveMenuIndicator(
+                                                  menu: TestCategory.EXAM,
+                                                  activeMenu:
+                                                      _knowledgeTestController
+                                                          .activeMenu,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -1439,7 +1409,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                               if (_knowledgeTestController
                                                   .sheetHeightIncreased) {
                                                 if (_currentSlide != 0) {
-                                                  _knowledgeTestController
+                                                  await _knowledgeTestController
                                                       .alphaSliderToStatisticsCardController
                                                       .animateToPage(0);
                                                 }
@@ -1497,90 +1467,268 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                           },
                                           padding: EdgeInsets.zero,
                                           child: Center(
-                                            child: Stack(children: [
+                                            child: Stack(
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                      "assets/icons/courses/bank.png",
+                                                      height: 35.0,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    sText(
+                                                      "Bank",
+                                                      color: _knowledgeTestController
+                                                                  .activeMenu ==
+                                                              TestCategory.BANK
+                                                          ? Color(0xFF003D6C)
+                                                          : Colors.grey,
+                                                      align: TextAlign.center,
+                                                      size: 12,
+                                                    ),
+                                                  ],
+                                                ),
+                                                Positioned(
+                                                  bottom: 24,
+                                                  left: 0,
+                                                  right: 0,
+                                                  child: ActiveMenuIndicator(
+                                                    menu: TestCategory.BANK,
+                                                    activeMenu:
+                                                        _knowledgeTestController
+                                                            .activeMenu,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        MaterialButton(
+                                          onPressed: () async {
+                                            if (_knowledgeTestController
+                                                    .activeMenu !=
+                                                TestCategory.SAVED) {
+                                              if (model.isShowAnalysisBox) {
+                                                model.isShowAnalysisBox = false;
+                                              }
+                                              _knowledgeTestController
+                                                      .activeMenu =
+                                                  TestCategory.SAVED;
+                                              if (_knowledgeTestController
+                                                  .sheetHeightIncreased) {
+                                                if (_currentSlide != 0) {
+                                                  await _knowledgeTestController
+                                                      .alphaSliderToStatisticsCardController
+                                                      .animateToPage(0);
+                                                }
+                                                tests =
+                                                    await _knowledgeTestController
+                                                        .getTest(
+                                                  context,
+                                                  _knowledgeTestController
+                                                      .activeMenu,
+                                                  _course,
+                                                  _user,
+                                                );
+
+                                                if (tests.isNotEmpty) {
+                                                  await _knowledgeTestController
+                                                      .filterAndSetKnowledgeTestsTaken(
+                                                    testCategory:
+                                                        _knowledgeTestController
+                                                            .activeMenu,
+                                                    course: _course,
+                                                    testName: (tests[0]
+                                                            as TestNameAndCount)
+                                                        .name,
+                                                  );
+                                                }
+                                                setState(() {});
+
+                                                _knowledgeTestController
+                                                    .isActiveAnyMenu = true;
+
+                                                _knowledgeTestController
+                                                        .emptyTestList =
+                                                    tests.isEmpty;
+                                              }
+
+                                              _knowledgeTestController
+                                                  .openKnowledgeTestCard(
+                                                context,
+                                                smallHeightDevice,
+                                                _knowledgeTestController
+                                                    .activeMenu,
+                                              );
+
+                                              setState(() {});
+                                            } else {
+                                              _knowledgeTestController
+                                                  .closeKnowledgeTestCard(
+                                                context,
+                                                smallHeightDevice,
+                                                _knowledgeTestController
+                                                    .activeMenu,
+                                              );
+                                              setState(() {});
+                                            }
+                                          },
+                                          padding: EdgeInsets.zero,
+                                          child: Stack(
+                                            children: [
                                               Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
                                                   Image.asset(
-                                                    "assets/icons/courses/bank.png",
+                                                    "assets/icons/courses/saved.png",
                                                     height: 35.0,
                                                   ),
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  sText("Bank",
-                                                      color: Colors.grey,
-                                                      align: TextAlign.center,
-                                                      size: 12),
+                                                  sText(
+                                                    "Saved",
+                                                    color:
+                                                        _knowledgeTestController
+                                                                    .activeMenu ==
+                                                                TestCategory
+                                                                    .SAVED
+                                                            ? Color(0xFF003D6C)
+                                                            : Colors.grey,
+                                                    align: TextAlign.center,
+                                                    size: 12,
+                                                  ),
                                                 ],
                                               ),
-                                              if (_knowledgeTestController
-                                                      .activeMenu ==
-                                                  TestCategory.BANK)
-                                                Positioned(
-                                                  bottom: 20,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: Container(
-                                                    height: 2,
-                                                    width: 46,
-                                                    color: Color(0xFF003D6C),
-                                                  ),
-                                                )
-                                            ]),
+                                              Positioned(
+                                                bottom: 24,
+                                                left: 0,
+                                                right: 0,
+                                                child: ActiveMenuIndicator(
+                                                  menu: TestCategory.SAVED,
+                                                  activeMenu:
+                                                      _knowledgeTestController
+                                                          .activeMenu,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         MaterialButton(
-                                          onPressed: () {
-                                            // getTest(context, TestCategory.SAVED);
+                                          onPressed: () async {
+                                            if (_knowledgeTestController
+                                                    .activeMenu !=
+                                                TestCategory.ESSAY) {
+                                              if (model.isShowAnalysisBox) {
+                                                model.isShowAnalysisBox = false;
+                                              }
+                                              _knowledgeTestController
+                                                      .activeMenu =
+                                                  TestCategory.ESSAY;
+                                              if (_knowledgeTestController
+                                                  .sheetHeightIncreased) {
+                                                if (_currentSlide != 0) {
+                                                  await _knowledgeTestController
+                                                      .alphaSliderToStatisticsCardController
+                                                      .animateToPage(0);
+                                                }
+                                                tests =
+                                                    await _knowledgeTestController
+                                                        .getTest(
+                                                  context,
+                                                  _knowledgeTestController
+                                                      .activeMenu,
+                                                  _course,
+                                                  _user,
+                                                );
+
+                                                if (tests.isNotEmpty) {
+                                                  await _knowledgeTestController
+                                                      .filterAndSetKnowledgeTestsTaken(
+                                                    testCategory:
+                                                        _knowledgeTestController
+                                                            .activeMenu,
+                                                    course: _course,
+                                                    testName: (tests[0]
+                                                            as TestNameAndCount)
+                                                        .name,
+                                                  );
+                                                }
+                                                setState(() {});
+
+                                                _knowledgeTestController
+                                                    .isActiveAnyMenu = true;
+
+                                                _knowledgeTestController
+                                                        .emptyTestList =
+                                                    tests.isEmpty;
+                                              }
+
+                                              _knowledgeTestController
+                                                  .openKnowledgeTestCard(
+                                                context,
+                                                smallHeightDevice,
+                                                _knowledgeTestController
+                                                    .activeMenu,
+                                              );
+
+                                              setState(() {});
+                                            } else {
+                                              _knowledgeTestController
+                                                  .closeKnowledgeTestCard(
+                                                context,
+                                                smallHeightDevice,
+                                                _knowledgeTestController
+                                                    .activeMenu,
+                                              );
+                                              setState(() {});
+                                            }
                                           },
                                           padding: EdgeInsets.zero,
-                                          child: Container(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  "assets/icons/courses/saved.png",
-                                                  height: 35.0,
+                                          child: Stack(
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Image.asset(
+                                                    "assets/icons/courses/essay.png",
+                                                    height: 35.0,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  sText(
+                                                    "Essay",
+                                                    color:
+                                                        _knowledgeTestController
+                                                                    .activeMenu ==
+                                                                TestCategory
+                                                                    .ESSAY
+                                                            ? Color(0xFF003D6C)
+                                                            : Colors.grey,
+                                                    align: TextAlign.center,
+                                                    size: 12,
+                                                  ),
+                                                ],
+                                              ),
+                                              Positioned(
+                                                bottom: 24,
+                                                left: 0,
+                                                right: 0,
+                                                child: ActiveMenuIndicator(
+                                                  menu: TestCategory.ESSAY,
+                                                  activeMenu:
+                                                      _knowledgeTestController
+                                                          .activeMenu,
                                                 ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                sText(
-                                                  "Saved",
-                                                  color: Colors.grey,
-                                                  align: TextAlign.center,
-                                                  size: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        MaterialButton(
-                                          onPressed: () {},
-                                          padding: EdgeInsets.zero,
-                                          child: Container(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  "assets/icons/courses/essay.png",
-                                                  height: 35.0,
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                sText(
-                                                  "Essay",
-                                                  color: Colors.grey,
-                                                  align: TextAlign.center,
-                                                  size: 12,
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -1600,5 +1748,23 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
         },
       ),
     );
+  }
+}
+
+class ActiveMenuIndicator extends StatelessWidget {
+  const ActiveMenuIndicator(
+      {Key? key, required this.activeMenu, required this.menu})
+      : super(key: key);
+  final TestCategory activeMenu;
+  final TestCategory menu;
+  @override
+  Widget build(BuildContext context) {
+    return menu == activeMenu
+        ? Container(
+            height: 2,
+            width: 46,
+            color: Color(0xFF003D6C),
+          )
+        : Container();
   }
 }

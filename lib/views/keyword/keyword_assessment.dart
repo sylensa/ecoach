@@ -9,6 +9,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/keyword/keyword_question_view.dart';
 import 'package:ecoach/views/keyword/keyword_quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
+import 'package:ecoach/views/quiz/quiz_essay_page.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:flutter/material.dart';
 
@@ -343,32 +344,48 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
 
                                           goTo(
                                             context,
-                                            KeywordQuestionView(
-                                              controller: QuizController(
-                                                widget.user!,
-                                                widget.course!,
-                                                questions: widget.questions!,
-                                                name: widget.test != null
-                                                    ? widget.test!.name
-                                                    : widget.name!,
-                                                time: widget.questions!.length *
-                                                    60,
-                                                topicId: widget.test != null
-                                                    ? widget.test!.id
-                                                    : null,
-                                                type: TestType.KNOWLEDGE,
-                                                challengeType:
-                                                    widget.testCategory!,
-                                              ),
-                                              theme: QuizTheme.BLUE,
-                                              diagnostic:
-                                                  widget.testCategory! !=
-                                                          TestCategory.MOCK
-                                                      ? false
-                                                      : true,
-                                              numberOfQuestionSelected:
-                                                  selectNumberQuestions[0],
-                                            ),
+                                            widget.testCategory ==
+                                                    TestCategory.ESSAY
+                                                ? QuizEssayView(
+                                                    widget.user!,
+                                                    widget.questions!,
+                                                    name: widget.test != null
+                                                        ? widget.test!.name
+                                                        : widget.name!,
+                                                    course: widget.course!,
+                                                    timeInSec: widget
+                                                            .questions!.length *
+                                                        60,
+                                                    type: TestType.KNOWLEDGE,
+                                                  )
+                                                : KeywordQuestionView(
+                                                    controller: QuizController(
+                                                      widget.user!,
+                                                      widget.course!,
+                                                      questions:
+                                                          widget.questions!,
+                                                      name: widget.test != null
+                                                          ? widget.test!.name
+                                                          : widget.name!,
+                                                      time: widget.questions!
+                                                              .length *
+                                                          60,
+                                                      topicId:
+                                                          widget.test != null
+                                                              ? widget.test!.id
+                                                              : null,
+                                                      type: TestType.KNOWLEDGE,
+                                                      challengeType:
+                                                          widget.testCategory!,
+                                                    ),
+                                                    theme: QuizTheme.BLUE,
+                                                    diagnostic:
+                                                        widget.testCategory! ==
+                                                            TestCategory.MOCK,
+                                                    numberOfQuestionSelected:
+                                                        selectNumberQuestions[
+                                                            0],
+                                                  ),
                                             replace: true,
                                           );
                                         } else {

@@ -289,21 +289,18 @@ class KnowledgeTestController extends ChangeNotifier {
   }) async {
     isTestTaken = false;
     testsTaken = await TestController().keywordTestsTaken(course.id!);
-    switch (testCategory) {
-      case TestCategory.EXAM:
-      case TestCategory.BANK:
-      case TestCategory.NONE:
-      case TestCategory.MOCK:
-      case TestCategory.TOPIC:
-        typeSpecificTestsTaken = await testsTaken
-            .where((e) =>
-                e.challengeType == testCategory.toString() &&
-                e.testType == testType.toString())
-            .toList();
-        allTestsTakenForAnalysis = typeSpecificTestsTaken;
-
-        break;
-      default:
+    // switch (testCategory) {
+    //   case TestCategory.EXAM:
+    //     break;
+    //   default:
+    // }
+    if (testCategory != TestCategory.NONE) {
+      typeSpecificTestsTaken = await testsTaken
+          .where((e) =>
+              e.challengeType == testCategory.toString() &&
+              e.testType == testType.toString())
+          .toList();
+      allTestsTakenForAnalysis = typeSpecificTestsTaken;
     }
 
     if (testId != null) {
@@ -389,10 +386,8 @@ class KnowledgeTestController extends ChangeNotifier {
         break;
       case TestCategory.TOPIC:
         futureList = TestController().getTopics(course);
-
         break;
       case TestCategory.ESSAY:
-        // futureList = TestController().getEssays(course, 5);
         futureList = TestController().getEssayTests(course);
         break;
       case TestCategory.SAVED:
@@ -594,6 +589,8 @@ class KnowledgeTestController extends ChangeNotifier {
     switch (testCategory) {
       case TestCategory.EXAM:
       case TestCategory.BANK:
+      case TestCategory.SAVED:
+      case TestCategory.ESSAY:
         TestNameAndCount _test = test as TestNameAndCount;
         questions = await TestController().getQuizQuestions(
           _test.id!,
@@ -621,7 +618,6 @@ class KnowledgeTestController extends ChangeNotifier {
           testCategory: testCategory,
           questionCount: questions.length,
         );
-
         break;
       case TestCategory.MOCK:
         questions = await TestController().getMockQuestions(
@@ -636,10 +632,7 @@ class KnowledgeTestController extends ChangeNotifier {
           name: course.name,
         );
         break;
-      case TestCategory.ESSAY:
-        break;
-      case TestCategory.SAVED:
-        break;
+
       case TestCategory.NONE:
         var _test = test;
         List<Question> questions = test as List<Question>;
@@ -681,7 +674,10 @@ class KnowledgeTestController extends ChangeNotifier {
     );
   }
 
-  getTestsTaken({int? courseId, String? testName, TestCategory challengeType = TestCategory.NONE}) async {
+  getTestsTaken(
+      {int? courseId,
+      String? testName,
+      TestCategory challengeType = TestCategory.NONE}) async {
     await TestController()
         .getAllTestTakenByChallengeType(TestCategory.EXAM, courseId: courseId)
         .then((testsTaken) async {
