@@ -30,13 +30,15 @@ class GlossaryCountdown extends StatefulWidget {
     required this.user,
     required this.course,
     required this.listCourseKeywordsData,
-    required this.glossaryProgressData,
+    required this.studyGlossaryProgressData,
+    required this.listTryGlossaryProgressData,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
-  GlossaryProgressData? glossaryProgressData ;
+  GlossaryProgressData? studyGlossaryProgressData ;
+  List<GlossaryProgressData> listTryGlossaryProgressData ;
   List<CourseKeywords> listCourseKeywordsData;
 
 
@@ -88,7 +90,6 @@ class _GlossaryCountdowneState extends State<GlossaryCountdown> {
             List<GlossaryData> listGlossaryData = [];
             List topicIds = [];
                   if(isTopicSelected){
-
                     List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
                     for(int i = 0; i < listTopics.length; i++){
                       topicIds.add(listTopics[i].id);
@@ -104,9 +105,9 @@ class _GlossaryCountdowneState extends State<GlossaryCountdown> {
                     toastMessage("No glossary for this course");
                   }else{
                     if(studySelected){
-                      Get.off(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                      Get.off(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
                     }else{
-                      Get.off(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.glossaryProgressData,));
+                      Get.off(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.listTryGlossaryProgressData,));
                     }
                   }
              // Get.off(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));

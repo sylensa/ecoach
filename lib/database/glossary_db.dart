@@ -51,16 +51,18 @@ class GlossaryDB {
   //    glossaryProgressData = GlossaryProgressData.fromJson(response.first);
   //   return glossaryProgressData;
   // }
-  Future<GlossaryProgressData?> getGlossaryTryProgressByCourseId(int courseId) async {
-    GlossaryProgressData? glossaryProgressData;
+  Future<List<GlossaryProgressData>> getGlossaryTryProgressByCourseId(int courseId) async {
+    List<GlossaryProgressData> listGlossaryProgressData = [];
     final db = await DBProvider.database;
     var  response = await db!.rawQuery("Select * from glossary_try_progress where course_id = $courseId");
     print("response glossary_progress course id:$courseId : $response");
     if(response.isNotEmpty){
-      glossaryProgressData = GlossaryProgressData.fromJson(response.last);
-      return glossaryProgressData;
+      for(int i =0; i < response.length; i++){
+        GlossaryProgressData glossaryProgressData = GlossaryProgressData.fromJson(response[i]);
+        listGlossaryProgressData.add(glossaryProgressData);
+      }
     }
-    return glossaryProgressData;
+    return listGlossaryProgressData;
   }
   Future<GlossaryProgressData?> getGlossaryStudyProgressByCourseId(int courseId) async {
     GlossaryProgressData? glossaryProgressData;

@@ -213,10 +213,14 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
         isDismissible: true,
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
+
         builder: (BuildContext context) {
           return StatefulBuilder(
+
             builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
                   height: sheetHeight,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -225,6 +229,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                         topRight: Radius.circular(30),
                       )),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
                         height: 20,
@@ -339,31 +344,21 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                                children: [
                                  sText("Meaning",color: kAdeoGray3),
                                  SizedBox(height: 10,),
-                                 Container(
-                                   // padding: EdgeInsets.only(left: 20, right: 20),
-                                   child: Row(
-                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                     children: [
-                                       Expanded(
-                                         child: TextFormField(
-                                           controller: meaningController,
-                                           validator: (value) {
-                                             if (value == null || value.isEmpty) {
-                                               return 'Please check that you\'ve entered your group description';
-                                             }
-                                             return null;
-                                           },
-                                           maxLines: 7,
-                                           decoration: textDecorNoBorder(
-                                             radius: 10,
-                                             hintColor: Color(0xFFB9B9B9),
-                                             borderColor: Colors.white,
-                                             fill: Color(0xFFEDF3F7),
-                                             padding: EdgeInsets.only(left: 10, right: 10),
-                                           ),
-                                         ),
-                                       ),
-                                     ],
+                                 TextFormField(
+                                   controller: meaningController,
+                                   validator: (value) {
+                                     if (value == null || value.isEmpty) {
+                                       return 'Please check that you\'ve entered your group description';
+                                     }
+                                     return null;
+                                   },
+                                   maxLines: 7,
+                                   decoration: textDecorNoBorder(
+                                     radius: 10,
+                                     hintColor: Color(0xFFB9B9B9),
+                                     borderColor: Colors.white,
+                                     fill: Color(0xFFEDF3F7),
+                                     padding: EdgeInsets.only(left: 10, right: 10),
                                    ),
                                  ),
                                ],
@@ -436,6 +431,8 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
           return StatefulBuilder(
             builder: (BuildContext context, StateSetter stateSetter) {
               return Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
                   height: sheetHeight,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -444,6 +441,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                         topRight: Radius.circular(30),
                       )),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
                         height: 20,
@@ -706,11 +704,11 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
           children: [
             SizedBox(height: 10,),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset("assets/images/Polygon.png"),
+                  // Image.asset("assets/images/Polygon.png"),
                   Row(
                     children: [
                       Image.asset("assets/images/dictionary.png"),

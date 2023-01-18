@@ -26,7 +26,7 @@ class DBProvider {
     print(name);
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, name);
-    return await openDatabase(path, version: 45, onOpen: (db) {},
+    return await openDatabase(path, version: 46, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE friends_requests ("
           "id INTEGER PRIMARY KEY,"
@@ -49,7 +49,7 @@ class DBProvider {
       ) """);
 
       await db.execute("""CREATE TABLE 'glossary_study_progress' (
-        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'id' int NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
@@ -1335,7 +1335,7 @@ class DBProvider {
         try{
           await db.execute("""DROP TABLE 'glossary_study_progress'""");
           await db.execute("""CREATE TABLE 'glossary_study_progress' (
-        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+         'id' int NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
@@ -1362,7 +1362,7 @@ class DBProvider {
         try{
           await db.execute("""DROP TABLE 'glossary_try_progress'""");
           await db.execute("""CREATE TABLE 'glossary_try_progress' (
-        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        'id' int NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,
@@ -1374,7 +1374,7 @@ class DBProvider {
       ) """);
         }catch(e){
           await db.execute("""CREATE TABLE 'glossary_try_progress' (
-        'id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+         'id' int NOT NULL,
         'search_term' varchar(50) NOT NULL,
         'selected_character' varchar(50) NOT NULL,
         'course_id' INTEGER NOT NULL,

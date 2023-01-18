@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ecoach/controllers/glossary_controller.dart';
+import 'package:ecoach/controllers/text_to_speech_controller.dart';
 import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/database/topics_db.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -35,6 +36,7 @@ class _SavedPageState extends State<SavedPage> {
   List<Topic> listTopics = [];
   int savedCount = 0;
   getSavedData()async{
+    savedCount = 0;
     glossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
     for(int i =0; i < glossaryData.length; i++){
       if(glossaryData[i].isSaved == 1){
@@ -270,16 +272,16 @@ class _SavedPageState extends State<SavedPage> {
           children: [
             SizedBox(height: 10,),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset("assets/images/Polygon.png"),
+                  // Image.asset("assets/images/Polygon.png"),
                   Row(
                     children: [
                       Image.asset("assets/images/dictionary.png"),
                       SizedBox(width: 10,),
-                      sText("$savedCount")
+                      sText("${savedCount}")
                     ],
                   )
                 ],
@@ -289,41 +291,69 @@ class _SavedPageState extends State<SavedPage> {
             glossaryData.isNotEmpty ?
             Expanded(
               child: ListView.builder(
+                padding: EdgeInsets.zero,
                   itemCount: glossaryData.length,
                   itemBuilder: (BuildContext context, int index){
                     if(glossaryData[index].isSaved == 1){
                       return   MultiPurposeCourseCard(
+                        padding: EdgeInsets.only(left: 20,top: 5,bottom: 5),
                         title: '${glossaryData[index].term}',
-                        rightWidget:   FlutterSwitch(
-                          width: 50.0,
-                          height: 20.0,
-                          valueFontSize: 10.0,
-                          toggleSize: 15.0,
-                          value:  true,
-                          borderRadius: 30.0,
-                          padding: 2.0,
-                          showOnOff: false,
-                          activeColor: Color(0xFF555555),
-                          inactiveColor: Color(0xFFD1D1D1),
-                          inactiveTextColor: Colors.red,
-                          inactiveToggleColor: Color(0xFF555555),
-                          onToggle: (val) async{
-                            glossaryData[index].isSaved = 0;
-                            var res = jsonDecode(glossaryData[index].glossary!);
-                            res["is_saved"] =  glossaryData[index].isSaved;
-                            glossaryData[index].glossary = jsonEncode(res);
-                            GlossaryController().unSaveGlossariesList(glossaryData[index]);
-                            setState(() {
-                              glossaryData.removeAt(index);
-                            });
+                        rightWidget:   Row(
+                          children: [
+                            FlutterSwitch(
+                              width: 50.0,
+                              height: 30.0,
+                              valueFontSize: 10.0,
+                              toggleSize: 30.0,
+                              value:  true,
+                              borderRadius: 30.0,
+                              padding: 2.0,
+                              showOnOff: false,
+                              activeColor: Color(0xFF555555),
+                              inactiveColor: Color(0xFFD1D1D1),
+                              inactiveTextColor: Colors.red,
+                              inactiveToggleColor: Color(0xFF555555),
+                              onToggle: (val) async{
+                                glossaryData[index].isSaved = 0;
+                                var res = jsonDecode(glossaryData[index].glossary!);
+                                res["is_saved"] =  glossaryData[index].isSaved;
+                                glossaryData[index].glossary = jsonEncode(res);
+                                GlossaryController().unSaveGlossariesList(glossaryData[index]);
+                                setState(() {
+                                  glossaryData.removeAt(index);
+                                });
+                                getSavedData();
+                              },
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
+                                  elevation: MaterialStateProperty.resolveWith((states) => 0)
+                              ),
 
-                          },
+                              onPressed: ()async{
+                                if(glossaryData[index].played){
+                                  setState(() {
+                                    glossaryData[index].played = false;
+                                  });
+                                  await TextToSpeechController(text: glossaryData[index].definition!).stop();
+                                }else{
+                                  setState(() {
+                                    glossaryData[index].played = true;
+                                  });
+                                  await TextToSpeechController(text: glossaryData[index].definition!).speak();
+                                }
+
+
+                              },
+                              child:glossaryData[index].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 40,),
+                            ),
+                          ],
                         ),
                         subTitle: 'Create and view definitions',
 
                         onTap: () async {
                           await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: [glossaryData[index]],glossaryProgressData: null,));
-
                           // editDialogModalBottomSheet(context,glossaryData[index],index);
                         },
                       );

@@ -62,7 +62,6 @@ class GlossaryWidget extends StatefulWidget {
         required this.controller,
         required this.listCourseKeywordsData,
         required this.glossaryData,
-        required this.glossaryProgressData,
       })
       : super(key: key);
   Course course;
@@ -71,7 +70,6 @@ class GlossaryWidget extends StatefulWidget {
  
   List<GlossaryData> glossaryData = [];
   List<CourseKeywords> listCourseKeywordsData;
-  GlossaryProgressData? glossaryProgressData ;
   final MainController controller;
 
   @override
@@ -84,6 +82,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
  TextEditingController searchGlossaryController = TextEditingController();
  String searchGlossary = '';
  bool searchTap = false;
+ GlossaryProgressData? glossaryProgressData ;
+ List<GlossaryProgressData> listGlossaryProgressData = [];
  List<GlossaryData> searchGlossaryData = [];
  getAllGlossaryData()async{
    allGlossaryData =   await GlossaryDB().getGlossariesById(widget.course.id!);
@@ -166,14 +166,14 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                             studySelected = true;
                           });
                           showLoaderDialog(context);
-                          widget.glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
+                          glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
                           Navigator.pop(context);
-                          if(widget.glossaryProgressData != null){
+                          if(glossaryProgressData != null){
                             Navigator.pop(context);
                             continueRestartModalBottomSheet(context);
                           }else{
                             Navigator.pop(context);
-                            Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                            Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,studyGlossaryProgressData: glossaryProgressData,listTryGlossaryProgressData: [],));
                           }
                         },
                         child: Container(
@@ -286,22 +286,22 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                      MaterialButton(
                        onPressed: ()async{
                          if(studySelected){
-                           widget.glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
-                           if(widget.glossaryProgressData != null){
+                           glossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
+                           if(glossaryProgressData != null){
                              stateSetter(() {
                                continueSelected = true;
                              });
-                             Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                             Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,studyGlossaryProgressData: glossaryProgressData,listTryGlossaryProgressData: [],));
                            }else{
                              toastMessage("You've no save progress");
                            }
                          }else{
-                           widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
-                           if(widget.glossaryProgressData != null){
+                           listGlossaryProgressData=   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                           if(listGlossaryProgressData.isNotEmpty){
                              stateSetter(() {
                                continueSelected = true;
                              });
-                             Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                             Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,listTryGlossaryProgressData: listGlossaryProgressData,studyGlossaryProgressData: null,));
                            }else{
                              toastMessage("You've no save progress");
                            }
@@ -329,7 +329,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          stateSetter(() {
                            continueSelected = false;
                          });
-                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: null,));
+                         Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,studyGlossaryProgressData: null,listTryGlossaryProgressData: [],));
                        },
                        child: Container(
                          margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
@@ -424,13 +424,13 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                            scoreSelected = true;
                          });
                          showLoaderDialog(context);
-                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                         listGlossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
                          Navigator.pop(context);
                          Navigator.pop(context);
-                         if(widget.glossaryProgressData != null){
+                         if(listGlossaryProgressData.isNotEmpty){
                            continueRestartModalBottomSheet(context);
                          }else{
-                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,listTryGlossaryProgressData: listGlossaryProgressData,studyGlossaryProgressData: null,));
                          }
 
                           },
@@ -455,13 +455,13 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
                          });
                          print("object");
                          showLoaderDialog(context);
-                         widget.glossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                         listGlossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
                          Navigator.pop(context);
                          Navigator.pop(context);
-                         if(widget.glossaryProgressData != null){
+                         if(listGlossaryProgressData.isNotEmpty){
                            continueRestartModalBottomSheet(context);
                          }else{
-                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,glossaryProgressData: widget.glossaryProgressData,));
+                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,listTryGlossaryProgressData: listGlossaryProgressData,studyGlossaryProgressData: null,));
                          }
                          },
                        child: Container(

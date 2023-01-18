@@ -32,7 +32,7 @@ class GlossaryQuizView extends StatefulWidget {
   final User user;
   final Course course;
   List<GlossaryData> listGlossaryData;
-  GlossaryProgressData? glossaryProgressData ;
+  List<GlossaryProgressData> glossaryProgressData ;
 
   @override
   State<GlossaryQuizView> createState() => _GlossaryQuizViewState();
@@ -58,13 +58,16 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
     super.initState();
     listGlossaryData =  widget.listGlossaryData;
     totalGlossary = widget.listGlossaryData.length;
-    if(widget.glossaryProgressData != null){
-      initialIndex = widget.glossaryProgressData!.progressIndex! + 1;
-      print("initialIndex:$initialIndex");
-      correct = widget.glossaryProgressData!.correct!;
-      wrong = widget.glossaryProgressData!.wrong!;
-      totalGlossary = widget.glossaryProgressData!.count!;
+    if(widget.glossaryProgressData.isNotEmpty){
+      initialIndex = widget.glossaryProgressData.last.progressIndex!;
+      print("initialIndex:${widget.glossaryProgressData.last.progressIndex!}");
+      correct = widget.glossaryProgressData.last.correct!;
+      wrong = widget.glossaryProgressData.last.wrong!;
+      totalGlossary = widget.glossaryProgressData.last.count!;
+      print("widget.listGlossaryData.:${widget.listGlossaryData.length}");
+      print("totalGlossary.:${totalGlossary}");
     }
+
     for(int i = 0; i < widget.listGlossaryData.length; i++){
       textEditingController.add(TextEditingController());
     }
@@ -82,6 +85,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
           padding: EdgeInsets.only(top: 8.h,left: 0,right: 0),
           child: Column(
             children: [
+              if(scoreSelected)
               Container(
                 padding: EdgeInsets.only(left: 20,right: 20),
                 color: const Color(0xFF2D3E50),
@@ -201,7 +205,6 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
               ),
               Row(
                 children: [
-
                   Expanded(
                     child: Container(
                       child:LinearProgressIndicator(
@@ -217,6 +220,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
               widget.listGlossaryData.isNotEmpty ?
               CarouselSlider.builder(
                 carouselController: carouselController,
+
                   options:
                   CarouselOptions(
                     height:  380,
@@ -225,17 +229,12 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                     autoPlayAnimationDuration: Duration(seconds: 1),
                     enlargeCenterPage: true,
                     viewportFraction: 0.85,
-                    initialPage: initialIndex,
                     aspectRatio: 2.0,
+                    onScrolled: (value){
+                      print("value:$value");
+                    },
                     pageSnapping: true,
                     onPageChanged: (index, reason) async{
-                      setState(() {
-                        print("wrong:$index");
-                        if(isSkipped){
-                          initialIndex++;
-                          wrong++;
-                        }
-                      });
 
                     },
                   ),
@@ -306,9 +305,12 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                     controller: textEditingController[indexReport],
                                     enabled: widget.listGlossaryData[indexReport].answered == 1 ? false : true,
                                     keyboardType: TextInputType.emailAddress,
+                                    autofocus: true,
                                     onSubmitted: (String value)async{
                                       initialIndex++;
-                                      isSkipped = true;
+                                     setState(() {
+                                       isSkipped = false;
+                                     });
                                        widget.listGlossaryData[indexReport].answered = 1;
                                        if(value.isEmpty){
                                          textEditingController[indexReport].text = 'Answered';
@@ -325,25 +327,32 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                           showFailedDialog(context: context);
                                       }
                                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
+                                          id:widget.listGlossaryData[indexReport].id ,
                                           topicId: widget.listGlossaryData[indexReport].topic!.id,
                                           courseId: widget.listGlossaryData[indexReport].courseId!,
                                           searchTerm: widget.listGlossaryData[indexReport].term,
                                           selectedCharacter: "a",
-                                          progressIndex: indexReport,
+                                          progressIndex: initialIndex,
                                           count:  totalGlossary,
                                           correct: correct,
                                           wrong: wrong
                                       );
-                                      await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
+                                      // await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
                                       await GlossaryDB().insertGlossaryTryProgress(glossaryProgressData);
-                                      carouselController.animateToPage(indexReport + 1,duration: Duration(seconds: 1),curve: Curves.easeIn);
-                                      setState(() {
-                                        isSkipped = true;
-                                      });
-
+                                      carouselController.animateToPage(indexReport +1,duration: Duration(seconds: 1),curve: Curves.easeIn);
+                                      Future.delayed(
+                                        const Duration(seconds: 1),
+                                        () {
+                                          Navigator.pop(context);
+                                        },
+                                      );
                                       if(indexReport == widget.listGlossaryData.length - 1){
                                         testCompletedModalBottomSheet(context);
                                       }
+                                      // setState(() {
+                                      //   widget.listGlossaryData.removeAt(indexReport);
+                                      //   textEditingController.removeAt(indexReport);
+                                      // });
                                     },
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder(
