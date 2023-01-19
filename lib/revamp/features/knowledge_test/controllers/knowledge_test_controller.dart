@@ -289,11 +289,6 @@ class KnowledgeTestController extends ChangeNotifier {
   }) async {
     isTestTaken = false;
     testsTaken = await TestController().keywordTestsTaken(course.id!);
-    // switch (testCategory) {
-    //   case TestCategory.EXAM:
-    //     break;
-    //   default:
-    // }
     if (testCategory != TestCategory.NONE) {
       typeSpecificTestsTaken = await testsTaken
           .where((e) =>
@@ -674,12 +669,13 @@ class KnowledgeTestController extends ChangeNotifier {
     );
   }
 
-  getTestsTaken(
-      {int? courseId,
-      String? testName,
-      TestCategory challengeType = TestCategory.NONE}) async {
+  getTestsTaken({
+    int? courseId,
+    String? testName,
+    TestCategory challengeType = TestCategory.NONE,
+  }) async {
     await TestController()
-        .getAllTestTakenByChallengeType(TestCategory.EXAM, courseId: courseId)
+        .getAllTestTakenByChallengeType(challengeType, courseId: courseId)
         .then((testsTaken) async {
       if (testName != null) {
         allTestsTakenForAnalysis = await testsTaken.where((test) {

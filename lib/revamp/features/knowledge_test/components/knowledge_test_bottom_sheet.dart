@@ -183,6 +183,15 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
     );
   }
 
+  initTestsTaken(
+      {TestCategory? activeMenu, int? courseId, TestNameAndCount? test}) async {
+    await _knowledgeTestController.getTestsTaken(
+      challengeType: activeMenu!,
+      courseId: courseId!,
+      testName: test!.name,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -418,6 +427,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   initialPage: _currentSlide,
                                                   onPageChanged:
                                                       (index, reason) async {
+                                                    print("pageIndex: $index");
+
                                                     if (model
                                                         .isShowAnalysisBox) {
                                                       model.isShowAnalysisBox =
@@ -431,12 +442,12 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   },
                                                 ),
                                                 itemCount: tests.length,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int itemIndex,
-                                                        int pageViewIndex) {
+                                                itemBuilder: (
+                                                  BuildContext context,
+                                                  int itemIndex,
+                                                  int pageViewIndex,
+                                                ) {
                                                   _currentSlide = itemIndex;
-
                                                   test = tests[_currentSlide];
 
                                                   switch (
@@ -481,17 +492,15 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
 
                                                       break;
                                                     case TestCategory.EXAM:
-                                                      _knowledgeTestController
-                                                          .getTestsTaken(
-                                                        challengeType:
+                                                    case TestCategory.BANK:
+                                                      initTestsTaken(
+                                                        activeMenu:
                                                             _knowledgeTestController
                                                                 .activeMenu,
+                                                        test: test
+                                                            as TestNameAndCount,
                                                         courseId: _course.id,
-                                                        testName: (test
-                                                                as TestNameAndCount)
-                                                            .name,
                                                       );
-
                                                       _knowledgeTestController
                                                               .testTakenIndex =
                                                           _knowledgeTestController
@@ -528,51 +537,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                       break;
                                                     case TestCategory.SAVED:
                                                       break;
-                                                    case TestCategory.BANK:
-                                                      _knowledgeTestController
-                                                          .getTestsTaken(
-                                                        challengeType:
-                                                            _knowledgeTestController
-                                                                .activeMenu,
-                                                        courseId: _course.id,
-                                                        testName: (test
-                                                                as TestNameAndCount)
-                                                            .name,
-                                                      );
 
-                                                      _knowledgeTestController
-                                                              .testTakenIndex =
-                                                          _knowledgeTestController
-                                                              .typeSpecificTestsTaken
-                                                              .indexWhere(
-                                                        (examTaken) {
-                                                          // ? would be better to check condtion with examId instead of the name of exam taken
-                                                          return examTaken
-                                                                  .testname!
-                                                                  .toLowerCase() ==
-                                                              (test as TestNameAndCount)
-                                                                  .name
-                                                                  .toLowerCase();
-                                                        },
-                                                      );
-
-                                                      if (_knowledgeTestController
-                                                              .testTakenIndex !=
-                                                          -1) {
-                                                        _knowledgeTestController
-                                                            .isTestTaken = true;
-                                                        _knowledgeTestController
-                                                                .testTaken =
-                                                            _knowledgeTestController
-                                                                    .typeSpecificTestsTaken[
-                                                                _knowledgeTestController
-                                                                    .testTakenIndex];
-                                                      } else {
-                                                        _knowledgeTestController
-                                                                .isTestTaken =
-                                                            false;
-                                                      }
-                                                      break;
                                                     default:
                                                       break;
                                                   }
@@ -612,6 +577,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                         searchKeyword:
                                                             searchKeyword,
                                                       );
+                                                      setState(() {});
                                                     },
                                                   );
                                                 },
@@ -959,7 +925,10 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                                       Column(
                                                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                                                         children: [
-                                                                                          sText("${properCase("${entry.value[i].keyword}")}", weight: FontWeight.bold),
+                                                                                          sText(
+                                                                                            "${properCase("${entry.value[i].keyword}")}",
+                                                                                            weight: FontWeight.bold,
+                                                                                          ),
                                                                                           sText("${entry.value[i].total} appearances", size: 12, color: kAdeoGray3),
                                                                                         ],
                                                                                       ),

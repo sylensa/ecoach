@@ -109,7 +109,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
   @override
   void initState() {
     super.initState();
-    
+
     flipCardController = FlipCardController();
     isActiveGraphSide = widget.showGraph;
     flipCardController._state = this;
@@ -117,9 +117,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
       duration: Duration(milliseconds: 600),
       vsync: this,
     );
-    if (widget.activeMenu != TestCategory.NONE) {
-      testsTakenForAnalysis = widget.allTestsTakenForAnalysis;
-    }
+    // if (widget.activeMenu != TestCategory.NONE) {
+    //   testsTakenForAnalysis = widget.allTestsTakenForAnalysis;
+    // }
   }
 
   @override
@@ -672,7 +672,7 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                             )
                           : Center(
                               child: sText(
-                                "No tests taken for this topic",
+                                "No tests taken",
                                 color: Colors.white.withOpacity(0.7),
                               ),
                             ),
