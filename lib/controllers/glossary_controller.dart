@@ -75,6 +75,7 @@ class GlossaryController{
   getPersonalisedGlossariesList()async{
     List<GlossaryData> listGlossaryData = [];
     var response = await  doGet("${AppUrl.personalizedGlossaries}");
+    print("response:$response");
     if(response["status"] && response["code"] == "200" && response["data"]["data"].isNotEmpty){
       for(int i =0; i < response["data"]["data"].length; i++){
         GlossaryData glossaryData = GlossaryData.fromJson(response["data"]["data"][i]);

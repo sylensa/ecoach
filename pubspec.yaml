@@ -127,6 +127,7 @@ dependencies:
    just_audio: ^0.9.29
    quiver: ^3.1.0
    data_table_2: ^2.3.9
+   drag_and_drop_lists: ^0.3.3
    # azlistview: ^2.0.0-nullsafety.0
 
 flutter_icons:

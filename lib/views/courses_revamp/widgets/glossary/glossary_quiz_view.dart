@@ -319,12 +319,12 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                        setState(() {
                                          correct++;
                                        });
-                                         showSuccessDialog(context: context);
+                                         showSuccessDialog(context: context,index: indexReport);
                                       }else{
                                         setState(() {
                                           wrong++;
                                         });
-                                          showFailedDialog(context: context);
+                                          showFailedDialog(context: context,index: indexReport);
                                       }
                                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
                                           id:widget.listGlossaryData[indexReport].id ,
@@ -378,7 +378,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
     );
   }
 
-  showSuccessDialog({BuildContext? context}) {
+  showSuccessDialog({BuildContext? context, int index = 0}) {
     // flutter defined function
     showDialog(
       context: context!,
@@ -400,6 +400,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
             child: Column(
               children: [
                 sText("Great Job,",weight: FontWeight.w400,color: Colors.black,align: TextAlign.center),
+                if(index != widget.listGlossaryData.length - 1)
                 sText("Let's move on to the next one,",weight: FontWeight.w400,color: Colors.black,align: TextAlign.center),
               ],
             ),
@@ -409,7 +410,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
       },
     );
   }
-  showFailedDialog({BuildContext? context}) {
+  showFailedDialog({BuildContext? context, int index = 0}) {
     // flutter defined function
     showDialog(
       context: context!,
@@ -431,6 +432,7 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
             child: Column(
               children: [
                 sText("Aww wrong answer,",weight: FontWeight.w400,color: Colors.white,align: TextAlign.center),
+                if(index != widget.listGlossaryData.length - 1)
                 sText("Let's move on to the next one,",weight: FontWeight.w400,color: Colors.white,align: TextAlign.center),
               ],
             ),
