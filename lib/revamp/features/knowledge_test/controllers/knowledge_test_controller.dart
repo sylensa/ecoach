@@ -141,6 +141,7 @@ class KnowledgeTestController extends ChangeNotifier {
   TestCategory selectedMenu = TestCategory.NONE;
   bool isShowAlphaScroll = false;
   bool _emptyTestTakenList = true;
+  Map _groupedLists = {};
 
   bool get emptyTestList => _emptyTestTakenList;
   set emptyTestList(bool value) {
@@ -151,8 +152,7 @@ class KnowledgeTestController extends ChangeNotifier {
 
   List<TestTaken> tests = [];
   List<TestTaken> testsTaken = [];
-  CarouselController alphaSliderToStatisticsCardController =
-      CarouselController();
+
 
   String currentAlphabet = '';
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
@@ -191,25 +191,33 @@ class KnowledgeTestController extends ChangeNotifier {
   late bool isTestTaken = false;
   late bool showKeywordTextField = false;
 
-  void slideToActiveAlphabet(List<dynamic> tests, int index,
-      {String selectedAlphabet = ''}) {
-    int _selectedIndex;
-    List<dynamic> _selectedTests;
-    if (selectedAlphabet.isNotEmpty) {
-      _selectedTests = tests
-          .where((test) => test.name.toUpperCase().startsWith(
-                selectedAlphabet,
-              ))
-          .toList();
-      if (_selectedTests.length == 1) {
-        _selectedIndex = tests.indexOf(_selectedTests[0]);
-        // alphaSliderToStatisticsCardController.animateToPage(
-        //   _selectedIndex,
-        // );
-      } else {
-        // _selectedIndex = tests.indexOf(_selectedTest);
+  Map get groupedLists => _groupedLists;
+
+  set groupedLists(Map value) {
+    _groupedLists = value;
+  }
+
+  void groupMyList(List list) {
+    groupedLists = {};
+    list.forEach((item) {
+      if (groupedLists['${item.name[0]}'] == null) {
+        groupedLists['${item.name[0]}'] = [];
       }
-    }
+
+      groupedLists['${item.name[0]}'].add(item);
+    });
+  }
+
+  Future<int> slideToActiveAlphabet(
+    List<dynamic> tests,
+    int scrollLabelIndex, {
+    String selectedAlphabet = '',
+    Map? groupedList,
+  }) async {
+    var k = await tests.indexWhere((test) {
+      return test.name[0].toUpperCase() == selectedAlphabet;
+    });
+    return k;
   }
 
   loadKeywordTest(BuildContext context,

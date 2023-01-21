@@ -8,7 +8,8 @@ class AlphabetScrollSlider extends StatefulWidget {
     required this.alphabets,
     this.initialSelectedAlphabet = "P",
   }) : super(key: key);
-  final Function(String initialSelectedAlphabet, int index) callback;
+  final Function(String initialSelectedAlphabet, int index, bool isValueChanged)
+      callback;
   final String initialSelectedAlphabet;
   final List<String> alphabets;
 
@@ -21,6 +22,10 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
   late double selectedAlphaScrollValue;
   late double max;
   late int divisions;
+  late bool isSelectedAlphabet;
+  late bool isValueChanged;
+  late int index;
+  late String label;
 
   double min = 0;
 
@@ -28,17 +33,20 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
   void initState() {
     super.initState();
     alphaScrollSliderLabels = widget.alphabets;
-    selectedAlphaScrollValue =
-        alphaScrollSliderLabels.indexOf(widget.initialSelectedAlphabet).toDouble();
+    selectedAlphaScrollValue = alphaScrollSliderLabels
+        .indexOf(widget.initialSelectedAlphabet)
+        .toDouble();
     max = alphaScrollSliderLabels.length - 1;
     divisions = alphaScrollSliderLabels.length - 1;
+    isValueChanged = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      width: double.maxFinite,
+    return AspectRatio(
+      // height: 60,
+      // width: double.maxFinite,
+      aspectRatio: 19/3.1,
       child: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
@@ -52,15 +60,13 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ...alphaScrollSliderLabels.map((alphabetLabel) {
-                    int index = alphaScrollSliderLabels.indexOf(alphabetLabel);
-
+                    label = alphabetLabel;
+                    index = alphaScrollSliderLabels.indexOf(alphabetLabel);
                     bool isLastAlphabet = index == max;
-                    bool isSelectedAlphabet = selectedAlphaScrollValue == index;
-
-                    if (isSelectedAlphabet) {
-                      widget.callback(alphabetLabel, index);
+                    isSelectedAlphabet = selectedAlphaScrollValue == index;
+                    if (selectedAlphaScrollValue == index) {
+                      widget.callback(label, index, isValueChanged);
                     }
-
                     return Padding(
                       padding: EdgeInsets.only(
                         right: isLastAlphabet ? 0 : 12,
@@ -69,9 +75,8 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
                         alphabetLabel,
                         style: TextStyle(
                           fontSize: isSelectedAlphabet ? 20 : 14,
-                          color: Color(0xFF0367B4).withOpacity(
-                            isSelectedAlphabet ? 1 : 0.8
-                          ),
+                          color: Color(0xFF0367B4)
+                              .withOpacity(isSelectedAlphabet ? 1 : 0.8),
                           fontWeight: isSelectedAlphabet
                               ? FontWeight.w600
                               : FontWeight.w400,
@@ -107,10 +112,16 @@ class _AlphabetScrollSliderState extends State<AlphabetScrollSlider> {
                 min: min,
                 max: max,
                 divisions: divisions,
-                onChanged: (value) {
-                  setState(() {
-                    selectedAlphaScrollValue = value.roundToDouble();
-                  });
+                onChangeStart: ((value) {
+                  isValueChanged = false;
+                  // setState(() {});
+                }),
+                onChangeEnd: ((newValue) {
+                  isValueChanged = true;
+                  setState(() {});
+                }),
+                onChanged: (newValue) {
+                  selectedAlphaScrollValue = newValue.roundToDouble();
                 },
               ),
             ),
