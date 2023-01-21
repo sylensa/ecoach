@@ -449,7 +449,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 ) {
                                                   _currentSlide = itemIndex;
                                                   test = tests[_currentSlide];
-
                                                   switch (
                                                       _knowledgeTestController
                                                           .activeMenu) {
@@ -506,9 +505,9 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                           _knowledgeTestController
                                                               .typeSpecificTestsTaken
                                                               .indexWhere(
-                                                                  (examTaken) {
+                                                                  (testTaken) {
                                                         // ? would be better to check condtion with examId instead of the name of exam taken
-                                                        return examTaken
+                                                        return testTaken
                                                                 .testname!
                                                                 .toLowerCase() ==
                                                             (test as TestNameAndCount)
@@ -1255,7 +1254,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                         MaterialButton(
                                           onPressed: () async {
                                             // isShowAlphaScroll = false;
-
                                             if (_knowledgeTestController
                                                     .activeMenu !=
                                                 TestCategory.EXAM) {
@@ -1339,7 +1337,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  sText("Exam ",
+                                                  sText("Exam",
                                                       color: _knowledgeTestController
                                                                   .activeMenu ==
                                                               TestCategory.EXAM
