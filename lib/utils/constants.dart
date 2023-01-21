@@ -1,4 +1,5 @@
 // enum DropdownSize { small, medium, large }
+import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:ecoach/controllers/group_management_controller.dart';
 import 'package:ecoach/models/active_package_model.dart';
 import 'package:ecoach/models/agent_transaction.dart';
@@ -64,3 +65,4 @@ var scoreSelected;
 List<GlossaryData> personaliseGlossaryData = [];
 List<GlossaryData> allGlossaryData = [];
 List<Question> checkQuestions = [];
+List<DragAndDropList> contents = [];

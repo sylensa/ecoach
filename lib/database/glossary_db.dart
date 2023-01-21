@@ -182,10 +182,10 @@ class GlossaryDB {
 
   deleteAllGlossaryTryProgress() async {
     final db = await DBProvider.database;
-    await db!.rawQuery('Delete from glossary_progress');
+    await db!.rawQuery('Delete from glossary_try_progress');
   }
   deleteAllGlossaryStudyProgress() async {
     final db = await DBProvider.database;
-    await db!.rawQuery('Delete from glossary_progress');
+    await db!.rawQuery('Delete from glossary_study_progress');
   }
 }

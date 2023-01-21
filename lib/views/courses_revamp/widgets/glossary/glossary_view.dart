@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/glossary_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
+import 'package:ecoach/controllers/text_to_speech_controller.dart';
 import 'package:ecoach/database/glossary_db.dart';
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
@@ -314,8 +315,27 @@ class _GlossaryViewState extends State<GlossaryView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                GestureDetector(
+
+
+                                  onTap: ()async{
+                                    if(glossaryData[indexReport].played){
+                                      setState(() {
+                                        glossaryData[indexReport].played = false;
+                                      });
+                                      await TextToSpeechController(text: glossaryData[indexReport].definition!).stop();
+                                    }else{
+                                      setState(() {
+                                        glossaryData[indexReport].played = true;
+                                      });
+                                      await TextToSpeechController(text: glossaryData[indexReport].definition!).speak();
+                                    }
+
+                                  },
+                                  child:glossaryData[indexReport].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
+                                ),
                                 FlutterSwitch(
                                   width: 50.0,
                                   height: 20.0,

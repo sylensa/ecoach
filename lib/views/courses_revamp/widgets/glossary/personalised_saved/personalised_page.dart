@@ -1,3 +1,4 @@
+import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:ecoach/controllers/glossary_controller.dart';
 import 'package:ecoach/controllers/text_to_speech_controller.dart';
 import 'package:ecoach/database/topics_db.dart';
@@ -8,10 +9,12 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/personalised_saved/personalised_view.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:ecoach/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:get/get.dart';
 
 class PersonalisedPage extends StatefulWidget {
   PersonalisedPage(
@@ -32,6 +35,56 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   List<Topic> listTopics = [];
   bool progressCode = true;
   FlutterTts flutterTts = FlutterTts();
+
+  createContent(){
+    contents.clear();
+    contents = List.generate(1, (index) {
+      return DragAndDropList(
+        contentsWhenEmpty: Container(),
+        children: <DragAndDropItem>[
+          for(int index =0; index < personaliseGlossaryData.length; index++)
+            DragAndDropItem(
+              child: MultiPurposeCourseCard(
+                padding: EdgeInsets.only(left: 15,top: 10,bottom: 10,right: 20),
+                title: '${personaliseGlossaryData[index].term}',
+                subTitle: 'Create and view definitions',
+                rightWidget:    ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
+                      elevation: MaterialStateProperty.resolveWith((states) => 0)
+                  ),
+
+                  onPressed: ()async{
+                    Get.to(() => PersonalisedView(course: widget.course,user: widget.user,listGlossaryData: [personaliseGlossaryData[index]],));
+
+                    // if(personaliseGlossaryData[index].played){
+                    //   setState(() {
+                    //     personaliseGlossaryData[index].played = false;
+                    //   });
+                    //   await TextToSpeechController(text: personaliseGlossaryData[index].definition!).stop();
+                    // }else{
+                    //   setState(() {
+                    //     personaliseGlossaryData[index].played = true;
+                    //   });
+                    //   await TextToSpeechController(text: personaliseGlossaryData[index].definition!).speak();
+                    // }
+
+
+                  },
+                  child:personaliseGlossaryData[index].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
+                ),
+                onTap: () async {
+                  onSelectModalBottomSheet(context,personaliseGlossaryData[index],index);
+                },
+              ) ,
+            )
+        ],
+      );
+    });
+    setState(() {
+
+    });
+  }
 
   onSelectModalBottomSheet(context,GlossaryData glossary,int index) {
     double sheetHeight = 400;
@@ -97,6 +150,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                            setState(() {
                             if(res){
                               personaliseGlossaryData.removeAt(index);
+                              createContent();
                             }else{
                               toastMessage("Deletion failed, try again later");
                             }
@@ -201,9 +255,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
         });
   }
 
-  createDialogModalBottomSheet(
-      context,
-      ) {
+  createDialogModalBottomSheet(context,) {
     double sheetHeight = appHeight(context) * 0.9;
     TextEditingController termController = TextEditingController();
     TextEditingController meaningController = TextEditingController();
@@ -382,6 +434,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                             if(glossary != null){
                              setState(() {
                                personaliseGlossaryData.add(glossary);
+                               createContent();
                              });
                             }else{
                               toastMessage("Failed try again later");
@@ -612,6 +665,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
                            if(glossary != null){
                              personaliseGlossaryData.removeAt(index);
                              personaliseGlossaryData.insert(index, glossary);
+                             createContent();
                              setState(() {
 
                              });
@@ -655,6 +709,7 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
   getPersonalisedData()async{
     try{
       personaliseGlossaryData = await GlossaryController().getPersonalisedGlossariesList();
+      createContent();
     }catch(e){
       print(e.toString());
     }
@@ -676,10 +731,12 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
     // TODO: implement initState
     super.initState();
     TextToSpeechController().initialize();
-    if(personaliseGlossaryData.isEmpty){
+
       getPersonalisedData();
-    }
+
     getTopics();
+
+
   }
   @override
   Widget build(BuildContext context) {
@@ -706,9 +763,14 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Image.asset("assets/images/Polygon.png"),
+                  GestureDetector(
+                    onTap: (){
+                      Get.to(() => PersonalisedView(course: widget.course,user: widget.user,listGlossaryData: personaliseGlossaryData,));
+                    },
+                      child: Image.asset("assets/images/Polygon.png")
+                  ),
                   Row(
                     children: [
                       Image.asset("assets/images/dictionary.png"),
@@ -722,42 +784,39 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
             SizedBox(height: 10,),
             personaliseGlossaryData.isNotEmpty ?
             Expanded(
-              child: ListView.builder(
-                  itemCount: personaliseGlossaryData.length,
-                  itemBuilder: (BuildContext context, int index){
-                    return   MultiPurposeCourseCard(
-                      padding: EdgeInsets.only(left: 15,top: 10,bottom: 10),
-                      title: '${personaliseGlossaryData[index].term}',
-                      subTitle: 'Create and view definitions',
-                      rightWidget:    ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
-                          elevation: MaterialStateProperty.resolveWith((states) => 0)
-                        ),
-
-                        onPressed: ()async{
-                          if(personaliseGlossaryData[index].played){
-                            setState(() {
-                              personaliseGlossaryData[index].played = false;
-                            });
-                            await TextToSpeechController(text: personaliseGlossaryData[index].definition!).stop();
-                          }else{
-                            setState(() {
-                              personaliseGlossaryData[index].played = true;
-                            });
-                            await TextToSpeechController(text: personaliseGlossaryData[index].definition!).speak();
-                          }
-
-
-                        },
-                        child:personaliseGlossaryData[index].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
-                      ),
-                      onTap: () async {
-                        onSelectModalBottomSheet(context,personaliseGlossaryData[index],index);
-                      },
-                    );
-
-                  }),
+              child: DragAndDropLists(
+                children: contents,
+                onItemReorder: _onItemReorder,
+                onListReorder: _onListReorder,
+                listPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                itemDivider: Container(
+                  color:Colors.white,
+                  height: 5,
+                ),
+                itemDecorationWhileDragging: BoxDecoration(
+                  // color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 3,
+                      offset: Offset(0, 0), // changes position of shadow
+                    ),
+                  ],
+                ),
+                lastItemTargetHeight: 20,
+                addLastItemTargetHeightToTop: false,
+                lastListTargetSize: 0,
+                itemDragHandle: const DragHandle(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 10,bottom: 17),
+                    child: Icon(
+                      Icons.menu,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ) ,
             ) :
             progressCode ?
             Expanded(child: Center(child: progress(),)) :
@@ -766,5 +825,24 @@ class _PersonalisedPageState extends State<PersonalisedPage> {
         ),
       ),
     );
+  }
+
+  _onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
+    setState(() {
+      var movedItem = contents[oldListIndex].children.removeAt(oldItemIndex);
+      contents[newListIndex].children.insert(newItemIndex, movedItem);
+      print("contents:${personaliseGlossaryData.first.term}");
+    });
+  }
+
+  _onListReorder(int oldListIndex, int newListIndex) {
+    setState(() {
+      print("hery");
+      var movedList = contents.removeAt(oldListIndex);
+      contents.insert(newListIndex, movedList);
+
+      print("contents:${personaliseGlossaryData.first.term}");
+
+    });
   }
 }

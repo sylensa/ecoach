@@ -14,6 +14,7 @@ import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_quiz_view.
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 
 class GlossaryInstruction extends StatefulWidget {
   GlossaryInstruction({
@@ -40,10 +41,13 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0XFF00D289),
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Color(0XFF00D289),
+        backgroundColor: Colors.grey[100],
         elevation: 0,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back_ios,color: Color(0XFF00D289),)),
       ),
       body: Stack(
         children: [
@@ -54,9 +58,9 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
               height: appHeight(context) * 0.7 ,
               width: appWidth(context) ,
               fit: BoxFit.fitHeight,
+              color: Color(0XFF00D289),
             ),
           ),
-
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -79,6 +83,12 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                Container(
+                  color: Colors.white38,
+                  height: 1,
+                  width: 200,
+                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(
@@ -94,6 +104,12 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  color: Colors.white38,
+                  height: 1,
+                  width: 200,
                 ),
                 const SizedBox(height: 10),
                 Padding(
@@ -114,6 +130,12 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                Container(
+                  color: Colors.white38,
+                  height: 1,
+                  width: 200,
+                ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Row(
@@ -131,18 +153,25 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 10),
+                Container(
+                  color: Colors.white38,
+                  height: 1,
+                  width: 200,
+                ),
               ],
             ),
           ),
-        Center(
+          Center(
           child: Container(
             child: Column(
               children: [
-                sText("Instructions",color: Colors.white,size: 30,weight: FontWeight.bold),
+                sText("Instructions",color: Color(0XFF00D289),size: 30,weight: FontWeight.bold),
                 SizedBox(height: 20,),
 
                 Container(
-                  child: sText("In this mode , you will be able to View both definitions and meanings at the same time",color: Colors.black,weight: FontWeight.bold,align: TextAlign.center,lHeight: 2),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: sText("In this mode , you will be able to View both definitions and meanings at the same time",color: Colors.grey,weight: FontWeight.bold,align: TextAlign.center,lHeight: 2),
                 ),
                 SizedBox(height: 20,),
 
@@ -151,68 +180,75 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
             ),
           ),
         ),
+
           Positioned(
             bottom: 20,
-            left: appWidth(context) * 0.3,
-            child: GestureDetector(
-              onTap: ()async{
-                print(widget.course.id!);
-                List<GlossaryData> listGlossaryData = [];
-                List topicIds = [];
-               print("isTopicSelected:$isTopicSelected");
-                await GlossaryDB().deleteAllGlossaryTryProgress();
+            child: Container(
+              width: appWidth(context),
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ConfirmationSlider(
+                onConfirmation:()async{
+                  print(widget.course.id!);
+                  List<GlossaryData> listGlossaryData = [];
+                  List topicIds = [];
+                  print("isTopicSelected:$isTopicSelected");
+                  // await GlossaryDB().deleteAllGlossaryTryProgress();
 
-               if(isViewed){
-                 if(studySelected){
-                   widget.studyGlossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
-                 }else{
-                   widget.listTryGlossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
-                 }
-               }
-                if(isTopicSelected){
-                  // await GlossaryDB().deleteAllGlossaryTopic();
-                  // await GlossaryDB().deleteAll();
-                  List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
-                  for(int i = 0; i < listTopics.length; i++){
-                    topicIds.add(listTopics[i].id);
+                  if(isViewed){
+                    if(studySelected){
+                      widget.studyGlossaryProgressData =   await GlossaryDB().getGlossaryStudyProgressByCourseId(widget.course.id!);
+                    }else{
+                      widget.listTryGlossaryProgressData =   await GlossaryDB().getGlossaryTryProgressByCourseId(widget.course.id!);
+                    }
                   }
-                  listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
-                }
-                else{
-                  listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
-                }
-                if(listGlossaryData.isEmpty){
-                  toastMessage("No glossary for this course");
-                }else{
-                  if(studySelected){
-                  await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
-                  setState(() {
-                    isViewed = true;
-                  });
+                  if(isTopicSelected){
+                    // await GlossaryDB().deleteAllGlossaryTopic();
+                    // await GlossaryDB().deleteAll();
+                    List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
+                    for(int i = 0; i < listTopics.length; i++){
+                      topicIds.add(listTopics[i].id);
+                    }
+                    listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
+                  }
+                  else{
+                    listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
+                  }
+                  if(listGlossaryData.isEmpty){
+                    toastMessage("No glossary for this course");
                   }else{
-                    for(int glossaryIndex = 0; glossaryIndex < listGlossaryData.length; glossaryIndex++){
-                      for(int progressIndex = 0; progressIndex < widget.listTryGlossaryProgressData.length; progressIndex++){
-                        if(listGlossaryData[glossaryIndex].id == widget.listTryGlossaryProgressData[progressIndex].id){
-                          listGlossaryData.removeAt(glossaryIndex);
+                    if(studySelected){
+                      await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
+                      setState(() {
+                        isViewed = true;
+                      });
+                    }else{
+                      for(int glossaryIndex = 0; glossaryIndex < listGlossaryData.length; glossaryIndex++){
+                        for(int progressIndex = 0; progressIndex < widget.listTryGlossaryProgressData.length; progressIndex++){
+                          if(listGlossaryData[glossaryIndex].id == widget.listTryGlossaryProgressData[progressIndex].id){
+                            listGlossaryData.removeAt(glossaryIndex);
+                          }
                         }
                       }
+
+                      await   Get.to(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.listTryGlossaryProgressData,));
+                      setState(() {
+                        isViewed = true;
+                      });
                     }
-
-                 await   Get.to(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.listTryGlossaryProgressData,));
-                 setState(() {
-                   isViewed = true;
-                 });
                   }
-                }
 
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 50,vertical: 15),
-                child: sText("Start",color: Colors.white,weight: FontWeight.w500),
-                decoration: BoxDecoration(
-                    color: Color(0XFF15996B),
-                    borderRadius: BorderRadius.circular(30)
-                ),
+                } ,
+                backgroundColor: Colors.white,
+                text: "Swipe to Start",
+                textStyle: appStyle(col: Colors.grey,weight: FontWeight.bold,size: 18),
+                shadow: BoxShadow(color: Colors.white,),
+                iconColor: Color(0xFF0367B4),
+                sliderButtonContent: Icon(Icons.keyboard_double_arrow_right,color: Colors.white,),
+                stickToEnd: false,
+                foregroundColor: Color(0XFF00D289),
+                backgroundColorEnd:   Color(0XFF00D289),
+
+
               ),
             ),
           ),

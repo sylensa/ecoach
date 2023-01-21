@@ -45,6 +45,7 @@ class ApiCall<T> {
     try {
       String urlString = url + '?' + Uri(queryParameters: params ?? {}).query;
       print(urlString);
+      print("params:$params");
       http.Response response = await http.get(
         Uri.parse(urlString),
         headers: headers ??

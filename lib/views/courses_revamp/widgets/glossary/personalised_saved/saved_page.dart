@@ -11,6 +11,7 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/personalised_saved/personalised_view.dart';
 import 'package:ecoach/widgets/cards/MultiPurposeCourseCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -31,6 +32,7 @@ class SavedPage extends StatefulWidget {
 
 class _SavedPageState extends State<SavedPage> {
   List<GlossaryData> glossaryData = [];
+  List<GlossaryData> savedGlossaryData = [];
   bool progressCode = true;
   Topic? selectedTopic;
   List<Topic> listTopics = [];
@@ -41,6 +43,7 @@ class _SavedPageState extends State<SavedPage> {
     for(int i =0; i < glossaryData.length; i++){
       if(glossaryData[i].isSaved == 1){
         savedCount++;
+        savedGlossaryData.add(glossaryData[i]);
       }
     }
     setState(() {
@@ -271,12 +274,21 @@ class _SavedPageState extends State<SavedPage> {
         child: Column(
           children: [
             SizedBox(height: 10,),
+            if(savedGlossaryData.isNotEmpty)
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20,vertical: 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Image.asset("assets/images/Polygon.png"),
+                  GestureDetector(
+                    onTap: ()async{
+                      await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: savedGlossaryData,glossaryProgressData: null,));
+                      setState(() {
+
+                      });
+                    },
+                      child: Image.asset("assets/images/Polygon.png"),
+                  ),
                   Row(
                     children: [
                       Image.asset("assets/images/dictionary.png"),
@@ -296,7 +308,6 @@ class _SavedPageState extends State<SavedPage> {
                   itemBuilder: (BuildContext context, int index){
                     if(glossaryData[index].isSaved == 1){
                       return   MultiPurposeCourseCard(
-                        padding: EdgeInsets.only(left: 20,top: 5,bottom: 5),
                         title: '${glossaryData[index].term}',
                         rightWidget:   Row(
                           children: [
@@ -324,29 +335,6 @@ class _SavedPageState extends State<SavedPage> {
                                 });
                                 getSavedData();
                               },
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor: MaterialStateColor.resolveWith((states) => Colors.white),
-                                  elevation: MaterialStateProperty.resolveWith((states) => 0)
-                              ),
-
-                              onPressed: ()async{
-                                if(glossaryData[index].played){
-                                  setState(() {
-                                    glossaryData[index].played = false;
-                                  });
-                                  await TextToSpeechController(text: glossaryData[index].definition!).stop();
-                                }else{
-                                  setState(() {
-                                    glossaryData[index].played = true;
-                                  });
-                                  await TextToSpeechController(text: glossaryData[index].definition!).speak();
-                                }
-
-
-                              },
-                              child:glossaryData[index].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 40,),
                             ),
                           ],
                         ),
