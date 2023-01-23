@@ -136,8 +136,8 @@ class TestController {
   }
 
   Future<List<Question>> getKeywordQuestions(String keyword, int courseId,
-      {int currentQuestionCount = 0}) {
-    return QuestionDB().getQuestionByKeyword(keyword.toLowerCase(), courseId,
+      {int currentQuestionCount = 0}) async {
+    return await QuestionDB().getQuestionByKeyword(keyword.toLowerCase(), courseId,
         currentQuestionCount: currentQuestionCount);
   }
 

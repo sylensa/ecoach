@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:math' as math;
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ecoach/controllers/quiz_controller.dart';
 import 'package:ecoach/controllers/test_controller.dart';
-import 'package:ecoach/database/test_taken_db.dart';
+
 import 'package:ecoach/helper/helper.dart';
 import 'package:ecoach/models/course.dart';
 import 'package:ecoach/models/keywords_model.dart';
@@ -12,21 +9,18 @@ import 'package:ecoach/models/question.dart';
 import 'package:ecoach/models/quiz.dart';
 import 'package:ecoach/models/test_taken.dart';
 import 'package:ecoach/models/user.dart';
-import 'package:ecoach/revamp/features/knowledge_test/components/alphabet_scroll_slider.dart';
 import 'package:ecoach/revamp/features/knowledge_test/components/knowledge_test_bottom_sheet.dart';
-import 'package:ecoach/revamp/features/knowledge_test/components/test_taken_statistics_card.dart';
-import 'package:ecoach/revamp/features/knowledge_test/view/test_instruction_screen.dart';
+
 import 'package:ecoach/utils/constants.dart';
-import 'package:ecoach/utils/style_sheet.dart';
+
 import 'package:ecoach/views/keyword/keyword_assessment.dart';
-import 'package:ecoach/views/keyword/keyword_question_view.dart';
+
 import 'package:ecoach/views/keyword/keyword_quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_cover.dart';
 import 'package:ecoach/views/quiz/quiz_page.dart';
 import 'package:ecoach/views/speed/speed_quiz_cover.dart';
 import 'package:ecoach/views/test/test_type_list.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CustomSliderThumbCircle extends SliderComponentShape {
   final double thumbRadius;
@@ -152,7 +146,6 @@ class KnowledgeTestController extends ChangeNotifier {
 
   List<TestTaken> tests = [];
   List<TestTaken> testsTaken = [];
-
 
   String currentAlphabet = '';
   Map<String, List<CourseKeywords>> groupedCourseKeywordsMap = {
@@ -342,7 +335,6 @@ class KnowledgeTestController extends ChangeNotifier {
   TestCategory openKnowledgeTestCard(
       BuildContext context, bool smallHeightDevice, TestCategory menu) {
     if (!isActiveAnyMenu || searchTap) {
-      print("dhjhd");
       searchTap = false;
       showKeywordTextField = false;
       sheetHeight = appHeight(context) * 0.90;
@@ -358,6 +350,7 @@ class KnowledgeTestController extends ChangeNotifier {
       BuildContext context, bool smallHeightDevice, TestCategory menu) {
     sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
     activeMenu = TestCategory.NONE;
+    emptyTestList = true;
     sheetHeightIncreased = false;
     isActiveAnyMenu = false;
     isShowAlphaScroll = false;

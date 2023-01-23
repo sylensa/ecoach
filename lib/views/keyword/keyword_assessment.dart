@@ -80,8 +80,12 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: sText("Assessment",
-            color: Colors.black, size: 20, weight: FontWeight.bold),
+        title: sText(
+          "Assessment",
+          color: Colors.black,
+          size: 20,
+          weight: FontWeight.w500,
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -95,7 +99,7 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
             )),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.only(left: 20, right: 20, top: 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -107,69 +111,72 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
               Column(
                 children: [
                   Container(
-                    // width: appWidth(context),
-                    child: Container(
-                      height: 60,
-                      // width: appWidth(context),
-                      child: ListView.builder(
-                          itemCount: numberQuestions.length,
-                          controller: pageControllerView,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
+                    constraints: BoxConstraints(maxHeight: 80),
+                    child: ListView.builder(
+                        itemCount: numberQuestions.length,
+                        controller: pageControllerView,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (BuildContext context, int index) {
+                          bool isLastItem =
+                              numberQuestions.lastIndexOf == index;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (index >= _currentPage) {
+                                  pageControllerView.animateTo(
+                                      appWidth(context) / 10,
+                                      duration: new Duration(microseconds: 1),
+                                      curve: Curves.easeIn);
+                                } else {
+                                  pageControllerView.jumpTo(0.0);
+                                }
                                 setState(() {
-                                  if (index >= _currentPage) {
-                                    pageControllerView.animateTo(
-                                        appWidth(context) / 10,
-                                        duration: new Duration(microseconds: 1),
-                                        curve: Curves.easeIn);
-                                  } else {
-                                    pageControllerView.jumpTo(0.0);
-                                  }
-                                  setState(() {
-                                    _currentPage = index;
-                                    selectNumberQuestions.clear();
-                                    selectNumberQuestions
-                                        .add(numberQuestions[index]);
-                                  });
+                                  _currentPage = index;
+                                  selectNumberQuestions.clear();
+                                  selectNumberQuestions
+                                      .add(numberQuestions[index]);
                                 });
-                              },
-                              child: Container(
-                                constraints:
-                                    BoxConstraints(minHeight: 60, minWidth: 50),
-                                padding: EdgeInsets.all(8),
-                                margin: EdgeInsets.all(8),
-                                child: Center(
-                                  child: sText(
-                                      numberQuestions[index].toString(),
-                                      size: selectNumberQuestions
-                                              .contains(numberQuestions[index])
-                                          ? 30
-                                          : 25,
-                                      align: TextAlign.center,
-                                      color: selectNumberQuestions
-                                              .contains(numberQuestions[index])
-                                          ? Colors.white
-                                          : Colors.grey[400]!,
-                                      weight: FontWeight.w600),
-                                  // SizedBox(width: 30,)
-                                ),
-                                decoration: BoxDecoration(
+                              });
+                            },
+                            child: Container(
+                              constraints: BoxConstraints(
+                                minHeight: 80,
+                                minWidth: 75,
+                              ),
+                              padding: EdgeInsets.all(8),
+                              margin: EdgeInsets.only(
+                                right: !isLastItem ? 12 : 0,
+                              ),
+                              child: Center(
+                                child: sText(
+                                  numberQuestions[index].toString(),
+                                  size: 30,
+                                  align: TextAlign.center,
                                   color: selectNumberQuestions
                                           .contains(numberQuestions[index])
-                                      ? kAdeoGreen4
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(
-                                      selectNumberQuestions
-                                              .contains(numberQuestions[index])
-                                          ? 10
-                                          : 0),
+                                      ? Colors.white
+                                      : Colors.black12,
+                                  weight: FontWeight.w600,
+                                  lHeight: 1.6,
                                 ),
+                                // SizedBox(width: 30,)
                               ),
-                            );
-                          }),
-                    ),
+                              decoration: BoxDecoration(
+                                color: selectNumberQuestions
+                                        .contains(numberQuestions[index])
+                                    ? kAdeoGreen4
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                  10,
+                                ),
+                                border: selectNumberQuestions
+                                        .contains(numberQuestions[index])
+                                    ? Border.all(color: kAdeoGreen4)
+                                    : Border.all(color: Colors.black12),
+                              ),
+                            ),
+                          );
+                        }),
                   ),
                 ],
               ),
@@ -186,235 +193,249 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
                       SizedBox(
                         height: 20,
                       ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 24),
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Color(0XFF00C9B9), width: 2),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
+                      Stack(
+                        children: [
+                          Positioned(
+                            top: 18,
+                            right: 18,
+                            child: Image.asset(
+                              "assets/icons/courses/clock.png",
+                              height: 30,
+                              width: 30,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 48,
+                              right: 16,
+                              bottom: 16,
+                              left: 24,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0XFF00C9B9),
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    "assets/images/oval-pattern.png"),
+                                fit: BoxFit.cover,
+                                opacity: 0.08,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: kAdeoGray3),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: appWidth(context) * 0.70,
-                                    child: sText(
-                                        "Take a 10 question test on a topic",
-                                        size: 12),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: kAdeoGray3),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: appWidth(context) * 0.70,
-                                    child: sText(
-                                        "Score 7 or Higher to progress to the next topic",
-                                        size: 12),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: kAdeoGray3),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: appWidth(context) * 0.70,
-                                    child: sText(
-                                        "A score of less than 7 will open up the topic notes for revision",
-                                        size: 12),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: kAdeoGray3),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: appWidth(context) * 0.70,
-                                    child: sText(
-                                        "Progress is saved all the time so you can continue where ever you left off",
-                                        size: 12),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: kAdeoGray3,
+                                        color: kAdeoGray3,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: appWidth(context) * 0.72,
-                                    child: sText(
-                                        "Start a new revision round whenever you want to",
-                                        size: 12),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 18,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(child: Container()),
-                                  MaterialButton(
-                                    onPressed: () {
-                                      var nextScreen;
-                                      if (widget.questionCount != 0) {
-                                        if (selectNumberQuestions.isNotEmpty) {
-                                          // if (widget.quizCover != null) {
-                                          //   widget.quizCover!.count =
-                                          //       selectNumberQuestions[0];
-                                          //   widget.quizCover!.time =
-                                          //       selectNumberQuestions[0] * 60;
-                                          //   nextScreen = widget.quizCover;
-
-                                          //   goTo(
-                                          //     context,
-                                          //     nextScreen,
-                                          //     replace: true,
-                                          //   );
-                                          // if (widget.testCategory ==
-                                          //     TestCategory.NONE) {
-                                          //   widget.quizCover!.count =
-                                          //       selectNumberQuestions[0];
-                                          //   widget.quizCover!.time =
-                                          //       selectNumberQuestions[0] * 60;
-                                          //   nextScreen = widget.quizCover;
-                                          // } else {
-                                          //   // nextScreen = widget.questionView;
-                                          // }
-
-                                          print("user: ${widget.user}");
-
-                                          goTo(
-                                            context,
-                                            widget.testCategory ==
-                                                    TestCategory.ESSAY
-                                                ? QuizEssayView(
-                                                    widget.user!,
-                                                    widget.questions!,
-                                                    name: widget.test != null
-                                                        ? widget.test!.name
-                                                        : widget.name!,
-                                                    course: widget.course!,
-                                                    timeInSec: widget
-                                                            .questions!.length *
-                                                        60,
-                                                    type: TestType.KNOWLEDGE,
-                                                  )
-                                                : KeywordQuestionView(
-                                                    controller: QuizController(
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      width: appWidth(context) * 0.70,
+                                      child: selectNumberQuestions.isEmpty
+                                          ? sText(
+                                              "Take a test on a topic",
+                                              size: 12,
+                                            )
+                                          : sText(
+                                              "Take a ${selectNumberQuestions.first} question test on a topic",
+                                              size: 12,
+                                            ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: kAdeoGray3),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      width: appWidth(context) * 0.70,
+                                      child: sText(
+                                        "Score 70% or higher to progress to the next topic",
+                                        size: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: kAdeoGray3),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      width: appWidth(context) * 0.70,
+                                      child: sText(
+                                        "A score of less than 70% will open up the topic notes for revision",
+                                        size: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: kAdeoGray3),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      width: appWidth(context) * 0.70,
+                                      child: sText(
+                                          "Progress is saved all the time so you can continue where ever you left off",
+                                          size: 12),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: kAdeoGray3,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Container(
+                                      width: appWidth(context) * 0.72,
+                                      child: sText(
+                                          "Start a new revision round whenever you want to",
+                                          size: 12),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 18,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(child: Container()),
+                                    MaterialButton(
+                                      onPressed: () {
+                                        var nextScreen;
+                                        if (widget.questionCount != 0) {
+                                          if (selectNumberQuestions
+                                              .isNotEmpty) {
+                                            goTo(
+                                              context,
+                                              widget.testCategory ==
+                                                      TestCategory.ESSAY
+                                                  ? QuizEssayView(
                                                       widget.user!,
-                                                      widget.course!,
-                                                      questions:
-                                                          widget.questions!,
+                                                      widget.questions!,
                                                       name: widget.test != null
                                                           ? widget.test!.name
                                                           : widget.name!,
-                                                      time: widget.questions!
+                                                      course: widget.course!,
+                                                      timeInSec: widget
+                                                              .questions!
                                                               .length *
                                                           60,
-                                                      topicId:
-                                                          widget.test != null
-                                                              ? widget.test!.id
-                                                              : null,
                                                       type: TestType.KNOWLEDGE,
-                                                      challengeType:
-                                                          widget.testCategory!,
+                                                    )
+                                                  : KeywordQuestionView(
+                                                      controller:
+                                                          QuizController(
+                                                        widget.user!,
+                                                        widget.course!,
+                                                        questions:
+                                                            widget.questions!,
+                                                        name: widget.test !=
+                                                                null
+                                                            ? widget.test!.name
+                                                            : widget.name!,
+                                                        time: widget.questions!
+                                                                .length *
+                                                            60,
+                                                        topicId: widget.test !=
+                                                                null
+                                                            ? widget.test!.id
+                                                            : null,
+                                                        type:
+                                                            TestType.KNOWLEDGE,
+                                                        challengeType: widget
+                                                            .testCategory!,
+                                                      ),
+                                                      theme: QuizTheme.BLUE,
+                                                      diagnostic: widget
+                                                              .testCategory! ==
+                                                          TestCategory.MOCK,
+                                                      numberOfQuestionSelected:
+                                                          selectNumberQuestions[
+                                                              0],
                                                     ),
-                                                    theme: QuizTheme.BLUE,
-                                                    diagnostic:
-                                                        widget.testCategory! ==
-                                                            TestCategory.MOCK,
-                                                    numberOfQuestionSelected:
-                                                        selectNumberQuestions[
-                                                            0],
-                                                  ),
-                                            replace: true,
-                                          );
+                                              replace: true,
+                                            );
+                                          } else {
+                                            toastMessage(
+                                                "Select number of questions");
+                                          }
                                         } else {
-                                          toastMessage(
-                                              "Select number of questions");
+                                          if (widget.quizCover != null)
+                                            toastMessage(
+                                                "No questions available for ${properCase(widget.quizCover!.name)} keyword");
                                         }
-                                      } else {
-                                        if (widget.quizCover != null)
-                                          toastMessage(
-                                              "No questions available for ${properCase(widget.quizCover!.name)} keyword");
-                                      }
-                                    },
-                                    padding: EdgeInsets.zero,
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 14),
-                                      child:
-                                          sText("Start", color: Colors.white),
-                                      decoration: BoxDecoration(
-                                          color: Color(0XFF00C9B9),
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
+                                      },
+                                      padding: EdgeInsets.zero,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 32, vertical: 14),
+                                        child: sText(
+                                          "Start",
+                                          color: Colors.white,
+                                        ),
+                                        decoration: BoxDecoration(
+                                            color: Color(0XFF00C9B9),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       )
                     ],
                   )

@@ -175,7 +175,7 @@ class _BelowPassMarkState extends State<BelowPassMark> {
                     Text(
                       widget.test.correct!.toString() +
                           " / " +
-                          widget.test.totalQuestions.toString(),
+                          (widget.test.correct! + widget.test.wrong!).toString(),
                       style: TextStyle(
                         fontSize: orientation == Orientation.portrait
                             ? height * 0.04

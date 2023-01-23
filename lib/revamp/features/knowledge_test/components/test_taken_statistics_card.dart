@@ -623,11 +623,9 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                         child: LinearProgressIndicator(
                                           color: Color(0XFF00C9B9),
                                           backgroundColor: Color(0XFF0367B4),
-                                          value: isTestTaken
-                                              ? (testTaken!.correct! +
-                                                      testTaken!.wrong!) /
-                                                  testTaken!.totalQuestions
-                                              : _test.progress,
+                                          value: testTaken!.correct! /
+                                              (testTaken!.correct! +
+                                                  testTaken!.wrong!),
                                         ),
                                       ),
                                       SizedBox(
@@ -648,13 +646,13 @@ class _TestTakenStatisticCardState extends State<TestsStatisticCard>
                                           Row(
                                             children: [
                                               sText(
-                                                "${isTestTaken ? testTaken!.correct! + testTaken!.wrong! : _test.count}",
+                                                "${testTaken!.correct!}",
                                                 color: Colors.white,
                                                 weight: FontWeight.bold,
                                                 size: 12,
                                               ),
                                               sText(
-                                                " / ${isTestTaken ? testTaken!.totalQuestions : _test.totalCount} Q",
+                                                " / ${testTaken!.correct! + testTaken!.wrong!} Q",
                                                 color: Colors.white
                                                     .withOpacity(0.7),
                                                 size: 12,

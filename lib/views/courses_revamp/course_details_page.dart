@@ -30,6 +30,7 @@ import 'package:ecoach/views/courses_revamp/widgets/note_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/progress_widget.dart';
 import 'package:ecoach/views/courses_revamp/widgets/test_type_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -68,7 +69,7 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
   Future? stats;
   List<Question> questions = [];
   List<GlossaryData> glossaryData = [];
-  GlossaryProgressData? glossaryProgressData ;
+  GlossaryProgressData? glossaryProgressData;
 
   List<CourseDetail> courseDetails = [
     CourseDetail(
@@ -196,12 +197,10 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
     welcomeProvider.setCurrentUser(widget.user);
   }
 
-  fetchQuestionByCourse()async{
+  fetchQuestionByCourse() async {
     questions = await QuestionDB().getQuestionsByCourseId(course!.id!);
-    glossaryData =   await GlossaryDB().getGlossariesById(course!.id!);
-    setState(() {
-
-    });
+    glossaryData = await GlossaryDB().getGlossariesById(course!.id!);
+    setState(() {});
   }
 
   @override
@@ -295,7 +294,8 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                     Navigator.pop(context);
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                     margin: rightPadding(20),
                     height: 50,
                     child: Icon(
@@ -369,8 +369,8 @@ class _CoursesDetailsPageState extends State<CoursesDetailsPage> {
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         width: 2.0,
-                                        color: listCourseDetails
-                                                .contains(courseDetails[index])
+                                        color: listCourseDetails.contains(
+                                                courseDetails[index])
                                             ? Color(0xFFFFFFF)
                                             : Colors.transparent,
                                       ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ecoach/controllers/test_controller.dart';
 import 'package:ecoach/helper/helper.dart';
@@ -11,6 +13,7 @@ import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
 class KnowledgeTestBottomSheet extends StatefulWidget {
@@ -85,11 +88,12 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
 
   @override
   void initState() {
+    super.initState();
     _course = widget.course;
     _user = widget.user;
     _knowledgeTestController.searchTap = false;
+    _knowledgeTestController.emptyTestList = false;
     _listCourseKeywordsData = widget.listCourseKeywordsData;
-
     if (_listCourseKeywordsData.isNotEmpty) {
       groupedCourseKeywordsMap = {
         'A': [],
@@ -136,29 +140,33 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
           .add(courseKeyword);
     });
     focusNodeKeywordSearchField = FocusNode();
-    super.initState();
   }
 
   runKeywordSearch(String keyword, KnowledgeTestControllerModel model) async {
-    if (keyword.isNotEmpty) {
+    if (keyword != '') {
       for (int i = 0; i < keywordTestTaken.length; i++) {
         if (keywordTestTaken[i].testname!.toLowerCase() ==
-            keyword.toLowerCase()) {
+                keyword.toLowerCase() &&
+            keywordTestTaken[i].challengeType == TestCategory.NONE) {
           model.listQuestions = await TestController().getKeywordQuestions(
               keyword.toLowerCase(), _course.id!,
               currentQuestionCount:
                   keywordTestTaken[i].correct! + keywordTestTaken[i].wrong!);
-          setState(() {});
           return;
         }
       }
+
+      Future.delayed(Duration(milliseconds: 300), () async {
+        await TestController()
+            .getKeywordQuestions(keyword.toLowerCase(), _course.id!,
+                currentQuestionCount: 0)
+            .then((value) => model.listQuestions = value);
+      });
+    } else {
+      focusNodeKeywordSearchField.unfocus();
+      model.listQuestions.clear();
+      setState(() {});
     }
-    if (keyword.isNotEmpty) {
-      model.listQuestions = await TestController().getKeywordQuestions(
-          keyword.toLowerCase(), _course.id!,
-          currentQuestionCount: 0);
-    }
-    setState(() {});
   }
 
   @override
@@ -280,12 +288,15 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 20,
+                  height: 16,
                 ),
                 Container(
-                  color: Colors.grey,
-                  height: 3,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
                   width: 84,
+                  height: 3,
                 ),
                 SizedBox(
                   height: 20,
@@ -624,7 +635,8 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                             scrollDirection: Axis.horizontal,
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                  horizontal: 24.0),
+                                                horizontal: 24.0,
+                                              ),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
@@ -782,15 +794,14 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                           child: TextField(
                                                             focusNode:
                                                                 focusNodeKeywordSearchField,
+                                                            autocorrect: false,
                                                             controller:
                                                                 searchKeywordController,
                                                             onChanged: (String
                                                                 value) async {
                                                               searchKeyword =
                                                                   value.trim();
-                                                              model
-                                                                  .listQuestions
-                                                                  .clear();
+
                                                               await runKeywordSearch(
                                                                 searchKeyword,
                                                                 model,
@@ -800,32 +811,31 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                               if (_knowledgeTestController
                                                                       .searchTap ==
                                                                   false) {
-                                                                setState(() {
+                                                                _knowledgeTestController
+                                                                        .sheetHeight =
+                                                                    appHeight(
+                                                                            context) *
+                                                                        0.90;
+                                                                setState(() {});
+                                                                // _knowledgeTestController
+                                                                //         .showKeywordTextField =
+                                                                //     true;
+                                                                _knowledgeTestController
+                                                                        .sheetHeightIncreased =
+                                                                    true;
+                                                                if (_knowledgeTestController
+                                                                    .isActiveAnyMenu) {
                                                                   _knowledgeTestController
-                                                                          .sheetHeight =
-                                                                      appHeight(
-                                                                              context) *
-                                                                          0.90;
+                                                                          .activeMenu =
+                                                                      TestCategory
+                                                                          .NONE;
                                                                   _knowledgeTestController
-                                                                          .showKeywordTextField =
-                                                                      true;
-                                                                  _knowledgeTestController
-                                                                          .sheetHeightIncreased =
-                                                                      true;
-                                                                  if (_knowledgeTestController
-                                                                      .isActiveAnyMenu) {
-                                                                    _knowledgeTestController
-                                                                            .activeMenu =
-                                                                        TestCategory
-                                                                            .NONE;
-                                                                    _knowledgeTestController
-                                                                            .isActiveAnyMenu =
-                                                                        false;
-                                                                  }
-                                                                  _knowledgeTestController
-                                                                          .searchTap =
-                                                                      true;
-                                                                });
+                                                                          .isActiveAnyMenu =
+                                                                      false;
+                                                                }
+                                                                _knowledgeTestController
+                                                                        .searchTap =
+                                                                    true;
                                                               }
                                                             }),
                                                             decoration:
@@ -884,8 +894,9 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              SingleChildScrollView(
-                                                child: Container(
+                                              AspectRatio(
+                                                aspectRatio: 1,
+                                                child: SingleChildScrollView(
                                                   child:
                                                       model.listQuestions
                                                               .isEmpty
@@ -998,8 +1009,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                     );
                                                                     if (_knowledgeTestController
                                                                         .isTestTaken) {
-                                                                      // searchKeywordController
-                                                                      //     .clear();
                                                                       focusNodeKeywordSearchField
                                                                           .unfocus();
                                                                       setState(
@@ -1033,34 +1042,34 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                             ),
                                                 ),
                                               ),
-                                              SingleChildScrollView(
-                                                child: Container(
-                                                  child: Column(children: [
-                                                    Icon(
-                                                      Icons.trending_up,
-                                                      size: 15,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Icon(
-                                                      Icons.numbers,
-                                                      size: 15,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    if (model
-                                                        .listQuestions.isEmpty)
-                                                      for (var entry
-                                                          in groupedCourseKeywordsMap
-                                                              .entries)
-                                                        if (entry
-                                                            .value.isNotEmpty)
-                                                          Text(entry.key),
-                                                  ]),
-                                                ),
-                                              )
+                                              // SingleChildScrollView(
+                                              //   child: Container(
+                                              //     child: Column(children: [
+                                              //       Icon(
+                                              //         Icons.trending_up,
+                                              //         size: 15,
+                                              //       ),
+                                              //       SizedBox(
+                                              //         height: 4,
+                                              //       ),
+                                              //       Icon(
+                                              //         Icons.numbers,
+                                              //         size: 15,
+                                              //       ),
+                                              //       SizedBox(
+                                              //         height: 4,
+                                              //       ),
+                                              //       if (model
+                                              //           .listQuestions.isEmpty)
+                                              //         for (var entry
+                                              //             in groupedCourseKeywordsMap
+                                              //                 .entries)
+                                              //           if (entry
+                                              //               .value.isNotEmpty)
+                                              //             Text(entry.key),
+                                              //     ]),
+                                              //   ),
+                                              // )
                                             ],
                                           )),
                                     ),
