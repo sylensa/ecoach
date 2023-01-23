@@ -40,18 +40,20 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:validators/validators.dart';
 
 class KeywordQuestionView extends StatefulWidget {
-  KeywordQuestionView(
-      {Key? key,
-      required this.controller,
-      this.theme = QuizTheme.GREEN,
-      this.diagnostic = false,
-      this.numberOfQuestionSelected = 0})
-      : super(key: key);
+  KeywordQuestionView({
+    Key? key,
+    required this.controller,
+    this.theme = QuizTheme.GREEN,
+    this.diagnostic = false,
+    this.numberOfQuestionSelected = 0,
+     this.isDynamicTest = true,
+  }) : super(key: key);
 
   QuizController controller;
   bool diagnostic;
   QuizTheme theme;
   int numberOfQuestionSelected;
+  final bool isDynamicTest;
 
   @override
   State<KeywordQuestionView> createState() => _KeywordQuestionViewState();
@@ -265,9 +267,13 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
     //     print("listQuestions.length :${listQuestions.length }");
     //     await TestTakenDB().deleteAllKeywordTestTakenByName(testTaken.testname!.toLowerCase());
     //   }
-    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(testTaken, controller.course.id!, topicId: controller.topicId);
+    await OfflineSaveController(context, controller.user).saveKeywordTestTaken(
+        testTaken, controller.course.id!,
+        topicId: controller.topicId);
 
-    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(controller.course.id!,);
+    keywordTestTaken = await TestTakenDB().getKeywordTestTaken(
+      controller.course.id!,
+    );
     ApiCall<TestTaken>(AppUrl.testTaken,
         user: controller.user,
         isList: false,
@@ -361,6 +367,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
           test: testTakenSaved!,
           diagnostic: widget.diagnostic,
           controller: widget.controller,
+           isDynamicTest: widget.isDynamicTest,
           testCategory: controller.challengeType,
           message: 'Good, more room for improvement',
         ),
@@ -378,6 +385,7 @@ class _KeywordQuestionViewState extends State<KeywordQuestionView> {
           controller: widget.controller,
           testCategory: controller.challengeType,
           message: 'Average Performance, need improvement',
+          isDynamicTest: widget.isDynamicTest,
         ),
         replace: true,
       );

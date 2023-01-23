@@ -22,6 +22,7 @@ class ResultSummaryScreen extends StatefulWidget {
     this.controller,
     this.history = false,
     this.diagnostic = false,
+    this.isDynamicTest = false,
     Key? key,
     required this.message,
   }) : super(key: key);
@@ -35,6 +36,7 @@ class ResultSummaryScreen extends StatefulWidget {
   TestCategory testCategory;
   QuizController? controller;
   final String message;
+  final bool isDynamicTest;
 
   @override
   State<ResultSummaryScreen> createState() => _ResultSummaryScreenState();
@@ -238,64 +240,65 @@ class _ResultSummaryScreenState extends State<ResultSummaryScreen> {
                   //     toastMessage("This feature not available now");
                   //   },
                   // ),
-                  LowerButtons(
-                    height: height,
-                    width: width,
-                    text: "Re-Test",
-                    image: "assets/images/refresh.png",
-                    orientation: orientation,
-                    onpress: () async {
-                      Navigator.pop(context);
-                      // List<Question> questions = [];
-                      // switch (widget.testCategory) {
-                      //   case TestCategory.BANK:
-                      //   case TestCategory.EXAM:
-                      //   case TestCategory.ESSAY:
-                      //     questions = await TestController().getQuizQuestions(
-                      //       widget.test.id!,
-                      //       limit: 40,
-                      //     );
-                      //     break;
-                      //   case TestCategory.TOPIC:
-                      //     List<int> topicIds = widget.test.getTopicIds();
-                      //
-                      //     questions =
-                      //         await TestController().getTopicQuestions(
-                      //       topicIds,
-                      //       limit: () {
-                      //         if (widget.testType == TestType.CUSTOMIZED)
-                      //           return 40;
-                      //         return widget.testType != TestType.SPEED
-                      //             ? 10
-                      //             : 1000;
-                      //       }(),
-                      //     );
-                      //     break;
-                      //   default:
-                      //     questions =
-                      //         await TestController().getMockQuestions(0);
-                      // }
-                      //
-                      // Navigator.pop(context);
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) {
-                      //       return QuizCover(
-                      //         widget.user,
-                      //         questions,
-                      //         type: widget.testType,
-                      //         name: widget.test.testname!,
-                      //         theme: QuizTheme.ORANGE,
-                      //         category: widget.testCategory,
-                      //         time: questions.length * 60,
-                      //         course: widget.course,
-                      //       );
-                      //     },
-                      //   ),
-                      // );
-                    },
-                  ),
+                  if (!widget.isDynamicTest)
+                    LowerButtons(
+                      height: height,
+                      width: width,
+                      text: "Re-Test",
+                      image: "assets/images/refresh.png",
+                      orientation: orientation,
+                      onpress: () async {
+                        Navigator.pop(context);
+                        // List<Question> questions = [];
+                        // switch (widget.testCategory) {
+                        //   case TestCategory.BANK:
+                        //   case TestCategory.EXAM:
+                        //   case TestCategory.ESSAY:
+                        //     questions = await TestController().getQuizQuestions(
+                        //       widget.test.id!,
+                        //       limit: 40,
+                        //     );
+                        //     break;
+                        //   case TestCategory.TOPIC:
+                        //     List<int> topicIds = widget.test.getTopicIds();
+                        //
+                        //     questions =
+                        //         await TestController().getTopicQuestions(
+                        //       topicIds,
+                        //       limit: () {
+                        //         if (widget.testType == TestType.CUSTOMIZED)
+                        //           return 40;
+                        //         return widget.testType != TestType.SPEED
+                        //             ? 10
+                        //             : 1000;
+                        //       }(),
+                        //     );
+                        //     break;
+                        //   default:
+                        //     questions =
+                        //         await TestController().getMockQuestions(0);
+                        // }
+                        //
+                        // Navigator.pop(context);
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) {
+                        //       return QuizCover(
+                        //         widget.user,
+                        //         questions,
+                        //         type: widget.testType,
+                        //         name: widget.test.testname!,
+                        //         theme: QuizTheme.ORANGE,
+                        //         category: widget.testCategory,
+                        //         time: questions.length * 60,
+                        //         course: widget.course,
+                        //       );
+                        //     },
+                        //   ),
+                        // );
+                      },
+                    ),
                 ],
               ),
               SizedBox(height: height * 0.006),
