@@ -68,7 +68,9 @@ class ConquestController {
   int countdownInSeconds = 0;
   int totalTime = 0;
   DateTime questionTimer = DateTime.now();
-
+  int wrongCount = 0;
+  int scoreCount = 0;
+  int unattemptedCount = 0;
   startTest() {
     speedtimerController!.start();
     startTime = DateTime.now();
@@ -116,31 +118,40 @@ class ConquestController {
   }
 
   int get correct {
-    int score = 0;
-    questions.forEach((question) {
-      print("correct___________________________");
-      print(question.toJson());
-      if (question.isCorrect) score++;
-    });
-    return score;
+    // questions.forEach((question) {
+    //   print("correct___________________________");
+    //   print(question.toJson());
+    //   if (question.isCorrect) score++;
+    // });
+    if (questions[currentQuestion].isCorrect){
+      scoreCount++;
+    }
+    return scoreCount;
   }
 
   int get wrong {
-    int wrong = 0;
-    questions.forEach((question) {
-      print("wrong___________________________");
-      print(question.toJson());
-      if (question.isWrong) wrong++;
-    });
-    return wrong;
+    // wrongCount = 0;
+    // questions.forEach((question) {
+    //   print("wrong___________________________");
+    //   print(question.toJson());
+    //   if (question.isWrong) wrong++;
+    // });
+    if (questions[currentQuestion].isWrong){
+      print("wrongCount:$wrongCount");
+      wrongCount++;
+    }
+    return wrongCount;
   }
 
   int get unattempted {
-    int unattempted = 0;
-    questions.forEach((question) {
-      if (question.unattempted) unattempted++;
-    });
-    return unattempted;
+
+    // questions.forEach((question) {
+    //   if (question.unattempted) unattempted++;
+    // });
+    if (questions[currentQuestion].unattempted){
+      unattemptedCount++;
+    }
+    return unattemptedCount;
   }
 
   double get avgScore {

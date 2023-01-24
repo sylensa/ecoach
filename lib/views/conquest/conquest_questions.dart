@@ -268,7 +268,7 @@ class _ConquestQuizViewState extends State<ConquestQuizView>
                 averageScore: controller.getAvgScore().toStringAsFixed(2) + '%',
                 speed: controller.avgTime.toStringAsFixed(2) + 's',
                 correctScore: controller.correct.toString(),
-                wrongScrore: controller.wrong.toString(),
+                wrongScrore: controller.getTotalWrong().toString(),
               ),
 
               Expanded(

@@ -181,10 +181,7 @@ class _ReviewOnBoardingeState extends State<ConquestOnBoarding> {
           ),
           GestureDetector(
             onTap: ()async{
-              ConquestController controller = ConquestController(
-                widget.user,
-                widget.course,
-              );
+              ConquestController controller = ConquestController(widget.user, widget.course,);
               controller.questions = widget.listQuestions;
               controller.name = widget.course.name;
               goTo(context, ConquestQuizView(controller: controller,),replace: true);

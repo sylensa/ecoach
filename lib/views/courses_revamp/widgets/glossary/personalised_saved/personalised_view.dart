@@ -94,7 +94,7 @@ class _PersonalisedViewState extends State<PersonalisedView> {
                           setState(() {
                             widget.listGlossaryData[currentIndex].played = true;
                           });
-                          await TextToSpeechController(text: widget.listGlossaryData[currentIndex].definition!).speak();
+                          await TextToSpeechController(text: "${widget.listGlossaryData[currentIndex].term!}. ${widget.listGlossaryData[currentIndex].definition!}").speak();
                         }
 
                       },
@@ -164,11 +164,11 @@ class _PersonalisedViewState extends State<PersonalisedView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 20,),
-                                sText("${widget.listGlossaryData[indexReport].topic!.name}",color: Colors.black,size: 25,weight: FontWeight.w500),
+                                sText("${widget.listGlossaryData[indexReport].term}",color: Colors.black,size: 25,weight: FontWeight.w500),
                                 SizedBox(height: 20,),
-                                sText("Term",color: Colors.grey,size: 12,weight: FontWeight.w500),
+                                sText("Topic",color: Colors.grey,size: 12,weight: FontWeight.w500),
                                 SizedBox(height: 10,),
-                                sText("${widget.listGlossaryData[indexReport].term}",color: Colors.black,size: 16,weight: FontWeight.w500),
+                                sText("${widget.listGlossaryData[indexReport].topic!.name}",color: Colors.black,size: 16,weight: FontWeight.w500),
                                 SizedBox(height: 40,),
                                 sText("Definition",color: Colors.grey,size: 12,weight: FontWeight.w500),
                                 SizedBox(height: 10,),
