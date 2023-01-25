@@ -307,8 +307,8 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                     keyboardType: TextInputType.emailAddress,
                                     autofocus: true,
                                     onSubmitted: (String value)async{
-                                      initialIndex++;
                                      setState(() {
+                                       initialIndex++;
                                        isSkipped = false;
                                      });
                                        widget.listGlossaryData[indexReport].answered = 1;
@@ -339,16 +339,18 @@ class _GlossaryQuizViewState extends State<GlossaryQuizView> {
                                       );
                                       // await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
                                       await GlossaryDB().insertGlossaryTryProgress(glossaryProgressData);
-                                      carouselController.animateToPage(indexReport +1,duration: Duration(seconds: 1),curve: Curves.easeIn);
                                       Future.delayed(
                                         const Duration(seconds: 1),
                                         () {
                                           Navigator.pop(context);
+                                          if(indexReport == widget.listGlossaryData.length - 1){
+                                            testCompletedModalBottomSheet(context);
+                                            return;
+                                          }
                                         },
                                       );
-                                      if(indexReport == widget.listGlossaryData.length - 1){
-                                        testCompletedModalBottomSheet(context);
-                                      }
+                                     carouselController.animateToPage(indexReport + 1 ,duration: Duration(seconds: 1),curve: Curves.easeIn);
+
                                       // setState(() {
                                       //   widget.listGlossaryData.removeAt(indexReport);
                                       //   textEditingController.removeAt(indexReport);
