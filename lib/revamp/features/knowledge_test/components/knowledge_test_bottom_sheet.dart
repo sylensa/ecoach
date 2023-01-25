@@ -13,6 +13,7 @@ import 'package:ecoach/revamp/features/knowledge_test/controllers/knowledge_test
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +43,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   late Course _course;
   late User _user;
-  late bool smallHeightDevice;
+  late bool smallHeightDevice = false;
   late int? topicId;
   late FocusNode focusNodeKeywordSearchField;
   late int _scrollToIndex;
@@ -89,10 +90,23 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(
+      Duration.zero,
+      () => () {
+        smallHeightDevice = appHeight(context) < 890;
+
+        setState(() {});
+        _knowledgeTestController.sheetHeight =
+            smallHeightDevice ? 500 : appHeight(context) * 0.56;
+      },
+    );
+
     _course = widget.course;
     _user = widget.user;
     _knowledgeTestController.searchTap = false;
     _knowledgeTestController.emptyTestList = false;
+
     _listCourseKeywordsData = widget.listCourseKeywordsData;
     if (_listCourseKeywordsData.isNotEmpty) {
       groupedCourseKeywordsMap = {
@@ -171,9 +185,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
 
   @override
   void didChangeDependencies() {
-    smallHeightDevice = appHeight(context) < 890 ? true : false;
-    _knowledgeTestController.sheetHeight =
-        smallHeightDevice ? 500 : appHeight(context) * 0.56;
     super.didChangeDependencies();
   }
 
@@ -428,10 +439,6 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                 carouselController:
                                                     alphaSliderToStatisticsCardController,
                                                 options: CarouselOptions(
-                                                  // height:
-                                                  //     model.isShowAnalysisBox
-                                                  //         ? 600
-                                                  //         : 300,
                                                   autoPlay: false,
                                                   enableInfiniteScroll: false,
                                                   autoPlayAnimationDuration:
@@ -813,7 +820,9 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                   false) {
                                                                 _knowledgeTestController
                                                                         .sheetHeight =
-                                                                    appHeight(context) * 0.90;
+                                                                    appHeight(
+                                                                            context) *
+                                                                        0.90;
                                                                 setState(() {});
                                                                 // _knowledgeTestController
                                                                 //         .showKeywordTextField =

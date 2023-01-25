@@ -130,12 +130,19 @@ class KnowledgeTestController extends ChangeNotifier {
   List<CourseKeywords> listCourseKeywordsData = [];
   bool isActiveAnyMenu = false;
   bool sheetHeightIncreased = false;
-  late double sheetHeight;
   TestCategory activeMenu = TestCategory.NONE;
   TestCategory selectedMenu = TestCategory.NONE;
   bool isShowAlphaScroll = false;
   bool _emptyTestTakenList = true;
   Map _groupedLists = {};
+  double _sheetHeight = 480;
+
+  double get sheetHeight => _sheetHeight;
+
+  set sheetHeight(double value) {
+    _sheetHeight = value;
+    notifyListeners();
+  }
 
   bool get emptyTestList => _emptyTestTakenList;
   set emptyTestList(bool value) {
@@ -333,7 +340,10 @@ class KnowledgeTestController extends ChangeNotifier {
   }
 
   TestCategory openKnowledgeTestCard(
-      BuildContext context, bool smallHeightDevice, TestCategory menu) {
+    BuildContext context,
+    bool smallHeightDevice,
+    TestCategory menu,
+  ) {
     if (!isActiveAnyMenu || searchTap) {
       searchTap = false;
       showKeywordTextField = false;
@@ -347,8 +357,11 @@ class KnowledgeTestController extends ChangeNotifier {
   }
 
   TestCategory closeKnowledgeTestCard(
-      BuildContext context, bool smallHeightDevice, TestCategory menu) {
-    sheetHeight = smallHeightDevice ? 510 : appHeight(context) * 0.56;
+    BuildContext context,
+    bool smallHeightDevice,
+    TestCategory menu,
+  ) {
+    sheetHeight = 500;
     activeMenu = TestCategory.NONE;
     emptyTestList = true;
     sheetHeightIncreased = false;
@@ -651,7 +664,7 @@ class KnowledgeTestController extends ChangeNotifier {
       default:
         widgetView = null;
     }
-
+    Navigator.pop(context);
     await Navigator.push(
       context,
       MaterialPageRoute(
