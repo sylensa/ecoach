@@ -26,8 +26,8 @@ class _StoreBundlesState extends State<StoreBundlesComponent> {
       aspectRatio: 12 / 16,
       child: Container(
         padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
+          left: 20,
+          right: 20,
         ),
         width: double.maxFinite,
         child: ListView.builder(

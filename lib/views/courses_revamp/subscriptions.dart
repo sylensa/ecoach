@@ -3,6 +3,7 @@ import 'package:ecoach/models/user.dart';
 import 'package:ecoach/revamp/features/store/all_bundles.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/courses_page.dart';
+import 'package:ecoach/views/library/library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -155,12 +156,11 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen>
                     ),
                     AvailableBundlesPage(),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: ListView(
-                        children: [
-                          Text("Library"),
-                        ],
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.0,
+                        vertical: 24
                       ),
+                      child: LibraryScreen(),
                     ),
                   ],
                 ),

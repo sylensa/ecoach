@@ -188,8 +188,8 @@ class _CoursesPageState extends State<CoursesPage> {
                           children: [
                             Container(
                               width: appWidth(context),
-                              constraints: BoxConstraints(minHeight: 77),
-                              padding: EdgeInsets.all(20),
+                              constraints: BoxConstraints(minHeight: 70),
+                              padding: EdgeInsets.all(18),
                               margin: EdgeInsets.only(bottom: 12),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -204,8 +204,8 @@ class _CoursesPageState extends State<CoursesPage> {
                                     children: [
                                       sText(
                                           "${context.read<DownloadUpdate>().plans[index].name}",
-                                          weight: FontWeight.w500,
-                                          size: 14,
+                                          weight: FontWeight.w600,
+                                          size: 15,
                                           color: kAdeoDark,
                                           align: TextAlign.left,
                                           lHeight: 1.8),
