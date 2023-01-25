@@ -244,7 +244,7 @@ class _BelowPassMarkState extends State<BelowPassMark> {
                   //   orientation: orientation,
                   //   onpress: () {},
                   // ),
-                  if (!widget.isDynamicTest)
+                  if (widget.isDynamicTest)
                     LowerButtons(
                       height: height,
                       width: width,

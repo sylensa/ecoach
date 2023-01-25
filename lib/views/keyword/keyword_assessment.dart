@@ -74,6 +74,10 @@ class _KeywordAssessmentState extends State<KeywordAssessment> {
     if (widget.testCategory == TestCategory.MOCK) {
       selectNumberQuestions.add(40);
     }
+    if (numberQuestions.length == 1) {
+      selectNumberQuestions.add(numberQuestions.first);
+    }
+
   }
 
   @override
