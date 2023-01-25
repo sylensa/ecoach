@@ -813,9 +813,7 @@ class _KnowledgeTestBottomSheetState extends State<KnowledgeTestBottomSheet> {
                                                                   false) {
                                                                 _knowledgeTestController
                                                                         .sheetHeight =
-                                                                    appHeight(
-                                                                            context) *
-                                                                        0.90;
+                                                                    appHeight(context) * 0.90;
                                                                 setState(() {});
                                                                 // _knowledgeTestController
                                                                 //         .showKeywordTextField =

@@ -35,7 +35,7 @@ class AdeoSearchBox extends StatelessWidget {
           textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
             suffixIcon: Container(
-              margin: EdgeInsets.only(right: 12),
+              margin: EdgeInsets.only(right: 0),
               child: Material(
                 color: Colors.transparent,
                 child: IconButton(
@@ -66,7 +66,7 @@ class AdeoSearchBox extends StatelessWidget {
               fontSize: 18,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
                   style: BorderStyle.solid, color: Color(0xFFFFFFFF)),
             ),

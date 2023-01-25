@@ -14,6 +14,7 @@ import 'package:ecoach/utils/style_sheet.dart';
 // import 'package:ecoach/views/courses.dart';
 import 'package:ecoach/views/courses_revamp/courses_page.dart';
 import 'package:ecoach/views/analysis.dart';
+import 'package:ecoach/views/courses_revamp/subscriptions.dart';
 import 'package:ecoach/views/group_main_page.dart';
 import 'package:ecoach/views/more_page.dart';
 import 'package:ecoach/views/user_group/group_page/user_group_page.dart';
@@ -80,7 +81,12 @@ class _MainHomePageState extends State<MainHomePage>
       ),
 
       UserGroupPage(widget.user),
-      CoursesPage(
+      // CoursesPage(
+      //   widget.user,
+      //   mainController,
+      //   planId: widget.planId,
+      // ),
+      SubscriptionsScreen(
         widget.user,
         mainController,
         planId: widget.planId,
@@ -90,7 +96,7 @@ class _MainHomePageState extends State<MainHomePage>
       //   widget.user,
       //   controller: mainController,
       // ),
-      AvailableBundlesPage(),
+      // AvailableBundlesPage(),
       MorePage(
         widget.user,
         controller: mainController,
@@ -267,10 +273,10 @@ class _MainHomePageState extends State<MainHomePage>
               'inactive': Icons.group_add_outlined,
             },
             {'active': Icons.school_rounded, 'inactive': Icons.school_outlined},
-            {
-              'active': Icons.storefront,
-              'inactive': Icons.storefront,
-            },
+            // {
+            //   'active': Icons.storefront,
+            //   'inactive': Icons.storefront,
+            // },
             {
               'active': Icons.account_circle_rounded,
               'inactive': Icons.account_circle_outlined,

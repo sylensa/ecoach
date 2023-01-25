@@ -63,7 +63,7 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
           SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.symmetric(
-                vertical: MediaQuery.of(context).size.height * 0.1,
+                vertical: MediaQuery.of(context).size.height * 0.05,
               ),
               width: MediaQuery.of(context).size.width,
               constraints: BoxConstraints(
@@ -72,20 +72,11 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
               color: kAdeoDark,
               child: Container(
                 margin: EdgeInsets.only(top: 36, bottom: 24),
-                constraints: BoxConstraints(
-                  maxWidth: 1200,
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // SizedBox(
-                    //   height: 18,
-                    // ),
                     Container(
                       width: double.maxFinite,
-                      constraints: BoxConstraints(
-                        maxWidth: 1200,
-                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -94,13 +85,13 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
                             style: kTwentyFourPointText.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
-                              fontSize: 28,
+                              fontSize: 20,
                               fontFamily: "Poppins",
                             ),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(
-                            height: 24,
+                            height: 16,
                           ),
                           isLoadingFilters
                               ? Container(
@@ -116,7 +107,8 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
                                   scrollDirection: Axis.horizontal,
                                   child: Container(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 24.0),
+                                        horizontal: 24.0,
+                                      ),
                                       child: Wrap(
                                         children: _tags.map((tag) {
                                           if (!tag.isEmpty) {
@@ -178,7 +170,7 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
                                       )),
                                 ),
                           SizedBox(
-                            height: 62,
+                            height: 18,
                           ),
                           isLoadingBundles
                               ? Container(
@@ -211,8 +203,10 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
                                           },
                                           style: ButtonStyle(
                                             padding: MaterialStateProperty.all(
-                                              EdgeInsets.symmetric(horizontal: 16, vertical: 8)
-                                            ),
+                                                EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 8,
+                                            )),
                                             backgroundColor:
                                                 MaterialStateProperty.all(
                                               Colors.white24,
@@ -222,7 +216,7 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
                                             "Reload bundles",
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 16,
+                                              fontSize: 14,
                                               fontFamily: "Poppins",
                                             ),
                                           ),
@@ -247,8 +241,9 @@ class _FeaturedTestsPageState extends State<AvailableBundlesPage> {
             child: Container(
               width: double.maxFinite,
               padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.05,
-                bottom: 18,
+                // top: MediaQuery.of(context).size.height * 0.05,
+                top: 12,
+                bottom: 8,
               ),
               decoration: BoxDecoration(
                 color: kAdeoDark,
