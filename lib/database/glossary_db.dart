@@ -64,10 +64,34 @@ class GlossaryDB {
     }
     return listGlossaryProgressData;
   }
+  Future<List<GlossaryProgressData>> getGlossaryTryProgressByCourseIdTopicId(int courseId,int topicId) async {
+    List<GlossaryProgressData> listGlossaryProgressData = [];
+    final db = await DBProvider.database;
+    var  response = await db!.rawQuery("Select * from glossary_try_progress where course_id = $courseId AND topic_id = $topicId");
+    print("response glossary_progress course id:$courseId : $response");
+    if(response.isNotEmpty){
+      for(int i =0; i < response.length; i++){
+        GlossaryProgressData glossaryProgressData = GlossaryProgressData.fromJson(response[i]);
+        listGlossaryProgressData.add(glossaryProgressData);
+      }
+    }
+    return listGlossaryProgressData;
+  }
   Future<GlossaryProgressData?> getGlossaryStudyProgressByCourseId(int courseId) async {
     GlossaryProgressData? glossaryProgressData;
     final db = await DBProvider.database;
     var  response = await db!.rawQuery("Select * from glossary_study_progress where course_id = $courseId");
+    print("response glossary_progress course id:$courseId : $response");
+    if(response.isNotEmpty){
+      glossaryProgressData = GlossaryProgressData.fromJson(response.last);
+      return glossaryProgressData;
+    }
+    return glossaryProgressData;
+  }
+  Future<GlossaryProgressData?> getGlossaryStudyProgressByCourseIdTopicId(int courseId, int topicId,) async {
+    GlossaryProgressData? glossaryProgressData;
+    final db = await DBProvider.database;
+    var  response = await db!.rawQuery("Select * from glossary_study_progress where course_id = $courseId AND topic_id = $topicId");
     print("response glossary_progress course id:$courseId : $response");
     if(response.isNotEmpty){
       glossaryProgressData = GlossaryProgressData.fromJson(response.last);

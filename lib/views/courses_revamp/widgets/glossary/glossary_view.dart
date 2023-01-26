@@ -45,9 +45,12 @@ class _GlossaryViewState extends State<GlossaryView> {
   int _currentPage = 0;
   bool switchValue = false;
   List<CourseKeywords> courseKeywords = [];
-  List<GlossaryData> glossaryData = [];
+  // List<GlossaryData> glossaryData = [];
+  List<List<GlossaryData>> totalGlossaryData = [];
+  List<String> selectedListCharacter = [];
   String selectedCharacter = '';
   int currentIndex = 1;
+  int changeIndex = 0;
   String termKeyword = '';
   List<Question> listQuestions = [];
   Map<String, List<GlossaryData>> glossaryDataListsResult = {
@@ -169,29 +172,30 @@ class _GlossaryViewState extends State<GlossaryView> {
     }
 
 
-    if(widget.glossaryProgressData == null){
-      glossaryData =  glossaryDataListsResult.entries.first.value;
-      termKeyword = glossaryData.first.term!;
-      selectedCharacter =  glossaryDataListsResult.entries.first.key;
-    }else{
+
+    for (var entry in glossaryDataListsResult.entries){
+      totalGlossaryData.add(entry.value);
+      selectedListCharacter.add(entry.key);
+      selectedCharacter = selectedListCharacter.first;
+    }
+
+    if(widget.glossaryProgressData != null){
       termKeyword = widget.glossaryProgressData!.searchTerm!;
       selectedCharacter = widget.glossaryProgressData!.selectedCharacter!.toLowerCase();
       currentIndex = widget.glossaryProgressData!.progressIndex! + 1;
+      int i= 0;
       for (var entry in glossaryDataLists.entries){
+        i++;
         if (entry.key.toLowerCase() == selectedCharacter.toLowerCase()){
-          glossaryData = entry.value;
+          changeIndex = i;
         }
       }
-
       print("groupedCourseKeywordsResult:${glossaryDataListsResult}");
-
     }
-
     getQuestions();
-
-
   }
   GlobalKey<ScaffoldState> scaffold = GlobalKey();
+  CarouselController carouselController = CarouselController();
 
   @override
   Widget build(BuildContext context) {
@@ -215,19 +219,25 @@ class _GlossaryViewState extends State<GlossaryView> {
                     for(var entries in glossaryDataListsResult.entries)
                       GestureDetector(
                         onTap: ()async{
+                          selectedCharacter = entries.key;
+                          for(int i = 0; i < selectedListCharacter.length; i++){
+                            if(selectedListCharacter[i].toLowerCase() == selectedCharacter.toLowerCase()){
+                              changeIndex = i;
+                            }
+                          }
                             currentIndex = 1;
-                            glossaryData = entries.value;
-                            selectedCharacter = entries.key;
-                            termKeyword = glossaryData.first.term!;
+                            termKeyword =  totalGlossaryData[changeIndex].first.term!;
+
                             GlossaryProgressData glossaryProgressData = GlossaryProgressData(
-                                topicId: glossaryData.first.topic!.id,
-                                courseId: glossaryData.first.courseId!,
+                              id: totalGlossaryData[changeIndex].first.id,
+                                topicId: totalGlossaryData[changeIndex].first.topic!.id,
+                                courseId: totalGlossaryData[changeIndex].first.courseId!,
                                 searchTerm: termKeyword,
                                 selectedCharacter: selectedCharacter,
                                 progressIndex: currentIndex -1,
                                 correct: 0,
                                 wrong: 0,
-                                count: glossaryData.length,
+                                count: totalGlossaryData[changeIndex].length,
                             );
                             await GlossaryDB().deleteGlossaryStudyProgress(widget.course.id!);
                             await GlossaryDB().insertGlossaryStudyProgress(glossaryProgressData);
@@ -251,7 +261,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                     CircularProgressIndicator(
                                       color: Colors.white,
                                       strokeWidth: 2,
-                                      value: currentIndex/glossaryData.length,
+                                      value: currentIndex/totalGlossaryData[changeIndex].length,
                                     ),
                                     Center(
                                       child: sText(entries.key.toLowerCase(),color: Colors.white,align: TextAlign.center,size: 18,weight: FontWeight.w500),
@@ -269,6 +279,7 @@ class _GlossaryViewState extends State<GlossaryView> {
               ),
               SizedBox(height: 20,),
               CarouselSlider.builder(
+                  carouselController: carouselController,
                   options:
                   CarouselOptions(
                     height:  680,
@@ -281,27 +292,39 @@ class _GlossaryViewState extends State<GlossaryView> {
                     pageSnapping: true,
                     initialPage: currentIndex -1,
                     onPageChanged: (index, reason) async{
+                      print("index:$index");
                       currentIndex  = index +1;
-                      termKeyword = glossaryData[index].term!;
+                      termKeyword = totalGlossaryData[changeIndex][index].term!;
                       GlossaryProgressData glossaryProgressData = GlossaryProgressData(
-                        topicId: glossaryData[index].topic!.id,
-                        courseId: glossaryData[index].courseId!,
+                        id: totalGlossaryData[changeIndex][index].id,
+                        topicId: totalGlossaryData[changeIndex][index].topic!.id,
+                        courseId: totalGlossaryData[changeIndex][index].courseId!,
                         searchTerm: termKeyword,
                         selectedCharacter: selectedCharacter,
                         progressIndex: index,
                         correct: 0,
                         wrong: 0,
-                        count: glossaryData.length,
+                        count: totalGlossaryData[changeIndex].length,
                       );
                       await GlossaryDB().deleteGlossaryStudyProgress(widget.course.id!);
                       await GlossaryDB().insertGlossaryStudyProgress(glossaryProgressData);
                       listQuestions = await TestController().getKeywordQuestions(termKeyword.toLowerCase(), widget.course.id!);
+                      if(totalGlossaryData[changeIndex].length == currentIndex){
+                        changeIndex++;
+                        selectedCharacter = selectedListCharacter[changeIndex];
+                        setState(() {
+
+                        });
+
+                      }
+
                       setState(() {
                         print("listQuestions:${listQuestions.length}");
                       });
+
                     },
                   ),
-                  itemCount:glossaryData.length,
+                  itemCount:totalGlossaryData[changeIndex].length,
                   itemBuilder: (BuildContext context, int indexReport, int index2) {
                     return  SingleChildScrollView(
                       child: Container(
@@ -318,30 +341,28 @@ class _GlossaryViewState extends State<GlossaryView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 GestureDetector(
-
-
                                   onTap: ()async{
-                                    if(glossaryData[indexReport].played){
+                                    if(totalGlossaryData[changeIndex][indexReport].played){
                                       setState(() {
-                                        glossaryData[indexReport].played = false;
+                                        totalGlossaryData[changeIndex][indexReport].played = false;
                                       });
-                                      await TextToSpeechController(text: glossaryData[indexReport].definition!).stop();
+                                      await TextToSpeechController(text: "${totalGlossaryData[changeIndex][indexReport].term}. ${totalGlossaryData[changeIndex][indexReport].definition!}").stop();
                                     }else{
                                       setState(() {
-                                        glossaryData[indexReport].played = true;
+                                        totalGlossaryData[changeIndex][indexReport].played = true;
                                       });
-                                      await TextToSpeechController(text: glossaryData[indexReport].definition!).speak();
+                                      await TextToSpeechController(text: "${totalGlossaryData[changeIndex][indexReport].term}. ${totalGlossaryData[changeIndex][indexReport].definition!}").speak();
                                     }
 
                                   },
-                                  child:glossaryData[indexReport].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
+                                  child:totalGlossaryData[changeIndex][indexReport].played ? Icon(Icons.pause,color: Colors.black,) : Image.asset("assets/images/Polygon.png",width: 20,),
                                 ),
                                 FlutterSwitch(
                                   width: 50.0,
                                   height: 20.0,
                                   valueFontSize: 10.0,
                                   toggleSize: 15.0,
-                                  value: glossaryData[indexReport].isSaved != null ? glossaryData[indexReport].isSaved! == 1 ? true : false :false,
+                                  value: totalGlossaryData[changeIndex][indexReport].isSaved != null ? totalGlossaryData[changeIndex][indexReport].isSaved! == 1 ? true : false :false,
                                   borderRadius: 30.0,
                                   padding: 2.0,
                                   showOnOff: false,
@@ -353,33 +374,33 @@ class _GlossaryViewState extends State<GlossaryView> {
                                     setState(() {
                                       switchValue = val;
                                       if(switchValue){
-                                        glossaryData[indexReport].isSaved = 1;
+                                        totalGlossaryData[changeIndex][indexReport].isSaved = 1;
                                       }else{
-                                        glossaryData[indexReport].isSaved = 0;
+                                        totalGlossaryData[changeIndex][indexReport].isSaved = 0;
                                       }
-                                      var res = jsonDecode(glossaryData[indexReport].glossary!);
-                                      res["is_saved"] =  glossaryData[indexReport].isSaved;
-                                      glossaryData[indexReport].glossary = jsonEncode(res);
+                                      var res = jsonDecode(totalGlossaryData[changeIndex][indexReport].glossary!);
+                                      res["is_saved"] =  totalGlossaryData[changeIndex][indexReport].isSaved;
+                                      totalGlossaryData[changeIndex][indexReport].glossary = jsonEncode(res);
                                     });
                                   if(switchValue){
-                                     GlossaryController().saveGlossariesList(glossaryData[indexReport]);
+                                     GlossaryController().saveGlossariesList(totalGlossaryData[changeIndex][indexReport]);
                                   }else{
-                                     GlossaryController().unSaveGlossariesList(glossaryData[indexReport]);
+                                     GlossaryController().unSaveGlossariesList(totalGlossaryData[changeIndex][indexReport]);
                                   }
                                   },
                                 ),
                               ],
                             ),
                             SizedBox(height: 20,),
-                            sText("${glossaryData[indexReport].topic!.name}",color: Colors.black,size: 25,weight: FontWeight.w500),
+                            sText("${totalGlossaryData[changeIndex][indexReport].term}",color: Colors.black,size: 25,weight: FontWeight.w500),
                             SizedBox(height: 20,),
-                            sText("Term",color: Colors.grey,size: 12,weight: FontWeight.w500),
+                            sText("Topic",color: Colors.grey,size: 12,weight: FontWeight.w500),
                             SizedBox(height: 10,),
-                            sText("${glossaryData[indexReport].term}",color: Colors.black,size: 16,weight: FontWeight.w500),
+                            sText("${totalGlossaryData[changeIndex][indexReport].topic!.name}",color: Colors.black,size: 16,weight: FontWeight.w500),
                             SizedBox(height: 40,),
                             sText("Definition",color: Colors.grey,size: 12,weight: FontWeight.w500),
                             SizedBox(height: 10,),
-                            sText("${glossaryData[indexReport].definition}",color: Colors.black,size: 16,weight: FontWeight.w500),
+                            sText("${totalGlossaryData[changeIndex][indexReport].definition}",color: Colors.black,size: 16,weight: FontWeight.w500),
                             SizedBox(height: 70,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -403,7 +424,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            sText("${glossaryData[indexReport].keywordRank}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
+                                            sText("${totalGlossaryData[changeIndex][indexReport].keywordRank}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
                                           ],
                                         ),
                                       ),
@@ -424,7 +445,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          sText("${glossaryData[indexReport].keywordAppearance}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
+                                          sText("${totalGlossaryData[changeIndex][indexReport].keywordAppearance}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center),
                                         ],
                                       ),
                                     ),
@@ -447,7 +468,7 @@ class _GlossaryViewState extends State<GlossaryView> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          sText("${glossaryData[indexReport].userSavesCount}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center,),
+                                          sText("${totalGlossaryData[changeIndex][indexReport].userSavesCount}",color: Colors.grey,size: 40,weight: FontWeight.bold,align: TextAlign.center,),
                                         ],
                                       ),
                                     ),

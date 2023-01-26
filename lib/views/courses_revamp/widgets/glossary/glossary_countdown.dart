@@ -16,6 +16,7 @@ import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/utils/style_sheet.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_instruction.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_quiz_view.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_topic_study.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:ecoach/views/learn/learn_course_completion.dart';
 import 'package:ecoach/views/review/review_questions.dart';
@@ -32,11 +33,13 @@ class GlossaryCountdown extends StatefulWidget {
     required this.listCourseKeywordsData,
     required this.studyGlossaryProgressData,
     required this.listTryGlossaryProgressData,
+    this.topic,
 
     Key? key,
   }) : super(key: key);
   final User user;
   final Course course;
+  Topic? topic;
   GlossaryProgressData? studyGlossaryProgressData ;
   List<GlossaryProgressData> listTryGlossaryProgressData ;
   List<CourseKeywords> listCourseKeywordsData;
@@ -105,7 +108,11 @@ class _GlossaryCountdowneState extends State<GlossaryCountdown> {
                     toastMessage("No glossary for this course");
                   }else{
                     if(studySelected){
-                      Get.off(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
+                      if(widget.topic == null){
+                        Get.off(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
+                      }else{
+                        Get.off(() => GlossaryTopicView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,topic: widget.topic,));
+                      }
                     }else{
                       Get.off(() => GlossaryQuizView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.listTryGlossaryProgressData,));
                     }

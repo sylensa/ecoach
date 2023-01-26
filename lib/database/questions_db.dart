@@ -126,6 +126,43 @@ class QuestionDB {
 
     return question;
   }
+  Future<List<Question>> getQuestionByKeywordByTopic(String keyword,int topicId,{int currentQuestionCount = 0}) async {
+    print("keyword:$keyword");
+    print("currentQuestionCount:$currentQuestionCount");
+    List<Question> questions = [];
+    List<Question> allQuestions = [];
+    final db = await DBProvider.database;
+    var result = await db!.rawQuery("select * from questions where topic_id = $topicId");
+    print("result:${result.length}");
+    for(int i = 0; i < result.length; i++){
+      Question question = Question.fromJson(result[i]) ;
+      if(question.text!.toLowerCase().contains(keyword.toLowerCase())){
+        question.answers = await AnswerDB().questoinAnswers(question.id!);
+        questions.add(question);
+      }
+      if(question.resource!.toLowerCase().contains(keyword.toLowerCase())){
+        questions.add(question);
+      }
+      if(question.instructions!.toLowerCase().contains(keyword.toLowerCase())){
+        questions.add(question);
+      }
+
+      for(int t = 0; t < question.answers!.length; t++){
+        if(question.answers![t].text!.toLowerCase().contains(keyword.toLowerCase())){
+          questions.add(question);
+        }
+      }
+
+    }
+    if(currentQuestionCount <= questions.length ){
+      for(int i = currentQuestionCount; i < questions.length; i++){
+        allQuestions.add(questions[i]);
+      }
+    }
+
+    print("questions:${allQuestions.length}");
+    return allQuestions.isNotEmpty ? allQuestions : questions;
+  }
   Future<List<Question>> getQuestionByKeyword(String keyword,int courseId,{int currentQuestionCount = 0}) async {
     print("keyword:$keyword");
     print("currentQuestionCount:$currentQuestionCount");

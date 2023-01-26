@@ -11,6 +11,7 @@ import 'package:ecoach/models/topic.dart';
 import 'package:ecoach/models/user.dart';
 import 'package:ecoach/utils/constants.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_quiz_view.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_topic_study.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,10 +24,11 @@ class GlossaryInstruction extends StatefulWidget {
     required this.listCourseKeywordsData,
     required this.studyGlossaryProgressData,
     required this.listTryGlossaryProgressData,
-
+    this.topic,
     Key? key,
   }) : super(key: key);
   final User user;
+  Topic? topic;
   final Course course;
   List<CourseKeywords> listCourseKeywordsData;
   GlossaryProgressData? studyGlossaryProgressData ;
@@ -204,11 +206,7 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                   if(isTopicSelected){
                     // await GlossaryDB().deleteAllGlossaryTopic();
                     // await GlossaryDB().deleteAll();
-                    List<Topic> listTopics = await TopicDB().allCourseTopics(widget.course);
-                    for(int i = 0; i < listTopics.length; i++){
-                      topicIds.add(listTopics[i].id);
-                    }
-                    listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,topicIds);
+                    listGlossaryData =  await GlossaryDB().getGlossariesByTopicId(widget.course.id!,[widget.topic!.id]);
                   }
                   else{
                     listGlossaryData =  await GlossaryDB().getGlossariesById(widget.course.id!);
@@ -217,7 +215,11 @@ class _GlossaryInstructionState extends State<GlossaryInstruction> {
                     toastMessage("No glossary for this course");
                   }else{
                     if(studySelected){
-                      await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
+                      if(widget.topic == null){
+                        await  Get.to(() => GlossaryView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,));
+                      }else{
+                        await  Get.to(() => GlossaryTopicView(user: widget.user,course: widget.course,listGlossaryData: listGlossaryData,glossaryProgressData: widget.studyGlossaryProgressData,topic: widget.topic,));
+                      }
                       setState(() {
                         isViewed = true;
                       });

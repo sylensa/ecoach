@@ -27,6 +27,7 @@ import 'package:ecoach/views/autopilot/autopilot_introit.dart';
 import 'package:ecoach/views/conquest/conquest_onboarding.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_countdown.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_instruction.dart';
+import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_topics.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/glossary_view.dart';
 import 'package:ecoach/views/courses_revamp/widgets/glossary/personalised_saved/index.dart';
 import 'package:ecoach/views/courses_revamp/widgets/knowledge_test/topic_test.dart';
@@ -759,7 +760,7 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
               Navigator.pop(context);
               if (checkQuestions.isNotEmpty) {
                 isTopicSelected = true;
-                studyTryModalBottomSheet(context);
+                goTo(context, GlossaryTopics(course: widget.course,user: widget.user,glossaryData: widget.glossaryData,listCourseKeywordsData: widget.listCourseKeywordsData,));
               }
               else {
                 showDialogYesNo(
@@ -773,7 +774,8 @@ class _GlossaryWidgetState extends State<GlossaryWidget> {
               }
             }else{
               isTopicSelected = true;
-              studyTryModalBottomSheet(context);
+              goTo(context, GlossaryTopics(course: widget.course,user: widget.user,glossaryData: widget.glossaryData,listCourseKeywordsData: widget.listCourseKeywordsData,));
+
             }
 
 

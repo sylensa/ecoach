@@ -140,7 +140,11 @@ class TestController {
     return await QuestionDB().getQuestionByKeyword(keyword.toLowerCase(), courseId,
         currentQuestionCount: currentQuestionCount);
   }
-
+  Future<List<Question>> getKeywordQuestionsByTopic(String keyword, int topicId,
+      {int currentQuestionCount = 0}) async {
+    return await QuestionDB().getQuestionByKeywordByTopic(keyword.toLowerCase(), topicId,
+        currentQuestionCount: currentQuestionCount);
+  }
   Future<List<Question>> getTotalKeywordQuestions(
       String keyword, int courseId) {
     return QuestionDB().getTotalQuestionByKeyword(keyword, courseId);
