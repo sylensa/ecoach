@@ -229,6 +229,7 @@ class _GlossaryTopicsState extends State<GlossaryTopics> {
                               stateSetter(() {
                                 continueSelected = true;
                               });
+                              Navigator.pop(context);
                               Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,studyGlossaryProgressData: glossaryProgressData,listTryGlossaryProgressData: [],topic: topic,));
                             }else{
                               toastMessage("You've no save progress");
@@ -239,6 +240,7 @@ class _GlossaryTopicsState extends State<GlossaryTopics> {
                               stateSetter(() {
                                 continueSelected = true;
                               });
+                              Navigator.pop(context);
                               Get.to(() => GlossaryCountdown(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,listTryGlossaryProgressData: listGlossaryProgressData,studyGlossaryProgressData: null,topic: topic,));
                             }else{
                               toastMessage("You've no save progress");
@@ -263,10 +265,15 @@ class _GlossaryTopicsState extends State<GlossaryTopics> {
 
                       MaterialButton(
                         onPressed: ()async{
-                          await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
+                          if(studySelected){
+                            await GlossaryDB().deleteGlossaryStudyProgress(widget.course.id!);
+                          }else{
+                            await GlossaryDB().deleteGlossaryTryProgress(widget.course.id!);
+                          }
                           stateSetter(() {
                             continueSelected = false;
                           });
+                          Navigator.pop(context);
                           Get.to(() => GlossaryInstruction(user: widget.user,course: widget.course,listCourseKeywordsData: widget.listCourseKeywordsData,studyGlossaryProgressData: null,listTryGlossaryProgressData: [],topic: topic,));
                         },
                         child: Container(
